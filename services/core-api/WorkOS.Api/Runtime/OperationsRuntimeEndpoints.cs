@@ -73,7 +73,7 @@ public static class OperationsRuntimeEndpoints
                 : Results.Ok(prepared);
         });
 
-        app.MapPost("/api/operations/work-items/{workItemId}/confirm", (string workItemId, ConfirmWorkItemRequest request, CanonicalOperationsApiService operations, ProjectionRuntime runtime, HttpRequest httpRequest) =>
+        app.MapPost("/api/operations/work-items/{workItemId}/confirm", (string workItemId, ConfirmWorkItemRequest request, CanonicalOperationsApiService operations, HttpRequest httpRequest) =>
         {
             var actor = httpRequest.HttpContext.RequireActor();
             var workItem = operations.GetWorkItem(workItemId);
@@ -84,13 +84,7 @@ public static class OperationsRuntimeEndpoints
 
             var token = httpRequest.SessionTokenForOperations();
             var requestId = httpRequest.Headers["X-Request-Id"].FirstOrDefault() ?? httpRequest.HttpContext.TraceIdentifier;
-            var device = RuntimeActorAuthorization.TrustedDeviceFromRequest(runtime, actor, request.DeviceId);
-            var enrichedRequest = request with
-            {
-                DeviceTrustStatus = device?.DeviceTrustStatus ?? (string.IsNullOrWhiteSpace(request.DeviceId) ? "not_provided" : "unknown"),
-                Surface = string.IsNullOrWhiteSpace(request.Surface) ? "operations-api" : request.Surface
-            };
-            var result = operations.ConfirmWorkItem(workItemId, enrichedRequest, actor with { SessionToken = token }, requestId);
+            var result = operations.ConfirmWorkItem(workItemId, request, actor with { SessionToken = token }, requestId);
             return Results.Json(result, statusCode: result.StatusCode);
         });
 

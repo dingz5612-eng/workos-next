@@ -86,7 +86,7 @@ const workItems = [
   wi("Dorm.RoomSetupConfirm", "房间建档确认", "train-1-business-mainline", "宿舍经办人", "Accommodation.ResourceSetup", "RoomSetup.Confirm", "Room", ["roomNo", "floor", "capacity"], ["room-photo", "room-basic-info"], "ledger.none.v1", ["Dorm.BedSetupConfirm"], ["RoomReadyLens"]),
   wi("Dorm.BedSetupConfirm", "床位建档确认", "train-1-business-mainline", "宿舍经办人", "Accommodation.ResourceSetup", "BedSetup.Confirm", "Bed", ["roomId", "bedNo", "bedType"], ["bed-photo", "room-link-proof"], "ledger.none.v1", ["Dorm.ResourceReadinessConfirm"], ["DormAvailabilityLens"]),
   wi("Dorm.RatePlanConfirm", "价格方案确认", "train-1-business-mainline", "宿舍负责人", "Accommodation.RatePlan", "RatePlan.Confirm", "RatePlan", ["ratePlanId", "amount", "billingCycle"], ["rate-policy"], "ledger.none.v1", ["Dorm.ResourceReadinessConfirm"], ["RatePlanLens"]),
-  wi("Dorm.ResourceReadinessConfirm", "资源可售确认", "train-1-business-mainline", "宿舍经办人", "Accommodation.ResourceReadiness", "ResourceReadiness.Confirm", "Room", ["roomId", "bedId", "readinessState"], ["completion-photo", "verification-check"], "ledger.none.v1", ["Dorm.LeadCapture", "Dorm.CheckinConfirm"], ["DormAvailabilityLens", "RoomReadinessLens"]),
+  wi("Dorm.ResourceReadinessConfirm", "资源可售确认", "train-1-business-mainline", "宿舍经办人", "Accommodation.ResourceReadiness", "ResourceReadiness.Confirm", "Room", ["roomId", "bedId", "readinessState"], ["completion-photo", "verification-check"], "ledger.none.v1", ["Dorm.LeadCapture"], ["DormAvailabilityLens", "RoomReadinessLens"]),
   wi("Dorm.LeadCapture", "线索录入", "train-1-business-mainline", "宿舍经办人", "Accommodation.Lead", "Lead.Capture", "Lead", ["name", "phone", "sourceChannel"], ["lead-consent"], "ledger.none.v1", ["Dorm.ReservationConfirm"], ["LeadFunnelLens"]),
   wi("Dorm.ReservationConfirm", "预订确认", "train-1-business-mainline", "宿舍负责人", "Accommodation.Reservation", "Reservation.Confirm", "Reservation", ["leadId", "roomId", "bedId", "ratePlanId"], ["reservation-acknowledgement", "bed-availability-proof"], "ledger.none.v1", ["Dorm.CheckinConfirm"], ["ReservationLens"]),
   wi("Dorm.CheckinConfirm", "入住确认", "train-1-business-mainline", "宿舍经办人", "Accommodation.CheckIn", "Checkin.Confirm", "Stay", ["residentId", "stayId", "roomId", "bedId"], ["identity-document", "checkin-confirmation", "reservation-acknowledgement", "bed-availability-proof"], "ledger.none.v1", ["Dorm.PaymentConfirm", "Dorm.DepositConfirm", "Dorm.AccessCredentialIssue"], ["StayOnboardingLens", "DormAvailabilityLens"]),
@@ -1420,6 +1420,11 @@ function updateGoldenPilot() {
 function updateCanonicalScenarioMap() {
   const file = "docs/business/dormitory/canonical-scenario-map.json";
   const doc = readJson(file);
+  const firstGoldenChainTypes = new Set([
+    "Dorm.RoomSetupConfirm",
+    "Dorm.BedSetupConfirm",
+    "Dorm.ResourceReadinessConfirm"
+  ]);
   for (const mapping of doc.mappings ?? []) {
     if (mapping.workItemType === "Dorm.RoomReadinessCheck") mapping.workItemType = "Dorm.ResourceReadinessConfirm";
     if (mapping.workItemType === "Dorm.RefundApprove") mapping.workItemType = "Dorm.CheckoutSettlementApprove";
@@ -1429,7 +1434,14 @@ function updateCanonicalScenarioMap() {
       mapping.commandType = item.commandType;
       mapping.migrationRefs = item.migrationRefs;
       delete mapping.sourceCardId;
-      mapping.sourceScenario = "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml";
+      mapping.sourceScenario = firstGoldenChainTypes.has(item.workItemType)
+        ? "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml"
+        : "PENDING_SOURCE_PACKAGE_REVIEW";
+      mapping.sourceScenarioRef = firstGoldenChainTypes.has(item.workItemType)
+        ? "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml"
+        : "PENDING_00_SOURCE_PACKAGE_DECISION";
+      mapping.scenarioMatrixRef = "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml";
+      mapping.sourceKernelRef = kernelPath;
       mapping.surfaceId = item.surfaceId;
       mapping.ownerDomain = item.canonicalOwner;
     }
@@ -1456,6 +1468,13 @@ function updateScenarioFieldContract() {
     if (fieldSet.workItemType === "Dorm.RoomReadinessCheck") fieldSet.workItemType = "Dorm.ResourceReadinessConfirm";
     if (fieldSet.workItemType === "Dorm.RefundApprove") fieldSet.workItemType = "Dorm.CheckoutSettlementApprove";
   }
+  doc.sourceScenarioFile = "PENDING_SOURCE_PACKAGE_REVIEW";
+  doc.sourceScenarioRefs = [
+    "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml"
+  ];
+  doc.scenarioMatrixRef = "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml";
+  doc.sourceKernelRef = kernelPath;
+  doc.generatedContractStatus = "PENDING_GENERATED_CONTRACT";
   doc.derivedFrom = [kernelPath];
   doc.generatedBy = generatedBy;
   doc.sourceKernelVersion = kernelVersion;
@@ -1772,12 +1791,25 @@ function allowedFactsFor(objectId, financeOwned) {
 }
 
 function forbiddenFactsFor(financeOwned, ledgerPolicyRef) {
+  const financeFacts = [
+    "Payment",
+    "Deposit",
+    "DepositAccount",
+    "LedgerEntry",
+    "LedgerTransaction",
+    "PaymentAllocation",
+    "Refund",
+    "AmountBasis",
+    "MoneyBasis",
+    "FinancialFact",
+    "FinanceReceipt"
+  ];
   if (ledgerPolicyRef === "ledger.readonly.v1") {
-    return ["Room", "Bed", "Stay", "RoomInspection", "ServiceTask", "Payment", "PaymentAllocation", "DepositEntry", "LedgerEntry", "Refund"];
+    return ["Room", "Bed", "Stay", "RoomInspection", "ServiceTask", ...financeFacts, "DepositEntry"];
   }
   return financeOwned
     ? ["Room", "Bed", "Stay", "RoomInspection", "ServiceTask"]
-    : ["Payment", "PaymentAllocation", "DepositEntry", "LedgerEntry", "Refund"];
+    : [...financeFacts, "DepositEntry"];
 }
 
 function ledgerImpactFor(policy) {

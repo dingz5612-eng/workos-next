@@ -27,6 +27,13 @@ if (selfTest) {
   if (!badContractFailures.some((item) => item.includes("missingAdmissionBehavior.confirmAllowed"))) {
     throw new Error("Admission Kernel self-test did not detect missing admission confirmAllowed=true.");
   }
+  const badStartMapSource = read("services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs")
+    .replace('["W-DORM-MAINLINE:cert.roomSetupConfirm"] = "definition.dormitory.roomSetupConfirm.v1"', '["W-DORM-MAINLINE:cert.roomSetupConfirm"] = "definition.dormitory.missing.v1"');
+  const badStartMapFailures = [];
+  validateStartAdapterMaps(badStartMapSource, definitionRegistryContract, badStartMapFailures);
+  if (!badStartMapFailures.some((item) => item.includes("StartAdapterDefinitionIds"))) {
+    throw new Error("Admission Kernel self-test did not detect StartAdapterDefinitionIds registry mismatch.");
+  }
   console.log("Admission Kernel self-test: PASS");
 }
 
@@ -339,6 +346,21 @@ function checkRuntimeImplementation(failures) {
   if (operationsRuntime.includes("request.Admission") || operationsRuntime.includes("request.AdmissionDecisionRef")) {
     failures.push("OperationsRuntimeService.CreateWorkItem must not persist client-supplied admission.");
   }
+  const confirmRequest = recordBody(operationsRuntime, "ConfirmWorkItemRequest");
+  if (!confirmRequest) {
+    failures.push("OperationsRuntimeService.cs must define ConfirmWorkItemRequest.");
+  }
+  for (const forbidden of ["Admission", "AdmissionDecisionRef", "ConfirmAllowed", "ProductionAllowed", "Capability", "PolicyRef", "TrustedDevice", "DeviceTrustStatus", "Surface"]) {
+    if (confirmRequest.includes(forbidden)) {
+      failures.push(`ConfirmWorkItemRequest must not accept client-supplied ${forbidden}.`);
+    }
+  }
+  const operationsEndpoints = read("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs");
+  for (const forbidden of ["request.Surface", "request.DeviceTrustStatus", "request.TrustedDevice"]) {
+    if (operationsEndpoints.includes(forbidden)) {
+      failures.push(`OperationsRuntimeEndpoints.cs must not use client-supplied trust/admission field ${forbidden}.`);
+    }
+  }
 
   const canonical = read("services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs");
   for (const term of [
@@ -401,6 +423,14 @@ function checkRuntimeImplementation(failures) {
   if (!definitionRegistry.includes("StartAdapterDefinitionIds") || !definitionRegistry.includes("ResolveStartAdapter")) {
     failures.push("WorkItemDefinitionRegistryService must expose a server-side Start Adapter Map for Search/Start admission.");
   }
+  const startAdapterResolver = methodBody(definitionRegistry, "ResolveStartAdapter");
+  if (startAdapterResolver.includes("ResolveByWorkspaceCard") || startAdapterResolver.includes("FindBySourceCardId")) {
+    failures.push("ResolveStartAdapter must not fallback to nonCurrent workspace/card or sourceCardId definition resolution.");
+  }
+  if (!startAdapterResolver.includes("start_adapter_not_registered")) {
+    failures.push("ResolveStartAdapter must hard-unresolve unmapped workspace/card inputs as start_adapter_not_registered.");
+  }
+  validateStartAdapterMaps(definitionRegistry, definitionRegistryContract, failures);
   for (const definition of definitionRegistryContract.definitions || []) {
     if ("sourceCardId" in definition) {
       failures.push(`${definition.definitionId} must preserve sourceCardId only as read-only migrationRefs.`);
@@ -454,6 +484,57 @@ function checkRuntimeImplementation(failures) {
   }
 }
 
+function validateStartAdapterMaps(registrySource, registryContract, failures) {
+  const startMap = parseCSharpStringMap(registrySource, "StartAdapterDefinitionIds");
+  const routeMap = parseCSharpStringMap(registrySource, "StartUiRouteDefinitionKeys");
+  if (startMap.size === 0) {
+    failures.push("StartAdapterDefinitionIds must not be empty.");
+  }
+  const definitionsById = new Map((registryContract.definitions || []).map((item) => [item.definitionId, item]));
+  for (const [key, definitionId] of startMap.entries()) {
+    const [workspaceId, cardId] = splitStartAdapterKey(key);
+    const definition = definitionsById.get(definitionId);
+    if (!definition) {
+      failures.push(`StartAdapterDefinitionIds ${key} references missing definition ${definitionId}.`);
+      continue;
+    }
+    if (definition.definitionMode !== "oam-certification-current") {
+      failures.push(`StartAdapterDefinitionIds ${key} must reference oam-certification-current definition, actual ${definition.definitionMode}.`);
+    }
+    if (definition.workspaceId !== workspaceId) {
+      failures.push(`StartAdapterDefinitionIds ${key} workspaceId must match registry ${definition.workspaceId}.`);
+    }
+    const migrationRef = (definition.migrationRefs || []).find((item) => item.type === "sourceCardId");
+    if (!migrationRef || migrationRef.value !== cardId) {
+      failures.push(`StartAdapterDefinitionIds ${key} sourceCardId must match registry migrationRefs.sourceCardId.`);
+      continue;
+    }
+    for (const [field, expected] of [
+      ["readOnly", true],
+      ["executable", false],
+      ["affectsAdmission", false],
+      ["affectsRuntimeConfirm", false],
+      ["affectsBusinessIdentity", false],
+      ["affectsLedger", false]
+    ]) {
+      if (migrationRef[field] !== expected) {
+        failures.push(`StartAdapterDefinitionIds ${key} migrationRef.${field} must be ${expected}.`);
+      }
+    }
+  }
+  if (routeMap.size === 0) {
+    failures.push("StartUiRouteDefinitionKeys must bind UI route inputs to current registry keys.");
+  }
+  for (const [routeKey, currentKey] of routeMap.entries()) {
+    if (String(currentKey).startsWith("definition.")) {
+      failures.push(`StartUiRouteDefinitionKeys ${routeKey} must point to a current registry key, not a definitionId.`);
+    }
+    if (!startMap.has(currentKey)) {
+      failures.push(`StartUiRouteDefinitionKeys ${routeKey} points to unknown StartAdapterDefinitionIds key ${currentKey}.`);
+    }
+  }
+}
+
 function checkMissingAdmissionFallbackImplementation(failures) {
   const surface = read("apps/mobile/src/admissionSurface.js");
   const search = read("apps/mobile/src/searchIntentHub.js");
@@ -503,6 +584,10 @@ function read(relativePath) {
 
 function methodBody(source, methodName) {
   const markers = [
+    `private WorkItemDefinitionResolution ${methodName}(`,
+    `public WorkItemDefinitionResolution ${methodName}(`,
+    `private static WorkItemDefinitionResolution ${methodName}(`,
+    `public static WorkItemDefinitionResolution ${methodName}(`,
     `private void ${methodName}(`,
     `public void ${methodName}(`,
     `private static void ${methodName}(`,
@@ -531,6 +616,36 @@ function propertyBody(source, propertyName) {
   if (start < 0) return "";
   const end = source.indexOf(";", start);
   return end < 0 ? source.slice(start) : source.slice(start, end + 1);
+}
+
+function parseCSharpStringMap(source, mapName) {
+  const start = source.indexOf(mapName);
+  if (start < 0) return new Map();
+  const brace = source.indexOf("{", start);
+  if (brace < 0) return new Map();
+  let depth = 0;
+  let end = -1;
+  for (let index = brace; index < source.length; index += 1) {
+    const char = source[index];
+    if (char === "{") depth += 1;
+    if (char === "}") depth -= 1;
+    if (depth === 0) {
+      end = index;
+      break;
+    }
+  }
+  const body = end < 0 ? source.slice(brace) : source.slice(brace, end + 1);
+  const map = new Map();
+  for (const match of body.matchAll(/\["([^"]+)"\]\s*=\s*"([^"]+)"/g)) {
+    map.set(match[1], match[2]);
+  }
+  return map;
+}
+
+function splitStartAdapterKey(key) {
+  const separator = key.indexOf(":");
+  if (separator < 0) return [key, ""];
+  return [key.slice(0, separator), key.slice(separator + 1)];
 }
 
 function recordBody(source, recordName) {

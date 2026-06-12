@@ -55,10 +55,10 @@ public sealed class CanonicalOperationsApiServiceTests
         var service = Service(
             out var runtime,
             out _,
-            definitions: RegistryWith(Definition("roomSetup", "Dorm.RoomSetup", "W-S3")));
-        var workspace = runtime.FindWorkspace("W-S3")!;
+            workspaces: new[] { StartAdapterWorkspace("W-STAY-RESOURCE", "roomSetup") });
+        var workspace = runtime.FindWorkspace("W-STAY-RESOURCE")!;
 
-        var result = service.StartWorkspaceCase(workspace, "W-S3", OperatorActor());
+        var result = service.StartWorkspaceCase(workspace, "W-STAY-RESOURCE", OperatorActor());
 
         Assert.IsNotNull(result.WorkItem.Admission);
         Assert.AreEqual(result.WorkItem.AdmissionDecisionRef, result.WorkItem.Admission["admissionDecisionRef"]);
@@ -73,12 +73,34 @@ public sealed class CanonicalOperationsApiServiceTests
     {
         var registry = WorkItemDefinitionRegistryService.LoadDefault();
         var adapterDefinition = registry.ResolveStartAdapter("W-STAY-LEAD-RESERVATION", "leadCapture");
+        var currentKeyDefinition = registry.ResolveStartAdapter("W-DORM-MAINLINE", "cert.roomSetupConfirm");
         var directWorkspaceCard = registry.ResolveByWorkspaceCard("W-STAY-LEAD-RESERVATION", "leadCapture");
 
         Assert.IsTrue(adapterDefinition.Resolved);
         Assert.AreEqual("definition.dormitory.leadCapture.v1", adapterDefinition.DefinitionId);
         Assert.AreEqual("oam-certification-current", adapterDefinition.Definition?.DefinitionMode);
+        Assert.IsTrue(currentKeyDefinition.Resolved);
+        Assert.AreEqual("definition.dormitory.roomSetupConfirm.v1", currentKeyDefinition.DefinitionId);
+        Assert.AreEqual("oam-certification-current", currentKeyDefinition.Definition?.DefinitionMode);
         Assert.IsFalse(directWorkspaceCard.Resolved);
+    }
+
+    [TestMethod]
+    public void definition_registry_does_not_fallback_to_workspace_card_for_unregistered_start_adapter()
+    {
+        var registry = WorkItemDefinitionRegistryService.LoadDefault();
+
+        var missingAdapter = registry.ResolveStartAdapter("W-STAY-UNKNOWN", "legacyCard");
+
+        Assert.IsFalse(missingAdapter.Resolved);
+        Assert.AreEqual("start_adapter_not_registered", missingAdapter.Reason);
+        Assert.IsTrue(missingAdapter.MigrationRefs.All(item =>
+            item.ReadOnly &&
+            !item.Executable &&
+            !item.AffectsAdmission &&
+            !item.AffectsRuntimeConfirm &&
+            !item.AffectsBusinessIdentity &&
+            !item.AffectsLedger));
     }
 
     [TestMethod]
@@ -386,8 +408,6 @@ public sealed class CanonicalOperationsApiServiceTests
             {
                 EvidenceIds = new[] { "ev-high-risk-trusted" },
                 DeviceId = "device-trusted",
-                DeviceTrustStatus = "untrusted",
-                Surface = "pc",
                 Reason = "财务复核通过，允许进入内部试点确认。"
             },
             FinanceActor(),
@@ -425,8 +445,6 @@ public sealed class CanonicalOperationsApiServiceTests
             {
                 EvidenceIds = new[] { "ev-self-reported" },
                 DeviceId = "device-client-only",
-                DeviceTrustStatus = "trusted",
-                Surface = "pc",
                 Reason = "客户端自报 trusted 不能作为准入事实。"
             },
             FinanceActor(),
@@ -676,7 +694,6 @@ public sealed class CanonicalOperationsApiServiceTests
         {
             EvidenceIds = new[] { $"ev-{idempotencyKey}" },
             DeviceId = deviceId,
-            Surface = "pc",
             Reason = "财务复核通过，允许进入内部试点确认。"
         };
 
@@ -732,6 +749,39 @@ public sealed class CanonicalOperationsApiServiceTests
 
     private static WorkItemDefinitionRegistryService RegistryWith(params WorkItemDefinition[] definitions) =>
         new(WorkItemDefinitionRegistryService.LoadDefault().Definitions.Concat(definitions).ToArray());
+
+    private static WorkspaceProjection StartAdapterWorkspace(string workspaceId, string cardId) =>
+        new(
+            "WorkspaceCardProjection",
+            workspaceId,
+            "stay",
+            $"task-{workspaceId}",
+            LocalizedText("Operations"),
+            LocalizedText("Operations"),
+            new[] { StartAdapterCard(cardId) },
+            LocalizedText("Next"),
+            Array.Empty<BlockerRule>());
+
+    private static CardProjection StartAdapterCard(string cardId) =>
+        new(
+            "WorkspaceCardProjection",
+            cardId,
+            "ready",
+            LocalizedText(cardId),
+            new FieldSet(Array.Empty<FieldProjection>(), Array.Empty<FieldProjection>(), Array.Empty<FieldProjection>()),
+            Array.Empty<EvidenceRequirement>(),
+            Array.Empty<SystemCheck>(),
+            Array.Empty<BlockerRule>(),
+            Array.Empty<EventDefinition>(),
+            new TransitionDefinition("prepare", "confirm", "block"),
+            new ConfirmationPolicy(true, false, "operator", LocalizedText("Confirm")));
+
+    private static IReadOnlyDictionary<string, string> LocalizedText(string value) =>
+        new Dictionary<string, string>
+        {
+            ["zh-CN"] = value,
+            ["ru-RU"] = value
+        };
 
     private static WorkItemDefinition Definition(
         string sourceCardId,

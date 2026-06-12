@@ -74,6 +74,7 @@ const requiredFiles = [
   "docs/read-intelligence/read-intelligence-kernel.json",
   "docs/read-intelligence/read-intelligence-kernel.schema.json",
   "docs/oam/db-no-side-effects-proof.json",
+  "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
   "artifacts/oam/checks/kernel-responsibility-map-result.json",
   "artifacts/oam/checks/professional-ai-review-seats-result.json",
   "artifacts/oam/checks/codex-execution-channel-policy-result.json",

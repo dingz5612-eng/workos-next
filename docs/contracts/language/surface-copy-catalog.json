@@ -496,6 +496,177 @@
         "ru-RU": "Общее управление",
         "ky-KG": "Ортоқ башкаруу"
       }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.scenarioName",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "宿舍资源可售第一金链",
+        "ru-RU": "Первая цепочка готовности ресурсов общежития",
+        "ky-KG": "Жатакана ресурстарынын даярдык биринчи чынжыры"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.businessGoal",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "房间、床位、资源准备达到内部试点可售条件。",
+        "ru-RU": "Комнаты, койки и ресурсы готовы к условиям внутреннего пилота.",
+        "ky-KG": "Бөлмө, керебет жана ресурстар ички пилот шарттарына даяр."
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.step.roomSetupConfirm",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "确认房间基础信息",
+        "ru-RU": "Подтвердить базовые данные комнаты",
+        "ky-KG": "Бөлмөнүн негизги маалыматын тастыктоо"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.step.bedSetupConfirm",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "确认床位与房间归属",
+        "ru-RU": "Подтвердить койку и ее комнату",
+        "ky-KG": "Керебетти жана бөлмөгө тиешелүүлүгүн тастыктоо"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.step.resourceReadinessConfirm",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "确认资源准备状态",
+        "ru-RU": "Подтвердить готовность ресурса",
+        "ky-KG": "Ресурстун даярдык абалын тастыктоо"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.branch.missingField",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "缺少必填信息",
+        "ru-RU": "Не хватает обязательных данных",
+        "ky-KG": "Милдеттүү маалымат жетишсиз"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.branch.missingEvidence",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "缺少所需证据",
+        "ru-RU": "Не хватает требуемого доказательства",
+        "ky-KG": "Талап кылынган далил жетишсиз"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.branch.untrustedEvidence",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "证据暂不能信任",
+        "ru-RU": "Доказательство пока не доверенное",
+        "ky-KG": "Далил азырынча ишенимдүү эмес"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.branch.duplicateRoom",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "房间可能重复",
+        "ru-RU": "Комната может дублироваться",
+        "ky-KG": "Бөлмө кайталанышы мүмкүн"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.branch.wrongBedRoomOwner",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "床位归属不一致",
+        "ru-RU": "Койка относится к другой комнате",
+        "ky-KG": "Керебеттин бөлмөгө тиешелүүлүгү туура эмес"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.branch.resourceNotSaleable",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "资源尚未达到可售准备",
+        "ru-RU": "Ресурс еще не готов для продажи",
+        "ky-KG": "Ресурс сатууга даяр эмес"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.branch.manualReview",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "需要人工复核",
+        "ru-RU": "Требуется ручная проверка",
+        "ky-KG": "Кол менен текшерүү керек"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.branch.correction",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "需要纠正后再提交",
+        "ru-RU": "Нужно исправить и подать снова",
+        "ky-KG": "Оңдоп кайра тапшыруу керек"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.field.roomBasicProfile",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "房间基础信息",
+        "ru-RU": "Базовые данные комнаты",
+        "ky-KG": "Бөлмөнүн негизги маалыматы"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.field.roomId",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "已确认房间",
+        "ru-RU": "Подтвержденная комната",
+        "ky-KG": "Тастыкталган бөлмө"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.field.bedNo",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "床位号",
+        "ru-RU": "Номер койки",
+        "ky-KG": "Керебет номери"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.field.bedType",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "床位类型",
+        "ru-RU": "Тип койки",
+        "ky-KG": "Керебет түрү"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.field.bedId",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "已确认床位",
+        "ru-RU": "Подтвержденная койка",
+        "ky-KG": "Тастыкталган керебет"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.field.readinessState",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "资源准备状态",
+        "ru-RU": "Состояние готовности ресурса",
+        "ky-KG": "Ресурстун даярдык абалы"
+      }
     }
   ]
 }

@@ -271,7 +271,7 @@ public sealed class CanonicalOperationsApiService
         var deviceTrust = VerifiedDeviceTrustContext.FromServerSession(
             normalized.DeviceId,
             actor.TenantId,
-            normalized.Surface,
+            "operations-api",
             catalog.FindDeviceSession(actor.TenantId, normalized.DeviceId));
         var admissionDecision = admission.EvaluateConfirm(
             definition,

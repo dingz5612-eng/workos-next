@@ -29,7 +29,10 @@ businessIdentity:
     - objectId
     - fieldId
     - factId
-    - policyRef
+    - admissionPolicyRef
+    - evidencePolicyRef
+    - ledgerPolicyRef
+    - surfacePolicyRef
   forbidden:
     - cardId
     - sourceCardId
@@ -185,39 +188,93 @@ scenarioPackages:
       - 纠错
     fields:
       - fieldId: room.basicProfile
+        sourceFieldId: room.basicProfile
+        labelCopyKey: dormitory.resourceSaleability.field.roomBasicProfile
         displayNameZh: 房间基础信息
+        displayNameZhForReviewOnly: 房间基础信息
         type: object
         category: required-current-input
         editable: true
         source: currentWorkItem
         truthOwner: Dorm.RoomSetupConfirm
         fallbackAllowed: false
+        objectKind: Room
+        definitionScope: definition.dormitory.roomSetupConfirm.v1
+        generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
+        rawIdManualInputAllowed: false
+        allowedSubfields:
+          - roomNo
+          - floor
+          - capacity
+        forbiddenSubfields:
+          - readinessState
+          - saleabilityState
+          - 可售状态
         validationRules:
-          - 必须包含楼栋、房号、房型、可售状态。
+          - 只处理房间建档基础信息，不包含 readinessState、saleabilityState 或可售状态。
         evidenceRequirements:
           - room-photo
       - fieldId: bed.roomBinding
+        sourceFieldId: bed.roomId
+        labelCopyKey: dormitory.resourceSaleability.field.roomId
         displayNameZh: 床位归属
+        displayNameZhForReviewOnly: 床位归属
         type: object
         category: required-current-input
         editable: true
         source: currentWorkItem
         truthOwner: Dorm.BedSetupConfirm
         fallbackAllowed: false
+        objectKind: Room
+        definitionScope: definition.dormitory.bedSetupConfirm.v1
+        generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
+        inputMode: selectedStableRef
+        rawIdManualInputAllowed: false
+        selectedStableRefSources:
+          - confirmed WorkItem
+          - generated read model
+          - authorized projection
+        forbiddenStableRefSources:
+          - user manual raw ID input
+          - route param
+          - cardId
+          - sourceCardId
+          - workspaceCardId
+          - search label
         validationRules:
           - 床位必须归属于已确认房间。
         evidenceRequirements:
           - room-link-proof
       - fieldId: resource.readinessState
+        sourceFieldId: resource.readinessState
+        labelCopyKey: dormitory.resourceSaleability.field.readinessState
         displayNameZh: 资源可售状态
+        displayNameZhForReviewOnly: 资源准备状态
         type: enum
         category: required-current-input
         editable: true
         source: currentWorkItem
         truthOwner: Dorm.ResourceReadinessConfirm
         fallbackAllowed: false
+        objectKind: Room
+        definitionScope: definition.dormitory.resourceReadinessConfirm.v1
+        generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
+        inputMode: clientSubmitted
+        executableFields:
+          - roomId
+          - bedId
+          - readinessState
+        selectedStableRefs:
+          - fieldId: roomId
+            sourceFieldId: resource.roomId
+            inputMode: selectedStableRef
+            rawIdManualInputAllowed: false
+          - fieldId: bedId
+            sourceFieldId: resource.bedId
+            inputMode: selectedStableRef
+            rawIdManualInputAllowed: false
         validationRules:
-          - 只能由资源可售确认工单写入。
+          - 当前可执行字段只认 roomId、bedId、readinessState。
         evidenceRequirements:
           - verification-check
     handoff:
@@ -248,8 +305,16 @@ scenarioPackages:
       forbiddenFacts:
         - Payment
         - Deposit
+        - DepositAccount
         - LedgerEntry
+        - LedgerTransaction
         - DashboardSummary 写入
+        - PaymentAllocation
+        - Refund
+        - AmountBasis
+        - MoneyBasis
+        - FinancialFact
+        - FinanceReceipt
     admission:
       policyRef: dormitory_l1_internal_pilot_observation
       productionConfirmAllowed: false

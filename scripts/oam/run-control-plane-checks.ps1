@@ -251,6 +251,7 @@ Invoke-Gate node scripts/check-shared-governance-boundary.mjs
 Invoke-Gate node scripts/oam/check-db-no-side-effects-proof.mjs
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs --self-test
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs
+Invoke-Gate node scripts/oam/check-dormitory-golden-chain-source-package.mjs
 Invoke-Gate node scripts/business/check-dormitory-operating-kernel.mjs
 Invoke-Gate node scripts/business/check-dormitory-resource-saleability-golden-chain.mjs
 Invoke-Gate node scripts/business/check-dormitory-scenario-package-matrix.mjs

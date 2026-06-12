@@ -13,6 +13,7 @@ const definitionRegistry = readJson("docs/contracts/definition/workitem-definiti
 const workflowRegistry = readJson("docs/contracts/business/oam-workflow-state-registry.json");
 
 const resolveMethod = methodBody(registrySource, "Resolve");
+const resolveStartAdapterMethod = methodBody(registrySource, "ResolveStartAdapter");
 const confirmMethod = methodBody(canonicalSource, "ConfirmWorkItem");
 const currentDecisionTypes = new Set(
   (decisionTable.decisions ?? [])
@@ -40,6 +41,16 @@ if (/public\s+string\?\s+SourceCardId/.test(registrySource) || /SourceCardId\s*\
 if (!registrySource.includes("StartAdapterDefinitionIds") || !registrySource.includes("ResolveStartAdapter")) {
   fail("start_adapter_map_missing", "Search/Start admission must use a server-side Start Adapter Map instead of client-submitted admission.");
 }
+if (resolveStartAdapterMethod.includes("ResolveByWorkspaceCard") || resolveStartAdapterMethod.includes("FindBySourceCardId")) {
+  fail("start_adapter_non_current_fallback_present", "Start Adapter must not fallback to nonCurrent workspace/card or sourceCardId definition resolution.");
+}
+if (!resolveStartAdapterMethod.includes("start_adapter_not_registered")) {
+  fail("start_adapter_missing_unregistered_rejection", "Unmapped Start Adapter input must remain unresolved instead of promoting old card identity.");
+}
+validateStartAdapterMaps();
+if (!registrySource.includes("Migration/audit/read-only explanation only")) {
+  fail("migration_audit_resolver_comment_missing", "ResolveByWorkspaceCard / FindBySourceCardId must be explicitly marked migration/audit/read-only only.");
+}
 if (!confirmMethod.includes("definitions.Resolve(workItem)")) {
   fail("confirm_definition_resolve_missing", "Canonical confirm must resolve Definition from WorkItem identity.");
 }
@@ -66,6 +77,20 @@ for (const required of [
 ]) {
   if (!canonicalSource.includes(required)) {
     fail("confirm_trace_binding_missing", `Canonical confirm missing trace binding: ${required}`);
+  }
+}
+for (const file of [
+  "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+  "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+  "services/core-api/WorkOS.Api/Runtime/CorrectionCenterService.cs",
+  "services/core-api/WorkOS.Api/Runtime/RuntimeCorrectionCenterStorage.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs"
+]) {
+  const source = read(file);
+  for (const resolver of ["ResolveByWorkspaceCard(", "FindBySourceCardId("]) {
+    if (source.includes(resolver)) {
+      fail("old_resolver_current_path_call", `${file} must not call ${resolver} from current runtime/search/admission/finance paths.`);
+    }
   }
 }
 
@@ -151,6 +176,87 @@ function read(file) {
 
 function fail(id, message) {
   violations.push({ severity: "P0", id, message });
+}
+
+function validateStartAdapterMaps() {
+  const startMap = parseCSharpStringMap(registrySource, "StartAdapterDefinitionIds");
+  const routeMap = parseCSharpStringMap(registrySource, "StartUiRouteDefinitionKeys");
+  const definitionsById = new Map((definitionRegistry.definitions ?? []).map((item) => [item.definitionId, item]));
+  if (startMap.size === 0) {
+    fail("start_adapter_definition_map_empty", "StartAdapterDefinitionIds must not be empty.");
+  }
+  for (const [key, definitionId] of startMap.entries()) {
+    const [workspaceId, cardId] = splitStartAdapterKey(key);
+    const definition = definitionsById.get(definitionId);
+    if (!definition) {
+      fail("start_adapter_definition_missing", `StartAdapterDefinitionIds ${key} references missing definition ${definitionId}.`);
+      continue;
+    }
+    if (definition.definitionMode !== "oam-certification-current") {
+      fail("start_adapter_definition_not_current", `StartAdapterDefinitionIds ${key} must reference current definition ${definitionId}.`);
+    }
+    if (definition.workspaceId !== workspaceId) {
+      fail("start_adapter_workspace_mismatch", `StartAdapterDefinitionIds ${key} workspace must match registry ${definition.workspaceId}.`);
+    }
+    const sourceCardRef = (definition.migrationRefs ?? []).find((ref) => ref.type === "sourceCardId");
+    if (!sourceCardRef || sourceCardRef.value !== cardId) {
+      fail("start_adapter_source_card_mismatch", `StartAdapterDefinitionIds ${key} sourceCardId must match definition migrationRefs.`);
+      continue;
+    }
+    for (const [field, expected] of [
+      ["readOnly", true],
+      ["executable", false],
+      ["affectsAdmission", false],
+      ["affectsRuntimeConfirm", false],
+      ["affectsBusinessIdentity", false],
+      ["affectsLedger", false]
+    ]) {
+      if (sourceCardRef[field] !== expected) {
+        fail("start_adapter_migration_policy_invalid", `StartAdapterDefinitionIds ${key} migrationRefs.sourceCardId.${field} must be ${expected}.`);
+      }
+    }
+  }
+  if (routeMap.size === 0) {
+    fail("start_route_map_missing", "Start UI route inputs must map to current StartAdapterDefinitionIds keys.");
+  }
+  for (const [routeKey, currentKey] of routeMap.entries()) {
+    if (String(currentKey).startsWith("definition.")) {
+      fail("start_route_map_points_to_definition", `Start route ${routeKey} must point to a current StartAdapterDefinitionIds key, not definitionId.`);
+    }
+    if (!startMap.has(currentKey)) {
+      fail("start_route_map_target_missing", `Start route ${routeKey} points to unknown current key ${currentKey}.`);
+    }
+  }
+}
+
+function parseCSharpStringMap(source, mapName) {
+  const start = source.indexOf(mapName);
+  if (start < 0) return new Map();
+  const brace = source.indexOf("{", start);
+  if (brace < 0) return new Map();
+  let depth = 0;
+  let end = -1;
+  for (let index = brace; index < source.length; index += 1) {
+    const char = source[index];
+    if (char === "{") depth += 1;
+    if (char === "}") depth -= 1;
+    if (depth === 0) {
+      end = index;
+      break;
+    }
+  }
+  const body = end < 0 ? source.slice(brace) : source.slice(brace, end + 1);
+  const map = new Map();
+  for (const match of body.matchAll(/\["([^"]+)"\]\s*=\s*"([^"]+)"/g)) {
+    map.set(match[1], match[2]);
+  }
+  return map;
+}
+
+function splitStartAdapterKey(key) {
+  const separator = key.indexOf(":");
+  if (separator < 0) return [key, ""];
+  return [key.slice(0, separator), key.slice(separator + 1)];
 }
 
 function requireMigrationRefs(item, label) {
