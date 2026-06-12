@@ -1,0 +1,32 @@
+{
+  "version": "oam.metric-definition-registry-proof.v1",
+  "status": "passed",
+  "checkedAtUtc": "2026-06-12T10:24:18.242Z",
+  "proves": [
+    "MetricDefinition Registry is read-only.",
+    "Every MetricDefinition has sourceFacts, permission, lineage, freshness, allowedConsumers, forbiddenInputs, and goNoGoImpact.",
+    "Metric cannot write Room, Bed, Payment, AmountBasis, FinancialFact, LedgerTransaction, or LedgerEntry.",
+    "Metric cannot infer business facts from UI state, label, display text, or dashboard summary."
+  ],
+  "metricIds": [
+    "dormitory.resourceReadiness",
+    "finance.receivedAmount",
+    "governance.blockerAging"
+  ],
+  "forbiddenInputs": [
+    "ui.state",
+    "label",
+    "displayText",
+    "dashboard.summary"
+  ],
+  "forbiddenWrites": [
+    "Room",
+    "Bed",
+    "Payment",
+    "AmountBasis",
+    "FinancialFact",
+    "LedgerTransaction",
+    "LedgerEntry"
+  ],
+  "violations": []
+}

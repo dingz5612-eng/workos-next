@@ -9,36 +9,48 @@
       "factId": "AmountBasisProposal",
       "owner": "BusinessDomainPack",
       "truthLevel": "proposal",
+      "allowedCommitters": ["DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack", "HRDomainPack"],
+      "forbiddenOwners": ["Search", "Surface", "Dashboard", "Report", "Metric", "FinanceTruthPack", "MoneyKernelPack"],
       "financeTruth": false
     },
     {
       "factId": "AmountBasisReviewed",
       "owner": "FinanceTruthPack",
       "truthLevel": "workflowTruth",
+      "allowedCommitters": ["FinanceTruthPack"],
+      "forbiddenOwners": ["BusinessDomainPack", "DormitoryDomainPack", "Search", "Surface", "Dashboard", "Report", "Metric"],
       "financeTruth": false
     },
     {
       "factId": "AmountBasis",
       "owner": "FinanceTruthPack",
       "truthLevel": "workflowTruth",
+      "allowedCommitters": ["FinanceTruthPack"],
+      "forbiddenOwners": ["BusinessDomainPack", "DormitoryDomainPack", "Search", "Surface", "Dashboard", "Report", "Metric"],
       "financeTruth": false
     },
     {
       "factId": "FinancialFact",
       "owner": "FinanceTruthPack",
       "truthLevel": "centerTruth",
+      "allowedCommitters": ["FinanceTruthPack"],
+      "forbiddenOwners": ["BusinessDomainPack", "DormitoryDomainPack", "Search", "Surface", "Dashboard", "Report", "Metric"],
       "financeTruth": true
     },
     {
       "factId": "LedgerTransaction",
       "owner": "MoneyKernelPack",
       "truthLevel": "centerTruth",
+      "allowedCommitters": ["MoneyKernelPack"],
+      "forbiddenOwners": ["BusinessDomainPack", "DormitoryDomainPack", "FinanceTruthPack", "Search", "Surface", "Dashboard", "Report", "Metric"],
       "financeTruth": true
     },
     {
       "factId": "LedgerEntry",
       "owner": "MoneyKernelPack",
       "truthLevel": "centerTruth",
+      "allowedCommitters": ["MoneyKernelPack"],
+      "forbiddenOwners": ["BusinessDomainPack", "DormitoryDomainPack", "FinanceTruthPack", "Search", "Surface", "Dashboard", "Report", "Metric"],
       "financeTruth": true
     }
   ],
@@ -54,10 +66,54 @@
     "SearchResult",
     "LensReadModel",
     "DashboardSummary",
-    "SharedReceipt"
+    "SharedReceipt",
+    "ReportDataset",
+    "MetricDefinition"
   ],
+  "readSideWritersForbiddenOwners": ["Search", "Surface", "Dashboard", "Report", "Metric"],
   "readSideFinanceTruthAllowed": false,
   "nonOwnerCommitAllowed": false,
+  "financeKernelCommitters": ["FinanceTruthPack", "MoneyKernelPack"],
+  "businessDomainFinancialFactWriteAllowed": false,
+  "businessDomainLedgerEntryWriteAllowed": false,
+  "evidenceObjectPolicy": {
+    "factId": "EvidenceObject",
+    "owner": "EvidenceTrustPack",
+    "proofOnly": true,
+    "definesBusinessFactAllowed": false,
+    "allowedCommitters": ["EvidenceTrustPack"],
+    "forbiddenOwners": ["BusinessDomainPack", "DormitoryDomainPack", "Search", "Surface", "Dashboard", "Report", "Metric"]
+  },
+  "negativeFixtures": [
+    {
+      "fixtureId": "forbidden-owner-dashboard-financial-fact",
+      "actor": "Dashboard",
+      "targetFactId": "FinancialFact",
+      "expected": "fail",
+      "severity": "P0"
+    },
+    {
+      "fixtureId": "forbidden-owner-search-amount-basis",
+      "actor": "Search",
+      "targetFactId": "AmountBasis",
+      "expected": "fail",
+      "severity": "P0"
+    },
+    {
+      "fixtureId": "forbidden-owner-business-ledger-entry",
+      "actor": "DormitoryDomainPack",
+      "targetFactId": "LedgerEntry",
+      "expected": "fail",
+      "severity": "P0"
+    },
+    {
+      "fixtureId": "forbidden-owner-metric-financial-fact",
+      "actor": "Metric",
+      "targetFactId": "FinancialFact",
+      "expected": "fail",
+      "severity": "P0"
+    }
+  ],
   "productionLocks": {
     "businessProduction": "BLOCKED",
     "dormitoryL2": "BLOCKED",

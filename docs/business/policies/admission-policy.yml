@@ -13,6 +13,14 @@
     "l0ProductionConfirmAllowed": false,
     "l1ProductionConfirmAllowed": false,
     "requiresAdmissionRecord": true,
+    "missingAdmissionBehavior": {
+      "visibleAllowed": true,
+      "prepareAllowed": false,
+      "confirmAllowed": false,
+      "productionAllowed": false,
+      "mode": "contract_preview",
+      "reason": "missing_admission_contract"
+    },
     "requiresProductionAllowedTrueForProductionConfirm": true,
     "pageSpecificWriteApisAllowed": false,
     "productionWriteRoutesAllowedWhenL0": false

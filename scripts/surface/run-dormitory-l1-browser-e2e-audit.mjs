@@ -33,6 +33,32 @@ const report = {
   status: "running",
   runId,
   generatedAtUtc: new Date().toISOString(),
+  auditLevel: "L1",
+  auditPurpose: "架构 UI 审计：证明 Surface 不越权、控件来自 generated model、截图证据可绑定。",
+  allowedInterpretation: [
+    "可以证明当前 Surface 与 Operations Runtime 路径在架构层不越权。",
+    "可以证明截图、DOM 状态、网络事件能绑定当前 HEAD。",
+    "可以作为 Candidate Evidence 的浏览器 L1 架构证据。"
+  ],
+  forbiddenInterpretation: [
+    "不能证明宿舍业务已经落地。",
+    "不能打开 productionConfirmAllowed。",
+    "不能把 browser evidence、CI green、artifact exists 或 Final Report exists 解释为 GO。"
+  ],
+  scenarioScope: {
+    level: "L1",
+    kind: "architecture_ui_audit",
+    businessAcceptance: false,
+    included: ["Surface readonly boundary", "Operations Runtime path", "generated model controls", "screenshot binding"],
+    excluded: ["Business GO", "Dormitory L2 acceptance", "Production release"]
+  },
+  businessGoAllowed: false,
+  currentScenario: "not_started",
+  completedScenarioCount: 0,
+  totalScenarioCount: 4,
+  lastHeartbeatAt: new Date().toISOString(),
+  screenshotCount: 0,
+  currentStep: "initializing",
   browserMode: "playwright-real-browser",
   mockPolicy: "no route mocks, no backend simulation, no API substitute for user operations, no localStorage injection",
   scope: {
@@ -623,6 +649,7 @@ function writeArtifacts() {
   for (const scenario of report.scenarios) {
     if (scenario.status === "running") scenario.status = scenario.violations.length ? "failed" : "passed";
   }
+  refreshAuditProgress(report.status === "running" ? "artifact_write" : "completed");
   const screenshotIndex = {
     version: "dormitory-l1.screenshot-index.v1",
     runId,
@@ -636,11 +663,22 @@ function writeArtifacts() {
   fs.writeFileSync(latestPath, JSON.stringify({
     runId,
     status: report.status,
+    auditLevel: report.auditLevel,
+    businessGoAllowed: report.businessGoAllowed,
     report: rel(reportPath),
     markdown: rel(mdPath),
     screenshotIndex: rel(screenshotIndexPath),
     generatedAtUtc: report.generatedAtUtc
   }, null, 2));
+}
+
+function refreshAuditProgress(currentStep) {
+  report.currentScenario = report.scenarios.at(-1)?.scenarioId || "not_started";
+  report.completedScenarioCount = report.scenarios.filter((scenario) => scenario.status && scenario.status !== "running").length;
+  report.totalScenarioCount = 4;
+  report.lastHeartbeatAt = new Date().toISOString();
+  report.screenshotCount = report.screenshots.length;
+  report.currentStep = currentStep;
 }
 
 function markdownReport(currentReport) {
@@ -649,6 +687,8 @@ function markdownReport(currentReport) {
     "",
     `- Run ID: ${currentReport.runId}`,
     `- Status: ${currentReport.status}`,
+    `- Audit level: ${currentReport.auditLevel}`,
+    `- Business GO allowed: ${currentReport.businessGoAllowed}`,
     `- Browser mode: ${currentReport.browserMode}`,
     `- Commit SHA: ${currentReport.git.headSha}`,
     `- CI run ID: ${currentReport.ciRun?.id || "not_available"}`,

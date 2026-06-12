@@ -72,11 +72,11 @@
       "hiddenReason": "",
       "home": { "visible": true, "priority": 90, "section": "accommodation-operations" },
       "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
-      "search": { "visible": true, "keywords": ["stay", "checkin", "charge", "入住", "住宿", "应收"], "intentTags": ["stay_lifecycle", "charge"] },
+      "search": { "visible": true, "keywords": ["stay", "checkin", "charge", "入住", "住宿", "在住", "维护在住信息", "住客", "生命周期", "应收"], "intentTags": ["stay_lifecycle", "charge"] },
       "learning": { "visible": true, "section": "Accommodation / Stay Lifecycle" },
       "lenses": ["active-stay", "stay-balance"],
       "cards": [
-        { "cardId": "residentProfile", "home": true, "workbench": true, "searchKeywords": ["resident", "住客"], "intentTags": ["resident"], "learningSection": "Accommodation / Stay Lifecycle", "defaultLens": "active-stay", "hiddenReason": "" },
+        { "cardId": "residentProfile", "home": true, "workbench": true, "searchKeywords": ["resident", "住客", "住客资料", "在住"], "intentTags": ["resident"], "learningSection": "Accommodation / Stay Lifecycle", "defaultLens": "active-stay", "hiddenReason": "" },
         { "cardId": "checkInBedAssign", "home": true, "workbench": true, "searchKeywords": ["bed assign", "床位"], "intentTags": ["stay"], "learningSection": "Accommodation / Stay Lifecycle", "defaultLens": "active-stay", "hiddenReason": "" },
         { "cardId": "chargeAssessment", "home": true, "workbench": true, "searchKeywords": ["charge", "应收"], "intentTags": ["charge"], "learningSection": "Accommodation / Stay Lifecycle", "defaultLens": "stay-balance", "hiddenReason": "" },
         { "cardId": "stayExtension", "home": true, "workbench": true, "searchKeywords": ["extension", "续住"], "intentTags": ["stay"], "learningSection": "Accommodation / Stay Lifecycle", "defaultLens": "active-stay", "hiddenReason": "" }

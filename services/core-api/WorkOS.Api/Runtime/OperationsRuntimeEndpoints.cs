@@ -46,7 +46,7 @@ public static class OperationsRuntimeEndpoints
             var actor = httpRequest.HttpContext.RequireActor();
             return !TenantMatches(tenantId, actor.TenantId)
                 ? TenantScopeForbidden("operation_work_items_tenant_mismatch")
-                : Results.Ok(operations.ListWorkItemSurfaces(actor.TenantId, caseId));
+                : Results.Ok(operations.ListWorkItemSurfaces(actor, caseId));
         });
 
         app.MapGet("/api/operations/work-items/{workItemId}", (string workItemId, CanonicalOperationsApiService operations, HttpRequest httpRequest) =>
@@ -55,7 +55,7 @@ public static class OperationsRuntimeEndpoints
             var resolved = operations.GetWorkItem(workItemId);
             return resolved is null || !TenantMatches(resolved.TenantId, actor.TenantId)
                 ? Results.NotFound(new { error = "operation_work_item_not_found", workItemId })
-                : Results.Ok(operations.GetWorkItemSurface(workItemId));
+                : Results.Ok(operations.GetWorkItemSurface(workItemId, actor));
         });
 
         app.MapPost("/api/operations/work-items/{workItemId}/prepare", (string workItemId, PrepareWorkItemRequest request, CanonicalOperationsApiService operations, HttpRequest httpRequest) =>
@@ -73,7 +73,7 @@ public static class OperationsRuntimeEndpoints
                 : Results.Ok(prepared);
         });
 
-        app.MapPost("/api/operations/work-items/{workItemId}/confirm", (string workItemId, ConfirmWorkItemRequest request, CanonicalOperationsApiService operations, ProjectionRuntime runtime, HttpRequest httpRequest) =>
+        app.MapPost("/api/operations/work-items/{workItemId}/confirm", (string workItemId, ConfirmWorkItemRequest request, CanonicalOperationsApiService operations, HttpRequest httpRequest) =>
         {
             var actor = httpRequest.HttpContext.RequireActor();
             var workItem = operations.GetWorkItem(workItemId);
@@ -84,13 +84,7 @@ public static class OperationsRuntimeEndpoints
 
             var token = httpRequest.SessionTokenForOperations();
             var requestId = httpRequest.Headers["X-Request-Id"].FirstOrDefault() ?? httpRequest.HttpContext.TraceIdentifier;
-            var device = RuntimeActorAuthorization.TrustedDeviceFromRequest(runtime, actor, request.DeviceId);
-            var enrichedRequest = request with
-            {
-                DeviceTrustStatus = device?.DeviceTrustStatus ?? (string.IsNullOrWhiteSpace(request.DeviceId) ? "not_provided" : "unknown"),
-                Surface = string.IsNullOrWhiteSpace(request.Surface) ? "operations-api" : request.Surface
-            };
-            var result = operations.ConfirmWorkItem(workItemId, enrichedRequest, actor with { SessionToken = token }, requestId);
+            var result = operations.ConfirmWorkItem(workItemId, request, actor with { SessionToken = token }, requestId);
             return Results.Json(result, statusCode: result.StatusCode);
         });
 

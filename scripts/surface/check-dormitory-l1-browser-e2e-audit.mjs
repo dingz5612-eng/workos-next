@@ -33,6 +33,7 @@ if (!/no localStorage injection/i.test(report.mockPolicy || "")) {
 if (report.status !== "passed") {
   violations.push(`Report status must be passed, got ${report.status}.`);
 }
+validateAuditLevel();
 
 const scenarioIds = new Set((report.scenarios || []).map((scenario) => scenario.scenarioId));
 for (const scenarioId of requiredScenarios) {
@@ -97,6 +98,42 @@ if (violations.length) {
 }
 
 console.log(`check-dormitory-l1-browser-e2e-audit: PASS (${report.runId}, screenshots=${report.screenshots.length})`);
+
+function validateAuditLevel() {
+  if (report.auditLevel !== "L1") {
+    violations.push(`Report auditLevel must be L1, got ${report.auditLevel || "missing"}.`);
+  }
+  if (["L2", "L3"].includes(report.auditLevel)) {
+    violations.push("L2/L3 browser audit must not be enabled in the current stage.");
+  }
+  if (report.businessGoAllowed !== false) {
+    violations.push("L1 browser audit must keep businessGoAllowed=false.");
+  }
+  if (!/架构|Surface|截图/.test(String(report.auditPurpose || ""))) {
+    violations.push("L1 browser audit must declare architecture UI audit purpose.");
+  }
+  const forbidden = Array.isArray(report.forbiddenInterpretation)
+    ? report.forbiddenInterpretation.join("\n")
+    : String(report.forbiddenInterpretation || "");
+  if (!/业务|productionConfirmAllowed|GO/.test(forbidden)) {
+    violations.push("L1 browser audit must forbid business GO interpretation.");
+  }
+  if (!report.scenarioScope || report.scenarioScope.businessAcceptance !== false) {
+    violations.push("L1 browser audit scenarioScope must declare businessAcceptance=false.");
+  }
+  if (!report.currentScenario) violations.push("L1 browser audit missing currentScenario progress.");
+  if (report.completedScenarioCount !== (report.scenarios || []).length) {
+    violations.push("L1 browser audit completedScenarioCount must match scenario count.");
+  }
+  if (report.totalScenarioCount !== requiredScenarios.size) {
+    violations.push(`L1 browser audit totalScenarioCount must be ${requiredScenarios.size}.`);
+  }
+  if (!report.lastHeartbeatAt) violations.push("L1 browser audit missing lastHeartbeatAt.");
+  if (report.screenshotCount !== (report.screenshots || []).length) {
+    violations.push("L1 browser audit screenshotCount must match screenshots length.");
+  }
+  if (!report.currentStep) violations.push("L1 browser audit missing currentStep.");
+}
 
 function validateScreenshot(entry, label) {
   if (!entry?.path) {

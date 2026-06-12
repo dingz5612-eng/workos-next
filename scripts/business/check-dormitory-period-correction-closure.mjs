@@ -120,10 +120,12 @@ function checkFinanceBoundary() {
 }
 
 function packageBlock(packageId) {
+  const scenarioStart = source.matrix.indexOf("\nscenarioPackages:");
+  const searchText = scenarioStart >= 0 ? source.matrix.slice(scenarioStart) : source.matrix;
   const marker = `  - packageId: ${packageId}`;
-  const start = source.matrix.indexOf(marker);
+  const start = searchText.indexOf(marker);
   if (start < 0) return "";
-  const rest = source.matrix.slice(start + marker.length);
+  const rest = searchText.slice(start + marker.length);
   const next = /\n\s{2}- packageId:\s*/.exec(rest);
   return marker + (next ? rest.slice(0, next.index) : rest);
 }

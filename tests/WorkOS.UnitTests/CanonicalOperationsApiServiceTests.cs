@@ -50,6 +50,60 @@ public sealed class CanonicalOperationsApiServiceTests
     }
 
     [TestMethod]
+    public void operations_workspace_start_attaches_admission_to_work_items()
+    {
+        var service = Service(
+            out var runtime,
+            out _,
+            workspaces: new[] { StartAdapterWorkspace("W-STAY-RESOURCE", "roomSetup") });
+        var workspace = runtime.FindWorkspace("W-STAY-RESOURCE")!;
+
+        var result = service.StartWorkspaceCase(workspace, "W-STAY-RESOURCE", OperatorActor());
+
+        Assert.IsNotNull(result.WorkItem.Admission);
+        Assert.AreEqual(result.WorkItem.AdmissionDecisionRef, result.WorkItem.Admission["admissionDecisionRef"]);
+        Assert.IsTrue((bool)result.WorkItem.Admission["confirmAllowed"]);
+        var listed = result.OperationWorkItems.First(item => item.WorkItemId == result.WorkItem.WorkItemId);
+        Assert.IsNotNull(listed.Admission);
+        Assert.AreEqual(result.WorkItem.AdmissionDecisionRef, listed.AdmissionDecisionRef);
+    }
+
+    [TestMethod]
+    public void definition_registry_resolves_start_adapter_without_promoting_workspace_card_identity()
+    {
+        var registry = WorkItemDefinitionRegistryService.LoadDefault();
+        var adapterDefinition = registry.ResolveStartAdapter("W-STAY-LEAD-RESERVATION", "leadCapture");
+        var currentKeyDefinition = registry.ResolveStartAdapter("W-DORM-MAINLINE", "cert.roomSetupConfirm");
+        var directWorkspaceCard = registry.ResolveByWorkspaceCard("W-STAY-LEAD-RESERVATION", "leadCapture");
+
+        Assert.IsTrue(adapterDefinition.Resolved);
+        Assert.AreEqual("definition.dormitory.leadCapture.v1", adapterDefinition.DefinitionId);
+        Assert.AreEqual("oam-certification-current", adapterDefinition.Definition?.DefinitionMode);
+        Assert.IsTrue(currentKeyDefinition.Resolved);
+        Assert.AreEqual("definition.dormitory.roomSetupConfirm.v1", currentKeyDefinition.DefinitionId);
+        Assert.AreEqual("oam-certification-current", currentKeyDefinition.Definition?.DefinitionMode);
+        Assert.IsFalse(directWorkspaceCard.Resolved);
+    }
+
+    [TestMethod]
+    public void definition_registry_does_not_fallback_to_workspace_card_for_unregistered_start_adapter()
+    {
+        var registry = WorkItemDefinitionRegistryService.LoadDefault();
+
+        var missingAdapter = registry.ResolveStartAdapter("W-STAY-UNKNOWN", "legacyCard");
+
+        Assert.IsFalse(missingAdapter.Resolved);
+        Assert.AreEqual("start_adapter_not_registered", missingAdapter.Reason);
+        Assert.IsTrue(missingAdapter.MigrationRefs.All(item =>
+            item.ReadOnly &&
+            !item.Executable &&
+            !item.AffectsAdmission &&
+            !item.AffectsRuntimeConfirm &&
+            !item.AffectsBusinessIdentity &&
+            !item.AffectsLedger));
+    }
+
+    [TestMethod]
     public void operations_confirm_idempotency_conflict_does_not_write_second_domain_event()
     {
         var service = Service(out _, out var store);
@@ -127,6 +181,11 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.IsFalse(result.Confirmed);
         Assert.IsEmpty(store.Submissions);
         Assert.IsEmpty(store.DomainEvents);
+        Assert.IsEmpty(store.WorkItemEvents);
+        Assert.IsEmpty(store.OutboxMessages);
+        Assert.IsEmpty(store.LedgerTransactions);
+        Assert.IsEmpty(store.LedgerEntries);
+        Assert.IsEmpty(store.WriteLog);
         var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
         Assert.AreEqual("prepare_only", admission["mode"]);
         Assert.IsFalse((bool)admission["confirmAllowed"]);
@@ -135,6 +194,55 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.IsFalse((bool)definition["resolved"]);
         var noGo = (IReadOnlyList<string>)admission["noGoItems"];
         CollectionAssert.Contains(noGo.ToArray(), "definition_not_resolved_for_production_confirm");
+    }
+
+    [TestMethod]
+    public void operations_confirm_blocks_missing_admission_policy_before_unit_of_work()
+    {
+        var service = Service(
+            out _,
+            out var store,
+            definitions: RegistryWith(Definition(
+                "missingAdmission",
+                "Dorm.MissingAdmission",
+                "W-S3",
+                admissionPolicyRef: string.Empty)));
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-missing-admission-policy",
+            TenantId: "tenant-s3",
+            WorkItemType: "Dorm.MissingAdmission",
+            WorkspaceId: "W-S3",
+            CardId: "missingAdmission",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "case-missing-admission-policy",
+                ["cardId"] = "missingAdmission",
+                ["definitionId"] = "definition.test.missingAdmission.v1"
+            }));
+
+        var result = service.ConfirmWorkItem(
+            "wi-missing-admission-policy",
+            Request("idem-missing-admission-policy", cardId: "missingAdmission", fieldValues: new Dictionary<string, string>()),
+            OperatorActor(),
+            "req-missing-admission-policy");
+
+        Assert.AreEqual(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.AreEqual("admission_rejected", result.Error);
+        Assert.IsFalse(result.Confirmed);
+        Assert.IsEmpty(store.Submissions);
+        Assert.IsEmpty(store.DomainEvents);
+        Assert.IsEmpty(store.WorkItemEvents);
+        Assert.IsEmpty(store.OutboxMessages);
+        Assert.IsEmpty(store.LedgerTransactions);
+        Assert.IsEmpty(store.LedgerEntries);
+        Assert.IsEmpty(store.WriteLog);
+        var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
+        Assert.IsFalse((bool)admission["prepareAllowed"]);
+        Assert.IsFalse((bool)admission["confirmAllowed"]);
+        Assert.IsFalse((bool)admission["productionAllowed"]);
+        var noGo = (IReadOnlyList<string>)admission["noGoItems"];
+        CollectionAssert.Contains(noGo.ToArray(), "missing_admission_contract");
     }
 
     [TestMethod]
@@ -300,8 +408,6 @@ public sealed class CanonicalOperationsApiServiceTests
             {
                 EvidenceIds = new[] { "ev-high-risk-trusted" },
                 DeviceId = "device-trusted",
-                DeviceTrustStatus = "untrusted",
-                Surface = "pc",
                 Reason = "财务复核通过，允许进入内部试点确认。"
             },
             FinanceActor(),
@@ -339,8 +445,6 @@ public sealed class CanonicalOperationsApiServiceTests
             {
                 EvidenceIds = new[] { "ev-self-reported" },
                 DeviceId = "device-client-only",
-                DeviceTrustStatus = "trusted",
-                Surface = "pc",
                 Reason = "客户端自报 trusted 不能作为准入事实。"
             },
             FinanceActor(),
@@ -590,7 +694,6 @@ public sealed class CanonicalOperationsApiServiceTests
         {
             EvidenceIds = new[] { $"ev-{idempotencyKey}" },
             DeviceId = deviceId,
-            Surface = "pc",
             Reason = "财务复核通过，允许进入内部试点确认。"
         };
 
@@ -647,7 +750,44 @@ public sealed class CanonicalOperationsApiServiceTests
     private static WorkItemDefinitionRegistryService RegistryWith(params WorkItemDefinition[] definitions) =>
         new(WorkItemDefinitionRegistryService.LoadDefault().Definitions.Concat(definitions).ToArray());
 
-    private static WorkItemDefinition Definition(string sourceCardId, string workItemType, string workspaceId) =>
+    private static WorkspaceProjection StartAdapterWorkspace(string workspaceId, string cardId) =>
+        new(
+            "WorkspaceCardProjection",
+            workspaceId,
+            "stay",
+            $"task-{workspaceId}",
+            LocalizedText("Operations"),
+            LocalizedText("Operations"),
+            new[] { StartAdapterCard(cardId) },
+            LocalizedText("Next"),
+            Array.Empty<BlockerRule>());
+
+    private static CardProjection StartAdapterCard(string cardId) =>
+        new(
+            "WorkspaceCardProjection",
+            cardId,
+            "ready",
+            LocalizedText(cardId),
+            new FieldSet(Array.Empty<FieldProjection>(), Array.Empty<FieldProjection>(), Array.Empty<FieldProjection>()),
+            Array.Empty<EvidenceRequirement>(),
+            Array.Empty<SystemCheck>(),
+            Array.Empty<BlockerRule>(),
+            Array.Empty<EventDefinition>(),
+            new TransitionDefinition("prepare", "confirm", "block"),
+            new ConfirmationPolicy(true, false, "operator", LocalizedText("Confirm")));
+
+    private static IReadOnlyDictionary<string, string> LocalizedText(string value) =>
+        new Dictionary<string, string>
+        {
+            ["zh-CN"] = value,
+            ["ru-RU"] = value
+        };
+
+    private static WorkItemDefinition Definition(
+        string sourceCardId,
+        string workItemType,
+        string workspaceId,
+        string admissionPolicyRef = "admission.prepare_only_or_l1_observation.v1") =>
         new(
             $"definition.test.{sourceCardId}.v1",
             "dormitory",
@@ -675,7 +815,7 @@ public sealed class CanonicalOperationsApiServiceTests
             "evidence.test.v1",
             "risk.standard.v1",
             "ledger.none.v1",
-            "admission.prepare_only_or_l1_observation.v1",
+            admissionPolicyRef,
             $"surface.test.{sourceCardId}",
             false,
             "operations-runtime-native",

@@ -1,7 +1,7 @@
 export function normalizeAdmissionState(value = {}) {
   return {
     visibleAllowed: value.visibleAllowed !== false,
-    prepareAllowed: value.prepareAllowed !== false,
+    prepareAllowed: value.prepareAllowed === true,
     confirmAllowed: value.confirmAllowed === true,
     productionAllowed: value.productionAllowed === true,
     mode: normalizeAdmissionMode(value.mode),
@@ -20,16 +20,7 @@ export function admissionStateFromWorkItem(workItem = {}, state = {}) {
   const businessAdmission = state.businessLineAdmission || state.runtimeStore?.businessLineAdmission || {};
   const releaseBlocked = globalProductionBlocked(state);
   const mode = admission.mode || businessAdmission.dormitory?.mode || businessAdmission.dormitory?.surfaceMode || "";
-  if (!hasExplicitAdmission) {
-    return normalizeAdmissionState({
-      visibleAllowed: true,
-      prepareAllowed: true,
-      confirmAllowed: true,
-      productionAllowed: false,
-      mode: releaseBlocked ? (mode || "internal_pilot_observation") : (mode || "internal_pilot_observation"),
-      reason: releaseBlocked ? "business_production_blocked" : "internal_pilot_observation"
-    });
-  }
+  if (!hasExplicitAdmission) return missingAdmissionState(mode || "contract_preview");
   return normalizeAdmissionState({
     visibleAllowed: admission.visibleAllowed,
     prepareAllowed: admission.prepareAllowed,
@@ -37,6 +28,18 @@ export function admissionStateFromWorkItem(workItem = {}, state = {}) {
     productionAllowed: releaseBlocked ? false : admission.productionAllowed ?? admission.production_allowed,
     mode: releaseBlocked ? (mode || "internal_pilot_observation") : mode,
     reason: admission.reason || admission.reasonCode || (releaseBlocked ? "business_production_blocked" : "")
+  });
+}
+
+export function missingAdmissionState(mode = "contract_preview") {
+  return normalizeAdmissionState({
+    visibleAllowed: true,
+    prepareAllowed: false,
+    confirmAllowed: false,
+    productionAllowed: false,
+    mode,
+    reason: "missing_admission_contract",
+    noGoItems: ["missing_admission_contract"]
   });
 }
 

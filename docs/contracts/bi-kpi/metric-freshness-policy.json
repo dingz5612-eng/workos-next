@@ -1,0 +1,35 @@
+{
+  "version": "oam.metric-operating-model.metric-freshness-policy.v1",
+  "status": "authoritative-readonly",
+  "readOnly": true,
+  "businessFactWriteAllowed": false,
+  "freshnessPolicies": [
+    {
+      "policyId": "metric-freshness.daily-read-model.v1",
+      "maxStalenessMs": 86400000,
+      "requiresSourceUpdatedAt": true,
+      "requiresComputedAt": true,
+      "requiresLastDisplayedAt": true,
+      "staleReasonRequiredWhenStale": true,
+      "writeFactsAllowed": false
+    },
+    {
+      "policyId": "metric-freshness.hourly-read-model.v1",
+      "maxStalenessMs": 3600000,
+      "requiresSourceUpdatedAt": true,
+      "requiresComputedAt": true,
+      "requiresLastDisplayedAt": true,
+      "staleReasonRequiredWhenStale": true,
+      "writeFactsAllowed": false
+    },
+    {
+      "policyId": "metric-freshness.ledger-read-model.v1",
+      "maxStalenessMs": 3600000,
+      "requiresSourceUpdatedAt": true,
+      "requiresComputedAt": true,
+      "requiresLastDisplayedAt": true,
+      "staleReasonRequiredWhenStale": true,
+      "writeFactsAllowed": false
+    }
+  ]
+}

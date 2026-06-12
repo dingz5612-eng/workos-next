@@ -3,6 +3,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const selfTest = process.argv.includes("--self-test");
+const writeProof = process.argv.includes("--write-proof") || process.env.OAM_WRITE_PROOF === "1";
 
 const searchContract = readJson("docs/contracts/search/search-contract.json");
 const indexSources = readJson("docs/contracts/search/search-index-sources.json");
@@ -63,6 +64,7 @@ if (selfTest) {
 }
 
 const failures = runChecks({ searchContract });
+if (writeProof) writeSearchProofs(failures);
 if (failures.length > 0) {
   for (const failure of failures) console.error(`P0 ${failure}`);
   throw new Error("Search Kernel check failed.");
@@ -97,18 +99,29 @@ function checkContract(contract, failures) {
   if (contract.indexSourcesRef !== "docs/contracts/search/search-index-sources.json") {
     failures.push("search-contract must reference Search index sources.");
   }
-  if (!(contract.inputAdapters || []).some((adapter) => adapter.adapterId === "operationsRuntimeFactInput" && adapter.status === "active")) {
-    failures.push("search-contract must declare active operationsRuntimeFactInput.");
+  const operationsRuntimeFactInput = (contract.inputAdapters || []).find((adapter) => adapter.adapterId === "operationsRuntimeFactInput");
+  if (!operationsRuntimeFactInput || operationsRuntimeFactInput.status !== "forbidden-direct-search-input") {
+    failures.push("search-contract must forbid operationsRuntimeFactInput as direct Search input.");
+  }
+  if (!contract.readModelOnlyPolicy?.allowedInputs?.includes("SearchIndexRecord") ||
+    !contract.readModelOnlyPolicy?.allowedInputs?.includes("OamObjectEnvelope") ||
+    !contract.readModelOnlyPolicy?.allowedInputs?.includes("LensReadModel") ||
+    !contract.readModelOnlyPolicy?.forbiddenDirectInputs?.includes("operationsRuntimeFactInput")) {
+    failures.push("search-contract must declare generated/read-envelope-only Search inputs.");
+  }
+  if (contract.readModelOnlyPolicy?.operationsReadStoreSearchOperations?.allowedOnlyAs !== "upstreamProjectionBuilderSource" ||
+    contract.readModelOnlyPolicy?.operationsReadStoreSearchOperations?.searchKernelDirectQueryAllowed !== false) {
+    failures.push("OperationsReadStore.SearchOperations must be upstream projection builder source only.");
   }
   if ((contract.inputAdapters || []).some((adapter) => adapter.status === "planned" || adapter.status === "future")) {
     failures.push("search-contract must not retain planned input adapter placeholders.");
   }
-  if (!(contract.runtimeAdapters || []).some((adapter) => adapter.name === "OperationsReadStore.SearchOperations")) {
-    failures.push("search-contract must register OperationsReadStore.SearchOperations as a runtime adapter.");
+  if (!(contract.runtimeAdapters || []).some((adapter) => adapter.name === "OperationsReadStore.SearchOperations" && adapter.status === "upstream-projection-builder-source")) {
+    failures.push("search-contract must register OperationsReadStore.SearchOperations only as upstream projection builder source.");
   }
   const invariantText = (contract.invariants || []).join(" ");
-  if (!invariantText.includes("Operations Runtime confirmed events") || !invariantText.includes("display/search-only")) {
-    failures.push("search-contract must state Operations events and business anchors search boundary.");
+  if (!invariantText.includes("SearchKernelService must not directly query OperationsReadStore.SearchOperations") || !invariantText.includes("display/search-only")) {
+    failures.push("search-contract must state Search read-model-only and business anchors search boundary.");
   }
 }
 
@@ -121,8 +134,17 @@ function checkSourcesAndSchema(failures) {
     if (source.admissionRequired !== true) failures.push(`${source.sourceId} must require admission.`);
   }
   const operationsEvents = (indexSources.sources || []).find((source) => source.sourceId === "operationsDomainEvents");
-  if (!operationsEvents || !String(operationsEvents.ref || "").includes("OperationsReadStore.SearchOperations")) {
-    failures.push("search-index-sources must include operationsDomainEvents through OperationsReadStore.SearchOperations.");
+  if (!operationsEvents ||
+    operationsEvents.sourceRole !== "upstreamProjectionBuilderSource" ||
+    operationsEvents.searchKernelDirectInputAllowed !== false ||
+    operationsEvents.outputContract !== "SearchIndexRecord") {
+    failures.push("search-index-sources must keep operationsDomainEvents upstream-only and emit SearchIndexRecord.");
+  }
+  for (const input of ["SearchIndexRecord", "OamObjectEnvelope", "LensReadModel", "generatedReadModel", "authorizedProjectionReadModel"]) {
+    if (!(indexSources.allowedSearchKernelInputs ?? []).includes(input)) failures.push(`search-index-sources missing allowed Search input ${input}.`);
+  }
+  if (!(indexSources.forbiddenSearchKernelInputs ?? []).includes("operationsRuntimeFactInput")) {
+    failures.push("search-index-sources must forbid operationsRuntimeFactInput as direct Search input.");
   }
 
   for (const field of requiredResultFields) {
@@ -224,14 +246,11 @@ function checkRuntimeImplementation(failures) {
     "\"traceRefs\"",
     "\"sourceRefs\"",
     "\"language\"",
-    "SearchOperationsSources",
-    "OperationsReadStore.SearchOperations",
-    "ResolveDefinition",
     "BusinessAnchorKeys"
   ]) {
     if (!searchKernel.includes(term)) failures.push(`SearchKernelService.cs missing ${term}`);
   }
-  for (const forbidden of ["OperationsRuntimeService", "GetWorkItem(", "GetWorkItemSurface(", "ListWorkItems(", "OperationsRuntime.SearchOperations", "NextActionableWorkItem"]) {
+  for (const forbidden of ["OperationsRuntimeService", "GetWorkItem(", "GetWorkItemSurface(", "ListWorkItems(", "OperationsRuntime.SearchOperations", "OperationsReadStore.SearchOperations", "SearchOperationsSources", "NextActionableWorkItem"]) {
     if (searchKernel.includes(forbidden)) failures.push(`SearchKernelService.cs must not inject or call runtime catalog term: ${forbidden}`);
   }
   if (searchKernel.includes("decision.ConfirmAllowed ? 25") || searchKernel.includes("visible_with_confirm_admission")) {
@@ -283,4 +302,137 @@ function read(relativePath) {
 
 function exists(relativePath) {
   return fs.existsSync(path.join(root, relativePath));
+}
+
+function writeSearchProofs(failures) {
+  const passed = failures.length === 0;
+  const checkedAtUtc = new Date().toISOString();
+  const base = {
+    schemaVersion: "workosnext.search-proof.v1",
+    status: passed ? "passed" : "failed",
+    checkedAtUtc,
+    failures,
+    gates: ["node scripts/check-search-kernel.mjs"]
+  };
+  const proofs = [
+    [
+      "artifacts/oam/proofs/search/search-derived-readmodel-only-proof.json",
+      {
+        ...base,
+        proofId: "search-derived-readmodel-only-proof",
+        proves: [
+          "Search consumes generated/read envelopes only.",
+          "OperationsReadStore.SearchOperations is upstream projection-builder source only.",
+          "operationsRuntimeFactInput is forbidden as direct Search input."
+        ],
+        allowedInputs: searchContract.readModelOnlyPolicy?.allowedInputs ?? [],
+        forbiddenDirectInputs: searchContract.readModelOnlyPolicy?.forbiddenDirectInputs ?? [],
+        operationsReadStoreBoundary: searchContract.readModelOnlyPolicy?.operationsReadStoreSearchOperations ?? null,
+        sourceRefs: [
+          "docs/contracts/search/search-contract.json",
+          "docs/contracts/search/search-index-sources.json"
+        ]
+      }
+    ],
+    [
+      "artifacts/oam/proofs/search/search-no-kernel-direct-read-proof.json",
+      {
+        ...base,
+        proofId: "search-no-kernel-direct-read-proof",
+        proves: [
+          "SearchKernelService does not call runtime catalog APIs directly.",
+          "SearchKernelService does not query OperationsReadStore.SearchOperations directly."
+        ],
+        forbiddenRuntimeTerms: [
+          "OperationsRuntimeService",
+          "GetWorkItem(",
+          "GetWorkItemSurface(",
+          "ListWorkItems(",
+          "OperationsRuntime.SearchOperations",
+          "OperationsReadStore.SearchOperations",
+          "SearchOperationsSources",
+          "NextActionableWorkItem"
+        ],
+        sourceRefs: ["services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs"]
+      }
+    ],
+    [
+      "artifacts/oam/proofs/search/search-permission-filter-proof.json",
+      {
+        ...base,
+        proofId: "search-permission-filter-proof",
+        proves: [
+          "SearchResult carries permission envelope.",
+          "Search actions are readonly or navigation only.",
+          "Permission policy contains tenant, visibility, and action guards."
+        ],
+        permissionRequiredFields: resultSchema.properties?.permission?.required ?? [],
+        permissionRuleIds: (permissionPolicy.rules ?? []).map((rule) => rule.ruleId),
+        sourceRefs: [
+          "docs/contracts/search/search-result-schema.json",
+          "docs/contracts/search/search-permission-policy.json"
+        ]
+      }
+    ],
+    [
+      "artifacts/oam/proofs/search/search-hidden-result-ranking-proof.json",
+      {
+        ...base,
+        proofId: "search-hidden-result-ranking-proof",
+        proves: [
+          "Hidden results are not ranked.",
+          "ConfirmAllowed is not a ranking boost."
+        ],
+        requiredRules: [
+          "hidden-results-not-ranked",
+          "search-result-required-trust-fields"
+        ],
+        rankingPolicyRef: "docs/contracts/search/search-ranking-policy.json",
+        permissionPolicyRef: "docs/contracts/search/search-permission-policy.json"
+      }
+    ],
+    [
+      "artifacts/oam/proofs/search/search-sensitive-redaction-proof.json",
+      {
+        ...base,
+        proofId: "search-sensitive-redaction-proof",
+        proves: [
+          "Sensitive results require redaction for ordinary users.",
+          "SearchResult carries redaction and dataClassification."
+        ],
+        requiredRule: "sensitive-results-redacted-for-ordinary-users",
+        permissionRequiredFields: resultSchema.properties?.permission?.required ?? [],
+        sourceRefs: [
+          "docs/contracts/search/search-result-schema.json",
+          "docs/contracts/search/search-permission-policy.json"
+        ]
+      }
+    ],
+    [
+      "artifacts/oam/proofs/search/search-lineage-freshness-proof.json",
+      {
+        ...base,
+        proofId: "search-lineage-freshness-proof",
+        proves: [
+          "SearchResult carries lineage envelope.",
+          "SearchResult carries freshness envelope.",
+          "Search cannot write business facts through gateResult."
+        ],
+        lineageRequiredFields: resultSchema.properties?.lineage?.required ?? [],
+        freshnessRequiredFields: resultSchema.properties?.freshness?.required ?? [],
+        gateResultRequiredFields: resultSchema.properties?.gateResult?.required ?? [],
+        sourceRefs: ["docs/contracts/search/search-result-schema.json"]
+      }
+    ]
+  ];
+
+  for (const [relativePath, proof] of proofs) {
+    writeJson(relativePath, proof);
+  }
+}
+
+function writeJson(relativePath, value) {
+  const fullPath = path.join(root, relativePath);
+  fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+  fs.writeFileSync(fullPath, `${JSON.stringify(value, null, 2)}\n`);
 }

@@ -1,0 +1,37 @@
+{
+  "version": "oam.language.alias-registry.v1",
+  "status": "authoritative-information-language-kernel",
+  "aliasesAreSourceOfTruth": false,
+  "aliases": [
+    {
+      "aliasKey": "permission.reason.actor_session_required",
+      "canonicalKey": "surface.permission.reason.actorSessionRequired",
+      "sourceOfTruth": false
+    },
+    {
+      "aliasKey": "permission.reason.role_surface_not_allowed",
+      "canonicalKey": "surface.permission.reason.roleSurfaceNotAllowed",
+      "sourceOfTruth": false
+    },
+    {
+      "aliasKey": "permission.reason.capability_missing",
+      "canonicalKey": "surface.permission.reason.capabilityMissing",
+      "sourceOfTruth": false
+    },
+    {
+      "aliasKey": "permission.reason.device_not_trusted",
+      "canonicalKey": "surface.permission.reason.deviceNotTrusted",
+      "sourceOfTruth": false
+    },
+    {
+      "aliasKey": "semantic.amountBasis.notFinanceResult",
+      "canonicalKey": "explain.businessBasisNotFinancialTruth",
+      "sourceOfTruth": false
+    },
+    {
+      "aliasKey": "semantic.financeTruth.explain",
+      "canonicalKey": "explain.financeTruthRequired",
+      "sourceOfTruth": false
+    }
+  ]
+}

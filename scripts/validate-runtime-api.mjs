@@ -7,6 +7,7 @@ const openApi = JSON.parse(fs.readFileSync("docs/contracts/workos-runtime.openap
 const sliceManifest = JSON.parse(fs.readFileSync("docs/contracts/slice-manifest.json", "utf8"));
 const surfacePolicy = JSON.parse(fs.readFileSync("docs/contracts/runtime-surface-policy.json", "utf8"));
 const lensContract = JSON.parse(fs.readFileSync("docs/contracts/accommodation-lens-contract.json", "utf8"));
+const definitionRegistry = JSON.parse(fs.readFileSync("docs/contracts/definition/workitem-definition-registry.json", "utf8"));
 const startupTimeoutMs = Number.parseInt(process.env.WORKOS_API_VALIDATE_TIMEOUT_MS ?? "90000", 10);
 const defaultTestConnectionString =
   "Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev";
@@ -107,7 +108,7 @@ async function validateHealth() {
 }
 
 async function validatePrepare(projection) {
-  const item = await findOperationsWorkItem("W-STAY-RESOURCE", "roomSetup");
+  const item = await findStartAdapterWorkItem("W-STAY-RESOURCE", "roomSetup");
   const prepared = await postJson(workItemPath(workItemIdOf(item), "/prepare"), {
     workspaceId: workspaceIdOf(item),
     cardId: cardIdOf(item)
@@ -432,29 +433,79 @@ function workItemPath(workItemId, suffix = "") {
   return `/api/operations/work-items/${encodeURIComponent(workItemId)}${suffix}`;
 }
 
-async function findOperationsWorkItem(workspaceId, cardId) {
-  const items = await getJson("/api/operations/work-items");
-  assert(Array.isArray(items), "Operations work-items response must be an array");
-  const existing = items.find((candidate) =>
-    workspaceIdOf(candidate) === workspaceId && cardIdOf(candidate) === cardId);
-  if (existing) return existing;
+async function findStartAdapterWorkItem(workspaceId, cardId, options = {}) {
+  return findOperationsWorkItem(workspaceId, cardId, { ...options, requireStartAdapterResult: true });
+}
 
-  const started = await postJson("/api/operations/workspaces/start", { templateWorkspaceId: workspaceId });
+async function findOperationsWorkItem(workspaceId, cardId, options = {}) {
+  const requireStartAdapterResult = options.requireStartAdapterResult === true;
+  const actorToken = options.actorToken || "";
+  if (!actorToken) {
+    const items = await getJson("/api/operations/work-items");
+    assert(Array.isArray(items), "Operations work-items response must be an array");
+    const existingCandidates = items.filter((candidate) => matchesOperationsWorkItem(candidate, workspaceId, cardId));
+    const existing = existingCandidates.find(isCurrentDefinitionWorkItem);
+    if (existing) return existing;
+  }
+
+  const started = actorToken
+    ? await postJsonWithActor(
+      "/api/operations/workspaces/start",
+      { templateWorkspaceId: workspaceId },
+      actorToken,
+      `api-start-${Date.now()}`)
+    : await postJson("/api/operations/workspaces/start", { templateWorkspaceId: workspaceId });
   const startedItems = [started.workItem, ...(started.operationWorkItems || [])].filter(Boolean);
   const item = startedItems.find((candidate) =>
-    workspaceIdOf(candidate) === workspaceId && cardIdOf(candidate) === cardId);
+    matchesOperationsWorkItem(candidate, workspaceId, cardId) && isCurrentDefinitionWorkItem(candidate));
   if (!item) {
-    return await createOperationsWorkItem(workspaceId, cardId);
+    if (requireStartAdapterResult) {
+      const returned = startedItems.map((candidate) => ({
+        workItemId: workItemIdOf(candidate),
+        workspaceId: workspaceIdOf(candidate),
+        cardId: cardIdOf(candidate),
+        definitionId: definitionIdOf(candidate),
+        definitionMode: definitionModeOf(candidate),
+        admissionReason: admissionReasonOf(candidate)
+      }));
+      assert(false, `Operations Workspace Start must return a current WorkItem for ${workspaceId}/${cardId}; returned=${JSON.stringify(returned)}`);
+    }
+    return await fallbackForNonStartValidation(workspaceId, cardId);
   }
   assert(item, `Operations Workspace Start did not return a WorkItem for ${workspaceId}/${cardId}`);
   assert(workItemIdOf(item), `Operations WorkItem missing workItemId for ${workspaceId}/${cardId}`);
   return item;
 }
 
-async function createOperationsWorkItem(workspaceId, cardId) {
+function matchesOperationsWorkItem(item, workspaceId, cardId) {
+  const templateWorkspaceId = item?.payload?.templateWorkspaceId || "";
+  return (workspaceIdOf(item) === workspaceId || templateWorkspaceId === workspaceId) &&
+    cardIdOf(item) === cardId;
+}
+
+function isCurrentDefinitionWorkItem(item) {
+  const definitionId = definitionIdOf(item);
+  const definition = definitionRegistry.definitionsById?.get(definitionId) || definitionById(definitionId);
+  const admissionReason = admissionReasonOf(item);
+  const operationAxis = item?.payload?.operationAxis || "";
+  const generatedTransitionPolicyId = item?.payload?.generatedTransitionPolicyId || "";
+  return definitionId.startsWith("definition.") &&
+    definition?.definitionMode === "oam-certification-current" &&
+    (
+      operationAxis === "Definition -> OperationCase -> WorkItem" ||
+      operationAxis === "DomainEvent -> GeneratedTransitionPolicy -> WorkItem" ||
+      Boolean(generatedTransitionPolicyId)
+    ) &&
+    !String(admissionReason).includes("definition_not_resolved") &&
+    !String(admissionReason).includes("start_adapter_not_registered");
+}
+
+async function fallbackForNonStartValidation(workspaceId, cardId) {
+  const definition = currentDefinitionForStart(workspaceId, cardId);
+  assert(definition?.definitionId, `Non-Start validation fallback requires a current definitionId for ${workspaceId}/${cardId}`);
   const created = await postJson("/api/operations/work-items", {
     workItemId: `validate-${workspaceId}-${cardId}-${Date.now()}`,
-    workItemType: cardId,
+    workItemType: definition.workItemType,
     targetWorkspaceId: workspaceId,
     workspaceId,
     cardId,
@@ -462,13 +513,37 @@ async function createOperationsWorkItem(workspaceId, cardId) {
     payload: {
       caseId: `case-${workspaceId}`,
       cardId,
-      templateWorkspaceId: workspaceId
+      templateWorkspaceId: workspaceId,
+      definitionId: definition.definitionId
     }
   });
   assert(workItemIdOf(created), `Operations WorkItem create did not return workItemId for ${workspaceId}/${cardId}`);
   assert(workspaceIdOf(created) === workspaceId, `created WorkItem workspace mismatch for ${workspaceId}/${cardId}`);
   assert(cardIdOf(created) === cardId, `created WorkItem card mismatch for ${workspaceId}/${cardId}`);
   return created;
+}
+
+function currentDefinitionForStart(workspaceId, cardId) {
+  return (definitionRegistry.definitions || []).find((definition) =>
+    definition.workspaceId === workspaceId &&
+    definition.definitionMode === "oam-certification-current" &&
+    (definition.migrationRefs || []).some((ref) => ref.type === "sourceCardId" && ref.value === cardId));
+}
+
+function definitionById(definitionId) {
+  return (definitionRegistry.definitions || []).find((definition) => definition.definitionId === definitionId);
+}
+
+function definitionIdOf(item) {
+  return item?.payload?.definitionId || item?.definitionId || "";
+}
+
+function definitionModeOf(item) {
+  return definitionById(definitionIdOf(item))?.definitionMode || item?.definitionMode || "";
+}
+
+function admissionReasonOf(item) {
+  return item?.admission?.reason || item?.admission?.code || "";
 }
 
 function workItemIdOf(item) {
@@ -485,7 +560,7 @@ function cardIdOf(item) {
 
 async function validateConfirmPolicyResponse() {
   const login = await postJson("/api/auth/login", { username: "operator", password: "dev" });
-  const roomWorkItem = await findOperationsWorkItem("W-STAY-RESOURCE", "roomSetup");
+  const roomWorkItem = await findStartAdapterWorkItem("W-STAY-RESOURCE", "roomSetup");
   const roomConfirmPath = workItemPath(workItemIdOf(roomWorkItem), "/confirm");
   const response = await fetch(`${baseUrl}${roomConfirmPath}`, {
     method: "POST",
@@ -509,6 +584,7 @@ async function validateConfirmPolicyResponse() {
   assert(localizedKey.status === 400, `unknown localized label payload key must return 400, got ${localizedKey.status}`);
 
   const financeLogin = await postJson("/api/auth/login", { username: "finance", password: "dev" });
+  assert(financeLogin.role === "finance", `finance login must return finance role, got ${financeLogin.role}`);
   const forbidden = await fetch(`${baseUrl}${roomConfirmPath}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Token": financeLogin.token, "X-Request-Id": `api-forbidden-${Date.now()}` },
@@ -516,22 +592,30 @@ async function validateConfirmPolicyResponse() {
   });
   assert(forbidden.status === 403, `role forbidden confirm must return 403, got ${forbidden.status}`);
 
-  const depositWorkItem = await findOperationsWorkItem("W-STAY-DEPOSIT-LEDGER", "depositReceipt");
-  const businessBlocked = await fetch(`${baseUrl}${workItemPath(workItemIdOf(depositWorkItem), "/confirm")}`, {
+  const paymentWorkItem = await findStartAdapterWorkItem("W-STAY-PAYMENT-LEDGER", "paymentReceipt");
+  const businessBlocked = await fetch(`${baseUrl}${workItemPath(workItemIdOf(paymentWorkItem), "/confirm")}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Token": login.token, "X-Request-Id": `api-business-${Date.now()}` },
     body: JSON.stringify(confirmBody(
       `api-business-${Date.now()}`,
       {
-        depositId: "api-deposit-policy",
-        receivedAmount: "3000",
+        paymentId: "api-payment-policy",
+        paymentAmount: "3000",
         paymentMethod: "bank_transfer",
-        targetFact: "DepositFact"
+        payerName: "Runtime API validation",
+        receivedBy: "finance",
+        currency: "KGS",
+        sourcePack: "business-domain",
+        targetFact: "LedgerEntry"
       },
       "business-blocked"
     ))
   });
-  assert(businessBlocked.status === 422, `business policy violation must return 422, got ${businessBlocked.status}`);
+  const businessBlockedBody = await businessBlocked.text();
+  assert(
+    businessBlocked.status === 422,
+    `business policy violation must return 422, got ${businessBlocked.status}: ${businessBlockedBody}`
+  );
 }
 
 async function validateProductionRejectsDevAuthDefaults() {
@@ -613,7 +697,7 @@ async function validateConfirmLedgerProjectionLensChain() {
       technicalState: "ready"
     }, `room:${roomId}`)
   };
-  const chainWorkItem = await findOperationsWorkItem("W-STAY-RESOURCE", "roomSetup");
+  const chainWorkItem = await findStartAdapterWorkItem("W-STAY-RESOURCE", "roomSetup");
   const workItemId = workItemIdOf(chainWorkItem);
   const confirmPath = workItemPath(workItemId, "/confirm");
   const result = await postJsonWithActor(

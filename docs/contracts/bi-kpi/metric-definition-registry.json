@@ -1,0 +1,72 @@
+{
+  "version": "oam.metric-operating-model.metric-definition-registry.v1",
+  "status": "authoritative-readonly",
+  "readOnly": true,
+  "businessFactWriteAllowed": false,
+  "financeFactWriteAllowed": false,
+  "ledgerEntryWriteAllowed": false,
+  "metricDefinitions": [
+    {
+      "metricId": "dormitory.resourceReadiness",
+      "nameZh": "宿舍资源就绪率",
+      "metricOwner": "operations-governance",
+      "sourceFacts": ["Room", "Bed", "WorkItemFact"],
+      "formulaRef": "formula.dormitory.resourceReadiness.v1",
+      "dimensions": ["tenantId", "buildingId", "date"],
+      "aggregationWindow": "daily",
+      "slaClockRef": "sla.dormitory.resourceReadiness.v1",
+      "permissionPolicyRef": "metric-permission.operations-readonly.v1",
+      "lineagePolicyRef": "metric-lineage.generated-read-model.v1",
+      "freshnessPolicyRef": "metric-freshness.daily-read-model.v1",
+      "allowedConsumers": ["DashboardWidget", "ReportDataset", "ReadinessSurface"],
+      "forbiddenInputs": ["ui.state", "label", "displayText", "dashboard.summary", "search.result", "surface.copy"],
+      "goNoGoImpact": "read_only_evidence_no_go_unlock",
+      "writesBusinessFactsAllowed": false,
+      "writesObjectKinds": []
+    },
+    {
+      "metricId": "finance.receivedAmount",
+      "nameZh": "已收金额",
+      "metricOwner": "finance-governance",
+      "sourceFacts": ["FinancialFact", "LedgerTransaction", "LedgerEntry"],
+      "formulaRef": "formula.finance.receivedAmount.v1",
+      "dimensions": ["tenantId", "businessDomain", "date"],
+      "aggregationWindow": "daily",
+      "slaClockRef": "sla.finance.ledgerPosting.v1",
+      "permissionPolicyRef": "metric-permission.finance-readonly.v1",
+      "lineagePolicyRef": "metric-lineage.finance-kernel.v1",
+      "freshnessPolicyRef": "metric-freshness.ledger-read-model.v1",
+      "allowedConsumers": ["DashboardWidget", "ReportDataset"],
+      "forbiddenInputs": ["ui.state", "label", "displayText", "dashboard.summary", "search.result", "surface.copy", "AmountBasisProposal"],
+      "goNoGoImpact": "read_only_evidence_no_go_unlock",
+      "writesBusinessFactsAllowed": false,
+      "writesObjectKinds": []
+    },
+    {
+      "metricId": "governance.blockerAging",
+      "nameZh": "阻塞项滞留时长",
+      "metricOwner": "governance-control-plane",
+      "sourceFacts": ["ExceptionCase", "WorkItemFact"],
+      "formulaRef": "formula.governance.blockerAging.v1",
+      "dimensions": ["tenantId", "ownerDomain", "date"],
+      "aggregationWindow": "rolling_7_days",
+      "slaClockRef": "sla.governance.blockerAging.v1",
+      "permissionPolicyRef": "metric-permission.governance-readonly.v1",
+      "lineagePolicyRef": "metric-lineage.operations-runtime.v1",
+      "freshnessPolicyRef": "metric-freshness.hourly-read-model.v1",
+      "allowedConsumers": ["DashboardWidget", "ReportDataset", "ReadinessSurface"],
+      "forbiddenInputs": ["ui.state", "label", "displayText", "dashboard.summary", "search.result", "surface.copy"],
+      "goNoGoImpact": "read_only_blocker_visibility_no_go_unlock",
+      "writesBusinessFactsAllowed": false,
+      "writesObjectKinds": []
+    }
+  ],
+  "globalForbiddenInputs": ["ui.state", "label", "displayText", "dashboard.summary"],
+  "forbiddenWrites": ["Room", "Bed", "Payment", "AmountBasis", "FinancialFact", "LedgerTransaction", "LedgerEntry"],
+  "invariants": [
+    "MetricDefinition is read-only and cannot write business facts.",
+    "MetricDefinition cannot infer facts from UI state, labels, display text, dashboard summary, search result, or surface copy.",
+    "MetricDefinition cannot write Room, Bed, Payment, AmountBasis, FinancialFact, LedgerTransaction, or LedgerEntry.",
+    "MetricDefinition GO/NO_GO impact is informational and cannot unlock production."
+  ]
+}

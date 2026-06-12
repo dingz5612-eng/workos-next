@@ -1,0 +1,36 @@
+{
+  "version": "oam.language.tokenizer-dictionary.v1",
+  "status": "authoritative-information-language-kernel",
+  "languages": ["zh-CN", "ru-RU", "ky-KG"],
+  "truthInferenceAllowed": false,
+  "canCreateBusinessFact": false,
+  "tokens": [
+    {
+      "tokenId": "token.room",
+      "canonicalKey": "objectKind.room",
+      "aliases": {
+        "zh-CN": ["房间", "房号", "宿舍房间"],
+        "ru-RU": ["комната", "номер комнаты"],
+        "ky-KG": ["бөлмө", "бөлмө номери"]
+      }
+    },
+    {
+      "tokenId": "token.bed",
+      "canonicalKey": "objectKind.bed",
+      "aliases": {
+        "zh-CN": ["床位", "床", "铺位"],
+        "ru-RU": ["койка", "место"],
+        "ky-KG": ["койка", "орун"]
+      }
+    },
+    {
+      "tokenId": "token.payment",
+      "canonicalKey": "metric.finance.receivedAmount.name",
+      "aliases": {
+        "zh-CN": ["收款", "到账", "付款"],
+        "ru-RU": ["оплата", "платеж"],
+        "ky-KG": ["төлөм", "акча түшүү"]
+      }
+    }
+  ]
+}

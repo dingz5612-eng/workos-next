@@ -1,0 +1,143 @@
+{
+  "version": "oam.language.multilingual-copy-catalog.v1",
+  "status": "authoritative-information-language-kernel",
+  "languages": ["zh-CN", "ru-RU", "ky-KG"],
+  "copies": [
+    {
+      "copyId": "resultType.workItemList",
+      "copy": {
+        "zh-CN": "办理项列表",
+        "ru-RU": "Список задач",
+        "ky-KG": "Иш тапшырмалар тизмеси"
+      }
+    },
+    {
+      "copyId": "resultType.metricValue",
+      "copy": {
+        "zh-CN": "指标读数",
+        "ru-RU": "Значение метрики",
+        "ky-KG": "Көрсөткүч мааниси"
+      }
+    },
+    {
+      "copyId": "resultType.reportDataset",
+      "copy": {
+        "zh-CN": "报表数据集",
+        "ru-RU": "Набор данных отчета",
+        "ky-KG": "Отчет маалымат топтому"
+      }
+    },
+    {
+      "copyId": "metric.dormitory.resourceReadiness.name",
+      "copy": {
+        "zh-CN": "宿舍资源就绪率",
+        "ru-RU": "Готовность ресурсов проживания",
+        "ky-KG": "Жатакана ресурстарынын даярдыгы"
+      }
+    },
+    {
+      "copyId": "metric.finance.receivedAmount.name",
+      "copy": {
+        "zh-CN": "已收金额",
+        "ru-RU": "Полученная сумма",
+        "ky-KG": "Түшкөн сумма"
+      }
+    },
+    {
+      "copyId": "metric.governance.blockerAging.name",
+      "copy": {
+        "zh-CN": "阻塞项滞留时长",
+        "ru-RU": "Возраст блокирующих вопросов",
+        "ky-KG": "Бөгөт иштеринин узактыгы"
+      }
+    },
+    {
+      "copyId": "dashboard.widget.resourceReadiness.title",
+      "copy": {
+        "zh-CN": "资源就绪",
+        "ru-RU": "Готовность ресурсов",
+        "ky-KG": "Ресурстардын даярдыгы"
+      }
+    },
+    {
+      "copyId": "dashboard.widget.financeReceived.title",
+      "copy": {
+        "zh-CN": "收款读数",
+        "ru-RU": "Показатель оплат",
+        "ky-KG": "Төлөм көрсөткүчү"
+      }
+    },
+    {
+      "copyId": "lineage.sourceFacts.title",
+      "copy": {
+        "zh-CN": "来源事实",
+        "ru-RU": "Исходные факты",
+        "ky-KG": "Булак фактылар"
+      }
+    },
+    {
+      "copyId": "lineage.freshness.title",
+      "copy": {
+        "zh-CN": "数据新鲜度",
+        "ru-RU": "Актуальность данных",
+        "ky-KG": "Маалымат жаңылыгы"
+      }
+    },
+    {
+      "copyId": "readiness.noGo.title",
+      "copy": {
+        "zh-CN": "仍未放行",
+        "ru-RU": "Запуск не разрешен",
+        "ky-KG": "Ишке киргизүү уруксат эмес"
+      }
+    },
+    {
+      "copyId": "searchIntent.findRoom.label",
+      "copy": {
+        "zh-CN": "查找房间",
+        "ru-RU": "Найти комнату",
+        "ky-KG": "Бөлмө табуу"
+      }
+    },
+    {
+      "copyId": "searchIntent.openWorkItem.label",
+      "copy": {
+        "zh-CN": "打开办理项",
+        "ru-RU": "Открыть задачу",
+        "ky-KG": "Иш тапшырмасын ачуу"
+      }
+    },
+    {
+      "copyId": "admission.reason.financeReviewRequired",
+      "copy": {
+        "zh-CN": "需要财务复核后才能形成金额依据。",
+        "ru-RU": "Основание суммы появляется только после финансовой проверки.",
+        "ky-KG": "Сумма негизи финансы текшерүүсүнөн кийин гана түзүлөт."
+      }
+    },
+    {
+      "copyId": "evidence.reason.proofOnly",
+      "copy": {
+        "zh-CN": "证据只能证明事实，不能替代事实来源。",
+        "ru-RU": "Доказательство только подтверждает факт и не заменяет источник факта.",
+        "ky-KG": "Далил фактты гана ырастайт, факт булагын алмаштырбайт."
+      }
+    },
+    {
+      "copyId": "financeTruth.reason.amountBasisReviewedRequired",
+      "copy": {
+        "zh-CN": "金额依据必须先经过财务复核。",
+        "ru-RU": "Основание суммы требует финансовой проверки.",
+        "ky-KG": "Сумма негизи финансы текшерүүсүн талап кылат."
+      }
+    },
+    {
+      "copyId": "noGo.reason.ciGreenNotGo",
+      "copy": {
+        "zh-CN": "检查通过不代表可以投产。",
+        "ru-RU": "Успешные проверки не означают разрешение запуска.",
+        "ky-KG": "Текшерүүлөр өтсө да ишке киргизүү уруксат эмес."
+      }
+    }
+  ]
+}

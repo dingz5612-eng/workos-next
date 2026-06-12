@@ -43,7 +43,11 @@ export function workspaceView(ctx) {
   const workspaceCompleted = (item.cards || []).every((card) => isTerminalCardStatus(card.status));
   const viewingCompletedStep = isTerminalCardStatus(activeCard.status) && !workspaceCompleted;
   const currentActionResult = currentActionResultForOperationCard(ctx.state.lastActionResult, item, activeCard, ctx);
-  const actionState = buildOperationActionState({ workspace: item, workspaceId: item.id, cardId: activeCard.id }, activeCard, currentActionResult, { ...ctx.state, lastActionResult: currentActionResult });
+  const actionState = buildOperationActionState(
+    operationAdmissionContext(item, activeCard, ctx),
+    activeCard,
+    currentActionResult,
+    { ...ctx.state, lastActionResult: currentActionResult });
   const isCompleted = workspaceCompleted && isTerminalCardStatus(activeCard.status);
   if (isCompleted) {
     return ctx.shell(`
@@ -70,6 +74,18 @@ export function workspaceView(ctx) {
     </section>
     ${viewingCompletedStep || isCompleted ? "" : `<div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>`}
   `);
+}
+
+function operationAdmissionContext(workspace = {}, card = {}, ctx = {}) {
+  const workItem = (ctx.state.runtimeStore?.operationWorkItems || []).find((item) =>
+    item.workspaceId === workspace.id &&
+    (item.cardId === card.id || item.sourceCardId === card.id || item.workspaceCardId === card.id));
+  return {
+    ...(workItem || {}),
+    workspace,
+    workspaceId: workspace.id,
+    cardId: card.id
+  };
 }
 
 export function currentActionResultForOperationCard(result = null, item = {}, card = {}, ctx = {}) {

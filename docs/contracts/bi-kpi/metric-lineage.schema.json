@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.metric-operating-model.metric-lineage.schema.v1",
+  "title": "Metric Operating Model Lineage Envelope",
+  "type": "object",
+  "required": [
+    "policyId",
+    "sourceFacts",
+    "sourceVersion",
+    "factRefs",
+    "evidenceRefs",
+    "transformRefs",
+    "readModelVersion"
+  ],
+  "properties": {
+    "policyId": { "type": "string" },
+    "sourceFacts": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "sourceVersion": { "type": "string" },
+    "factRefs": { "type": "array", "items": { "type": "string" } },
+    "evidenceRefs": { "type": "array", "items": { "type": "string" } },
+    "transformRefs": { "type": "array", "items": { "type": "string" } },
+    "readModelVersion": { "type": "string" }
+  },
+  "additionalProperties": true
+}

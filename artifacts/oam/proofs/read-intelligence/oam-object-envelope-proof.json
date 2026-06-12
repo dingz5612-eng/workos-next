@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "workosnext.read-intelligence-proof.v1",
+  "proofId": "oam-object-envelope-proof",
+  "status": "passed",
+  "generatedBy": "scripts/oam/generate-current-evidence-root.mjs",
+  "singleWriter": "scripts/oam/generate-current-evidence-root.mjs",
+  "checker": "scripts/oam/check-read-intelligence-kernel.mjs",
+  "proves": [
+    "Read Intelligence only consumes generated read models and authorized read envelopes.",
+    "OamObjectEnvelope, SearchIndexRecord, SearchResultEnvelope, and LensReadModel carry permission, lineage, and freshness requirements.",
+    "Read Intelligence, Search, Lens, Dashboard, Report, and Metric surfaces are readonly and cannot write business facts.",
+    "operationsRuntimeFactInput is forbidden as direct Search input."
+  ],
+  "allowedInputs": [
+    "generatedReadModel",
+    "SearchIndexRecord",
+    "OamObjectEnvelope",
+    "LensReadModel",
+    "authorizedProjectionReadModel"
+  ],
+  "forbiddenInputs": [
+    "operationsRuntimeFactInput"
+  ],
+  "envelopeSchemas": [
+    {
+      "id": "workosnext.read.oam-object-envelope.schema.v1",
+      "required": [
+        "version",
+        "objectKind",
+        "objectId",
+        "runtimeOwner",
+        "permission",
+        "lineage",
+        "freshness",
+        "sourceRefs"
+      ]
+    },
+    {
+      "id": "workosnext.read.search-index-record.schema.v1",
+      "required": [
+        "version",
+        "indexRecordId",
+        "objectEnvelope",
+        "searchableText",
+        "language",
+        "permission",
+        "lineage",
+        "freshness"
+      ]
+    },
+    {
+      "id": "workosnext.read.search-result-envelope.schema.v1",
+      "required": [
+        "version",
+        "searchResultId",
+        "target",
+        "admission",
+        "permission",
+        "lineage",
+        "freshness",
+        "ranking",
+        "language"
+      ]
+    },
+    {
+      "id": "workosnext.read.lens-read-model.schema.v1",
+      "required": [
+        "version",
+        "lensId",
+        "sourceEnvelopes",
+        "permission",
+        "lineage",
+        "freshness",
+        "writeFactsAllowed"
+      ]
+    },
+    {
+      "id": "workosnext.read.permission-envelope.schema.v1",
+      "required": [
+        "visibility",
+        "redaction",
+        "dataClassification",
+        "requiredPermissions",
+        "checkedAt",
+        "policyVersion",
+        "decisionSource",
+        "actorScope"
+      ]
+    },
+    {
+      "id": "workosnext.read.lineage-envelope.schema.v1",
+      "required": [
+        "sourceSystem",
+        "sourceType",
+        "sourceId",
+        "sourceUpdatedAt",
+        "definitionVersion",
+        "sourceNodeRefs",
+        "sourceVersion",
+        "factRefs",
+        "evidenceRefs",
+        "transformRefs",
+        "outboxRefs",
+        "readModelVersion"
+      ]
+    },
+    {
+      "id": "workosnext.read.freshness-envelope.schema.v1",
+      "required": [
+        "indexedAt",
+        "indexLagMs",
+        "stale",
+        "maxStalenessMs",
+        "checkedAt",
+        "sourceUpdatedAt",
+        "computedAt",
+        "lastDisplayedAt",
+        "computeLagMs",
+        "staleReason",
+        "freshnessPolicyVersion"
+      ]
+    }
+  ],
+  "readModelCollectionsChecked": [
+    "metrics",
+    "dashboards",
+    "reportDatasets"
+  ],
+  "sourceRefs": [
+    "docs/read-intelligence/read-intelligence-kernel.json",
+    "docs/contracts/read/oam-object-envelope.schema.json",
+    "docs/contracts/read/permission-envelope.schema.json",
+    "docs/contracts/read/lineage-envelope.schema.json",
+    "docs/contracts/read/freshness-envelope.schema.json",
+    "docs/contracts/generated/dormitory/read-model.generated.json"
+  ],
+  "failures": [],
+  "checkedAtUtc": "2026-06-12T10:01:29.115Z"
+}

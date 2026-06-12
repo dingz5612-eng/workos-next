@@ -10,7 +10,7 @@
     "domainKernel": "docs/oam/kernel-schemas/domain-kernel.schema.json",
     "workItem": "docs/oam/kernel-schemas/workitem.schema.json"
   },
-  "nodeCount": 1271,
+  "nodeCount": 1292,
   "edgeCount": 1095,
   "nodes": [
     {
@@ -10523,6 +10523,37 @@
       ]
     },
     {
+      "nodeId": "file.docs/contracts/bi-kpi/dashboard-widget-contract.json",
+      "nodeType": "File",
+      "owner": "metric-operating-model-owner",
+      "sourceFile": "docs/contracts/bi-kpi/dashboard-widget-contract.json",
+      "runtimeBinding": "metric-operating-model",
+      "testBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.data-kpi",
+      "checker": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "evidence": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "replacementPath": "docs/contracts/bi-kpi/dashboard-widget-contract.json",
+      "absorbedBy": "docs/contracts/bi-kpi/dashboard-widget-contract.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.docs/contracts/bi-kpi/dimension-contract.json",
       "nodeType": "File",
       "owner": "authority-owner",
@@ -10616,6 +10647,161 @@
       ]
     },
     {
+      "nodeId": "file.docs/contracts/bi-kpi/metric-definition-registry.json",
+      "nodeType": "File",
+      "owner": "metric-operating-model-owner",
+      "sourceFile": "docs/contracts/bi-kpi/metric-definition-registry.json",
+      "runtimeBinding": "metric-operating-model",
+      "testBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.data-kpi",
+      "checker": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "evidence": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "replacementPath": "docs/contracts/bi-kpi/metric-definition-registry.json",
+      "absorbedBy": "docs/contracts/bi-kpi/metric-definition-registry.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/metric-dimension-registry.json",
+      "nodeType": "File",
+      "owner": "metric-operating-model-owner",
+      "sourceFile": "docs/contracts/bi-kpi/metric-dimension-registry.json",
+      "runtimeBinding": "metric-operating-model",
+      "testBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.data-kpi",
+      "checker": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "evidence": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "replacementPath": "docs/contracts/bi-kpi/metric-dimension-registry.json",
+      "absorbedBy": "docs/contracts/bi-kpi/metric-dimension-registry.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/metric-freshness-policy.json",
+      "nodeType": "File",
+      "owner": "metric-operating-model-owner",
+      "sourceFile": "docs/contracts/bi-kpi/metric-freshness-policy.json",
+      "runtimeBinding": "metric-operating-model",
+      "testBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.data-kpi",
+      "checker": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "evidence": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "replacementPath": "docs/contracts/bi-kpi/metric-freshness-policy.json",
+      "absorbedBy": "docs/contracts/bi-kpi/metric-freshness-policy.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/metric-lineage.schema.json",
+      "nodeType": "File",
+      "owner": "metric-operating-model-owner",
+      "sourceFile": "docs/contracts/bi-kpi/metric-lineage.schema.json",
+      "runtimeBinding": "metric-operating-model",
+      "testBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.data-kpi",
+      "checker": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "evidence": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "replacementPath": "docs/contracts/bi-kpi/metric-lineage.schema.json",
+      "absorbedBy": "docs/contracts/bi-kpi/metric-lineage.schema.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/metric-permission-policy.json",
+      "nodeType": "File",
+      "owner": "metric-operating-model-owner",
+      "sourceFile": "docs/contracts/bi-kpi/metric-permission-policy.json",
+      "runtimeBinding": "metric-operating-model",
+      "testBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.data-kpi",
+      "checker": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "evidence": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "replacementPath": "docs/contracts/bi-kpi/metric-permission-policy.json",
+      "absorbedBy": "docs/contracts/bi-kpi/metric-permission-policy.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.docs/contracts/bi-kpi/metric-registry.contract.json",
       "nodeType": "File",
       "owner": "authority-owner",
@@ -10643,6 +10829,37 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
         "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/object-kind-metric-map.json",
+      "nodeType": "File",
+      "owner": "metric-operating-model-owner",
+      "sourceFile": "docs/contracts/bi-kpi/object-kind-metric-map.json",
+      "runtimeBinding": "metric-operating-model",
+      "testBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.data-kpi",
+      "checker": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "evidence": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "replacementPath": "docs/contracts/bi-kpi/object-kind-metric-map.json",
+      "absorbedBy": "docs/contracts/bi-kpi/object-kind-metric-map.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
         "docs/oam/oam-kernel-graph.json"
       ]
     },
@@ -10709,6 +10926,37 @@
       ]
     },
     {
+      "nodeId": "file.docs/contracts/bi-kpi/report-dataset-contract.json",
+      "nodeType": "File",
+      "owner": "metric-operating-model-owner",
+      "sourceFile": "docs/contracts/bi-kpi/report-dataset-contract.json",
+      "runtimeBinding": "metric-operating-model",
+      "testBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.data-kpi",
+      "checker": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "evidence": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "replacementPath": "docs/contracts/bi-kpi/report-dataset-contract.json",
+      "absorbedBy": "docs/contracts/bi-kpi/report-dataset-contract.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.docs/contracts/bi-kpi/sla-clock-contract.json",
       "nodeType": "File",
       "owner": "authority-owner",
@@ -10736,6 +10984,37 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
         "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/sla-clock-registry.json",
+      "nodeType": "File",
+      "owner": "metric-operating-model-owner",
+      "sourceFile": "docs/contracts/bi-kpi/sla-clock-registry.json",
+      "runtimeBinding": "metric-operating-model",
+      "testBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.data-kpi",
+      "checker": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "evidence": "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "replacementPath": "docs/contracts/bi-kpi/sla-clock-registry.json",
+      "absorbedBy": "docs/contracts/bi-kpi/sla-clock-registry.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
         "docs/oam/oam-kernel-graph.json"
       ]
     },
@@ -11496,6 +11775,37 @@
       ]
     },
     {
+      "nodeId": "file.docs/contracts/language/alias-registry.json",
+      "nodeType": "File",
+      "owner": "language-kernel-owner",
+      "sourceFile": "docs/contracts/language/alias-registry.json",
+      "runtimeBinding": "information-language-kernel",
+      "testBinding": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-language-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.language",
+      "checker": "scripts/check-language-kernel.mjs",
+      "evidence": "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+      "replacementPath": "docs/contracts/language/alias-registry.json",
+      "absorbedBy": "docs/contracts/language/alias-registry.json",
+      "removalProofGate": "scripts/check-language-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.docs/contracts/language/domain-term-catalog.json",
       "nodeType": "File",
       "owner": "authority-owner",
@@ -11589,6 +11899,68 @@
       ]
     },
     {
+      "nodeId": "file.docs/contracts/language/glossary.json",
+      "nodeType": "File",
+      "owner": "language-kernel-owner",
+      "sourceFile": "docs/contracts/language/glossary.json",
+      "runtimeBinding": "information-language-kernel",
+      "testBinding": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-language-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.language",
+      "checker": "scripts/check-language-kernel.mjs",
+      "evidence": "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+      "replacementPath": "docs/contracts/language/glossary.json",
+      "absorbedBy": "docs/contracts/language/glossary.json",
+      "removalProofGate": "scripts/check-language-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/language/internal-term-firewall.json",
+      "nodeType": "File",
+      "owner": "language-kernel-owner",
+      "sourceFile": "docs/contracts/language/internal-term-firewall.json",
+      "runtimeBinding": "information-language-kernel",
+      "testBinding": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-language-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.language",
+      "checker": "scripts/check-language-kernel.mjs",
+      "evidence": "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+      "replacementPath": "docs/contracts/language/internal-term-firewall.json",
+      "absorbedBy": "docs/contracts/language/internal-term-firewall.json",
+      "removalProofGate": "scripts/check-language-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.docs/contracts/language/language-contract.json",
       "nodeType": "File",
       "owner": "authority-owner",
@@ -11612,6 +11984,37 @@
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "replacementPath": "docs/contracts/language/language-contract.json",
       "absorbedBy": "docs/contracts/language/language-contract.json",
+      "removalProofGate": "scripts/check-language-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/language/multilingual-copy-catalog.json",
+      "nodeType": "File",
+      "owner": "language-kernel-owner",
+      "sourceFile": "docs/contracts/language/multilingual-copy-catalog.json",
+      "runtimeBinding": "information-language-kernel",
+      "testBinding": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-language-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.language",
+      "checker": "scripts/check-language-kernel.mjs",
+      "evidence": "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+      "replacementPath": "docs/contracts/language/multilingual-copy-catalog.json",
+      "absorbedBy": "docs/contracts/language/multilingual-copy-catalog.json",
       "removalProofGate": "scripts/check-language-kernel.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
@@ -11682,6 +12085,37 @@
       ]
     },
     {
+      "nodeId": "file.docs/contracts/language/search-intent-dictionary.json",
+      "nodeType": "File",
+      "owner": "language-kernel-owner",
+      "sourceFile": "docs/contracts/language/search-intent-dictionary.json",
+      "runtimeBinding": "information-language-kernel",
+      "testBinding": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-language-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.language",
+      "checker": "scripts/check-language-kernel.mjs",
+      "evidence": "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+      "replacementPath": "docs/contracts/language/search-intent-dictionary.json",
+      "absorbedBy": "docs/contracts/language/search-intent-dictionary.json",
+      "removalProofGate": "scripts/check-language-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.docs/contracts/language/search-synonyms.json",
       "nodeType": "File",
       "owner": "projection-search-lens-owner",
@@ -11736,6 +12170,37 @@
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "replacementPath": "docs/contracts/language/surface-copy-catalog.json",
       "absorbedBy": "docs/contracts/language/surface-copy-catalog.json",
+      "removalProofGate": "scripts/check-language-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/language/tokenizer-dictionary.json",
+      "nodeType": "File",
+      "owner": "language-kernel-owner",
+      "sourceFile": "docs/contracts/language/tokenizer-dictionary.json",
+      "runtimeBinding": "information-language-kernel",
+      "testBinding": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-language-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.language",
+      "checker": "scripts/check-language-kernel.mjs",
+      "evidence": "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+      "replacementPath": "docs/contracts/language/tokenizer-dictionary.json",
+      "absorbedBy": "docs/contracts/language/tokenizer-dictionary.json",
       "removalProofGate": "scripts/check-language-kernel.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
@@ -13784,6 +14249,38 @@
       "consumers": [
         "scripts/check-local-path-references.mjs",
         "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_evidence",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
+      "replacementPath": "docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
+      "absorbedBy": "docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
+      "removalProofGate": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
     {
@@ -19590,6 +20087,37 @@
       ]
     },
     {
+      "runtimeBinding": "control-plane-gate",
+      "testBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/control-plane-gate-results.json",
+      "deletionCondition": "当且仅当内容已被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "nodeId": "file.scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "currentTruthAllowed": false,
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "evidence": "artifacts/oam/checks/control-plane-gate-results.json",
+      "replacementPath": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "absorbedBy": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当且仅当内容已被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-business-object-field-registry.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -19685,6 +20213,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-current-architecture-manifest.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-current-architecture-manifest.mjs",
+      "runtimeBinding": "control-plane-gate",
+      "testBinding": [
+        "scripts/oam/check-current-architecture-manifest.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-current-architecture-manifest.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/control-plane-gate-results.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-current-architecture-manifest.mjs",
+      "evidence": "artifacts/oam/checks/control-plane-gate-results.json",
+      "replacementPath": "scripts/oam/check-current-architecture-manifest.mjs",
+      "absorbedBy": "scripts/oam/check-current-architecture-manifest.mjs",
+      "removalProofGate": "scripts/oam/check-current-architecture-manifest.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-current-architecture-manifest.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-current-authority-index.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -19775,6 +20334,40 @@
       "consumers": [
         "scripts/oam/check-current-evidence-root.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-current-oam-release-attestation.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-current-oam-release-attestation.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-current-oam-release-attestation.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-current-oam-release-attestation.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/current-oam-release-attestation-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 release attestation gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-current-oam-release-attestation.mjs",
+      "evidence": "artifacts/oam/checks/current-oam-release-attestation-result.json",
+      "replacementPath": "scripts/oam/check-current-oam-release-attestation.mjs",
+      "absorbedBy": "scripts/oam/check-current-oam-release-attestation.mjs",
+      "removalProofGate": "scripts/oam/check-current-oam-release-attestation.mjs",
+      "deletionConditionZh": "当 release attestation gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-current-oam-release-attestation.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml",
+        "tests/WorkOS.ReleaseEvidenceTests/OamReleaseControlTests.cs"
       ]
     },
     {
@@ -19930,6 +20523,39 @@
       "consumers": [
         "scripts/oam/check-derived-contract-consistency.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
+      "replacementPath": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
       ]
     },
     {
@@ -27342,6 +27968,37 @@
       ]
     },
     {
+      "nodeId": "file.tests/fixtures/oam-finance-truth/negative/business-domain-direct-amount-basis.yml",
+      "nodeType": "File",
+      "owner": "finance-ledger-owner",
+      "sourceFile": "tests/fixtures/oam-finance-truth/negative/business-domain-direct-amount-basis.yml",
+      "runtimeBinding": "finance-negative-fixture",
+      "testBinding": [
+        "scripts/check-finance-truth.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-finance-truth.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/finance-truth-report.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.finance-ledger",
+      "checker": "scripts/check-finance-truth.mjs",
+      "evidence": "artifacts/oam/checks/finance-truth-report.json",
+      "replacementPath": "tests/fixtures/oam-finance-truth/negative/business-domain-direct-amount-basis.yml",
+      "absorbedBy": "tests/fixtures/oam-finance-truth/negative/business-domain-direct-amount-basis.yml",
+      "removalProofGate": "scripts/check-finance-truth.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-finance-truth.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.tests/fixtures/oam-finance-truth/negative/business-domain-direct-ledger-entry.yml",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -27370,6 +28027,37 @@
       "consumers": [
         "scripts/check-runtime-write-paths.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.tests/fixtures/oam-finance-truth/negative/dashboard-infers-amount-basis.yml",
+      "nodeType": "File",
+      "owner": "finance-ledger-owner",
+      "sourceFile": "tests/fixtures/oam-finance-truth/negative/dashboard-infers-amount-basis.yml",
+      "runtimeBinding": "finance-negative-fixture",
+      "testBinding": [
+        "scripts/check-finance-truth.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-finance-truth.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/finance-truth-report.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.finance-ledger",
+      "checker": "scripts/check-finance-truth.mjs",
+      "evidence": "artifacts/oam/checks/finance-truth-report.json",
+      "replacementPath": "tests/fixtures/oam-finance-truth/negative/dashboard-infers-amount-basis.yml",
+      "absorbedBy": "tests/fixtures/oam-finance-truth/negative/dashboard-infers-amount-basis.yml",
+      "removalProofGate": "scripts/check-finance-truth.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-finance-truth.mjs",
+        "docs/oam/oam-kernel-graph.json"
       ]
     },
     {
@@ -27404,6 +28092,37 @@
       ]
     },
     {
+      "nodeId": "file.tests/fixtures/oam-finance-truth/negative/metric-infers-amount-basis.yml",
+      "nodeType": "File",
+      "owner": "finance-ledger-owner",
+      "sourceFile": "tests/fixtures/oam-finance-truth/negative/metric-infers-amount-basis.yml",
+      "runtimeBinding": "finance-negative-fixture",
+      "testBinding": [
+        "scripts/check-finance-truth.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-finance-truth.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/finance-truth-report.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.finance-ledger",
+      "checker": "scripts/check-finance-truth.mjs",
+      "evidence": "artifacts/oam/checks/finance-truth-report.json",
+      "replacementPath": "tests/fixtures/oam-finance-truth/negative/metric-infers-amount-basis.yml",
+      "absorbedBy": "tests/fixtures/oam-finance-truth/negative/metric-infers-amount-basis.yml",
+      "removalProofGate": "scripts/check-finance-truth.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-finance-truth.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.tests/fixtures/oam-finance-truth/negative/refund-over-liability.yml",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -27432,6 +28151,37 @@
       "consumers": [
         "scripts/check-runtime-write-paths.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.tests/fixtures/oam-finance-truth/negative/search-infers-amount-basis.yml",
+      "nodeType": "File",
+      "owner": "finance-ledger-owner",
+      "sourceFile": "tests/fixtures/oam-finance-truth/negative/search-infers-amount-basis.yml",
+      "runtimeBinding": "finance-negative-fixture",
+      "testBinding": [
+        "scripts/check-finance-truth.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-finance-truth.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/finance-truth-report.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.finance-ledger",
+      "checker": "scripts/check-finance-truth.mjs",
+      "evidence": "artifacts/oam/checks/finance-truth-report.json",
+      "replacementPath": "tests/fixtures/oam-finance-truth/negative/search-infers-amount-basis.yml",
+      "absorbedBy": "tests/fixtures/oam-finance-truth/negative/search-infers-amount-basis.yml",
+      "removalProofGate": "scripts/check-finance-truth.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-finance-truth.mjs",
+        "docs/oam/oam-kernel-graph.json"
       ]
     },
     {

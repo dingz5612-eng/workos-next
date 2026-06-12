@@ -80,6 +80,11 @@ const kernel = readJson(kernelPath);
 const domainKernel = readJson(domainKernelPath);
 const graph = readJson(graphPath);
 const graphNodeIds = new Set((graph.nodes ?? []).map((node) => node.nodeId));
+const sourceAuthorityNodeRefs = new Map([
+  [kernelPath, "kernel.system"],
+  [domainKernelPath, "domain.dormitory"],
+  [graphPath, "graph.oam"]
+]);
 const allTargets = new Map();
 
 for (const spec of manifestSpecs) {
@@ -118,6 +123,10 @@ function checkManifest(spec, manifest) {
   if (JSON.stringify(manifest.generatedFrom) !== JSON.stringify(spec.requiredSources)) {
     fail("generated_manifest_sources_invalid", `${spec.path} generatedFrom 必须是 ${spec.requiredSources.join(", ")}。`);
   }
+  const expectedSourceRefs = sourceRefsFor(spec.requiredSources);
+  if (JSON.stringify(manifest.sourceRefs) !== JSON.stringify(expectedSourceRefs)) {
+    fail("generated_manifest_source_refs_invalid", `${spec.path} sourceRefs 必须语义绑定 ${expectedSourceRefs.join(", ")}。`);
+  }
   if (manifest.kernelGraphHash !== hashFile(graphPath)) {
     fail("generated_manifest_graph_hash_invalid", `${spec.path} kernelGraphHash 与当前 OAM 图谱不一致。`);
   }
@@ -144,6 +153,38 @@ function checkManifest(spec, manifest) {
     requirePath(target, `派生目标 ${target}`);
     requirePath(item.generatedBy, `派生生成器 ${item.generatedBy}`);
     requirePath(item.checker, `派生检查器 ${item.checker}`);
+    for (const field of ["generated", "doNotEdit", "generatorVersion", "generatedFrom", "sourceRefs", "sourceNodeRefs", "sourceContentDigest", "kernelGraphHash", "compilerInputDigest"]) {
+      const value = item[field];
+      if (value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0)) {
+        fail("derived_item_generated_metadata_missing", `${target} 缺少 generated target metadata：${field}。`);
+      }
+    }
+    if (item.generated !== true || item.doNotEdit !== true) {
+      fail("derived_item_generated_flags_invalid", `${target} 必须 generated=true 且 doNotEdit=true。`);
+    }
+    if (item.generatorVersion !== manifest.generatorVersion) {
+      fail("derived_item_generator_version_mismatch", `${target} generatorVersion 必须匹配 manifest。`);
+    }
+    if (JSON.stringify(item.generatedFrom) !== JSON.stringify(spec.requiredSources)) {
+      fail("derived_item_generated_from_invalid", `${target} generatedFrom 必须是 ${spec.requiredSources.join(", ")}。`);
+    }
+    if (JSON.stringify(item.sourceRefs) !== JSON.stringify(expectedSourceRefs)) {
+      fail("derived_item_source_refs_invalid", `${target} sourceRefs 必须语义绑定 ${expectedSourceRefs.join(", ")}。`);
+    }
+    if (JSON.stringify(item.sourceNodeRefs) !== JSON.stringify(expectedSourceRefs)) {
+      fail("derived_source_node_refs_invalid", `${target} sourceNodeRefs 必须语义绑定 ${expectedSourceRefs.join(", ")}。`);
+    }
+    for (const nodeRef of item.sourceNodeRefs ?? []) {
+      if (!graphNodeIds.has(nodeRef)) {
+        fail("derived_source_node_ref_missing", `${target} sourceNodeRef 不存在于 OAM 图谱：${nodeRef}。`);
+      }
+    }
+    if ((spec.requiredSources ?? []).includes(domainKernelPath) && (item.sourceNodeRefs ?? []).some((nodeRef) => /^workitem\.Finance\./.test(nodeRef))) {
+      fail("derived_source_node_ref_semantic_mismatch", `${target} 宿舍域 Source 不得绑定 finance workItem：${item.sourceNodeRefs.join(", ")}。`);
+    }
+    if (item.kernelGraphHash !== hashFile(graphPath)) {
+      fail("derived_item_kernel_graph_hash_invalid", `${target} kernelGraphHash 与当前 OAM 图谱不一致。`);
+    }
     if (item.manifestKind !== spec.kind) {
       fail("derived_item_manifest_kind_invalid", `${target} manifestKind 必须是 ${spec.kind}。`);
     }
@@ -159,8 +200,12 @@ function checkManifest(spec, manifest) {
     if (item.sourceKernelVersion !== expectedItemKernelVersion(spec, target)) {
       fail("derived_item_kernel_version_mismatch", `${target} sourceKernelVersion 不一致。`);
     }
+    const expectedTargetBinding = targetGraphBindingFor(target);
     if (!item.graphBinding || !graphNodeIds.has(item.graphBinding)) {
       fail("derived_graph_binding_missing", `${target} graphBinding 不存在：${item.graphBinding}`);
+    }
+    if (item.graphBinding !== expectedTargetBinding) {
+      fail("derived_graph_binding_semantic_mismatch", `${target} graphBinding 必须绑定生成目标文件节点 ${expectedTargetBinding}，实际 ${item.graphBinding}。`);
     }
     if (!item.sourceHashes || Object.keys(item.sourceHashes).length !== spec.requiredSources.length) {
       fail("derived_source_hashes_missing", `${target} 必须记录每个输入 Source hash。`);
@@ -186,6 +231,24 @@ function dormitoryWorkItemTargets() {
     .filter((file) => file.endsWith(".json"))
     .map((file) => `docs/business/domains/dormitory/workitems/${file}`)
     .sort();
+}
+
+function sourceRefsFor(files) {
+  return files.map((file) => {
+    const nodeRef = sourceAuthorityNodeRefs.get(file);
+    if (!nodeRef) return targetGraphBindingFor(file);
+    if (!graphNodeIds.has(nodeRef)) {
+      fail("source_authority_node_ref_missing", `${file} 的权威 source nodeRef 不存在于 OAM 图谱：${nodeRef}。`);
+    }
+    return nodeRef;
+  });
+}
+
+function targetGraphBindingFor(file) {
+  const fileNodeRef = `file.${file}`;
+  if (graphNodeIds.has(fileNodeRef)) return fileNodeRef;
+  const node = (graph.nodes ?? []).find((item) => item.sourceFile === file);
+  return node?.nodeId ?? fileNodeRef;
 }
 
 function readJson(file) {

@@ -31,7 +31,7 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
         {
             using var bootstrap = connection.CreateCommand();
             bootstrap.CommandText = """
-                create table if not exists schema_migrations (
+                create table if not exists public.schema_migrations (
                     migration_id text primary key,
                     applied_at_utc timestamptz not null
                 );
@@ -42,7 +42,7 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
             {
                 var migrationId = Path.GetFileNameWithoutExtension(file);
                 using var exists = connection.CreateCommand();
-                exists.CommandText = "select 1 from schema_migrations where migration_id = @migrationId";
+                exists.CommandText = "select 1 from public.schema_migrations where migration_id = @migrationId";
                 exists.Parameters.AddWithValue("migrationId", migrationId);
                 if (exists.ExecuteScalar() is not null)
                 {
@@ -57,7 +57,7 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
 
                 using var insert = connection.CreateCommand();
                 insert.Transaction = transaction;
-                insert.CommandText = "insert into schema_migrations(migration_id, applied_at_utc) values (@migrationId, @appliedAtUtc)";
+                insert.CommandText = "insert into public.schema_migrations(migration_id, applied_at_utc) values (@migrationId, @appliedAtUtc)";
                 insert.Parameters.AddWithValue("migrationId", migrationId);
                 insert.Parameters.AddWithValue("appliedAtUtc", DateTimeOffset.UtcNow);
                 insert.ExecuteNonQuery();

@@ -1,0 +1,14 @@
+{
+  "version": "oam.report-dataset-permission-lineage-freshness-proof.v1",
+  "status": "passed",
+  "checkedAtUtc": "2026-06-12T10:24:18.246Z",
+  "proves": [
+    "Every ReportDataset has sourceFacts, metricRefs, permissionEnvelope, lineageEnvelope, freshnessEnvelope, exportPolicy, and noBusinessFactWrite=true.",
+    "ReportDataset exports are read-only evidence and cannot write business facts."
+  ],
+  "datasetIds": [
+    "report.dormitory.generatedP0Contracts.dataset.v1",
+    "report.finance.readonlyLedger.dataset.v1"
+  ],
+  "violations": []
+}

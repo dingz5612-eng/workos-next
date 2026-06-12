@@ -11,12 +11,28 @@ const currentState = readJson("docs/oam/current-admission-state.json");
 const registry = readJson("docs/business/business-line-registry.json");
 const surfacePolicy = readJson("docs/contracts/runtime-surface-policy.json");
 const actorDevice = readJson("docs/contracts/admission/actor-device-admission-contract.json");
+const admissionPolicy = readJson("docs/business/policies/admission-policy.yml");
+const generatedManifest = readJson("docs/oam/generated-contracts-manifest.json");
+const definitionRegistryContract = readJson("docs/contracts/definition/workitem-definition-registry.json");
 
 if (selfTest) {
   const badState = { ...currentState, businessProduction: "OPEN" };
   const badFailures = runChecks({ currentState: badState });
   if (!badFailures.some((item) => item.includes("businessProduction"))) {
     throw new Error("Admission Kernel self-test did not detect opened production state.");
+  }
+  const badContract = structuredClone(contract);
+  badContract.missingAdmissionBehavior = { ...badContract.missingAdmissionBehavior, confirmAllowed: true };
+  const badContractFailures = runChecks({ currentState, contract: badContract });
+  if (!badContractFailures.some((item) => item.includes("missingAdmissionBehavior.confirmAllowed"))) {
+    throw new Error("Admission Kernel self-test did not detect missing admission confirmAllowed=true.");
+  }
+  const badStartMapSource = read("services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs")
+    .replace('["W-DORM-MAINLINE:cert.roomSetupConfirm"] = "definition.dormitory.roomSetupConfirm.v1"', '["W-DORM-MAINLINE:cert.roomSetupConfirm"] = "definition.dormitory.missing.v1"');
+  const badStartMapFailures = [];
+  validateStartAdapterMaps(badStartMapSource, definitionRegistryContract, badStartMapFailures);
+  if (!badStartMapFailures.some((item) => item.includes("StartAdapterDefinitionIds"))) {
+    throw new Error("Admission Kernel self-test did not detect StartAdapterDefinitionIds registry mismatch.");
   }
   console.log("Admission Kernel self-test: PASS");
 }
@@ -31,19 +47,56 @@ console.log("Admission Kernel check: PASS");
 
 function runChecks(context) {
   const failures = [];
-  checkContract(failures);
+  checkContract(context.contract ?? contract, failures);
   checkSources(failures);
+  checkSourcePolicy(failures);
   checkCurrentState(context.currentState, failures);
   checkMatrix(context.currentState, failures);
   checkBusinessLineAlignment(failures);
   checkHighRiskSurfaceReasons(failures);
   checkHighRiskTrustClosure(failures);
   checkRuntimeImplementation(failures);
+  checkMissingAdmissionFallbackImplementation(failures);
   return failures;
 }
 
-function checkContract(failures) {
-  if (contract.version !== "oam.admission-contract.v1") failures.push("admission-contract version mismatch.");
+function checkContract(document, failures) {
+  if (document.version !== "oam.admission-contract.v1") failures.push("admission-contract version mismatch.");
+  for (const [field, expected] of Object.entries({
+    generated: true,
+    doNotEdit: true,
+    architecture: "oam.current",
+    manualEditAllowed: false,
+    deterministicSort: true
+  })) {
+    if (document[field] !== expected) failures.push(`admission-contract ${field} must be ${expected}.`);
+  }
+  for (const field of ["kernelGraphHash", "sourceNodeRefs", "generatorVersion", "generatedFrom", "sourceRefs", "sourceContentDigest"]) {
+    const value = document[field];
+    if (!value || (Array.isArray(value) && value.length === 0)) failures.push(`admission-contract generated metadata missing ${field}.`);
+  }
+  for (const ref of ["kernel.system", "domain.dormitory", "graph.oam"]) {
+    if (!(document.sourceNodeRefs || []).includes(ref)) failures.push(`admission-contract sourceNodeRefs missing ${ref}.`);
+  }
+  const manifestEntry = (generatedManifest.contracts || []).find((item) => item.targetPath === "docs/contracts/admission/admission-contract.json");
+  if (!manifestEntry) failures.push("generated-contracts-manifest missing admission-contract entry.");
+  if (manifestEntry && JSON.stringify(manifestEntry.sourceNodeRefs || []) !== JSON.stringify(document.sourceNodeRefs || [])) {
+    failures.push("admission-contract sourceNodeRefs must match generated-contracts-manifest.");
+  }
+  const missingBehavior = document.missingAdmissionBehavior || {};
+  for (const [field, expected] of Object.entries({
+    visibleAllowed: true,
+    prepareAllowed: false,
+    confirmAllowed: false,
+    productionAllowed: false,
+    mode: "contract_preview",
+    reason: "missing_admission_contract"
+  })) {
+    if (missingBehavior[field] !== expected) failures.push(`admission-contract missingAdmissionBehavior.${field} must be ${expected}.`);
+  }
+  if (!(missingBehavior.noGoItems || []).includes("missing_admission_contract")) {
+    failures.push("admission-contract missingAdmissionBehavior.noGoItems must include missing_admission_contract.");
+  }
   for (const field of [
     "visibleAllowed",
     "prepareAllowed",
@@ -59,7 +112,7 @@ function checkContract(failures) {
     "surfaceState",
     "noGoItems"
   ]) {
-    if (!contract.outputFields?.[field]) failures.push(`admission-contract missing output field: ${field}`);
+    if (!document.outputFields?.[field]) failures.push(`admission-contract missing output field: ${field}`);
   }
 }
 
@@ -78,6 +131,24 @@ function checkSources(failures) {
     "workItemDefinition"
   ]) {
     if (!ids.has(id)) failures.push(`admission-sources missing source: ${id}`);
+  }
+}
+
+function checkSourcePolicy(failures) {
+  if (admissionPolicy.policyId !== "business.admission-policy") failures.push("admission source policy id mismatch.");
+  const behavior = admissionPolicy.rules?.missingAdmissionBehavior || {};
+  for (const [field, expected] of Object.entries({
+    visibleAllowed: true,
+    prepareAllowed: false,
+    confirmAllowed: false,
+    productionAllowed: false,
+    mode: "contract_preview",
+    reason: "missing_admission_contract"
+  })) {
+    if (behavior[field] !== expected) failures.push(`admission source policy missingAdmissionBehavior.${field} must be ${expected}.`);
+    if (contract.missingAdmissionBehavior?.[field] !== behavior[field]) {
+      failures.push(`generated admission-contract missingAdmissionBehavior.${field} must match Source policy.`);
+    }
   }
 }
 
@@ -242,6 +313,13 @@ function checkRuntimeImplementation(failures) {
   ]) {
     if (!admissionSource.includes(term)) failures.push(`AdmissionKernelService.cs missing ${term}.`);
   }
+  for (const term of [
+    "MissingAdmissionPolicy",
+    "MissingAdmissionContract",
+    "missing_admission_contract"
+  ]) {
+    if (!admissionSource.includes(term)) failures.push(`AdmissionKernelService.cs missing missing admission runtime guard: ${term}.`);
+  }
   if (admissionSource.includes("BlockProductionOnly")) {
     failures.push("AdmissionKernelService must not allow unresolved definition confirm through BlockProductionOnly.");
   }
@@ -253,6 +331,35 @@ function checkRuntimeImplementation(failures) {
   }
   if (!admissionSource.includes("docs/oam/current-admission-state.json")) {
     failures.push("AdmissionKernelService must cite the current OAM admission state.");
+  }
+
+  const operationsRuntime = read("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs");
+  const createRequest = recordBody(operationsRuntime, "CreateWorkItemRequest");
+  if (!createRequest) {
+    failures.push("OperationsRuntimeService.cs must define CreateWorkItemRequest.");
+  }
+  for (const forbidden of ["Admission", "AdmissionDecisionRef"]) {
+    if (createRequest.includes(forbidden)) {
+      failures.push(`CreateWorkItemRequest must not accept client-supplied ${forbidden}.`);
+    }
+  }
+  if (operationsRuntime.includes("request.Admission") || operationsRuntime.includes("request.AdmissionDecisionRef")) {
+    failures.push("OperationsRuntimeService.CreateWorkItem must not persist client-supplied admission.");
+  }
+  const confirmRequest = recordBody(operationsRuntime, "ConfirmWorkItemRequest");
+  if (!confirmRequest) {
+    failures.push("OperationsRuntimeService.cs must define ConfirmWorkItemRequest.");
+  }
+  for (const forbidden of ["Admission", "AdmissionDecisionRef", "ConfirmAllowed", "ProductionAllowed", "Capability", "PolicyRef", "TrustedDevice", "DeviceTrustStatus", "Surface"]) {
+    if (confirmRequest.includes(forbidden)) {
+      failures.push(`ConfirmWorkItemRequest must not accept client-supplied ${forbidden}.`);
+    }
+  }
+  const operationsEndpoints = read("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs");
+  for (const forbidden of ["request.Surface", "request.DeviceTrustStatus", "request.TrustedDevice"]) {
+    if (operationsEndpoints.includes(forbidden)) {
+      failures.push(`OperationsRuntimeEndpoints.cs must not use client-supplied trust/admission field ${forbidden}.`);
+    }
   }
 
   const canonical = read("services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs");
@@ -305,6 +412,34 @@ function checkRuntimeImplementation(failures) {
   if (canonical.includes("VerifiedDeviceTrustContext.FromRequest")) {
     failures.push("CanonicalOperationsApiService.cs must not trust request.DeviceTrustStatus for VerifiedDeviceTrustContext.");
   }
+  if (!canonical.includes("definitions.ResolveStartAdapter") || canonical.includes("GeneratedP0StartDefinitionId")) {
+    failures.push("CanonicalOperationsApiService must use the server-side Start Adapter Map instead of hard-coded P0 start fallback.");
+  }
+
+  const definitionRegistry = read("services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs");
+  if (/public\s+string\?\s+SourceCardId/.test(definitionRegistry) || /SourceCardId\s*\?\?/.test(definitionRegistry)) {
+    failures.push("WorkItemDefinitionRegistryService must not promote top-level sourceCardId into definition resolution.");
+  }
+  if (!definitionRegistry.includes("StartAdapterDefinitionIds") || !definitionRegistry.includes("ResolveStartAdapter")) {
+    failures.push("WorkItemDefinitionRegistryService must expose a server-side Start Adapter Map for Search/Start admission.");
+  }
+  const startAdapterResolver = methodBody(definitionRegistry, "ResolveStartAdapter");
+  if (startAdapterResolver.includes("ResolveByWorkspaceCard") || startAdapterResolver.includes("FindBySourceCardId")) {
+    failures.push("ResolveStartAdapter must not fallback to nonCurrent workspace/card or sourceCardId definition resolution.");
+  }
+  if (!startAdapterResolver.includes("start_adapter_not_registered")) {
+    failures.push("ResolveStartAdapter must hard-unresolve unmapped workspace/card inputs as start_adapter_not_registered.");
+  }
+  validateStartAdapterMaps(definitionRegistry, definitionRegistryContract, failures);
+  for (const definition of definitionRegistryContract.definitions || []) {
+    if ("sourceCardId" in definition) {
+      failures.push(`${definition.definitionId} must preserve sourceCardId only as read-only migrationRefs.`);
+    }
+  }
+  const migrationSourceCard = propertyBody(definitionRegistry, "MigrationSourceCardId");
+  if (!migrationSourceCard.includes("MigrationRefs?.FirstOrDefault")) {
+    failures.push("MigrationSourceCardId must be derived only from read-only migrationRefs.");
+  }
 
   const correctionModels = read("services/core-api/WorkOS.Api/Runtime/CorrectionCenterModels.cs");
   for (const term of ["EvidenceRefs", "AdmissionDecisionRef", "DeviceTrustStatus", "Surface"]) {
@@ -327,6 +462,9 @@ function checkRuntimeImplementation(failures) {
   if (!searchKernel.includes("admission.EvaluateSearch")) {
     failures.push("SearchKernelService must label search results through Admission Kernel.");
   }
+  if (!searchKernel.includes("definitions.ResolveStartAdapter")) {
+    failures.push("SearchKernelService must resolve active command admission through the server-side Start Adapter Map.");
+  }
 
   const releasePolicy = read("services/core-api/WorkOS.Api/Runtime/ReleaseAdmissionPolicy.cs");
   for (const term of [
@@ -346,6 +484,98 @@ function checkRuntimeImplementation(failures) {
   }
 }
 
+function validateStartAdapterMaps(registrySource, registryContract, failures) {
+  const startMap = parseCSharpStringMap(registrySource, "StartAdapterDefinitionIds");
+  const routeMap = parseCSharpStringMap(registrySource, "StartUiRouteDefinitionKeys");
+  if (startMap.size === 0) {
+    failures.push("StartAdapterDefinitionIds must not be empty.");
+  }
+  const definitionsById = new Map((registryContract.definitions || []).map((item) => [item.definitionId, item]));
+  for (const [key, definitionId] of startMap.entries()) {
+    const [workspaceId, cardId] = splitStartAdapterKey(key);
+    const definition = definitionsById.get(definitionId);
+    if (!definition) {
+      failures.push(`StartAdapterDefinitionIds ${key} references missing definition ${definitionId}.`);
+      continue;
+    }
+    if (definition.definitionMode !== "oam-certification-current") {
+      failures.push(`StartAdapterDefinitionIds ${key} must reference oam-certification-current definition, actual ${definition.definitionMode}.`);
+    }
+    if (definition.workspaceId !== workspaceId) {
+      failures.push(`StartAdapterDefinitionIds ${key} workspaceId must match registry ${definition.workspaceId}.`);
+    }
+    const migrationRef = (definition.migrationRefs || []).find((item) => item.type === "sourceCardId");
+    if (!migrationRef || migrationRef.value !== cardId) {
+      failures.push(`StartAdapterDefinitionIds ${key} sourceCardId must match registry migrationRefs.sourceCardId.`);
+      continue;
+    }
+    for (const [field, expected] of [
+      ["readOnly", true],
+      ["executable", false],
+      ["affectsAdmission", false],
+      ["affectsRuntimeConfirm", false],
+      ["affectsBusinessIdentity", false],
+      ["affectsLedger", false]
+    ]) {
+      if (migrationRef[field] !== expected) {
+        failures.push(`StartAdapterDefinitionIds ${key} migrationRef.${field} must be ${expected}.`);
+      }
+    }
+  }
+  if (routeMap.size === 0) {
+    failures.push("StartUiRouteDefinitionKeys must bind UI route inputs to current registry keys.");
+  }
+  for (const [routeKey, currentKey] of routeMap.entries()) {
+    if (String(currentKey).startsWith("definition.")) {
+      failures.push(`StartUiRouteDefinitionKeys ${routeKey} must point to a current registry key, not a definitionId.`);
+    }
+    if (!startMap.has(currentKey)) {
+      failures.push(`StartUiRouteDefinitionKeys ${routeKey} points to unknown StartAdapterDefinitionIds key ${currentKey}.`);
+    }
+  }
+}
+
+function checkMissingAdmissionFallbackImplementation(failures) {
+  const surface = read("apps/mobile/src/admissionSurface.js");
+  const search = read("apps/mobile/src/searchIntentHub.js");
+  const searchView = read("apps/mobile/src/views/searchView.js");
+  if (surface.includes("prepareAllowed: value.prepareAllowed !== false")) {
+    failures.push("normalizeAdmissionState must not default missing prepareAllowed to true.");
+  }
+  if (!/function\s+missingAdmissionState[\s\S]*prepareAllowed:\s*false[\s\S]*confirmAllowed:\s*false[\s\S]*productionAllowed:\s*false[\s\S]*missing_admission_contract/.test(surface)) {
+    failures.push("admissionSurface.js must define missingAdmissionState with prepare/confirm/production all false.");
+  }
+  if (!/if\s*\(!hasExplicitAdmission\)\s*return\s+missingAdmissionState/.test(surface)) {
+    failures.push("admissionStateFromWorkItem must use missingAdmissionState when no explicit admission is present.");
+  }
+  if (!search.includes("missingAdmissionState") || /prepareAllowed:\s*true[\s\S]{0,160}confirmAllowed:\s*true/.test(search)) {
+    failures.push("searchIntentHub.js missing admission fallback must not infer prepareAllowed/confirmAllowed.");
+  }
+  if (searchView.includes("runtimeStore?.commandAdmission") ||
+      searchView.includes("businessLineAdmission?.dormitoryCommandAdmission")) {
+    failures.push("Search active commands must not consume local runtimeStore/businessLine command admission.");
+  }
+  if (!/source\s*===\s*"SearchKernelService"/.test(searchView) ||
+      !/admissionDecisionRef[\s\S]{0,260}item\.admission/.test(searchView)) {
+    failures.push("Search active commands must require a backend SearchKernelService admission envelope with admissionDecisionRef.");
+  }
+  const operationTests = read("apps/mobile/src/__tests__/OperationActionStateContract.test.js");
+  const searchTests = read("apps/mobile/src/__tests__/SearchIntentHubContract.test.js");
+  if (!operationTests.includes("does not bind submit when a Surface card has no Admission contract")) {
+    failures.push("Surface missing admission negative test is required.");
+  }
+  if (!searchTests.includes("keeps Search items without Admission contract readonly")) {
+    failures.push("Search missing admission negative test is required.");
+  }
+  const runtimeTests = read("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs");
+  if (!runtimeTests.includes("operations_confirm_blocks_missing_admission_policy_before_unit_of_work")) {
+    failures.push("Runtime missing admission negative test is required.");
+  }
+  if (!searchTests.includes("keeps active commands readonly when no backend Search Kernel admission exists")) {
+    failures.push("Search command admission negative test must prove local command admission is ignored.");
+  }
+}
+
 function read(relativePath) {
   const fullPath = path.join(root, relativePath);
   if (!fs.existsSync(fullPath)) throw new Error(`Missing file: ${relativePath}`);
@@ -354,6 +584,10 @@ function read(relativePath) {
 
 function methodBody(source, methodName) {
   const markers = [
+    `private WorkItemDefinitionResolution ${methodName}(`,
+    `public WorkItemDefinitionResolution ${methodName}(`,
+    `private static WorkItemDefinitionResolution ${methodName}(`,
+    `public static WorkItemDefinitionResolution ${methodName}(`,
     `private void ${methodName}(`,
     `public void ${methodName}(`,
     `private static void ${methodName}(`,
@@ -374,6 +608,52 @@ function methodBody(source, methodName) {
     if (depth === 0) return source.slice(start, index + 1);
   }
   return source.slice(start);
+}
+
+function propertyBody(source, propertyName) {
+  const marker = `public string ${propertyName} =>`;
+  const start = source.indexOf(marker);
+  if (start < 0) return "";
+  const end = source.indexOf(";", start);
+  return end < 0 ? source.slice(start) : source.slice(start, end + 1);
+}
+
+function parseCSharpStringMap(source, mapName) {
+  const start = source.indexOf(mapName);
+  if (start < 0) return new Map();
+  const brace = source.indexOf("{", start);
+  if (brace < 0) return new Map();
+  let depth = 0;
+  let end = -1;
+  for (let index = brace; index < source.length; index += 1) {
+    const char = source[index];
+    if (char === "{") depth += 1;
+    if (char === "}") depth -= 1;
+    if (depth === 0) {
+      end = index;
+      break;
+    }
+  }
+  const body = end < 0 ? source.slice(brace) : source.slice(brace, end + 1);
+  const map = new Map();
+  for (const match of body.matchAll(/\["([^"]+)"\]\s*=\s*"([^"]+)"/g)) {
+    map.set(match[1], match[2]);
+  }
+  return map;
+}
+
+function splitStartAdapterKey(key) {
+  const separator = key.indexOf(":");
+  if (separator < 0) return [key, ""];
+  return [key.slice(0, separator), key.slice(separator + 1)];
+}
+
+function recordBody(source, recordName) {
+  const marker = `public sealed record ${recordName}(`;
+  const start = source.indexOf(marker);
+  if (start < 0) return "";
+  const end = source.indexOf(");", start);
+  return end < 0 ? "" : source.slice(start, end + 2);
 }
 
 function readJson(relativePath) {

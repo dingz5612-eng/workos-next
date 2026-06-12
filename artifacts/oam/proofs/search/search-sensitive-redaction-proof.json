@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "workosnext.search-proof.v1",
+  "status": "passed",
+  "generatedBy": "scripts/oam/generate-current-evidence-root.mjs",
+  "singleWriter": "scripts/oam/generate-current-evidence-root.mjs",
+  "checker": "scripts/check-search-kernel.mjs",
+  "failures": [],
+  "gates": [
+    "node scripts/check-search-kernel.mjs"
+  ],
+  "proofId": "search-sensitive-redaction-proof",
+  "proves": [
+    "Sensitive results require redaction for ordinary users.",
+    "SearchResult carries redaction and dataClassification."
+  ],
+  "requiredRule": "sensitive-results-redacted-for-ordinary-users",
+  "permissionRequiredFields": [
+    "visibility",
+    "redaction",
+    "dataClassification",
+    "requiredPermissions",
+    "checkedAt",
+    "policyVersion",
+    "actorScope",
+    "decisionSource"
+  ],
+  "sourceRefs": [
+    "docs/contracts/search/search-result-schema.json",
+    "docs/contracts/search/search-permission-policy.json"
+  ],
+  "checkedAtUtc": "2026-06-12T10:01:29.115Z"
+}

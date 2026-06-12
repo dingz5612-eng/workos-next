@@ -85,17 +85,22 @@ function validateContract(contract) {
   }
   const semantics = contract.userSemanticBoundaries || {};
   for (const field of [
+    "visibleDoesNotImplyConfirm",
     "summaryDoesNotImplyConfirm",
     "receiptDoesNotImplyProduction",
-    "visibleDoesNotImplyConfirm",
+    "blockerDoesNotGrantBypass",
     "dashboardSummaryCannotUnlockProduction",
     "sharedReceiptCannotReplaceFinanceTruth",
+    "businessBasisDoesNotImplyFinancialTruth",
+    "surfaceReadyDoesNotImplyProductionConfirm",
+    "trustedConfirmDoesNotImplyProductionConfirm",
+    "confirmAllowedDoesNotImplyProductionAllowed",
     "ordinaryUserNoInternalRuntimeTerms",
     "permissionExplainabilityUsesLanguageKernel"
   ]) {
     if (!(field in semantics)) failures.push(v("surface.user_semantic_boundary", `userSemanticBoundaries missing ${field}.`));
   }
-  for (const token of ["DomainEvent", "LedgerEntry", "ProcessManager", "Lens", "slice", "Confirm Runtime", "Unit of Work", "Projection", "Outbox", "raw capability", "raw surface view id"]) {
+  for (const token of ["oam.current", "Confirm Runtime", "Unit of Work", "DomainEvent", "LedgerEntry", "ProcessManager", "Projection", "Lens", "slice", "truthOwnerDomain", "admissionDecisionRef", "definitionId", "payloadHash", "commandSubmissionId", "rawReason", "rawCode"]) {
     if (!semantics.ordinaryUserNoInternalRuntimeTerms?.includes(token)) {
       failures.push(v("surface.internal_term_boundary", `ordinaryUserNoInternalRuntimeTerms missing ${token}.`));
     }

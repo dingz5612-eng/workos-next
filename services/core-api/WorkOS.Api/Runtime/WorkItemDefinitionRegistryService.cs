@@ -5,6 +5,34 @@ namespace WorkOS.Api.Runtime;
 public sealed class WorkItemDefinitionRegistryService
 {
     private static readonly Lazy<WorkItemDefinitionRegistryService> Default = new(LoadDefaultRegistry);
+    private static readonly IReadOnlyDictionary<string, string> StartAdapterDefinitionIds =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["W-DORM-MAINLINE:cert.roomSetupConfirm"] = "definition.dormitory.roomSetupConfirm.v1",
+            ["W-DORM-MAINLINE:cert.leadCapture"] = "definition.dormitory.leadCapture.v1",
+            ["W-DORM-MAINLINE:cert.checkinConfirm"] = "definition.dormitory.checkinConfirm.v1",
+            ["W-DORM-GOVERNANCE:cert.stayExtendApprove"] = "definition.dormitory.stayExtendApprove.v1",
+            ["W-DORM-MAINLINE:cert.depositConfirm"] = "definition.dormitory.depositConfirm.v1",
+            ["W-DORM-MAINLINE:cert.paymentConfirm"] = "definition.dormitory.paymentConfirm.v1",
+            ["W-DORM-SERVICE-CHECKOUT:cert.checkoutSettlementApprove"] = "definition.dormitory.checkoutSettlementApprove.v1",
+            ["W-DORM-SERVICE-CHECKOUT:cert.serviceTaskCreate"] = "definition.dormitory.serviceTaskCreate.v1",
+            ["W-DORM-SERVICE-CHECKOUT:cert.expenseRecord"] = "definition.finance.expenseRecord.v1",
+            ["W-DORM-GOVERNANCE:cert.periodReview"] = "definition.dormitory.periodReview.v1"
+        };
+    private static readonly IReadOnlyDictionary<string, string> StartUiRouteDefinitionKeys =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["W-STAY-RESOURCE:roomSetup"] = "W-DORM-MAINLINE:cert.roomSetupConfirm",
+            ["W-STAY-LEAD-RESERVATION:leadCapture"] = "W-DORM-MAINLINE:cert.leadCapture",
+            ["W-STAY-CHECKIN:lead"] = "W-DORM-MAINLINE:cert.checkinConfirm",
+            ["W-STAY-LIFECYCLE:residentProfile"] = "W-DORM-GOVERNANCE:cert.stayExtendApprove",
+            ["W-STAY-DEPOSIT-LEDGER:depositAssessment"] = "W-DORM-MAINLINE:cert.depositConfirm",
+            ["W-STAY-PAYMENT-LEDGER:paymentReceipt"] = "W-DORM-MAINLINE:cert.paymentConfirm",
+            ["W-STAY-CHECKOUT-SETTLEMENT:checkoutStart"] = "W-DORM-SERVICE-CHECKOUT:cert.checkoutSettlementApprove",
+            ["W-STAY-SERVICE-TASK:serviceTaskCreate"] = "W-DORM-SERVICE-CHECKOUT:cert.serviceTaskCreate",
+            ["W-STAY-EXPENSE-LEDGER:expenseRecord"] = "W-DORM-SERVICE-CHECKOUT:cert.expenseRecord",
+            ["W-STAY-PERIOD-ANALYTICS:periodScope"] = "W-DORM-GOVERNANCE:cert.periodReview"
+        };
     private readonly IReadOnlyList<WorkItemDefinition> definitions;
     private readonly IReadOnlyDictionary<string, WorkItemDefinition> byDefinitionId;
     private readonly IReadOnlyDictionary<string, WorkItemDefinition> bySourceCardId;
@@ -48,6 +76,8 @@ public sealed class WorkItemDefinitionRegistryService
 
     public WorkItemDefinitionResolution ResolveByWorkspaceCard(string? workspaceId, string? cardId)
     {
+        // Migration/audit/read-only explanation only. Current Runtime Confirm, Start, Search,
+        // Admission, and Finance paths must use Resolve or ResolveStartAdapter instead.
         var definition = definitions.FirstOrDefault(item =>
             (item.WorkspaceId ?? string.Empty).Equals(workspaceId ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
             item.MigrationSourceCardId.Equals(cardId ?? string.Empty, StringComparison.OrdinalIgnoreCase));
@@ -60,6 +90,19 @@ public sealed class WorkItemDefinitionRegistryService
             : WorkItemDefinitionResolution.FromDefinition(definition);
     }
 
+    public WorkItemDefinitionResolution ResolveStartAdapter(string? workspaceId, string? cardId)
+    {
+        var definitionId = StartAdapterDefinitionId(workspaceId, cardId);
+        var definition = FindByDefinitionId(definitionId);
+        return definition is null
+            ? WorkItemDefinitionResolution.Unresolved(
+                definitionId,
+                MigrationRefsForSourceCardId(cardId),
+                GuessBusinessLine(workspaceId),
+                "start_adapter_not_registered")
+            : WorkItemDefinitionResolution.FromDefinition(definition);
+    }
+
     public WorkItemDefinition? FindByDefinitionId(string? definitionId) =>
         !string.IsNullOrWhiteSpace(definitionId) &&
         byDefinitionId.TryGetValue(definitionId, out var definition)
@@ -67,6 +110,7 @@ public sealed class WorkItemDefinitionRegistryService
             : null;
 
     public WorkItemDefinition? FindBySourceCardId(string? sourceCardId) =>
+        // Migration/audit/read-only explanation only; never a current execution identity.
         !string.IsNullOrWhiteSpace(sourceCardId) &&
         bySourceCardId.TryGetValue(sourceCardId, out var definition)
             ? definition
@@ -127,6 +171,19 @@ public sealed class WorkItemDefinitionRegistryService
                     false,
                     "docs/contracts/definition/source-id-migration-fence.json")
             };
+
+    private static string StartAdapterDefinitionId(string? workspaceId, string? cardId) =>
+        StartAdapterDefinitionIds.TryGetValue(StartAdapterCurrentKey(workspaceId, cardId), out var definitionId)
+            ? definitionId
+            : string.Empty;
+
+    private static string StartAdapterCurrentKey(string? workspaceId, string? cardId)
+    {
+        var requestedKey = $"{workspaceId ?? string.Empty}:{cardId ?? string.Empty}";
+        return StartUiRouteDefinitionKeys.TryGetValue(requestedKey, out var currentKey)
+            ? currentKey
+            : requestedKey;
+    }
 
     private static string GuessBusinessLine(string? workspaceId) =>
         string.IsNullOrWhiteSpace(workspaceId)

@@ -248,16 +248,36 @@
     "historicalDesignInputsAllowed": false,
     "greyAuthorityBucketsAllowed": false,
     "forbiddenGreyPaths": [
-      { "forbiddenPath": "docs/product" },
-      { "forbiddenPath": "docs/review" },
-      { "forbiddenPath": "docs/decisions/ADR-0001-phase-0-1-bootstrap.md" },
-      { "forbiddenPath": "docs/oam/final-acceptance-report.md" },
-      { "forbiddenPath": "docs/oam/review-defect-record.md" },
-      { "forbiddenPath": "docs/oam/mobile-refactor-readiness-plan.md" },
-      { "forbiddenPath": "docs/system/oam-warning-baseline.md" },
-      { "forbiddenPath": "docs/oam/certification-scenarios.json" },
-      { "forbiddenPath": "docs/oam/dormitory-certification-scenarios.json" },
-      { "forbiddenPath": "docs/business/dormitory/certification-scenarios.json" }
+      {
+        "forbiddenPath": "docs/product"
+      },
+      {
+        "forbiddenPath": "docs/review"
+      },
+      {
+        "forbiddenPath": "docs/decisions/ADR-0001-phase-0-1-bootstrap.md"
+      },
+      {
+        "forbiddenPath": "docs/oam/final-acceptance-report.md"
+      },
+      {
+        "forbiddenPath": "docs/oam/review-defect-record.md"
+      },
+      {
+        "forbiddenPath": "docs/oam/mobile-refactor-readiness-plan.md"
+      },
+      {
+        "forbiddenPath": "docs/system/oam-warning-baseline.md"
+      },
+      {
+        "forbiddenPath": "docs/oam/certification-scenarios.json"
+      },
+      {
+        "forbiddenPath": "docs/oam/dormitory-certification-scenarios.json"
+      },
+      {
+        "forbiddenPath": "docs/business/dormitory/certification-scenarios.json"
+      }
     ],
     "forbiddenStageTerms": [
       "previous-architecture-stage-terms",
@@ -303,7 +323,20 @@
       "artifacts/oam/checks/professional-ai-review-seats-result.json",
       "artifacts/oam/checks/codex-execution-channel-policy-result.json",
       "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
-      "artifacts/oam/final-report.json"
+      "artifacts/oam/final-report.json",
+      "artifacts/oam/evidence/current-oam-release-evidence-object.json",
+      "artifacts/oam/evidence/current-oam-release-attestation.json",
+      "artifacts/oam/proofs/search/search-derived-readmodel-only-proof.json",
+      "artifacts/oam/proofs/search/search-no-kernel-direct-read-proof.json",
+      "artifacts/oam/proofs/search/search-permission-filter-proof.json",
+      "artifacts/oam/proofs/search/search-hidden-result-ranking-proof.json",
+      "artifacts/oam/proofs/search/search-sensitive-redaction-proof.json",
+      "artifacts/oam/proofs/search/search-lineage-freshness-proof.json",
+      "artifacts/oam/proofs/read-intelligence/oam-object-envelope-proof.json",
+      "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+      "artifacts/oam/proofs/dashboard/dashboard-widget-sourcefacts-proof.json",
+      "artifacts/oam/proofs/report/report-dataset-permission-lineage-freshness-proof.json",
+      "artifacts/oam/proofs/language/language-glossary-generated-proof.json"
     ],
     "binding": [
       "commitSha",
@@ -313,7 +346,23 @@
       "gateSummary",
       "testSummary",
       "coverageSummary",
-      "goNoGo"
+      "goNoGo",
+      "githubSha",
+      "githubRunId",
+      "githubRunAttempt",
+      "githubRefName",
+      "artifactName",
+      "githubArtifactMetadataDigest",
+      "githubArtifactDigestStatus",
+      "zipArtifactDigest",
+      "releaseAuthority",
+      "evidenceRootDigest",
+      "kernelGraphHash",
+      "evidenceGraphHash",
+      "finalReportDigest",
+      "generatedContractsHash",
+      "finalGoNoGo",
+      "nextStageAllowed"
     ]
   }
 }

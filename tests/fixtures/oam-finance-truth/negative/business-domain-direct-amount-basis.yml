@@ -1,0 +1,10 @@
+{
+  "scenarioId": "oam-finance-negative-business-domain-direct-amount-basis",
+  "sourcePack": "DormitoryDomainPack",
+  "inputFact": "AmountBasis",
+  "basisType": "payment_receipt",
+  "targetFact": "AmountBasis",
+  "amount": 100,
+  "currency": "KGS",
+  "expectedViolation": "finance_truth.business_amount_basis_direct"
+}

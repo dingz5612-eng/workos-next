@@ -37,6 +37,7 @@ const requiredFileNodeFields = [
 
 const violations = [];
 const policy = readJson(policyPath);
+const lifecycleRegistry = policy.fileLifecycleRegistry ?? {};
 const graph = readJson(graphPath);
 const ledger = readJson(ledgerPath);
 const currentFiles = listCurrentFiles();
@@ -52,6 +53,7 @@ if (policy.architecture !== "oam.current") {
 if (!sameSet(policy.allowedLifecycleStates ?? [], [...allowedStates])) {
   fail("file_lifecycle_allowed_states", "文件生命周期状态只能使用指定枚举。");
 }
+validateFileLifecycleRegistry(lifecycleRegistry);
 
 for (const file of currentFiles) {
   const node = fileNodeByPath.get(file);
@@ -144,6 +146,98 @@ function validateFileNode(node, file, fileExistsInCurrentSet) {
   }
 }
 
+function validateFileLifecycleRegistry(registry) {
+  const requiredLifecycles = [
+    "source",
+    "generated",
+    "tooling",
+    "runtime",
+    "evidence",
+    "release",
+    "retired",
+    "referenceOnly"
+  ];
+  if (registry.version !== "oam.file-lifecycle-registry.v1" || registry.status !== "authoritative") {
+    fail("file_lifecycle_registry_identity", "File Lifecycle Registry 必须声明 oam.file-lifecycle-registry.v1 authoritative。");
+  }
+  if (registry.registryAuthority !== policyPath) {
+    fail("file_lifecycle_registry_authority", `File Lifecycle Registry 必须以内嵌方式绑定 ${policyPath}。`);
+  }
+  if (registry.architecture !== "oam.current") {
+    fail("file_lifecycle_registry_architecture", "File Lifecycle Registry 必须绑定 oam.current。");
+  }
+  if (!sameSet(Object.keys(registry.canonicalLifecycles ?? {}), requiredLifecycles)) {
+    fail("file_lifecycle_registry_lifecycles", "File Lifecycle Registry 必须且只能定义 source/generated/tooling/runtime/evidence/release/retired/referenceOnly。");
+  }
+  if (!Array.isArray(registry.classificationPriority) || registry.classificationPriority.length === 0) {
+    fail("file_lifecycle_registry_priority", "File Lifecycle Registry 必须定义分类优先级。");
+  }
+  if ((registry.classificationPriority ?? [])[0] !== "sourceWhitelist") {
+    fail("file_lifecycle_registry_source_priority", "Source 白名单必须是生命周期分类第一优先级。");
+  }
+  for (const lifecycle of requiredLifecycles) {
+    const item = registry.canonicalLifecycles?.[lifecycle];
+    if (!item) continue;
+    for (const field of ["responsibilityZh", "manualEditAllowed", "businessFactAuthorityAllowed", "contractAuthorityAllowed", "canDefineBusinessFacts", "proofOnly"]) {
+      if (!(field in item)) {
+        fail("file_lifecycle_registry_field_missing", `${lifecycle} 缺少 ${field}。`);
+      }
+    }
+    if (!/[\u3400-\u9fff]/.test(String(item.responsibilityZh ?? ""))) {
+      fail("file_lifecycle_registry_chinese_missing", `${lifecycle} 必须包含中文职责说明。`);
+    }
+  }
+  if (registry.canonicalLifecycles?.source?.businessFactAuthorityAllowed !== true) {
+    fail("file_lifecycle_registry_source_authority", "source 必须允许业务事实权威。");
+  }
+  if (registry.canonicalLifecycles?.generated?.manualEditAllowed !== false ||
+    registry.canonicalLifecycles?.generated?.businessFactAuthorityAllowed !== false ||
+    registry.canonicalLifecycles?.generated?.doNotEditRequired !== true) {
+    fail("file_lifecycle_registry_generated_boundary", "generated 必须禁止手改、禁止业务事实权威并要求 doNotEdit。");
+  }
+  if (registry.canonicalLifecycles?.tooling?.manualEditAllowed !== true ||
+    registry.canonicalLifecycles?.tooling?.businessFactAuthorityAllowed !== false) {
+    fail("file_lifecycle_registry_tooling_boundary", "tooling 必须可人工维护且不得拥有业务事实权威。");
+  }
+  for (const lifecycle of ["evidence", "release"]) {
+    if (registry.canonicalLifecycles?.[lifecycle]?.proofOnly !== true ||
+      registry.canonicalLifecycles?.[lifecycle]?.businessFactAuthorityAllowed !== false) {
+      fail("file_lifecycle_registry_proof_boundary", `${lifecycle} 只能证明，不得定义业务事实。`);
+    }
+  }
+  for (const state of allowedStates) {
+    const lifecycle = registry.stateToLifecycle?.[state];
+    if (!requiredLifecycles.includes(lifecycle)) {
+      fail("file_lifecycle_registry_state_mapping", `${state} 必须映射到唯一 canonical lifecycle。`);
+    }
+  }
+  if (!Array.isArray(registry.pathRules) || registry.pathRules.length === 0) {
+    fail("file_lifecycle_registry_rules_missing", "File Lifecycle Registry 必须定义路径分类规则。");
+  }
+  const ruleIds = new Set();
+  let hasSourceWhitelistRule = false;
+  for (const rule of registry.pathRules ?? []) {
+    if (!rule.id || ruleIds.has(rule.id)) {
+      fail("file_lifecycle_registry_rule_id", `路径规则 id 缺失或重复：${rule.id ?? "<missing>"}`);
+    }
+    ruleIds.add(rule.id);
+    if (!["sourceWhitelist", "exactPath", "prefix", "suffix", "contains"].includes(rule.matchType)) {
+      fail("file_lifecycle_registry_rule_match_type", `${rule.id} 使用未知 matchType：${rule.matchType}`);
+    }
+    if (!requiredLifecycles.includes(rule.lifecycle)) {
+      fail("file_lifecycle_registry_rule_lifecycle", `${rule.id} 使用未知 lifecycle：${rule.lifecycle}`);
+    }
+    if (rule.matchType === "sourceWhitelist") {
+      hasSourceWhitelistRule = true;
+    } else if (!Array.isArray(rule.patterns) || rule.patterns.length === 0) {
+      fail("file_lifecycle_registry_rule_patterns", `${rule.id} 必须声明 patterns。`);
+    }
+  }
+  if (!hasSourceWhitelistRule) {
+    fail("file_lifecycle_registry_source_rule_missing", "File Lifecycle Registry 必须声明 sourceWhitelist 路径规则。");
+  }
+}
+
 function listCurrentFiles() {
   const output = execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard"], { cwd: root, encoding: "utf8" });
   return output
@@ -153,6 +247,7 @@ function listCurrentFiles() {
     .filter((item) => !item.startsWith("artifacts/oam/authority-cleanup/"))
     .filter((item) => !item.startsWith("artifacts/oam/checks/"))
     .filter((item) => !item.startsWith("artifacts/oam/evidence/"))
+    .filter((item) => !item.startsWith("artifacts/oam/proofs/"))
     .filter((item) => !item.startsWith("artifacts/oam/test-results/"))
     .filter((item) => item !== "artifacts/oam/final-report.json")
     .sort((left, right) => left.localeCompare(right));
@@ -175,6 +270,12 @@ function writeResult() {
     checkedAtUtc: new Date().toISOString(),
     architecture: "oam.current",
     status: violations.length ? "failed" : "passed",
+    fileLifecycleRegistry: {
+      version: lifecycleRegistry.version ?? null,
+      status: violations.some((item) => item.id.startsWith("file_lifecycle_registry")) ? "failed" : "passed",
+      lifecycleCount: Object.keys(lifecycleRegistry.canonicalLifecycles ?? {}).length,
+      pathRuleCount: lifecycleRegistry.pathRules?.length ?? 0
+    },
     currentFileCount: currentFiles.length,
     graphFileNodeCount: fileNodes.length,
     violationCount: violations.length,

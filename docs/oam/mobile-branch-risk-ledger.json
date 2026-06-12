@@ -8,16 +8,16 @@
   "sortOrder": "branches.missing desc, filePath asc",
   "globalCoverage": {
     "statements": {
-      "total": 4830,
-      "covered": 4192,
+      "total": 4836,
+      "covered": 4198,
       "missing": 638,
-      "pct": 86.79
+      "pct": 86.8
     },
     "branches": {
-      "total": 7408,
-      "covered": 5225,
-      "missing": 2183,
-      "pct": 70.53
+      "total": 7410,
+      "covered": 5226,
+      "missing": 2184,
+      "pct": 70.52
     },
     "functions": {
       "total": 1406,
@@ -26,10 +26,10 @@
       "pct": 91.89
     },
     "lines": {
-      "total": 4006,
-      "covered": 3643,
+      "total": 4012,
+      "covered": 3649,
       "missing": 363,
-      "pct": 90.93
+      "pct": 90.95
     }
   },
   "stage": {
@@ -66,16 +66,16 @@
     "firstStageTargetReached": true,
     "currentCoverage": {
       "statements": {
-        "total": 4830,
-        "covered": 4192,
+        "total": 4836,
+        "covered": 4198,
         "missing": 638,
-        "pct": 86.79
+        "pct": 86.8
       },
       "branches": {
-        "total": 7408,
-        "covered": 5225,
-        "missing": 2183,
-        "pct": 70.53
+        "total": 7410,
+        "covered": 5226,
+        "missing": 2184,
+        "pct": 70.52
       },
       "functions": {
         "total": 1406,
@@ -84,10 +84,10 @@
         "pct": 91.89
       },
       "lines": {
-        "total": 4006,
-        "covered": 3643,
+        "total": 4012,
+        "covered": 3649,
         "missing": 363,
-        "pct": 90.93
+        "pct": 90.95
       }
     },
     "target": {
@@ -3281,6 +3281,60 @@
       }
     },
     {
+      "filePath": "apps/mobile/src/i18n/operationCopy.js",
+      "coverage": {
+        "statements": {
+          "total": 7,
+          "covered": 7,
+          "missing": 0,
+          "pct": 100
+        },
+        "branches": {
+          "total": 2,
+          "covered": 1,
+          "missing": 1,
+          "pct": 50
+        },
+        "functions": {
+          "total": 0,
+          "covered": 0,
+          "missing": 0,
+          "pct": 100
+        },
+        "lines": {
+          "total": 7,
+          "covered": 7,
+          "missing": 0,
+          "pct": 100
+        }
+      },
+      "policy": {
+        "status": "unregistered",
+        "layer": "未登记",
+        "targetBranchCoveragePct": null,
+        "currentStageHardBaselinePct": null,
+        "nextStageTargetPct": null,
+        "affectsBusinessWrite": null,
+        "affectsAdmissionRejection": null,
+        "affectsSearchReadonly": null,
+        "affectsDeviceTrust": null,
+        "affectsOrdinaryMobileUser": null,
+        "testFiles": []
+      },
+      "source": {
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
+        "isCoveredByCoverageSummary": true
+      },
+      "risk": {
+        "level": "未登记",
+        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
+        "allowDeferral": false,
+        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
+        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
+      }
+    },
+    {
       "filePath": "apps/mobile/src/operationStatus.js",
       "coverage": {
         "statements": {
@@ -3552,60 +3606,6 @@
     },
     {
       "filePath": "apps/mobile/src/i18n/domainCopy.js",
-      "coverage": {
-        "statements": {
-          "total": 1,
-          "covered": 1,
-          "missing": 0,
-          "pct": 100
-        },
-        "branches": {
-          "total": 0,
-          "covered": 0,
-          "missing": 0,
-          "pct": 100
-        },
-        "functions": {
-          "total": 0,
-          "covered": 0,
-          "missing": 0,
-          "pct": 100
-        },
-        "lines": {
-          "total": 1,
-          "covered": 1,
-          "missing": 0,
-          "pct": 100
-        }
-      },
-      "policy": {
-        "status": "unregistered",
-        "layer": "未登记",
-        "targetBranchCoveragePct": null,
-        "currentStageHardBaselinePct": null,
-        "nextStageTargetPct": null,
-        "affectsBusinessWrite": null,
-        "affectsAdmissionRejection": null,
-        "affectsSearchReadonly": null,
-        "affectsDeviceTrust": null,
-        "affectsOrdinaryMobileUser": null,
-        "testFiles": []
-      },
-      "source": {
-        "isNewSourceFile": false,
-        "gitStatus": "tracked_or_unknown",
-        "isCoveredByCoverageSummary": true
-      },
-      "risk": {
-        "level": "未登记",
-        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
-        "allowDeferral": false,
-        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
-        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
-      }
-    },
-    {
-      "filePath": "apps/mobile/src/i18n/operationCopy.js",
       "coverage": {
         "statements": {
           "total": 1,

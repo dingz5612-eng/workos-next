@@ -1,0 +1,10 @@
+{
+  "scenarioId": "oam-finance-negative-search-infers-amount-basis",
+  "sourcePack": "Search",
+  "inputFact": "SearchResult",
+  "basisType": "search_result",
+  "targetFact": "AmountBasis",
+  "amount": 100,
+  "currency": "KGS",
+  "expectedViolation": "finance_truth.readside_amount_basis_inference"
+}

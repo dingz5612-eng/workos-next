@@ -7,8 +7,11 @@ const proof = readJson("docs/oam/db-no-side-effects-proof.json");
 const canonical = readText("services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs");
 const tests = readText("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs");
 const requiredRejectedPaths = [
+  "missing admission",
   "unresolved definition",
   "unknown field",
+  "invalid objectId",
+  "invalid fieldId",
   "forbidden field",
   "systemGenerated submitted",
   "derived submitted",
@@ -16,19 +19,28 @@ const requiredRejectedPaths = [
   "cardId business identity",
   "missing evidence",
   "invalid selectedStableRef",
-  "finance_kernel without admission"
+  "finance_kernel without admission",
+  "non finance kernel ledger write",
+  "Search attempted business fact write",
+  "Surface attempted business fact write",
+  "Dashboard attempted business fact write"
 ];
 const requiredNoSideEffects = [
   "no UnitOfWork commit",
   "no CommandSubmission",
   "no DomainEvent",
+  "no WorkItemEvent",
+  "no LedgerTransaction",
   "no LedgerEntry",
   "no Outbox",
+  "no WriteLog",
   "no confirmed transition",
   "no next WorkItem dispatch",
   "no Projection mutation",
   "no Lens mutation",
-  "no Search read model mutation"
+  "no Search read model mutation",
+  "no Dashboard metric mutation",
+  "no Evidence object mutation"
 ];
 
 for (const item of requiredRejectedPaths) {
@@ -55,6 +67,7 @@ if (canonical.includes("FirstNonEmpty(definition.DefinitionId")) {
 }
 for (const marker of [
   "operations_confirm_blocks_unresolved_definition_before_unit_of_work",
+  "operations_confirm_blocks_missing_admission_policy_before_unit_of_work",
   "operations_confirm_does_not_resolve_definition_from_card_id_fallback",
   "operations_confirm_without_idempotency_key_returns_422_without_writing_domain_event",
   "operations_confirm_blocks_production_mode_before_unit_of_work",
@@ -65,7 +78,15 @@ for (const marker of [
 ]) {
   if (!tests.includes(marker)) fail(`missing negative test marker: ${marker}`);
 }
-for (const marker of ["Assert.IsEmpty(store.Submissions)", "Assert.IsEmpty(store.DomainEvents)"]) {
+for (const marker of [
+  "Assert.IsEmpty(store.Submissions)",
+  "Assert.IsEmpty(store.DomainEvents)",
+  "Assert.IsEmpty(store.WorkItemEvents)",
+  "Assert.IsEmpty(store.OutboxMessages)",
+  "Assert.IsEmpty(store.LedgerTransactions)",
+  "Assert.IsEmpty(store.LedgerEntries)",
+  "Assert.IsEmpty(store.WriteLog)"
+]) {
   if (!tests.includes(marker)) fail(`negative tests must assert ${marker}.`);
 }
 

@@ -4,6 +4,8 @@ public static class FinanceTruthPipeline
 {
     public static FinanceTruthOutcome Route(MoneyBasis basis)
     {
+        ValidateBusinessInputBoundary(basis.SourcePack, basis.TargetFact);
+
         if (basis.Amount <= 0)
         {
             return FinanceTruthOutcome.Blocked("finance_truth_requires_positive_amount");
@@ -42,6 +44,8 @@ public static class FinanceTruthPipeline
 
     public static FinanceCommit Commit(MoneyBasis basis, string transactionId)
     {
+        ValidateBusinessInputBoundary(basis.SourcePack, basis.TargetFact);
+
         if (basis.Amount <= 0)
         {
             throw new InvalidOperationException("finance_truth_requires_positive_amount");
@@ -91,6 +95,71 @@ public static class FinanceTruthPipeline
             transaction,
             entries,
             FinanceReceipt.FromBasis(basis, transactionId));
+    }
+
+    public static AmountBasisProposalReviewedByFinance ReviewProposal(AmountBasisProposal proposal, string reviewedBy, string reviewTraceId)
+    {
+        if (proposal.Amount <= 0)
+        {
+            throw new InvalidOperationException("finance_truth_requires_positive_amount");
+        }
+
+        if (string.IsNullOrWhiteSpace(reviewedBy) || string.IsNullOrWhiteSpace(reviewTraceId))
+        {
+            throw new InvalidOperationException("finance_truth_requires_finance_review_trace");
+        }
+
+        return new AmountBasisProposalReviewedByFinance(
+            proposal.TenantId,
+            proposal.CaseId,
+            proposal.WorkItemId,
+            proposal.ProposalId,
+            proposal.BasisType,
+            proposal.Amount,
+            proposal.Currency,
+            reviewedBy,
+            reviewTraceId,
+            proposal.EvidenceRefs ?? Array.Empty<string>());
+    }
+
+    public static MoneyBasis MaterializeAmountBasis(AmountBasisProposalReviewedByFinance reviewed)
+    {
+        return new MoneyBasis(
+            reviewed.TenantId,
+            reviewed.CaseId,
+            reviewed.WorkItemId,
+            reviewed.ProposalId,
+            reviewed.BasisType,
+            reviewed.Amount,
+            reviewed.Currency,
+            "FinanceTruthPack",
+            "AmountBasis",
+            null,
+            "reversal",
+            reviewed.EvidenceRefs);
+    }
+
+    public static void ValidateBusinessInputBoundary(string sourcePack, string targetFact)
+    {
+        if (string.IsNullOrWhiteSpace(targetFact))
+        {
+            return;
+        }
+
+        var sourceIsFinanceKernel = sourcePack.Equals("FinanceTruthPack", StringComparison.OrdinalIgnoreCase) ||
+            sourcePack.Equals("MoneyKernelPack", StringComparison.OrdinalIgnoreCase);
+        if (!sourceIsFinanceKernel && targetFact.Equals("AmountBasis", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("finance_truth_blocks_business_domain_amount_basis");
+        }
+
+        if (!sourceIsFinanceKernel &&
+            (targetFact.Equals("FinancialFact", StringComparison.OrdinalIgnoreCase) ||
+             targetFact.Equals("LedgerTransaction", StringComparison.OrdinalIgnoreCase) ||
+             targetFact.Equals("LedgerEntry", StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new InvalidOperationException("finance_truth_blocks_direct_finance_fact");
+        }
     }
 
     public static void ValidateBalanced(LedgerTransactionV1 transaction, IReadOnlyList<LedgerEntryV1> entries)
@@ -342,6 +411,31 @@ public sealed record MoneyBasis(
     private static string FirstNonEmpty(params string?[] values) =>
         values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
 }
+
+public sealed record AmountBasisProposal(
+    string TenantId,
+    string CaseId,
+    string WorkItemId,
+    string ProposalId,
+    string BasisType,
+    decimal Amount,
+    string Currency,
+    string SourcePack,
+    IReadOnlyList<string>? EvidenceRefs = null);
+
+public sealed record AmountBasisProposalReviewedByFinance(
+    string TenantId,
+    string CaseId,
+    string WorkItemId,
+    string ProposalId,
+    string BasisType,
+    decimal Amount,
+    string Currency,
+    string ReviewedBy,
+    string ReviewTraceId,
+    IReadOnlyList<string> EvidenceRefs);
+
+public sealed record AmountBasisReviewed(AmountBasisProposalReviewedByFinance ReviewedByFinance);
 
 public sealed record FinanceTruthOutcome(string Status, FinanceCommit? Commit, UnclearMoneyCase? UnclearCase, string Code)
 {

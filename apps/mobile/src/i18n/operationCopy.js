@@ -862,3 +862,103 @@ export const operationCopy = {
     "anchorActionCorrection": "оңдоо бекитилет"
   }
 };
+
+const canonicalOperationCopyAliases = {
+  "surface.permission.title": "permission.explain.title",
+  "surface.permission.reason.actorSessionRequired": "permission.reason.actor_session_required",
+  "surface.permission.reason.roleSurfaceNotAllowed": "permission.reason.role_surface_not_allowed",
+  "surface.permission.reason.capabilityMissing": "permission.reason.capability_missing",
+  "surface.permission.reason.deviceNotTrusted": "permission.reason.device_not_trusted",
+  "surface.permission.reason.pcSurfaceRequiresPcDevice": "permission.reason.pc_surface_requires_pc_device",
+  "surface.permission.reason.releaseSurfaceRestricted": "permission.reason.release_surface_restricted",
+  "surface.permission.reason.businessAdmissionBlocked": "permission.reason.business_line_admission_blocked",
+  "surface.permission.reason.pilotScopeBlocked": "permission.reason.pilot_scope_blocked",
+  "surface.permission.nextStep.contactOwner": "permission.next.contactOwner",
+  "surface.permission.nextStep.switchAllowedSurface": "permission.next.switchAllowedSurface",
+  "surface.permission.owner.releaseOwner": "permission.owner.releaseOwner",
+  "surface.permission.owner.admin": "permission.owner.admin",
+  "surface.permission.owner.finance": "permission.owner.finance",
+  "surface.permission.owner.manager": "permission.owner.manager",
+  "surface.permission.owner.operator": "permission.owner.operator",
+  "explain.summaryNotConfirm": "semantic.summary.notConfirmBasis",
+  "explain.receiptNotProduction": "semantic.receipt.notProductionRelease",
+  "explain.businessBasisNotFinancialTruth": "semantic.amountBasis.notFinanceResult",
+  "explain.managementReadonly": "semantic.managementCockpit.readonly",
+  "explain.financeTruthRequired": "semantic.financeTruth.explain"
+};
+
+const canonicalOperationCopyLiterals = {
+  "zh-CN": {
+    "surface.permission.title": "权限说明",
+    "surface.kind.workItem": "工作任务",
+    "surface.kind.truthRecord": "事实记录",
+    "surface.kind.summary": "摘要",
+    "surface.kind.receipt": "回执",
+    "surface.kind.blocker": "阻断原因",
+    "surface.kind.readonlyRecord": "只读记录",
+    "explain.visibleNotConfirm": "可见只代表可以查看，不代表可以确认。",
+    "explain.summaryNotConfirm": "摘要只用于理解当前情况，不是确认依据。",
+    "explain.receiptNotProduction": "回执只说明已收到或已记录，不是生产放行。",
+    "explain.businessBasisNotFinancialTruth": "业务依据不是财务结果，必须等待财务确认。",
+    "explain.managementReadonly": "管理视图只能观察和形成意图，不能直接确认业务事实。",
+    "explain.financeTruthRequired": "财务结果只能由财务确认链路产生。",
+    "truth.owner.sharedGovernance": "共享治理",
+    "truth.owner.financeTruth": "财务定真",
+    "truth.owner.moneyKernel": "资金内核",
+    "truth.owner.projectionKernel": "投影内核",
+    "truth.owner.accommodation": "住宿业务",
+    "truth.owner.identity": "身份治理",
+    "truth.owner.maintenance": "服务维护"
+  },
+  "ru-RU": {
+    "surface.permission.title": "Пояснение доступа",
+    "surface.kind.workItem": "Рабочая задача",
+    "surface.kind.truthRecord": "Запись факта",
+    "surface.kind.summary": "Сводка",
+    "surface.kind.receipt": "Квитанция",
+    "surface.kind.blocker": "Причина блокировки",
+    "surface.kind.readonlyRecord": "Запись только для чтения",
+    "explain.visibleNotConfirm": "Видимость означает только просмотр, а не подтверждение.",
+    "explain.summaryNotConfirm": "Сводка помогает понять ситуацию, но не является основанием подтверждения.",
+    "explain.receiptNotProduction": "Квитанция означает получение или запись, но не выпуск в производство.",
+    "explain.businessBasisNotFinancialTruth": "Бизнес-основание не является финансовым результатом; нужна финансовая фиксация.",
+    "explain.managementReadonly": "Управленческий вид только наблюдает и формирует намерение, но не подтверждает факты напрямую.",
+    "explain.financeTruthRequired": "Финансовый результат создается только цепочкой финансовой фиксации.",
+    "truth.owner.sharedGovernance": "Общее управление",
+    "truth.owner.financeTruth": "Финансовая фиксация",
+    "truth.owner.moneyKernel": "Денежное ядро",
+    "truth.owner.projectionKernel": "Ядро проекций",
+    "truth.owner.accommodation": "Проживание",
+    "truth.owner.identity": "Управление идентичностью",
+    "truth.owner.maintenance": "Обслуживание"
+  },
+  "ky-KG": {
+    "surface.permission.title": "Уруксат түшүндүрмөсү",
+    "surface.kind.workItem": "Иш тапшырмасы",
+    "surface.kind.truthRecord": "Факт жазуусу",
+    "surface.kind.summary": "Кыскача маалымат",
+    "surface.kind.receipt": "Квитанция",
+    "surface.kind.blocker": "Бөгөт себеби",
+    "surface.kind.readonlyRecord": "Окуу үчүн гана жазуу",
+    "explain.visibleNotConfirm": "Көрүнүү көрө алууну гана билдирет, тастыктоо эмес.",
+    "explain.summaryNotConfirm": "Кыскача маалымат абалды түшүндүрөт, бирок тастыктоо негизи эмес.",
+    "explain.receiptNotProduction": "Квитанция алынганын же жазылганын гана билдирет, production уруксаты эмес.",
+    "explain.businessBasisNotFinancialTruth": "Бизнес негизи финансы жыйынтыгы эмес; финансы тактоосу керек.",
+    "explain.managementReadonly": "Башкаруу көрүнүшү байкоо жана ниет түзүү үчүн гана, бизнес фактты түз тастыктабайт.",
+    "explain.financeTruthRequired": "Финансы жыйынтыгы финансы тактоо чынжыры аркылуу гана түзүлөт.",
+    "truth.owner.sharedGovernance": "Жалпы башкаруу",
+    "truth.owner.financeTruth": "Финансы тактоосу",
+    "truth.owner.moneyKernel": "Акча өзөгү",
+    "truth.owner.projectionKernel": "Окуу көрүнүшү",
+    "truth.owner.accommodation": "Жатакана бизнеси",
+    "truth.owner.identity": "Идентификация башкаруусу",
+    "truth.owner.maintenance": "Тейлөө"
+  }
+};
+
+for (const [language, copy] of Object.entries(operationCopy)) {
+  for (const [canonicalKey, aliasKey] of Object.entries(canonicalOperationCopyAliases)) {
+    copy[canonicalKey] = copy[aliasKey];
+  }
+  Object.assign(copy, canonicalOperationCopyLiterals[language] || {});
+}

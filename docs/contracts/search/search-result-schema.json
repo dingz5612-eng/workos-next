@@ -86,7 +86,9 @@
         "dataClassification",
         "requiredPermissions",
         "checkedAt",
-        "policyVersion"
+        "policyVersion",
+        "actorScope",
+        "decisionSource"
       ]
     },
     "lineage": {
@@ -96,7 +98,13 @@
         "sourceType",
         "sourceId",
         "sourceUpdatedAt",
-        "definitionVersion"
+        "definitionVersion",
+        "sourceVersion",
+        "factRefs",
+        "evidenceRefs",
+        "transformRefs",
+        "outboxRefs",
+        "readModelVersion"
       ]
     },
     "freshness": {
@@ -104,7 +112,13 @@
       "required": [
         "indexedAt",
         "indexLagMs",
-        "stale"
+        "stale",
+        "sourceUpdatedAt",
+        "computedAt",
+        "lastDisplayedAt",
+        "computeLagMs",
+        "staleReason",
+        "freshnessPolicyVersion"
       ]
     },
     "ranking": {

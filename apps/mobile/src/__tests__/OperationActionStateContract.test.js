@@ -102,6 +102,25 @@ describe("OAM Surface primary action state machine", () => {
     expect(visibleText(html)).toContain("查看不能提交原因");
   });
 
+  it("does not bind submit when a Surface card has no Admission contract", () => {
+    const card = { id: "roomSetup", status: "ready", evidence: [] };
+    const workItem = {
+      workspaceId: "W-STAY-RESOURCE",
+      cardId: "roomSetup"
+    };
+    const ctx = createSurfaceCtx();
+    const actionState = buildOperationActionState(workItem, card, null, ctx.state);
+    const html = primaryActionButton(actionState, ctx);
+
+    expect(actionState.status).toBe("confirmDenied");
+    expect(actionState.admission.prepareAllowed).toBe(false);
+    expect(actionState.admission.confirmAllowed).toBe(false);
+    expect(actionState.admission.productionAllowed).toBe(false);
+    expect(actionState.admission.reason).toBe("missing_admission_contract");
+    expect(html).not.toContain("data-submit-card");
+    expect(visibleText(html)).toContain("查看不能提交原因");
+  });
+
   it("keeps projection pending distinct from failure", () => {
     const store = runtimeStore();
     store.workspaces[0].cards[0].evidence = [];

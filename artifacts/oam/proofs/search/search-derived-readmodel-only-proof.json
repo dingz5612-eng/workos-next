@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "workosnext.search-proof.v1",
+  "status": "passed",
+  "generatedBy": "scripts/oam/generate-current-evidence-root.mjs",
+  "singleWriter": "scripts/oam/generate-current-evidence-root.mjs",
+  "checker": "scripts/check-search-kernel.mjs",
+  "failures": [],
+  "gates": [
+    "node scripts/check-search-kernel.mjs"
+  ],
+  "proofId": "search-derived-readmodel-only-proof",
+  "proves": [
+    "Search consumes generated/read envelopes only.",
+    "OperationsReadStore.SearchOperations is upstream projection-builder source only.",
+    "operationsRuntimeFactInput is forbidden as direct Search input."
+  ],
+  "allowedInputs": [
+    "generatedReadModel",
+    "SearchIndexRecord",
+    "OamObjectEnvelope",
+    "LensReadModel",
+    "authorizedProjectionReadModel"
+  ],
+  "forbiddenDirectInputs": [
+    "operationsRuntimeFactInput"
+  ],
+  "operationsReadStoreBoundary": {
+    "allowedOnlyAs": "upstreamProjectionBuilderSource",
+    "searchKernelDirectQueryAllowed": false
+  },
+  "sourceRefs": [
+    "docs/contracts/search/search-contract.json",
+    "docs/contracts/search/search-index-sources.json"
+  ],
+  "checkedAtUtc": "2026-06-12T10:01:29.115Z"
+}

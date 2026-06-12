@@ -1,6 +1,11 @@
 $ErrorActionPreference = "Stop"
 $script:GateResults = @()
 $script:GateReportPath = "artifacts/oam/checks/control-plane-gate-results.json"
+$script:RunStartedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+$script:ExpectedGateCount = 0
+$script:CurrentStage = "not_started"
+$script:CurrentGate = ""
+$script:TerminalFailureMessage = ""
 
 function Get-GitValue {
   param([string[]] $Arguments)
@@ -16,19 +21,90 @@ function Get-GitValue {
   return "unknown"
 }
 
+function Get-ExpectedGateCount {
+  $scriptPath = if ($PSCommandPath) { $PSCommandPath } else { $MyInvocation.MyCommand.Path }
+  $content = Get-Content -Raw -Path $scriptPath
+  $count = [regex]::Matches($content, "(?m)^\s*Invoke-Gate\b(?!.*-RecordResult\s+\`$false)").Count
+  if (Test-Path "artifacts/oam/test-results/mobile/coverage/coverage-summary.json") {
+    $count -= 1
+  }
+  return $count
+}
+
+function Get-StageForCommand {
+  param([string] $CommandLine)
+
+  if ($CommandLine -match "authority|current-architecture|current-oam|rule-authority|truth-ownership|truth-owners|file-lifecycle|source-layer") {
+    return "authority_file_lifecycle"
+  }
+  if ($CommandLine -match "generated|derived|compile|kernel-graph") {
+    return "generated_compiler"
+  }
+  if ($CommandLine -match "runtime|api-boundaries|search|read-intelligence|surface|dashboard|finance|ledger|metric|language") {
+    return "runtime_read_surface_finance"
+  }
+  if ($CommandLine -match "browser|coverage|mobile") {
+    return "browser_mobile_evidence"
+  }
+  if ($CommandLine -match "evidence-root|release-attestation") {
+    return "evidence_report"
+  }
+  return "control_plane_gate"
+}
+
 function Write-GateReport {
-  param([string] $Status = "running")
+  param(
+    [string] $RunStatus = "running",
+    [string] $Status = "running",
+    [string] $CurrentStage = $script:CurrentStage,
+    [string] $CurrentGate = $script:CurrentGate
+  )
 
   $failed = @($script:GateResults | Where-Object { $_.status -ne "passed" })
-  $effectiveStatus = if ($failed.Count -eq 0 -and $Status -ne "failed") { "passed" } else { "failed" }
+  $completedGateCount = $script:GateResults.Count
+  $effectiveStatus = if ($RunStatus -eq "completed" -and $failed.Count -eq 0 -and $completedGateCount -eq $script:ExpectedGateCount) {
+    "passed"
+  } elseif ($RunStatus -eq "failed" -or $Status -eq "failed" -or $failed.Count -gt 0) {
+    "failed"
+  } elseif ($RunStatus -eq "not_started") {
+    "not_started"
+  } else {
+    "running"
+  }
+  $finalizable = $RunStatus -eq "completed" -and $effectiveStatus -eq "passed" -and $completedGateCount -eq $script:ExpectedGateCount
+  $blockingReasons = @()
+  if ($RunStatus -eq "running") {
+    $blockingReasons += "Control Plane 仍在运行，不能作为最终裁决。"
+  }
+  if ($RunStatus -eq "failed") {
+    $blockingReasons += "Control Plane 已失败，不能作为最终 PASS。"
+  }
+  if ($completedGateCount -ne $script:ExpectedGateCount) {
+    $blockingReasons += "Control Plane 已完成 gate 数量与 expectedGateCount 不一致：completed=${completedGateCount}, expected=$($script:ExpectedGateCount)。"
+  }
+  if ($failed.Count -gt 0) {
+    $blockingReasons += "Control Plane 失败 gate 数量：$($failed.Count)。"
+  }
+  if ($script:TerminalFailureMessage) {
+    $blockingReasons += $script:TerminalFailureMessage
+  }
   $report = [ordered]@{
     version = "oam.control-plane-gate-results.v1"
     generatedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
     commitSha = Get-GitValue -Arguments @("rev-parse", "HEAD")
     branch = Get-GitValue -Arguments @("branch", "--show-current")
+    runStatus = $RunStatus
     status = $effectiveStatus
-    requiredGateCount = $script:GateResults.Count
+    expectedGateCount = $script:ExpectedGateCount
+    requiredGateCount = $script:ExpectedGateCount
+    completedGateCount = $completedGateCount
     failedGateCount = $failed.Count
+    finalizable = $finalizable
+    startedAtUtc = $script:RunStartedAtUtc
+    finishedAtUtc = if ($RunStatus -in @("completed", "failed")) { (Get-Date).ToUniversalTime().ToString("o") } else { $null }
+    currentStage = $CurrentStage
+    currentGate = $CurrentGate
+    blockingReasons = $blockingReasons
     gates = $script:GateResults
   }
 
@@ -36,7 +112,9 @@ function Write-GateReport {
   if (-not (Test-Path $dir)) {
     New-Item -ItemType Directory -Path $dir | Out-Null
   }
-  $report | ConvertTo-Json -Depth 8 | Set-Content -Path $script:GateReportPath -Encoding UTF8
+  $tempPath = "$($script:GateReportPath).tmp"
+  $report | ConvertTo-Json -Depth 8 | Set-Content -Path $tempPath -Encoding UTF8
+  Move-Item -LiteralPath $tempPath -Destination $script:GateReportPath -Force
 }
 
 function Invoke-Gate {
@@ -50,6 +128,11 @@ function Invoke-Gate {
 
   $commandLine = "$Command $($Arguments -join ' ')".Trim()
   $startedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+  $script:CurrentGate = $commandLine
+  $script:CurrentStage = Get-StageForCommand -CommandLine $commandLine
+  if ($RecordResult) {
+    Write-GateReport -RunStatus "running"
+  }
   try {
     & $Command @Arguments
     $exitCode = $LASTEXITCODE
@@ -64,9 +147,10 @@ function Invoke-Gate {
         startedAtUtc = $startedAtUtc
         endedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
       }
-      Write-GateReport
+      Write-GateReport -RunStatus "running"
     }
   } catch {
+    $script:TerminalFailureMessage = "Control Plane 当前 gate 失败：$commandLine。$($_.Exception.Message)"
     if ($RecordResult) {
       $script:GateResults += [ordered]@{
         command = $commandLine
@@ -76,16 +160,24 @@ function Invoke-Gate {
         endedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
         message = $_.Exception.Message
       }
-      Write-GateReport -Status "failed"
     }
+    Write-GateReport -RunStatus "failed" -Status "failed"
     throw
   }
 }
 
+$script:ExpectedGateCount = Get-ExpectedGateCount
+$script:CurrentStage = "initializing"
+$script:CurrentGate = ""
+Write-GateReport -RunStatus "running"
+
 Invoke-Gate node scripts/oam/check-current-oam.mjs
+Invoke-Gate node scripts/oam/check-current-architecture-manifest.mjs
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs --self-test
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs
 Invoke-Gate node scripts/oam/check-current-authority-index.mjs
+Invoke-Gate node scripts/authority/check-master-design-schema.mjs
+Invoke-Gate node scripts/authority/check-truth-ownership-matrix.mjs
 Invoke-Gate node scripts/oam/generate-authority-source-layer-audit.mjs
 Invoke-Gate node scripts/oam/check-authority-source-layer-audit.mjs
 Invoke-Gate node scripts/oam/check-authority-cleanup-mutation-tests.mjs
@@ -132,6 +224,7 @@ Invoke-Gate node scripts/check-account-actor-kernel.mjs
 Invoke-Gate node scripts/check-language-kernel.mjs
 Invoke-Gate node scripts/oam/check-surface-language-v2.mjs
 Invoke-Gate node scripts/oam/check-read-intelligence-kernel.mjs
+Invoke-Gate node scripts/oam/check-bi-kpi-metric-operating-model.mjs
 Invoke-Gate node scripts/check-search-kernel.mjs --self-test
 Invoke-Gate node scripts/check-search-kernel.mjs
 Invoke-Gate node scripts/check-surface-contract.mjs
@@ -158,6 +251,7 @@ Invoke-Gate node scripts/check-shared-governance-boundary.mjs
 Invoke-Gate node scripts/oam/check-db-no-side-effects-proof.mjs
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs --self-test
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs
+Invoke-Gate node scripts/oam/check-dormitory-golden-chain-source-package.mjs
 Invoke-Gate node scripts/business/check-dormitory-operating-kernel.mjs
 Invoke-Gate node scripts/business/check-dormitory-resource-saleability-golden-chain.mjs
 Invoke-Gate node scripts/business/check-dormitory-scenario-package-matrix.mjs
@@ -183,5 +277,7 @@ if (-not (Test-Path "artifacts/oam/test-results/mobile/coverage/coverage-summary
 Invoke-Gate node scripts/oam/generate-mobile-branch-risk-ledger.mjs
 Invoke-Gate node scripts/oam/check-mobile-coverage-policy.mjs
 Invoke-Gate node scripts/oam/check-mobile-critical-branch-scenarios.mjs
+Write-GateReport -RunStatus "completed" -Status "passed" -CurrentStage "completed" -CurrentGate ""
 Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs -RecordResult $false
 Invoke-Gate node scripts/oam/check-current-evidence-root.mjs -RecordResult $false
+Invoke-Gate node scripts/oam/check-current-oam-release-attestation.mjs -RecordResult $false

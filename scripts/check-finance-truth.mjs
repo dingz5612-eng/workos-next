@@ -62,7 +62,7 @@ function validateContracts() {
   if (pipeline.packId !== "FinanceTruthPack" || pipeline.moneyKernelPack !== "MoneyKernelPack") {
     violations.push(violation("finance_truth.owner_mismatch", "docs/business/finance/finance-truth-pipeline.yml", "FinanceTruthPack and MoneyKernelPack ownership must be explicit."));
   }
-  for (const fact of ["PaymentFact", "DepositFact", "LedgerEntry"]) {
+  for (const fact of ["PaymentFact", "DepositFact", "FinancialFact", "LedgerTransaction", "LedgerEntry"]) {
     if (!pipeline.forbiddenDirectFacts?.includes(fact)) {
       violations.push(violation("finance_truth.missing_forbidden_direct_fact", "docs/business/finance/finance-truth-pipeline.yml", `${fact} must be forbidden as direct business-domain output.`, { fact }));
     }
@@ -75,6 +75,18 @@ function validateContracts() {
   if (pipeline.truthRules?.bankImportDirectPaymentConfirmedAllowed !== false) {
     violations.push(violation("finance_truth.bank_import_direct_payment", "docs/business/finance/finance-truth-pipeline.yml", "Bank import must not directly create PaymentConfirmed."));
   }
+  if (pipeline.truthRules?.businessDomainAmountBasisProposalAllowed !== true) {
+    violations.push(violation("finance_truth.amount_basis_proposal_not_allowed", "docs/business/finance/finance-truth-pipeline.yml", "Business domains must be allowed to submit AmountBasisProposal only."));
+  }
+  if (pipeline.truthRules?.businessDomainAmountBasisAllowed !== false) {
+    violations.push(violation("finance_truth.business_amount_basis_allowed", "docs/business/finance/finance-truth-pipeline.yml", "businessDomainAmountBasisAllowed must be false."));
+  }
+  if (pipeline.truthRules?.businessDomainDirectFinancialFactAllowed !== false) {
+    violations.push(violation("finance_truth.business_financial_fact_allowed", "docs/business/finance/finance-truth-pipeline.yml", "Business domains must not submit FinancialFact directly."));
+  }
+  if (pipeline.truthRules?.dashboardMetricSearchAmountBasisInferenceAllowed !== false) {
+    violations.push(violation("finance_truth.readside_amount_basis_inference_allowed", "docs/business/finance/finance-truth-pipeline.yml", "Dashboard / Metric / Search must not infer AmountBasis."));
+  }
   if (pipeline.goNoGo?.productionAllowed !== false) {
     violations.push(violation("finance_truth.production_claim", "docs/business/finance/finance-truth-pipeline.yml", "OAM finance-gate must not declare production allowed."));
   }
@@ -85,6 +97,26 @@ function validateContracts() {
   for (const input of ["AmountBasisProposal", "AmountBasisReviewed", "AmountBasis"]) {
     if (!pipeline.acceptedInputs?.includes(input)) {
       violations.push(violation("finance_truth.amount_basis_input_missing", "docs/business/finance/finance-truth-pipeline.yml", `${input} must be an accepted finance pipeline input.`, { input }));
+    }
+  }
+  if (pipeline.businessInputType !== "AmountBasisProposal") {
+    violations.push(violation("finance_truth.business_input_not_proposal", "docs/business/finance/finance-truth-pipeline.yml", "Business input type must be AmountBasisProposal."));
+  }
+  const businessInputs = pipeline.businessInputPolicy ?? [];
+  const proposalPolicy = businessInputs.find((item) => item.inputType === "AmountBasisProposal");
+  if (!proposalPolicy) {
+    violations.push(violation("finance_truth.amount_basis_proposal_policy_missing", "docs/business/finance/finance-truth-pipeline.yml", "businessInputPolicy must contain AmountBasisProposal."));
+  } else {
+    if (proposalPolicy.financeReviewOutput !== "AmountBasisReviewed" || proposalPolicy.financeKernelOutput !== "AmountBasis") {
+      violations.push(violation("finance_truth.amount_basis_review_chain_missing", "docs/business/finance/finance-truth-pipeline.yml", "AmountBasisProposal must flow through AmountBasisReviewed to AmountBasis."));
+    }
+    if (!proposalPolicy.forbiddenOutcomeBeforeFinanceReview?.includes("AmountBasis")) {
+      violations.push(violation("finance_truth.amount_basis_before_review_not_forbidden", "docs/business/finance/finance-truth-pipeline.yml", "AmountBasis must be forbidden before finance review."));
+    }
+  }
+  for (const input of businessInputs) {
+    if (input.inputType === "AmountBasis") {
+      violations.push(violation("finance_truth.business_amount_basis_policy_present", "docs/business/finance/finance-truth-pipeline.yml", "Business input policy must not accept AmountBasis directly."));
     }
   }
   const ledgerKernel = readDocument("docs/finance/finance-ledger-kernel.json");
@@ -99,6 +131,21 @@ function validateContracts() {
   }
   if (ledgerKernel.semanticDistinctions?.normalPayments?.depositLiabilityAllowed !== false) {
     violations.push(violation("finance_truth.normal_payment_deposit_boundary", "docs/finance/finance-ledger-kernel.json", "Normal payments must not use deposit liability."));
+  }
+  if (ledgerKernel.businessInputPolicy?.businessDomainInput !== "AmountBasisProposal" ||
+      ledgerKernel.businessInputPolicy?.financeReviewOutput !== "AmountBasisReviewed" ||
+      ledgerKernel.businessInputPolicy?.financeKernelOutput !== "AmountBasis") {
+    violations.push(violation("finance_truth.ledger_kernel_business_input_policy", "docs/finance/finance-ledger-kernel.json", "Ledger kernel must declare Proposal -> Reviewed -> AmountBasis."));
+  }
+  for (const [key, expected] of Object.entries({
+    businessDomainDirectAmountBasisAllowed: false,
+    businessDomainDirectFinancialFactAllowed: false,
+    businessDomainDirectLedgerEntryAllowed: false,
+    dashboardMetricSearchAmountBasisInferenceAllowed: false
+  })) {
+    if (ledgerKernel.businessInputPolicy?.[key] !== expected) {
+      violations.push(violation("finance_truth.ledger_kernel_policy_drift", "docs/finance/finance-ledger-kernel.json", `businessInputPolicy.${key} must be ${expected}.`, { key }));
+    }
   }
 
   const kernel = readDocument("docs/business/finance/money-kernel-rules.yml");
@@ -160,9 +207,17 @@ function validateScenarioFiles(files, expectNegative) {
 
 function validateScenario(scenario, file, expectNegative) {
   const violations = [];
-  const directFacts = new Set(["PaymentFact", "DepositFact", "LedgerEntry"]);
+  const directFacts = new Set(["PaymentFact", "DepositFact", "FinancialFact", "LedgerTransaction", "LedgerEntry"]);
   if (directFacts.has(scenario.inputFact) || directFacts.has(scenario.targetFact)) {
-    violations.push(violation("finance_truth.direct_fact_commit", file, "Business/adapter path must not commit PaymentFact, DepositFact, or LedgerEntry directly.", { fact: scenario.targetFact }));
+    violations.push(violation("finance_truth.direct_fact_commit", file, "Business/adapter path must not commit PaymentFact, DepositFact, FinancialFact, LedgerTransaction, or LedgerEntry directly.", { fact: scenario.targetFact }));
+  }
+  if ((scenario.inputFact === "AmountBasis" || scenario.targetFact === "AmountBasis") &&
+      !["FinanceTruthPack", "MoneyKernelPack"].includes(scenario.sourcePack)) {
+    violations.push(violation("finance_truth.business_amount_basis_direct", file, "Non-finance source must submit AmountBasisProposal, not AmountBasis.", { sourcePack: scenario.sourcePack }));
+  }
+  if (["Dashboard", "Metric", "Search", "Surface"].includes(scenario.sourcePack) &&
+      (scenario.inputFact === "AmountBasis" || scenario.targetFact === "AmountBasis")) {
+    violations.push(violation("finance_truth.readside_amount_basis_inference", file, "Dashboard / Metric / Search / Surface must not infer AmountBasis.", { sourcePack: scenario.sourcePack }));
   }
   if (scenario.inputFact === "PaymentConfirmed" || scenario.basisType === "bank_import_payment_confirmed") {
     violations.push(violation("finance_truth.bank_import_direct_payment_confirmed", file, "Bank import must create FinanceIntake or MoneyBasis, not PaymentConfirmed."));
@@ -193,6 +248,8 @@ function validateSourceBindings() {
   const source = readText("services/core-api/WorkOS.Api/Runtime/FinanceTruthKernel.cs");
   for (const token of [
     "MoneyBasis",
+    "AmountBasisProposal",
+    "AmountBasisReviewed",
     "FinanceIntake",
     "FinanceCase",
     "FinanceReviewWorkItem",
@@ -204,6 +261,8 @@ function validateSourceBindings() {
     "LedgerProjectionRebuilder",
     "DepositRefundService",
     "finance_truth_blocks_bank_import_direct_payment_confirmed",
+    "finance_truth_blocks_business_domain_amount_basis",
+    "AmountBasisProposalReviewedByFinance",
     "finance_truth_requires_original_deposit_account",
     "deposit_refund_or_deduction_exceeds_available_liability"
   ]) {
@@ -235,6 +294,8 @@ function runSelfTest() {
   const negative = validateScenarioFiles(listDocuments(negativeRoot), true);
   assertSelfTest(negative.some((item) => item.id === "finance_truth.deposit_as_revenue"), "deposit-as-revenue fixture must fail.");
   assertSelfTest(negative.some((item) => item.id === "finance_truth.direct_fact_commit"), "business-domain direct LedgerEntry fixture must fail.");
+  assertSelfTest(negative.some((item) => item.id === "finance_truth.business_amount_basis_direct"), "business-domain direct AmountBasis fixture must fail.");
+  assertSelfTest(negative.some((item) => item.id === "finance_truth.readside_amount_basis_inference"), "read-side AmountBasis inference fixture must fail.");
   assertSelfTest(negative.some((item) => item.id === "finance_truth.unbalanced_transaction"), "unbalanced transaction fixture must fail.");
   assertSelfTest(negative.some((item) => item.id === "finance_truth.refund_exceeds_liability"), "refund over liability fixture must fail.");
   assertSelfTest(negative.some((item) => item.id === "finance_truth.bank_import_direct_payment_confirmed"), "bank import direct PaymentConfirmed fixture must fail.");

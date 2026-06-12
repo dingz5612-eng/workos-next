@@ -3,11 +3,15 @@ import path from "node:path";
 
 const root = process.cwd();
 const auditPath = "artifacts/oam/authority-cleanup/source-layer-audit.json";
-const allowedLayers = new Set(["source", "generated", "runtime", "evidence", "manual"]);
+const lifecyclePolicyPath = "docs/oam/file-lifecycle-policy.json";
+const lifecyclePolicy = readJson(lifecyclePolicyPath);
+const lifecycleRegistry = lifecyclePolicy.fileLifecycleRegistry ?? {};
+const allowedLayers = new Set(["source", "generated", "runtime", "evidence", "tooling", "release", "retired", "referenceOnly"]);
 const requiredFields = [
   "path",
   "currentIdentity",
   "targetLayer",
+  "fileLifecycle",
   "manualEditAllowed",
   "businessFactAuthorityAllowed",
   "contractAuthorityAllowed",
@@ -26,6 +30,12 @@ if (!fs.existsSync(abs(auditPath))) {
   const audit = readJson(auditPath);
   if (audit.version !== "authority-cleanup.source-layer-audit.v1") {
     fail("audit_version_invalid", "source-layer-audit.json 必须声明 authority-cleanup.source-layer-audit.v1。");
+  }
+  if (audit.fileLifecycleRegistry?.policyPath !== lifecyclePolicyPath) {
+    fail("audit_lifecycle_registry_missing", "Source Layer Audit 必须绑定 File Lifecycle Registry。");
+  }
+  if (audit.fileLifecycleRegistry?.registryVersion !== "oam.file-lifecycle-registry.v1") {
+    fail("audit_lifecycle_registry_version", "Source Layer Audit 必须绑定 oam.file-lifecycle-registry.v1。");
   }
   if (!Array.isArray(audit.entries) || audit.entries.length === 0) {
     fail("audit_entries_missing", "source-layer-audit.json 必须包含 entries。");
@@ -75,6 +85,7 @@ if (!fs.existsSync(abs(auditPath))) {
   }
 
   const paths = new Set();
+  const lifecycleByPath = new Map();
   for (const entry of audit.entries ?? []) {
     for (const field of requiredFields) {
       if (!(field in entry) || entry[field] === "" || entry[field] === "unknown") {
@@ -86,6 +97,16 @@ if (!fs.existsSync(abs(auditPath))) {
     if (!allowedLayers.has(entry.targetLayer)) {
       fail("audit_layer_invalid", `${entry.path} 的目标层非法：${entry.targetLayer}`);
     }
+    if (!allowedLayers.has(entry.fileLifecycle)) {
+      fail("audit_lifecycle_invalid", `${entry.path} 的 fileLifecycle 非法：${entry.fileLifecycle}`);
+    }
+    if (entry.fileLifecycle !== entry.targetLayer) {
+      fail("audit_lifecycle_layer_mismatch", `${entry.path} 的 fileLifecycle 必须与 targetLayer 保持一致，避免路径层与生命周期双重解释。`);
+    }
+    if (lifecycleByPath.has(entry.path)) {
+      fail("audit_lifecycle_duplicate", `${entry.path} 存在重复生命周期声明。`);
+    }
+    lifecycleByPath.set(entry.path, entry.fileLifecycle);
     for (const field of ["manualEditAllowed", "businessFactAuthorityAllowed", "contractAuthorityAllowed", "derived"]) {
       if (typeof entry[field] !== "boolean") {
         fail("audit_boolean_invalid", `${entry.path} 的 ${field} 必须是布尔值。`);
@@ -97,8 +118,29 @@ if (!fs.existsSync(abs(auditPath))) {
     if (entry.derived === true && entry.businessFactAuthorityAllowed === true) {
       fail("derived_business_authority", `${entry.path} 是派生文件，不得拥有业务事实权威。`);
     }
-    if (["generated", "runtime", "evidence"].includes(entry.targetLayer) && entry.businessFactAuthorityAllowed === true) {
+    if (["generated", "runtime", "evidence", "release", "retired", "referenceOnly"].includes(entry.targetLayer) && entry.businessFactAuthorityAllowed === true) {
       fail("non_source_business_authority", `${entry.path} 不在 Source Layer，不得拥有业务事实权威。`);
+    }
+    if (entry.targetLayer === "source" && !((audit.sourceWhitelist ?? []).includes(entry.path))) {
+      fail("source_not_in_whitelist", `${entry.path} 不是 Source 白名单成员，不得声明 source 生命周期。`);
+    }
+    if (entry.targetLayer === "generated" && entry.manualEditAllowed !== false) {
+      fail("generated_manual_edit_allowed", `${entry.path} 是 generated，manualEditAllowed 必须为 false。`);
+    }
+    if (entry.targetLayer === "generated" && !hasGeneratedBoundaryMarker(entry.path)) {
+      fail("generated_marker_missing", `${entry.path} 是 generated，必须声明 doNotEdit / generatedBy / derivedFrom / generatedFrom 边界标记。`);
+    }
+    if (entry.targetLayer === "tooling" && entry.businessFactAuthorityAllowed === true) {
+      fail("tooling_business_authority", `${entry.path} 是 Tooling，不得拥有业务事实权威。`);
+    }
+    if (/^scripts\//.test(entry.path) && entry.targetLayer === "generated" && entry.manualEditAllowed === false) {
+      fail("tooling_misclassified_generated", `${entry.path} 是人工维护脚本，不得被误判为 generated 禁手改文件。`);
+    }
+    if (/^scripts\//.test(entry.path) && entry.manualEditAllowed !== true) {
+      fail("tooling_manual_edit_forbidden", `${entry.path} 是人工维护脚本，manualEditAllowed 必须为 true。`);
+    }
+    if (/^artifacts\//.test(entry.path) && entry.targetLayer === "source") {
+      fail("artifact_as_source", `${entry.path} 是 artifact，不得成为 Source。`);
     }
     if (entry.scanReasons?.includes("controlled-old-term-scan") &&
       entry.controlledOldTermUse !== true &&
@@ -111,6 +153,11 @@ if (!fs.existsSync(abs(auditPath))) {
   }
 }
 
+const requiredRegistryLifecycles = ["source", "generated", "tooling", "runtime", "evidence", "release", "retired", "referenceOnly"];
+if (!sameSet(Object.keys(lifecycleRegistry.canonicalLifecycles ?? {}), requiredRegistryLifecycles)) {
+  fail("lifecycle_registry_incomplete", "File Lifecycle Registry 必须定义八类 canonical lifecycle。");
+}
+
 if (failures.length > 0) {
   console.error("Authority source layer audit check: FAIL");
   for (const failure of failures) console.error(`- ${failure.id}: ${failure.message}`);
@@ -121,6 +168,19 @@ console.log("Authority source layer audit check: PASS");
 
 function readJson(file) {
   return JSON.parse(fs.readFileSync(abs(file), "utf8"));
+}
+
+function hasGeneratedBoundaryMarker(file) {
+  try {
+    const text = fs.readFileSync(abs(file), "utf8");
+    return /\b(doNotEdit|generatedBy|generatedFrom|derivedFrom)\b/.test(text);
+  } catch {
+    return false;
+  }
+}
+
+function sameSet(left, right) {
+  return JSON.stringify([...new Set(left)].sort()) === JSON.stringify([...new Set(right)].sort());
 }
 
 function fail(id, message) {

@@ -32,7 +32,10 @@ const requiredBusinessIdentity = [
   "objectId",
   "fieldId",
   "factId",
-  "policyRef"
+  "admissionPolicyRef",
+  "evidencePolicyRef",
+  "ledgerPolicyRef",
+  "surfacePolicyRef"
 ];
 const forbiddenIdentity = [
   "cardId",
@@ -51,9 +54,15 @@ const requiredAllowedFacts = [
 const requiredForbiddenFacts = [
   "Payment",
   "Deposit",
+  "DepositAccount",
   "LedgerEntry",
+  "LedgerTransaction",
   "PaymentAllocation",
   "Refund",
+  "AmountBasis",
+  "MoneyBasis",
+  "FinancialFact",
+  "FinanceReceipt",
   "DashboardSummary 写入"
 ];
 const requiredBranchFlows = [
@@ -102,6 +111,11 @@ requireList("businessIdentity", requiredBusinessIdentity);
 for (const item of forbiddenIdentity) requireValue(section("businessIdentity").includes(`- ${item}`), "scenario.forbidden_identity_missing", `禁止身份缺少 ${item}。`, { item });
 
 const allowedIdentityBlock = between(section("businessIdentity"), "allowed:", "forbidden:");
+requireValue(!allowedIdentityBlock.includes("policyRef"), "scenario.policy_ref_generic_in_allowed_identity", "businessIdentity.allowed 不得保留泛称 policyRef。");
+const deprecatedAliasesBlock = between(section("businessIdentity"), "deprecatedAliases:", "roles:");
+for (const required of ["alias: policyRef", "readOnly: true", "executable: false", "notCompilerInput: true", "admissionPolicyRef", "evidencePolicyRef", "ledgerPolicyRef", "surfacePolicyRef"]) {
+  requireValue(deprecatedAliasesBlock.includes(required), "scenario.policy_ref_deprecated_alias_missing", `policyRef deprecatedAlias 缺少 ${required}。`, { required });
+}
 for (const item of forbiddenIdentity) {
   requireValue(!allowedIdentityBlock.includes(item), "scenario.compat_identity_in_allowed_identity", `${item} 不得进入业务身份 allowed。`, { item });
 }
@@ -109,11 +123,64 @@ for (const item of forbiddenIdentity) {
   const fence = migrationFenceFor(item);
   requireValue(Boolean(fence), "scenario.migration_fence_missing", `${item} 必须进入 migrationFences。`, { item });
   if (fence) {
-    for (const required of ["readOnly: true", "executable: false", "affectsAdmission: false", "affectsRuntimeConfirm: false", "affectsLedger: false", "deletionProofRef: docs/contracts/definition/source-id-migration-fence.json"]) {
+    for (const required of ["readOnly: true", "executable: false", "affectsAdmission: false", "affectsRuntimeConfirm: false", "affectsBusinessIdentity: false", "affectsLedger: false", "deletionProofRef: docs/contracts/definition/source-id-migration-fence.json"]) {
       requireValue(fence.includes(required), "scenario.migration_fence_field_missing", `${item} migrationFences 缺少 ${required}。`, { item, required });
     }
   }
 }
+
+const financeLedgerBoundary = section("financeLedgerBoundary");
+for (const required of [
+  "ledgerPolicyRef: ledger.none.v1",
+  "ledgerEntryAllowed: false",
+  "ledgerTransactionAllowed: false",
+  "moneyBasisAllowed: false",
+  "amountBasisAllowed: false",
+  "paymentFactAllowed: false",
+  "depositFactAllowed: false",
+  "refundFactAllowed: false",
+  "financeKernelHandoffAllowed: false",
+  "businessDomainMaySubmitAmountBasis: false"
+]) {
+  requireValue(financeLedgerBoundary.includes(required), "scenario.finance_ledger_boundary_missing", `financeLedgerBoundary 缺少 ${required}。`, { required });
+}
+for (const workItemType of requiredInScope) {
+  const zeroImpact = blockFor(financeLedgerBoundary, `workItemType: ${workItemType}`, "\n    - workItemType:");
+  requireValue(Boolean(zeroImpact), "scenario.finance_zero_impact_missing", `${workItemType} 缺少账务零影响声明。`, { workItemType });
+  for (const required of ["producesMoneyBasis: false", "producesAmountBasis: false", "producesLedgerTransaction: false", "producesLedgerEntry: false"]) {
+    requireValue(zeroImpact.includes(required), "scenario.finance_zero_impact_field_missing", `${workItemType} 缺少 ${required}。`, { workItemType, required });
+  }
+}
+
+const fieldContracts = section("fieldContracts");
+for (const required of [
+  "workItemType: Dorm.RoomSetupConfirm",
+  "fieldId: room.basicProfile",
+  "sourceFieldId: room.basicProfile",
+  "labelCopyKey: dormitory.resourceSaleability.field.roomBasicProfile",
+  "displayNameZhForReviewOnly: 房间基础信息",
+  "forbiddenSubfields:",
+  "- readinessState",
+  "- saleabilityState",
+  "- 可售状态",
+  "workItemType: Dorm.BedSetupConfirm",
+  "fieldId: roomId",
+  "sourceFieldId: bed.roomId",
+  "inputMode: selectedStableRef",
+  "rawIdManualInputAllowed: false",
+  "workItemType: Dorm.ResourceReadinessConfirm",
+  "fieldId: bedId",
+  "sourceFieldId: resource.bedId",
+  "fieldId: readinessState",
+  "sourceFieldId: resource.readinessState"
+]) {
+  requireValue(fieldContracts.includes(required), "scenario.field_contract_missing", `fieldContracts 缺少 ${required}。`, { required });
+}
+for (const forbidden of ["route param", "cardId", "sourceCardId", "workspaceCardId", "search label"]) {
+  requireValue(section("selectedStableRefRules").includes(`- ${forbidden}`), "scenario.stable_ref_forbidden_source_missing", `selectedStableRefRules 必须禁止 ${forbidden}。`, { forbidden });
+}
+requireValue(section("objectIdBinding").includes("oldCardIdRenameBlocked: true"), "scenario.old_card_rename_not_blocked", "objectIdBinding 必须阻断旧 cardId 换名伪装。");
+requireValue(section("sourceFieldGaps").includes("pending00Decision: true") && section("sourceFieldGaps").includes("compilePreparationAllowed: false_until_00_approval"), "scenario.source_field_gap_policy_missing", "sourceFieldGaps 必须等待 00 裁决且不得放行编译准备。");
 
 const mainFlow = section("mainFlow");
 const workItemsInFlow = [...mainFlow.matchAll(/workItemType:\s*([^\n\r]+)/g)].map((match) => match[1].trim());
@@ -207,6 +274,13 @@ function between(value, start, end) {
   if (startIndex < 0) return "";
   const endIndex = value.indexOf(end, startIndex + start.length);
   return endIndex < 0 ? value.slice(startIndex + start.length) : value.slice(startIndex + start.length, endIndex);
+}
+
+function blockFor(value, marker, nextMarker) {
+  const start = value.indexOf(marker);
+  if (start < 0) return "";
+  const next = value.indexOf(nextMarker, start + marker.length);
+  return next < 0 ? value.slice(start) : value.slice(start, next);
 }
 
 function hasLine(line) {

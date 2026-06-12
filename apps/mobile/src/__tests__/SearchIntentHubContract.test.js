@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 import { openWorkItem, setView } from "../navigationController.js";
 import { buildSearchResultVM, rankSearchResults } from "../searchIntentHub.js";
 import { searchView } from "../views/searchView.js";
-import { createSurfaceCtx, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
+import { createSurfaceCtx, internalPilotAdmissionFixture, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("OAM Surface search intent hub contract", () => {
   it("renders a WorkItem action button and opens the persisted operation panel", () => {
-    const ctx = createSurfaceCtx({ view: "search", query: "创建房间" });
+    const ctx = withSearchKernelAdmission(createSurfaceCtx({ view: "search", query: "创建房间" }));
     const html = searchView(ctx);
 
     expect(html).toContain("主动办理");
@@ -25,13 +25,54 @@ describe("OAM Surface search intent hub contract", () => {
   });
 
   it("routes the explicit accommodation resource wording to the Operations start command", () => {
-    const html = searchView(createSurfaceCtx({ view: "search", query: "新增住宿房源" }));
+    const html = searchView(withSearchKernelAdmission(createSurfaceCtx({ view: "search", query: "新增住宿房源" })));
     const text = visibleText(html);
 
     expect(html).toContain('data-search-section="activeCommands"');
     expect(html).toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
     expect(text).toContain("新增住宿房源");
     expect(text).toContain("开始观察记录");
+  });
+
+  it("uses Search Kernel admission for active commands without local command admission", () => {
+    const ctx = createSurfaceCtx({ view: "search", query: "新增住宿房源" });
+    ctx.state.runtimeStore.commandAdmission = null;
+    ctx.state.runtimeStore.businessLineAdmission = null;
+    ctx.state.runtimeStore.searchResultsByQuery = {
+      "新增住宿房源": [{
+        resultType: "workspaceCardCompatibility",
+        workspaceId: "W-STAY-RESOURCE",
+        cardId: "roomSetup",
+        admission: {
+          ...internalPilotAdmissionFixture(),
+          confirmAllowed: false,
+          admissionDecisionRef: "admission:test:search-kernel-prepare"
+        },
+        sourceRefs: {
+          source: "SearchKernelService",
+          sourceType: "workspaceCardProjection",
+          admissionDecisionRef: "admission:test:search-kernel-prepare"
+        }
+      }]
+    };
+
+    const html = searchView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
+    expect(text).toContain("开始观察记录");
+  });
+
+  it("keeps active commands readonly when no backend Search Kernel admission exists", () => {
+    const ctx = createSurfaceCtx({ view: "search", query: "新增住宿房源" });
+    ctx.state.runtimeStore.commandAdmission = internalPilotAdmissionFixture();
+    ctx.state.runtimeStore.businessLineAdmission = null;
+    ctx.state.runtimeStore.searchResultsByQuery = {};
+
+    const html = searchView(ctx);
+
+    expect(html).not.toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
+    expect(html).toContain('data-view="learning"');
   });
 
   it("renders account recent searches and registered common intent suggestions", () => {
@@ -180,7 +221,8 @@ describe("OAM Surface search intent hub contract", () => {
         badges: ["mine", "ready"],
         businessObject: "21 号房间",
         objectId: "ROOM-21",
-        reason: "流程停在价格配置卡"
+        reason: "流程停在价格配置卡",
+        admission: internalPilotAdmissionFixture()
       },
       {
         queueItemId: "q-unrelated",
@@ -306,7 +348,7 @@ describe("OAM Surface search intent hub contract", () => {
   });
 
   it("renders admission explainability on search cards without ordinary-user raw refs", () => {
-    const ctx = createSurfaceCtx({ view: "search", query: "创建房间" });
+    const ctx = withSearchKernelAdmission(createSurfaceCtx({ view: "search", query: "创建房间" }));
     const html = searchView(ctx);
     const text = visibleText(html);
 
@@ -350,6 +392,28 @@ describe("OAM Surface search intent hub contract", () => {
     expect(text).toContain("当前不能确认");
     expect(html).not.toContain(">处理</button>");
     expect(html).toContain(">查看记录</button>");
+  });
+
+  it("keeps Search items without Admission contract readonly", () => {
+    const ctx = createSurfaceCtx({ view: "search", query: "缺准入" });
+    const vm = buildSearchResultVM({
+      resultType: "workItem",
+      workItemId: "wi-missing-admission",
+      workspaceId: "W-STAY-RESOURCE",
+      cardId: "roomSetup",
+      actionLabel: "处理",
+      lifecycleState: "ready",
+      title: { "zh-CN": "缺准入工作项" }
+    }, ctx);
+
+    expect(vm.visibleAllowed).toBe(true);
+    expect(vm.prepareAllowed).toBe(false);
+    expect(vm.confirmAllowed).toBe(false);
+    expect(vm.productionAllowed).toBe(false);
+    expect(vm.admission.reason).toBe("missing_admission_contract");
+    expect(vm.actionLabel).toBe("查看记录");
+    expect(vm.gateResult.writeThroughSearchAllowed).toBe(false);
+    expect(vm.gateResult.writeBusinessFactAllowed).toBe(false);
   });
 
   it("renders Operations Search Kernel work items found by lead customer anchor", () => {
@@ -401,8 +465,8 @@ describe("OAM Surface search intent hub contract", () => {
   });
 
   it("localizes active room commands without English fallback", () => {
-    const ru = visibleText(searchView(createSurfaceCtx({ view: "search", lang: "ru-RU", query: "комната" })));
-    const ky = visibleText(searchView(createSurfaceCtx({ view: "search", lang: "ky-KG", query: "бөлмө" })));
+    const ru = visibleText(searchView(withSearchKernelAdmission(createSurfaceCtx({ view: "search", lang: "ru-RU", query: "комната" }))));
+    const ky = visibleText(searchView(withSearchKernelAdmission(createSurfaceCtx({ view: "search", lang: "ky-KG", query: "бөлмө" }))));
 
     expect(ru).toContain("Можно начать самому");
     expect(ru).toContain("Добавить комнату");
@@ -432,3 +496,40 @@ describe("OAM Surface search intent hub contract", () => {
     expect(ky).not.toMatch(/\b(rejection|device|permission|finance|role)\b/);
   });
 });
+
+function withSearchKernelAdmission(ctx, options = {}) {
+  const query = options.query || ctx.state.query;
+  const workspaceId = options.workspaceId || "W-STAY-RESOURCE";
+  const cardId = options.cardId || "roomSetup";
+  const admission = {
+    ...internalPilotAdmissionFixture(),
+    ...(options.admission || {})
+  };
+  ctx.state.runtimeStore.searchResultsByQuery = {
+    ...(ctx.state.runtimeStore.searchResultsByQuery || {}),
+    [normalizeQuery(query)]: [{
+      resultType: "workspaceCardCompatibility",
+      workspaceId,
+      cardId,
+      admission,
+      sourceRefs: {
+        source: "SearchKernelService",
+        sourceType: "workspaceCardProjection",
+        admissionDecisionRef: admission.admissionDecisionRef
+      },
+      gateResult: {
+        status: "visible_readonly",
+        source: "SearchKernelService",
+        sourceType: "workspaceCardProjection",
+        admissionDecisionRef: admission.admissionDecisionRef,
+        writeThroughSearchAllowed: false,
+        writeBusinessFactAllowed: false
+      }
+    }]
+  };
+  return ctx;
+}
+
+function normalizeQuery(value = "") {
+  return String(value || "").trim().toLocaleLowerCase();
+}

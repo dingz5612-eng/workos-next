@@ -76,13 +76,26 @@ businessIdentity:
     - objectId
     - fieldId
     - factId
-    - policyRef
+    - admissionPolicyRef
+    - evidencePolicyRef
+    - ledgerPolicyRef
+    - surfacePolicyRef
   forbidden:
     - cardId
     - sourceCardId
     - workspace card
     - old catalog id
     - old seed id
+  deprecatedAliases:
+    - alias: policyRef
+      readOnly: true
+      executable: false
+      notCompilerInput: true
+      replacement:
+        - admissionPolicyRef
+        - evidencePolicyRef
+        - ledgerPolicyRef
+        - surfacePolicyRef
 roles:
   allowedHumanRoles:
     - 宿舍经办人
@@ -97,10 +110,43 @@ allowedFacts:
 forbiddenFacts:
   - Payment
   - Deposit
+  - DepositAccount
   - LedgerEntry
+  - LedgerTransaction
   - PaymentAllocation
   - Refund
+  - AmountBasis
+  - MoneyBasis
+  - FinancialFact
+  - FinanceReceipt
   - DashboardSummary 写入
+financeLedgerBoundary:
+  ledgerPolicyRef: ledger.none.v1
+  ledgerEntryAllowed: false
+  ledgerTransactionAllowed: false
+  moneyBasisAllowed: false
+  amountBasisAllowed: false
+  paymentFactAllowed: false
+  depositFactAllowed: false
+  refundFactAllowed: false
+  financeKernelHandoffAllowed: false
+  businessDomainMaySubmitAmountBasis: false
+  workItemZeroImpact:
+    - workItemType: Dorm.RoomSetupConfirm
+      producesMoneyBasis: false
+      producesAmountBasis: false
+      producesLedgerTransaction: false
+      producesLedgerEntry: false
+    - workItemType: Dorm.BedSetupConfirm
+      producesMoneyBasis: false
+      producesAmountBasis: false
+      producesLedgerTransaction: false
+      producesLedgerEntry: false
+    - workItemType: Dorm.ResourceReadinessConfirm
+      producesMoneyBasis: false
+      producesAmountBasis: false
+      producesLedgerTransaction: false
+      producesLedgerEntry: false
 admissionPolicyRef: dormitory_l1_internal_pilot_observation
 admissionPolicy:
   maturity: L1 internal pilot
@@ -140,6 +186,7 @@ migrationFences:
     executable: false
     affectsAdmission: false
     affectsRuntimeConfirm: false
+    affectsBusinessIdentity: false
     affectsLedger: false
     deletionProofRef: docs/contracts/definition/source-id-migration-fence.json
   - term: sourceCardId
@@ -147,6 +194,7 @@ migrationFences:
     executable: false
     affectsAdmission: false
     affectsRuntimeConfirm: false
+    affectsBusinessIdentity: false
     affectsLedger: false
     deletionProofRef: docs/contracts/definition/source-id-migration-fence.json
   - term: workspace card
@@ -154,6 +202,7 @@ migrationFences:
     executable: false
     affectsAdmission: false
     affectsRuntimeConfirm: false
+    affectsBusinessIdentity: false
     affectsLedger: false
     deletionProofRef: docs/contracts/definition/source-id-migration-fence.json
   - term: old catalog id
@@ -161,6 +210,7 @@ migrationFences:
     executable: false
     affectsAdmission: false
     affectsRuntimeConfirm: false
+    affectsBusinessIdentity: false
     affectsLedger: false
     deletionProofRef: docs/contracts/definition/source-id-migration-fence.json
   - term: old seed id
@@ -168,8 +218,498 @@ migrationFences:
     executable: false
     affectsAdmission: false
     affectsRuntimeConfirm: false
+    affectsBusinessIdentity: false
     affectsLedger: false
     deletionProofRef: docs/contracts/definition/source-id-migration-fence.json
+fieldContracts:
+  - workItemType: Dorm.RoomSetupConfirm
+    purpose: room_basic_profile_only
+    executableFields:
+      - fieldId: room.basicProfile
+        sourceFieldId: room.basicProfile
+        labelCopyKey: dormitory.resourceSaleability.field.roomBasicProfile
+        displayNameZhForReviewOnly: 房间基础信息
+        inputMode: clientSubmitted
+        objectKind: Room
+        definitionScope: definition.dormitory.roomSetupConfirm.v1
+        generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
+        allowedSubfields:
+          - roomNo
+          - floor
+          - capacity
+        forbiddenSubfields:
+          - readinessState
+          - saleabilityState
+          - 可售状态
+        rawIdManualInputAllowed: false
+  - workItemType: Dorm.BedSetupConfirm
+    purpose: bed_profile_with_confirmed_room_ref
+    executableFields:
+      - fieldId: roomId
+        sourceFieldId: bed.roomId
+        labelCopyKey: dormitory.resourceSaleability.field.roomId
+        displayNameZhForReviewOnly: 已确认房间
+        inputMode: selectedStableRef
+        objectKind: Room
+        definitionScope: definition.dormitory.bedSetupConfirm.v1
+        generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
+        rawIdManualInputAllowed: false
+      - fieldId: bedNo
+        sourceFieldId: bed.bedNo
+        labelCopyKey: dormitory.resourceSaleability.field.bedNo
+        displayNameZhForReviewOnly: 床位号
+        inputMode: clientSubmitted
+        objectKind: Bed
+        definitionScope: definition.dormitory.bedSetupConfirm.v1
+        generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
+      - fieldId: bedType
+        sourceFieldId: bed.bedType
+        labelCopyKey: dormitory.resourceSaleability.field.bedType
+        displayNameZhForReviewOnly: 床位类型
+        inputMode: clientSubmitted
+        objectKind: Bed
+        definitionScope: definition.dormitory.bedSetupConfirm.v1
+        generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
+  - workItemType: Dorm.ResourceReadinessConfirm
+    purpose: resource_readiness_only
+    executableFields:
+      - fieldId: roomId
+        sourceFieldId: resource.roomId
+        labelCopyKey: dormitory.resourceSaleability.field.roomId
+        displayNameZhForReviewOnly: 已确认房间
+        inputMode: selectedStableRef
+        objectKind: Room
+        definitionScope: definition.dormitory.resourceReadinessConfirm.v1
+        generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
+        rawIdManualInputAllowed: false
+      - fieldId: bedId
+        sourceFieldId: resource.bedId
+        labelCopyKey: dormitory.resourceSaleability.field.bedId
+        displayNameZhForReviewOnly: 已确认床位
+        inputMode: selectedStableRef
+        objectKind: Bed
+        definitionScope: definition.dormitory.resourceReadinessConfirm.v1
+        generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
+        rawIdManualInputAllowed: false
+      - fieldId: readinessState
+        sourceFieldId: resource.readinessState
+        labelCopyKey: dormitory.resourceSaleability.field.readinessState
+        displayNameZhForReviewOnly: 资源准备状态
+        inputMode: clientSubmitted
+        objectKind: Room
+        definitionScope: definition.dormitory.resourceReadinessConfirm.v1
+        generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
+selectedStableRefRules:
+  allowedSources:
+    - confirmed WorkItem
+    - generated read model
+    - authorized projection
+  forbiddenSources:
+    - user manual raw ID input
+    - route param
+    - cardId
+    - sourceCardId
+    - workspaceCardId
+    - search label
+  rawIdManualInputAllowed: false
+objectIdBinding:
+  objectIdMustBind:
+    - objectKind
+    - definitionScope
+    - generatedContractRef
+  oldCardIdRenameBlocked: true
+sourceFieldGaps:
+  owner:
+    - 01｜产品业务
+    - 02｜架构运行时
+  pending00Decision: true
+  compilePreparationAllowed: false_until_00_approval
+  gaps:
+    - buildingId
+    - roomType
+    - readinessEvidenceRefs
+    - readinessNote
+    - blockedReason
+    - notSaleableReason
+    - serviceVerificationRef
+languageBinding:
+  requiredLanguages:
+    - zh-CN
+    - ru-RU
+    - ky-KG
+  scenarioNameCopyKey: dormitory.resourceSaleability.scenarioName
+  businessGoalCopyKey: dormitory.resourceSaleability.businessGoal
+  stepCopyKeys:
+    - dormitory.resourceSaleability.step.roomSetupConfirm
+    - dormitory.resourceSaleability.step.bedSetupConfirm
+    - dormitory.resourceSaleability.step.resourceReadinessConfirm
+  branchFlowCopyKeys:
+    - dormitory.resourceSaleability.branch.missingField
+    - dormitory.resourceSaleability.branch.missingEvidence
+    - dormitory.resourceSaleability.branch.untrustedEvidence
+    - dormitory.resourceSaleability.branch.duplicateRoom
+    - dormitory.resourceSaleability.branch.wrongBedRoomOwner
+    - dormitory.resourceSaleability.branch.resourceNotSaleable
+    - dormitory.resourceSaleability.branch.manualReview
+    - dormitory.resourceSaleability.branch.correction
+  explanationKeys:
+    - explain.visibleNotConfirm
+    - explain.summaryNotConfirm
+    - explain.receiptNotProduction
+    - explain.businessBasisNotFinancialTruth
+    - explain.managementReadonly
+    - explain.financeTruthRequired
+  missingTranslationNoGoItems: []
+userVisibleTermFirewall:
+  ordinaryUserVisibleInternalTerms: false
+  internalTraceVisibilityScope: internal/evidence
+  permissionGated: true
+surfaceSemantics:
+  visibleDoesNotImplyConfirm: true
+  summaryDoesNotImplyConfirm: true
+  receiptDoesNotImplyProduction: true
+  blockerDoesNotGrantBypass: true
+  dashboardSummaryCannotUnlockProduction: true
+  sharedReceiptCannotReplaceFinanceTruth: true
+  businessBasisDoesNotImplyFinancialTruth: true
+  surfaceReadyDoesNotImplyProductionConfirm: true
+  trustedConfirmDoesNotImplyProductionConfirm: true
+  confirmAllowedDoesNotImplyProductionAllowed: true
+readSideAcceptance:
+  Search:
+    consumesOnly:
+      - SearchIndexRecord
+      - OamObjectEnvelope
+      - generatedReadModel
+    writeThroughSearchAllowed: false
+    visibilityDoesNotImplyConfirmAllowed: true
+    requiresPermissionEnvelope: true
+    requiresLineageEnvelope: true
+    requiresFreshnessEnvelope: true
+    forbiddenAvailableActions:
+      - confirm
+      - writeBusinessFact
+      - productionConfirm
+  missingEnvelopeBehavior:
+    permissionMissing:
+      resultVisibility: HIDDEN
+      rankable: false
+      actionable: false
+    lineageMissing:
+      authoritative: false
+      metricEligible: false
+      dashboardEligible: false
+    freshnessMissing:
+      stale: true
+      freshnessStatus: UNKNOWN
+      metricEligible: false
+      dashboardEligible: false
+    admissionMissing:
+      visibleAllowed: true
+      prepareAllowed: false
+      confirmAllowed: false
+      productionAllowed: false
+  Dashboard:
+    readonly: true
+    dashboardSummaryIsNotSourceOfTruth: true
+    sourceFactsRequired: true
+    dashboardSummaryCannotUnlockProduction: true
+  Metric:
+    scope: L1_OBSERVATION
+    notProductionKpi: true
+    computationInput:
+      - generated read model
+      - ReportDataset
+      - authorized projection
+    forbiddenInput:
+      - UI field
+      - DashboardSummary
+      - page state
+    requiredFields:
+      - metricId
+      - definitionVersion
+      - maturityScope
+      - permission
+      - lineage
+      - freshness
+localPriorIdentityDeletionChain:
+  scope: dormitory_resource_saleability_source_package
+  entries:
+    - legacyType: cardId
+      legacyId: cardId
+      whereFound: migration fence / negative tests only
+      currentReplacement: definitionId + workItemType + commandType + objectId
+      allowedTemporaryConsumers:
+        - migrationFences
+        - audit/evidence
+        - negative tests
+      forbiddenConsumers:
+        - Current Source
+        - Runtime Confirm
+        - Admission
+        - Finance ledger writer
+        - Search confirm
+        - Surface control inference
+        - Dashboard source truth
+      consumerCount: 0
+      blockingConsumers: []
+      targetDeletePhase: post_source_package_review
+      deletionGate: OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE
+      owner: 06｜质量证据
+      status: registered_readonly
+      evidenceRef: docs/contracts/definition/source-id-migration-fence.json
+      replacementVerifiedBy: scripts/oam/check-dormitory-golden-chain-source-package.mjs
+      readOnly: true
+      executable: false
+      affectsAdmission: false
+      affectsRuntimeConfirm: false
+      affectsBusinessIdentity: false
+      affectsLedger: false
+    - legacyType: sourceCardId
+      legacyId: sourceCardId
+      whereFound: migrationRefs / migration fence only
+      currentReplacement: definitionId + workItemType + commandType
+      allowedTemporaryConsumers:
+        - migrationFences
+        - audit/evidence
+        - negative tests
+      forbiddenConsumers:
+        - Current Source
+        - Runtime Confirm
+        - Admission
+        - Finance ledger writer
+        - Search confirm
+        - Surface control inference
+        - Dashboard source truth
+      consumerCount: 0
+      blockingConsumers: []
+      targetDeletePhase: post_source_package_review
+      deletionGate: OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE
+      owner: 06｜质量证据
+      status: registered_readonly
+      evidenceRef: docs/contracts/definition/source-id-migration-fence.json
+      replacementVerifiedBy: scripts/oam/check-dormitory-golden-chain-source-package.mjs
+      readOnly: true
+      executable: false
+      affectsAdmission: false
+      affectsRuntimeConfirm: false
+      affectsBusinessIdentity: false
+      affectsLedger: false
+    - legacyType: workspaceCardId
+      legacyId: workspaceCardId
+      whereFound: deletion plan only
+      currentReplacement: objectId + definition scope
+      allowedTemporaryConsumers:
+        - audit/evidence
+        - negative tests
+      forbiddenConsumers:
+        - Current Source
+        - Runtime Confirm
+        - Admission
+        - Finance ledger writer
+        - Search confirm
+        - Surface control inference
+        - Dashboard source truth
+      consumerCount: 0
+      blockingConsumers: []
+      targetDeletePhase: post_source_package_review
+      deletionGate: OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE
+      owner: 06｜质量证据
+      status: registered_readonly
+      evidenceRef: docs/contracts/definition/source-id-migration-fence.json
+      replacementVerifiedBy: scripts/oam/check-dormitory-golden-chain-source-package.mjs
+      readOnly: true
+      executable: false
+      affectsAdmission: false
+      affectsRuntimeConfirm: false
+      affectsBusinessIdentity: false
+      affectsLedger: false
+    - legacyType: workspaceId
+      legacyId: workspaceId/cardId
+      whereFound: deletion plan only
+      currentReplacement: definitionId + objectId
+      allowedTemporaryConsumers:
+        - audit/evidence
+        - negative tests
+      forbiddenConsumers:
+        - Runtime Confirm
+        - Admission
+        - Search confirm
+        - Surface control inference
+      consumerCount: 0
+      blockingConsumers: []
+      targetDeletePhase: post_source_package_review
+      deletionGate: OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE
+      owner: 06｜质量证据
+      status: registered_readonly
+      evidenceRef: docs/contracts/definition/source-id-migration-fence.json
+      replacementVerifiedBy: scripts/oam/check-dormitory-golden-chain-source-package.mjs
+      readOnly: true
+      executable: false
+      affectsAdmission: false
+      affectsRuntimeConfirm: false
+      affectsBusinessIdentity: false
+      affectsLedger: false
+    - legacyType: oldCatalogId
+      legacyId: old catalog id
+      whereFound: deletion plan only
+      currentReplacement: Source Kernel definitionId
+      allowedTemporaryConsumers:
+        - audit/evidence
+      forbiddenConsumers:
+        - Current Source
+        - Runtime Confirm
+        - Admission
+      consumerCount: 0
+      blockingConsumers: []
+      targetDeletePhase: post_source_package_review
+      deletionGate: OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE
+      owner: 06｜质量证据
+      status: registered_readonly
+      evidenceRef: docs/contracts/definition/source-id-migration-fence.json
+      replacementVerifiedBy: scripts/oam/check-dormitory-golden-chain-source-package.mjs
+      readOnly: true
+      executable: false
+      affectsAdmission: false
+      affectsRuntimeConfirm: false
+      affectsBusinessIdentity: false
+      affectsLedger: false
+    - legacyType: oldSeedId
+      legacyId: old seed id
+      whereFound: deletion plan only
+      currentReplacement: Source Kernel scenarioId
+      allowedTemporaryConsumers:
+        - audit/evidence
+      forbiddenConsumers:
+        - Current Source
+        - Runtime Confirm
+        - Admission
+      consumerCount: 0
+      blockingConsumers: []
+      targetDeletePhase: post_source_package_review
+      deletionGate: OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE
+      owner: 06｜质量证据
+      status: registered_readonly
+      evidenceRef: docs/contracts/definition/source-id-migration-fence.json
+      replacementVerifiedBy: scripts/oam/check-dormitory-golden-chain-source-package.mjs
+      readOnly: true
+      executable: false
+      affectsAdmission: false
+      affectsRuntimeConfirm: false
+      affectsBusinessIdentity: false
+      affectsLedger: false
+    - legacyType: ResolveByWorkspaceCard
+      legacyId: ResolveByWorkspaceCard
+      whereFound: runtime guard negative surface only
+      currentReplacement: ResolveStartAdapter explicit map + definition registry current identity
+      allowedTemporaryConsumers:
+        - negative tests
+        - audit/evidence
+      forbiddenConsumers:
+        - Runtime Confirm
+        - Admission
+        - Finance ledger writer
+      consumerCount: 0
+      blockingConsumers: []
+      targetDeletePhase: post_source_package_review
+      deletionGate: OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE
+      owner: 02｜架构运行时
+      status: registered_readonly
+      evidenceRef: services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs
+      replacementVerifiedBy: scripts/oam/check-operation-identity-boundary.mjs
+      readOnly: true
+      executable: false
+      affectsAdmission: false
+      affectsRuntimeConfirm: false
+      affectsBusinessIdentity: false
+      affectsLedger: false
+    - legacyType: FindBySourceCardId
+      legacyId: FindBySourceCardId
+      whereFound: runtime guard negative surface only
+      currentReplacement: FindByDefinitionId + FindByWorkItemType
+      allowedTemporaryConsumers:
+        - negative tests
+        - audit/evidence
+      forbiddenConsumers:
+        - Runtime Confirm
+        - Admission
+        - Finance ledger writer
+      consumerCount: 0
+      blockingConsumers: []
+      targetDeletePhase: post_source_package_review
+      deletionGate: OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE
+      owner: 02｜架构运行时
+      status: registered_readonly
+      evidenceRef: services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs
+      replacementVerifiedBy: scripts/oam/check-operation-identity-boundary.mjs
+      readOnly: true
+      executable: false
+      affectsAdmission: false
+      affectsRuntimeConfirm: false
+      affectsBusinessIdentity: false
+      affectsLedger: false
+    - legacyType: MigrationSourceCardId
+      legacyId: MigrationSourceCardId resolver
+      whereFound: migrationRefs read path only
+      currentReplacement: migrationRefs.sourceCardId as read-only deletion evidence
+      allowedTemporaryConsumers:
+        - migrationFences
+        - audit/evidence
+      forbiddenConsumers:
+        - Runtime Confirm
+        - Admission
+        - Finance ledger writer
+      consumerCount: 0
+      blockingConsumers: []
+      targetDeletePhase: post_source_package_review
+      deletionGate: OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE
+      owner: 02｜架构运行时
+      status: registered_readonly
+      evidenceRef: docs/contracts/definition/source-id-migration-fence.json
+      replacementVerifiedBy: scripts/oam/check-operation-identity-boundary.mjs
+      readOnly: true
+      executable: false
+      affectsAdmission: false
+      affectsRuntimeConfirm: false
+      affectsBusinessIdentity: false
+      affectsLedger: false
+sourceToGeneratedProvenancePlan:
+  sourceScenarioRef: docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml
+  scenarioMatrixRef: docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml
+  sourceKernelRef: docs/business/domains/dormitory/dormitory-operating-kernel.json
+  expectedGeneratedStatus: PENDING_GENERATED_CONTRACT
+  compilePreparationAllowed: false_until_00_approval
+  generatedCompilationCompleted: false
+sourceLevelNoSideEffects:
+  rejectedPathBusinessWriteAllowed: false
+  rejectedPathAllowedAudit:
+    securityAudit: true
+    accessLog: true
+    nonBusinessFact: true
+  rejectedPathMustNotWrite:
+    - UnitOfWork commit
+    - CommandSubmission
+    - DomainEvent
+    - WorkItemEvent
+    - LedgerTransaction
+    - LedgerEntry
+    - WriteLog
+    - Outbox
+    - confirmed transition
+    - next WorkItem dispatch
+    - Projection mutation
+    - Lens mutation
+    - Search mutation
+    - Dashboard mutation
+    - business Evidence mutation
+  rejectedAuditMustNotBecome:
+    - DomainEvent
+    - LedgerEntry
+    - Projection source
+    - Search source
+    - Dashboard source
+    - Receipt confirm proof
+    - Summary confirm proof
 goNoGoConditions:
   finalDecisionOwner: artifacts/oam/final-report.json
   goAllowedOnlyWhen:

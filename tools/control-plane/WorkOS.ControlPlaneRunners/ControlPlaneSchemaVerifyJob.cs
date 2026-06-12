@@ -311,7 +311,7 @@ public static class ControlPlaneSchemaVerifyJob
             return 0;
         }
 
-        command.CommandText = "select count(*) from schema_migrations";
+        command.CommandText = "select count(*) from public.schema_migrations";
         return Convert.ToInt64(command.ExecuteScalar());
     }
 

@@ -14,7 +14,16 @@ const workItem = {
   requiredEvidence: ["room_duplicate_check"],
   traceRefs: ["trace:e2e-room"],
   riskLevel: "P1",
-  dueAt: "2026-06-02T10:00:00Z"
+  dueAt: "2026-06-02T10:00:00Z",
+  admission: {
+    visibleAllowed: true,
+    prepareAllowed: true,
+    confirmAllowed: true,
+    productionAllowed: false,
+    mode: "internal_pilot_observation",
+    reason: "business_production_blocked",
+    admissionDecisionRef: "admission:e2e:server-kernel"
+  }
 };
 
 const projection = {
@@ -170,7 +179,8 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await page.locator("#query").fill("创建房间");
   await page.locator("#searchNow").click();
   await expect(page.locator("body")).not.toContainText("[object Object]");
-  await expect(page.locator('[data-search-section="searchWorkItems"]')).toContainText("继续观察记录");
+  await expect(page.locator('[data-search-section="searchWorkItems"]')).toContainText("查看记录");
+  await expect(page.locator('[data-search-section="searchWorkItems"]')).not.toContainText("继续观察记录");
   await expect(page.locator('[data-search-section="searchLearning"]')).toHaveCount(0);
   await page.locator('[data-search-section="searchWorkItems"] [data-work-item-id]').first().click();
   await expect(page.locator('[data-surface="operation-panel-route"]')).toBeVisible();

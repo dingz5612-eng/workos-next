@@ -127,10 +127,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-access-credential-issue.v1",
       "evidencePolicyRef": "evidence.dorm-access-credential-issue.v1",
@@ -171,10 +178,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-access-credential-revoke.v1",
       "evidencePolicyRef": "evidence.dorm-access-credential-revoke.v1",
@@ -204,7 +218,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.CheckOutSettlement",
       "workspaceId": "W-STAY-CHECKOUT-SETTLEMENT",
-      "sourceCardId": "bedRelease",
       "workItemType": "Dorm.BedRelease",
       "commandType": "Checkout.RequestBedRelease",
       "ownerSlice": "Accommodation.CheckOutSettlement",
@@ -228,14 +241,26 @@
       "surfacePolicyRef": "surface.Accommodation.CheckOutSettlement.bedRelease",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "bedRelease",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.bedSetup.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ResourceSetup",
       "workspaceId": "W-STAY-RESOURCE",
-      "sourceCardId": "bedSetup",
       "workItemType": "Dorm.BedSetup",
       "commandType": "Resource.BedSetup",
       "ownerSlice": "Accommodation.ResourceSetup",
@@ -259,7 +284,20 @@
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.bedSetup",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "bedSetup",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.bedSetupConfirm.v1",
@@ -277,10 +315,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-bed-setup-confirm.v1",
       "evidencePolicyRef": "evidence.dorm-bed-setup-confirm.v1",
@@ -321,10 +366,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-bed-transfer-approve.v1",
       "evidencePolicyRef": "evidence.dorm-bed-transfer-approve.v1",
@@ -365,10 +417,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-checkin-confirm.v1",
       "evidencePolicyRef": "evidence.dorm-checkin-confirm.v1",
@@ -444,7 +503,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.DepositLedger",
       "workspaceId": "W-STAY-DEPOSIT-LEDGER",
-      "sourceCardId": "depositAssessment",
       "workItemType": "Dorm.DepositAssessment",
       "commandType": "Deposit.Assess",
       "ownerSlice": "Accommodation.DepositLedger",
@@ -470,14 +528,26 @@
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositAssessment",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "depositAssessment",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.depositClose.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.DepositLedger",
       "workspaceId": "W-STAY-DEPOSIT-LEDGER",
-      "sourceCardId": "depositClose",
       "workItemType": "Dorm.DepositClose",
       "commandType": "Deposit.Close",
       "ownerSlice": "Accommodation.DepositLedger",
@@ -503,7 +573,20 @@
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositClose",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "depositClose",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.depositConfirm.v1",
@@ -556,7 +639,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.DepositLedger",
       "workspaceId": "W-STAY-DEPOSIT-LEDGER",
-      "sourceCardId": "depositConfirmation",
       "workItemType": "Dorm.DepositConfirmation",
       "commandType": "Deposit.Confirm",
       "ownerSlice": "Accommodation.DepositLedger",
@@ -582,14 +664,26 @@
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositConfirmation",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "depositConfirmation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.depositDeduction.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.DepositLedger",
       "workspaceId": "W-STAY-DEPOSIT-LEDGER",
-      "sourceCardId": "depositDeduction",
       "workItemType": "Dorm.DepositDeduction",
       "commandType": "Deposit.Deduct",
       "ownerSlice": "Accommodation.DepositLedger",
@@ -615,14 +709,26 @@
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositDeduction",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "depositDeduction",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.depositReceipt.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.DepositLedger",
       "workspaceId": "W-STAY-DEPOSIT-LEDGER",
-      "sourceCardId": "depositReceipt",
       "workItemType": "Dorm.DepositReceipt",
       "commandType": "Deposit.Receive",
       "ownerSlice": "Accommodation.DepositLedger",
@@ -648,14 +754,26 @@
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositReceipt",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "depositReceipt",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.depositRefundApproval.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.DepositLedger",
       "workspaceId": "W-STAY-DEPOSIT-LEDGER",
-      "sourceCardId": "depositRefundApproval",
       "workItemType": "Dorm.DepositRefundApproval",
       "commandType": "Deposit.RefundApprove",
       "ownerSlice": "Accommodation.DepositLedger",
@@ -681,14 +799,26 @@
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositRefundApproval",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "depositRefundApproval",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.depositRefundPayment.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.DepositLedger",
       "workspaceId": "W-STAY-DEPOSIT-LEDGER",
-      "sourceCardId": "depositRefundPayment",
       "workItemType": "Dorm.DepositRefundPayment",
       "commandType": "Deposit.RefundPay",
       "ownerSlice": "Accommodation.DepositLedger",
@@ -714,7 +844,20 @@
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositRefundPayment",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "depositRefundPayment",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.exceptionResolve.v1",
@@ -732,10 +875,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-exception-resolve.v1",
       "evidencePolicyRef": "evidence.dorm-exception-resolve.v1",
@@ -795,7 +945,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.CheckOutSettlement",
       "workspaceId": "W-STAY-CHECKOUT-SETTLEMENT",
-      "sourceCardId": "finalBalanceClose",
       "workItemType": "Dorm.FinalBalanceClose",
       "commandType": "Checkout.FinalBalanceClose",
       "ownerSlice": "Accommodation.CheckOutSettlement",
@@ -821,7 +970,20 @@
       "surfacePolicyRef": "surface.Accommodation.CheckOutSettlement.finalBalanceClose",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "finalBalanceClose",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.incidentRecord.v1",
@@ -839,10 +1001,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-incident-record.v1",
       "evidencePolicyRef": "evidence.dorm-incident-record.v1",
@@ -883,10 +1052,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-lead-capture.v1",
       "evidencePolicyRef": "evidence.dorm-lead-capture.v1",
@@ -916,7 +1092,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.PaymentLedger",
       "workspaceId": "W-STAY-PAYMENT-LEDGER",
-      "sourceCardId": "paymentAdjustment",
       "workItemType": "Dorm.PaymentAdjustment",
       "commandType": "Payment.Adjust",
       "ownerSlice": "Accommodation.PaymentLedger",
@@ -942,14 +1117,26 @@
       "surfacePolicyRef": "surface.Accommodation.PaymentLedger.paymentAdjustment",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "paymentAdjustment",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.paymentAllocation.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.PaymentLedger",
       "workspaceId": "W-STAY-PAYMENT-LEDGER",
-      "sourceCardId": "paymentAllocation",
       "workItemType": "Dorm.PaymentAllocation",
       "commandType": "Payment.Allocate",
       "ownerSlice": "Accommodation.PaymentLedger",
@@ -975,7 +1162,20 @@
       "surfacePolicyRef": "surface.Accommodation.PaymentLedger.paymentAllocation",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "paymentAllocation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.paymentConfirm.v1",
@@ -1028,7 +1228,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.PaymentLedger",
       "workspaceId": "W-STAY-PAYMENT-LEDGER",
-      "sourceCardId": "paymentConfirmation",
       "workItemType": "Dorm.PaymentConfirmation",
       "commandType": "Payment.Confirm",
       "ownerSlice": "Accommodation.PaymentLedger",
@@ -1054,14 +1253,26 @@
       "surfacePolicyRef": "surface.Accommodation.PaymentLedger.paymentConfirmation",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "paymentConfirmation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.paymentReceipt.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.PaymentLedger",
       "workspaceId": "W-STAY-PAYMENT-LEDGER",
-      "sourceCardId": "paymentReceipt",
       "workItemType": "Dorm.PaymentReceipt",
       "commandType": "Payment.Receive",
       "ownerSlice": "Accommodation.PaymentLedger",
@@ -1087,7 +1298,20 @@
       "surfacePolicyRef": "surface.Accommodation.PaymentLedger.paymentReceipt",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "paymentReceipt",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.periodActionPlanExecute.v1",
@@ -1105,10 +1329,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-period-action-plan-execute.v1",
       "evidencePolicyRef": "evidence.dorm-period-action-plan-execute.v1",
@@ -1138,7 +1369,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.PeriodAnalytics",
       "workspaceId": "W-STAY-PERIOD-ANALYTICS",
-      "sourceCardId": "periodClose",
       "workItemType": "Dorm.PeriodClose",
       "commandType": "Period.Close",
       "ownerSlice": "Accommodation.PeriodAnalytics",
@@ -1162,7 +1392,20 @@
       "surfacePolicyRef": "surface.Accommodation.PeriodAnalytics.periodClose",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "periodClose",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.periodReview.v1",
@@ -1185,10 +1428,17 @@
         "RoomInspection",
         "ServiceTask",
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-period-review.v1",
       "evidencePolicyRef": "evidence.dorm-period-review.v1",
@@ -1229,10 +1479,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-rate-plan-confirm.v1",
       "evidencePolicyRef": "evidence.dorm-rate-plan-confirm.v1",
@@ -1262,7 +1519,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ResourceSetup",
       "workspaceId": "W-STAY-RESOURCE",
-      "sourceCardId": "rateSetup",
       "workItemType": "Dorm.RateSetup",
       "commandType": "Resource.RateSetup",
       "ownerSlice": "Accommodation.ResourceSetup",
@@ -1286,7 +1542,20 @@
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.rateSetup",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "rateSetup",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.refundApprove.v1",
@@ -1336,10 +1605,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-reservation-cancel-close.v1",
       "evidencePolicyRef": "evidence.dorm-reservation-cancel-close.v1",
@@ -1380,10 +1656,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-reservation-confirm.v1",
       "evidencePolicyRef": "evidence.dorm-reservation-confirm.v1",
@@ -1424,10 +1707,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-reservation-no-show-close.v1",
       "evidencePolicyRef": "evidence.dorm-reservation-no-show-close.v1",
@@ -1468,10 +1758,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-resource-readiness-confirm.v1",
       "evidencePolicyRef": "evidence.dorm-resource-readiness-confirm.v1",
@@ -1501,7 +1798,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ResourceSetup",
       "workspaceId": "W-STAY-RESOURCE",
-      "sourceCardId": "roomBlock",
       "workItemType": "Dorm.RoomBlock",
       "commandType": "Resource.RoomBlock",
       "ownerSlice": "Accommodation.ResourceSetup",
@@ -1525,7 +1821,20 @@
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.roomBlock",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "roomBlock",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.roomInspectionConfirm.v1",
@@ -1543,10 +1852,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-room-inspection-confirm.v1",
       "evidencePolicyRef": "evidence.dorm-room-inspection-confirm.v1",
@@ -1576,7 +1892,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ResourceSetup",
       "workspaceId": "W-STAY-RESOURCE",
-      "sourceCardId": "roomReadiness",
       "workItemType": "Dorm.RoomReadiness",
       "commandType": "Resource.RoomReadiness",
       "ownerSlice": "Accommodation.ResourceSetup",
@@ -1601,7 +1916,20 @@
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.roomReadiness",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "roomReadiness",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.roomReadinessCheck.v1",
@@ -1640,7 +1968,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ResourceSetup",
       "workspaceId": "W-STAY-RESOURCE",
-      "sourceCardId": "roomRelease",
       "workItemType": "Dorm.RoomRelease",
       "commandType": "Resource.RoomRelease",
       "ownerSlice": "Accommodation.ResourceSetup",
@@ -1664,14 +1991,26 @@
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.roomRelease",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "roomRelease",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.roomSetup.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ResourceSetup",
       "workspaceId": "W-STAY-RESOURCE",
-      "sourceCardId": "roomSetup",
       "workItemType": "Dorm.RoomSetup",
       "commandType": "Resource.RoomSetup",
       "ownerSlice": "Accommodation.ResourceSetup",
@@ -1695,7 +2034,20 @@
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.roomSetup",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "roomSetup",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.roomSetupConfirm.v1",
@@ -1713,10 +2065,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-room-setup-confirm.v1",
       "evidencePolicyRef": "evidence.dorm-room-setup-confirm.v1",
@@ -1757,10 +2116,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-service-task-assign.v1",
       "evidencePolicyRef": "evidence.dorm-service-task-assign.v1",
@@ -1801,10 +2167,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-service-task-complete.v1",
       "evidencePolicyRef": "evidence.dorm-service-task-complete.v1",
@@ -1845,10 +2218,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-service-task-create.v1",
       "evidencePolicyRef": "evidence.dorm-service-task-create.v1",
@@ -1889,10 +2269,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-service-task-verify.v1",
       "evidencePolicyRef": "evidence.dorm-service-task-verify.v1",
@@ -1933,10 +2320,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "fieldContractRef": "field.dorm-stay-extend-approve.v1",
       "evidencePolicyRef": "evidence.dorm-stay-extend-approve.v1",
@@ -2242,7 +2636,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Governance.CorrectionCenter",
       "workspaceId": "PC-GOVERNANCE",
-      "sourceCardId": "ledgerCorrectionApply",
       "workItemType": "Finance.LedgerCorrectionApply",
       "commandType": "LedgerCorrection.Apply",
       "ownerSlice": "Governance.CorrectionCenter",
@@ -2269,7 +2662,20 @@
       "surfacePolicyRef": "surface.PCGovernance.ledgerCorrectionApply",
       "productionConfirmAllowed": false,
       "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
-      "definitionMode": "surface-input-adapter"
+      "definitionMode": "surface-input-adapter",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "ledgerCorrectionApply",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     }
   ]
 }

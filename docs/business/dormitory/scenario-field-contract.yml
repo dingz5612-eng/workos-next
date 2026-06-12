@@ -2,7 +2,7 @@
   "version": "oam.dormitory.scenario-field-contract.v1",
   "domain": "dormitory",
   "productionAllowed": false,
-  "sourceScenarioFile": "docs/scenarios/dormitory/golden-pilot.yml",
+  "sourceScenarioFile": "PENDING_SOURCE_PACKAGE_REVIEW",
   "fieldSets": [
     {
       "scenarioId": "dorm-cert-001",
@@ -378,5 +378,11 @@
   "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
   "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
   "manualEditAllowed": false,
-  "graphBinding": "domain.dormitory.scenario-field-contract"
+  "graphBinding": "domain.dormitory.scenario-field-contract",
+  "sourceScenarioRefs": [
+    "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml"
+  ],
+  "scenarioMatrixRef": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+  "sourceKernelRef": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+  "generatedContractStatus": "PENDING_GENERATED_CONTRACT"
 }

@@ -129,10 +129,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-room-setup-confirm.v1",
@@ -264,10 +271,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-bed-setup-confirm.v1",
@@ -400,10 +414,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "payment_confirmation",
       "evidencePolicyRef": "evidence.dorm-rate-plan-confirm.v1",
@@ -535,10 +556,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-resource-readiness-confirm.v1",
@@ -619,8 +647,7 @@
         "RoomReadinessLens"
       ],
       "downstreamWorkItems": [
-        "Dorm.LeadCapture",
-        "Dorm.CheckinConfirm"
+        "Dorm.LeadCapture"
       ],
       "failureRoutes": [
         "Dorm.ExceptionResolve",
@@ -673,10 +700,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-lead-capture.v1",
@@ -807,10 +841,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "payment_confirmation",
       "evidencePolicyRef": "evidence.dorm-reservation-confirm.v1",
@@ -944,10 +985,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-checkin-confirm.v1",
@@ -1367,10 +1415,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-service-task-create.v1",
@@ -1503,10 +1558,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "payment_confirmation",
       "evidencePolicyRef": "evidence.dorm-service-task-assign.v1",
@@ -1639,10 +1701,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-service-task-complete.v1",
@@ -1775,10 +1844,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "payment_confirmation",
       "evidencePolicyRef": "evidence.dorm-service-task-verify.v1",
@@ -2325,10 +2401,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-room-inspection-confirm.v1",
@@ -2606,10 +2689,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "payment_confirmation",
       "evidencePolicyRef": "evidence.dorm-stay-extend-approve.v1",
@@ -2742,10 +2832,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "payment_confirmation",
       "evidencePolicyRef": "evidence.dorm-bed-transfer-approve.v1",
@@ -2877,10 +2974,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-reservation-cancel-close.v1",
@@ -3010,10 +3114,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-reservation-no-show-close.v1",
@@ -3418,10 +3529,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-access-credential-issue.v1",
@@ -3554,10 +3672,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-access-credential-revoke.v1",
@@ -3690,10 +3815,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-incident-record.v1",
@@ -3831,10 +3963,17 @@
         "RoomInspection",
         "ServiceTask",
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "period_close",
       "evidencePolicyRef": "evidence.dorm-period-review.v1",
@@ -3968,10 +4107,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
       "evidencePolicyRef": "evidence.dorm-period-action-plan-execute.v1",
@@ -4103,10 +4249,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "admissionPolicyRef": "payment_confirmation",
       "evidencePolicyRef": "evidence.dorm-exception-resolve.v1",
@@ -4705,8 +4858,7 @@
         "RoomReadinessLens"
       ],
       "downstreamWorkItems": [
-        "Dorm.LeadCapture",
-        "Dorm.CheckinConfirm"
+        "Dorm.LeadCapture"
       ],
       "failureRoutes": [
         "Dorm.ExceptionResolve",

@@ -1,0 +1,58 @@
+{
+  "version": "oam.metric-operating-model.metric-dimension-registry.v1",
+  "status": "authoritative-readonly",
+  "readOnly": true,
+  "businessFactWriteAllowed": false,
+  "metricDimensions": [
+    {
+      "dimensionId": "tenantId",
+      "nameZh": "租户",
+      "objectKind": "tenant",
+      "sourceFacts": ["RuntimeTenantContext"],
+      "permissionPolicyRef": "metric-permission.operations-readonly.v1",
+      "lineagePolicyRef": "metric-lineage.generated-read-model.v1",
+      "freshnessPolicyRef": "metric-freshness.daily-read-model.v1",
+      "writeFactsAllowed": false
+    },
+    {
+      "dimensionId": "buildingId",
+      "nameZh": "楼栋",
+      "objectKind": "building",
+      "sourceFacts": ["Room", "Bed"],
+      "permissionPolicyRef": "metric-permission.operations-readonly.v1",
+      "lineagePolicyRef": "metric-lineage.generated-read-model.v1",
+      "freshnessPolicyRef": "metric-freshness.daily-read-model.v1",
+      "writeFactsAllowed": false
+    },
+    {
+      "dimensionId": "businessDomain",
+      "nameZh": "业务域",
+      "objectKind": "businessDomain",
+      "sourceFacts": ["WorkItemFact", "FinancialFact"],
+      "permissionPolicyRef": "metric-permission.governance-readonly.v1",
+      "lineagePolicyRef": "metric-lineage.operations-runtime.v1",
+      "freshnessPolicyRef": "metric-freshness.hourly-read-model.v1",
+      "writeFactsAllowed": false
+    },
+    {
+      "dimensionId": "ownerDomain",
+      "nameZh": "责任域",
+      "objectKind": "ownerDomain",
+      "sourceFacts": ["WorkItemFact", "ExceptionCase"],
+      "permissionPolicyRef": "metric-permission.governance-readonly.v1",
+      "lineagePolicyRef": "metric-lineage.operations-runtime.v1",
+      "freshnessPolicyRef": "metric-freshness.hourly-read-model.v1",
+      "writeFactsAllowed": false
+    },
+    {
+      "dimensionId": "date",
+      "nameZh": "日期",
+      "objectKind": "calendarDate",
+      "sourceFacts": ["sourceUpdatedAt", "computedAt"],
+      "permissionPolicyRef": "metric-permission.operations-readonly.v1",
+      "lineagePolicyRef": "metric-lineage.generated-read-model.v1",
+      "freshnessPolicyRef": "metric-freshness.daily-read-model.v1",
+      "writeFactsAllowed": false
+    }
+  ]
+}

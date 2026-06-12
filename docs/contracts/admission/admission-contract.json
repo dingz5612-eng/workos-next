@@ -1,6 +1,6 @@
 {
   "version": "oam.admission-contract.v1",
-  "generatedBy": "oam-current",
+  "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
   "inputAuthorities": {
     "actor": {
       "source": "Runtime actor session and capability policy",
@@ -94,5 +94,49 @@
     "L0 Contract Preview cannot confirm.",
     "High-risk actions require capability and trusted device evidence.",
     "Surface policy cannot grant production action."
-  ]
+  ],
+  "generated": true,
+  "doNotEdit": true,
+  "architecture": "oam.current",
+  "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+  "generatedFrom": [
+    "docs/oam/system-operating-kernel.json",
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+    "docs/oam/oam-kernel-graph.json"
+  ],
+  "sourceRefs": [
+    "kernel.system",
+    "domain.dormitory",
+    "graph.oam"
+  ],
+  "sourceNodeRefs": [
+    "kernel.system",
+    "domain.dormitory",
+    "graph.oam"
+  ],
+  "sourceHash": "sha256:8338355929ff2ba7ea9298a7b1f26270927c064cf3903dee04eddc854693ee55",
+  "sourceContentDigest": "sha256:8338355929ff2ba7ea9298a7b1f26270927c064cf3903dee04eddc854693ee55",
+  "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+  "sourceKernelVersion": "oam.system-operating-kernel.v1",
+  "sourceGraphVersion": "oam.kernel-graph.v1",
+  "sourceHashes": {
+    "docs/oam/system-operating-kernel.json": "sha256:7f68ee0b45409c126845840223617d3eaf24f2a9af8910fe47d8e35081c63867",
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
+    "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+  },
+  "manualEditAllowed": false,
+  "deterministicSort": true,
+  "missingAdmissionBehavior": {
+    "visibleAllowed": true,
+    "prepareAllowed": false,
+    "confirmAllowed": false,
+    "productionAllowed": false,
+    "mode": "contract_preview",
+    "reason": "missing_admission_contract",
+    "noGoItems": [
+      "missing_admission_contract"
+    ]
+  },
+  "compilerInputDigest": "sha256:7d9ddb6de133cf4ca9de029532125fa31b82a09b4301be52ba4f37b348b38825",
+  "outputContentDigest": "sha256:c433ae1cd497ad48fc2938b646882d8509d31daf7a929eb67d4b3ee184d0a6e5"
 }

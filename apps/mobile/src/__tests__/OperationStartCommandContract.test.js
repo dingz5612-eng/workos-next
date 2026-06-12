@@ -10,7 +10,7 @@ import { fetchSearchResults, startOperationsWorkspace } from "../apiClient.js";
 import { runSearch, startOperationsWorkspaceCommand } from "../navigationController.js";
 import { routeView } from "../appRouter.js";
 import { applyRuntimeProjection } from "../runtime/runtimeStore.js";
-import { createSurfaceCtx, runtimeStore, source, visibleText } from "./surfaceContractTestHelpers.js";
+import { createSurfaceCtx, internalPilotAdmissionFixture, runtimeStore, source, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("Operations Runtime start command contract", () => {
   beforeEach(() => {
@@ -30,6 +30,7 @@ describe("Operations Runtime start command contract", () => {
       workItemType: "Dorm.RoomSetup",
       lifecycleState: "available",
       ownerRole: "operator",
+      admission: internalPilotAdmissionFixture(),
       payload: {
         cardId: "roomSetup",
         templateWorkspaceId: "W-STAY-RESOURCE"
@@ -103,6 +104,7 @@ describe("Operations Runtime start command contract", () => {
       workItemType: "Dorm.RoomSetup",
       lifecycleState: "available",
       ownerRole: "operator",
+      admission: internalPilotAdmissionFixture(),
       payload: {
         cardId: "roomSetup",
         templateWorkspaceId: "W-STAY-RESOURCE"

@@ -8,6 +8,9 @@
     "dormitoryBusinessBasisIsNotFinanceTruth": true,
     "sharedReceiptIsNotFinanceTruth": true,
     "dashboardSummaryIsNotFinanceTruth": true,
+    "businessDomainAmountBasisAllowed": false,
+    "businessDomainAmountBasisProposalAllowed": true,
+    "dashboardMetricSearchAmountBasisInferenceAllowed": false,
     "ledgerEntryMustPassFinanceLedgerKernel": true
   },
   "financeTruthOwner": "Finance / Ledger Kernel",
@@ -35,6 +38,15 @@
     "LedgerTransaction",
     "LedgerEntry"
   ],
+  "businessInputPolicy": {
+    "businessDomainInput": "AmountBasisProposal",
+    "financeReviewOutput": "AmountBasisReviewed",
+    "financeKernelOutput": "AmountBasis",
+    "businessDomainDirectAmountBasisAllowed": false,
+    "businessDomainDirectFinancialFactAllowed": false,
+    "businessDomainDirectLedgerEntryAllowed": false,
+    "dashboardMetricSearchAmountBasisInferenceAllowed": false
+  },
   "semanticDistinctions": {
     "nonFinanceTruth": [
       "AmountBasisProposal",

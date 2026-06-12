@@ -1,0 +1,32 @@
+{
+  "version": "oam.metric-operating-model.metric-permission-policy.v1",
+  "status": "authoritative-readonly",
+  "readOnly": true,
+  "businessFactWriteAllowed": false,
+  "permissionPolicies": [
+    {
+      "policyId": "metric-permission.operations-readonly.v1",
+      "allowedConsumers": ["DashboardWidget", "ReportDataset", "ReadinessSurface"],
+      "requiredPermissions": ["operations.read"],
+      "dataClassification": "operational",
+      "readOnly": true,
+      "writeFactsAllowed": false
+    },
+    {
+      "policyId": "metric-permission.finance-readonly.v1",
+      "allowedConsumers": ["DashboardWidget", "ReportDataset"],
+      "requiredPermissions": ["finance.read"],
+      "dataClassification": "finance",
+      "readOnly": true,
+      "writeFactsAllowed": false
+    },
+    {
+      "policyId": "metric-permission.governance-readonly.v1",
+      "allowedConsumers": ["DashboardWidget", "ReportDataset", "ReadinessSurface"],
+      "requiredPermissions": ["governance.read"],
+      "dataClassification": "governance",
+      "readOnly": true,
+      "writeFactsAllowed": false
+    }
+  ]
+}

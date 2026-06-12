@@ -1,0 +1,111 @@
+{
+  "version": "oam.language.glossary.v1",
+  "status": "authoritative-information-language-kernel",
+  "languages": ["zh-CN", "ru-RU", "ky-KG"],
+  "entries": [
+    {
+      "termId": "objectKind",
+      "copy": {
+        "zh-CN": "对象类型",
+        "ru-RU": "Тип объекта",
+        "ky-KG": "Объект түрү"
+      }
+    },
+    {
+      "termId": "resultType",
+      "copy": {
+        "zh-CN": "结果类型",
+        "ru-RU": "Тип результата",
+        "ky-KG": "Жыйынтык түрү"
+      }
+    },
+    {
+      "termId": "metric",
+      "copy": {
+        "zh-CN": "指标",
+        "ru-RU": "Метрика",
+        "ky-KG": "Көрсөткүч"
+      }
+    },
+    {
+      "termId": "dashboard",
+      "copy": {
+        "zh-CN": "看板",
+        "ru-RU": "Панель",
+        "ky-KG": "Панель"
+      }
+    },
+    {
+      "termId": "lineage",
+      "copy": {
+        "zh-CN": "来源链路",
+        "ru-RU": "Цепочка источников",
+        "ky-KG": "Булак чынжыры"
+      }
+    },
+    {
+      "termId": "readiness",
+      "copy": {
+        "zh-CN": "就绪状态",
+        "ru-RU": "Состояние готовности",
+        "ky-KG": "Даярдык абалы"
+      }
+    },
+    {
+      "termId": "tokenizer",
+      "copy": {
+        "zh-CN": "分词字典",
+        "ru-RU": "Словарь токенов",
+        "ky-KG": "Токен сөздүгү"
+      }
+    },
+    {
+      "termId": "searchIntent",
+      "copy": {
+        "zh-CN": "搜索意图",
+        "ru-RU": "Поисковое намерение",
+        "ky-KG": "Издөө ниети"
+      }
+    },
+    {
+      "termId": "permissionReason",
+      "copy": {
+        "zh-CN": "权限原因",
+        "ru-RU": "Причина доступа",
+        "ky-KG": "Уруксат себеби"
+      }
+    },
+    {
+      "termId": "admissionReason",
+      "copy": {
+        "zh-CN": "准入原因",
+        "ru-RU": "Причина допуска",
+        "ky-KG": "Кирүү себеби"
+      }
+    },
+    {
+      "termId": "evidenceReason",
+      "copy": {
+        "zh-CN": "证据原因",
+        "ru-RU": "Причина доказательства",
+        "ky-KG": "Далил себеби"
+      }
+    },
+    {
+      "termId": "financeTruthReason",
+      "copy": {
+        "zh-CN": "财务定真原因",
+        "ru-RU": "Причина финансовой фиксации",
+        "ky-KG": "Финансы тактоо себеби"
+      }
+    },
+    {
+      "termId": "noGoReason",
+      "copy": {
+        "zh-CN": "未放行原因",
+        "ru-RU": "Причина запрета запуска",
+        "ky-KG": "Ишке киргизбөө себеби"
+      }
+    }
+  ]
+}

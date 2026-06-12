@@ -2,8 +2,11 @@
   "version": "oam.db-no-side-effects-proof.v1",
   "status": "authoritative-current-no-go",
   "rejectedPaths": [
+    "missing admission",
     "unresolved definition",
     "unknown field",
+    "invalid objectId",
+    "invalid fieldId",
     "forbidden field",
     "systemGenerated submitted",
     "derived submitted",
@@ -11,19 +14,28 @@
     "cardId business identity",
     "missing evidence",
     "invalid selectedStableRef",
-    "finance_kernel without admission"
+    "finance_kernel without admission",
+    "non finance kernel ledger write",
+    "Search attempted business fact write",
+    "Surface attempted business fact write",
+    "Dashboard attempted business fact write"
   ],
   "noSideEffects": [
     "no UnitOfWork commit",
     "no CommandSubmission",
     "no DomainEvent",
+    "no WorkItemEvent",
+    "no LedgerTransaction",
     "no LedgerEntry",
     "no Outbox",
+    "no WriteLog",
     "no confirmed transition",
     "no next WorkItem dispatch",
     "no Projection mutation",
     "no Lens mutation",
-    "no Search read model mutation"
+    "no Search read model mutation",
+    "no Dashboard metric mutation",
+    "no Evidence object mutation"
   ],
   "proofRefs": [
     "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",

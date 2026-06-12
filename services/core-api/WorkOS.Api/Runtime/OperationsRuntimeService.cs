@@ -85,7 +85,12 @@ public sealed class OperationsRuntimeService
                 null,
                 "normal",
                 "medium",
-                $"{request.TenantId}:{request.WorkItemId}:confirm"));
+                $"{request.TenantId}:{request.WorkItemId}:confirm",
+                null,
+                null,
+                null,
+                null,
+                null));
         }
 
         return null;
@@ -558,7 +563,9 @@ public sealed record WorkItem(
     string? BackupOwnerId = null,
     string? EscalationOwnerRole = null,
     IReadOnlyList<string>? RequiredEvidenceRefs = null,
-    IReadOnlyList<string>? AffectedFactRefs = null);
+    IReadOnlyList<string>? AffectedFactRefs = null,
+    IReadOnlyDictionary<string, object>? Admission = null,
+    string? AdmissionDecisionRef = null);
 
 public sealed record OperationsWorkItemSurface(
     string WorkItemId,
@@ -584,7 +591,9 @@ public sealed record OperationsWorkItemSurface(
     IReadOnlyList<string>? RequiredEvidenceRefs,
     IReadOnlyList<string>? AffectedFactRefs,
     WorkspaceProjection? Workspace,
-    CardProjection? Card)
+    CardProjection? Card,
+    IReadOnlyDictionary<string, object>? Admission = null,
+    string? AdmissionDecisionRef = null)
 {
     public static OperationsWorkItemSurface From(
         WorkItem workItem,
@@ -615,7 +624,9 @@ public sealed record OperationsWorkItemSurface(
             workItem.RequiredEvidenceRefs,
             workItem.AffectedFactRefs,
             workspace,
-            card);
+            card,
+            workItem.Admission,
+            workItem.AdmissionDecisionRef);
 }
 
 public sealed record PrepareWorkItemRequest(
@@ -640,8 +651,6 @@ public sealed record ConfirmWorkItemRequest(
     string? AggregateRef = null,
     string? RequestId = null,
     string? DeviceId = null,
-    string? DeviceTrustStatus = null,
-    string? Surface = null,
     string? Reason = null)
 {
     public ConfirmWorkItemRequest Normalize(string workItemId, string workspaceId, string cardId)
@@ -662,11 +671,7 @@ public sealed record ConfirmWorkItemRequest(
             SubmissionId = submissionId,
             CardInstanceId = cardInstanceId,
             FieldValues = FieldValues ?? new Dictionary<string, string>(),
-            EvidenceIds = EvidenceIds ?? Array.Empty<string>(),
-            DeviceTrustStatus = string.IsNullOrWhiteSpace(DeviceTrustStatus)
-                ? (string.IsNullOrWhiteSpace(DeviceId) ? "not_provided" : "unknown")
-                : DeviceTrustStatus,
-            Surface = string.IsNullOrWhiteSpace(Surface) ? "operations-api" : Surface
+            EvidenceIds = EvidenceIds ?? Array.Empty<string>()
         };
     }
 

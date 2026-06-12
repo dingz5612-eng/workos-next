@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "workosnext.search-proof.v1",
+  "status": "passed",
+  "generatedBy": "scripts/oam/generate-current-evidence-root.mjs",
+  "singleWriter": "scripts/oam/generate-current-evidence-root.mjs",
+  "checker": "scripts/check-search-kernel.mjs",
+  "failures": [],
+  "gates": [
+    "node scripts/check-search-kernel.mjs"
+  ],
+  "proofId": "search-no-kernel-direct-read-proof",
+  "proves": [
+    "SearchKernelService does not call runtime catalog APIs directly.",
+    "SearchKernelService does not query OperationsReadStore.SearchOperations directly."
+  ],
+  "forbiddenRuntimeTerms": [
+    "OperationsRuntimeService",
+    "GetWorkItem(",
+    "GetWorkItemSurface(",
+    "ListWorkItems(",
+    "OperationsRuntime.SearchOperations",
+    "OperationsReadStore.SearchOperations",
+    "SearchOperationsSources",
+    "NextActionableWorkItem"
+  ],
+  "sourceRefs": [
+    "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs"
+  ],
+  "checkedAtUtc": "2026-06-12T10:01:29.115Z"
+}

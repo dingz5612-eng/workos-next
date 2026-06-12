@@ -1,0 +1,31 @@
+{
+  "version": "oam.language.internal-term-firewall.v1",
+  "status": "authoritative-information-language-kernel",
+  "ordinaryUserVisibleForbidden": true,
+  "forbiddenVisibleTerms": [
+    "Confirm Runtime",
+    "Unit of Work",
+    "DomainEvent",
+    "LedgerEntry",
+    "ProcessManager",
+    "Projection",
+    "Lens",
+    "truthOwnerDomain",
+    "definitionId",
+    "payloadHash",
+    "commandSubmissionId",
+    "rawReason",
+    "rawCode"
+  ],
+  "forbiddenLocalizedHints": ["对象投影", "Проекция", "проекции", "проекция"],
+  "ordinaryUserSurfaces": [
+    "Surface",
+    "Search",
+    "Dashboard",
+    "Report",
+    "Metric",
+    "Readiness",
+    "Lineage"
+  ],
+  "replacementPolicy": "Use user-facing language kernel copy and never expose raw runtime, definition, payload, command, or owner identifiers."
+}

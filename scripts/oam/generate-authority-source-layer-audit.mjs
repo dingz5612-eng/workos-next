@@ -1,9 +1,13 @@
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 
 const root = process.cwd();
 const outputPath = "artifacts/oam/authority-cleanup/source-layer-audit.json";
+const lifecyclePolicyPath = "docs/oam/file-lifecycle-policy.json";
+const lifecyclePolicy = readJson(lifecyclePolicyPath);
+const lifecycleRegistry = lifecyclePolicy.fileLifecycleRegistry ?? {};
 const index = readJson("docs/oam/current-authority-index.json");
 const ledger = readJson("docs/oam/current-engineering-ledger.json");
 const ledgerByPath = new Map((ledger.files ?? []).map((item) => [slash(item.path), item]));
@@ -105,7 +109,13 @@ const blockingReasons = [
 ].filter(Boolean);
 const report = {
   version: "authority-cleanup.source-layer-audit.v1",
-  generatedAtUtc: new Date().toISOString(),
+  generatedAtUtc: "pending",
+  fileLifecycleRegistry: {
+    policyPath: lifecyclePolicyPath,
+    registryVersion: lifecycleRegistry.version ?? "missing",
+    registryDigest: hashFileStrict(lifecyclePolicyPath),
+    classificationPriority: lifecycleRegistry.classificationPriority ?? []
+  },
   sourceWhitelist: [...sourceWhitelist].sort(),
   sourceWhitelistUnique,
   unknownCount,
@@ -117,6 +127,7 @@ const report = {
   blockingReasons,
   entries
 };
+report.generatedAtUtc = stableTimestamp(outputPath, report, "generatedAtUtc");
 
 fs.mkdirSync(path.dirname(abs(outputPath)), { recursive: true });
 fs.writeFileSync(abs(outputPath), `${JSON.stringify(report, null, 2)}\n`, "utf8");
@@ -174,6 +185,7 @@ function addAudit(file, reason) {
     path: normalized,
     currentIdentity: indexByPath.get(normalized)?.identity ?? ledgerByPath.get(normalized)?.currentIdentity ?? "not_registered",
     targetLayer: classification.layer,
+    fileLifecycle: classification.lifecycle ?? classification.layer,
     manualEditAllowed: classification.manualEditAllowed,
     businessFactAuthorityAllowed: classification.businessFactAuthorityAllowed,
     contractAuthorityAllowed: classification.contractAuthorityAllowed,
@@ -192,24 +204,14 @@ function classify(file) {
   const text = isTextFile(file) ? readText(file) : "";
   const hasDerivedMarker = /\b(generatedBy|derivedFrom|doNotEdit)\b/.test(text) || /"generated"\s*:\s*true/.test(text);
   const controlledOldTermUse = isControlledOldTermFile(file);
+  const registryLifecycle = lifecycleFromRegistry(file);
 
-  if (sourceWhitelist.has(file)) {
-    return {
-      layer: "source",
-      manualEditAllowed: true,
-      businessFactAuthorityAllowed: /business-line|truth-owner|operating-kernel|finance-ledger|identity-permission|read-intelligence|surface-contract|language-contract|current-admission/.test(file),
-      contractAuthorityAllowed: true,
-      derived: false,
-      upstreamSource: file,
-      action: "keep_source",
-      deletionRisk: "high",
-      controlledOldTermUse,
-      notesZh: "保留为少而硬的 Source Layer 权威源；只能人工维护，不得声明 generatedBy 或 derivedFrom。"
-    };
+  if (registryLifecycle) {
+    return classificationFromLifecycle(file, registryLifecycle, controlledOldTermUse);
   }
 
   if (/^docs\/contracts\/authority\/.*\.contract\.json$/.test(file)) {
-    return generated(file, "docs/oam/current-architecture.md", "downgrade_to_generated_authority_view", "该 authority contract 只能作为生成视图或迁移证明，唯一事实需吸收到现有 Source。");
+    return referenceOnly(file, "keep_as_reference_only_authority_view", "该 authority contract 只能作为参考或迁移证明，唯一事实需吸收到现有 Source。");
   }
   if (/^docs\/business\/dormitory\//.test(file) || /^docs\/business\/domains\/dormitory\/workitems\//.test(file)) {
     return generated(file, "docs/business/domains/dormitory/dormitory-operating-kernel.json", "downgrade_to_generated_or_delete_after_absorption", "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。");
@@ -232,28 +234,84 @@ function classify(file) {
   if (/^artifacts\/oam\//.test(file)) {
     return evidence(file, "keep_as_evidence_artifact", "OAM 产物只证明执行结果，不替代 Source。");
   }
+  if (/^scripts\//.test(file)) {
+    return tooling(file, "keep_as_tooling", "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。");
+  }
   if (hasDerivedMarker) {
     return generated(file, inferUpstream(file), "downgrade_to_generated", "文件带派生或生成标记，不能作为 Source 业务事实权威。");
   }
   return {
-    layer: "manual",
+    layer: "referenceOnly",
     manualEditAllowed: true,
     businessFactAuthorityAllowed: false,
     contractAuthorityAllowed: false,
     derived: false,
     upstreamSource: inferUpstream(file),
-    action: controlledOldTermUse ? "keep_controlled_fence_or_adr" : "keep_non_authority_manual",
+    action: controlledOldTermUse ? "keep_controlled_fence_or_adr" : "keep_as_reference_only",
     deletionRisk: "medium",
     controlledOldTermUse,
     notesZh: controlledOldTermUse
       ? "旧词只允许作为受控 fence、ADR 或迁移证明存在。"
-      : "保留为人读说明或辅助文件，不作为业务事实权威。"
+      : "保留为人读说明或辅助文件，只能 referenceOnly，不作为业务事实权威。"
   };
+}
+
+function lifecycleFromRegistry(file) {
+  const rules = lifecycleRegistry.pathRules ?? [];
+  for (const rule of rules) {
+    if (rule.matchType === "sourceWhitelist" && sourceWhitelist.has(file)) return rule.lifecycle;
+    const patterns = rule.patterns ?? [];
+    if (rule.matchType === "exactPath" && patterns.includes(file)) return rule.lifecycle;
+    if (rule.matchType === "prefix" && patterns.some((pattern) => file.startsWith(pattern))) return rule.lifecycle;
+    if (rule.matchType === "suffix" && patterns.some((pattern) => file.endsWith(pattern))) return rule.lifecycle;
+    if (rule.matchType === "contains" && patterns.some((pattern) => file.includes(pattern))) return rule.lifecycle;
+  }
+  return "referenceOnly";
+}
+
+function classificationFromLifecycle(file, lifecycle, controlledOldTermUse) {
+  if (lifecycle === "source") {
+    return {
+      layer: "source",
+      lifecycle,
+      manualEditAllowed: true,
+      businessFactAuthorityAllowed: /business-line|truth-owner|operating-kernel|finance-ledger|identity-permission|read-intelligence|surface-contract|language-contract|current-admission/.test(file),
+      contractAuthorityAllowed: true,
+      derived: false,
+      upstreamSource: file,
+      action: "keep_source",
+      deletionRisk: "high",
+      controlledOldTermUse,
+      notesZh: "保留为少而硬的 Source Layer 权威源；只能由 Source 白名单授权，不得由 artifact、dashboard、search 或 surface 替代。"
+    };
+  }
+  if (lifecycle === "generated") {
+    return generated(file, inferUpstream(file), "keep_as_generated_contract", "由 Source 或 generator 派生的合同 / manifest / generated view；禁止手改，不拥有业务事实权威。");
+  }
+  if (lifecycle === "tooling") {
+    return tooling(file, "keep_as_tooling", "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。");
+  }
+  if (lifecycle === "runtime") {
+    return runtime(file, "runtimeImplementation", "keep_as_runtime_implementation", "Runtime / schema / migration 只能消费 Source 或 Generated 合同，不得重新解释业务事实。");
+  }
+  if (lifecycle === "evidence") {
+    return evidence(file, "keep_as_evidence_artifact", "OAM 本地证据产物只证明执行结果，不替代 Source，不授权发布。");
+  }
+  if (lifecycle === "release") {
+    return release(file, "keep_as_release_evidence", "Release Evidence 只由 CI / release 流程证明发布状态，本地必须保持 releaseAuthority=false。");
+  }
+  if (lifecycle === "retired") {
+    return retired(file, "keep_retired_blocked_or_delete", "退役文件不得作为当前权威，也不得被 Runtime / Search / Surface / Dashboard 消费为事实来源。");
+  }
+  return referenceOnly(file, controlledOldTermUse ? "keep_controlled_fence_or_adr" : "keep_as_reference_only", controlledOldTermUse
+    ? "旧词只允许作为受控 fence、ADR 或迁移证明存在，不能解释为当前业务事实权威。"
+    : "参考材料只能用于说明背景，不得成为当前事实权威。");
 }
 
 function generated(file, upstreamSource, action, notesZh) {
   return {
     layer: "generated",
+    lifecycle: "generated",
     manualEditAllowed: false,
     businessFactAuthorityAllowed: false,
     contractAuthorityAllowed: true,
@@ -269,6 +327,7 @@ function generated(file, upstreamSource, action, notesZh) {
 function runtime(file, authorityRole, action, notesZh) {
   return {
     layer: authorityRole === "validationSchema" || authorityRole === "databaseAsset" ? "runtime" : "runtime",
+    lifecycle: "runtime",
     manualEditAllowed: true,
     businessFactAuthorityAllowed: false,
     contractAuthorityAllowed: false,
@@ -284,6 +343,7 @@ function runtime(file, authorityRole, action, notesZh) {
 function evidence(file, action, notesZh) {
   return {
     layer: "evidence",
+    lifecycle: "evidence",
     manualEditAllowed: false,
     businessFactAuthorityAllowed: false,
     contractAuthorityAllowed: false,
@@ -291,6 +351,70 @@ function evidence(file, action, notesZh) {
     upstreamSource: "scripts/oam/run-control-plane-checks.ps1",
     action,
     deletionRisk: "low",
+    controlledOldTermUse: isControlledOldTermFile(file),
+    notesZh
+  };
+}
+
+function tooling(file, action, notesZh) {
+  return {
+    layer: "tooling",
+    lifecycle: "tooling",
+    manualEditAllowed: true,
+    businessFactAuthorityAllowed: false,
+    contractAuthorityAllowed: false,
+    derived: false,
+    upstreamSource: inferUpstream(file),
+    action,
+    deletionRisk: "medium",
+    controlledOldTermUse: isControlledOldTermFile(file),
+    notesZh
+  };
+}
+
+function release(file, action, notesZh) {
+  return {
+    layer: "release",
+    lifecycle: "release",
+    manualEditAllowed: false,
+    businessFactAuthorityAllowed: false,
+    contractAuthorityAllowed: false,
+    derived: true,
+    upstreamSource: "scripts/oam/generate-current-evidence-root.mjs",
+    action,
+    deletionRisk: "low",
+    controlledOldTermUse: isControlledOldTermFile(file),
+    notesZh
+  };
+}
+
+function retired(file, action, notesZh) {
+  return {
+    layer: "retired",
+    lifecycle: "retired",
+    manualEditAllowed: false,
+    businessFactAuthorityAllowed: false,
+    contractAuthorityAllowed: false,
+    derived: false,
+    upstreamSource: inferUpstream(file),
+    action,
+    deletionRisk: "low",
+    controlledOldTermUse: isControlledOldTermFile(file),
+    notesZh
+  };
+}
+
+function referenceOnly(file, action, notesZh) {
+  return {
+    layer: "referenceOnly",
+    lifecycle: "referenceOnly",
+    manualEditAllowed: true,
+    businessFactAuthorityAllowed: false,
+    contractAuthorityAllowed: false,
+    derived: false,
+    upstreamSource: inferUpstream(file),
+    action,
+    deletionRisk: "medium",
     controlledOldTermUse: isControlledOldTermFile(file),
     notesZh
   };
@@ -351,4 +475,30 @@ function absDir(file) {
 
 function slash(file) {
   return String(file).trim().replace(/\\/g, "/");
+}
+
+function hashFileStrict(file) {
+  return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(abs(file), "utf8")).digest("hex")}`;
+}
+
+function stableTimestamp(file, nextDocument, field) {
+  const full = abs(file);
+  if (!fs.existsSync(full)) return new Date().toISOString();
+  try {
+    const previous = JSON.parse(fs.readFileSync(full, "utf8"));
+    if (sameExceptField(previous, nextDocument, field)) {
+      return previous[field] ?? new Date().toISOString();
+    }
+  } catch {
+    return new Date().toISOString();
+  }
+  return new Date().toISOString();
+}
+
+function sameExceptField(left, right, field) {
+  const leftClone = { ...left };
+  const rightClone = { ...right };
+  delete leftClone[field];
+  delete rightClone[field];
+  return JSON.stringify(leftClone) === JSON.stringify(rightClone);
 }

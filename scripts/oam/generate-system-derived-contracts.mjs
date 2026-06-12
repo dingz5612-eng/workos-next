@@ -11,11 +11,23 @@ const graphPath = "docs/oam/oam-kernel-graph.json";
 const systemOutputPath = "docs/oam/system-derived-contracts.json";
 const domainOutputPath = "docs/oam/domain-derived-contracts.json";
 const generatedContractsOutputPath = "docs/oam/generated-contracts-manifest.json";
+const admissionContractPath = "docs/contracts/admission/admission-contract.json";
 
 const kernel = readJson(systemKernelPath);
 const domainKernel = readJson(domainKernelPath);
 const graph = readJson(graphPath);
-const graphNodeBySource = new Map((graph.nodes ?? []).map((node) => [slash(node.sourceFile), node]));
+const graphNodeIds = new Set((graph.nodes ?? []).map((node) => node.nodeId));
+const graphNodesBySource = new Map();
+for (const node of graph.nodes ?? []) {
+  const sourceFile = slash(node.sourceFile);
+  if (!sourceFile) continue;
+  graphNodesBySource.set(sourceFile, [...(graphNodesBySource.get(sourceFile) ?? []), node]);
+}
+const sourceAuthorityNodeRefs = new Map([
+  [systemKernelPath, "kernel.system"],
+  [domainKernelPath, "domain.dormitory"],
+  [graphPath, "graph.oam"]
+]);
 const dormitoryWorkItemDerivedTargets = fs.existsSync(path.join(root, "docs/business/domains/dormitory/workitems"))
   ? fs.readdirSync(path.join(root, "docs/business/domains/dormitory/workitems"))
     .filter((file) => file.endsWith(".json"))
@@ -65,41 +77,62 @@ writeJson(systemOutputPath, manifest({
   version: "oam.system-derived-contracts.v1",
   manifestKind: "system-derived",
   generatedFrom: [systemKernelPath, graphPath],
-  sourceRefs: ["kernel.system", "graph.authority"],
+  sourceRefs: sourceRefsFor([systemKernelPath, graphPath]),
   contracts: contracts(systemTargets, [systemKernelPath, graphPath], "system-derived")
 }));
 writeJson(domainOutputPath, manifest({
   version: "oam.domain-derived-contracts.v1",
   manifestKind: "domain-derived",
   generatedFrom: [domainKernelPath, graphPath],
-  sourceRefs: ["domain.dormitory", "graph.authority"],
+  sourceRefs: sourceRefsFor([domainKernelPath, graphPath]),
   contracts: contracts(domainTargets, [domainKernelPath, graphPath], "domain-derived")
 }));
 writeJson(generatedContractsOutputPath, manifest({
   version: "oam.generated-contracts-manifest.v1",
   manifestKind: "generated-contracts",
   generatedFrom: [systemKernelPath, domainKernelPath, graphPath],
-  sourceRefs: ["kernel.system", "domain.dormitory", "graph.authority"],
+  sourceRefs: sourceRefsFor([systemKernelPath, domainKernelPath, graphPath]),
   contracts: contracts(generatedContractTargets, [systemKernelPath, domainKernelPath, graphPath], "generated-contracts")
 }));
+writeAdmissionGeneratedContract();
 
 console.log(`Generated layer manifests written: ${systemOutputPath}, ${domainOutputPath}, ${generatedContractsOutputPath}`);
 console.log(`contracts=${systemTargets.length + domainTargets.length + generatedContractTargets.length}`);
 
 function contracts(targetPaths, derivedFrom, manifestKind) {
+  const sourceRefs = sourceRefsFor(derivedFrom);
+  const sourceNodeRefs = [...sourceRefs];
+  const sourceHashes = Object.fromEntries(derivedFrom.map((file) => [file, hashFile(file)]));
   return [...targetPaths].sort((a, b) => a.localeCompare(b)).map((targetPath) => ({
     targetPath,
+    generated: true,
+    doNotEdit: true,
     manifestKind,
     derivedFrom,
     generatedBy,
+    generatorVersion,
+    generatedFrom: derivedFrom,
+    sourceRefs,
+    sourceNodeRefs,
+    sourceContentDigest: hashFiles(derivedFrom),
+    kernelGraphHash: hashFile(graphPath),
     sourceKernelVersion: targetPath.includes("/domains/dormitory/") || targetPath.includes("/dormitory/") || targetPath.includes("/scenarios/")
       ? domainKernel.version
       : kernel.version,
     sourceGraphVersion: graph.version,
     manualEditAllowed: false,
-    graphBinding: graphNodeBySource.get(targetPath)?.nodeId ?? graphBindingFor(targetPath),
+    graphBinding: graphBindingFor(targetPath),
     checker: checkerFor(targetPath),
-    sourceHashes: Object.fromEntries(derivedFrom.map((file) => [file, hashFile(file)]))
+    sourceHashes,
+    compilerInputDigest: digest({
+      generatorVersion,
+      manifestKind,
+      targetPath,
+      generatedFrom: derivedFrom,
+      sourceRefs,
+      sourceNodeRefs,
+      sourceHashes
+    })
   }));
 }
 
@@ -149,8 +182,68 @@ function checkerFor(file) {
 }
 
 function graphBindingFor(file) {
-  const node = graph.nodes?.find((item) => item.sourceFile === file);
-  return node?.nodeId ?? `file.${file}`;
+  const fileNodeId = `file.${file}`;
+  if (graphNodeIds.has(fileNodeId)) return fileNodeId;
+  const nodes = graphNodesBySource.get(file) ?? [];
+  return nodes[0]?.nodeId ?? fileNodeId;
+}
+
+function sourceRefsFor(files) {
+  return files.map((file) => sourceAuthorityNodeRefFor(file));
+}
+
+function sourceAuthorityNodeRefFor(file) {
+  const authorityNodeRef = sourceAuthorityNodeRefs.get(file);
+  if (!authorityNodeRef) return graphBindingFor(file);
+  if (!graphNodeIds.has(authorityNodeRef)) {
+    throw new Error(`source authority node ref missing from OAM graph: ${file} -> ${authorityNodeRef}`);
+  }
+  return authorityNodeRef;
+}
+
+function writeAdmissionGeneratedContract() {
+  const generatedFrom = [systemKernelPath, domainKernelPath, graphPath];
+  const sourceRefs = sourceRefsFor(generatedFrom);
+  const sourceHashes = Object.fromEntries(generatedFrom.map((file) => [file, hashFile(file)]));
+  const base = readJson(admissionContractPath);
+  const doc = {
+    ...base,
+    generated: true,
+    doNotEdit: true,
+    architecture: "oam.current",
+    generatedBy,
+    generatorVersion,
+    generatedFrom,
+    sourceRefs,
+    sourceNodeRefs: sourceRefs,
+    sourceHash: hashFiles(generatedFrom),
+    sourceContentDigest: hashFiles(generatedFrom),
+    kernelGraphHash: hashFile(graphPath),
+    sourceKernelVersion: kernel.version,
+    sourceGraphVersion: graph.version,
+    sourceHashes,
+    manualEditAllowed: false,
+    deterministicSort: true,
+    missingAdmissionBehavior: {
+      visibleAllowed: true,
+      prepareAllowed: false,
+      confirmAllowed: false,
+      productionAllowed: false,
+      mode: "contract_preview",
+      reason: "missing_admission_contract",
+      noGoItems: ["missing_admission_contract"]
+    },
+    compilerInputDigest: digest({
+      generatorVersion,
+      targetPath: admissionContractPath,
+      generatedFrom,
+      sourceRefs,
+      sourceHashes,
+      missingAdmissionBehavior: "confirmAllowed=false"
+    })
+  };
+  doc.outputContentDigest = digest({ ...doc, outputContentDigest: "sha256:pending" });
+  writeJson(admissionContractPath, doc);
 }
 
 function readJson(file) {

@@ -2,7 +2,7 @@
   "generated": true,
   "doNotEdit": true,
   "kind": "workitems.generated",
-  "kernelGraphHash": "sha256:5945fca7077cdf1cd4e09765030fdb5b6eed8e9c66baea6eaa4bbd2185195fb9",
+  "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
   "sourceNodeRefs": [
     "dormitory.workItem.Dorm.RoomSetupConfirm",
     "dormitory.workItem.Dorm.BedSetupConfirm",
@@ -13,10 +13,10 @@
     "dormitory.workItem.Dorm.BedSetupConfirm",
     "dormitory.workItem.Dorm.ResourceReadinessConfirm"
   ],
-  "sourceHash": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
-  "sourceContentDigest": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
-  "compilerInputDigest": "sha256:165515514229f1602c8d00572aecfdf0db972cd7822df71ea83c1956ae0d060a",
-  "outputContentDigest": "sha256:84cc9b81cbf844618d3c27ea732d1949585128cd179f15a823811c102d512c7c",
+  "sourceHash": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
+  "sourceContentDigest": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
+  "compilerInputDigest": "sha256:7b4629c270bb7271eeb330705d57e433930e364d5ee5a92b59a1468d303869c6",
+  "outputContentDigest": "sha256:71d6706e91c01571269472769a93ba72e1c9d3762baeed1dc7b27590fdeb94b2",
   "deterministicSort": true,
   "generatorVersion": "current-oam-kernel-compiler.v1",
   "generatedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
@@ -41,10 +41,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "requiredEvidence": [
         "room-photo",
@@ -71,10 +78,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "requiredEvidence": [
         "bed-photo",
@@ -101,10 +115,17 @@
       ],
       "forbiddenFacts": [
         "Payment",
-        "PaymentAllocation",
-        "DepositEntry",
+        "Deposit",
+        "DepositAccount",
         "LedgerEntry",
-        "Refund"
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "Refund",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
       ],
       "requiredEvidence": [
         "completion-photo",
