@@ -3,6 +3,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const selfTest = process.argv.includes("--self-test");
+const writeProof = process.argv.includes("--write-proof") || process.env.OAM_WRITE_PROOF === "1";
 
 const searchContract = readJson("docs/contracts/search/search-contract.json");
 const indexSources = readJson("docs/contracts/search/search-index-sources.json");
@@ -63,7 +64,7 @@ if (selfTest) {
 }
 
 const failures = runChecks({ searchContract });
-writeSearchProofs(failures);
+if (writeProof) writeSearchProofs(failures);
 if (failures.length > 0) {
   for (const failure of failures) console.error(`P0 ${failure}`);
   throw new Error("Search Kernel check failed.");

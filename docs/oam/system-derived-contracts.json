@@ -13,7 +13,7 @@
   ],
   "sourceRefs": [
     "kernel.system",
-    "graph.authority"
+    "graph.oam"
   ],
   "sourceKernel": "docs/oam/system-operating-kernel.json",
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
@@ -40,8 +40,8 @@
         "docs/oam/oam-kernel-graph.json"
       ],
       "sourceRefs": [
-        "docs/oam/system-operating-kernel.json",
-        "docs/oam/oam-kernel-graph.json"
+        "kernel.system",
+        "graph.oam"
       ],
       "sourceNodeRefs": [
         "kernel.system",
@@ -58,7 +58,7 @@
         "docs/oam/system-operating-kernel.json": "sha256:7f68ee0b45409c126845840223617d3eaf24f2a9af8910fe47d8e35081c63867",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
       },
-      "compilerInputDigest": "sha256:0ca038e5d4be22ad21bf16a04291a6c5a8d6fed4a11b4443e12bd49a1ee3faa3"
+      "compilerInputDigest": "sha256:7ff38907b80a6d73336201d4e87baac110d9073f3243003bd8460b008132e15b"
     },
     {
       "targetPath": "docs/contracts/oam-responsibility-boundary-matrix.json",
@@ -76,8 +76,8 @@
         "docs/oam/oam-kernel-graph.json"
       ],
       "sourceRefs": [
-        "docs/oam/system-operating-kernel.json",
-        "docs/oam/oam-kernel-graph.json"
+        "kernel.system",
+        "graph.oam"
       ],
       "sourceNodeRefs": [
         "kernel.system",
@@ -94,7 +94,7 @@
         "docs/oam/system-operating-kernel.json": "sha256:7f68ee0b45409c126845840223617d3eaf24f2a9af8910fe47d8e35081c63867",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
       },
-      "compilerInputDigest": "sha256:19e7bcb9615784fc3b326d6fb03553b2b6ddf13765813fef11f020e04fa90618"
+      "compilerInputDigest": "sha256:8ebb21c4e8f70d6a31036a97efd46d53e60e68493568d45a2b6fad5424f55724"
     },
     {
       "targetPath": "docs/system/current-system-map.md",
@@ -112,8 +112,8 @@
         "docs/oam/oam-kernel-graph.json"
       ],
       "sourceRefs": [
-        "docs/oam/system-operating-kernel.json",
-        "docs/oam/oam-kernel-graph.json"
+        "kernel.system",
+        "graph.oam"
       ],
       "sourceNodeRefs": [
         "kernel.system",
@@ -130,9 +130,9 @@
         "docs/oam/system-operating-kernel.json": "sha256:7f68ee0b45409c126845840223617d3eaf24f2a9af8910fe47d8e35081c63867",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
       },
-      "compilerInputDigest": "sha256:2c4ef3c20032541605acc0cb23ea5a7880953fe3812af8400b4b12130ce3dd8e"
+      "compilerInputDigest": "sha256:0634d4fece22bc9ed159e55d07f0666e391e094c5edb10129d3adcdbf5afb1c1"
     }
   ],
-  "compilerInputDigest": "sha256:7ac4b5968c68f785ba7aacbd668d1dc45637c772c43bc57f99362acbd56c7572",
-  "outputContentDigest": "sha256:44fb8ce82867e7e766d46b918c1cbf747a5ad31c057eef3fe7e925cfb4114aab"
+  "compilerInputDigest": "sha256:a5b8b85bf3fc1a023774841b20b5516cbf1b74c887684ad9da637cb853d8fc22",
+  "outputContentDigest": "sha256:270f84592190f9032d9b2605e19570849ec137a71091bbc5d6de42cee0a7a132"
 }

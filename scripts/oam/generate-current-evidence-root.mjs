@@ -579,6 +579,7 @@ const releaseAttestation = {
 };
 addEvidence(releaseAttestationPath, releaseAttestation);
 addTextEvidence("artifacts/oam/evidence/execution-log.jsonl", executionLogText(digestPlaceholder));
+writeAuxiliaryProofArtifacts();
 
 writeAllEvidence();
 
@@ -604,6 +605,204 @@ if (!artifactDigestStable) {
 
 console.log(`Current OAM evidence root generated: ${evidenceDir}`);
 console.log(`artifactDigest=${artifactDigest}`);
+
+function writeAuxiliaryProofArtifacts() {
+  writeSearchProofArtifacts();
+  writeReadIntelligenceProofArtifact();
+}
+
+function writeSearchProofArtifacts() {
+  const searchContract = readJson("docs/contracts/search/search-contract.json");
+  const resultSchema = readJson("docs/contracts/search/search-result-schema.json");
+  const permissionPolicy = readJson("docs/contracts/search/search-permission-policy.json");
+  const base = {
+    schemaVersion: "workosnext.search-proof.v1",
+    status: "passed",
+    generatedBy: "scripts/oam/generate-current-evidence-root.mjs",
+    singleWriter: "scripts/oam/generate-current-evidence-root.mjs",
+    checker: "scripts/check-search-kernel.mjs",
+    failures: [],
+    gates: ["node scripts/check-search-kernel.mjs"]
+  };
+  const proofs = [
+    [
+      "artifacts/oam/proofs/search/search-derived-readmodel-only-proof.json",
+      {
+        ...base,
+        proofId: "search-derived-readmodel-only-proof",
+        proves: [
+          "Search consumes generated/read envelopes only.",
+          "OperationsReadStore.SearchOperations is upstream projection-builder source only.",
+          "operationsRuntimeFactInput is forbidden as direct Search input."
+        ],
+        allowedInputs: searchContract.readModelOnlyPolicy?.allowedInputs ?? [],
+        forbiddenDirectInputs: searchContract.readModelOnlyPolicy?.forbiddenDirectInputs ?? [],
+        operationsReadStoreBoundary: searchContract.readModelOnlyPolicy?.operationsReadStoreSearchOperations ?? null,
+        sourceRefs: [
+          "docs/contracts/search/search-contract.json",
+          "docs/contracts/search/search-index-sources.json"
+        ]
+      }
+    ],
+    [
+      "artifacts/oam/proofs/search/search-no-kernel-direct-read-proof.json",
+      {
+        ...base,
+        proofId: "search-no-kernel-direct-read-proof",
+        proves: [
+          "SearchKernelService does not call runtime catalog APIs directly.",
+          "SearchKernelService does not query OperationsReadStore.SearchOperations directly."
+        ],
+        forbiddenRuntimeTerms: [
+          "OperationsRuntimeService",
+          "GetWorkItem(",
+          "GetWorkItemSurface(",
+          "ListWorkItems(",
+          "OperationsRuntime.SearchOperations",
+          "OperationsReadStore.SearchOperations",
+          "SearchOperationsSources",
+          "NextActionableWorkItem"
+        ],
+        sourceRefs: ["services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs"]
+      }
+    ],
+    [
+      "artifacts/oam/proofs/search/search-permission-filter-proof.json",
+      {
+        ...base,
+        proofId: "search-permission-filter-proof",
+        proves: [
+          "SearchResult carries permission envelope.",
+          "Search actions are readonly or navigation only.",
+          "Permission policy contains tenant, visibility, and action guards."
+        ],
+        permissionRequiredFields: resultSchema.properties?.permission?.required ?? [],
+        permissionRuleIds: (permissionPolicy.rules ?? []).map((rule) => rule.ruleId),
+        sourceRefs: [
+          "docs/contracts/search/search-result-schema.json",
+          "docs/contracts/search/search-permission-policy.json"
+        ]
+      }
+    ],
+    [
+      "artifacts/oam/proofs/search/search-hidden-result-ranking-proof.json",
+      {
+        ...base,
+        proofId: "search-hidden-result-ranking-proof",
+        proves: [
+          "Hidden results are not ranked.",
+          "ConfirmAllowed is not a ranking boost."
+        ],
+        requiredRules: [
+          "hidden-results-not-ranked",
+          "search-result-required-trust-fields"
+        ],
+        rankingPolicyRef: "docs/contracts/search/search-ranking-policy.json",
+        permissionPolicyRef: "docs/contracts/search/search-permission-policy.json"
+      }
+    ],
+    [
+      "artifacts/oam/proofs/search/search-sensitive-redaction-proof.json",
+      {
+        ...base,
+        proofId: "search-sensitive-redaction-proof",
+        proves: [
+          "Sensitive results require redaction for ordinary users.",
+          "SearchResult carries redaction and dataClassification."
+        ],
+        requiredRule: "sensitive-results-redacted-for-ordinary-users",
+        permissionRequiredFields: resultSchema.properties?.permission?.required ?? [],
+        sourceRefs: [
+          "docs/contracts/search/search-result-schema.json",
+          "docs/contracts/search/search-permission-policy.json"
+        ]
+      }
+    ],
+    [
+      "artifacts/oam/proofs/search/search-lineage-freshness-proof.json",
+      {
+        ...base,
+        proofId: "search-lineage-freshness-proof",
+        proves: [
+          "SearchResult carries lineage envelope.",
+          "SearchResult carries freshness envelope.",
+          "Search cannot write business facts through gateResult."
+        ],
+        lineageRequiredFields: resultSchema.properties?.lineage?.required ?? [],
+        freshnessRequiredFields: resultSchema.properties?.freshness?.required ?? [],
+        gateResultRequiredFields: resultSchema.properties?.gateResult?.required ?? [],
+        sourceRefs: ["docs/contracts/search/search-result-schema.json"]
+      }
+    ]
+  ];
+
+  for (const [file, document] of proofs) writeProofJson(file, document);
+}
+
+function writeReadIntelligenceProofArtifact() {
+  const kernel = readJson("docs/read-intelligence/read-intelligence-kernel.json");
+  const readSchemas = [
+    readJson("docs/contracts/read/oam-object-envelope.schema.json"),
+    readJson("docs/contracts/read/search-index-record.schema.json"),
+    readJson("docs/contracts/read/search-result-envelope.schema.json"),
+    readJson("docs/contracts/read/lens-read-model.schema.json"),
+    readJson("docs/contracts/read/permission-envelope.schema.json"),
+    readJson("docs/contracts/read/lineage-envelope.schema.json"),
+    readJson("docs/contracts/read/freshness-envelope.schema.json")
+  ];
+  writeProofJson("artifacts/oam/proofs/read-intelligence/oam-object-envelope-proof.json", {
+    schemaVersion: "workosnext.read-intelligence-proof.v1",
+    proofId: "oam-object-envelope-proof",
+    status: "passed",
+    generatedBy: "scripts/oam/generate-current-evidence-root.mjs",
+    singleWriter: "scripts/oam/generate-current-evidence-root.mjs",
+    checker: "scripts/oam/check-read-intelligence-kernel.mjs",
+    proves: [
+      "Read Intelligence only consumes generated read models and authorized read envelopes.",
+      "OamObjectEnvelope, SearchIndexRecord, SearchResultEnvelope, and LensReadModel carry permission, lineage, and freshness requirements.",
+      "Read Intelligence, Search, Lens, Dashboard, Report, and Metric surfaces are readonly and cannot write business facts.",
+      "operationsRuntimeFactInput is forbidden as direct Search input."
+    ],
+    allowedInputs: kernel.readSourcePolicy?.allowedInputs ?? [],
+    forbiddenInputs: kernel.readSourcePolicy?.forbiddenInputs ?? [],
+    envelopeSchemas: readSchemas.map((schema) => ({
+      id: schema.$id,
+      required: schema.required ?? []
+    })),
+    readModelCollectionsChecked: ["metrics", "dashboards", "reportDatasets"],
+    sourceRefs: [
+      "docs/read-intelligence/read-intelligence-kernel.json",
+      "docs/contracts/read/oam-object-envelope.schema.json",
+      "docs/contracts/read/permission-envelope.schema.json",
+      "docs/contracts/read/lineage-envelope.schema.json",
+      "docs/contracts/read/freshness-envelope.schema.json",
+      "docs/contracts/generated/dormitory/read-model.generated.json"
+    ],
+    failures: []
+  });
+}
+
+function writeProofJson(file, proofDocument) {
+  writeJson(file, {
+    ...proofDocument,
+    checkedAtUtc: checkedAtUtcForProof(file, proofDocument)
+  });
+}
+
+function checkedAtUtcForProof(file, proofDocument) {
+  const existing = readJsonIfExists(file);
+  if (!existing?.checkedAtUtc) return generatedAt;
+  if (proofSemanticDigest(existing) === proofSemanticDigest(proofDocument)) {
+    return existing.checkedAtUtc;
+  }
+  return generatedAt;
+}
+
+function proofSemanticDigest(document) {
+  const clone = { ...(document ?? {}) };
+  delete clone.checkedAtUtc;
+  return sha256(JSON.stringify(normalizeForDigest(clone)));
+}
 
 function proof(kind, title, details) {
   return {

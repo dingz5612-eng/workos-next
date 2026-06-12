@@ -1,7 +1,9 @@
 {
   "schemaVersion": "workosnext.search-proof.v1",
   "status": "passed",
-  "checkedAtUtc": "2026-06-12T09:33:10.883Z",
+  "generatedBy": "scripts/oam/generate-current-evidence-root.mjs",
+  "singleWriter": "scripts/oam/generate-current-evidence-root.mjs",
+  "checker": "scripts/check-search-kernel.mjs",
   "failures": [],
   "gates": [
     "node scripts/check-search-kernel.mjs"
@@ -48,5 +50,6 @@
   ],
   "sourceRefs": [
     "docs/contracts/search/search-result-schema.json"
-  ]
+  ],
+  "checkedAtUtc": "2026-06-12T10:01:29.115Z"
 }

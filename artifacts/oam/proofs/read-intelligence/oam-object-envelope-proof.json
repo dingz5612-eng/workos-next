@@ -2,7 +2,9 @@
   "schemaVersion": "workosnext.read-intelligence-proof.v1",
   "proofId": "oam-object-envelope-proof",
   "status": "passed",
-  "checkedAtUtc": "2026-06-12T09:33:10.785Z",
+  "generatedBy": "scripts/oam/generate-current-evidence-root.mjs",
+  "singleWriter": "scripts/oam/generate-current-evidence-root.mjs",
+  "checker": "scripts/oam/check-read-intelligence-kernel.mjs",
   "proves": [
     "Read Intelligence only consumes generated read models and authorized read envelopes.",
     "OamObjectEnvelope, SearchIndexRecord, SearchResultEnvelope, and LensReadModel carry permission, lineage, and freshness requirements.",
@@ -132,5 +134,6 @@
     "docs/contracts/read/freshness-envelope.schema.json",
     "docs/contracts/generated/dormitory/read-model.generated.json"
   ],
-  "failures": []
+  "failures": [],
+  "checkedAtUtc": "2026-06-12T10:01:29.115Z"
 }

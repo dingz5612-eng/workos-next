@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
+const writeProof = process.argv.includes("--write-proof") || process.env.OAM_WRITE_PROOF === "1";
 const failures = [];
 const kernel = readJson("docs/read-intelligence/read-intelligence-kernel.json");
 const readModel = readJson("docs/contracts/generated/dormitory/read-model.generated.json");
@@ -116,13 +117,13 @@ for (const field of ["indexedAt", "indexLagMs", "stale", "maxStalenessMs", "chec
 }
 
 if (failures.length > 0) {
-  writeOamObjectEnvelopeProof("failed");
+  if (writeProof) writeOamObjectEnvelopeProof("failed");
   console.error("Read Intelligence kernel check: FAIL");
   for (const failure of failures) console.error(`- ${failure}`);
   process.exit(1);
 }
 
-writeOamObjectEnvelopeProof("passed");
+if (writeProof) writeOamObjectEnvelopeProof("passed");
 console.log("Read Intelligence kernel check: PASS");
 
 function readJson(file) {

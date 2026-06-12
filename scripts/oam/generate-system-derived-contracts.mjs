@@ -15,7 +15,18 @@ const generatedContractsOutputPath = "docs/oam/generated-contracts-manifest.json
 const kernel = readJson(systemKernelPath);
 const domainKernel = readJson(domainKernelPath);
 const graph = readJson(graphPath);
-const graphNodeBySource = new Map((graph.nodes ?? []).map((node) => [slash(node.sourceFile), node]));
+const graphNodeIds = new Set((graph.nodes ?? []).map((node) => node.nodeId));
+const graphNodesBySource = new Map();
+for (const node of graph.nodes ?? []) {
+  const sourceFile = slash(node.sourceFile);
+  if (!sourceFile) continue;
+  graphNodesBySource.set(sourceFile, [...(graphNodesBySource.get(sourceFile) ?? []), node]);
+}
+const sourceAuthorityNodeRefs = new Map([
+  [systemKernelPath, "kernel.system"],
+  [domainKernelPath, "domain.dormitory"],
+  [graphPath, "graph.oam"]
+]);
 const dormitoryWorkItemDerivedTargets = fs.existsSync(path.join(root, "docs/business/domains/dormitory/workitems"))
   ? fs.readdirSync(path.join(root, "docs/business/domains/dormitory/workitems"))
     .filter((file) => file.endsWith(".json"))
@@ -65,21 +76,21 @@ writeJson(systemOutputPath, manifest({
   version: "oam.system-derived-contracts.v1",
   manifestKind: "system-derived",
   generatedFrom: [systemKernelPath, graphPath],
-  sourceRefs: ["kernel.system", "graph.authority"],
+  sourceRefs: sourceRefsFor([systemKernelPath, graphPath]),
   contracts: contracts(systemTargets, [systemKernelPath, graphPath], "system-derived")
 }));
 writeJson(domainOutputPath, manifest({
   version: "oam.domain-derived-contracts.v1",
   manifestKind: "domain-derived",
   generatedFrom: [domainKernelPath, graphPath],
-  sourceRefs: ["domain.dormitory", "graph.authority"],
+  sourceRefs: sourceRefsFor([domainKernelPath, graphPath]),
   contracts: contracts(domainTargets, [domainKernelPath, graphPath], "domain-derived")
 }));
 writeJson(generatedContractsOutputPath, manifest({
   version: "oam.generated-contracts-manifest.v1",
   manifestKind: "generated-contracts",
   generatedFrom: [systemKernelPath, domainKernelPath, graphPath],
-  sourceRefs: ["kernel.system", "domain.dormitory", "graph.authority"],
+  sourceRefs: sourceRefsFor([systemKernelPath, domainKernelPath, graphPath]),
   contracts: contracts(generatedContractTargets, [systemKernelPath, domainKernelPath, graphPath], "generated-contracts")
 }));
 
@@ -87,7 +98,8 @@ console.log(`Generated layer manifests written: ${systemOutputPath}, ${domainOut
 console.log(`contracts=${systemTargets.length + domainTargets.length + generatedContractTargets.length}`);
 
 function contracts(targetPaths, derivedFrom, manifestKind) {
-  const sourceNodeRefs = derivedFrom.map((file) => graphNodeBySource.get(file)?.nodeId ?? graphBindingFor(file));
+  const sourceRefs = sourceRefsFor(derivedFrom);
+  const sourceNodeRefs = [...sourceRefs];
   const sourceHashes = Object.fromEntries(derivedFrom.map((file) => [file, hashFile(file)]));
   return [...targetPaths].sort((a, b) => a.localeCompare(b)).map((targetPath) => ({
     targetPath,
@@ -98,7 +110,7 @@ function contracts(targetPaths, derivedFrom, manifestKind) {
     generatedBy,
     generatorVersion,
     generatedFrom: derivedFrom,
-    sourceRefs: derivedFrom,
+    sourceRefs,
     sourceNodeRefs,
     sourceContentDigest: hashFiles(derivedFrom),
     kernelGraphHash: hashFile(graphPath),
@@ -107,7 +119,7 @@ function contracts(targetPaths, derivedFrom, manifestKind) {
       : kernel.version,
     sourceGraphVersion: graph.version,
     manualEditAllowed: false,
-    graphBinding: graphNodeBySource.get(targetPath)?.nodeId ?? graphBindingFor(targetPath),
+    graphBinding: graphBindingFor(targetPath),
     checker: checkerFor(targetPath),
     sourceHashes,
     compilerInputDigest: digest({
@@ -115,6 +127,7 @@ function contracts(targetPaths, derivedFrom, manifestKind) {
       manifestKind,
       targetPath,
       generatedFrom: derivedFrom,
+      sourceRefs,
       sourceNodeRefs,
       sourceHashes
     })
@@ -167,8 +180,23 @@ function checkerFor(file) {
 }
 
 function graphBindingFor(file) {
-  const node = graph.nodes?.find((item) => item.sourceFile === file);
-  return node?.nodeId ?? `file.${file}`;
+  const fileNodeId = `file.${file}`;
+  if (graphNodeIds.has(fileNodeId)) return fileNodeId;
+  const nodes = graphNodesBySource.get(file) ?? [];
+  return nodes[0]?.nodeId ?? fileNodeId;
+}
+
+function sourceRefsFor(files) {
+  return files.map((file) => sourceAuthorityNodeRefFor(file));
+}
+
+function sourceAuthorityNodeRefFor(file) {
+  const authorityNodeRef = sourceAuthorityNodeRefs.get(file);
+  if (!authorityNodeRef) return graphBindingFor(file);
+  if (!graphNodeIds.has(authorityNodeRef)) {
+    throw new Error(`source authority node ref missing from OAM graph: ${file} -> ${authorityNodeRef}`);
+  }
+  return authorityNodeRef;
 }
 
 function readJson(file) {
