@@ -37,6 +37,32 @@ const report = {
   status: "running",
   runId,
   generatedAtUtc: new Date().toISOString(),
+  auditLevel: "L1",
+  auditPurpose: "架构 UI 审计：证明 10 个入口沿 generated Surface 与 Operations Runtime 路径执行，不证明业务已落地。",
+  allowedInterpretation: [
+    "可以证明 ten-scenario 作为 L1 架构证据覆盖统一入口、只读边界和截图绑定。",
+    "可以证明当前阶段没有从 UI state、label 或 dashboard summary 反写业务事实。",
+    "可以作为 Candidate Evidence 的浏览器 L1 架构证据。"
+  ],
+  forbiddenInterpretation: [
+    "不能证明宿舍业务已经落地。",
+    "不能作为 Dormitory L2 业务验收。",
+    "不能打开 productionConfirmAllowed、businessProductionStatus 或 releaseAuthority。"
+  ],
+  scenarioScope: {
+    level: "L1",
+    kind: "architecture_ui_audit",
+    businessAcceptance: false,
+    included: ["10 unified entry observations", "generated Surface controls", "Operations Runtime path", "screenshot binding"],
+    excluded: ["Business GO", "Dormitory L2 acceptance", "Production release"]
+  },
+  businessGoAllowed: false,
+  currentScenario: "not_started",
+  completedScenarioCount: 0,
+  totalScenarioCount: scenarios.length,
+  lastHeartbeatAt: new Date().toISOString(),
+  screenshotCount: 0,
+  currentStep: "initializing",
   browserMode: process.env.WORKOS_REAL_BROWSER_HEADLESS === "1" ? "playwright-chromium-headless" : "playwright-chromium-visible",
   mockPolicy: "real browser clicks and form input only; no route mocks; no backend simulation; no API substitute for user operations",
   endpoints: { baseUrl, apiUrl },
@@ -512,6 +538,7 @@ function addFinding(result, id, message, details = {}) {
 }
 
 function writeArtifacts() {
+  refreshAuditProgress(report.status === "running" ? "artifact_write" : "completed");
   const screenshotIndex = {
     version: "dormitory.ten-scenario.screenshot-index.v1",
     runId,
@@ -529,6 +556,8 @@ function markdownReport(current) {
     "",
     `- Run ID: ${current.runId}`,
     `- Status: ${current.status}`,
+    `- Audit level: ${current.auditLevel}`,
+    `- Business GO allowed: ${current.businessGoAllowed}`,
     `- Browser mode: ${current.browserMode}`,
     `- Mock policy: ${current.mockPolicy}`,
     `- Scenario count: ${current.scenarios.length}`,
@@ -547,6 +576,15 @@ function markdownReport(current) {
     "| --- | --- |",
     ...current.assertions.map((item) => `| ${item.id} | ${item.status} |`)
   ].join("\n") + "\n";
+}
+
+function refreshAuditProgress(currentStep) {
+  report.currentScenario = report.scenarios.at(-1)?.id || "not_started";
+  report.completedScenarioCount = report.scenarios.filter((scenario) => scenario.status && scenario.status !== "running").length;
+  report.totalScenarioCount = scenarios.length;
+  report.lastHeartbeatAt = new Date().toISOString();
+  report.screenshotCount = report.screenshots.length;
+  report.currentStep = currentStep;
 }
 
 function screenshotEntry(filePath, kind, scrollY = null) {

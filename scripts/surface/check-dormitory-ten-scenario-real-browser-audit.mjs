@@ -32,6 +32,7 @@ function validateReport() {
   if (report.status !== "passed") {
     violations.push(v("ten_scenario.status", "10 场景真实浏览器审计结果必须 passed。"));
   }
+  validateAuditLevel();
   if (!["playwright-chromium-visible", "playwright-chromium-headless"].includes(report.browserMode)) {
     violations.push(v("ten_scenario.browser_mode", "证据必须来自 Playwright Chromium 真实浏览器模式。", { browserMode: report.browserMode }));
   }
@@ -97,6 +98,42 @@ function validateReport() {
   }
 }
 
+function validateAuditLevel() {
+  if (report.auditLevel !== "L1") {
+    violations.push(v("ten_scenario.audit_level", "当前阶段 10 场景浏览器审计只能是 L1 架构证据。", { auditLevel: report.auditLevel || "missing" }));
+  }
+  if (["L2", "L3"].includes(report.auditLevel)) {
+    violations.push(v("ten_scenario.l2_l3_forbidden", "当前阶段禁止启用 L2/L3 浏览器审计。"));
+  }
+  if (report.businessGoAllowed !== false) {
+    violations.push(v("ten_scenario.business_go_allowed", "L1 浏览器审计必须保持 businessGoAllowed=false。"));
+  }
+  if (!/架构|Surface|Operations/.test(String(report.auditPurpose || ""))) {
+    violations.push(v("ten_scenario.audit_purpose", "报告必须声明 L1 架构 UI 审计目的。"));
+  }
+  const forbidden = Array.isArray(report.forbiddenInterpretation)
+    ? report.forbiddenInterpretation.join("\n")
+    : String(report.forbiddenInterpretation || "");
+  if (!/业务|productionConfirmAllowed|releaseAuthority|GO/.test(forbidden)) {
+    violations.push(v("ten_scenario.forbidden_interpretation", "报告必须声明 ten-scenario 不能解释为业务 GO、生产确认或发布授权。"));
+  }
+  if (!report.scenarioScope || report.scenarioScope.businessAcceptance !== false) {
+    violations.push(v("ten_scenario.scope", "scenarioScope 必须声明 businessAcceptance=false。"));
+  }
+  if (!report.currentScenario) violations.push(v("ten_scenario.current_scenario", "报告缺少 currentScenario 进度字段。"));
+  if (report.completedScenarioCount !== (report.scenarios || []).length) {
+    violations.push(v("ten_scenario.completed_count", "completedScenarioCount 必须等于已写入场景数量。", { completedScenarioCount: report.completedScenarioCount, scenarioCount: report.scenarios?.length || 0 }));
+  }
+  if (report.totalScenarioCount !== 10) {
+    violations.push(v("ten_scenario.total_count", "totalScenarioCount 必须等于 10。", { totalScenarioCount: report.totalScenarioCount }));
+  }
+  if (!report.lastHeartbeatAt) violations.push(v("ten_scenario.heartbeat", "报告缺少 lastHeartbeatAt。"));
+  if (report.screenshotCount !== (report.screenshots || []).length) {
+    violations.push(v("ten_scenario.screenshot_progress", "screenshotCount 必须等于 screenshots.length。", { screenshotCount: report.screenshotCount, screenshots: report.screenshots?.length || 0 }));
+  }
+  if (!report.currentStep) violations.push(v("ten_scenario.current_step", "报告缺少 currentStep。"));
+}
+
 function readJson(filePath) {
   try {
     return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -113,8 +150,12 @@ function writeResult() {
     generatedBy: "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs",
     status: violations.length ? "failed" : "passed",
     report: path.relative(root, reportPath).replace(/\\/g, "/"),
+    auditLevel: report.auditLevel || "",
+    businessGoAllowed: report.businessGoAllowed,
     scenarioCount: report.scenarios?.length || 0,
     screenshotCount: report.screenshots?.length || 0,
+    completedScenarioCount: report.completedScenarioCount || 0,
+    totalScenarioCount: report.totalScenarioCount || 0,
     workspaceStartCount: report.networkPolicy?.workspaceStartCount || 0,
     operationsConfirmCount: report.networkPolicy?.operationsConfirmCount || 0,
     violationCount: violations.length,

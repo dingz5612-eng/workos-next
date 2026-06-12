@@ -8,6 +8,8 @@ const evidenceDir = "artifacts/oam/evidence";
 const finalReportPath = "artifacts/oam/final-report.json";
 const controlPlaneGateResultPath = "artifacts/oam/checks/control-plane-gate-results.json";
 const responsibilityMapPath = "docs/oam/current-oam-kernel-responsibility-map.json";
+const candidateEvidenceObjectPath = "artifacts/oam/evidence/current-oam-candidate-evidence-object.json";
+const commitAttestationPath = "artifacts/oam/evidence/current-oam-commit-attestation.json";
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
 const releaseAttestationPath = "artifacts/oam/evidence/current-oam-release-attestation.json";
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
@@ -24,6 +26,8 @@ const githubArtifactDigestStatus = githubArtifactMetadataDigest ? "attested" : p
 
 const requiredEvidenceFiles = [
   "artifacts/oam/evidence/evidence-graph.json",
+  candidateEvidenceObjectPath,
+  commitAttestationPath,
   releaseEvidenceObjectPath,
   releaseAttestationPath,
   "artifacts/oam/evidence/execution-log.jsonl",
@@ -52,6 +56,7 @@ const requiredEvidenceFiles = [
   "docs/oam/codex-execution-channel-policy.json",
   "docs/finance/finance-ledger-kernel.json",
   "docs/oam/compiler-generated-contract-kernel.json",
+  "docs/oam/file-lifecycle-policy.json",
   "docs/identity/identity-permission-kernel.json",
   "docs/oam/kernel/oam-kernel-source.schema.json",
   "docs/oam/kernel/oam-kernel-generated.schema.json",
@@ -119,6 +124,36 @@ const coverageSummary = buildCoverageSummary();
 const mobileBranchRiskKernel = buildMobileBranchRiskKernel();
 const realBrowserEvidence = buildRealBrowserEvidence();
 const mutationTests = readMutationTestsResult();
+const sourceAuthorityDigest = digestForFiles(sourceAuthorityFiles());
+const generatedContractDigest = generatedContractsHash;
+const fileLifecycleDigest = hashFileStrict("docs/oam/file-lifecycle-policy.json");
+const runtimeBoundaryDigest = digestForFiles([
+  "artifacts/oam/evidence/runtime-proof.json",
+  "scripts/check-runtime-write-paths.mjs",
+  "scripts/check-api-boundaries.mjs"
+]);
+const readSurfaceFinanceBoundaryDigest = digestForFiles([
+  "artifacts/oam/evidence/search-readonly-proof.json",
+  "artifacts/oam/evidence/surface-language-proof.json",
+  "docs/read-intelligence/read-intelligence-kernel.json",
+  "docs/finance/finance-ledger-kernel.json",
+  "scripts/check-search-kernel.mjs",
+  "scripts/check-surface-contract.mjs",
+  "scripts/check-finance-truth.mjs",
+  "scripts/finance/check-finance-semantic-truth.mjs"
+]);
+const mutationDigest = digestForDisk(["artifacts/oam/authority-cleanup/mutation-tests-result.json"]);
+const browserL1Digest = realBrowserEvidence.summary.l1?.report
+  ? digestForFiles([realBrowserEvidence.summary.l1.report])
+  : "missing";
+const candidateSubject = buildCandidateEvidenceSubject();
+const evidenceSubjectDigest = digestObject(candidateSubject);
+const candidateEvidenceDigest = digestObject({
+  kind: "current-oam-candidate-evidence-subject",
+  evidenceSubjectDigest,
+  subject: candidateSubject
+});
+const trackedContentDigestValue = trackedContentDigest();
 const unresolvedP0 = p0Ledger.filter((item) => item.status !== "passed");
 const releaseReadiness = buildReleaseReadiness();
 const finalDecision = buildFinalDecision();
@@ -385,6 +420,56 @@ addEvidence(
 const workstreamProofNodes = buildWorkstreamProofNodes();
 const workstreamGoNoGoFields = buildWorkstreamGoNoGoFields(workstreamProofNodes);
 const p0ClosureProofNodes = buildP0ClosureProofNodes();
+const candidateEvidenceObject = {
+  ...proof("current-oam-candidate-evidence-object", "当前 OAM Candidate Evidence Object", {
+    proofType: "candidate-evidence",
+    purposeZh: "证明当前本地内容满足架构闭合候选条件；不负责发布授权，不等于业务 GO。",
+    releaseAuthorityForbidden: true
+  }),
+  proofType: "candidate-evidence",
+  sourceAuthorityDigest,
+  generatedContractDigest,
+  fileLifecycleDigest,
+  runtimeBoundaryDigest,
+  readSurfaceFinanceBoundaryDigest,
+  mutationDigest,
+  browserL1Digest,
+  evidenceSubjectDigest,
+  candidateEvidenceDigest,
+  currentRepositoryHead,
+  headSha: currentRepositoryHead,
+  candidateStatus: candidateSubject.candidateStatus,
+  candidateReadyForCompile: candidateSubject.candidateReadyForCompile,
+  candidateReadyForBusinessImplementation: false,
+  candidateReadyForRelease: false,
+  releaseAuthority: false,
+  githubArtifactDigestStatus: "not_applicable_for_candidate",
+  forbiddenBindings: [
+    "githubArtifactDigest",
+    "external artifact attestation",
+    "releaseAuthority=true"
+  ],
+  subject: candidateSubject
+};
+const commitAttestation = {
+  ...proof("current-oam-commit-attestation", "当前 OAM Commit Attestation", {
+    proofType: "commit-attestation",
+    purposeZh: "证明当前 HEAD 与 Candidate Evidence 的主体摘要一致；不负责发布授权。"
+  }),
+  proofType: "commit-attestation",
+  commitSha,
+  currentRepositoryHead,
+  candidateEvidenceDigest,
+  evidenceSubjectDigest,
+  sourceTreeDigest: trackedContentDigestValue,
+  trackedContentDigest: trackedContentDigestValue,
+  generatedAtUtc: generatedAt,
+  bindingStatus: commitSha === currentRepositoryHead ? "current" : "stale",
+  candidateBindingStatus: evidenceSubjectDigest === candidateEvidenceObject.evidenceSubjectDigest ? "current" : "stale",
+  releaseAuthority: false,
+  candidateEvidenceObject: candidateEvidenceObjectPath
+};
+const finalReportStatusMatrix = buildFinalReportStatusMatrix(candidateEvidenceObject, commitAttestation);
 
 const finalReport = {
   ...proof("current-oam-final-report", "当前 OAM 可信运行闭环最终报告", {}),
@@ -403,6 +488,20 @@ const finalReport = {
   releaseReadiness,
   controlPlaneGateResult,
   finalDecision,
+  multiStatusVersion: "oam.final-report.multi-status.v1",
+  statusMatrix: finalReportStatusMatrix,
+  authorityStatus: finalReportStatusMatrix.authorityStatus,
+  fileLifecycleStatus: finalReportStatusMatrix.fileLifecycleStatus,
+  compileStatus: finalReportStatusMatrix.compileStatus,
+  runtimeBoundaryStatus: finalReportStatusMatrix.runtimeBoundaryStatus,
+  readSurfaceFinanceStatus: finalReportStatusMatrix.readSurfaceFinanceStatus,
+  mutationStatus: finalReportStatusMatrix.mutationStatus,
+  browserL1Status: finalReportStatusMatrix.browserL1Status,
+  candidateEvidenceStatus: finalReportStatusMatrix.candidateEvidenceStatus,
+  commitAttestationStatus: finalReportStatusMatrix.commitAttestationStatus,
+  businessReadinessStatus: finalReportStatusMatrix.businessReadinessStatus,
+  releaseReadinessStatus: finalReportStatusMatrix.releaseReadinessStatus,
+  finalGoNoGoStatus: finalReportStatusMatrix.finalGoNoGo,
   responsibilityMap: {
     path: responsibilityMapPath,
     workstreamCount: responsibilityMap.workstreams?.length ?? 0,
@@ -423,6 +522,8 @@ const finalReport = {
   gateSummary,
   testSummary,
   mutationTests,
+  candidateEvidence: summarizeCandidateEvidence(candidateEvidenceObject),
+  commitAttestation: summarizeCommitAttestation(commitAttestation),
   failedChecks: [],
   skippedOrNotApplicable: buildSkippedOrNotApplicable(),
   coverageSummary,
@@ -456,6 +557,8 @@ const finalReport = {
   p0RuleLedger: p0Ledger
 };
 
+addEvidence(candidateEvidenceObjectPath, candidateEvidenceObject);
+addEvidence(commitAttestationPath, commitAttestation);
 addEvidence("artifacts/oam/evidence/current-oam-final-report.json", finalReport);
 addEvidence(finalReportPath, finalReport);
 
@@ -474,6 +577,23 @@ const evidenceGraph = {
     path: file,
     kind: file.endsWith("final-report.json") ? "final-report" : path.basename(file, ".json")
   })),
+  evidenceObjectRefs: [
+    {
+      path: candidateEvidenceObjectPath,
+      proofType: "candidate-evidence",
+      purposeZh: "本地候选闭合证明，不授权发布。"
+    },
+    {
+      path: commitAttestationPath,
+      proofType: "commit-attestation",
+      purposeZh: "当前 HEAD 与候选主体摘要绑定证明，不授权发布。"
+    },
+    {
+      path: releaseEvidenceObjectPath,
+      proofType: "release-evidence",
+      purposeZh: "CI / release 发布证明，本地保持 releaseAuthority=false。"
+    }
+  ],
   authorityRefs: [
     "docs/oam/current-architecture.manifest.json",
     "docs/system/oam-p0-rule-ledger.md",
@@ -491,7 +611,10 @@ const evidenceGraph = {
   controlPlaneGateResult,
   releaseReadiness,
   finalDecision,
+  finalReportStatusMatrix,
   mutationTests,
+  candidateEvidence: summarizeCandidateEvidence(candidateEvidenceObject),
+  commitAttestation: summarizeCommitAttestation(commitAttestation),
   responsibilityMap: {
     path: responsibilityMapPath,
     workstreamCount: responsibilityMap.workstreams?.length ?? 0
@@ -537,6 +660,10 @@ const releaseEvidenceObject = {
   kernelGraphHash,
   evidenceGraphHash: digestPlaceholder,
   finalReportDigest: digestPlaceholder,
+  releaseEvidenceRole: "ci_release_attestation_only",
+  candidateEvidenceObject: candidateEvidenceObjectPath,
+  commitAttestation: commitAttestationPath,
+  releaseDoesNotReplaceCandidateEvidence: true,
   businessProduction: admission.businessProduction,
   dormitoryL2: admission.dormitoryProduction,
   productionConfirmAllowed: admission.productionConfirmAllowed,
@@ -983,6 +1110,120 @@ function digestForDisk(fileList) {
   return `sha256:${sha256(JSON.stringify(normalized))}`;
 }
 
+function digestForFiles(fileList) {
+  const normalized = {};
+  for (const file of [...fileList].map(normalizeRepoPath).sort((left, right) => left.localeCompare(right))) {
+    const target = path.join(root, file);
+    normalized[file] = fs.existsSync(target)
+      ? `sha256:${sha256(fs.readFileSync(target))}`
+      : "missing";
+  }
+  return `sha256:${sha256(JSON.stringify(normalized))}`;
+}
+
+function sourceAuthorityFiles() {
+  const authorityIndex = readJson("docs/oam/current-authority-index.json");
+  const declared = (authorityIndex.classificationModel?.sourceLayerWhitelist ?? [])
+    .map(normalizeRepoPath)
+    .filter(Boolean);
+  if (declared.length > 0) return declared.sort((left, right) => left.localeCompare(right));
+  return (authorityIndex.entries ?? [])
+    .filter((entry) => entry.layer === "source")
+    .map((entry) => normalizeRepoPath(entry.path))
+    .filter(Boolean)
+    .sort((left, right) => left.localeCompare(right));
+}
+
+function buildCandidateEvidenceSubject() {
+  const candidateStatus = controlPlaneGateResult.status === "passed" &&
+    (controlPlaneGateResult.failedGateCount ?? 0) === 0 &&
+    mutationTests.status === "passed"
+    ? "PASS"
+    : "FAIL";
+  return {
+    sourceAuthorityDigest,
+    generatedContractDigest,
+    fileLifecycleDigest,
+    runtimeBoundaryDigest,
+    readSurfaceFinanceBoundaryDigest,
+    mutationDigest,
+    browserL1Digest,
+    controlPlaneStatus: controlPlaneGateResult.status,
+    controlPlaneFailedGateCount: controlPlaneGateResult.failedGateCount ?? 0,
+    mutationStatus: mutationTests.status,
+    browserL1Status: realBrowserEvidence.summary.l1?.status ?? "missing_or_failed",
+    candidateStatus,
+    candidateReadyForCompile: candidateStatus === "PASS",
+    candidateReadyForBusinessImplementation: false,
+    candidateReadyForRelease: false,
+    notesZh: "Candidate Evidence 只证明本地架构候选闭合；业务落地和发布仍保持 NO_GO。"
+  };
+}
+
+function summarizeCandidateEvidence(candidate) {
+  return {
+    path: candidateEvidenceObjectPath,
+    proofType: candidate.proofType,
+    candidateStatus: candidate.candidateStatus,
+    candidateReadyForCompile: candidate.candidateReadyForCompile,
+    candidateReadyForBusinessImplementation: candidate.candidateReadyForBusinessImplementation,
+    candidateReadyForRelease: candidate.candidateReadyForRelease,
+    evidenceSubjectDigest: candidate.evidenceSubjectDigest,
+    candidateEvidenceDigest: candidate.candidateEvidenceDigest,
+    releaseAuthority: candidate.releaseAuthority
+  };
+}
+
+function summarizeCommitAttestation(attestation) {
+  return {
+    path: commitAttestationPath,
+    proofType: attestation.proofType,
+    commitSha: attestation.commitSha,
+    bindingStatus: attestation.bindingStatus,
+    candidateBindingStatus: attestation.candidateBindingStatus,
+    evidenceSubjectDigest: attestation.evidenceSubjectDigest,
+    candidateEvidenceDigest: attestation.candidateEvidenceDigest,
+    trackedContentDigest: attestation.trackedContentDigest,
+    releaseAuthority: attestation.releaseAuthority
+  };
+}
+
+function trackedContentDigest() {
+  const files = execSync("git ls-files", { cwd: root, encoding: "utf8" })
+    .split(/\r?\n/)
+    .map(normalizeRepoPath)
+    .filter(Boolean)
+    .sort((left, right) => left.localeCompare(right));
+  const entries = {};
+  for (const file of files) {
+    const target = path.join(root, file);
+    if (!fs.existsSync(target)) {
+      entries[file] = "missing";
+      continue;
+    }
+    entries[file] = `sha256:${sha256(fs.readFileSync(target))}`;
+  }
+  return digestObject({
+    kind: "tracked-content-digest",
+    fileCount: files.length,
+    entries
+  });
+}
+
+function digestObject(value) {
+  return `sha256:${sha256(JSON.stringify(stableForSubjectDigest(value)))}`;
+}
+
+function stableForSubjectDigest(value) {
+  if (Array.isArray(value)) return value.map(stableForSubjectDigest);
+  if (!value || typeof value !== "object") return value;
+  const output = {};
+  for (const key of Object.keys(value).sort()) {
+    output[key] = stableForSubjectDigest(value[key]);
+  }
+  return output;
+}
+
 function documentForDigest(file, document) {
   if (file.endsWith(".jsonl") && typeof document === "string") {
     return document
@@ -1156,12 +1397,21 @@ function hashFileIfPresent(file) {
 function buildGateSummary() {
   const requiredCommands = requiredGateCommands();
   return {
+    runStatus: controlPlaneGateResult.runStatus,
     status: controlPlaneGateResult.status,
     ciWorkflow: ".github/workflows/ci.yml",
     controlPlaneEntry: "scripts/oam/run-control-plane-checks.ps1",
     resultFile: controlPlaneGateResultPath,
     commitSha: controlPlaneGateResult.commitSha,
     generatedAtUtc: controlPlaneGateResult.generatedAtUtc,
+    startedAtUtc: controlPlaneGateResult.startedAtUtc,
+    finishedAtUtc: controlPlaneGateResult.finishedAtUtc,
+    expectedGateCount: controlPlaneGateResult.expectedGateCount ?? 0,
+    completedGateCount: controlPlaneGateResult.completedGateCount ?? 0,
+    finalizable: controlPlaneGateResult.finalizable === true,
+    currentStage: controlPlaneGateResult.currentStage ?? "",
+    currentGate: controlPlaneGateResult.currentGate ?? "",
+    blockingReasons: controlPlaneGateResult.blockingReasons ?? [],
     missingRequiredGates: controlPlaneGateResult.missingRequiredGates ?? [],
     failedGateCount: controlPlaneGateResult.failedGateCount ?? 0,
     requiredGateCount: controlPlaneGateResult.requiredGateCount ?? 0,
@@ -1296,9 +1546,18 @@ function readControlPlaneGateResult() {
       generatedAtUtc: generatedAt,
       commitSha,
       branch,
-      status: "missing",
-      requiredGateCount: 0,
+      runStatus: "not_started",
+      status: "not_started",
+      expectedGateCount: requiredCommands.length,
+      requiredGateCount: requiredCommands.length,
+      completedGateCount: 0,
       failedGateCount: 0,
+      finalizable: false,
+      startedAtUtc: null,
+      finishedAtUtc: null,
+      currentStage: "not_started",
+      currentGate: "",
+      blockingReasons: ["Control Plane 尚未启动，不能作为最终结果。"],
       gates: [],
       missingRequiredGates: requiredCommands
     };
@@ -1311,7 +1570,17 @@ function readControlPlaneGateResult() {
   const missingRequiredGates = requiredCommands.filter((command) => !actual.has(command));
   return {
     ...result,
+    runStatus: result.runStatus ?? "missing_state_machine",
     status: result.status ?? "missing",
+    expectedGateCount: result.expectedGateCount ?? result.requiredGateCount ?? 0,
+    requiredGateCount: result.requiredGateCount ?? result.expectedGateCount ?? 0,
+    completedGateCount: result.completedGateCount ?? (result.gates?.length ?? 0),
+    finalizable: result.finalizable === true,
+    startedAtUtc: result.startedAtUtc ?? null,
+    finishedAtUtc: result.finishedAtUtc ?? null,
+    currentStage: result.currentStage ?? "",
+    currentGate: result.currentGate ?? "",
+    blockingReasons: result.blockingReasons ?? [],
     missingRequiredGates,
     stale: result.commitSha !== commitSha
   };
@@ -1353,6 +1622,13 @@ function readL1BrowserEvidence() {
     status,
     report: reportRef || "",
     runId: report?.runId || "",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: report?.auditPurpose || "",
+    allowedInterpretation: report?.allowedInterpretation ?? [],
+    forbiddenInterpretation: report?.forbiddenInterpretation ?? [],
+    scenarioScope: report?.scenarioScope ?? {},
+    businessGoAllowed: report?.businessGoAllowed,
+    progress: browserAuditProgress(report),
     scenarioCount: report?.scenarios?.length ?? 0,
     screenshotHashCount: screenshotHashes.length,
     node: report ? buildBrowserProofNode({
@@ -1366,6 +1642,13 @@ function readL1BrowserEvidence() {
       scenarioIds: (report.scenarios ?? []).map((scenario) => scenario.scenarioId).filter(Boolean),
       screenshotHashes,
       reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: report.auditPurpose,
+      allowedInterpretation: report.allowedInterpretation,
+      forbiddenInterpretation: report.forbiddenInterpretation,
+      scenarioScope: report.scenarioScope,
+      businessGoAllowed: report.businessGoAllowed,
+      progress: browserAuditProgress(report),
       refs: [
         reportRef,
         normalizeRepoPath(report.outputs?.markdown || ""),
@@ -1389,6 +1672,13 @@ function readTenScenarioBrowserEvidence() {
     status,
     report: report ? reportRef : "",
     runId: report?.runId || "",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: report?.auditPurpose || "",
+    allowedInterpretation: report?.allowedInterpretation ?? [],
+    forbiddenInterpretation: report?.forbiddenInterpretation ?? [],
+    scenarioScope: report?.scenarioScope ?? {},
+    businessGoAllowed: report?.businessGoAllowed,
+    progress: browserAuditProgress(report),
     scenarioCount: report?.scenarios?.length ?? 0,
     screenshotHashCount: screenshotHashes.length,
     node: report ? buildBrowserProofNode({
@@ -1404,6 +1694,13 @@ function readTenScenarioBrowserEvidence() {
       scenarioIds: (report.scenarios ?? []).map((scenario) => scenario.id).filter(Boolean),
       screenshotHashes,
       reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: report.auditPurpose,
+      allowedInterpretation: report.allowedInterpretation,
+      forbiddenInterpretation: report.forbiddenInterpretation,
+      scenarioScope: report.scenarioScope,
+      businessGoAllowed: report.businessGoAllowed,
+      progress: browserAuditProgress(report),
       refs: [
         reportRef,
         ["artifacts", "oam", "evidence", "dormitory-real-browser", runId, "ten-scenario-real-browser-report.md"].join("/"),
@@ -1412,6 +1709,18 @@ function readTenScenarioBrowserEvidence() {
         "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs"
       ]
     }) : null
+  };
+}
+
+function browserAuditProgress(report) {
+  if (!report) return {};
+  return {
+    currentScenario: report.currentScenario || "",
+    completedScenarioCount: report.completedScenarioCount ?? 0,
+    totalScenarioCount: report.totalScenarioCount ?? 0,
+    lastHeartbeatAt: report.lastHeartbeatAt || "",
+    screenshotCount: report.screenshotCount ?? 0,
+    currentStep: report.currentStep || ""
   };
 }
 
@@ -1434,6 +1743,9 @@ function buildBrowserProofNode(input) {
     reportRef: input.reportRef,
     refs,
     screenshotHashes: input.screenshotHashes,
+    auditLevel: input.auditLevel,
+    businessGoAllowed: input.businessGoAllowed,
+    progress: input.progress,
     headSha: sourceCommitSha,
     reportHeadSha: input.headSha,
     reportFresh: input.headSha === sourceCommitSha,
@@ -1462,6 +1774,13 @@ function buildBrowserProofNode(input) {
     ciRunUrl: input.ciRunUrl,
     scenarioIds: input.scenarioIds,
     screenshotHashes: input.screenshotHashes,
+    auditLevel: input.auditLevel,
+    auditPurpose: input.auditPurpose,
+    allowedInterpretation: input.allowedInterpretation ?? [],
+    forbiddenInterpretation: input.forbiddenInterpretation ?? [],
+    scenarioScope: input.scenarioScope ?? {},
+    businessGoAllowed: input.businessGoAllowed,
+    progress: input.progress ?? {},
     reportRef: input.reportRef,
     refs,
     command: refs.find((file) => file.includes("/run-")) ?? input.gate,
@@ -1470,6 +1789,292 @@ function buildBrowserProofNode(input) {
     outputHashes: [{ path: `evidence-node:${input.id}`, hash: proofHash }],
     goNoGoImpact: ["surfaceLanguageGoNoGo", "finalGoNoGo"],
     notesZh: `${input.gate} 的真实浏览器 proof DAG 节点；截图哈希、报告和检查器均作为依赖，CI 绿色不等于业务 GO。`
+  };
+}
+
+function buildFinalReportStatusMatrix(candidate, attestation) {
+  const authorityGate = gateGroupStatus([
+    "node scripts/oam/check-current-oam.mjs",
+    "node scripts/oam/check-current-architecture-manifest.mjs",
+    "node scripts/oam/check-current-authority-index.mjs",
+    "node scripts/authority/check-master-design-schema.mjs",
+    "node scripts/authority/check-truth-ownership-matrix.mjs",
+    "node scripts/oam/check-authority-source-layer-audit.mjs",
+    "node scripts/oam/check-kernel-responsibility-map.mjs",
+    "node scripts/check-rule-authority.mjs",
+    "node scripts/check-truth-owners.mjs"
+  ]);
+  const fileLifecycleGate = gateGroupStatus([
+    "node scripts/oam/check-file-lifecycle-policy.mjs",
+    "node scripts/oam/check-authority-source-layer-audit.mjs"
+  ]);
+  const compileGate = gateGroupStatus([
+    "node scripts/business/generate-dormitory-derived-contracts.mjs",
+    "node scripts/oam/generate-system-derived-contracts.mjs",
+    "node scripts/oam/compile-current-kernel-graph.mjs",
+    "node scripts/oam/check-derived-contract-consistency.mjs",
+    "node scripts/oam/check-generated-contract-consistency.mjs",
+    "node scripts/oam/check-generated-files-not-manually-edited.mjs",
+    "node scripts/oam/check-oam-kernel-graph.mjs"
+  ]);
+  const runtimeGate = gateGroupStatus([
+    "node scripts/check-api-boundaries.mjs",
+    "node scripts/check-runtime-write-paths.mjs",
+    "node scripts/oam/check-runtime-governance-v2.mjs",
+    "node scripts/oam/check-db-no-side-effects-proof.mjs"
+  ]);
+  const readSurfaceFinanceGate = gateGroupStatus([
+    "node scripts/oam/check-read-intelligence-kernel.mjs",
+    "node scripts/check-search-kernel.mjs",
+    "node scripts/check-surface-contract.mjs",
+    "node scripts/oam/check-surface-language-v2.mjs",
+    "node scripts/oam/check-dashboard-readonly.mjs",
+    "node scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+    "node scripts/check-finance-truth.mjs",
+    "node scripts/finance/check-finance-semantic-truth.mjs"
+  ]);
+  const mutationPassed = mutationTests.status === "passed";
+  const browserL1Passed = realBrowserEvidence.summary.l1?.status === "passed";
+  const candidatePassed = candidate.candidateStatus === "PASS";
+  const commitCurrent = attestation.bindingStatus === "current" && attestation.candidateBindingStatus === "current";
+
+  return {
+    version: "oam.final-report.multi-status.v1",
+    authorityStatus: reportStatusEntry({
+      status: authorityGate.status,
+      inputs: [
+        "docs/oam/current-architecture.manifest.json",
+        "docs/oam/current-authority-index.json",
+        "docs/oam/current-oam-kernel-responsibility-map.json",
+        "docs/contracts/authority/master-design.contract.json",
+        "docs/contracts/authority/truth-ownership-matrix.contract.json"
+      ],
+      proofRefs: [
+        "artifacts/oam/evidence/master-design-proof.json",
+        "artifacts/oam/evidence/truth-ownership-proof.json",
+        "artifacts/oam/authority-cleanup/source-layer-audit.json",
+        ...authorityGate.proofRefs
+      ],
+      blockingReasons: authorityGate.blockingReasons,
+      nextAction: authorityGate.status === "PASS"
+        ? "保持当前架构唯一生效；旧 catalog、旧 seed、generated view、dashboard、search、surface 继续不能成为第二权威。"
+        : "先修复权威层、Master Design 或 Truth Ownership Matrix，再重新生成证据。"
+    }),
+    fileLifecycleStatus: reportStatusEntry({
+      status: fileLifecycleGate.status,
+      inputs: [
+        "docs/oam/file-lifecycle-policy.json",
+        "artifacts/oam/authority-cleanup/source-layer-audit.json"
+      ],
+      proofRefs: [
+        "docs/oam/file-lifecycle-policy.json",
+        "artifacts/oam/authority-cleanup/source-layer-audit.json",
+        ...fileLifecycleGate.proofRefs
+      ],
+      blockingReasons: fileLifecycleGate.blockingReasons,
+      nextAction: fileLifecycleGate.status === "PASS"
+        ? "继续按 File Lifecycle Registry 分类文件；禁止靠路径或关键词猜测生命周期。"
+        : "修复文件生命周期注册表或 Source Layer Audit 分类后重跑本阶段。"
+    }),
+    compileStatus: reportStatusEntry({
+      status: compileGate.status,
+      inputs: [
+        "docs/oam/system-derived-contracts.json",
+        "docs/oam/domain-derived-contracts.json",
+        "docs/oam/generated-contracts-manifest.json",
+        "docs/oam/kernel/oam-kernel-graph.generated.json"
+      ],
+      proofRefs: [
+        "docs/oam/generated-contracts-manifest.json",
+        "docs/oam/kernel/oam-kernel-graph.generated.json",
+        ...compileGate.proofRefs
+      ],
+      blockingReasons: compileGate.blockingReasons,
+      nextAction: compileGate.status === "PASS"
+        ? "仅表示 generated 合同可编译且未手改；不能解释为业务 GO。"
+        : "修复 Source 或 generator，再重新生成 generated 合同。"
+    }),
+    runtimeBoundaryStatus: reportStatusEntry({
+      status: runtimeGate.status,
+      inputs: [
+        "artifacts/oam/evidence/runtime-proof.json",
+        "docs/identity/identity-permission-kernel.json",
+        "docs/finance/finance-ledger-kernel.json"
+      ],
+      proofRefs: [
+        "artifacts/oam/evidence/runtime-proof.json",
+        ...runtimeGate.proofRefs
+      ],
+      blockingReasons: runtimeGate.blockingReasons,
+      nextAction: runtimeGate.status === "PASS"
+        ? "保持 Runtime 只消费 generated，不拥有业务事实权威。"
+        : "修复运行时写入路径或 API 边界后重跑边界门禁。"
+    }),
+    readSurfaceFinanceStatus: reportStatusEntry({
+      status: readSurfaceFinanceGate.status,
+      inputs: [
+        "docs/read-intelligence/read-intelligence-kernel.json",
+        "artifacts/oam/evidence/search-readonly-proof.json",
+        "artifacts/oam/evidence/surface-language-proof.json",
+        "docs/finance/finance-ledger-kernel.json"
+      ],
+      proofRefs: [
+        "artifacts/oam/evidence/search-readonly-proof.json",
+        "artifacts/oam/evidence/surface-language-proof.json",
+        "artifacts/oam/proofs/read-intelligence/oam-object-envelope-proof.json",
+        "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+        ...readSurfaceFinanceGate.proofRefs
+      ],
+      blockingReasons: readSurfaceFinanceGate.blockingReasons,
+      nextAction: readSurfaceFinanceGate.status === "PASS"
+        ? "Search、Surface、Dashboard、Report、Metric 保持只读；Finance facts 继续只能由 finance kernel 写。"
+        : "修复 Read / Search / Surface / Dashboard / Finance 边界后重跑门禁。"
+    }),
+    mutationStatus: reportStatusEntry({
+      status: mutationPassed ? "PASS" : "NO_GO",
+      inputs: ["artifacts/oam/authority-cleanup/mutation-tests-result.json"],
+      proofRefs: ["artifacts/oam/authority-cleanup/mutation-tests-result.json"],
+      blockingReasons: mutationPassed ? [] : [`Mutation tests 未通过：${mutationTests.status}`],
+      nextAction: mutationPassed
+        ? "负例继续证明 forbidden owner、手改 generated、CI green as GO 等路径会失败。"
+        : "修复失败负例，确认 forbidden 写入仍被拒绝。"
+    }),
+    browserL1Status: reportStatusEntry({
+      status: browserL1Passed ? "PASS" : "NO_GO",
+      inputs: [
+        realBrowserEvidence.summary.l1?.report ?? "artifacts/oam/evidence/dormitory-l1-browser-e2e/latest-report.json"
+      ],
+      proofRefs: [
+        realBrowserEvidence.summary.l1?.report ?? "artifacts/oam/evidence/dormitory-l1-browser-e2e/latest-report.json",
+        "scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs"
+      ],
+      blockingReasons: browserL1Passed ? [] : [`浏览器 L1 架构审计未通过或过期：${realBrowserEvidence.summary.l1?.status ?? "missing"}`],
+      nextAction: browserL1Passed
+        ? "L1 只证明架构 UI 不越权和截图绑定；不得解释为业务验收。"
+        : "刷新 L1 架构浏览器审计并重新绑定截图证据。"
+    }),
+    candidateEvidenceStatus: reportStatusEntry({
+      status: candidatePassed ? "PASS" : "NO_GO",
+      inputs: [
+        candidate.sourceAuthorityDigest,
+        candidate.generatedContractDigest,
+        candidate.fileLifecycleDigest,
+        candidate.runtimeBoundaryDigest,
+        candidate.readSurfaceFinanceBoundaryDigest,
+        candidate.mutationDigest,
+        candidate.browserL1Digest
+      ],
+      proofRefs: [candidateEvidenceObjectPath],
+      blockingReasons: candidatePassed ? [] : [`Candidate Evidence 未通过：${candidate.candidateStatus}`],
+      nextAction: candidatePassed
+        ? "Candidate Evidence 只证明本地候选闭合，不负责发布授权。"
+        : "按失败摘要修复 Candidate Evidence 对应输入后重新生成。"
+    }),
+    commitAttestationStatus: reportStatusEntry({
+      status: commitCurrent ? "PASS" : "NO_GO",
+      inputs: [
+        attestation.commitSha,
+        attestation.evidenceSubjectDigest,
+        attestation.trackedContentDigest
+      ],
+      proofRefs: [commitAttestationPath],
+      blockingReasons: commitCurrent ? [] : [`Commit Attestation 绑定不是 current：binding=${attestation.bindingStatus}，candidate=${attestation.candidateBindingStatus}`],
+      nextAction: commitCurrent
+        ? "Commit Attestation 已绑定当前 HEAD 与 Candidate subject digest；仍不授予 releaseAuthority。"
+        : "提交或内容变更后重新生成 Commit Attestation，并确认绑定当前 HEAD。"
+    }),
+    businessReadinessStatus: reportStatusEntry({
+      status: "NO_GO",
+      inputs: [
+        "docs/oam/current-admission-state.json",
+        admission.businessProduction,
+        admission.dormitoryProduction,
+        String(admission.productionConfirmAllowed)
+      ],
+      proofRefs: [
+        "docs/oam/current-admission-state.json",
+        finalReportPath
+      ],
+      blockingReasons: [
+        "Business Production 当前仍为 BLOCKED，业务落地不允许。",
+        "Dormitory L2 当前仍为 BLOCKED，宿舍业务 L2 不允许。",
+        "productionConfirmAllowed=false，生产确认不允许。"
+      ],
+      nextAction: "保持 NO_GO；只有架构体系闭合后，才能进入宿舍第一金链 Source 场景包审核。"
+    }),
+    releaseReadinessStatus: reportStatusEntry({
+      status: "NO_GO",
+      inputs: [
+        githubArtifactDigestStatus,
+        String(false),
+        releaseReadiness.releaseEligible ? "releaseEligible=true" : "releaseEligible=false"
+      ],
+      proofRefs: [
+        releaseEvidenceObjectPath,
+        releaseAttestationPath
+      ],
+      blockingReasons: [
+        "githubArtifactDigestStatus=pending_external_attestation，外部 artifact 摘要证明未完成。",
+        "releaseAuthority=false，不能发布放行。",
+        "CI green、artifact exists、browser evidence、Final Report exists 均不等于 GO。"
+      ],
+      nextAction: "保持发布阻断；只有外部 attestation 和发布准入真实完成后才能重新裁决。"
+    }),
+    finalGoNoGo: reportStatusEntry({
+      status: "NO_GO",
+      inputs: [
+        "authorityStatus",
+        "compileStatus",
+        "runtimeBoundaryStatus",
+        "candidateEvidenceStatus",
+        "businessReadinessStatus",
+        "releaseReadinessStatus"
+      ],
+      proofRefs: [
+        candidateEvidenceObjectPath,
+        commitAttestationPath,
+        releaseEvidenceObjectPath,
+        releaseAttestationPath,
+        finalReportPath
+      ],
+      blockingReasons: finalDecision.noGoReasons,
+      nextAction: "最终保持 NO_GO；不得开始宿舍业务落地、不得发布、不得把任一单项 PASS 解释为 GO。"
+    })
+  };
+}
+
+function reportStatusEntry(input) {
+  return {
+    status: input.status,
+    inputs: [...new Set((input.inputs ?? []).filter((item) => item !== undefined && item !== null && String(item) !== ""))],
+    proofRefs: [...new Set((input.proofRefs ?? []).filter(Boolean).map(String))],
+    blockingReasons: input.status === "PASS" ? [] : [...new Set(input.blockingReasons ?? [])],
+    nextAction: input.nextAction
+  };
+}
+
+function gateGroupStatus(commands) {
+  const actualGates = controlPlaneGateResult.gates ?? [];
+  const missing = [];
+  const failed = [];
+  for (const command of commands) {
+    const gate = actualGates.find((item) => item.command === command);
+    if (!gate) {
+      missing.push(command);
+      continue;
+    }
+    if (gate.status !== "passed" || gate.exitCode !== 0) {
+      failed.push(`${command}=${gate.status ?? "missing"}`);
+    }
+  }
+  const blockingReasons = [
+    ...missing.map((command) => `Control Plane 缺失门禁：${command}`),
+    ...failed.map((command) => `Control Plane 门禁未通过：${command}`)
+  ];
+  return {
+    status: blockingReasons.length === 0 ? "PASS" : "NO_GO",
+    blockingReasons,
+    proofRefs: commands
   };
 }
 
@@ -1498,6 +2103,15 @@ function buildFinalDecision() {
   }
   if (controlPlaneGateResult.status !== "passed") {
     addNoGoReason(`Control Plane 未通过或未执行：${controlPlaneGateResult.status}`);
+  }
+  if (controlPlaneGateResult.runStatus !== "completed") {
+    addNoGoReason(`Control Plane 未处于 completed/finalizable 最终态：runStatus=${controlPlaneGateResult.runStatus}，证据生成中或不可裁决。`);
+  }
+  if (controlPlaneGateResult.finalizable !== true) {
+    addNoGoReason("Control Plane finalizable=false，不能作为最终 PASS。");
+  }
+  if ((controlPlaneGateResult.completedGateCount ?? 0) !== (controlPlaneGateResult.expectedGateCount ?? controlPlaneGateResult.requiredGateCount ?? 0)) {
+    addNoGoReason(`Control Plane 完成数量不等于 expectedGateCount：completed=${controlPlaneGateResult.completedGateCount ?? 0}，expected=${controlPlaneGateResult.expectedGateCount ?? controlPlaneGateResult.requiredGateCount ?? 0}`);
   }
   if ((controlPlaneGateResult.failedGateCount ?? 0) > 0) {
     addNoGoReason(`Control Plane 失败项数量：${controlPlaneGateResult.failedGateCount}`);

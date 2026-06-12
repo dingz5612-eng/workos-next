@@ -197,7 +197,10 @@ function normalizeCurrentAllowedTerms(file, text) {
     file === "scripts/validate-contracts.mjs" ||
     file === "scripts/oam/compile-current-kernel-graph.mjs" ||
     file === "scripts/oam/check-kernel-responsibility-map.mjs" ||
+    file === "docs/oam/file-lifecycle-policy.json" ||
     file === "scripts/oam/generate-authority-source-layer-audit.mjs" ||
+    file === "scripts/oam/check-authority-source-layer-audit.mjs" ||
+    file === "scripts/oam/check-file-lifecycle-policy.mjs" ||
     file === "scripts/oam/check-read-intelligence-kernel.mjs" ||
     file === "scripts/check-search-kernel.mjs" ||
     file === "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs" ||

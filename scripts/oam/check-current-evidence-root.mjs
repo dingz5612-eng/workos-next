@@ -5,12 +5,15 @@ import { execSync } from "node:child_process";
 
 const root = process.cwd();
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
+const controlPlaneGateResultPath = "artifacts/oam/checks/control-plane-gate-results.json";
 const ciRunId = env("GITHUB_RUN_ID") || "local";
 const ciRunAttempt = env("GITHUB_RUN_ATTEMPT") || "local";
 const expectedRepository = env("GITHUB_REPOSITORY") || "";
 const expectedWorkflow = env("GITHUB_WORKFLOW") || "CI";
 const expectedArtifactName = artifactNameForRun(ciRunId);
 const currentRepositoryHead = env("GITHUB_SHA") || git("rev-parse HEAD") || "local";
+const candidateEvidenceObjectPath = "artifacts/oam/evidence/current-oam-candidate-evidence-object.json";
+const commitAttestationPath = "artifacts/oam/evidence/current-oam-commit-attestation.json";
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
 const releaseAttestationPath = "artifacts/oam/evidence/current-oam-release-attestation.json";
 const pendingExternalAttestation = "pending_external_attestation";
@@ -19,6 +22,8 @@ const bareSha256Pattern = /^[a-f0-9]{64}$/;
 const allowedNodeStatuses = new Set(["passed", "blocked", "failed", "missing_or_failed", "bound", "required", "missing"]);
 const requiredFiles = [
   "artifacts/oam/evidence/evidence-graph.json",
+  candidateEvidenceObjectPath,
+  commitAttestationPath,
   releaseEvidenceObjectPath,
   releaseAttestationPath,
   "artifacts/oam/evidence/execution-log.jsonl",
@@ -47,6 +52,7 @@ const requiredFiles = [
   "docs/oam/codex-execution-channel-policy.json",
   "docs/finance/finance-ledger-kernel.json",
   "docs/oam/compiler-generated-contract-kernel.json",
+  "docs/oam/file-lifecycle-policy.json",
   "docs/identity/identity-permission-kernel.json",
   "docs/oam/kernel/oam-kernel-source.schema.json",
   "docs/oam/kernel/oam-kernel-generated.schema.json",
@@ -76,7 +82,7 @@ const requiredFiles = [
   "artifacts/oam/test-results/mobile/coverage/coverage-summary.json",
   "artifacts/oam/checks/mobile-coverage-policy-result.json",
   "artifacts/oam/checks/mobile-critical-branch-scenarios-result.json",
-  "artifacts/oam/checks/control-plane-gate-results.json",
+  controlPlaneGateResultPath,
   "artifacts/oam/final-report.json"
 ];
 
@@ -94,10 +100,13 @@ for (const file of requiredFiles) {
 if (documents.size === requiredFiles.length) {
   const graph = documents.get("artifacts/oam/evidence/evidence-graph.json");
   const finalReport = documents.get("artifacts/oam/final-report.json");
+  const candidateObject = documents.get(candidateEvidenceObjectPath);
+  const commitAttestation = documents.get(commitAttestationPath);
   const releaseObject = documents.get(releaseEvidenceObjectPath);
   const releaseAttestation = documents.get(releaseAttestationPath);
   const mutationTestsResult = documents.get("artifacts/oam/authority-cleanup/mutation-tests-result.json");
   const responsibilityMap = documents.get("docs/oam/current-oam-kernel-responsibility-map.json");
+  const controlPlaneGateResult = documents.get(controlPlaneGateResultPath);
   const expectedDigest = graph?.binding?.artifactDigest;
   const actualDigest = digestFor(documents);
 
@@ -123,16 +132,20 @@ if (documents.size === requiredFiles.length) {
   }
 
   checkArtifactName("final report", finalReport.artifactName);
+  checkCandidateEvidenceObject(candidateObject, graph, finalReport);
+  checkCommitAttestation(commitAttestation, candidateObject, graph, finalReport);
   checkReleaseEvidenceObject(releaseObject, graph, finalReport, documents);
   checkReleaseAttestation(releaseAttestation, releaseObject, graph);
   checkEvidenceBindingConsistency(graph, releaseObject, finalReport, expectedDigest);
   checkEvidenceGraphNodes(graph, finalReport);
+  checkControlPlaneStateMachine(controlPlaneGateResult, finalReport, graph);
 
   if (Array.isArray(finalReport.unresolvedP0) && finalReport.unresolvedP0.length > 0) {
     failures.push(`final report has unresolved P0: ${finalReport.unresolvedP0.map((item) => item.ruleId).join(", ")}`);
   }
 
   checkFinalDecision(finalReport);
+  checkFinalReportMultiStatus(finalReport, candidateObject, commitAttestation, releaseObject);
   checkMutationTests(finalReport, graph, mutationTestsResult);
   checkFinalReportGoNoGoFields(finalReport, responsibilityMap);
   checkWorkstreamProofNodes(graph, responsibilityMap, finalReport);
@@ -204,6 +217,104 @@ function checkArtifactName(label, artifactName) {
   }
   if (String(artifactName ?? "").includes("${{")) {
     failures.push(`${label} artifactName must be concrete and must not contain a GitHub expression literal.`);
+  }
+}
+
+function checkCandidateEvidenceObject(candidateObject, graph, finalReport) {
+  if (!candidateObject || typeof candidateObject !== "object") {
+    failures.push("candidate evidence object is missing or invalid.");
+    return;
+  }
+  if (candidateObject.proofType !== "candidate-evidence") {
+    failures.push("candidate evidence object proofType must be candidate-evidence.");
+  }
+  if (candidateObject.releaseAuthority !== false) {
+    failures.push("candidate evidence object must not grant releaseAuthority.");
+  }
+  if ("githubArtifactDigest" in candidateObject || "githubArtifactMetadataDigest" in candidateObject) {
+    failures.push("candidate evidence object must not bind GitHub artifact digest fields.");
+  }
+  if (!["PASS", "FAIL"].includes(candidateObject.candidateStatus)) {
+    failures.push(`candidate evidence object candidateStatus invalid: ${candidateObject.candidateStatus || "missing"}.`);
+  }
+  if (candidateObject.candidateReadyForRelease !== false) {
+    failures.push("candidate evidence object candidateReadyForRelease must remain false.");
+  }
+  if (candidateObject.candidateReadyForBusinessImplementation !== false) {
+    failures.push("candidate evidence object candidateReadyForBusinessImplementation must remain false for the current stage.");
+  }
+  for (const field of [
+    "sourceAuthorityDigest",
+    "generatedContractDigest",
+    "fileLifecycleDigest",
+    "runtimeBoundaryDigest",
+    "readSurfaceFinanceBoundaryDigest",
+    "mutationDigest",
+    "browserL1Digest",
+    "candidateEvidenceDigest",
+    "evidenceSubjectDigest"
+  ]) {
+    if (!sha256DigestPattern.test(String(candidateObject[field] ?? ""))) {
+      failures.push(`candidate evidence object ${field} must be sha256.`);
+    }
+  }
+  const expectedSubjectDigest = digestObject(candidateObject.subject ?? {});
+  if (candidateObject.evidenceSubjectDigest !== expectedSubjectDigest) {
+    failures.push(`candidate evidence object evidenceSubjectDigest mismatch: expected ${expectedSubjectDigest}, actual ${candidateObject.evidenceSubjectDigest || "missing"}.`);
+  }
+  const expectedCandidateDigest = digestObject({
+    kind: "current-oam-candidate-evidence-subject",
+    evidenceSubjectDigest: candidateObject.evidenceSubjectDigest,
+    subject: candidateObject.subject
+  });
+  if (candidateObject.candidateEvidenceDigest !== expectedCandidateDigest) {
+    failures.push(`candidate evidence object candidateEvidenceDigest mismatch: expected ${expectedCandidateDigest}, actual ${candidateObject.candidateEvidenceDigest || "missing"}.`);
+  }
+  if (finalReport.candidateEvidence?.candidateEvidenceDigest !== candidateObject.candidateEvidenceDigest) {
+    failures.push("final report candidateEvidence must reference candidate evidence digest.");
+  }
+  const refs = graph.evidenceObjectRefs ?? [];
+  if (!refs.some((ref) => ref.path === candidateEvidenceObjectPath && ref.proofType === "candidate-evidence")) {
+    failures.push("evidence graph must reference candidate evidence object with proofType=candidate-evidence.");
+  }
+}
+
+function checkCommitAttestation(attestation, candidateObject, graph, finalReport) {
+  if (!attestation || typeof attestation !== "object") {
+    failures.push("commit attestation is missing or invalid.");
+    return;
+  }
+  if (attestation.proofType !== "commit-attestation") {
+    failures.push("commit attestation proofType must be commit-attestation.");
+  }
+  if (attestation.commitSha !== currentRepositoryHead || attestation.currentRepositoryHead !== currentRepositoryHead) {
+    failures.push("commit attestation must bind the current HEAD.");
+  }
+  if (attestation.bindingStatus !== "current") {
+    failures.push(`commit attestation bindingStatus must be current, actual: ${attestation.bindingStatus || "missing"}.`);
+  }
+  if (attestation.releaseAuthority !== false) {
+    failures.push("commit attestation must not grant releaseAuthority.");
+  }
+  if (attestation.candidateEvidenceDigest !== candidateObject?.candidateEvidenceDigest) {
+    failures.push("commit attestation candidateEvidenceDigest must match candidate evidence object.");
+  }
+  if (attestation.evidenceSubjectDigest !== candidateObject?.evidenceSubjectDigest) {
+    failures.push("commit attestation evidenceSubjectDigest must match candidate evidence object.");
+  }
+  if (attestation.candidateBindingStatus !== "current") {
+    failures.push(`commit attestation candidateBindingStatus must be current, actual: ${attestation.candidateBindingStatus || "missing"}.`);
+  }
+  const expectedTrackedContentDigest = trackedContentDigest();
+  if (attestation.trackedContentDigest !== expectedTrackedContentDigest || attestation.sourceTreeDigest !== expectedTrackedContentDigest) {
+    failures.push("commit attestation trackedContentDigest/sourceTreeDigest must match current tracked content.");
+  }
+  if (finalReport.commitAttestation?.bindingStatus !== "current") {
+    failures.push("final report commitAttestation must be current.");
+  }
+  const refs = graph.evidenceObjectRefs ?? [];
+  if (!refs.some((ref) => ref.path === commitAttestationPath && ref.proofType === "commit-attestation")) {
+    failures.push("evidence graph must reference commit attestation with proofType=commit-attestation.");
   }
 }
 
@@ -317,6 +428,19 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
   }
   if (releaseObject.productionConfirmAllowed !== false) {
     failures.push("release evidence object productionConfirmAllowed must remain false.");
+  }
+  if (releaseObject.releaseEvidenceRole !== "ci_release_attestation_only") {
+    failures.push("release evidence object must declare role ci_release_attestation_only.");
+  }
+  if (releaseObject.releaseDoesNotReplaceCandidateEvidence !== true) {
+    failures.push("release evidence object must explicitly not replace candidate evidence.");
+  }
+  if (releaseObject.candidateEvidenceObject !== candidateEvidenceObjectPath || releaseObject.commitAttestation !== commitAttestationPath) {
+    failures.push("release evidence object must reference candidate evidence object and commit attestation.");
+  }
+  const refs = graph.evidenceObjectRefs ?? [];
+  if (!refs.some((ref) => ref.path === releaseEvidenceObjectPath && ref.proofType === "release-evidence")) {
+    failures.push("evidence graph must reference release evidence object with proofType=release-evidence.");
   }
 
   const expectedEvidenceRootDigest = digestFor(new Map([...allDocuments.entries()].filter(([file]) => file !== releaseEvidenceObjectPath)));
@@ -707,6 +831,42 @@ function digestFor(fileMap) {
   return `sha256:${sha256(JSON.stringify(normalized))}`;
 }
 
+function digestObject(value) {
+  return `sha256:${sha256(JSON.stringify(stableForSubjectDigest(value)))}`;
+}
+
+function stableForSubjectDigest(value) {
+  if (Array.isArray(value)) return value.map(stableForSubjectDigest);
+  if (!value || typeof value !== "object") return value;
+  const output = {};
+  for (const key of Object.keys(value).sort()) {
+    output[key] = stableForSubjectDigest(value[key]);
+  }
+  return output;
+}
+
+function trackedContentDigest() {
+  const files = execSync("git ls-files", { cwd: root, encoding: "utf8" })
+    .split(/\r?\n/)
+    .map((item) => item.trim().replace(/\\/g, "/"))
+    .filter(Boolean)
+    .sort((left, right) => left.localeCompare(right));
+  const entries = {};
+  for (const file of files) {
+    const target = path.join(root, file);
+    if (!fs.existsSync(target)) {
+      entries[file] = "missing";
+      continue;
+    }
+    entries[file] = `sha256:${sha256(fs.readFileSync(target))}`;
+  }
+  return digestObject({
+    kind: "tracked-content-digest",
+    fileCount: files.length,
+    entries
+  });
+}
+
 function normalizeForDigest(value) {
   if (typeof value === "string") return value.replaceAll(/sha256:[a-f0-9]{64}|__CURRENT_OAM_EVIDENCE_DIGEST__|__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__/g, digestPlaceholder);
   if (Array.isArray(value)) return value.map(normalizeForDigest);
@@ -868,6 +1028,52 @@ function checkRealBrowserEvidence(graph, finalReport) {
     if (node.headSha !== finalReport.latestCommit && requirePassed) failures.push(`${gate} node commit does not match final report.`);
     if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
     if (!node.refs?.includes(item.report)) failures.push(`${gate} node missing report ref.`);
+    const browserReport = exists(item.report) ? readJson(item.report) : null;
+    checkBrowserAuditLevel(`${key} browser evidence`, browserReport, item, node);
+  }
+}
+
+function checkBrowserAuditLevel(label, report, summary, node) {
+  if (!report || typeof report !== "object") {
+    failures.push(`${label} report is missing or invalid.`);
+    return;
+  }
+  if (report.auditLevel !== "L1" || summary.auditLevel !== "L1" || node.auditLevel !== "L1") {
+    failures.push(`${label} must be marked auditLevel=L1 in report, summary, and graph node.`);
+  }
+  if (["L2", "L3"].includes(report.auditLevel)) {
+    failures.push(`${label} must not enable L2/L3 in the current stage.`);
+  }
+  if (report.businessGoAllowed !== false || summary.businessGoAllowed !== false || node.businessGoAllowed !== false) {
+    failures.push(`${label} must keep businessGoAllowed=false.`);
+  }
+  const forbidden = Array.isArray(report.forbiddenInterpretation)
+    ? report.forbiddenInterpretation.join("\n")
+    : String(report.forbiddenInterpretation || "");
+  if (!/业务|productionConfirmAllowed|releaseAuthority|GO/.test(forbidden)) {
+    failures.push(`${label} must forbid business GO / production / release interpretation.`);
+  }
+  if (!report.scenarioScope || report.scenarioScope.businessAcceptance !== false) {
+    failures.push(`${label} scenarioScope must declare businessAcceptance=false.`);
+  }
+  for (const field of ["currentScenario", "completedScenarioCount", "totalScenarioCount", "lastHeartbeatAt", "screenshotCount", "currentStep"]) {
+    if (report[field] === undefined || report[field] === null || report[field] === "") {
+      failures.push(`${label} missing progress field ${field}.`);
+    }
+  }
+  if (report.screenshotCount !== (report.screenshots ?? []).length) {
+    failures.push(`${label} screenshotCount must match report screenshots length.`);
+  }
+  if (summary.progress?.screenshotCount !== report.screenshotCount || node.progress?.screenshotCount !== report.screenshotCount) {
+    failures.push(`${label} progress screenshotCount must be carried into Evidence Graph summary and node.`);
+  }
+  const reportHashes = (report.screenshots ?? []).map((shot) => shot.sha256).filter(Boolean);
+  const nodeHashes = new Set(node.screenshotHashes ?? []);
+  for (const hash of reportHashes) {
+    if (!nodeHashes.has(hash)) {
+      failures.push(`${label} screenshot hash missing from Evidence Graph node: ${hash}.`);
+      break;
+    }
   }
 }
 
@@ -1040,6 +1246,192 @@ function checkFinalDecision(finalReport) {
       /productionConfirmAllowed=false|production_confirm.*阻断|生产确认不允许/i,
       "productionConfirmAllowed=false"
     );
+  }
+}
+
+function checkControlPlaneStateMachine(controlPlane, finalReport, graph) {
+  if (!controlPlane || typeof controlPlane !== "object") {
+    failures.push("control plane gate result is missing.");
+    return;
+  }
+  if (controlPlane.version !== "oam.control-plane-gate-results.v1") {
+    failures.push("control plane gate result version must be oam.control-plane-gate-results.v1.");
+  }
+  if (!["not_started", "running", "completed", "failed"].includes(controlPlane.runStatus)) {
+    failures.push(`control plane runStatus invalid or missing: ${controlPlane.runStatus ?? "missing"}.`);
+  }
+  const expected = Number(controlPlane.expectedGateCount);
+  const completed = Number(controlPlane.completedGateCount);
+  const failed = Number(controlPlane.failedGateCount);
+  if (!Number.isInteger(expected) || expected <= 0) {
+    failures.push("control plane expectedGateCount must be a positive integer.");
+  }
+  if (!Number.isInteger(completed) || completed < 0) {
+    failures.push("control plane completedGateCount must be a non-negative integer.");
+  }
+  if (!Number.isInteger(failed) || failed < 0) {
+    failures.push("control plane failedGateCount must be a non-negative integer.");
+  }
+  if (controlPlane.requiredGateCount !== controlPlane.expectedGateCount) {
+    failures.push("control plane requiredGateCount must equal expectedGateCount.");
+  }
+  if (!Array.isArray(controlPlane.gates) || controlPlane.gates.length !== completed) {
+    failures.push("control plane gates length must equal completedGateCount.");
+  }
+  if (controlPlane.runStatus !== "completed") {
+    failures.push(`control plane runStatus must be completed for Evidence Root PASS, actual: ${controlPlane.runStatus ?? "missing"}.`);
+  }
+  if (controlPlane.finalizable !== true) {
+    failures.push("control plane finalizable must be true for Evidence Root PASS.");
+  }
+  if (completed !== expected) {
+    failures.push(`control plane completedGateCount must equal expectedGateCount: completed=${completed}, expected=${expected}.`);
+  }
+  if (failed > 0) {
+    failures.push(`control plane failedGateCount must be 0, actual: ${failed}.`);
+  }
+  if (!controlPlane.startedAtUtc || !controlPlane.finishedAtUtc) {
+    failures.push("control plane completed result must include startedAtUtc and finishedAtUtc.");
+  }
+  if (controlPlane.currentStage !== "completed") {
+    failures.push(`control plane currentStage must be completed after finalization, actual: ${controlPlane.currentStage ?? "missing"}.`);
+  }
+  if (controlPlane.runStatus === "running" && controlPlane.finalizable !== false) {
+    failures.push("control plane running state must have finalizable=false.");
+  }
+  if (!Array.isArray(controlPlane.blockingReasons)) {
+    failures.push("control plane blockingReasons must be an array.");
+  }
+  if (finalReport.controlPlaneGateResult?.runStatus !== controlPlane.runStatus) {
+    failures.push("final report controlPlaneGateResult.runStatus must match raw control plane result.");
+  }
+  if (finalReport.controlPlaneGateResult?.finalizable !== controlPlane.finalizable) {
+    failures.push("final report controlPlaneGateResult.finalizable must match raw control plane result.");
+  }
+  if (finalReport.controlPlaneGateResult?.completedGateCount !== controlPlane.completedGateCount) {
+    failures.push("final report controlPlaneGateResult.completedGateCount must match raw control plane result.");
+  }
+  if (finalReport.gateSummary?.runStatus !== controlPlane.runStatus) {
+    failures.push("final report gateSummary.runStatus must match raw control plane result.");
+  }
+  if (graph.controlPlaneGateResult?.runStatus !== controlPlane.runStatus) {
+    failures.push("evidence graph controlPlaneGateResult.runStatus must match raw control plane result.");
+  }
+  if (graph.controlPlaneGateResult?.finalizable !== controlPlane.finalizable) {
+    failures.push("evidence graph controlPlaneGateResult.finalizable must match raw control plane result.");
+  }
+}
+
+function checkFinalReportMultiStatus(finalReport, candidateObject, commitAttestation, releaseObject) {
+  const matrix = finalReport.statusMatrix;
+  const requiredStatuses = [
+    "authorityStatus",
+    "fileLifecycleStatus",
+    "compileStatus",
+    "runtimeBoundaryStatus",
+    "readSurfaceFinanceStatus",
+    "mutationStatus",
+    "browserL1Status",
+    "candidateEvidenceStatus",
+    "commitAttestationStatus",
+    "businessReadinessStatus",
+    "releaseReadinessStatus",
+    "finalGoNoGo"
+  ];
+  if (finalReport.multiStatusVersion !== "oam.final-report.multi-status.v1") {
+    failures.push("final report missing multiStatusVersion=oam.final-report.multi-status.v1.");
+  }
+  if (!matrix || typeof matrix !== "object") {
+    failures.push("final report missing statusMatrix.");
+    return;
+  }
+  if (matrix.version !== "oam.final-report.multi-status.v1") {
+    failures.push("final report statusMatrix version must be oam.final-report.multi-status.v1.");
+  }
+
+  for (const field of requiredStatuses) {
+    const entry = matrix[field];
+    validateFinalReportStatusEntry(`statusMatrix.${field}`, entry);
+    if (field !== "finalGoNoGo") {
+      validateFinalReportStatusEntry(field, finalReport[field]);
+      if (JSON.stringify(finalReport[field]) !== JSON.stringify(entry)) {
+        failures.push(`final report ${field} must mirror statusMatrix.${field}.`);
+      }
+    }
+  }
+
+  validateFinalReportStatusEntry("finalGoNoGoStatus", finalReport.finalGoNoGoStatus);
+  if (JSON.stringify(finalReport.finalGoNoGoStatus) !== JSON.stringify(matrix.finalGoNoGo)) {
+    failures.push("final report finalGoNoGoStatus must mirror statusMatrix.finalGoNoGo.");
+  }
+  if (finalReport.finalGoNoGo !== "NO_GO" || matrix.finalGoNoGo?.status !== "NO_GO") {
+    failures.push("final report multi-status finalGoNoGo must remain NO_GO.");
+  }
+  if (matrix.authorityStatus?.status !== "PASS") {
+    failures.push("authorityStatus must be PASS for the closed architecture layer.");
+  }
+  if (matrix.fileLifecycleStatus?.status !== "PASS") {
+    failures.push("fileLifecycleStatus must be PASS after File Lifecycle Registry closure.");
+  }
+  if (matrix.compileStatus?.status !== "PASS") {
+    failures.push("compileStatus must be PASS for generated contract compilation closure.");
+  }
+  if (matrix.runtimeBoundaryStatus?.status !== "PASS") {
+    failures.push("runtimeBoundaryStatus must be PASS for runtime boundary closure.");
+  }
+  if (matrix.readSurfaceFinanceStatus?.status !== "PASS") {
+    failures.push("readSurfaceFinanceStatus must be PASS for read/surface/finance readonly closure.");
+  }
+  if (matrix.candidateEvidenceStatus?.status !== candidateObject?.candidateStatus) {
+    failures.push("candidateEvidenceStatus must match Candidate Evidence candidateStatus.");
+  }
+  if (commitAttestation?.bindingStatus === "current" && matrix.commitAttestationStatus?.status !== "PASS") {
+    failures.push("commitAttestationStatus must be PASS when Commit Attestation is current.");
+  }
+  if (finalReport.businessProductionStatus === "BLOCKED" && matrix.businessReadinessStatus?.status !== "NO_GO") {
+    failures.push("businessProductionStatus=BLOCKED requires businessReadinessStatus=NO_GO.");
+  }
+  if (releaseObject?.releaseAuthority === false && matrix.releaseReadinessStatus?.status !== "NO_GO") {
+    failures.push("releaseAuthority=false requires releaseReadinessStatus=NO_GO.");
+  }
+  if (finalReport.binding?.githubArtifactDigestStatus === pendingExternalAttestation && matrix.releaseReadinessStatus?.status !== "NO_GO") {
+    failures.push("pending external attestation requires releaseReadinessStatus=NO_GO.");
+  }
+  if ((matrix.candidateEvidenceStatus?.proofRefs ?? []).includes(releaseEvidenceObjectPath)) {
+    failures.push("candidateEvidenceStatus must not use Release Evidence Object as its proofRef.");
+  }
+  if ((matrix.releaseReadinessStatus?.proofRefs ?? []).includes(candidateEvidenceObjectPath)) {
+    failures.push("releaseReadinessStatus must not use Candidate Evidence Object as its proofRef.");
+  }
+  const releaseReasons = (matrix.releaseReadinessStatus?.blockingReasons ?? []).join("\n");
+  const finalReasons = (matrix.finalGoNoGo?.blockingReasons ?? []).join("\n");
+  if (!/CI green.*artifact exists.*browser evidence.*Final Report exists.*不等于 GO/.test(`${releaseReasons}\n${finalReasons}`)) {
+    failures.push("final report multi-status must state CI green, artifact exists, browser evidence, and Final Report exists do not equal GO.");
+  }
+}
+
+function validateFinalReportStatusEntry(label, entry) {
+  if (!entry || typeof entry !== "object") {
+    failures.push(`final report ${label} missing status entry.`);
+    return;
+  }
+  if (!["PASS", "NO_GO"].includes(entry.status)) {
+    failures.push(`final report ${label}.status must be PASS or NO_GO, actual: ${entry.status ?? "missing"}.`);
+  }
+  if (!Array.isArray(entry.inputs) || entry.inputs.length === 0) {
+    failures.push(`final report ${label}.inputs must be a non-empty array.`);
+  }
+  if (!Array.isArray(entry.proofRefs) || entry.proofRefs.length === 0) {
+    failures.push(`final report ${label}.proofRefs must be a non-empty array.`);
+  }
+  if (!Array.isArray(entry.blockingReasons)) {
+    failures.push(`final report ${label}.blockingReasons must be an array.`);
+  }
+  if (entry.status === "NO_GO" && (!Array.isArray(entry.blockingReasons) || entry.blockingReasons.length === 0)) {
+    failures.push(`final report ${label}.blockingReasons must explain NO_GO.`);
+  }
+  if (!/[\u3400-\u9fff]/.test(String(entry.nextAction ?? ""))) {
+    failures.push(`final report ${label}.nextAction must be Chinese.`);
   }
 }
 

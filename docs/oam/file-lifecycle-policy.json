@@ -15,6 +15,196 @@
     "delete_now"
   ],
   "defaultStateForUnprovenFile": "delete_now",
+  "fileLifecycleRegistry": {
+    "version": "oam.file-lifecycle-registry.v1",
+    "registryAuthority": "docs/oam/file-lifecycle-policy.json",
+    "status": "authoritative",
+    "architecture": "oam.current",
+    "classificationPriority": [
+      "sourceWhitelist",
+      "exactPath",
+      "prefix",
+      "suffix",
+      "contains",
+      "fallbackReferenceOnly"
+    ],
+    "canonicalLifecycles": {
+      "source": {
+        "nameZh": "人工维护权威输入",
+        "responsibilityZh": "少而硬的当前权威输入；可人工维护，允许声明业务事实权威，但只能通过 Source 白名单成为 Source。",
+        "manualEditAllowed": true,
+        "businessFactAuthorityAllowed": true,
+        "contractAuthorityAllowed": true,
+        "canDefineBusinessFacts": true,
+        "proofOnly": false
+      },
+      "generated": {
+        "nameZh": "机器生成合同",
+        "responsibilityZh": "由 generator 从 Source 生成的合同或视图；禁止手改，不允许业务事实权威，必须带 doNotEdit / generatedBy / derivedFrom 之一。",
+        "manualEditAllowed": false,
+        "businessFactAuthorityAllowed": false,
+        "contractAuthorityAllowed": true,
+        "canDefineBusinessFacts": false,
+        "proofOnly": false,
+        "doNotEditRequired": true
+      },
+      "tooling": {
+        "nameZh": "生成器与校验器",
+        "responsibilityZh": "generator / checker / audit script；可人工维护，只执行或验证边界，不拥有业务事实权威。",
+        "manualEditAllowed": true,
+        "businessFactAuthorityAllowed": false,
+        "contractAuthorityAllowed": false,
+        "canDefineBusinessFacts": false,
+        "proofOnly": false
+      },
+      "runtime": {
+        "nameZh": "运行时代码或运行资产",
+        "responsibilityZh": "运行时实现、Schema、数据库迁移和测试资产；只能消费 Source / Generated 合同，不拥有业务事实权威。",
+        "manualEditAllowed": true,
+        "businessFactAuthorityAllowed": false,
+        "contractAuthorityAllowed": false,
+        "canDefineBusinessFacts": false,
+        "proofOnly": false
+      },
+      "evidence": {
+        "nameZh": "本地证据产物",
+        "responsibilityZh": "本地 proof artifact，只证明检查结果，不发明规则，不定义业务事实，不授权发布。",
+        "manualEditAllowed": false,
+        "businessFactAuthorityAllowed": false,
+        "contractAuthorityAllowed": false,
+        "canDefineBusinessFacts": false,
+        "proofOnly": true
+      },
+      "release": {
+        "nameZh": "发布证明产物",
+        "responsibilityZh": "CI / release 流程最终生成的发布证明；本地可为 pending，但不得替代 Candidate Evidence。",
+        "manualEditAllowed": false,
+        "businessFactAuthorityAllowed": false,
+        "contractAuthorityAllowed": false,
+        "canDefineBusinessFacts": false,
+        "proofOnly": true,
+        "releaseAuthorityOnly": true
+      },
+      "retired": {
+        "nameZh": "退役文件",
+        "responsibilityZh": "退役或被替代材料；不能作为当前权威，也不能被 Runtime / Search / Surface / Dashboard 当作事实来源。",
+        "manualEditAllowed": false,
+        "businessFactAuthorityAllowed": false,
+        "contractAuthorityAllowed": false,
+        "canDefineBusinessFacts": false,
+        "proofOnly": false
+      },
+      "referenceOnly": {
+        "nameZh": "参考材料",
+        "responsibilityZh": "人读说明、迁移 fence、旧词审计或辅助材料；可被引用作背景，但不能作为当前事实权威。",
+        "manualEditAllowed": true,
+        "businessFactAuthorityAllowed": false,
+        "contractAuthorityAllowed": false,
+        "canDefineBusinessFacts": false,
+        "proofOnly": false
+      }
+    },
+    "stateToLifecycle": {
+      "active_authority": "source",
+      "active_contract": "referenceOnly",
+      "active_runtime": "runtime",
+      "active_validation": "runtime",
+      "active_evidence": "evidence",
+      "derived_view": "generated",
+      "human_manual": "referenceOnly",
+      "delete_now": "retired"
+    },
+    "pathRules": [
+      {
+        "id": "source-whitelist",
+        "matchType": "sourceWhitelist",
+        "lifecycle": "source"
+      },
+      {
+        "id": "release-evidence-objects",
+        "matchType": "prefix",
+        "patterns": [
+          "artifacts/oam/evidence/current-oam-release-"
+        ],
+        "lifecycle": "release"
+      },
+      {
+        "id": "local-evidence-artifacts",
+        "matchType": "prefix",
+        "patterns": [
+          "artifacts/oam/"
+        ],
+        "lifecycle": "evidence"
+      },
+      {
+        "id": "tooling-scripts",
+        "matchType": "prefix",
+        "patterns": [
+          "scripts/"
+        ],
+        "lifecycle": "tooling"
+      },
+      {
+        "id": "generated-contracts",
+        "matchType": "prefix",
+        "patterns": [
+          "apps/mobile/src/generated/",
+          "docs/business/domains/dormitory/workitems/",
+          "docs/contracts/generated/",
+          "docs/oam/domain-derived-contracts.json",
+          "docs/oam/generated-contracts-manifest.json",
+          "docs/oam/kernel/oam-kernel-graph.generated.json",
+          "docs/oam/system-derived-contracts.json"
+        ],
+        "lifecycle": "generated"
+      },
+      {
+        "id": "generated-suffixes",
+        "matchType": "suffix",
+        "patterns": [
+          ".generated.json"
+        ],
+        "lifecycle": "generated"
+      },
+      {
+        "id": "runtime-assets",
+        "matchType": "prefix",
+        "patterns": [
+          "infra/db/migrations/",
+          "schemas/",
+          "services/core-api/WorkOS.Api/Runtime/"
+        ],
+        "lifecycle": "runtime"
+      },
+      {
+        "id": "retired-or-legacy-fences",
+        "matchType": "contains",
+        "patterns": [
+          "/retired/",
+          "legacy",
+          "obsolete",
+          "deprecated"
+        ],
+        "lifecycle": "retired"
+      },
+      {
+        "id": "reference-documents",
+        "matchType": "suffix",
+        "patterns": [
+          ".md",
+          ".contract.json",
+          ".schema.json"
+        ],
+        "lifecycle": "referenceOnly"
+      }
+    ],
+    "forbiddenInterpretations": [
+      "scripts 不得因为文本包含 generated / doNotEdit / derivedFrom 被判成 generated。",
+      "artifacts 不得因为包含业务字段被判成 Source。",
+      "generated 文件不得 manualEditAllowed=true。",
+      "tooling 文件不得 businessFactAuthorityAllowed=true。"
+    ]
+  },
   "referenceBlockedPathPrefixes": [],
   "fileNodeRequiredFields": [
     "lifecycleState",
