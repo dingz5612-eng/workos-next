@@ -121,7 +121,14 @@ const tests = [
 const failed = tests.filter((item) => item.status !== "passed");
 writeJson(reportPath, {
   version: "oam.authority-cleanup-mutation-tests.v1",
-  checkedAtUtc: new Date().toISOString(),
+  checkedAtUtc: stableTimestamp(reportPath, {
+    version: "oam.authority-cleanup-mutation-tests.v1",
+    checkedAtUtc: "pending",
+    status: failed.length === 0 ? "passed" : "failed",
+    mutationCount: tests.length,
+    failedMutationCount: failed.length,
+    tests
+  }, "checkedAtUtc"),
   status: failed.length === 0 ? "passed" : "failed",
   mutationCount: tests.length,
   failedMutationCount: failed.length,
@@ -289,6 +296,28 @@ function writeJson(file, value) {
   const full = abs(file);
   fs.mkdirSync(path.dirname(full), { recursive: true });
   fs.writeFileSync(full, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+}
+
+function stableTimestamp(file, nextDocument, field) {
+  const full = abs(file);
+  if (!fs.existsSync(full)) return new Date().toISOString();
+  try {
+    const previous = JSON.parse(fs.readFileSync(full, "utf8"));
+    if (sameExceptField(previous, nextDocument, field)) {
+      return previous[field] ?? new Date().toISOString();
+    }
+  } catch {
+    return new Date().toISOString();
+  }
+  return new Date().toISOString();
+}
+
+function sameExceptField(left, right, field) {
+  const leftClone = { ...left };
+  const rightClone = { ...right };
+  delete leftClone[field];
+  delete rightClone[field];
+  return JSON.stringify(leftClone) === JSON.stringify(rightClone);
 }
 
 function abs(file) {

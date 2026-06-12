@@ -7,6 +7,7 @@ const contractPath = "docs/contracts/authority/truth-ownership-matrix.contract.j
 const registryPath = "docs/business/truth-owner-registry.yml";
 const resultPath = "artifacts/oam/checks/truth-ownership-matrix-result.json";
 const proofPath = "artifacts/oam/evidence/truth-ownership-proof.json";
+const writeProofArtifact = process.argv.includes("--write-proof") || process.env.OAM_WRITE_PROOF === "1";
 const violations = [];
 
 const schema = readJson(schemaPath);
@@ -74,7 +75,7 @@ checkFinanceWritePolicy();
 checkNegativeFixtures();
 
 writeResult();
-writeProof();
+if (writeProofArtifact) writeProof();
 if (violations.length) {
   for (const item of violations) console.error(`${item.id}: ${item.message}`);
   process.exit(1);

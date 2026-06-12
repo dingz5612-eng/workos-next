@@ -406,9 +406,9 @@ function collectObjectStringValues(value) {
 function writeProof() {
   const fullPath = path.join(root, proofPath);
   fs.mkdirSync(path.dirname(fullPath), { recursive: true });
-  fs.writeFileSync(fullPath, `${JSON.stringify({
+  const proof = {
     version: "oam.language-glossary-generated-proof.v1",
-    checkedAtUtc: new Date().toISOString(),
+    checkedAtUtc: "pending",
     status: failures.length ? "failed" : "passed",
     proves: [
       "Language Kernel covers objectKind, resultType, metric, dashboard, lineage, readiness, tokenizer, search intent, permission reason, admission reason, evidence reason, finance truth reason, and noGo reason.",
@@ -420,7 +420,31 @@ function writeProof() {
     informationAreas: requiredInformationAreas,
     canonicalKeys: requiredInformationCopyKeys,
     violations: failures
-  }, null, 2)}\n`);
+  };
+  proof.checkedAtUtc = stableTimestamp(proofPath, proof, "checkedAtUtc");
+  fs.writeFileSync(fullPath, `${JSON.stringify(proof, null, 2)}\n`);
+}
+
+function stableTimestamp(file, nextDocument, field) {
+  const fullPath = path.join(root, file);
+  if (!fs.existsSync(fullPath)) return new Date().toISOString();
+  try {
+    const previous = JSON.parse(fs.readFileSync(fullPath, "utf8"));
+    if (sameExceptField(previous, nextDocument, field)) {
+      return previous[field] ?? new Date().toISOString();
+    }
+  } catch {
+    return new Date().toISOString();
+  }
+  return new Date().toISOString();
+}
+
+function sameExceptField(left, right, field) {
+  const leftClone = { ...left };
+  const rightClone = { ...right };
+  delete leftClone[field];
+  delete rightClone[field];
+  return JSON.stringify(leftClone) === JSON.stringify(rightClone);
 }
 
 function assertSameLanguages(actual = [], label) {

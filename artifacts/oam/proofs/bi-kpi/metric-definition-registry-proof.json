@@ -1,7 +1,7 @@
 {
   "version": "oam.metric-definition-registry-proof.v1",
   "status": "passed",
-  "checkedAtUtc": "2026-06-12T09:09:19.462Z",
+  "checkedAtUtc": "2026-06-12T10:24:18.242Z",
   "proves": [
     "MetricDefinition Registry is read-only.",
     "Every MetricDefinition has sourceFacts, permission, lineage, freshness, allowedConsumers, forbiddenInputs, and goNoGoImpact.",

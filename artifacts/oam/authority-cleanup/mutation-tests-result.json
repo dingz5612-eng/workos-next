@@ -1,6 +1,6 @@
 {
   "version": "oam.authority-cleanup-mutation-tests.v1",
-  "checkedAtUtc": "2026-06-12T09:08:26.057Z",
+  "checkedAtUtc": "2026-06-12T10:23:41.447Z",
   "status": "passed",
   "mutationCount": 12,
   "failedMutationCount": 0,

@@ -6,6 +6,7 @@ const schemaPath = "schemas/authority/master-design.schema.json";
 const contractPath = "docs/contracts/authority/master-design.contract.json";
 const resultPath = "artifacts/oam/checks/master-design-schema-result.json";
 const proofPath = "artifacts/oam/evidence/master-design-proof.json";
+const writeProofArtifact = process.argv.includes("--write-proof") || process.env.OAM_WRITE_PROOF === "1";
 const violations = [];
 
 const schema = readJson(schemaPath);
@@ -73,7 +74,7 @@ for (const [field, expected] of Object.entries({
 }
 
 writeResult();
-writeProof();
+if (writeProofArtifact) writeProof();
 if (violations.length) {
   for (const item of violations) console.error(`${item.id}: ${item.message}`);
   process.exit(1);

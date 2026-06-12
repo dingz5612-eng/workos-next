@@ -105,7 +105,7 @@ const blockingReasons = [
 ].filter(Boolean);
 const report = {
   version: "authority-cleanup.source-layer-audit.v1",
-  generatedAtUtc: new Date().toISOString(),
+  generatedAtUtc: "pending",
   sourceWhitelist: [...sourceWhitelist].sort(),
   sourceWhitelistUnique,
   unknownCount,
@@ -117,6 +117,7 @@ const report = {
   blockingReasons,
   entries
 };
+report.generatedAtUtc = stableTimestamp(outputPath, report, "generatedAtUtc");
 
 fs.mkdirSync(path.dirname(abs(outputPath)), { recursive: true });
 fs.writeFileSync(abs(outputPath), `${JSON.stringify(report, null, 2)}\n`, "utf8");
@@ -351,4 +352,26 @@ function absDir(file) {
 
 function slash(file) {
   return String(file).trim().replace(/\\/g, "/");
+}
+
+function stableTimestamp(file, nextDocument, field) {
+  const full = abs(file);
+  if (!fs.existsSync(full)) return new Date().toISOString();
+  try {
+    const previous = JSON.parse(fs.readFileSync(full, "utf8"));
+    if (sameExceptField(previous, nextDocument, field)) {
+      return previous[field] ?? new Date().toISOString();
+    }
+  } catch {
+    return new Date().toISOString();
+  }
+  return new Date().toISOString();
+}
+
+function sameExceptField(left, right, field) {
+  const leftClone = { ...left };
+  const rightClone = { ...right };
+  delete leftClone[field];
+  delete rightClone[field];
+  return JSON.stringify(leftClone) === JSON.stringify(rightClone);
 }

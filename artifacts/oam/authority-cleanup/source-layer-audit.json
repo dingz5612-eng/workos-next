@@ -1,6 +1,6 @@
 {
   "version": "authority-cleanup.source-layer-audit.v1",
-  "generatedAtUtc": "2026-06-12T09:08:24.743Z",
+  "generatedAtUtc": "2026-06-12T10:23:40.495Z",
   "sourceWhitelist": [
     "docs/business/admission/business-line-levels.yml",
     "docs/business/business-line-registry.json",
@@ -337,6 +337,132 @@
         "generated-or-derived-marker-scan"
       ],
       "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "artifacts/oam/proofs/read-intelligence/oam-object-envelope-proof.json",
+      "currentIdentity": "not_registered",
+      "targetLayer": "evidence",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": true,
+      "upstreamSource": "scripts/oam/run-control-plane-checks.ps1",
+      "downstreamConsumers": [],
+      "recommendedAction": "keep_as_evidence_artifact",
+      "deletionRisk": "low",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "OAM 产物只证明执行结果，不替代 Source。"
+    },
+    {
+      "path": "artifacts/oam/proofs/search/search-derived-readmodel-only-proof.json",
+      "currentIdentity": "not_registered",
+      "targetLayer": "evidence",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": true,
+      "upstreamSource": "scripts/oam/run-control-plane-checks.ps1",
+      "downstreamConsumers": [],
+      "recommendedAction": "keep_as_evidence_artifact",
+      "deletionRisk": "low",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "OAM 产物只证明执行结果，不替代 Source。"
+    },
+    {
+      "path": "artifacts/oam/proofs/search/search-hidden-result-ranking-proof.json",
+      "currentIdentity": "not_registered",
+      "targetLayer": "evidence",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": true,
+      "upstreamSource": "scripts/oam/run-control-plane-checks.ps1",
+      "downstreamConsumers": [],
+      "recommendedAction": "keep_as_evidence_artifact",
+      "deletionRisk": "low",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "OAM 产物只证明执行结果，不替代 Source。"
+    },
+    {
+      "path": "artifacts/oam/proofs/search/search-lineage-freshness-proof.json",
+      "currentIdentity": "not_registered",
+      "targetLayer": "evidence",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": true,
+      "upstreamSource": "scripts/oam/run-control-plane-checks.ps1",
+      "downstreamConsumers": [],
+      "recommendedAction": "keep_as_evidence_artifact",
+      "deletionRisk": "low",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "OAM 产物只证明执行结果，不替代 Source。"
+    },
+    {
+      "path": "artifacts/oam/proofs/search/search-no-kernel-direct-read-proof.json",
+      "currentIdentity": "not_registered",
+      "targetLayer": "evidence",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": true,
+      "upstreamSource": "scripts/oam/run-control-plane-checks.ps1",
+      "downstreamConsumers": [],
+      "recommendedAction": "keep_as_evidence_artifact",
+      "deletionRisk": "low",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "OAM 产物只证明执行结果，不替代 Source。"
+    },
+    {
+      "path": "artifacts/oam/proofs/search/search-permission-filter-proof.json",
+      "currentIdentity": "not_registered",
+      "targetLayer": "evidence",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": true,
+      "upstreamSource": "scripts/oam/run-control-plane-checks.ps1",
+      "downstreamConsumers": [],
+      "recommendedAction": "keep_as_evidence_artifact",
+      "deletionRisk": "low",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "OAM 产物只证明执行结果，不替代 Source。"
+    },
+    {
+      "path": "artifacts/oam/proofs/search/search-sensitive-redaction-proof.json",
+      "currentIdentity": "not_registered",
+      "targetLayer": "evidence",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": true,
+      "upstreamSource": "scripts/oam/run-control-plane-checks.ps1",
+      "downstreamConsumers": [],
+      "recommendedAction": "keep_as_evidence_artifact",
+      "deletionRisk": "low",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "OAM 产物只证明执行结果，不替代 Source。"
     },
     {
       "path": "docs/business/admission/business-line-levels.yml",
@@ -6029,23 +6155,24 @@
     {
       "path": "scripts/oam/generate-current-evidence-root.mjs",
       "currentIdentity": "validation_file",
-      "targetLayer": "manual",
-      "manualEditAllowed": true,
+      "targetLayer": "generated",
+      "manualEditAllowed": false,
       "businessFactAuthorityAllowed": false,
-      "contractAuthorityAllowed": false,
-      "derived": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/oam/generate-current-evidence-root.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ],
-      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "recommendedAction": "downgrade_to_generated+review_old_term_fence_or_remove",
       "deletionRisk": "medium",
       "controlledOldTermUse": false,
       "scanReasons": [
-        "controlled-old-term-scan"
+        "controlled-old-term-scan",
+        "generated-or-derived-marker-scan"
       ],
-      "notesZh": "保留为人读说明或辅助文件，不作为业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
     },
     {
       "path": "scripts/oam/generate-mobile-branch-risk-ledger.mjs",

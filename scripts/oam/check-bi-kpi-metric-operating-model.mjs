@@ -217,10 +217,10 @@ function checkNegativeFixtures() {
 }
 
 function writeProofs() {
-  writeJson(metricProofPath, {
+  const metricProof = {
     version: "oam.metric-definition-registry-proof.v1",
     status: violations.length ? "failed" : "passed",
-    checkedAtUtc: new Date().toISOString(),
+    checkedAtUtc: "pending",
     proves: [
       "MetricDefinition Registry is read-only.",
       "Every MetricDefinition has sourceFacts, permission, lineage, freshness, allowedConsumers, forbiddenInputs, and goNoGoImpact.",
@@ -231,29 +231,37 @@ function writeProofs() {
     forbiddenInputs: forbiddenInferenceInputs,
     forbiddenWrites: forbiddenWriteTargets,
     violations
-  });
-  writeJson(dashboardProofPath, {
+  };
+  metricProof.checkedAtUtc = stableTimestamp(metricProofPath, metricProof, "checkedAtUtc");
+  writeJson(metricProofPath, metricProof);
+
+  const dashboardProof = {
     version: "oam.dashboard-widget-sourcefacts-proof.v1",
     status: violations.length ? "failed" : "passed",
-    checkedAtUtc: new Date().toISOString(),
+    checkedAtUtc: "pending",
     proves: [
       "Every DashboardWidget has sourceFacts, permission, lineage, freshness, and readonly_or_navigate_only action policy.",
       "DashboardWidget cannot write business facts or finance facts."
     ],
     widgetIds: (dashboardContract.dashboardWidgets ?? []).map((item) => item.widgetId),
     violations
-  });
-  writeJson(reportProofPath, {
+  };
+  dashboardProof.checkedAtUtc = stableTimestamp(dashboardProofPath, dashboardProof, "checkedAtUtc");
+  writeJson(dashboardProofPath, dashboardProof);
+
+  const reportProof = {
     version: "oam.report-dataset-permission-lineage-freshness-proof.v1",
     status: violations.length ? "failed" : "passed",
-    checkedAtUtc: new Date().toISOString(),
+    checkedAtUtc: "pending",
     proves: [
       "Every ReportDataset has sourceFacts, metricRefs, permissionEnvelope, lineageEnvelope, freshnessEnvelope, exportPolicy, and noBusinessFactWrite=true.",
       "ReportDataset exports are read-only evidence and cannot write business facts."
     ],
     datasetIds: (reportContract.reportDatasets ?? []).map((item) => item.datasetId),
     violations
-  });
+  };
+  reportProof.checkedAtUtc = stableTimestamp(reportProofPath, reportProof, "checkedAtUtc");
+  writeJson(reportProofPath, reportProof);
 }
 
 function assertFields(item, fields, label, id) {
@@ -274,6 +282,28 @@ function writeJson(file, value) {
   const fullPath = path.join(root, file);
   fs.mkdirSync(path.dirname(fullPath), { recursive: true });
   fs.writeFileSync(fullPath, `${JSON.stringify(value, null, 2)}\n`);
+}
+
+function stableTimestamp(file, nextDocument, field) {
+  const fullPath = path.join(root, file);
+  if (!fs.existsSync(fullPath)) return new Date().toISOString();
+  try {
+    const previous = JSON.parse(fs.readFileSync(fullPath, "utf8"));
+    if (sameExceptField(previous, nextDocument, field)) {
+      return previous[field] ?? new Date().toISOString();
+    }
+  } catch {
+    return new Date().toISOString();
+  }
+  return new Date().toISOString();
+}
+
+function sameExceptField(left, right, field) {
+  const leftClone = { ...left };
+  const rightClone = { ...right };
+  delete leftClone[field];
+  delete rightClone[field];
+  return JSON.stringify(leftClone) === JSON.stringify(rightClone);
 }
 
 function writeResult() {

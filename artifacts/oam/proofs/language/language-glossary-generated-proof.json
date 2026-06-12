@@ -1,6 +1,6 @@
 {
   "version": "oam.language-glossary-generated-proof.v1",
-  "checkedAtUtc": "2026-06-12T09:09:18.124Z",
+  "checkedAtUtc": "2026-06-12T10:24:17.150Z",
   "status": "passed",
   "proves": [
     "Language Kernel covers objectKind, resultType, metric, dashboard, lineage, readiness, tokenizer, search intent, permission reason, admission reason, evidence reason, finance truth reason, and noGo reason.",
