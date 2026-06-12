@@ -23,20 +23,47 @@
     "surfaceShell": "shared Operations surface shell with OperationStepRail and direct OperationCardShell/card-operation readonly state",
     "forbiddenShell": "page-private detail shell, intermediate completed-operation page, copied completed-step-list layout, page-private outer wrapper, or completed-record-control visual wrapper",
     "correctionPath": "new OAM WorkItem with correctionMode=append_only",
-    "actionOrder": ["create_active_work_item", "view_readonly_completed_record", "correct_append_only_from_record"],
-    "dataSources": ["OperationsWorkItemConfirmed payload", "ProjectionEvent payload", "mobile completed-record read cache"],
+    "actionOrder": [
+      "create_active_work_item",
+      "view_readonly_completed_record",
+      "correct_append_only_from_record"
+    ],
+    "dataSources": [
+      "OperationsWorkItemConfirmed payload",
+      "ProjectionEvent payload",
+      "mobile completed-record read cache"
+    ],
     "correctionEntry": "only from readonly completed record after submitted values are visible",
     "forbiddenPath": "direct edit or repeat submit of the completed work item"
   },
   "currentSurfaceArchitecture": {
     "architecture": "oam.current surface system",
-    "required": ["shared shell", "shared route guard", "shared named experience components", "surface contract", "direct OperationCardShell on step pages"],
-    "forbidden": ["page-private shell", "intent-card operation wrapper", "copied layout logic", "obsolete completed-record grid", "blocked Workspace/Card write path"],
+    "required": [
+      "shared shell",
+      "shared route guard",
+      "shared named experience components",
+      "surface contract",
+      "direct OperationCardShell on step pages"
+    ],
+    "forbidden": [
+      "page-private shell",
+      "intent-card operation wrapper",
+      "copied layout logic",
+      "obsolete completed-record grid",
+      "blocked Workspace/Card write path"
+    ],
     "repair": "rewrite non-current architecture onto the active surface architecture and delete obsolete implementation in the same impact scope"
   },
   "frontendExperienceSystem": {
     "contractRef": "docs/contracts/frontend-experience/frontend-experience-system-contract.json",
-    "layers": ["shared-components", "field-context-kernel", "surface-contract", "multilingual-dictionary", "state-action-contract", "real-browser-evidence"],
+    "layers": [
+      "shared-components",
+      "field-context-kernel",
+      "surface-contract",
+      "multilingual-dictionary",
+      "state-action-contract",
+      "real-browser-evidence"
+    ],
     "rule": "pages may specialize business content but not architecture",
     "contentContainerRule": "ordinary mobile content must render as shared containers; business titles, status labels, anchors, explanations, and next-action copy must not appear as naked text on the page background",
     "businessSummaryCardHierarchy": "business item cards use BusinessSummaryHeader, structured non-clickable business anchors, BusinessTaskOverview, and a separate bottom action container",
@@ -56,24 +83,65 @@
     },
     "submitCheckDefault": "show only missing user action, blockers, and readiness",
     "submitCheckDetails": "collapse inherited, derived, hidden, material, and rule diagnostics unless they explain a blocker",
-    "forbidden": ["page-local step dependency mapping", "manual input prompt for inherited fields", "manual input prompt for derived fields", "visible hidden-default fields"]
+    "forbidden": [
+      "page-local step dependency mapping",
+      "manual input prompt for inherited fields",
+      "manual input prompt for derived fields",
+      "visible hidden-default fields"
+    ]
   },
   "admissionExplainabilitySurface": {
-    "scope": ["mobile.search.resultCard", "mobile.operations.workItem.detail", "mobile.operations.workItem.confirm", "mobile.operations.workItem.receipt", "pc.governance.releaseState", "pc.governance.evidenceGraph"],
+    "scope": [
+      "mobile.search.resultCard",
+      "mobile.operations.workItem.detail",
+      "mobile.operations.workItem.confirm",
+      "mobile.operations.workItem.receipt",
+      "pc.governance.releaseState",
+      "pc.governance.evidenceGraph"
+    ],
     "rule": "visibleAllowed, prepareAllowed, confirmAllowed, productionAllowed, mode, and safe reason copy must be consumed by the visible surface",
     "searchResultCard": {
-      "visible": ["title", "subtitle", "statusLabel", "admissionLabel", "admissionReasonLabel", "nextAction"],
-      "hiddenForOrdinaryUsers": ["admissionDecisionRef", "blockedAdapter", "definitionId", "payloadHash", "commandSubmissionId", "rawReason", "rawCode"],
+      "visible": [
+        "title",
+        "subtitle",
+        "statusLabel",
+        "admissionLabel",
+        "admissionReasonLabel",
+        "nextAction"
+      ],
+      "hiddenForOrdinaryUsers": [
+        "admissionDecisionRef",
+        "blockedAdapter",
+        "definitionId",
+        "payloadHash",
+        "commandSubmissionId",
+        "rawReason",
+        "rawCode"
+      ],
       "confirmDeniedPrimaryAction": "view-only or learning action; never process/start-handling wording"
     },
     "operationWorkItemDetail": {
-      "requiredTopStatus": ["admissionLabel", "mode", "confirmAllowed", "productionAllowed"],
+      "requiredTopStatus": [
+        "admissionLabel",
+        "mode",
+        "confirmAllowed",
+        "productionAllowed"
+      ],
       "readyStateRule": "only confirmAllowed=true may bind the submit action"
     },
     "safeErrorCopy": {
       "source": "Language Kernel key",
-      "requiredKeys": ["operations.error.safe.403", "operations.error.safe.409", "operations.error.safe.422", "operations.error.safe.generic"],
-      "forbidden": ["visible raw reason", "visible raw code", "direct result.message passthrough for blocked confirm"]
+      "requiredKeys": [
+        "operations.error.safe.403",
+        "operations.error.safe.409",
+        "operations.error.safe.422",
+        "operations.error.safe.generic"
+      ],
+      "forbidden": [
+        "visible raw reason",
+        "visible raw code",
+        "direct result.message passthrough for blocked confirm"
+      ]
     }
   },
   "userSemanticBoundaries": {
@@ -82,8 +150,33 @@
     "visibleDoesNotImplyConfirm": "visibleAllowed 只代表可见，不等于 confirmAllowed。",
     "dashboardSummaryCannotUnlockProduction": "驾驶舱摘要只能观察或形成意图，不得打开生产。",
     "sharedReceiptCannotReplaceFinanceTruth": "共享回执不得替代财务定真或 AdmissionDecision。",
-    "ordinaryUserNoInternalRuntimeTerms": ["DomainEvent", "LedgerEntry", "ProcessManager", "Lens", "slice", "Confirm Runtime", "Unit of Work", "Projection", "Outbox", "raw capability", "raw surface view id"],
-    "permissionExplainabilityUsesLanguageKernel": "权限解释标题、原因、负责人、权限范围和下一步必须来自 Language Kernel。"
+    "ordinaryUserNoInternalRuntimeTerms": [
+      "DomainEvent",
+      "LedgerEntry",
+      "ProcessManager",
+      "Lens",
+      "slice",
+      "Confirm Runtime",
+      "Unit of Work",
+      "Projection",
+      "Outbox",
+      "raw capability",
+      "raw surface view id",
+      "oam.current",
+      "truthOwnerDomain",
+      "admissionDecisionRef",
+      "definitionId",
+      "payloadHash",
+      "commandSubmissionId",
+      "rawReason",
+      "rawCode"
+    ],
+    "permissionExplainabilityUsesLanguageKernel": "权限解释标题、原因、负责人、权限范围和下一步必须来自 Language Kernel。",
+    "blockerDoesNotGrantBypass": "阻断原因只说明当前不能继续，不得提供绕过路径。",
+    "businessBasisDoesNotImplyFinancialTruth": "业务依据只代表业务侧意向或材料，不得视为财务定真。",
+    "surfaceReadyDoesNotImplyProductionConfirm": "界面可用或准备完成不代表允许生产确认。",
+    "trustedConfirmDoesNotImplyProductionConfirm": "可信设备和确认许可不代表生产确认放行。",
+    "confirmAllowedDoesNotImplyProductionAllowed": "confirmAllowed 只代表当前准入可确认，不代表 productionAllowed。"
   },
   "surfaceSemanticBoundaries": {
     "visibleAllowed": "read-side visibility only",
@@ -102,13 +195,65 @@
     "forbiddenPath": "Operations Confirm, business fact mutation, static placeholder-only feedback, duplicate local feedback buttons, or placement inside save/submit business action row"
   },
   "mobile": {
-    "allowedSurfaces": ["home", "workbench", "search", "me", "workspace", "operationPanel", "learning", "notes", "reminders", "permissions", "businessRecords", "completedRecords", "evidenceLibrary", "uploadQueue", "submitQueue", "drafts", "failedSync", "recentSubmissions", "recentTraces", "deviceTrust", "feedback", "result", "confirmPage"],
-    "allowedApiModules": ["apps/mobile/src/apiClient.js", "apps/mobile/src/operationRuntime.js"],
-    "forbiddenPcSurfaces": ["releaseControl", "releaseFlightDeck", "pcGovernance", "governanceCenter", "financeControl", "financeReconciliation", "managerControlTower", "pcManager"],
-    "forbiddenPcApiTokens": ["controlPlaneReleases", "observability", "bankStatementImport", "reconciliation", "correction", "behaviorEvents"]
+    "allowedSurfaces": [
+      "home",
+      "workbench",
+      "search",
+      "me",
+      "workspace",
+      "operationPanel",
+      "learning",
+      "notes",
+      "reminders",
+      "permissions",
+      "businessRecords",
+      "completedRecords",
+      "evidenceLibrary",
+      "uploadQueue",
+      "submitQueue",
+      "drafts",
+      "failedSync",
+      "recentSubmissions",
+      "recentTraces",
+      "deviceTrust",
+      "feedback",
+      "result",
+      "confirmPage"
+    ],
+    "allowedApiModules": [
+      "apps/mobile/src/apiClient.js",
+      "apps/mobile/src/operationRuntime.js"
+    ],
+    "forbiddenPcSurfaces": [
+      "releaseControl",
+      "releaseFlightDeck",
+      "pcGovernance",
+      "governanceCenter",
+      "financeControl",
+      "financeReconciliation",
+      "managerControlTower",
+      "pcManager"
+    ],
+    "forbiddenPcApiTokens": [
+      "controlPlaneReleases",
+      "observability",
+      "bankStatementImport",
+      "reconciliation",
+      "correction",
+      "behaviorEvents"
+    ]
   },
   "pc": {
-    "allowedSurfaces": ["releaseControl", "releaseFlightDeck", "pcGovernance", "governanceCenter", "financeControl", "financeReconciliation", "managerControlTower", "pcManager"],
+    "allowedSurfaces": [
+      "releaseControl",
+      "releaseFlightDeck",
+      "pcGovernance",
+      "governanceCenter",
+      "financeControl",
+      "financeReconciliation",
+      "managerControlTower",
+      "pcManager"
+    ],
     "routeTree": "apps/mobile/src/pcRouteTree.js",
     "eventBinder": "apps/mobile/src/pcEventBinder.js",
     "apiModule": "apps/mobile/src/pcApiClient.js",

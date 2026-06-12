@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "workosnext.search-proof.v1",
+  "status": "passed",
+  "checkedAtUtc": "2026-06-12T09:09:20.301Z",
+  "failures": [],
+  "gates": [
+    "node scripts/check-search-kernel.mjs"
+  ],
+  "proofId": "search-permission-filter-proof",
+  "proves": [
+    "SearchResult carries permission envelope.",
+    "Search actions are readonly or navigation only.",
+    "Permission policy contains tenant, visibility, and action guards."
+  ],
+  "permissionRequiredFields": [
+    "visibility",
+    "redaction",
+    "dataClassification",
+    "requiredPermissions",
+    "checkedAt",
+    "policyVersion",
+    "actorScope",
+    "decisionSource"
+  ],
+  "permissionRuleIds": [
+    "business-line-blocked-cannot-execute",
+    "surface-visibility-not-confirm-permission",
+    "high-risk-requires-capability-device",
+    "tenant-filter-required",
+    "projection-source-label-required",
+    "operations-events-tenant-scoped-readonly",
+    "search-result-required-trust-fields",
+    "search-actions-readonly-only",
+    "hidden-results-not-ranked",
+    "sensitive-results-redacted-for-ordinary-users"
+  ],
+  "sourceRefs": [
+    "docs/contracts/search/search-result-schema.json",
+    "docs/contracts/search/search-permission-policy.json"
+  ]
+}

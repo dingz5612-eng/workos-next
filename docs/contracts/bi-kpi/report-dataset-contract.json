@@ -1,0 +1,48 @@
+{
+  "version": "oam.metric-operating-model.report-dataset-contract.v1",
+  "status": "authoritative-readonly",
+  "readOnly": true,
+  "businessFactWriteAllowed": false,
+  "reportDatasets": [
+    {
+      "datasetId": "report.dormitory.generatedP0Contracts.dataset.v1",
+      "sourceFacts": ["Room", "Bed", "WorkItemFact"],
+      "metricRefs": ["dormitory.resourceReadiness", "governance.blockerAging"],
+      "permissionEnvelope": {
+        "policyRef": "metric-permission.operations-readonly.v1",
+        "readOnly": true
+      },
+      "lineageEnvelope": {
+        "policyRef": "metric-lineage.generated-read-model.v1",
+        "sourceFacts": ["Room", "Bed", "WorkItemFact"]
+      },
+      "freshnessEnvelope": {
+        "policyRef": "metric-freshness.daily-read-model.v1",
+        "maxStalenessMs": 86400000
+      },
+      "exportPolicy": "readonly-governance-evidence",
+      "noBusinessFactWrite": true
+    },
+    {
+      "datasetId": "report.finance.readonlyLedger.dataset.v1",
+      "sourceFacts": ["FinancialFact", "LedgerTransaction", "LedgerEntry"],
+      "metricRefs": ["finance.receivedAmount"],
+      "permissionEnvelope": {
+        "policyRef": "metric-permission.finance-readonly.v1",
+        "readOnly": true
+      },
+      "lineageEnvelope": {
+        "policyRef": "metric-lineage.finance-kernel.v1",
+        "sourceFacts": ["FinancialFact", "LedgerTransaction", "LedgerEntry"]
+      },
+      "freshnessEnvelope": {
+        "policyRef": "metric-freshness.ledger-read-model.v1",
+        "maxStalenessMs": 3600000
+      },
+      "exportPolicy": "readonly-finance-evidence",
+      "noBusinessFactWrite": true
+    }
+  ],
+  "forbiddenInference": ["ui.state", "label", "displayText", "dashboard.summary"],
+  "forbiddenWrites": ["Room", "Bed", "Payment", "AmountBasis", "FinancialFact", "LedgerTransaction", "LedgerEntry"]
+}

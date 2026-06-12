@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "workosnext.search-proof.v1",
+  "status": "passed",
+  "checkedAtUtc": "2026-06-12T09:09:20.301Z",
+  "failures": [],
+  "gates": [
+    "node scripts/check-search-kernel.mjs"
+  ],
+  "proofId": "search-lineage-freshness-proof",
+  "proves": [
+    "SearchResult carries lineage envelope.",
+    "SearchResult carries freshness envelope.",
+    "Search cannot write business facts through gateResult."
+  ],
+  "lineageRequiredFields": [
+    "sourceSystem",
+    "sourceType",
+    "sourceId",
+    "sourceUpdatedAt",
+    "definitionVersion",
+    "sourceVersion",
+    "factRefs",
+    "evidenceRefs",
+    "transformRefs",
+    "outboxRefs",
+    "readModelVersion"
+  ],
+  "freshnessRequiredFields": [
+    "indexedAt",
+    "indexLagMs",
+    "stale",
+    "sourceUpdatedAt",
+    "computedAt",
+    "lastDisplayedAt",
+    "computeLagMs",
+    "staleReason",
+    "freshnessPolicyVersion"
+  ],
+  "gateResultRequiredFields": [
+    "status",
+    "source",
+    "sourceType",
+    "checkedAt",
+    "policyVersion",
+    "admissionDecisionRef",
+    "writeThroughSearchAllowed",
+    "writeBusinessFactAllowed"
+  ],
+  "sourceRefs": [
+    "docs/contracts/search/search-result-schema.json"
+  ]
+}

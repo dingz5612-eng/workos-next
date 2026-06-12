@@ -36,6 +36,121 @@ businessIdentity:
     - workspace card
     - old catalog id
     - old seed id
+workItemBindings:
+  - packageId: resource-saleability
+    workItems:
+      - workItemType: Dorm.RoomSetupConfirm
+        definitionId: definition.dormitory.roomSetupConfirm.v1
+      - workItemType: Dorm.BedSetupConfirm
+        definitionId: definition.dormitory.bedSetupConfirm.v1
+      - workItemType: Dorm.ResourceReadinessConfirm
+        definitionId: definition.dormitory.resourceReadinessConfirm.v1
+  - packageId: lead-reservation
+    workItems:
+      - workItemType: Dorm.LeadCapture
+        definitionId: definition.dormitory.leadCapture.v1
+      - workItemType: Dorm.ReservationConfirm
+        definitionId: definition.dormitory.reservationConfirm.v1
+  - packageId: check-in
+    workItems:
+      - workItemType: Dorm.CheckinConfirm
+        definitionId: definition.dormitory.checkinConfirm.v1
+      - workItemType: Dorm.AccessCredentialIssue
+        definitionId: definition.dormitory.accessCredentialIssue.v1
+  - packageId: ordinary-payment
+    workItems:
+      - workItemType: Dorm.PaymentConfirm
+        definitionId: definition.dormitory.paymentConfirm.v1
+  - packageId: deposit-liability
+    workItems:
+      - workItemType: Dorm.DepositConfirm
+        definitionId: definition.dormitory.depositConfirm.v1
+  - packageId: service-task
+    workItems:
+      - workItemType: Dorm.ServiceTaskCreate
+        definitionId: definition.dormitory.serviceTaskCreate.v1
+      - workItemType: Dorm.ServiceTaskAssign
+        definitionId: definition.dormitory.serviceTaskAssign.v1
+      - workItemType: Dorm.ServiceTaskComplete
+        definitionId: definition.dormitory.serviceTaskComplete.v1
+      - workItemType: Dorm.ServiceTaskVerify
+        definitionId: definition.dormitory.serviceTaskVerify.v1
+  - packageId: expense-governance
+    workItems:
+      - workItemType: Dorm.ExpenseRecord
+        definitionId: definition.expenseRecord.v1
+      - workItemType: Finance.ExpenseApprove
+        definitionId: definition.finance.expenseApprove.v1
+  - packageId: bed-transfer-extend
+    workItems:
+      - workItemType: Dorm.BedTransferApprove
+        definitionId: definition.dormitory.bedTransferApprove.v1
+      - workItemType: Dorm.StayExtendApprove
+        definitionId: definition.dormitory.stayExtendApprove.v1
+  - packageId: checkout-settlement
+    workItems:
+      - workItemType: Dorm.CheckoutSettlementApprove
+        definitionId: definition.dormitory.checkoutSettlementApprove.v1
+  - packageId: period-review
+    workItems:
+      - workItemType: Dorm.PeriodReview
+        definitionId: definition.dormitory.periodReview.v1
+      - workItemType: Dorm.PeriodActionPlanExecute
+        definitionId: definition.dormitory.periodActionPlanExecute.v1
+  - packageId: exception-correction
+    workItems:
+      - workItemType: Dorm.ExceptionResolve
+        definitionId: definition.dormitory.exceptionResolve.v1
+      - workItemType: Finance.CorrectionApply
+        definitionId: definition.finance.correctionApply.v1
+handoffDag:
+  nodes:
+    - resource-saleability
+    - lead-reservation
+    - check-in
+    - ordinary-payment
+    - deposit-liability
+    - service-task
+    - expense-governance
+    - bed-transfer-extend
+    - checkout-settlement
+    - period-review
+    - exception-correction
+  edges:
+    - from: resource-saleability
+      to: lead-reservation
+    - from: lead-reservation
+      to: check-in
+    - from: check-in
+      to: ordinary-payment
+    - from: check-in
+      to: deposit-liability
+    - from: check-in
+      to: service-task
+    - from: check-in
+      to: bed-transfer-extend
+    - from: ordinary-payment
+      to: period-review
+    - from: deposit-liability
+      to: checkout-settlement
+    - from: deposit-liability
+      to: period-review
+    - from: service-task
+      to: expense-governance
+    - from: service-task
+      to: period-review
+    - from: expense-governance
+      to: period-review
+    - from: bed-transfer-extend
+      to: checkout-settlement
+    - from: bed-transfer-extend
+      to: period-review
+    - from: checkout-settlement
+      to: period-review
+    - from: checkout-settlement
+      to: exception-correction
+    - from: period-review
+      to: exception-correction
 scenarioPackages:
   - packageId: resource-saleability
     nameZh: 资源可售
@@ -110,7 +225,8 @@ scenarioPackages:
         - Room
         - Bed
         - EvidenceObject
-      enablesNext: lead-reservation
+      enablesNext:
+        - lead-reservation
       carryForwardReadonly:
         - room.basicProfile
         - bed.roomBinding
@@ -221,7 +337,8 @@ scenarioPackages:
         - Lead
         - Reservation
         - EvidenceObject
-      enablesNext: check-in
+      enablesNext:
+        - check-in
       carryForwardReadonly:
         - lead.personContact
         - reservation.resourceIntent
@@ -330,7 +447,11 @@ scenarioPackages:
         - Stay
         - AccessCredential
         - EvidenceObject
-      enablesNext: ordinary-payment
+      enablesNext:
+        - ordinary-payment
+        - deposit-liability
+        - service-task
+        - bed-transfer-extend
       carryForwardReadonly:
         - stay.residentIdentity
         - stay.bedAssignment
@@ -381,7 +502,6 @@ scenarioPackages:
     businessGoalZh: 收集普通收款意向和收款凭证，并移交财务内核判断。
     inScope:
       - Dorm.PaymentConfirm
-      - Finance.PaymentReview
     outOfScope:
       - 押金负债
       - 直接写 LedgerEntry
@@ -425,7 +545,8 @@ scenarioPackages:
       produces:
         - PaymentIntent
         - EvidenceObject
-      enablesNext: deposit-liability
+      enablesNext:
+        - period-review
       carryForwardReadonly:
         - stay.residentIdentity
         - payment.receiptEvidence
@@ -476,7 +597,6 @@ scenarioPackages:
     businessGoalZh: 押金只形成财务内核可验证负债，不由宿舍域直接入账。
     inScope:
       - Dorm.DepositConfirm
-      - Finance.DepositReview
     outOfScope:
       - 押金作为收入
       - 直接写 LedgerEntry
@@ -520,7 +640,9 @@ scenarioPackages:
       produces:
         - DepositIntent
         - EvidenceObject
-      enablesNext: service-task
+      enablesNext:
+        - checkout-settlement
+        - period-review
       carryForwardReadonly:
         - stay.residentIdentity
         - deposit.amountIntent
@@ -617,7 +739,9 @@ scenarioPackages:
       produces:
         - ServiceTask
         - EvidenceObject
-      enablesNext: expense-governance
+      enablesNext:
+        - expense-governance
+        - period-review
       carryForwardReadonly:
         - service.requestDetail
         - service.completionProof
@@ -666,8 +790,7 @@ scenarioPackages:
     businessGoalZh: 记录支出申请和治理审批，支出入账只能移交财务内核。
     inScope:
       - Dorm.ExpenseRecord
-      - Dorm.ExpenseApprove
-      - Finance.ExpenseReview
+      - Finance.ExpenseApprove
     outOfScope:
       - 直接写 LedgerEntry
       - 未审批支出
@@ -712,7 +835,8 @@ scenarioPackages:
         - ExpenseIntent
         - ApprovalDecision
         - EvidenceObject
-      enablesNext: bed-transfer-extend
+      enablesNext:
+        - period-review
       carryForwardReadonly:
         - expense.requestAmount
         - expense.approvalReason
@@ -807,7 +931,9 @@ scenarioPackages:
         - StayChange
         - ApprovalDecision
         - EvidenceObject
-      enablesNext: checkout-settlement
+      enablesNext:
+        - checkout-settlement
+        - period-review
       carryForwardReadonly:
         - stay.currentContext
         - stay.changeRequest
@@ -857,7 +983,6 @@ scenarioPackages:
     businessGoalZh: 退住只确认业务状态和结算意向，账务结算交给财务内核。
     inScope:
       - Dorm.CheckoutSettlementApprove
-      - Finance.CheckoutReview
     outOfScope:
       - 直接退款
       - 直接写 LedgerEntry
@@ -901,7 +1026,9 @@ scenarioPackages:
       produces:
         - CheckoutIntent
         - EvidenceObject
-      enablesNext: period-review
+      enablesNext:
+        - period-review
+        - exception-correction
       carryForwardReadonly:
         - stay.currentContext
         - checkout.assetInspection
@@ -998,7 +1125,8 @@ scenarioPackages:
         - PeriodSnapshot
         - ActionPlan
         - ExceptionWorkItem
-      enablesNext: exception-correction
+      enablesNext:
+        - exception-correction
       carryForwardReadonly:
         - period.metricDataset
         - period.actionPlan
@@ -1108,7 +1236,7 @@ scenarioPackages:
         - CorrectionWorkItem
         - CorrectionEvent
         - EvidenceObject
-      enablesNext: resource-saleability
+      enablesNext: []
       carryForwardReadonly:
         - correction.originalFactRef
         - correction.newFactProposal

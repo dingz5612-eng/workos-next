@@ -10,7 +10,10 @@
     "matrixId",
     "truthOwners",
     "financeStateChain",
-    "readSideBoundaries"
+    "readSideBoundaries",
+    "readSideWritersForbiddenOwners",
+    "evidenceObjectPolicy",
+    "negativeFixtures"
   ],
   "properties": {
     "version": { "const": "workosnext.authority.truth-ownership-matrix.v1" },
@@ -19,7 +22,10 @@
     "matrixId": { "type": "string" },
     "truthOwners": { "type": "array", "minItems": 6 },
     "financeStateChain": { "type": "array", "minItems": 6 },
-    "readSideBoundaries": { "type": "array", "minItems": 4 }
+    "readSideBoundaries": { "type": "array", "minItems": 4 },
+    "readSideWritersForbiddenOwners": { "type": "array", "minItems": 5 },
+    "evidenceObjectPolicy": { "type": "object" },
+    "negativeFixtures": { "type": "array", "minItems": 3 }
   },
   "additionalProperties": true
 }

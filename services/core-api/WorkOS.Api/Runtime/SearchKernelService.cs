@@ -6,7 +6,6 @@ namespace WorkOS.Api.Runtime;
 public sealed class SearchKernelService
 {
     private readonly ProjectionWorkspaceSearchAdapter projectionWorkspaceSearch;
-    private readonly OperationsReadStore? operationsReadStore;
     private readonly WorkItemDefinitionRegistryService definitions;
     private readonly AdmissionKernelService admission;
     private readonly LanguageSearchSynonymCatalog synonyms;
@@ -14,11 +13,9 @@ public sealed class SearchKernelService
     public SearchKernelService(
         ProjectionWorkspaceSearchAdapter projectionWorkspaceSearch,
         WorkItemDefinitionRegistryService definitions,
-        AdmissionKernelService admission,
-        OperationsReadStore? operationsReadStore = null)
+        AdmissionKernelService admission)
     {
         this.projectionWorkspaceSearch = projectionWorkspaceSearch;
-        this.operationsReadStore = operationsReadStore;
         this.definitions = definitions;
         this.admission = admission;
         synonyms = LanguageSearchSynonymCatalog.LoadDefault();
@@ -34,7 +31,6 @@ public sealed class SearchKernelService
         var queryTerms = synonyms.Expand(query, resolvedLanguage);
         return SearchProjectionSources(runtime, query, queryTerms)
             .Select(item => BuildResult(item, queryTerms, actor, resolvedLanguage))
-            .Concat(SearchOperationsSources(query, queryTerms, actor, resolvedLanguage))
             .GroupBy(item => Convert.ToString(item["resultId"]), StringComparer.OrdinalIgnoreCase)
             .Select(group => group.OrderByDescending(item => Convert.ToInt32(item["score"])).First())
             .OrderByDescending(item => Convert.ToInt32(item["score"]))
@@ -58,32 +54,6 @@ public sealed class SearchKernelService
         }
 
         return sources.Values.ToArray();
-    }
-
-    internal IReadOnlyList<Dictionary<string, object?>> SearchOperationsSources(
-        string? query,
-        IReadOnlyList<string> expandedTerms,
-        RuntimeActorContext actor,
-        string language)
-    {
-        if (operationsReadStore is null || string.IsNullOrWhiteSpace(query))
-        {
-            return Array.Empty<Dictionary<string, object?>>();
-        }
-
-        var records = new Dictionary<string, OperationsSearchRecord>(StringComparer.OrdinalIgnoreCase);
-        foreach (var term in SearchTerms(query, expandedTerms))
-        {
-            foreach (var record in operationsReadStore.SearchOperations(actor.TenantId, term))
-            {
-                records.TryAdd(record.EventId, record);
-            }
-        }
-
-        return records.Values
-            .Select(record => BuildOperationsResult(record, expandedTerms, actor, language))
-            .OfType<Dictionary<string, object?>>()
-            .ToArray();
     }
 
     private static IReadOnlyList<string> SearchTerms(string? query, IReadOnlyList<string> expandedTerms) =>
@@ -184,147 +154,6 @@ public sealed class SearchKernelService
         };
     }
 
-    private Dictionary<string, object?>? BuildOperationsResult(
-        OperationsSearchRecord record,
-        IReadOnlyList<string> queryTerms,
-        RuntimeActorContext actor,
-        string language)
-    {
-        var input = ReadObject(record.Payload, "input");
-        var definition = ResolveDefinition(record);
-        var decision = admission.EvaluateSearch(definition, actor);
-        var fieldValues = FieldValues(record.Payload);
-        var businessAnchor = BusinessAnchorPayload(fieldValues);
-        var cardId = FirstNonEmpty(ReadStringOrEmpty(input, "cardId"), ReadStringOrEmpty(record.Payload, "cardId"));
-        var workspaceId = FirstNonEmpty(ReadStringOrEmpty(input, "workspaceId"), ReadStringOrEmpty(record.Payload, "workspaceId"), record.CaseId);
-        var title = businessAnchor.Count > 0
-            ? Localized(string.Join(" / ", businessAnchor.Values.Select(value => Convert.ToString(value)).Where(value => !string.IsNullOrWhiteSpace(value)).Take(3)))
-            : Localized(FirstNonEmpty(definition.Definition?.WorkItemType, record.EventType, "Operations WorkItem"));
-        var workspaceTitle = Localized(FirstNonEmpty(workspaceId, record.CaseId, "Operations"));
-        var text = SafeText(record);
-        var matchedTerms = queryTerms
-            .Where(term => text.Contains(term, StringComparison.OrdinalIgnoreCase))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToArray();
-        var score = 220 + matchedTerms.Length * 45;
-        var indexedAt = DateTimeOffset.UtcNow;
-
-        return new Dictionary<string, object?>
-        {
-            ["resultId"] = $"operations:{record.EventId}:{record.WorkItemId}",
-            ["resultType"] = "operationCase",
-            ["objectKind"] = "operationCase",
-            ["workItemId"] = record.WorkItemId,
-            ["workspaceId"] = workspaceId,
-            ["cardId"] = cardId,
-            ["caseId"] = record.CaseId,
-            ["workItemType"] = definition.Definition?.WorkItemType ?? string.Empty,
-            ["title"] = title,
-            ["summary"] = workspaceTitle,
-            ["subtitle"] = workspaceTitle,
-            ["status"] = "confirmed_event_readonly",
-            ["nextAction"] = LocalizedByLanguage(language, "查看已完成记录", "View completed record", "View completed record"),
-            ["matchedTerms"] = matchedTerms,
-            ["score"] = score,
-            ["businessAnchor"] = businessAnchor,
-            ["payload"] = new Dictionary<string, object?>
-            {
-                ["fieldValues"] = fieldValues,
-                ["sourceWorkItemId"] = record.WorkItemId,
-                ["sourceSubmissionId"] = record.SubmissionId,
-                ["sourceEventId"] = record.EventId
-            },
-            ["target"] = new Dictionary<string, object?>
-            {
-                ["view"] = "completedRecords",
-                ["kind"] = "operationsDomainEvent",
-                ["targetId"] = record.WorkItemId,
-                ["runtimeOwner"] = "OperationsReadStore.SearchOperations",
-                ["compatibility"] = "completed-operation-readonly",
-                ["workspaceId"] = workspaceId,
-                ["cardId"] = cardId,
-                ["workItemId"] = record.WorkItemId,
-                ["caseId"] = record.CaseId,
-                ["writeThroughSearchAllowed"] = false
-            },
-            ["admission"] = decision.ToContract(),
-            ["permission"] = Permission("visible", "business-anchor", "business", new[] { "search.read" }, indexedAt),
-            ["lineage"] = Lineage("OperationsRuntime", "operationsDomainEvent", record.EventId, record.OccurredAtUtc, definition.DefinitionId),
-            ["freshness"] = Freshness(indexedAt, Math.Max(0, (long)(indexedAt - record.OccurredAtUtc).TotalMilliseconds), false),
-            ["ranking"] = Ranking("oam.search-ranking-policy.v1", matchedTerms, decision.ConfirmAllowed),
-            ["businessContext"] = new Dictionary<string, object?>
-            {
-                ["workspaceId"] = workspaceId,
-                ["caseId"] = record.CaseId,
-                ["workItemId"] = record.WorkItemId,
-                ["businessLine"] = "dormitory"
-            },
-            ["availableActions"] = ReadonlyActions("view", "completedRecords"),
-            ["gateResult"] = GateResult(decision, indexedAt, "operationsDomainEvent"),
-            ["traceRefs"] = new[] { record.SubmissionId, record.EventId },
-            ["sourceRefs"] = new Dictionary<string, object?>
-            {
-                ["source"] = "SearchKernelService",
-                ["sourceType"] = "operationsDomainEvent",
-                ["inputAdapter"] = "OperationsReadStore.SearchOperations",
-                ["projectionAdapter"] = "OperationsReadStore.SearchOperations",
-                ["workspaceId"] = workspaceId,
-                ["cardId"] = cardId,
-                ["workItemId"] = record.WorkItemId,
-                ["caseId"] = record.CaseId,
-                ["sourceEventId"] = record.EventId,
-                ["sourceSubmissionId"] = record.SubmissionId,
-                ["definitionId"] = definition.DefinitionId,
-                ["admissionDecisionRef"] = decision.AdmissionDecisionRef
-            },
-            ["language"] = language,
-            ["explain"] = new Dictionary<string, string>
-            {
-                ["zh-CN"] = "搜索结果来自 Operations Runtime 事件和工作项；姓名和电话只作检索与展示锚点。",
-                ["ru-RU"] = "Результат найден по событиям и задачам Operations Runtime; имя и телефон используются только как поисковый якорь.",
-                ["ky-KG"] = "Натыйжа Operations Runtime окуялары жана иштеринен табылды; ат жана телефон издөө белгиси гана."
-            }
-        };
-    }
-
-    private WorkItemDefinitionResolution ResolveDefinition(OperationsSearchRecord record)
-    {
-        var input = ReadObject(record.Payload, "input");
-        var definitionTrace = ReadObject(record.Payload, "definition");
-        var definitionId = FirstNonEmpty(
-            ReadStringOrEmpty(record.Payload, "definitionVersionId"),
-            ReadStringOrEmpty(definitionTrace, "definitionId"),
-            ReadStringOrEmpty(input, "definitionId"));
-        var sourceCardId = FirstNonEmpty(
-            ReadStringOrEmpty(definitionTrace, "sourceCardId"),
-            ReadStringOrEmpty(input, "sourceCardId"),
-            ReadStringOrEmpty(input, "cardId"));
-        var businessLineId = FirstNonEmpty(
-            ReadStringOrEmpty(definitionTrace, "businessLineId"),
-            "dormitory");
-        var definition = definitions.FindByDefinitionId(definitionId);
-        return definition is null
-            ? WorkItemDefinitionResolution.Unresolved(definitionId, MigrationRefsForSourceCardId(sourceCardId), businessLineId, "search_record_definition_not_resolved")
-            : WorkItemDefinitionResolution.FromDefinition(definition);
-    }
-
-    private static IReadOnlyList<DefinitionMigrationRef> MigrationRefsForSourceCardId(string? sourceCardId) =>
-        string.IsNullOrWhiteSpace(sourceCardId)
-            ? Array.Empty<DefinitionMigrationRef>()
-            : new[]
-            {
-                new DefinitionMigrationRef(
-                    "sourceCardId",
-                    sourceCardId,
-                    true,
-                    false,
-                    false,
-                    false,
-                    false,
-                    false,
-                    "docs/contracts/definition/source-id-migration-fence.json")
-            };
-
     private static Dictionary<string, object?> Permission(
         string visibility,
         string redaction,
@@ -338,7 +167,9 @@ public sealed class SearchKernelService
             ["dataClassification"] = dataClassification,
             ["requiredPermissions"] = requiredPermissions,
             ["checkedAt"] = checkedAt.ToString("O"),
-            ["policyVersion"] = "oam.search-permission-policy.v1"
+            ["policyVersion"] = "oam.search-permission-policy.v1",
+            ["decisionSource"] = "SearchPermissionPolicy",
+            ["actorScope"] = "tenant-scoped"
         };
 
     private static Dictionary<string, object?> Lineage(
@@ -353,7 +184,13 @@ public sealed class SearchKernelService
             ["sourceType"] = sourceType,
             ["sourceId"] = sourceId,
             ["sourceUpdatedAt"] = sourceUpdatedAt.ToString("O"),
-            ["definitionVersion"] = definitionVersion
+            ["definitionVersion"] = definitionVersion,
+            ["sourceVersion"] = definitionVersion,
+            ["factRefs"] = Array.Empty<string>(),
+            ["evidenceRefs"] = Array.Empty<string>(),
+            ["transformRefs"] = new[] { "SearchIndexRecord", "OamObjectEnvelope", "LensReadModel" },
+            ["outboxRefs"] = Array.Empty<string>(),
+            ["readModelVersion"] = "oam.generated-read-model.v1"
         };
 
     private static Dictionary<string, object?> Freshness(DateTimeOffset indexedAt, long indexLagMs, bool stale) =>
@@ -361,7 +198,15 @@ public sealed class SearchKernelService
         {
             ["indexedAt"] = indexedAt.ToString("O"),
             ["indexLagMs"] = indexLagMs,
-            ["stale"] = stale
+            ["stale"] = stale,
+            ["maxStalenessMs"] = 300000,
+            ["checkedAt"] = indexedAt.ToString("O"),
+            ["sourceUpdatedAt"] = indexedAt.AddMilliseconds(-indexLagMs).ToString("O"),
+            ["computedAt"] = indexedAt.ToString("O"),
+            ["lastDisplayedAt"] = indexedAt.ToString("O"),
+            ["computeLagMs"] = indexLagMs,
+            ["staleReason"] = stale ? "source_lag_exceeded" : "fresh",
+            ["freshnessPolicyVersion"] = "oam.search-freshness-policy.v1"
         };
 
     private static Dictionary<string, object?> Ranking(

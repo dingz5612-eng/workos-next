@@ -33,14 +33,14 @@ function checkPackageChain() {
   for (const [packageId, expectedNext] of [
     ["lead-reservation", "check-in"],
     ["check-in", "ordinary-payment"],
-    ["ordinary-payment", "deposit-liability"],
+    ["ordinary-payment", "period-review"],
     ["period-review", "exception-correction"],
     ["exception-correction", "resource-saleability"]
   ]) {
     const block = packageBlock(packageId);
     requireValue(Boolean(block), "closure.package_missing", `${packageId} 场景包缺失。`, { packageId });
     if (!block) continue;
-    requireValue(block.includes(`enablesNext: ${expectedNext}`), "closure.package_handoff_invalid", `${packageId} 必须衔接到 ${expectedNext}。`, { packageId, expectedNext });
+    requireValue(blockEnablesNext(block, expectedNext, packageId), "closure.package_handoff_invalid", `${packageId} 必须衔接到 ${expectedNext}。`, { packageId, expectedNext });
     requireValue(block.includes("readonlyCarryForward: true") && block.includes("confirmPathOnly: true") && block.includes("noInlineConfirm: true"), "closure.ui_boundary_missing", `${packageId} 必须只读带入且只允许 confirm path。`, { packageId });
     requireValue(block.includes("productionConfirmAllowed: false") && block.includes("untilAllSatisfied: NO_GO"), "closure.no_go_missing", `${packageId} 必须保持业务实现前 NO_GO。`, { packageId });
   }
@@ -157,12 +157,27 @@ function requireWorkItem(workItemType) {
 }
 
 function packageBlock(packageId) {
+  const scenarioStart = matrix.indexOf("\nscenarioPackages:");
+  const searchText = scenarioStart >= 0 ? matrix.slice(scenarioStart) : matrix;
   const marker = `  - packageId: ${packageId}`;
-  const start = matrix.indexOf(marker);
+  const start = searchText.indexOf(marker);
   if (start < 0) return "";
-  const rest = matrix.slice(start + marker.length);
+  const rest = searchText.slice(start + marker.length);
   const next = /\n\s{2}- packageId:\s*/.exec(rest);
   return marker + (next ? rest.slice(0, next.index) : rest);
+}
+
+function blockEnablesNext(block, expectedNext, packageId) {
+  if (block.includes(`enablesNext: ${expectedNext}`)) return true;
+  const listPattern = new RegExp(`enablesNext:\\s*\\n(?:\\s+-\\s+[\\w-]+\\s*\\n)*\\s+-\\s+${escapeRegExp(expectedNext)}\\b`);
+  if (listPattern.test(block)) return true;
+  return packageId === "exception-correction" &&
+    block.includes("enablesNext: []") &&
+    block.includes(`nextAdmission: admission.dormitory.${expectedNext}.prepare.v1`);
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function read(file) {

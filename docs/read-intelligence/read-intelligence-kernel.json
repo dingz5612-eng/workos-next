@@ -9,7 +9,11 @@
     "roomNo": {
       "controlType": "text",
       "fallbackAllowed": false,
-      "forbiddenFallbackControls": ["dropdown", "select", "combobox"]
+      "forbiddenFallbackControls": [
+        "dropdown",
+        "select",
+        "combobox"
+      ]
     },
     "labelInferenceAllowed": false,
     "visibleAllowed": true,
@@ -22,14 +26,28 @@
     "lensConsumesGeneratedReadModelsOnly": true,
     "projectionConsumesGeneratedReadModelsOnly": true,
     "searchLensProjectionWriteFactsAllowed": false,
-    "searchResultTargetRequiredFields": ["view", "kind", "targetId", "runtimeOwner", "compatibility", "writeThroughSearchAllowed"],
+    "searchResultTargetRequiredFields": [
+      "view",
+      "kind",
+      "targetId",
+      "runtimeOwner",
+      "compatibility",
+      "writeThroughSearchAllowed"
+    ],
     "permissionFilterOrder": "before_ranking",
     "hiddenResultRanked": false,
     "confirmAllowedRankingBoost": false,
     "metricDashboardReportDatasetRequireSourceFactsLineage": true
   },
   "languageGlossary": {
-    "supports": ["objectKind", "resultType", "metric", "dashboard", "lineage", "readiness"]
+    "supports": [
+      "objectKind",
+      "resultType",
+      "metric",
+      "dashboard",
+      "lineage",
+      "readiness"
+    ]
   },
   "proofRefs": [
     "docs/contracts/generated/dormitory/read-model.generated.json",
@@ -43,5 +61,44 @@
     "docs/contracts/read/lineage-envelope.schema.json",
     "docs/contracts/read/freshness-envelope.schema.json",
     "docs/contracts/read/read-model-owner-registry.json"
-  ]
+  ],
+  "readSourcePolicy": {
+    "allowedInputs": [
+      "generatedReadModel",
+      "SearchIndexRecord",
+      "OamObjectEnvelope",
+      "LensReadModel",
+      "authorizedProjectionReadModel"
+    ],
+    "forbiddenInputs": [
+      "operationsRuntimeFactInput"
+    ],
+    "operationsReadStoreSearchOperations": {
+      "allowedOnlyAs": "upstreamProjectionBuilderSource",
+      "searchKernelDirectQueryAllowed": false
+    },
+    "searchLensProjectionWriteFactsAllowed": false
+  },
+  "envelopeRequirements": {
+    "permission": [
+      "actorScope",
+      "decisionSource"
+    ],
+    "lineage": [
+      "sourceVersion",
+      "factRefs",
+      "evidenceRefs",
+      "transformRefs",
+      "outboxRefs",
+      "readModelVersion"
+    ],
+    "freshness": [
+      "sourceUpdatedAt",
+      "computedAt",
+      "lastDisplayedAt",
+      "computeLagMs",
+      "staleReason",
+      "freshnessPolicyVersion"
+    ]
+  }
 }

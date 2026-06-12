@@ -21,6 +21,16 @@ const readSchemas = [
 if (kernel.version !== "oam.read-intelligence-kernel.v1") fail("read intelligence kernel version mismatch.");
 if (kernel.status !== "authoritative-current-no-go") fail("read intelligence kernel must remain current NO_GO.");
 if (kernel.writeFactsAllowed !== false) fail("read intelligence must not write facts.");
+for (const input of ["generatedReadModel", "SearchIndexRecord", "OamObjectEnvelope", "LensReadModel", "authorizedProjectionReadModel"]) {
+  if (!(kernel.readSourcePolicy?.allowedInputs ?? []).includes(input)) fail(`readSourcePolicy.allowedInputs missing ${input}.`);
+}
+if (!(kernel.readSourcePolicy?.forbiddenInputs ?? []).includes("operationsRuntimeFactInput")) {
+  fail("readSourcePolicy must forbid operationsRuntimeFactInput as Search direct input.");
+}
+if (kernel.readSourcePolicy?.operationsReadStoreSearchOperations?.allowedOnlyAs !== "upstreamProjectionBuilderSource" ||
+  kernel.readSourcePolicy?.operationsReadStoreSearchOperations?.searchKernelDirectQueryAllowed !== false) {
+  fail("OperationsReadStore.SearchOperations must be allowed only as upstream projection builder source.");
+}
 
 if (kernel.surfaceProof?.onlyConsumesGeneratedSurfaceModel !== true) fail("surface proof must consume only generated surface model.");
 const roomNoControls = (surface.controls ?? []).filter((control) => control.fieldId === "roomNo");
@@ -97,20 +107,22 @@ for (const field of ["visibility", "redaction", "dataClassification", "requiredP
   if (!permissionRequired.includes(field)) fail(`permission envelope missing ${field}.`);
 }
 const lineageRequired = readSchemas.find((schema) => schema.$id === "workosnext.read.lineage-envelope.schema.v1")?.required ?? [];
-for (const field of ["sourceSystem", "sourceType", "sourceId", "sourceUpdatedAt", "definitionVersion", "sourceNodeRefs"]) {
+for (const field of ["sourceSystem", "sourceType", "sourceId", "sourceUpdatedAt", "definitionVersion", "sourceNodeRefs", "sourceVersion", "factRefs", "evidenceRefs", "transformRefs", "outboxRefs", "readModelVersion"]) {
   if (!lineageRequired.includes(field)) fail(`lineage envelope missing ${field}.`);
 }
 const freshnessRequired = readSchemas.find((schema) => schema.$id === "workosnext.read.freshness-envelope.schema.v1")?.required ?? [];
-for (const field of ["indexedAt", "indexLagMs", "stale", "maxStalenessMs", "checkedAt"]) {
+for (const field of ["indexedAt", "indexLagMs", "stale", "maxStalenessMs", "checkedAt", "sourceUpdatedAt", "computedAt", "lastDisplayedAt", "computeLagMs", "staleReason", "freshnessPolicyVersion"]) {
   if (!freshnessRequired.includes(field)) fail(`freshness envelope missing ${field}.`);
 }
 
 if (failures.length > 0) {
+  writeOamObjectEnvelopeProof("failed");
   console.error("Read Intelligence kernel check: FAIL");
   for (const failure of failures) console.error(`- ${failure}`);
   process.exit(1);
 }
 
+writeOamObjectEnvelopeProof("passed");
 console.log("Read Intelligence kernel check: PASS");
 
 function readJson(file) {
@@ -124,4 +136,37 @@ function readJson(file) {
 
 function fail(message) {
   failures.push(message);
+}
+
+function writeOamObjectEnvelopeProof(status) {
+  const proofPath = path.join(root, "artifacts/oam/proofs/read-intelligence/oam-object-envelope-proof.json");
+  fs.mkdirSync(path.dirname(proofPath), { recursive: true });
+  fs.writeFileSync(proofPath, `${JSON.stringify({
+    schemaVersion: "workosnext.read-intelligence-proof.v1",
+    proofId: "oam-object-envelope-proof",
+    status,
+    checkedAtUtc: new Date().toISOString(),
+    proves: [
+      "Read Intelligence only consumes generated read models and authorized read envelopes.",
+      "OamObjectEnvelope, SearchIndexRecord, SearchResultEnvelope, and LensReadModel carry permission, lineage, and freshness requirements.",
+      "Read Intelligence, Search, Lens, Dashboard, Report, and Metric surfaces are readonly and cannot write business facts.",
+      "operationsRuntimeFactInput is forbidden as direct Search input."
+    ],
+    allowedInputs: kernel.readSourcePolicy?.allowedInputs ?? [],
+    forbiddenInputs: kernel.readSourcePolicy?.forbiddenInputs ?? [],
+    envelopeSchemas: readSchemas.map((schema) => ({
+      id: schema.$id,
+      required: schema.required ?? []
+    })),
+    readModelCollectionsChecked: ["metrics", "dashboards", "reportDatasets"],
+    sourceRefs: [
+      "docs/read-intelligence/read-intelligence-kernel.json",
+      "docs/contracts/read/oam-object-envelope.schema.json",
+      "docs/contracts/read/permission-envelope.schema.json",
+      "docs/contracts/read/lineage-envelope.schema.json",
+      "docs/contracts/read/freshness-envelope.schema.json",
+      "docs/contracts/generated/dormitory/read-model.generated.json"
+    ],
+    failures
+  }, null, 2)}\n`);
 }

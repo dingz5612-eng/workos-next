@@ -153,6 +153,7 @@ function listCurrentFiles() {
     .filter((item) => !item.startsWith("artifacts/oam/authority-cleanup/"))
     .filter((item) => !item.startsWith("artifacts/oam/checks/"))
     .filter((item) => !item.startsWith("artifacts/oam/evidence/"))
+    .filter((item) => !item.startsWith("artifacts/oam/proofs/"))
     .filter((item) => !item.startsWith("artifacts/oam/test-results/"))
     .filter((item) => item !== "artifacts/oam/final-report.json")
     .sort((left, right) => left.localeCompare(right));

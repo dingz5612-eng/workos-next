@@ -1,8 +1,11 @@
 {
   "version": "oam.bi-kpi-contract.v1",
   "status": "authoritative-current-contract",
+  "modelKind": "MetricOperatingModel",
   "requiredFields": [
     "metricId",
+    "nameZh",
+    "metricOwner",
     "numerator",
     "denominator",
     "sourceFacts",
@@ -15,6 +18,19 @@
   ],
   "readOnly": true,
   "businessFactWriteAllowed": false,
+  "financeFactWriteAllowed": false,
+  "ledgerEntryWriteAllowed": false,
+  "operatingModelRefs": [
+    "docs/contracts/bi-kpi/metric-definition-registry.json",
+    "docs/contracts/bi-kpi/metric-dimension-registry.json",
+    "docs/contracts/bi-kpi/sla-clock-registry.json",
+    "docs/contracts/bi-kpi/dashboard-widget-contract.json",
+    "docs/contracts/bi-kpi/report-dataset-contract.json",
+    "docs/contracts/bi-kpi/object-kind-metric-map.json",
+    "docs/contracts/bi-kpi/metric-lineage.schema.json",
+    "docs/contracts/bi-kpi/metric-permission-policy.json",
+    "docs/contracts/bi-kpi/metric-freshness-policy.json"
+  ],
   "contractRefs": [
     "docs/contracts/bi-kpi/metric-registry.contract.json",
     "docs/contracts/bi-kpi/dimension-contract.json",
@@ -28,8 +44,13 @@
   "invariants": [
     "Dashboard, report, management cockpit, and KPI pages are read-only.",
     "KPI definitions must state lineage and maturityScope.",
-    "KPI display cannot confirm or mutate business facts."
+    "MetricDefinition, DashboardWidget, and ReportDataset must carry sourceFacts, permission, lineage, and freshness.",
+    "KPI display cannot confirm or mutate business facts.",
+    "Metric, DashboardWidget, and ReportDataset cannot infer business facts from UI state, labels, display text, or dashboard summary.",
+    "Metric cannot write Room, Bed, Payment, AmountBasis, FinancialFact, LedgerTransaction, or LedgerEntry."
   ],
+  "forbiddenInference": ["ui.state", "label", "displayText", "dashboard.summary"],
+  "forbiddenWrites": ["Room", "Bed", "Payment", "AmountBasis", "FinancialFact", "LedgerTransaction", "LedgerEntry"],
   "evidence": [
     "docs/contracts/period-analytics-contract.json",
     "scripts/guard-architecture.ps1"

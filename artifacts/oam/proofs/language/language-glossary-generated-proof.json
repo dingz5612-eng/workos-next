@@ -1,0 +1,47 @@
+{
+  "version": "oam.language-glossary-generated-proof.v1",
+  "checkedAtUtc": "2026-06-12T09:09:18.124Z",
+  "status": "passed",
+  "proves": [
+    "Language Kernel covers objectKind, resultType, metric, dashboard, lineage, readiness, tokenizer, search intent, permission reason, admission reason, evidence reason, finance truth reason, and noGo reason.",
+    "Canonical keys are covered by zh-CN, ru-RU, and ky-KG copy.",
+    "Tokenizer and search intent dictionaries cannot infer or create business facts.",
+    "Old snake_case keys are aliases and are not source of truth.",
+    "Ordinary user copy does not expose internal runtime, definition, payload, command, or owner terms."
+  ],
+  "informationAreas": [
+    "objectKind",
+    "resultType",
+    "metric",
+    "dashboard",
+    "lineage",
+    "readiness",
+    "tokenizer",
+    "searchIntent",
+    "permissionReason",
+    "admissionReason",
+    "evidenceReason",
+    "financeTruthReason",
+    "noGoReason"
+  ],
+  "canonicalKeys": [
+    "resultType.workItemList",
+    "resultType.metricValue",
+    "resultType.reportDataset",
+    "metric.dormitory.resourceReadiness.name",
+    "metric.finance.receivedAmount.name",
+    "metric.governance.blockerAging.name",
+    "dashboard.widget.resourceReadiness.title",
+    "dashboard.widget.financeReceived.title",
+    "lineage.sourceFacts.title",
+    "lineage.freshness.title",
+    "readiness.noGo.title",
+    "searchIntent.findRoom.label",
+    "searchIntent.openWorkItem.label",
+    "admission.reason.financeReviewRequired",
+    "evidence.reason.proofOnly",
+    "financeTruth.reason.amountBasisReviewedRequired",
+    "noGo.reason.ciGreenNotGo"
+  ],
+  "violations": []
+}

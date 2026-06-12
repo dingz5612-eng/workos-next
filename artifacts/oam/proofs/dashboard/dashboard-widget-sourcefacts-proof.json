@@ -1,0 +1,15 @@
+{
+  "version": "oam.dashboard-widget-sourcefacts-proof.v1",
+  "status": "passed",
+  "checkedAtUtc": "2026-06-12T09:09:19.466Z",
+  "proves": [
+    "Every DashboardWidget has sourceFacts, permission, lineage, freshness, and readonly_or_navigate_only action policy.",
+    "DashboardWidget cannot write business facts or finance facts."
+  ],
+  "widgetIds": [
+    "dashboard.dormitory.resourceReadiness.card.v1",
+    "dashboard.finance.receivedAmount.card.v1",
+    "dashboard.governance.blockerAging.card.v1"
+  ],
+  "violations": []
+}

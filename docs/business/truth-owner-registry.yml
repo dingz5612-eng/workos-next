@@ -8,7 +8,7 @@
       "owner": "SharedGovernancePack",
       "truthLevel": "centerTruth",
       "allowedCommitters": ["SharedGovernancePack"],
-      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack", "BusinessDomainPack", "Search", "Surface", "Dashboard", "Report", "Metric"],
       "receiptProjection": "referenceOnly",
       "provisionalRefPolicy": "allowedForDraftOnly"
     },
@@ -17,7 +17,7 @@
       "owner": "SharedGovernancePack",
       "truthLevel": "centerTruth",
       "allowedCommitters": ["SharedGovernancePack"],
-      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack", "BusinessDomainPack", "FinanceTruthPack", "Search", "Surface", "Dashboard", "Report", "Metric"],
       "receiptProjection": "referenceOnly",
       "provisionalRefPolicy": "allowedForDraftOnly"
     },
@@ -26,7 +26,7 @@
       "owner": "SharedGovernancePack",
       "truthLevel": "centerTruth",
       "allowedCommitters": ["SharedGovernancePack"],
-      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack", "BusinessDomainPack", "FinanceTruthPack", "Search", "Surface", "Dashboard", "Report", "Metric"],
       "receiptProjection": "referenceOnly",
       "provisionalRefPolicy": "allowedForDraftOnly"
     },
@@ -89,7 +89,7 @@
       "owner": "FinanceTruthPack",
       "truthLevel": "centerTruth",
       "allowedCommitters": ["FinanceTruthPack"],
-      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack", "BusinessDomainPack", "Search", "Surface", "Dashboard", "Report", "Metric"],
       "receiptProjection": "referenceOnly",
       "provisionalRefPolicy": "notAllowedForLedgerCommit"
     },
@@ -98,7 +98,7 @@
       "owner": "MoneyKernelPack",
       "truthLevel": "centerTruth",
       "allowedCommitters": ["MoneyKernelPack"],
-      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack", "BusinessDomainPack", "FinanceTruthPack", "Search", "Surface", "Dashboard", "Report", "Metric"],
       "receiptProjection": "referenceOnly",
       "provisionalRefPolicy": "notAllowedForLedgerCommit"
     },
@@ -107,7 +107,7 @@
       "owner": "MoneyKernelPack",
       "truthLevel": "centerTruth",
       "allowedCommitters": ["MoneyKernelPack"],
-      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack", "BusinessDomainPack", "FinanceTruthPack", "Search", "Surface", "Dashboard", "Report", "Metric"],
       "receiptProjection": "referenceOnly",
       "provisionalRefPolicy": "notAllowedForLedgerCommit"
     },
@@ -125,7 +125,7 @@
       "owner": "BusinessDomainPack",
       "truthLevel": "proposal",
       "allowedCommitters": ["DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack", "HRDomainPack"],
-      "forbiddenOwners": ["management-cockpit", "receipt-projection", "search", "dashboard"],
+      "forbiddenOwners": ["management-cockpit", "receipt-projection", "search", "dashboard", "Search", "Surface", "Dashboard", "Report", "Metric", "FinanceTruthPack", "MoneyKernelPack"],
       "receiptProjection": "referenceOnly",
       "provisionalRefPolicy": "allowedForDraftOnly"
     },
@@ -134,7 +134,7 @@
       "owner": "FinanceTruthPack",
       "truthLevel": "workflowTruth",
       "allowedCommitters": ["FinanceTruthPack"],
-      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "search", "dashboard"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "search", "dashboard", "BusinessDomainPack", "DormitoryDomainPack", "Search", "Surface", "Dashboard", "Report", "Metric"],
       "receiptProjection": "referenceOnly",
       "provisionalRefPolicy": "allowedForDraftOnly"
     },
@@ -142,8 +142,8 @@
       "factId": "AmountBasis",
       "owner": "FinanceTruthPack",
       "truthLevel": "workflowTruth",
-      "allowedCommitters": ["FinanceTruthPack", "MoneyKernelPack"],
-      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection"],
+      "allowedCommitters": ["FinanceTruthPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "BusinessDomainPack", "DormitoryDomainPack", "Search", "Surface", "Dashboard", "Report", "Metric"],
       "receiptProjection": "referenceOnly",
       "provisionalRefPolicy": "allowedForDraftOnly"
     },

@@ -20,12 +20,15 @@
     },
     {
       "sourceId": "operationsDomainEvents",
-      "ref": "Operations Runtime confirmed domain events through OperationsReadStore.SearchOperations",
+      "ref": "OperationsReadStore.SearchOperations upstream projection builder source",
       "objectTypes": [
         "workItem",
         "operationCase"
       ],
-      "admissionRequired": true
+      "admissionRequired": true,
+      "sourceRole": "upstreamProjectionBuilderSource",
+      "searchKernelDirectInputAllowed": false,
+      "outputContract": "SearchIndexRecord"
     },
     {
       "sourceId": "workspaceCardProjection",
@@ -83,5 +86,15 @@
       ],
       "admissionRequired": true
     }
+  ],
+  "allowedSearchKernelInputs": [
+    "SearchIndexRecord",
+    "OamObjectEnvelope",
+    "LensReadModel",
+    "generatedReadModel",
+    "authorizedProjectionReadModel"
+  ],
+  "forbiddenSearchKernelInputs": [
+    "operationsRuntimeFactInput"
   ]
 }

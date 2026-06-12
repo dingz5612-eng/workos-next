@@ -1,0 +1,39 @@
+{
+  "version": "oam.language.search-intent-dictionary.v1",
+  "status": "authoritative-information-language-kernel",
+  "languages": ["zh-CN", "ru-RU", "ky-KG"],
+  "truthInferenceAllowed": false,
+  "canCreateBusinessFact": false,
+  "intents": [
+    {
+      "intentId": "searchIntent.findRoom",
+      "canonicalKey": "searchIntent.findRoom.label",
+      "allowedAction": "readonly_search",
+      "phrases": {
+        "zh-CN": ["查找房间", "找房号", "搜索宿舍房间"],
+        "ru-RU": ["найти комнату", "искать номер"],
+        "ky-KG": ["бөлмө табуу", "бөлмө издөө"]
+      }
+    },
+    {
+      "intentId": "searchIntent.openWorkItem",
+      "canonicalKey": "searchIntent.openWorkItem.label",
+      "allowedAction": "navigate_only",
+      "phrases": {
+        "zh-CN": ["打开办理项", "继续办理", "查看待办"],
+        "ru-RU": ["открыть задачу", "продолжить задачу"],
+        "ky-KG": ["иш тапшырмасын ачуу", "тапшырманы улантуу"]
+      }
+    },
+    {
+      "intentId": "searchIntent.financeReadonly",
+      "canonicalKey": "dashboard.widget.financeReceived.title",
+      "allowedAction": "readonly_search",
+      "phrases": {
+        "zh-CN": ["查看收款", "收款读数", "财务只读"],
+        "ru-RU": ["показатель оплат", "финансовое чтение"],
+        "ky-KG": ["төлөм көрсөткүчү", "финансы окуу"]
+      }
+    }
+  ]
+}

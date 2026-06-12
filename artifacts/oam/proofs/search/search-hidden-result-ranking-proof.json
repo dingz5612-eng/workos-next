@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "workosnext.search-proof.v1",
+  "status": "passed",
+  "checkedAtUtc": "2026-06-12T09:09:20.301Z",
+  "failures": [],
+  "gates": [
+    "node scripts/check-search-kernel.mjs"
+  ],
+  "proofId": "search-hidden-result-ranking-proof",
+  "proves": [
+    "Hidden results are not ranked.",
+    "ConfirmAllowed is not a ranking boost."
+  ],
+  "requiredRules": [
+    "hidden-results-not-ranked",
+    "search-result-required-trust-fields"
+  ],
+  "rankingPolicyRef": "docs/contracts/search/search-ranking-policy.json",
+  "permissionPolicyRef": "docs/contracts/search/search-permission-policy.json"
+}

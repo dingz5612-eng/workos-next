@@ -12,9 +12,9 @@
     },
     {
       "adapterId": "operationsRuntimeFactInput",
-      "status": "active",
-      "allowed": "May read tenant-scoped Operations Runtime work items, operation cases, and confirmed domain events through OperationsReadStore.SearchOperations to build read-only SearchResult targets.",
-      "forbidden": "Must not execute writes, infer authority from display anchors, expose ordinary users to raw runtime ids when a business anchor exists, or replace Operations Runtime as fact owner."
+      "status": "forbidden-direct-search-input",
+      "allowed": "只能作为上游 projection builder 的来源说明，不得作为 SearchKernelService 直接查询输入。",
+      "forbidden": "Search Kernel 不得直接读取 OperationsReadStore.SearchOperations 或 runtime fact；必须消费 SearchIndexRecord、OamObjectEnvelope、LensReadModel 或 generated read model。"
     }
   ],
   "analyticsPolicy": {
@@ -121,9 +121,9 @@
     {
       "name": "OperationsReadStore.SearchOperations",
       "path": "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs",
-      "status": "operations-read-source",
-      "allowed": "May provide tenant-scoped Operations domain events to SearchKernelService so a submitted step can route to the next actionable WorkItem in the same case.",
-      "forbidden": "Must not write facts, bypass Admission Kernel, or treat person name, phone, room display text, or bed display text as authoritative ids."
+      "status": "upstream-projection-builder-source",
+      "allowed": "May feed tenant-scoped confirmed operation events into an authorized projection builder that emits SearchIndexRecord.",
+      "forbidden": "Must not be queried directly by SearchKernelService and must not replace SearchIndexRecord, OamObjectEnvelope, LensReadModel, or generated read model inputs."
     }
   ],
   "invariants": [
@@ -137,7 +137,25 @@
     "Search uses Language Kernel synonyms and domain terms.",
     "Contains-only matching is allowed only inside registered projection adapters.",
     "Search visibility is not confirm permission.",
-    "Search Kernel must include Operations Runtime confirmed events and next actionable WorkItems when business anchor terms match.",
-    "Business anchors such as names, phones, room labels, and bed labels are display/search-only and must not become fact owners."
-  ]
+    "Business anchors such as names, phones, room labels, and bed labels are display/search-only and must not become fact owners.",
+    "SearchKernelService must not directly query OperationsReadStore.SearchOperations.",
+    "OperationsReadStore.SearchOperations may only feed an upstream projection builder.",
+    "Search / Lens / Projection consume generated read models and read envelopes only."
+  ],
+  "readModelOnlyPolicy": {
+    "allowedInputs": [
+      "generatedReadModel",
+      "SearchIndexRecord",
+      "OamObjectEnvelope",
+      "LensReadModel",
+      "authorizedProjectionReadModel"
+    ],
+    "forbiddenDirectInputs": [
+      "operationsRuntimeFactInput"
+    ],
+    "operationsReadStoreSearchOperations": {
+      "allowedOnlyAs": "upstreamProjectionBuilderSource",
+      "searchKernelDirectQueryAllowed": false
+    }
+  }
 }

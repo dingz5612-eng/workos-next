@@ -83,9 +83,12 @@ function Invoke-Gate {
 }
 
 Invoke-Gate node scripts/oam/check-current-oam.mjs
+Invoke-Gate node scripts/oam/check-current-architecture-manifest.mjs
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs --self-test
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs
 Invoke-Gate node scripts/oam/check-current-authority-index.mjs
+Invoke-Gate node scripts/authority/check-master-design-schema.mjs
+Invoke-Gate node scripts/authority/check-truth-ownership-matrix.mjs
 Invoke-Gate node scripts/oam/generate-authority-source-layer-audit.mjs
 Invoke-Gate node scripts/oam/check-authority-source-layer-audit.mjs
 Invoke-Gate node scripts/oam/check-authority-cleanup-mutation-tests.mjs
@@ -132,6 +135,7 @@ Invoke-Gate node scripts/check-account-actor-kernel.mjs
 Invoke-Gate node scripts/check-language-kernel.mjs
 Invoke-Gate node scripts/oam/check-surface-language-v2.mjs
 Invoke-Gate node scripts/oam/check-read-intelligence-kernel.mjs
+Invoke-Gate node scripts/oam/check-bi-kpi-metric-operating-model.mjs
 Invoke-Gate node scripts/check-search-kernel.mjs --self-test
 Invoke-Gate node scripts/check-search-kernel.mjs
 Invoke-Gate node scripts/check-surface-contract.mjs
@@ -185,3 +189,4 @@ Invoke-Gate node scripts/oam/check-mobile-coverage-policy.mjs
 Invoke-Gate node scripts/oam/check-mobile-critical-branch-scenarios.mjs
 Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs -RecordResult $false
 Invoke-Gate node scripts/oam/check-current-evidence-root.mjs -RecordResult $false
+Invoke-Gate node scripts/oam/check-current-oam-release-attestation.mjs -RecordResult $false

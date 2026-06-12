@@ -12,21 +12,35 @@ const expectedWorkflow = env("GITHUB_WORKFLOW") || "CI";
 const expectedArtifactName = artifactNameForRun(ciRunId);
 const currentRepositoryHead = env("GITHUB_SHA") || git("rev-parse HEAD") || "local";
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
+const releaseAttestationPath = "artifacts/oam/evidence/current-oam-release-attestation.json";
+const pendingExternalAttestation = "pending_external_attestation";
 const sha256DigestPattern = /^sha256:[a-f0-9]{64}$/;
 const bareSha256Pattern = /^[a-f0-9]{64}$/;
 const allowedNodeStatuses = new Set(["passed", "blocked", "failed", "missing_or_failed", "bound", "required", "missing"]);
 const requiredFiles = [
   "artifacts/oam/evidence/evidence-graph.json",
   releaseEvidenceObjectPath,
+  releaseAttestationPath,
   "artifacts/oam/evidence/execution-log.jsonl",
   "artifacts/oam/evidence/current-oam-final-report.json",
   "artifacts/oam/evidence/runtime-proof.json",
   "artifacts/oam/evidence/truth-ownership-proof.json",
   "artifacts/oam/evidence/search-readonly-proof.json",
+  "artifacts/oam/proofs/search/search-derived-readmodel-only-proof.json",
+  "artifacts/oam/proofs/search/search-no-kernel-direct-read-proof.json",
+  "artifacts/oam/proofs/search/search-permission-filter-proof.json",
+  "artifacts/oam/proofs/search/search-hidden-result-ranking-proof.json",
+  "artifacts/oam/proofs/search/search-sensitive-redaction-proof.json",
+  "artifacts/oam/proofs/search/search-lineage-freshness-proof.json",
+  "artifacts/oam/proofs/read-intelligence/oam-object-envelope-proof.json",
   "artifacts/oam/evidence/surface-language-proof.json",
   "artifacts/oam/evidence/high-risk-trust-proof.json",
   "artifacts/oam/evidence/master-design-proof.json",
   "artifacts/oam/evidence/master-outline-proof.json",
+  "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+  "artifacts/oam/proofs/dashboard/dashboard-widget-sourcefacts-proof.json",
+  "artifacts/oam/proofs/report/report-dataset-permission-lineage-freshness-proof.json",
+  "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
   "docs/oam/current-oam-kernel-responsibility-map.json",
   "docs/oam/current-oam-cross-domain-conflict-rules.json",
   "docs/oam/professional-ai-review-seats.json",
@@ -81,6 +95,7 @@ if (documents.size === requiredFiles.length) {
   const graph = documents.get("artifacts/oam/evidence/evidence-graph.json");
   const finalReport = documents.get("artifacts/oam/final-report.json");
   const releaseObject = documents.get(releaseEvidenceObjectPath);
+  const releaseAttestation = documents.get(releaseAttestationPath);
   const responsibilityMap = documents.get("docs/oam/current-oam-kernel-responsibility-map.json");
   const expectedDigest = graph?.binding?.artifactDigest;
   const actualDigest = digestFor(documents);
@@ -108,6 +123,7 @@ if (documents.size === requiredFiles.length) {
 
   checkArtifactName("final report", finalReport.artifactName);
   checkReleaseEvidenceObject(releaseObject, graph, finalReport, documents);
+  checkReleaseAttestation(releaseAttestation, releaseObject, graph);
   checkEvidenceBindingConsistency(graph, releaseObject, finalReport, expectedDigest);
   checkEvidenceGraphNodes(graph, finalReport);
 
@@ -212,7 +228,10 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
     "generatedAtUtc",
     "artifactName",
     "artifactDigest",
-    "githubArtifactDigest",
+    "githubArtifactDigestStatus",
+    "githubArtifactMetadataDigest",
+    "zipArtifactDigest",
+    "releaseAuthority",
     "evidenceRootDigest",
     "generatedContractsHash",
     "kernelGraphHash",
@@ -256,11 +275,31 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
   if (releaseObject.artifactDigest !== graph?.binding?.artifactDigest) {
     failures.push("release evidence object artifactDigest must match evidence graph artifactDigest.");
   }
-  if (releaseObject.githubArtifactDigest !== graph?.binding?.artifactDigest) {
-    failures.push("release evidence object githubArtifactDigest must match evidence graph artifactDigest.");
+  if (releaseObject.githubArtifactDigest === releaseObject.artifactDigest) {
+    failures.push("release evidence object githubArtifactDigest must not equal internal artifactDigest.");
   }
-  if (releaseObject.githubArtifactDigest === releaseObject.evidenceRootDigest) {
-    failures.push("release evidence object must distinguish githubArtifactDigest from evidenceRootDigest.");
+  if (releaseObject.githubArtifactMetadataDigest === releaseObject.artifactDigest) {
+    failures.push("release evidence object githubArtifactMetadataDigest must not equal internal artifactDigest.");
+  }
+  if (releaseObject.githubArtifactMetadataDigest === releaseObject.evidenceRootDigest) {
+    failures.push("release evidence object must distinguish githubArtifactMetadataDigest from evidenceRootDigest.");
+  }
+  if (releaseObject.githubArtifactDigestStatus === pendingExternalAttestation) {
+    if (releaseObject.githubArtifactMetadataDigest !== pendingExternalAttestation) {
+      failures.push("pending external attestation must use pending_external_attestation githubArtifactMetadataDigest.");
+    }
+    if (releaseObject.releaseAuthority !== false) {
+      failures.push("pending external attestation must force releaseAuthority=false.");
+    }
+    if (releaseObject.finalGoNoGo !== "NO_GO") {
+      failures.push("pending external attestation must force finalGoNoGo=NO_GO.");
+    }
+  } else if (releaseObject.githubArtifactDigestStatus === "attested") {
+    if (!sha256DigestPattern.test(String(releaseObject.githubArtifactMetadataDigest ?? ""))) {
+      failures.push("attested githubArtifactMetadataDigest must be sha256.");
+    }
+  } else {
+    failures.push(`release evidence object githubArtifactDigestStatus invalid: ${releaseObject.githubArtifactDigestStatus || "missing"}`);
   }
   if (releaseObject.finalGoNoGo !== "NO_GO") {
     failures.push("release evidence object finalGoNoGo must remain NO_GO.");
@@ -304,6 +343,52 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
   }
 }
 
+function checkReleaseAttestation(attestation, releaseObject, graph) {
+  if (!attestation || typeof attestation !== "object") {
+    failures.push("release attestation is missing or invalid.");
+    return;
+  }
+  checkArtifactName("release attestation", attestation.artifactName);
+  for (const field of [
+    "artifactDigest",
+    "evidenceRootDigest",
+    "githubArtifactMetadataDigest",
+    "githubArtifactDigestStatus",
+    "zipArtifactDigest",
+    "releaseAuthority",
+    "finalGoNoGo",
+    "nextStageAllowed"
+  ]) {
+    if (attestation[field] === undefined || attestation[field] === null || attestation[field] === "") {
+      failures.push(`release attestation missing ${field}.`);
+    }
+  }
+  if (attestation.artifactDigest !== graph?.binding?.artifactDigest || attestation.artifactDigest !== releaseObject?.artifactDigest) {
+    failures.push("release attestation artifactDigest must match internal evidence package digest.");
+  }
+  if (attestation.evidenceRootDigest !== releaseObject?.evidenceRootDigest) {
+    failures.push("release attestation evidenceRootDigest must match release evidence object.");
+  }
+  if (attestation.githubArtifactMetadataDigest !== releaseObject?.githubArtifactMetadataDigest) {
+    failures.push("release attestation githubArtifactMetadataDigest must match release evidence object.");
+  }
+  if (attestation.githubArtifactDigestStatus !== releaseObject?.githubArtifactDigestStatus) {
+    failures.push("release attestation githubArtifactDigestStatus must match release evidence object.");
+  }
+  if (attestation.zipArtifactDigest !== releaseObject?.zipArtifactDigest) {
+    failures.push("release attestation zipArtifactDigest must match release evidence object.");
+  }
+  if (attestation.githubArtifactMetadataDigest === attestation.artifactDigest) {
+    failures.push("release attestation githubArtifactMetadataDigest must not equal internal artifactDigest.");
+  }
+  if (attestation.githubArtifactDigestStatus === pendingExternalAttestation && attestation.releaseAuthority !== false) {
+    failures.push("pending release attestation must force releaseAuthority=false.");
+  }
+  if (attestation.finalGoNoGo !== "NO_GO" || attestation.nextStageAllowed !== false) {
+    failures.push("release attestation must keep current stage NO_GO and nextStageAllowed=false.");
+  }
+}
+
 function checkEvidenceBindingConsistency(graph, releaseObject, finalReport, expectedDigest) {
   const graphBinding = graph?.binding ?? {};
   const finalBinding = finalReport?.binding ?? {};
@@ -339,8 +424,7 @@ function checkEvidenceBindingConsistency(graph, releaseObject, finalReport, expe
   for (const [label, digest] of [
     ["evidence graph artifactDigest", graphBinding.artifactDigest ?? graph.artifactDigest],
     ["final report artifactDigest", finalBinding.artifactDigest ?? finalReport.artifactDigest],
-    ["release evidence artifactDigest", releaseObject?.artifactDigest ?? releaseBinding.artifactDigest],
-    ["release evidence githubArtifactDigest", releaseObject?.githubArtifactDigest]
+    ["release evidence artifactDigest", releaseObject?.artifactDigest ?? releaseBinding.artifactDigest]
   ]) {
     if (digest !== expectedDigest) {
       failures.push(`${label} must match current artifact digest ${expectedDigest}, actual: ${digest || "missing"}`);
@@ -533,7 +617,10 @@ function checkBinding(file, document, expectedDigest) {
     "generatedAt",
     "generatedAtUtc",
     "artifactDigest",
-    "githubArtifactDigest",
+    "githubArtifactDigestStatus",
+    "githubArtifactMetadataDigest",
+    "zipArtifactDigest",
+    "releaseAuthority",
     "evidenceRootDigest",
     "generatedContractsHash",
     "kernelGraphHash",
@@ -578,8 +665,11 @@ function checkBinding(file, document, expectedDigest) {
   if (binding.artifactName !== expectedArtifactName) {
     failures.push(`${file} binding artifactName must be ${expectedArtifactName}.`);
   }
-  if (binding.githubArtifactDigest !== binding.artifactDigest) {
-    failures.push(`${file} binding githubArtifactDigest must match artifactDigest.`);
+  if (binding.githubArtifactMetadataDigest === binding.artifactDigest || binding.githubArtifactDigest === binding.artifactDigest) {
+    failures.push(`${file} binding external artifact digest must not match internal artifactDigest.`);
+  }
+  if (binding.githubArtifactDigestStatus === pendingExternalAttestation && binding.releaseAuthority !== false) {
+    failures.push(`${file} pending external attestation must force releaseAuthority=false.`);
   }
   if (binding.artifactDigest !== expectedDigest) {
     failures.push(`${file} binding digest does not match evidence graph.`);
@@ -630,6 +720,8 @@ function isDigestOrHashKey(key) {
   return [
     "artifactDigest",
     "githubArtifactDigest",
+    "githubArtifactMetadataDigest",
+    "zipArtifactDigest",
     "evidenceRootDigest",
     "generatedContractsHash",
     "kernelGraphHash",

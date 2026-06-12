@@ -1,0 +1,41 @@
+{
+  "version": "oam.metric-operating-model.sla-clock-registry.v1",
+  "status": "authoritative-readonly",
+  "readOnly": true,
+  "businessFactWriteAllowed": false,
+  "slaClocks": [
+    {
+      "clockId": "sla.dormitory.resourceReadiness.v1",
+      "nameZh": "宿舍资源就绪 SLA",
+      "startsAtSource": "WorkItemFact.createdAt",
+      "stopsAtSource": "WorkItemFact.confirmedAt",
+      "timezone": "tenant",
+      "sourceFacts": ["WorkItemFact", "Room", "Bed"],
+      "lineagePolicyRef": "metric-lineage.generated-read-model.v1",
+      "freshnessPolicyRef": "metric-freshness.daily-read-model.v1",
+      "writeFactsAllowed": false
+    },
+    {
+      "clockId": "sla.finance.ledgerPosting.v1",
+      "nameZh": "财务入账 SLA",
+      "startsAtSource": "FinancialFact.committedAt",
+      "stopsAtSource": "LedgerEntry.postedAt",
+      "timezone": "tenant",
+      "sourceFacts": ["FinancialFact", "LedgerTransaction", "LedgerEntry"],
+      "lineagePolicyRef": "metric-lineage.finance-kernel.v1",
+      "freshnessPolicyRef": "metric-freshness.ledger-read-model.v1",
+      "writeFactsAllowed": false
+    },
+    {
+      "clockId": "sla.governance.blockerAging.v1",
+      "nameZh": "治理阻塞滞留 SLA",
+      "startsAtSource": "ExceptionCase.openedAt",
+      "stopsAtSource": "ExceptionCase.resolvedAt",
+      "timezone": "tenant",
+      "sourceFacts": ["ExceptionCase", "WorkItemFact"],
+      "lineagePolicyRef": "metric-lineage.operations-runtime.v1",
+      "freshnessPolicyRef": "metric-freshness.hourly-read-model.v1",
+      "writeFactsAllowed": false
+    }
+  ]
+}

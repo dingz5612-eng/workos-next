@@ -1,0 +1,10 @@
+{
+  "scenarioId": "oam-finance-negative-metric-infers-amount-basis",
+  "sourcePack": "Metric",
+  "inputFact": "MetricDefinition",
+  "basisType": "metric_summary",
+  "targetFact": "AmountBasis",
+  "amount": 100,
+  "currency": "KGS",
+  "expectedViolation": "finance_truth.readside_amount_basis_inference"
+}

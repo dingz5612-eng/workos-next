@@ -1,0 +1,67 @@
+{
+  "version": "oam.metric-operating-model.dashboard-widget-contract.v1",
+  "status": "authoritative-readonly",
+  "readOnly": true,
+  "businessFactWriteAllowed": false,
+  "dashboardWidgets": [
+    {
+      "widgetId": "dashboard.dormitory.resourceReadiness.card.v1",
+      "consumesMetricIds": ["dormitory.resourceReadiness"],
+      "sourceFacts": ["Room", "Bed", "WorkItemFact"],
+      "permission": {
+        "policyRef": "metric-permission.operations-readonly.v1",
+        "readOnly": true
+      },
+      "lineage": {
+        "policyRef": "metric-lineage.generated-read-model.v1",
+        "sourceFacts": ["Room", "Bed", "WorkItemFact"]
+      },
+      "freshness": {
+        "policyRef": "metric-freshness.daily-read-model.v1",
+        "maxStalenessMs": 86400000
+      },
+      "actionPolicy": "readonly_or_navigate_only",
+      "noBusinessFactWrite": true
+    },
+    {
+      "widgetId": "dashboard.finance.receivedAmount.card.v1",
+      "consumesMetricIds": ["finance.receivedAmount"],
+      "sourceFacts": ["FinancialFact", "LedgerTransaction", "LedgerEntry"],
+      "permission": {
+        "policyRef": "metric-permission.finance-readonly.v1",
+        "readOnly": true
+      },
+      "lineage": {
+        "policyRef": "metric-lineage.finance-kernel.v1",
+        "sourceFacts": ["FinancialFact", "LedgerTransaction", "LedgerEntry"]
+      },
+      "freshness": {
+        "policyRef": "metric-freshness.ledger-read-model.v1",
+        "maxStalenessMs": 3600000
+      },
+      "actionPolicy": "readonly_or_navigate_only",
+      "noBusinessFactWrite": true
+    },
+    {
+      "widgetId": "dashboard.governance.blockerAging.card.v1",
+      "consumesMetricIds": ["governance.blockerAging"],
+      "sourceFacts": ["ExceptionCase", "WorkItemFact"],
+      "permission": {
+        "policyRef": "metric-permission.governance-readonly.v1",
+        "readOnly": true
+      },
+      "lineage": {
+        "policyRef": "metric-lineage.operations-runtime.v1",
+        "sourceFacts": ["ExceptionCase", "WorkItemFact"]
+      },
+      "freshness": {
+        "policyRef": "metric-freshness.hourly-read-model.v1",
+        "maxStalenessMs": 3600000
+      },
+      "actionPolicy": "readonly_or_navigate_only",
+      "noBusinessFactWrite": true
+    }
+  ],
+  "forbiddenInference": ["ui.state", "label", "displayText", "dashboard.summary"],
+  "forbiddenWrites": ["Room", "Bed", "Payment", "AmountBasis", "FinancialFact", "LedgerTransaction", "LedgerEntry"]
+}

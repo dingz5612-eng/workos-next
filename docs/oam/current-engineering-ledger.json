@@ -6,12 +6,12 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceLifecyclePolicy": "docs/oam/file-lifecycle-policy.json",
   "defaultPolicy": "unregistered_files_are_not_allowed",
-  "fileCount": 948,
+  "fileCount": 970,
   "identityCounts": {
-    "validation_file": 307,
+    "validation_file": 314,
     "implementation_file": 330,
     "derived_view": 65,
-    "authority_file": 226,
+    "authority_file": 241,
     "human_manual": 20
   },
   "files": [
@@ -8167,6 +8167,35 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/contracts/bi-kpi/dashboard-widget-contract.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "metric-operating-model-owner",
+      "sourceKernel": "kernel.data-kpi",
+      "graphBinding": "file.docs/contracts/bi-kpi/dashboard-widget-contract.json",
+      "gates": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/bi-kpi/dashboard-widget-contract.json",
+      "absorbedBy": "docs/contracts/bi-kpi/dashboard-widget-contract.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/contracts/bi-kpi/dimension-contract.json",
       "currentIdentity": "authority_file",
       "lifecycleState": "active_contract",
@@ -8254,6 +8283,151 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/contracts/bi-kpi/metric-definition-registry.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "metric-operating-model-owner",
+      "sourceKernel": "kernel.data-kpi",
+      "graphBinding": "file.docs/contracts/bi-kpi/metric-definition-registry.json",
+      "gates": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/bi-kpi/metric-definition-registry.json",
+      "absorbedBy": "docs/contracts/bi-kpi/metric-definition-registry.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/metric-dimension-registry.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "metric-operating-model-owner",
+      "sourceKernel": "kernel.data-kpi",
+      "graphBinding": "file.docs/contracts/bi-kpi/metric-dimension-registry.json",
+      "gates": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/bi-kpi/metric-dimension-registry.json",
+      "absorbedBy": "docs/contracts/bi-kpi/metric-dimension-registry.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/metric-freshness-policy.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "metric-operating-model-owner",
+      "sourceKernel": "kernel.data-kpi",
+      "graphBinding": "file.docs/contracts/bi-kpi/metric-freshness-policy.json",
+      "gates": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/bi-kpi/metric-freshness-policy.json",
+      "absorbedBy": "docs/contracts/bi-kpi/metric-freshness-policy.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/metric-lineage.schema.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "metric-operating-model-owner",
+      "sourceKernel": "kernel.data-kpi",
+      "graphBinding": "file.docs/contracts/bi-kpi/metric-lineage.schema.json",
+      "gates": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/bi-kpi/metric-lineage.schema.json",
+      "absorbedBy": "docs/contracts/bi-kpi/metric-lineage.schema.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/metric-permission-policy.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "metric-operating-model-owner",
+      "sourceKernel": "kernel.data-kpi",
+      "graphBinding": "file.docs/contracts/bi-kpi/metric-permission-policy.json",
+      "gates": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/bi-kpi/metric-permission-policy.json",
+      "absorbedBy": "docs/contracts/bi-kpi/metric-permission-policy.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/contracts/bi-kpi/metric-registry.contract.json",
       "currentIdentity": "authority_file",
       "lifecycleState": "active_contract",
@@ -8280,6 +8454,35 @@
       "replacementPath": "docs/contracts/bi-kpi/metric-registry.contract.json",
       "absorbedBy": "docs/contracts/bi-kpi/metric-registry.contract.json",
       "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/object-kind-metric-map.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "metric-operating-model-owner",
+      "sourceKernel": "kernel.data-kpi",
+      "graphBinding": "file.docs/contracts/bi-kpi/object-kind-metric-map.json",
+      "gates": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/bi-kpi/object-kind-metric-map.json",
+      "absorbedBy": "docs/contracts/bi-kpi/object-kind-metric-map.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -8341,6 +8544,35 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/contracts/bi-kpi/report-dataset-contract.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "metric-operating-model-owner",
+      "sourceKernel": "kernel.data-kpi",
+      "graphBinding": "file.docs/contracts/bi-kpi/report-dataset-contract.json",
+      "gates": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/bi-kpi/report-dataset-contract.json",
+      "absorbedBy": "docs/contracts/bi-kpi/report-dataset-contract.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/contracts/bi-kpi/sla-clock-contract.json",
       "currentIdentity": "authority_file",
       "lifecycleState": "active_contract",
@@ -8367,6 +8599,35 @@
       "replacementPath": "docs/contracts/bi-kpi/sla-clock-contract.json",
       "absorbedBy": "docs/contracts/bi-kpi/sla-clock-contract.json",
       "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/sla-clock-registry.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "metric-operating-model-owner",
+      "sourceKernel": "kernel.data-kpi",
+      "graphBinding": "file.docs/contracts/bi-kpi/sla-clock-registry.json",
+      "gates": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/bi-kpi/sla-clock-registry.json",
+      "absorbedBy": "docs/contracts/bi-kpi/sla-clock-registry.json",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -9063,6 +9324,35 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/contracts/language/alias-registry.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "language-kernel-owner",
+      "sourceKernel": "kernel.language",
+      "graphBinding": "file.docs/contracts/language/alias-registry.json",
+      "gates": [
+        "scripts/check-language-kernel.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/language/language-glossary-generated-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/language/alias-registry.json",
+      "absorbedBy": "docs/contracts/language/alias-registry.json",
+      "removalProofGate": "scripts/check-language-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/contracts/language/domain-term-catalog.json",
       "currentIdentity": "authority_file",
       "lifecycleState": "active_contract",
@@ -9150,6 +9440,64 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/contracts/language/glossary.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "language-kernel-owner",
+      "sourceKernel": "kernel.language",
+      "graphBinding": "file.docs/contracts/language/glossary.json",
+      "gates": [
+        "scripts/check-language-kernel.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/language/language-glossary-generated-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/language/glossary.json",
+      "absorbedBy": "docs/contracts/language/glossary.json",
+      "removalProofGate": "scripts/check-language-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/contracts/language/internal-term-firewall.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "language-kernel-owner",
+      "sourceKernel": "kernel.language",
+      "graphBinding": "file.docs/contracts/language/internal-term-firewall.json",
+      "gates": [
+        "scripts/check-language-kernel.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/language/language-glossary-generated-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/language/internal-term-firewall.json",
+      "absorbedBy": "docs/contracts/language/internal-term-firewall.json",
+      "removalProofGate": "scripts/check-language-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/contracts/language/language-contract.json",
       "currentIdentity": "authority_file",
       "lifecycleState": "active_contract",
@@ -9175,6 +9523,35 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/contracts/language/language-contract.json",
       "absorbedBy": "docs/contracts/language/language-contract.json",
+      "removalProofGate": "scripts/check-language-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/contracts/language/multilingual-copy-catalog.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "language-kernel-owner",
+      "sourceKernel": "kernel.language",
+      "graphBinding": "file.docs/contracts/language/multilingual-copy-catalog.json",
+      "gates": [
+        "scripts/check-language-kernel.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/language/language-glossary-generated-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/language/multilingual-copy-catalog.json",
+      "absorbedBy": "docs/contracts/language/multilingual-copy-catalog.json",
       "removalProofGate": "scripts/check-language-kernel.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
@@ -9237,6 +9614,35 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/contracts/language/search-intent-dictionary.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "language-kernel-owner",
+      "sourceKernel": "kernel.language",
+      "graphBinding": "file.docs/contracts/language/search-intent-dictionary.json",
+      "gates": [
+        "scripts/check-language-kernel.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/language/language-glossary-generated-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/language/search-intent-dictionary.json",
+      "absorbedBy": "docs/contracts/language/search-intent-dictionary.json",
+      "removalProofGate": "scripts/check-language-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/contracts/language/search-synonyms.json",
       "currentIdentity": "authority_file",
       "lifecycleState": "active_contract",
@@ -9291,6 +9697,35 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/contracts/language/surface-copy-catalog.json",
       "absorbedBy": "docs/contracts/language/surface-copy-catalog.json",
+      "removalProofGate": "scripts/check-language-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/contracts/language/tokenizer-dictionary.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "language-kernel-owner",
+      "sourceKernel": "kernel.language",
+      "graphBinding": "file.docs/contracts/language/tokenizer-dictionary.json",
+      "gates": [
+        "scripts/check-language-kernel.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/proofs/language/language-glossary-generated-proof.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/language/tokenizer-dictionary.json",
+      "absorbedBy": "docs/contracts/language/tokenizer-dictionary.json",
       "removalProofGate": "scripts/check-language-kernel.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
@@ -16634,6 +17069,35 @@
       "deletionConditionZh": "当 authority-cleanup 证据被归档且当前门禁不再引用时删除。"
     },
     {
+      "path": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "gates": [
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/control-plane-gate-results.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "absorbedBy": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "removalProofGate": "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
+      "deletionConditionZh": "当且仅当内容已被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-business-object-field-registry.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -16723,6 +17187,35 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/check-current-architecture-manifest.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-current-architecture-manifest.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/check-current-architecture-manifest.mjs",
+      "gates": [
+        "scripts/oam/check-current-architecture-manifest.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/control-plane-gate-results.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-current-architecture-manifest.mjs",
+      "absorbedBy": "scripts/oam/check-current-architecture-manifest.mjs",
+      "removalProofGate": "scripts/oam/check-current-architecture-manifest.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-current-authority-index.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -16808,6 +17301,37 @@
       "absorbedBy": "scripts/oam/check-current-evidence-root.mjs",
       "removalProofGate": "scripts/oam/check-current-evidence-root.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-current-oam-release-attestation.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-current-oam-release-attestation.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml",
+        "tests/WorkOS.ReleaseEvidenceTests/OamReleaseControlTests.cs"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/check-current-oam-release-attestation.mjs",
+      "gates": [
+        "scripts/oam/check-current-oam-release-attestation.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/current-oam-release-attestation-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-current-oam-release-attestation.mjs",
+      "absorbedBy": "scripts/oam/check-current-oam-release-attestation.mjs",
+      "removalProofGate": "scripts/oam/check-current-oam-release-attestation.mjs",
+      "deletionConditionZh": "当 release attestation gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。"
     },
     {
       "path": "scripts/oam/check-current-oam.mjs",
@@ -23915,6 +24439,35 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "tests/fixtures/oam-finance-truth/negative/business-domain-direct-amount-basis.yml",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/check-finance-truth.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "finance-ledger-owner",
+      "sourceKernel": "kernel.finance-ledger",
+      "graphBinding": "file.tests/fixtures/oam-finance-truth/negative/business-domain-direct-amount-basis.yml",
+      "gates": [
+        "scripts/check-finance-truth.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/finance-truth-report.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "tests/fixtures/oam-finance-truth/negative/business-domain-direct-amount-basis.yml",
+      "absorbedBy": "tests/fixtures/oam-finance-truth/negative/business-domain-direct-amount-basis.yml",
+      "removalProofGate": "scripts/check-finance-truth.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "tests/fixtures/oam-finance-truth/negative/business-domain-direct-ledger-entry.yml",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -23941,6 +24494,35 @@
       "replacementPath": "tests/fixtures/oam-finance-truth/negative/business-domain-direct-ledger-entry.yml",
       "absorbedBy": "tests/fixtures/oam-finance-truth/negative/business-domain-direct-ledger-entry.yml",
       "removalProofGate": "scripts/check-runtime-write-paths.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "tests/fixtures/oam-finance-truth/negative/dashboard-infers-amount-basis.yml",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/check-finance-truth.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "finance-ledger-owner",
+      "sourceKernel": "kernel.finance-ledger",
+      "graphBinding": "file.tests/fixtures/oam-finance-truth/negative/dashboard-infers-amount-basis.yml",
+      "gates": [
+        "scripts/check-finance-truth.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/finance-truth-report.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "tests/fixtures/oam-finance-truth/negative/dashboard-infers-amount-basis.yml",
+      "absorbedBy": "tests/fixtures/oam-finance-truth/negative/dashboard-infers-amount-basis.yml",
+      "removalProofGate": "scripts/check-finance-truth.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -23973,6 +24555,35 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "tests/fixtures/oam-finance-truth/negative/metric-infers-amount-basis.yml",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/check-finance-truth.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "finance-ledger-owner",
+      "sourceKernel": "kernel.finance-ledger",
+      "graphBinding": "file.tests/fixtures/oam-finance-truth/negative/metric-infers-amount-basis.yml",
+      "gates": [
+        "scripts/check-finance-truth.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/finance-truth-report.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "tests/fixtures/oam-finance-truth/negative/metric-infers-amount-basis.yml",
+      "absorbedBy": "tests/fixtures/oam-finance-truth/negative/metric-infers-amount-basis.yml",
+      "removalProofGate": "scripts/check-finance-truth.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "tests/fixtures/oam-finance-truth/negative/refund-over-liability.yml",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -23999,6 +24610,35 @@
       "replacementPath": "tests/fixtures/oam-finance-truth/negative/refund-over-liability.yml",
       "absorbedBy": "tests/fixtures/oam-finance-truth/negative/refund-over-liability.yml",
       "removalProofGate": "scripts/check-runtime-write-paths.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "tests/fixtures/oam-finance-truth/negative/search-infers-amount-basis.yml",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/check-finance-truth.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "finance-ledger-owner",
+      "sourceKernel": "kernel.finance-ledger",
+      "graphBinding": "file.tests/fixtures/oam-finance-truth/negative/search-infers-amount-basis.yml",
+      "gates": [
+        "scripts/check-finance-truth.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/finance-truth-report.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "tests/fixtures/oam-finance-truth/negative/search-infers-amount-basis.yml",
+      "absorbedBy": "tests/fixtures/oam-finance-truth/negative/search-infers-amount-basis.yml",
+      "removalProofGate": "scripts/check-finance-truth.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {

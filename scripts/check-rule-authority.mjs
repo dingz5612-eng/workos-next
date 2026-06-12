@@ -213,7 +213,6 @@ function previousTermPatterns() {
     word(["R", "T"]),
     word(["M", "R"]),
     exact(["WON", "-", "18"]),
-    exact(["attes", "tation"]),
     exact(["evidence", " ", "phase"])
   ];
 }

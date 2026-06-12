@@ -1,6 +1,6 @@
 {
   "version": "authority-cleanup.source-layer-audit.v1",
-  "generatedAtUtc": "2026-06-11T22:20:46.523Z",
+  "generatedAtUtc": "2026-06-12T09:08:24.743Z",
   "sourceWhitelist": [
     "docs/business/admission/business-line-levels.yml",
     "docs/business/business-line-registry.json",
@@ -2058,6 +2058,27 @@
       "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
     },
     {
+      "path": "docs/contracts/bi-kpi/dashboard-widget-contract.json",
+      "currentIdentity": "authority_file",
+      "targetLayer": "generated",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "downstreamConsumers": [
+        "docs/oam/oam-kernel-graph.json",
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "engineering-ledger-authority-or-fact-authority"
+      ],
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
       "path": "docs/contracts/bi-kpi/dimension-contract.json",
       "currentIdentity": "authority_file",
       "targetLayer": "generated",
@@ -2121,6 +2142,111 @@
       "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
     },
     {
+      "path": "docs/contracts/bi-kpi/metric-definition-registry.json",
+      "currentIdentity": "authority_file",
+      "targetLayer": "generated",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "downstreamConsumers": [
+        "docs/oam/oam-kernel-graph.json",
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "engineering-ledger-authority-or-fact-authority"
+      ],
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/metric-dimension-registry.json",
+      "currentIdentity": "authority_file",
+      "targetLayer": "generated",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "downstreamConsumers": [
+        "docs/oam/oam-kernel-graph.json",
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "engineering-ledger-authority-or-fact-authority"
+      ],
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/metric-freshness-policy.json",
+      "currentIdentity": "authority_file",
+      "targetLayer": "generated",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "downstreamConsumers": [
+        "docs/oam/oam-kernel-graph.json",
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "engineering-ledger-authority-or-fact-authority"
+      ],
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/metric-lineage.schema.json",
+      "currentIdentity": "authority_file",
+      "targetLayer": "generated",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "downstreamConsumers": [
+        "docs/oam/oam-kernel-graph.json",
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "engineering-ledger-authority-or-fact-authority"
+      ],
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/metric-permission-policy.json",
+      "currentIdentity": "authority_file",
+      "targetLayer": "generated",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "downstreamConsumers": [
+        "docs/oam/oam-kernel-graph.json",
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "engineering-ledger-authority-or-fact-authority"
+      ],
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
       "path": "docs/contracts/bi-kpi/metric-registry.contract.json",
       "currentIdentity": "authority_file",
       "targetLayer": "generated",
@@ -2132,6 +2258,27 @@
       "downstreamConsumers": [
         "docs/oam/oam-kernel-graph.json",
         "scripts/validate-contracts.mjs"
+      ],
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "engineering-ledger-authority-or-fact-authority"
+      ],
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/object-kind-metric-map.json",
+      "currentIdentity": "authority_file",
+      "targetLayer": "generated",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "downstreamConsumers": [
+        "docs/oam/oam-kernel-graph.json",
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
       ],
       "recommendedAction": "keep_as_read_or_metric_contract",
       "deletionRisk": "medium",
@@ -2184,6 +2331,27 @@
       "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
     },
     {
+      "path": "docs/contracts/bi-kpi/report-dataset-contract.json",
+      "currentIdentity": "authority_file",
+      "targetLayer": "generated",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "downstreamConsumers": [
+        "docs/oam/oam-kernel-graph.json",
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
+      ],
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "engineering-ledger-authority-or-fact-authority"
+      ],
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
       "path": "docs/contracts/bi-kpi/sla-clock-contract.json",
       "currentIdentity": "authority_file",
       "targetLayer": "generated",
@@ -2195,6 +2363,27 @@
       "downstreamConsumers": [
         "docs/oam/oam-kernel-graph.json",
         "scripts/validate-contracts.mjs"
+      ],
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "engineering-ledger-authority-or-fact-authority"
+      ],
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/sla-clock-registry.json",
+      "currentIdentity": "authority_file",
+      "targetLayer": "generated",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "downstreamConsumers": [
+        "docs/oam/oam-kernel-graph.json",
+        "scripts/oam/check-bi-kpi-metric-operating-model.mjs"
       ],
       "recommendedAction": "keep_as_read_or_metric_contract",
       "deletionRisk": "medium",

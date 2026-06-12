@@ -9,26 +9,43 @@ const finalReportPath = "artifacts/oam/final-report.json";
 const controlPlaneGateResultPath = "artifacts/oam/checks/control-plane-gate-results.json";
 const responsibilityMapPath = "docs/oam/current-oam-kernel-responsibility-map.json";
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
+const releaseAttestationPath = "artifacts/oam/evidence/current-oam-release-attestation.json";
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 const evidenceRootDigestPlaceholder = "__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__";
+const pendingExternalAttestation = "pending_external_attestation";
 const ciRunId = env("GITHUB_RUN_ID") || "local";
 const ciRunAttempt = env("GITHUB_RUN_ATTEMPT") || "local";
 const repository = env("GITHUB_REPOSITORY") || repositoryFromGitRemote() || "dingz5612-eng/workos-next";
 const workflow = env("GITHUB_WORKFLOW") || "CI";
 const artifactName = artifactNameForRun(ciRunId);
+const githubArtifactMetadataDigest = env("WORKOS_GITHUB_ARTIFACT_METADATA_DIGEST") || env("GITHUB_ARTIFACT_METADATA_DIGEST") || "";
+const zipArtifactDigest = env("WORKOS_ZIP_ARTIFACT_DIGEST") || env("GITHUB_ARTIFACT_ZIP_DIGEST") || "";
+const githubArtifactDigestStatus = githubArtifactMetadataDigest ? "attested" : pendingExternalAttestation;
 
 const requiredEvidenceFiles = [
   "artifacts/oam/evidence/evidence-graph.json",
   releaseEvidenceObjectPath,
+  releaseAttestationPath,
   "artifacts/oam/evidence/execution-log.jsonl",
   "artifacts/oam/evidence/current-oam-final-report.json",
   "artifacts/oam/evidence/runtime-proof.json",
   "artifacts/oam/evidence/truth-ownership-proof.json",
   "artifacts/oam/evidence/search-readonly-proof.json",
+  "artifacts/oam/proofs/search/search-derived-readmodel-only-proof.json",
+  "artifacts/oam/proofs/search/search-no-kernel-direct-read-proof.json",
+  "artifacts/oam/proofs/search/search-permission-filter-proof.json",
+  "artifacts/oam/proofs/search/search-hidden-result-ranking-proof.json",
+  "artifacts/oam/proofs/search/search-sensitive-redaction-proof.json",
+  "artifacts/oam/proofs/search/search-lineage-freshness-proof.json",
+  "artifacts/oam/proofs/read-intelligence/oam-object-envelope-proof.json",
   "artifacts/oam/evidence/surface-language-proof.json",
   "artifacts/oam/evidence/high-risk-trust-proof.json",
   "artifacts/oam/evidence/master-design-proof.json",
   "artifacts/oam/evidence/master-outline-proof.json",
+  "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
+  "artifacts/oam/proofs/dashboard/dashboard-widget-sourcefacts-proof.json",
+  "artifacts/oam/proofs/report/report-dataset-permission-lineage-freshness-proof.json",
+  "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
   responsibilityMapPath,
   "docs/oam/current-oam-cross-domain-conflict-rules.json",
   "docs/oam/professional-ai-review-seats.json",
@@ -152,17 +169,41 @@ addEvidence(
   "artifacts/oam/evidence/truth-ownership-proof.json",
   proof("truth-ownership-proof", "真值归属可信", {
     truthOwnershipClosure: {
-      financeTruthOwner: "MoneyKernelPack",
+      everyFactIdSingleTruthOwner: true,
+      allowedCommittersAndForbiddenOwnersRequired: true,
+      financeTruthOwner: "FinanceTruthPack",
+      ledgerEntryTruthOwner: "MoneyKernelPack",
       nonFinanceLedgerEntryAllowed: false,
       amountBasisIsFinanceFact: false,
-      businessDomainDirectLedgerWriteAllowed: false
+      businessDomainDirectLedgerWriteAllowed: false,
+      businessDomainDirectFinancialFactAllowed: false,
+      evidenceObjectDefinesBusinessFactAllowed: false,
+      readSideBusinessFactWriteAllowed: false,
+      forbiddenReadSideOwners: [
+        "Search",
+        "Surface",
+        "Dashboard",
+        "Report",
+        "Metric"
+      ],
+      financeStateChain: [
+        "AmountBasisProposal",
+        "AmountBasisReviewed",
+        "AmountBasis",
+        "FinancialFact",
+        "LedgerTransaction",
+        "LedgerEntry"
+      ],
+      forbiddenOwnerNegativeFixturesFailAsP0: true
     },
     authorityRefs: [
       "docs/business/truth-owner-registry.yml",
+      "docs/contracts/authority/truth-ownership-matrix.contract.json",
       "docs/business/finance/ledger-semantic-rules.yml",
       "docs/finance/finance-semantic-truth-kernel.yml"
     ],
     gates: [
+      "node scripts/authority/check-truth-ownership-matrix.mjs",
       "node scripts/check-finance-truth.mjs",
       "node scripts/check-ledger-semantic-rules.mjs",
       "node scripts/finance/check-finance-semantic-truth.mjs"
@@ -273,6 +314,25 @@ addEvidence(
   proof("master-design-proof", "总设计输入可信", {
     masterDesignClosure: {
       currentArchitecture: "OAM",
+      currentArchitectureUniqueEffective: true,
+      fourGraphsAreViews: true,
+      threeLayersArePartitions: true,
+      sixLoopsAreExecutionOrder: true,
+      sourceGeneratedRuntimeEvidenceLayerOverreachForbidden: true,
+      notGoSignals: [
+        "ci.green",
+        "artifact.exists",
+        "browser.evidence",
+        "finalReport.exists"
+      ],
+      secondAuthorityForbiddenSources: [
+        "closedCatalog",
+        "closedSeed",
+        "generatedView",
+        "dashboard",
+        "search",
+        "surface"
+      ],
       businessProduction: admission.businessProduction,
       dormitoryProduction: admission.dormitoryProduction,
       productionConfirmAllowed: admission.productionConfirmAllowed,
@@ -282,11 +342,13 @@ addEvidence(
     authorityRefs: [
       "docs/oam/current-architecture.md",
       "docs/oam/current-architecture.manifest.json",
+      "docs/contracts/authority/master-design.contract.json",
       "docs/contracts/oam.current.json",
       "docs/system/current-system-map.md"
     ],
     gates: [
       "node scripts/oam/check-current-oam.mjs",
+      "node scripts/authority/check-master-design-schema.mjs",
       "node scripts/check-rule-authority.mjs",
       "node scripts/validate-contracts.mjs"
     ]
@@ -462,7 +524,11 @@ const releaseEvidenceObject = {
   generatedAtUtc: generatedAt,
   artifactName,
   artifactDigest: digestPlaceholder,
-  githubArtifactDigest: digestPlaceholder,
+  githubArtifactDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
+  githubArtifactMetadataDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
+  githubArtifactDigestStatus,
+  zipArtifactDigest: zipArtifactDigest || pendingExternalAttestation,
+  releaseAuthority: false,
   evidenceRootDigest: evidenceRootDigestPlaceholder,
   generatedContractsHash,
   kernelGraphHash,
@@ -484,6 +550,34 @@ const releaseEvidenceObject = {
   }
 };
 addEvidence(releaseEvidenceObjectPath, releaseEvidenceObject);
+const releaseAttestation = {
+  ...proof("current-oam-release-attestation", "当前 OAM Release Artifact 外部证明", {
+    releaseAttestationPurpose: "Separate internal evidence package digest from GitHub artifact metadata digest and zip digest.",
+    internalArtifactDigestField: "artifactDigest",
+    evidenceRootDigestField: "evidenceRootDigest",
+    githubArtifactMetadataDigestField: "githubArtifactMetadataDigest",
+    zipArtifactDigestField: "zipArtifactDigest",
+    ciGreenDoesNotEqualGo: true,
+    finalReportExistsDoesNotEqualGo: true
+  }),
+  repository,
+  workflow,
+  artifactName,
+  sourceCommitSha,
+  evidenceRunSha,
+  githubRunId: ciRunId,
+  githubRunAttempt: ciRunAttempt,
+  githubRefName: branch,
+  artifactDigest: digestPlaceholder,
+  evidenceRootDigest: evidenceRootDigestPlaceholder,
+  githubArtifactMetadataDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
+  githubArtifactDigestStatus,
+  zipArtifactDigest: zipArtifactDigest || pendingExternalAttestation,
+  releaseAuthority: false,
+  finalGoNoGo: forcedCurrentStageGoNoGo.finalGoNoGo,
+  nextStageAllowed: false
+};
+addEvidence(releaseAttestationPath, releaseAttestation);
 addTextEvidence("artifacts/oam/evidence/execution-log.jsonl", executionLogText(digestPlaceholder));
 
 writeAllEvidence();
@@ -555,7 +649,11 @@ function binding(kind) {
     generatedAt,
     generatedAtUtc: generatedAt,
     artifactDigest: digestPlaceholder,
-    githubArtifactDigest: digestPlaceholder,
+    githubArtifactDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
+    githubArtifactMetadataDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
+    githubArtifactDigestStatus,
+    zipArtifactDigest: zipArtifactDigest || pendingExternalAttestation,
+    releaseAuthority: false,
     evidenceRootDigest: evidenceRootDigestPlaceholder,
     generatedContractsHash,
     kernelGraphHash,
@@ -573,6 +671,10 @@ function evidenceBindingState() {
     referenceOnly: bindingStale,
     bindingStatus: bindingStale ? "stale" : "current",
     artifactDigest: digestPlaceholder,
+    githubArtifactMetadataDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
+    githubArtifactDigestStatus,
+    zipArtifactDigest: zipArtifactDigest || pendingExternalAttestation,
+    releaseAuthority: false,
     generatedContractsHash,
     evidenceGraphHash: digestPlaceholder,
     finalReportDigest: digestPlaceholder,
@@ -619,7 +721,6 @@ function applyArtifactDigest(digest) {
       setDigest(document, digest);
     }
   }
-  releaseEvidenceObject.githubArtifactDigest = digest;
 }
 
 function setDigest(value, digest) {
@@ -630,9 +731,6 @@ function setDigest(value, digest) {
   if (!value || typeof value !== "object") return;
   if (Object.prototype.hasOwnProperty.call(value, "artifactDigest")) {
     value.artifactDigest = digest;
-  }
-  if (Object.prototype.hasOwnProperty.call(value, "githubArtifactDigest")) {
-    value.githubArtifactDigest = digest;
   }
   for (const item of Object.values(value)) {
     setDigest(item, digest);
@@ -708,6 +806,8 @@ function isDigestOrHashKey(key) {
   return [
     "artifactDigest",
     "githubArtifactDigest",
+    "githubArtifactMetadataDigest",
+    "zipArtifactDigest",
     "evidenceRootDigest",
     "generatedContractsHash",
     "kernelGraphHash",

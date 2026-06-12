@@ -1,0 +1,10 @@
+{
+  "scenarioId": "oam-finance-negative-dashboard-infers-amount-basis",
+  "sourcePack": "Dashboard",
+  "inputFact": "DashboardSummary",
+  "basisType": "dashboard_summary",
+  "targetFact": "AmountBasis",
+  "amount": 100,
+  "currency": "KGS",
+  "expectedViolation": "finance_truth.readside_amount_basis_inference"
+}

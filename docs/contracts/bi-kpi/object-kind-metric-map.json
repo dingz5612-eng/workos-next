@@ -1,0 +1,38 @@
+{
+  "version": "oam.metric-operating-model.object-kind-metric-map.v1",
+  "status": "authoritative-readonly",
+  "readOnly": true,
+  "businessFactWriteAllowed": false,
+  "objectKindMetricMap": [
+    {
+      "objectKind": "Room",
+      "metricIds": ["dormitory.resourceReadiness"],
+      "sourceFacts": ["Room"],
+      "writeFactsAllowed": false
+    },
+    {
+      "objectKind": "Bed",
+      "metricIds": ["dormitory.resourceReadiness"],
+      "sourceFacts": ["Bed"],
+      "writeFactsAllowed": false
+    },
+    {
+      "objectKind": "FinancialFact",
+      "metricIds": ["finance.receivedAmount"],
+      "sourceFacts": ["FinancialFact"],
+      "writeFactsAllowed": false
+    },
+    {
+      "objectKind": "LedgerEntry",
+      "metricIds": ["finance.receivedAmount"],
+      "sourceFacts": ["LedgerEntry"],
+      "writeFactsAllowed": false
+    },
+    {
+      "objectKind": "ExceptionCase",
+      "metricIds": ["governance.blockerAging"],
+      "sourceFacts": ["ExceptionCase"],
+      "writeFactsAllowed": false
+    }
+  ]
+}

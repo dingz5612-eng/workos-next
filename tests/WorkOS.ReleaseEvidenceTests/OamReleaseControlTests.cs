@@ -55,7 +55,6 @@ public sealed class OamReleaseControlTests
             string.Concat("v", "5", "_", "5"),
             string.Concat("O", "M", "A"),
             string.Concat("R", "T", "-"),
-            string.Concat("attes", "tation"),
             string.Concat("evidence", " ", "phase")
         })
         {
@@ -86,14 +85,20 @@ public sealed class OamReleaseControlTests
         var generator = File.ReadAllText(RepoPath("scripts", "oam", "generate-current-evidence-root.mjs"));
         var checker = File.ReadAllText(RepoPath("scripts", "oam", "check-current-evidence-root.mjs"));
         const string releaseObject = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
+        const string releaseAttestation = "artifacts/oam/evidence/current-oam-release-attestation.json";
 
         foreach (var source in new[] { generator, checker })
         {
             StringAssert.Contains(source, releaseObject);
+            StringAssert.Contains(source, releaseAttestation);
             StringAssert.Contains(source, "kernelGraphHash");
             StringAssert.Contains(source, "evidenceGraphHash");
             StringAssert.Contains(source, "finalReportDigest");
             StringAssert.Contains(source, "githubArtifactDigest");
+            StringAssert.Contains(source, "githubArtifactMetadataDigest");
+            StringAssert.Contains(source, "githubArtifactDigestStatus");
+            StringAssert.Contains(source, "zipArtifactDigest");
+            StringAssert.Contains(source, "releaseAuthority");
             StringAssert.Contains(source, "evidenceRootDigest");
         }
     }
@@ -172,6 +177,9 @@ public sealed class OamReleaseControlTests
         new[]
         {
             "scripts/oam/check-current-oam.mjs",
+            "scripts/oam/check-current-architecture-manifest.mjs",
+            "scripts/authority/check-master-design-schema.mjs",
+            "scripts/authority/check-truth-ownership-matrix.mjs",
             "scripts/oam/check-system-operating-kernel.mjs",
             "scripts/oam/compile-current-kernel-graph.mjs",
             "scripts/oam/check-generated-contract-consistency.mjs",
@@ -198,10 +206,13 @@ public sealed class OamReleaseControlTests
             "scripts/check-dormitory-golden-domain.mjs",
             "scripts/check-language-kernel.mjs",
             "scripts/oam/check-read-intelligence-kernel.mjs",
+            "scripts/oam/check-bi-kpi-metric-operating-model.mjs",
             "scripts/check-search-kernel.mjs",
+            "scripts/business/check-dormitory-scenario-package-matrix.mjs",
             "scripts/check-admission-kernel.mjs",
             "scripts/check-account-actor-kernel.mjs",
-            "scripts/oam/check-db-no-side-effects-proof.mjs"
+            "scripts/oam/check-db-no-side-effects-proof.mjs",
+            "scripts/oam/check-current-oam-release-attestation.mjs"
         };
 
     private static ProcessResult RunNode(params string[] arguments)

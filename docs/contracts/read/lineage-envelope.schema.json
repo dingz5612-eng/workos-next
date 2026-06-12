@@ -9,15 +9,66 @@
     "sourceId",
     "sourceUpdatedAt",
     "definitionVersion",
-    "sourceNodeRefs"
+    "sourceNodeRefs",
+    "sourceVersion",
+    "factRefs",
+    "evidenceRefs",
+    "transformRefs",
+    "outboxRefs",
+    "readModelVersion"
   ],
   "properties": {
-    "sourceSystem": { "type": "string" },
-    "sourceType": { "type": "string" },
-    "sourceId": { "type": "string" },
-    "sourceUpdatedAt": { "type": "string" },
-    "definitionVersion": { "type": "string" },
-    "sourceNodeRefs": { "type": "array", "items": { "type": "string" } }
+    "sourceSystem": {
+      "type": "string"
+    },
+    "sourceType": {
+      "type": "string"
+    },
+    "sourceId": {
+      "type": "string"
+    },
+    "sourceUpdatedAt": {
+      "type": "string"
+    },
+    "definitionVersion": {
+      "type": "string"
+    },
+    "sourceNodeRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sourceVersion": {
+      "type": "string"
+    },
+    "factRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "transformRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "outboxRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "readModelVersion": {
+      "type": "string"
+    }
   },
   "additionalProperties": true
 }

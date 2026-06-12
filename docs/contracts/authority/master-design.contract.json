@@ -10,6 +10,79 @@
     "docs/contracts/definition/workitem-definition-registry.json",
     "docs/business/truth-owner-registry.yml"
   ],
+  "currentArchitectureUniqueEffective": {
+    "architecture": "oam.current",
+    "uniqueEffective": true,
+    "secondAuthorityAllowed": false,
+    "currentArchitectureRef": "docs/oam/current-architecture.md"
+  },
+  "fourGraphViewPolicy": [
+    {
+      "graphId": "authorityGraph",
+      "role": "viewOnly",
+      "notArtifactClass": true
+    },
+    {
+      "graphId": "kernelCompileGraph",
+      "role": "viewOnly",
+      "notArtifactClass": true
+    },
+    {
+      "graphId": "runtimeEffectGraph",
+      "role": "viewOnly",
+      "notArtifactClass": true
+    },
+    {
+      "graphId": "readEvidenceGraph",
+      "role": "viewOnly",
+      "notArtifactClass": true
+    }
+  ],
+  "threeLayerPartitionPolicy": [
+    {
+      "layerId": "Source Layer",
+      "partitionRole": "authoritativeInput",
+      "executionOrderRole": false,
+      "allowedAuthorityWrite": true,
+      "forbiddenOverreach": ["derived contract", "runtime code", "CI evidence reinterpret business fact"]
+    },
+    {
+      "layerId": "Generated Layer",
+      "partitionRole": "compiledOutput",
+      "executionOrderRole": false,
+      "allowedAuthorityWrite": false,
+      "forbiddenOverreach": ["manual edit", "declare business fact authority", "bypass Source Layer"]
+    },
+    {
+      "layerId": "Runtime / Evidence Layer",
+      "partitionRole": "runtimeAndProof",
+      "executionOrderRole": false,
+      "allowedAuthorityWrite": false,
+      "forbiddenOverreach": ["redefine Source rule", "interpret CI green as GO", "interpret artifact existence as GO"]
+    }
+  ],
+  "sixLoopExecutionOrder": [
+    "Authority Closure",
+    "Source Kernel Closure",
+    "Compiler Closure",
+    "Runtime WorkItem Effect Closure",
+    "Read / Surface Consumption Closure",
+    "Release Evidence Closure"
+  ],
+  "notGoSignals": [
+    "ci.green",
+    "artifact.exists",
+    "browser.evidence",
+    "finalReport.exists"
+  ],
+  "secondAuthorityForbiddenSources": [
+    "closed catalog",
+    "closed seed",
+    "generated view",
+    "dashboard",
+    "search",
+    "surface"
+  ],
   "canonicalConfirmOrder": [
     "catalog.GetWorkItem",
     "definitions.Resolve(workItem)",

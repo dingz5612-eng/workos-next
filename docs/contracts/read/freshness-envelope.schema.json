@@ -8,14 +8,48 @@
     "indexLagMs",
     "stale",
     "maxStalenessMs",
-    "checkedAt"
+    "checkedAt",
+    "sourceUpdatedAt",
+    "computedAt",
+    "lastDisplayedAt",
+    "computeLagMs",
+    "staleReason",
+    "freshnessPolicyVersion"
   ],
   "properties": {
-    "indexedAt": { "type": "string" },
-    "indexLagMs": { "type": "number" },
-    "stale": { "type": "boolean" },
-    "maxStalenessMs": { "type": "number" },
-    "checkedAt": { "type": "string" }
+    "indexedAt": {
+      "type": "string"
+    },
+    "indexLagMs": {
+      "type": "number"
+    },
+    "stale": {
+      "type": "boolean"
+    },
+    "maxStalenessMs": {
+      "type": "number"
+    },
+    "checkedAt": {
+      "type": "string"
+    },
+    "sourceUpdatedAt": {
+      "type": "string"
+    },
+    "computedAt": {
+      "type": "string"
+    },
+    "lastDisplayedAt": {
+      "type": "string"
+    },
+    "computeLagMs": {
+      "type": "number"
+    },
+    "staleReason": {
+      "type": "string"
+    },
+    "freshnessPolicyVersion": {
+      "type": "string"
+    }
   },
   "additionalProperties": true
 }
