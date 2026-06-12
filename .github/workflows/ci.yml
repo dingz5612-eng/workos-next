@@ -158,6 +158,7 @@ jobs:
           node scripts/business/check-dormitory-release-train.mjs
           node scripts/business/check-dormitory-pilot-scenario-pack.mjs
           node scripts/business/check-dormitory-metrics-lens-contract.mjs
+          node scripts/oam/check-dormitory-golden-chain-source-package.mjs
           node scripts/business/check-dormitory-execution-kernel.mjs
           node scripts/business/check-scenario-field-contract.mjs
           node scripts/business/check-canonical-scenario-map.mjs
