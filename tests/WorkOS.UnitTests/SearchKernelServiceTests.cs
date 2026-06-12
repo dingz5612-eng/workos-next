@@ -49,6 +49,47 @@ public sealed class SearchKernelServiceTests
         Assert.IsEmpty(results);
     }
 
+    [TestMethod]
+    public void search_kernel_emits_server_admission_for_start_adapter_commands()
+    {
+        var search = new SearchKernelService(
+            new ProjectionWorkspaceSearchAdapter(),
+            WorkItemDefinitionRegistryService.LoadDefault(),
+            new AdmissionKernelService());
+        var results = search.Search(ProjectionRuntime.OpenInMemory(), "处理押金", OperatorActor(), "zh-CN")
+            .Cast<Dictionary<string, object?>>()
+            .ToArray();
+
+        var command = results.Single(item =>
+            Value(item, "templateWorkspaceId") == "W-STAY-DEPOSIT-LEDGER" &&
+            Value(item, "firstCardId") == "depositAssessment");
+        var admission = (IReadOnlyDictionary<string, object>)command["admission"]!;
+        var sourceRefs = (IReadOnlyDictionary<string, object?>)command["sourceRefs"]!;
+        var target = (IReadOnlyDictionary<string, object?>)command["target"]!;
+
+        Assert.AreEqual("SearchKernelService", Convert.ToString(sourceRefs["source"]));
+        Assert.AreEqual("StartAdapterMap", Convert.ToString(sourceRefs["inputAdapter"]));
+        Assert.AreEqual("definition.dormitory.depositConfirm.v1", Convert.ToString(sourceRefs["definitionId"]));
+        Assert.IsTrue((bool)admission["prepareAllowed"]);
+        Assert.IsFalse((bool)admission["confirmAllowed"]);
+        Assert.IsFalse((bool)admission["productionAllowed"]);
+        Assert.IsFalse((bool)target["writeThroughSearchAllowed"]!);
+    }
+
+    [TestMethod]
+    public void search_kernel_does_not_emit_start_adapter_admission_without_query()
+    {
+        var search = new SearchKernelService(
+            new ProjectionWorkspaceSearchAdapter(),
+            WorkItemDefinitionRegistryService.LoadDefault(),
+            new AdmissionKernelService());
+        var results = search.Search(ProjectionRuntime.OpenInMemory(), "", OperatorActor(), "zh-CN")
+            .Cast<Dictionary<string, object?>>()
+            .ToArray();
+
+        Assert.IsFalse(results.Any(item => Value(item, "resultType") == "command"));
+    }
+
     private static RuntimeActorContext OperatorActor() =>
         new(
             "u-operator-test",
@@ -57,6 +98,9 @@ public sealed class SearchKernelServiceTests
             new[] { "workos.write", "operations.confirm", "search.read" },
             "test",
             "actor-token");
+
+    private static string Value(Dictionary<string, object?> item, string key) =>
+        item.TryGetValue(key, out var value) ? Convert.ToString(value) ?? string.Empty : string.Empty;
 
     private static string RepoPath(params string[] segments)
     {

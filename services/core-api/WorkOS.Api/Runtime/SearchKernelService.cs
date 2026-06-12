@@ -29,8 +29,10 @@ public sealed class SearchKernelService
     {
         var resolvedLanguage = NormalizeLanguage(language);
         var queryTerms = synonyms.Expand(query, resolvedLanguage);
-        return SearchProjectionSources(runtime, query, queryTerms)
-            .Select(item => BuildResult(item, queryTerms, actor, resolvedLanguage))
+        var searchTerms = SearchTerms(query, queryTerms);
+        return SearchProjectionSources(runtime, searchTerms)
+            .Select(item => BuildProjectionResult(item, searchTerms, actor, resolvedLanguage))
+            .Concat(SearchCommandResults(searchTerms, actor, resolvedLanguage))
             .GroupBy(item => Convert.ToString(item["resultId"]), StringComparer.OrdinalIgnoreCase)
             .Select(group => group.OrderByDescending(item => Convert.ToInt32(item["score"])).First())
             .OrderByDescending(item => Convert.ToInt32(item["score"]))
@@ -41,11 +43,10 @@ public sealed class SearchKernelService
 
     private IReadOnlyList<object> SearchProjectionSources(
         ProjectionRuntime runtime,
-        string? query,
-        IReadOnlyList<string> expandedTerms)
+        IReadOnlyList<string> searchTerms)
     {
         var sources = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-        foreach (var term in SearchTerms(query, expandedTerms))
+        foreach (var term in searchTerms)
         {
             foreach (var item in projectionWorkspaceSearch.Search(runtime, term))
             {
@@ -55,6 +56,17 @@ public sealed class SearchKernelService
 
         return sources.Values.ToArray();
     }
+
+    private IReadOnlyList<Dictionary<string, object?>> SearchCommandResults(
+        IReadOnlyList<string> searchTerms,
+        RuntimeActorContext actor,
+        string language) =>
+        searchTerms.Count == 0
+            ? Array.Empty<Dictionary<string, object?>>()
+            : SearchCommandCatalog
+                .Where(command => CommandMatches(command, searchTerms))
+                .Select(command => BuildCommandResult(command, searchTerms, actor, language))
+                .ToArray();
 
     private static IReadOnlyList<string> SearchTerms(string? query, IReadOnlyList<string> expandedTerms) =>
         new[] { query ?? string.Empty }
@@ -76,7 +88,7 @@ public sealed class SearchKernelService
         return string.Join(":", ReadString(item, "workspaceId"), ReadString(item, "cardId"), ReadString(item, "resultType"));
     }
 
-    private Dictionary<string, object?> BuildResult(
+    private Dictionary<string, object?> BuildProjectionResult(
         object projectionSource,
         IReadOnlyList<string> queryTerms,
         RuntimeActorContext actor,
@@ -150,6 +162,81 @@ public sealed class SearchKernelService
                 ["zh-CN"] = "搜索结果已由 Search Kernel 补充准入裁决、语言词表和来源引用。",
                 ["ru-RU"] = "Результат поиска дополнен ядром поиска: допуск, язык и ссылки на источник.",
                 ["ky-KG"] = "Издөө натыйжасына Search Kernel кирүү чечимин, тилди жана булак шилтемелерин кошту."
+            }
+        };
+    }
+
+    private Dictionary<string, object?> BuildCommandResult(
+        SearchCommandDefinition command,
+        IReadOnlyList<string> queryTerms,
+        RuntimeActorContext actor,
+        string language)
+    {
+        var definition = definitions.ResolveStartAdapter(command.TemplateWorkspaceId, command.FirstCardId);
+        var decision = admission.EvaluateSearch(definition, actor);
+        var indexedAt = DateTimeOffset.UtcNow;
+        var matchedTerms = command.Keywords
+            .Concat(new[] { command.ZhTitle, command.RuTitle, command.KyTitle })
+            .Where(keyword => queryTerms.Any(term => TermMatches(keyword, term)))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var sourceId = $"{command.TemplateWorkspaceId}:{command.FirstCardId}";
+
+        return new Dictionary<string, object?>
+        {
+            ["resultId"] = $"search-command:{sourceId}",
+            ["resultType"] = "command",
+            ["objectKind"] = "operationsCommand",
+            ["workspaceId"] = command.TemplateWorkspaceId,
+            ["cardId"] = command.FirstCardId,
+            ["templateWorkspaceId"] = command.TemplateWorkspaceId,
+            ["firstCardId"] = command.FirstCardId,
+            ["title"] = LocalizedByLanguage(language, command.ZhTitle, command.RuTitle, command.KyTitle),
+            ["summary"] = LocalizedByLanguage(language, command.ZhSummary, command.RuSummary, command.KySummary),
+            ["matchedTerms"] = matchedTerms,
+            ["score"] = 120 + matchedTerms.Length * 40,
+            ["target"] = new Dictionary<string, object?>
+            {
+                ["view"] = "operationPanel",
+                ["kind"] = "operationsCommand",
+                ["targetId"] = sourceId,
+                ["runtimeOwner"] = "StartAdapterMap",
+                ["compatibility"] = "currentStartAdapter",
+                ["workspaceId"] = command.TemplateWorkspaceId,
+                ["cardId"] = command.FirstCardId,
+                ["writeThroughSearchAllowed"] = false
+            },
+            ["admission"] = decision.ToContract(),
+            ["permission"] = Permission("visible", "none", "business", Array.Empty<string>(), indexedAt),
+            ["lineage"] = Lineage("StartAdapterMap", "operationsCommandAdmission", sourceId, indexedAt, definition.DefinitionId),
+            ["freshness"] = Freshness(indexedAt, 0, false),
+            ["ranking"] = Ranking("oam.search-ranking-policy.v1", matchedTerms, decision.ConfirmAllowed),
+            ["businessContext"] = new Dictionary<string, object?>
+            {
+                ["workspaceId"] = command.TemplateWorkspaceId,
+                ["cardId"] = command.FirstCardId,
+                ["businessLine"] = "dormitory"
+            },
+            ["availableActions"] = ReadonlyActions("navigate", "operationPanel"),
+            ["gateResult"] = GateResult(decision, indexedAt, "operationsCommandAdmission"),
+            ["traceRefs"] = Array.Empty<string>(),
+            ["sourceRefs"] = new Dictionary<string, object?>
+            {
+                ["source"] = "SearchKernelService",
+                ["sourceType"] = "operationsCommandAdmission",
+                ["inputAdapter"] = "StartAdapterMap",
+                ["projectionAdapter"] = "none",
+                ["workspaceId"] = command.TemplateWorkspaceId,
+                ["cardId"] = command.FirstCardId,
+                ["definitionId"] = definition.DefinitionId,
+                ["admissionDecisionRef"] = decision.AdmissionDecisionRef
+            },
+            ["language"] = language,
+            ["explain"] = new Dictionary<string, string>
+            {
+                ["zh-CN"] = "Search Kernel 仅补充开始入口准入 envelope；Search 不写业务事实，最终确认仍由 Runtime 校验。",
+                ["ru-RU"] = "Search Kernel добавляет только envelope допуска для входа; Search не пишет бизнес-факты, финальное подтверждение проверяет Runtime.",
+                ["ky-KG"] = "Search Kernel баштоо кирүүсү үчүн гана уруксат envelope кошот; Search бизнес факт жазбайт, акыркы тастыктоону Runtime текшерет."
             }
         };
     }
@@ -268,6 +355,121 @@ public sealed class SearchKernelService
 
     private static string FirstNonEmpty(params string?[] values) =>
         values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
+
+    private static bool CommandMatches(SearchCommandDefinition command, IReadOnlyList<string> searchTerms) =>
+        command.Keywords
+            .Concat(new[] { command.ZhTitle, command.RuTitle, command.KyTitle })
+            .Any(keyword => searchTerms.Any(term => TermMatches(keyword, term)));
+
+    private static bool TermMatches(string keyword, string term) =>
+        !string.IsNullOrWhiteSpace(keyword) &&
+        !string.IsNullOrWhiteSpace(term) &&
+        (keyword.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+         term.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+
+    private static readonly IReadOnlyList<SearchCommandDefinition> SearchCommandCatalog = new[]
+    {
+        new SearchCommandDefinition(
+            "W-STAY-RESOURCE",
+            "roomSetup",
+            "新增住宿房源",
+            "Добавить комнату",
+            "Бөлмө кошуу",
+            "先录房号和床位数，价格和可租状态后面再补。",
+            "Сначала внесите номер комнаты и число коек. Тарифы и готовность заполните дальше.",
+            "Алгач бөлмө номерин жана койка санын жазыңыз. Баа жана даярдык кийин толтурулат.",
+            new[] { "新增住宿房源", "创建房间", "房间", "房源", "room", "resource" }),
+        new SearchCommandDefinition(
+            "W-STAY-LEAD-RESERVATION",
+            "leadCapture",
+            "登记咨询和预订",
+            "Записать заявку и бронь",
+            "Суроо жана бронь каттоо",
+            "先把来访咨询记清楚，再决定预订、取消或转入住。",
+            "Сначала зафиксируйте обращение, затем бронь, отмена или заселение.",
+            "Адегенде кайрылууну так жазыңыз, анан бронь, жокко чыгаруу же кирүү.",
+            new[] { "线索", "预订", "咨询", "预约", "lead", "reservation" }),
+        new SearchCommandDefinition(
+            "W-STAY-CHECKIN",
+            "lead",
+            "安排入住和收款",
+            "Оформить заезд и оплату",
+            "Кирүү жана төлөм уюштуруу",
+            "从入住人开始，完成分床、计费、押金和收款确认。",
+            "От жильца к койке, начислению, депозиту и подтверждению оплаты.",
+            "Жашоочудан баштап койка, эсеп, депозит жана төлөмдү тастыктоо.",
+            new[] { "入住收款", "入住", "收款", "押金入住", "安排入住", "checkin", "payment" }),
+        new SearchCommandDefinition(
+            "W-STAY-LIFECYCLE",
+            "residentProfile",
+            "维护在住信息",
+            "Обновить данные проживания",
+            "Жашоо маалыматтарын жаңыртуу",
+            "处理住客资料、分床、应收、续住和在住变更。",
+            "Данные жильца, койка, начисления, продление и изменения проживания.",
+            "Жашоочу, койка, эсеп, узартуу жана жашоо өзгөрүүлөрү.",
+            new[] { "在住", "住客", "续住", "生命周期", "resident", "stay" }),
+        new SearchCommandDefinition(
+            "W-STAY-DEPOSIT-LEDGER",
+            "depositAssessment",
+            "处理押金",
+            "Обработать депозит",
+            "Депозитти иштетүү",
+            "押金评估、收取、财务确认、扣除、退款和关闭。",
+            "Оценка, прием, фин. подтверждение, удержание, возврат и закрытие.",
+            "Баалоо, алуу, финансы тастыктоо, кармоо, кайтаруу жана жабуу.",
+            new[] { "押金", "押金账本", "退款", "扣除", "deposit", "refund" }),
+        new SearchCommandDefinition(
+            "W-STAY-PAYMENT-LEDGER",
+            "paymentReceipt",
+            "登记普通收款",
+            "Записать обычный платеж",
+            "Кадимки төлөмдү каттоо",
+            "登记收款、财务确认、分配到应收，后续处理欠款。",
+            "Запись платежа, фин. подтверждение, распределение и долги.",
+            "Төлөмдү каттоо, финансы тастыктоо, бөлүштүрүү жана карыз.",
+            new[] { "普通收款", "收款账本", "欠款", "付款", "payment", "receipt" }),
+        new SearchCommandDefinition(
+            "W-STAY-SERVICE-TASK",
+            "serviceTaskCreate",
+            "安排清洁或维修",
+            "Назначить уборку или ремонт",
+            "Тазалоо же оңдоону дайындоо",
+            "创建影响房间、床位可售状态的清洁、维修或配置任务。",
+            "Создайте задачу, которая влияет на доступность комнаты или койки.",
+            "Бөлмө же койканын сатылуу абалына таасир берген тапшырма түзүңүз.",
+            new[] { "清洁", "维修", "服务任务", "保洁", "cleaning", "repair" }),
+        new SearchCommandDefinition(
+            "W-STAY-CHECKOUT-SETTLEMENT",
+            "checkoutStart",
+            "办理退住结算",
+            "Рассчитать выезд",
+            "Чыгуу эсептешүүсү",
+            "处理退住、查房、押金、最终结算、床位释放和清洁任务。",
+            "Выезд, проверка, депозит, финальный расчет, освобождение койки и уборка.",
+            "Чыгуу, текшерүү, депозит, акыркы эсеп, койка бошотуу жана тазалоо.",
+            new[] { "退住", "结算", "退住结算", "查房", "settlement" }),
+        new SearchCommandDefinition(
+            "W-STAY-EXPENSE-LEDGER",
+            "expenseRecord",
+            "登记宿舍支出",
+            "Записать расход общежития",
+            "Жатакана чыгымын каттоо",
+            "登记宿舍支出，后续审批并关联到房间、床位或服务任务。",
+            "Запишите расход, затем подтвердите и свяжите с комнатой, койкой или задачей.",
+            "Чыгымды каттап, кийин бөлмө, койка же тапшырмага байланыштырыңыз.",
+            new[] { "登记宿舍支出", "宿舍支出", "支出", "成本", "费用", "expense", "cost" }),
+        new SearchCommandDefinition(
+            "W-STAY-PERIOD-ANALYTICS",
+            "periodScope",
+            "做周期复盘",
+            "Провести обзор периода",
+            "Мезгилдик талдоо жүргүзүү",
+            "确认周期范围，查看指标、财务、运营诊断和行动计划。",
+            "Период, метрики, финансы, операционная диагностика и план действий.",
+            "Мезгил, көрсөткүч, финансы, операциялык диагноз жана аракет планы.",
+            new[] { "复盘", "周期", "经营", "指标", "period", "review" })
+    };
 
     private static bool IsTerminalStatus(string status) =>
         new[] { "done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped" }
@@ -546,3 +748,14 @@ internal sealed record SearchSynonymDocument(IReadOnlyList<SearchSynonymEntry>? 
 internal sealed record SearchSynonymEntry(
     string Canonical,
     IReadOnlyDictionary<string, IReadOnlyList<string>> Languages);
+
+internal sealed record SearchCommandDefinition(
+    string TemplateWorkspaceId,
+    string FirstCardId,
+    string ZhTitle,
+    string RuTitle,
+    string KyTitle,
+    string ZhSummary,
+    string RuSummary,
+    string KySummary,
+    IReadOnlyList<string> Keywords);

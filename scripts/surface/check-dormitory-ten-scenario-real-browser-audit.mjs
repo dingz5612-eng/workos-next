@@ -62,20 +62,31 @@ function validateReport() {
     "W-STAY-PERIOD-ANALYTICS"
   ]);
   for (const item of report.scenarios || []) {
+    const admissionBlocked = item.expectedOutcome === "admission_blocked";
     expected.delete(item.templateWorkspaceId);
     if (item.status !== "passed") violations.push(v("ten_scenario.scenario_status", `${item.title} 必须 passed。`, { scenario: item.id }));
     if (item.negative?.status !== "passed") violations.push(v("ten_scenario.negative", `${item.title} 空提交反例必须通过。`, { scenario: item.id }));
-    if (item.positive?.status !== "passed") violations.push(v("ten_scenario.positive", `${item.title} 正例提交必须通过。`, { scenario: item.id }));
-    if (!Array.isArray(item.steps) || item.steps.length < 5) {
-      violations.push(v("ten_scenario.step_coverage", `${item.title} 至少需要搜索、打开、空提交、填充、提交后 5 个页面证据。`, { scenario: item.id }));
+    if (admissionBlocked) {
+      if (item.positive?.status !== "not_applicable" || item.positive?.blockedByAdmission !== true || item.positive?.confirmDelta !== 0) {
+        violations.push(v("ten_scenario.finance_gate_blocked", `${item.title} 必须证明 finance-gate admission 阻断且不得形成 Confirm。`, { scenario: item.id, positive: item.positive }));
+      }
+    } else if (item.positive?.status !== "passed") {
+      violations.push(v("ten_scenario.positive", `${item.title} 正例提交必须通过。`, { scenario: item.id }));
+    }
+    const minimumStepCount = admissionBlocked ? 3 : 5;
+    if (!Array.isArray(item.steps) || item.steps.length < minimumStepCount) {
+      violations.push(v("ten_scenario.step_coverage", `${item.title} 页面证据不足。`, { scenario: item.id, minimumStepCount }));
     }
   }
   for (const missing of expected) {
     violations.push(v("ten_scenario.workspace_missing", `缺少宿舍场景 ${missing}。`, { workspaceId: missing }));
   }
   const policy = report.networkPolicy || {};
+  const expectedConfirmCount = (report.scenarios || []).filter((item) => item.expectedOutcome !== "admission_blocked").length;
   if (policy.workspaceStartCount < 10) violations.push(v("ten_scenario.workspace_start_count", "必须至少有 10 次 Operations workspace start。", policy));
-  if (policy.operationsConfirmCount !== 10) violations.push(v("ten_scenario.confirm_count", "10 个正例必须刚好形成 10 次 Operations Confirm。", policy));
+  if (policy.operationsConfirmCount !== expectedConfirmCount) {
+    violations.push(v("ten_scenario.confirm_count", `${expectedConfirmCount} 个可确认正例必须刚好形成 ${expectedConfirmCount} 次 Operations Confirm，finance-gate 阻断场景不得确认。`, { ...policy, expectedConfirmCount }));
+  }
   if (!policy.noForbiddenWorkspaceCardWrites) violations.push(v("ten_scenario.blocked_workspace_card_write", "不得出现旧 Workspace/Card prepare/confirm 写入口。", policy));
   if (!policy.noDirectBusinessFactWrites) violations.push(v("ten_scenario.direct_fact_write", "前端不得直接写业务事实、outbox 或投影。", policy));
   const assertions = new Map((report.assertions || []).map((item) => [item.id, item.status]));

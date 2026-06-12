@@ -26,7 +26,7 @@ const scenarios = [
   scenario("06", "payment-ledger", "W-STAY-PAYMENT-LEDGER", "paymentReceipt", "登记普通收款"),
   scenario("07", "checkout-settlement", "W-STAY-CHECKOUT-SETTLEMENT", "checkoutStart", "办理退住结算"),
   scenario("08", "service-task", "W-STAY-SERVICE-TASK", "serviceTaskCreate", "安排清洁或维修"),
-  scenario("09", "expense-ledger", "W-STAY-EXPENSE-LEDGER", "expenseRecord", "登记宿舍支出"),
+  scenario("09", "expense-ledger", "W-STAY-EXPENSE-LEDGER", "expenseRecord", "登记宿舍支出", { expectedOutcome: "admission_blocked" }),
   scenario("10", "period-analytics", "W-STAY-PERIOD-ANALYTICS", "periodScope", "做周期复盘")
 ];
 
@@ -142,6 +142,7 @@ async function runScenario(page, item) {
     title: item.title,
     templateWorkspaceId: item.workspaceId,
     firstCardId: item.firstCardId,
+    expectedOutcome: item.expectedOutcome,
     status: "running",
     negative: {},
     positive: {},
@@ -167,6 +168,11 @@ async function runScenario(page, item) {
   await click(page, `[data-start-operations-workspace="${item.workspaceId}"]`);
   await waitForOperationPanel(page);
   result.steps.push(await capture(page, `${item.index}-${item.id}-02-ready`, `${item.title} 新建步骤页`));
+
+  if (item.expectedOutcome === "admission_blocked") {
+    await verifyAdmissionBlockedScenario(page, item, result, startNetworkIndex, startedAt);
+    return result;
+  }
 
   const beforeEmptyConfirms = countConfirmWrites();
   await click(page, "[data-submit-card]");
@@ -218,6 +224,40 @@ async function runScenario(page, item) {
   result.durationMs = Date.now() - startedAt;
   result.status = result.findings.length ? "failed" : "passed";
   return result;
+}
+
+async function verifyAdmissionBlockedScenario(page, item, result, startNetworkIndex, startedAt) {
+  const ready = await readDomState(page);
+  result.negative = {
+    status: isAdmissionBlocked(ready) ? "passed" : "failed",
+    runtimeDecision: ready.runtimeDecision,
+    admissionDecision: ready.admissionDecision,
+    submitCount: ready.submitCount
+  };
+  if (result.negative.status !== "passed") {
+    addFinding(result, "finance_gate_not_blocked", `${item.title} 必须保持 finance-gate admission 阻断，不得出现提交入口。`, ready);
+  }
+
+  const beforeBlockedConfirms = countConfirmWrites();
+  await fillRequiredOperationFields(page, item);
+  await waitForHydrated(page);
+  result.steps.push(await capture(page, `${item.index}-${item.id}-03-filled-still-blocked`, `${item.title} 填写后仍保持阻断`));
+  const afterFill = await readDomState(page);
+  const confirmDelta = countConfirmWrites() - beforeBlockedConfirms;
+  result.positive = {
+    status: isAdmissionBlocked(afterFill) && confirmDelta === 0 ? "not_applicable" : "failed",
+    blockedByAdmission: isAdmissionBlocked(afterFill),
+    confirmDelta,
+    admissionDecision: afterFill.admissionDecision,
+    runtimeDecision: afterFill.runtimeDecision
+  };
+  if (result.positive.status !== "not_applicable") {
+    addFinding(result, "finance_gate_confirm_reopened", `${item.title} 填写后仍不得打开宿舍侧确认。`, result.positive);
+  }
+
+  result.network = analyzeNetwork(report.networkEvents.slice(startNetworkIndex));
+  result.durationMs = Date.now() - startedAt;
+  result.status = result.findings.length ? "failed" : "passed";
 }
 
 async function login(page) {
@@ -514,9 +554,10 @@ function analyzeNetwork(events) {
 }
 
 function networkAssertions(policy) {
+  const expectedConfirmCount = scenarios.filter((item) => item.expectedOutcome !== "admission_blocked").length;
   return [
     assertion("network.workspace_start_count", policy.workspaceStartCount >= scenarios.length, "10 个场景必须通过 Operations workspace start 进入。", policy),
-    assertion("network.operations_confirm_count", policy.operationsConfirmCount === scenarios.length, "10 个正例必须各形成一次 Operations Confirm。", policy),
+    assertion("network.operations_confirm_count", policy.operationsConfirmCount === expectedConfirmCount, `${expectedConfirmCount} 个可确认正例必须各形成一次 Operations Confirm，finance-gate 阻断场景不得确认。`, { ...policy, expectedConfirmCount }),
     assertion("network.no_blocked_workspace_card_writes", policy.noForbiddenWorkspaceCardWrites, "不得调用旧 Workspace/Card prepare/confirm 写入口。", policy),
     assertion("network.no_direct_business_fact_writes", policy.noDirectBusinessFactWrites, "前端不得直接写业务事实、outbox 或投影。", policy)
   ];
@@ -605,8 +646,16 @@ async function requireHealthy(url, label) {
   if (!response.ok) throw new Error(`${label} is not reachable: ${url} (${response.status})`);
 }
 
-function scenario(index, id, workspaceId, firstCardId, title) {
-  return { index, id, workspaceId, firstCardId, title };
+function scenario(index, id, workspaceId, firstCardId, title, options = {}) {
+  return { index, id, workspaceId, firstCardId, title, expectedOutcome: options.expectedOutcome || "confirm" };
+}
+
+function isAdmissionBlocked(domState = {}) {
+  const text = String(domState.textSample || "");
+  return domState.submitCount === 0 &&
+    (/confirm_denied|prepare_only_confirm_denied|blocked/i.test(String(domState.admissionDecision || domState.runtimeDecision || "")) ||
+      text.includes("当前不能确认") ||
+      text.includes("不能提交"));
 }
 
 function shortSuffix() {
