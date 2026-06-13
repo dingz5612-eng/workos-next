@@ -6,10 +6,10 @@ manualEditAllowed: true
 generated: false
 doNotEdit: false
 sourcePath: docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml
-scenarioNameZh: 宿舍资源可售第一金链
+scenarioNameZhForReviewOnly: 宿舍资源可售第一金链
 goldenChainId: dormitory.resource-saleability.golden-chain.v1
 scenarioId: dormitory.resource-saleability.l1-internal-pilot.v1
-businessGoalZh: 房间、床位、资源准备达到 L1 internal pilot 可售条件。
+businessGoalZhForReviewOnly: 房间、床位、资源准备达到 L1 internal pilot 可售条件。
 sourceReferences:
   - docs/business/domains/dormitory/dormitory-operating-kernel.json
   - docs/business/admission/business-line-levels.yml
@@ -41,31 +41,137 @@ mainFlow:
     workItemType: Dorm.ResourceReadinessConfirm
     definitionId: definition.dormitory.resourceReadinessConfirm.v1
     commandType: ResourceReadiness.Confirm
+handoffPolicy:
+  from: Dorm.ResourceReadinessConfirm
+  mode: prepare_only
+  allowedPrepareTargets:
+    - lead-reservation.prepare
+    - nextSourcePackage.prepare
+  forbiddenDirectHandoffs:
+    - Dorm.CheckinConfirm
+    - Dorm.PaymentConfirm
+    - Dorm.DepositConfirm
+    - Dorm.CheckoutSettlementApprove
+    - Finance.CorrectionApply
+    - Dorm.PeriodReview
 branchFlows:
   - id: missing-field
-    nameZh: 缺字段
+    nameZhForReviewOnly: 缺字段
     outcome: NO_GO
+    blockingReasonCode: DORM_RESOURCE_SALEABILITY_MISSING_FIELD
+    blockingReasonCopyKey: dormitory.resourceSaleability.branch.missingField
+    requiredEvidenceRefs:
+      - room-basic-info
+    allowedNextAction: supplement-required-info
+    allowedNextActionCopyKey: dormitory.resourceSaleability.action.supplementRequiredInfo
+    correctionAllowed: false
+    admissionNoGoItem: missing-required-field
+    safeErrorCopyKey: operations.error.safe.422
+    explanationKey: explain.visibleNotConfirm
+    expectedNoSideEffects: true
   - id: missing-evidence
-    nameZh: 缺证据
+    nameZhForReviewOnly: 缺证据
     outcome: NO_GO
+    blockingReasonCode: DORM_RESOURCE_SALEABILITY_MISSING_EVIDENCE
+    blockingReasonCopyKey: dormitory.resourceSaleability.branch.missingEvidence
+    requiredEvidenceRefs:
+      - room-photo
+      - bed-photo
+      - completion-photo
+    allowedNextAction: supplement-required-evidence
+    allowedNextActionCopyKey: dormitory.resourceSaleability.action.supplementRequiredEvidence
+    correctionAllowed: false
+    admissionNoGoItem: missing-required-evidence
+    safeErrorCopyKey: operations.error.safe.422
+    explanationKey: explain.summaryNotConfirm
+    expectedNoSideEffects: true
   - id: untrusted-evidence
-    nameZh: 证据不可信
+    nameZhForReviewOnly: 证据不可信
     outcome: NO_GO
+    blockingReasonCode: DORM_RESOURCE_SALEABILITY_UNTRUSTED_EVIDENCE
+    blockingReasonCopyKey: dormitory.resourceSaleability.branch.untrustedEvidence
+    requiredEvidenceRefs:
+      - room-photo
+      - room-link-proof
+      - verification-check
+    allowedNextAction: replace-untrusted-evidence
+    allowedNextActionCopyKey: dormitory.resourceSaleability.action.replaceEvidence
+    correctionAllowed: false
+    admissionNoGoItem: untrusted-evidence
+    safeErrorCopyKey: operations.error.safe.422
+    explanationKey: evidence.reason.proofOnly
+    expectedNoSideEffects: true
   - id: duplicate-room
-    nameZh: 重复房间
+    nameZhForReviewOnly: 重复房间
     outcome: NO_GO
+    blockingReasonCode: DORM_RESOURCE_SALEABILITY_DUPLICATE_ROOM
+    blockingReasonCopyKey: dormitory.resourceSaleability.branch.duplicateRoom
+    requiredEvidenceRefs:
+      - room-basic-info
+    allowedNextAction: contact-dormitory-owner
+    allowedNextActionCopyKey: dormitory.resourceSaleability.action.contactOwner
+    correctionAllowed: false
+    admissionNoGoItem: duplicate-room
+    safeErrorCopyKey: operations.error.safe.409
+    explanationKey: explain.managementReadonly
+    expectedNoSideEffects: true
   - id: wrong-bed-room-owner
-    nameZh: 床位归属错误
+    nameZhForReviewOnly: 床位归属错误
     outcome: NO_GO
+    blockingReasonCode: DORM_RESOURCE_SALEABILITY_WRONG_BED_ROOM_OWNER
+    blockingReasonCopyKey: dormitory.resourceSaleability.branch.wrongBedRoomOwner
+    requiredEvidenceRefs:
+      - room-link-proof
+    allowedNextAction: contact-dormitory-owner
+    allowedNextActionCopyKey: dormitory.resourceSaleability.action.contactOwner
+    correctionAllowed: false
+    admissionNoGoItem: wrong-bed-room-owner
+    safeErrorCopyKey: operations.error.safe.409
+    explanationKey: explain.managementReadonly
+    expectedNoSideEffects: true
   - id: resource-not-saleable
-    nameZh: 资源不可售
+    nameZhForReviewOnly: 资源不可售
     outcome: NO_GO
+    blockingReasonCode: DORM_RESOURCE_SALEABILITY_RESOURCE_NOT_SALEABLE
+    blockingReasonCopyKey: dormitory.resourceSaleability.branch.resourceNotSaleable
+    requiredEvidenceRefs:
+      - completion-photo
+      - verification-check
+    allowedNextAction: readonly-review
+    allowedNextActionCopyKey: dormitory.resourceSaleability.action.readonlyReview
+    correctionAllowed: false
+    admissionNoGoItem: resource-not-saleable
+    safeErrorCopyKey: operations.error.safe.422
+    explanationKey: explain.visibleNotConfirm
+    expectedNoSideEffects: true
   - id: manual-review
-    nameZh: 人工复核
+    nameZhForReviewOnly: 人工复核
     outcome: NO_GO
+    blockingReasonCode: DORM_RESOURCE_SALEABILITY_MANUAL_REVIEW
+    blockingReasonCopyKey: dormitory.resourceSaleability.branch.manualReview
+    requiredEvidenceRefs:
+      - audit-note
+    allowedNextAction: contact-dormitory-owner
+    allowedNextActionCopyKey: dormitory.resourceSaleability.action.contactOwner
+    correctionAllowed: false
+    admissionNoGoItem: manual-review-required
+    safeErrorCopyKey: operations.error.safe.generic
+    explanationKey: explain.managementReadonly
+    expectedNoSideEffects: true
   - id: correction
-    nameZh: 纠错
+    nameZhForReviewOnly: 纠错
     outcome: NO_GO
+    blockingReasonCode: DORM_RESOURCE_SALEABILITY_CORRECTION_REQUIRED
+    blockingReasonCopyKey: dormitory.resourceSaleability.branch.correction
+    requiredEvidenceRefs:
+      - audit-note
+    allowedNextAction: start-correction-request
+    allowedNextActionCopyKey: dormitory.resourceSaleability.action.openCorrection
+    correctionAllowed: true
+    admissionNoGoItem: correction-required
+    safeErrorCopyKey: operations.error.safe.422
+    explanationKey: explain.summaryNotConfirm
+    expectedNoSideEffects: true
 businessIdentity:
   allowed:
     - goldenChainId
@@ -98,15 +204,21 @@ businessIdentity:
         - surfacePolicyRef
 roles:
   allowedHumanRoles:
-    - 宿舍经办人
-    - 宿舍负责人
+    - roleId: dormitory.operator
+      labelCopyKey: dormitory.resourceSaleability.role.operator
+      nameZhForReviewOnly: 宿舍经办人
+    - roleId: dormitory.lead
+      labelCopyKey: dormitory.resourceSaleability.role.lead
+      nameZhForReviewOnly: 宿舍负责人
   thirdRoleAllowed: false
 allowedFacts:
-  - Room
-  - Bed
-  - EvidenceObject
-  - DomainEvent
-  - CommandSubmission
+  userVisibleFacts:
+    - Room
+    - Bed
+    - EvidenceObject
+  traceOnlyFacts:
+    - DomainEvent
+    - CommandSubmission
 forbiddenFacts:
   - Payment
   - Deposit
@@ -150,8 +262,21 @@ financeLedgerBoundary:
 admissionPolicyRef: dormitory_l1_internal_pilot_observation
 admissionPolicy:
   maturity: L1 internal pilot
-  internalPilotConfirmAllowed: true
+  internalPilotConfirmAllowedForReviewOnly: true
   productionConfirmAllowed: false
+  admissionSurfaceSemantics:
+    internalPilotConfirmCapability: serverAdmissionRequired
+    missingAdmissionBehavior:
+      visibleAllowed: true
+      prepareAllowed: false
+      confirmAllowed: false
+      productionAllowed: false
+    userVisibleExplanationKey: explain.visibleNotConfirm
+    forbiddenUserCopy:
+      - 当前可确认
+      - 试点可确认
+      - 可以提交确认
+      - 生产可确认
 ledgerPolicyRef: ledger.none.v1
 evidencePolicyRef: evidence.dormitory.resource-saleability.v1
 evidencePolicy:
@@ -230,6 +355,12 @@ fieldContracts:
         labelCopyKey: dormitory.resourceSaleability.field.roomBasicProfile
         displayNameZhForReviewOnly: 房间基础信息
         inputMode: clientSubmitted
+        category: business-input
+        editable: true
+        source: source-package-review
+        fallbackAllowed: false
+        ordinaryUserVisible: true
+        controlSource: generatedSurfaceModelOnly
         objectKind: Room
         definitionScope: definition.dormitory.roomSetupConfirm.v1
         generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
@@ -250,6 +381,12 @@ fieldContracts:
         labelCopyKey: dormitory.resourceSaleability.field.roomId
         displayNameZhForReviewOnly: 已确认房间
         inputMode: selectedStableRef
+        category: stable-reference
+        editable: true
+        source: source-package-review
+        fallbackAllowed: false
+        ordinaryUserVisible: true
+        controlSource: generatedSurfaceModelOnly
         objectKind: Room
         definitionScope: definition.dormitory.bedSetupConfirm.v1
         generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
@@ -259,6 +396,12 @@ fieldContracts:
         labelCopyKey: dormitory.resourceSaleability.field.bedNo
         displayNameZhForReviewOnly: 床位号
         inputMode: clientSubmitted
+        category: business-input
+        editable: true
+        source: source-package-review
+        fallbackAllowed: false
+        ordinaryUserVisible: true
+        controlSource: generatedSurfaceModelOnly
         objectKind: Bed
         definitionScope: definition.dormitory.bedSetupConfirm.v1
         generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
@@ -267,6 +410,12 @@ fieldContracts:
         labelCopyKey: dormitory.resourceSaleability.field.bedType
         displayNameZhForReviewOnly: 床位类型
         inputMode: clientSubmitted
+        category: business-input
+        editable: true
+        source: source-package-review
+        fallbackAllowed: false
+        ordinaryUserVisible: true
+        controlSource: generatedSurfaceModelOnly
         objectKind: Bed
         definitionScope: definition.dormitory.bedSetupConfirm.v1
         generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
@@ -278,6 +427,12 @@ fieldContracts:
         labelCopyKey: dormitory.resourceSaleability.field.roomId
         displayNameZhForReviewOnly: 已确认房间
         inputMode: selectedStableRef
+        category: stable-reference
+        editable: true
+        source: source-package-review
+        fallbackAllowed: false
+        ordinaryUserVisible: true
+        controlSource: generatedSurfaceModelOnly
         objectKind: Room
         definitionScope: definition.dormitory.resourceReadinessConfirm.v1
         generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
@@ -287,6 +442,12 @@ fieldContracts:
         labelCopyKey: dormitory.resourceSaleability.field.bedId
         displayNameZhForReviewOnly: 已确认床位
         inputMode: selectedStableRef
+        category: stable-reference
+        editable: true
+        source: source-package-review
+        fallbackAllowed: false
+        ordinaryUserVisible: true
+        controlSource: generatedSurfaceModelOnly
         objectKind: Bed
         definitionScope: definition.dormitory.resourceReadinessConfirm.v1
         generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
@@ -296,6 +457,12 @@ fieldContracts:
         labelCopyKey: dormitory.resourceSaleability.field.readinessState
         displayNameZhForReviewOnly: 资源准备状态
         inputMode: clientSubmitted
+        category: business-input
+        editable: true
+        source: source-package-review
+        fallbackAllowed: false
+        ordinaryUserVisible: true
+        controlSource: generatedSurfaceModelOnly
         objectKind: Room
         definitionScope: definition.dormitory.resourceReadinessConfirm.v1
         generatedContractRef: docs/contracts/generated/dormitory/fields.generated.json
@@ -359,6 +526,17 @@ languageBinding:
     - explain.businessBasisNotFinancialTruth
     - explain.managementReadonly
     - explain.financeTruthRequired
+    - evidence.reason.proofOnly
+  roleCopyKeys:
+    - dormitory.resourceSaleability.role.operator
+    - dormitory.resourceSaleability.role.lead
+  allowedNextActionCopyKeys:
+    - dormitory.resourceSaleability.action.supplementRequiredInfo
+    - dormitory.resourceSaleability.action.supplementRequiredEvidence
+    - dormitory.resourceSaleability.action.replaceEvidence
+    - dormitory.resourceSaleability.action.contactOwner
+    - dormitory.resourceSaleability.action.readonlyReview
+    - dormitory.resourceSaleability.action.openCorrection
   missingTranslationNoGoItems: []
 userVisibleTermFirewall:
   ordinaryUserVisibleInternalTerms: false
@@ -414,6 +592,27 @@ readSideAcceptance:
     dashboardSummaryIsNotSourceOfTruth: true
     sourceFactsRequired: true
     dashboardSummaryCannotUnlockProduction: true
+  DashboardWidget:
+    readonly: true
+    actionPolicy: readonly_or_navigate_only
+    permissionRequired: true
+    lineageRequired: true
+    freshnessRequired: true
+    sourceFactsRequired: true
+    noBusinessFactWrite: true
+  ReportDataset:
+    readonly: true
+    permissionRequired: true
+    lineageRequired: true
+    freshnessRequired: true
+    sourceFactsRequired: true
+    reportDatasetIsNotSourceOfTruth: true
+    missingEnvelopeBehavior:
+      permissionMissing: BLOCK
+      lineageMissing: BLOCK_METRIC_AND_DASHBOARD_USE
+      freshnessMissing: STALE_OR_BLOCK
+    exportPolicy: internal_review_only
+    noBusinessFactWrite: true
   Metric:
     scope: L1_OBSERVATION
     notProductionKpi: true
@@ -425,6 +624,14 @@ readSideAcceptance:
       - UI field
       - DashboardSummary
       - page state
+    lineage:
+      factRefs:
+        - DomainEvent
+        - CommandSubmission
+        - EvidenceObject
+        - Outbox
+      rawDomainEventReadAllowed: false
+      rawCommandSubmissionReadAllowed: false
     requiredFields:
       - metricId
       - definitionVersion

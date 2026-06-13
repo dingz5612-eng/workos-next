@@ -2,11 +2,15 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://workosnext.local/schemas/business/scenario-field-contract.schema.json",
   "type": "object",
-  "required": ["version", "domain", "productionAllowed", "fieldSets", "semanticFailureCases"],
+  "required": ["version", "domain", "productionAllowed", "sourceScenarioFile", "scenarioFieldContractStatus", "firstGoldenChainFieldContractReady", "generatedCompilationCompleted", "fieldSets", "semanticFailureCases"],
   "properties": {
     "version": { "type": "string" },
     "domain": { "const": "dormitory" },
     "productionAllowed": { "const": false },
+    "sourceScenarioFile": { "const": "PENDING_SOURCE_PACKAGE_REVIEW" },
+    "scenarioFieldContractStatus": { "const": "PENDING_SOURCE_PACKAGE_REVIEW" },
+    "firstGoldenChainFieldContractReady": { "const": false },
+    "generatedCompilationCompleted": { "const": false },
     "fieldSets": {
       "type": "array",
       "minItems": 10,

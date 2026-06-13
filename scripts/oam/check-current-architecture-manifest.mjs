@@ -10,6 +10,7 @@ const requiredEvidenceFiles = [
   "artifacts/oam/evidence/current-oam-release-attestation.json",
   "artifacts/oam/evidence/evidence-graph.json",
   "artifacts/oam/evidence/current-oam-final-report.json",
+  "artifacts/oam/evidence/evidence-lifecycle-proof.json",
   "artifacts/oam/final-report.json",
   "artifacts/oam/evidence/runtime-proof.json",
   "artifacts/oam/evidence/search-readonly-proof.json",
@@ -39,6 +40,10 @@ const requiredBindingFields = [
   "artifactName",
   "githubArtifactMetadataDigest",
   "githubArtifactDigestStatus",
+  "externalArtifactAttestation",
+  "evidenceLifecycleType",
+  "releaseEvidenceReferenceOnly",
+  "workspaceDirtyAtGeneration",
   "zipArtifactDigest",
   "releaseAuthority",
   "evidenceRootDigest",
@@ -97,6 +102,13 @@ function checkNegativeFixtures(candidate) {
     const mutated = structuredClone(candidate);
     mutated.currentEvidenceRoot.requiredFiles = mutated.currentEvidenceRoot.requiredFiles
       .filter((item) => item !== "artifacts/oam/proofs/search/search-derived-readmodel-only-proof.json");
+    return collectViolations(mutated).some((item) => item.id === "manifest.required_file_missing");
+  });
+
+  mutationTest("manifest_missing_evidence_lifecycle_proof_should_fail", () => {
+    const mutated = structuredClone(candidate);
+    mutated.currentEvidenceRoot.requiredFiles = mutated.currentEvidenceRoot.requiredFiles
+      .filter((item) => item !== "artifacts/oam/evidence/evidence-lifecycle-proof.json");
     return collectViolations(mutated).some((item) => item.id === "manifest.required_file_missing");
   });
 

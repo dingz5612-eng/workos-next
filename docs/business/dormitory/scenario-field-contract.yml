@@ -3,6 +3,9 @@
   "domain": "dormitory",
   "productionAllowed": false,
   "sourceScenarioFile": "PENDING_SOURCE_PACKAGE_REVIEW",
+  "scenarioFieldContractStatus": "PENDING_SOURCE_PACKAGE_REVIEW",
+  "firstGoldenChainFieldContractReady": false,
+  "generatedCompilationCompleted": false,
   "fieldSets": [
     {
       "scenarioId": "dorm-cert-001",

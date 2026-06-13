@@ -91,6 +91,25 @@ Product Capability
 
 任何 checker、报告或图谱不得把四图写成 artifact 分类，不得把三层写成执行顺序，不得把六环写成散点清单。
 
+## 2.3 Evidence / Release Lifecycle
+
+Evidence / Release 层必须区分三类生命周期：
+
+| 生命周期 | 生成位置 | 允许证明 | 禁止事项 |
+| --- | --- | --- | --- |
+| `local-candidate` | 本地整改或复审准备 | 当前工作区内容满足候选闭合条件；`releaseAuthority=false`。 | 不得写成 CI release，不得授予 GO，不得把 `bindingStatus=current` 当发布证据。 |
+| `repository-reference-snapshot` | 仓库中保留的历史参考快照 | 作为历史复审或迁移参考；默认 `stale=true`、`referenceOnly=true`。 | 不得成为当前发布权威，不得反向覆盖 Source 或 Runtime Evidence。 |
+| `ci-release` | GitHub Actions 发布证明链 | 只有存在 `GITHUB_SHA`、GitHub artifact metadata digest，且工作区干净时，才能尝试当前发布绑定。 | CI green、artifact exists、browser evidence、Final Report exists 均不等于 GO；没有外部 artifact attestation 时不得授权发布。 |
+
+`externalArtifactAttestation` 只能是：
+
+- `PENDING_EXTERNAL_ATTESTATION`
+- `ATTESTED`
+
+本地生成器默认只能生成 `local-candidate`。显式 `ci-release` 模式必须运行在 GitHub Actions，必须绑定 `GITHUB_SHA`，并必须提供 GitHub artifact metadata digest。只要当前工作区存在未提交差异，Release Evidence Object、Evidence Graph 和 Final Report 的发布绑定必须保持 `stale=true`、`referenceOnly=true`、`bindingStatus=stale`。
+
+无论 Evidence Root、Release Evidence Object 或 Final Report 是否存在，当前业务状态仍固定为 `businessProductionGoNoGo=NO_GO`、`releaseAuthority=false`、`productionConfirmAllowed=false`，直到单独的 00 复审和后续准入明确放行。
+
 ## 3. 一等目录
 
 ### 3.1 services

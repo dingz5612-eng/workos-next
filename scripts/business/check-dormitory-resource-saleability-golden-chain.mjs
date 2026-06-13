@@ -44,10 +44,12 @@ const forbiddenIdentity = [
   "old catalog id",
   "old seed id"
 ];
-const requiredAllowedFacts = [
+const requiredUserVisibleFacts = [
   "Room",
   "Bed",
-  "EvidenceObject",
+  "EvidenceObject"
+];
+const requiredTraceOnlyFacts = [
   "DomainEvent",
   "CommandSubmission"
 ];
@@ -99,14 +101,24 @@ requireValue(hasLine("layer: source"), "scenario.layer", "第一金链场景定�
 requireValue(hasLine("manualEditAllowed: true"), "scenario.manual_edit", "第一金链场景定稿包必须允许人工维护。");
 requireValue(hasLine("generated: false"), "scenario.generated_false", "第一金链场景定稿包不得是 generated。");
 requireValue(hasLine("doNotEdit: false"), "scenario.do_not_edit_false", "第一金链场景定稿包不得声明 doNotEdit。");
-requireValue(hasLine("scenarioNameZh: 宿舍资源可售第一金链"), "scenario.name", "场景名称必须是宿舍资源可售第一金链。");
-requireValue(hasLine("businessGoalZh: 房间、床位、资源准备达到 L1 internal pilot 可售条件。"), "scenario.goal", "业务目标必须绑定 L1 internal pilot 可售条件。");
+requireValue(hasLine("scenarioNameZhForReviewOnly: 宿舍资源可售第一金链"), "scenario.name", "场景名称必须是 review-only 的宿舍资源可售第一金链。");
+requireValue(!/^scenarioNameZh:/m.test(text), "scenario.name_raw_not_allowed", "scenarioNameZh 不得作为用户可见文案权威。");
+requireValue(hasLine("businessGoalZhForReviewOnly: 房间、床位、资源准备达到 L1 internal pilot 可售条件。"), "scenario.goal", "业务目标必须以 review-only 方式绑定 L1 internal pilot 可售条件。");
+requireValue(!/^businessGoalZh:/m.test(text), "scenario.goal_raw_not_allowed", "businessGoalZh 不得作为用户可见文案权威。");
 
 requireList("inScope", requiredInScope);
 requireList("outOfScope", requiredOutOfScope);
-requireList("allowedFacts", requiredAllowedFacts);
+requireList("allowedFacts", [...requiredUserVisibleFacts, ...requiredTraceOnlyFacts]);
 requireList("forbiddenFacts", requiredForbiddenFacts);
 requireList("branchFlows", requiredBranchFlows);
+for (const id of ["missing-field", "missing-evidence", "untrusted-evidence", "duplicate-room", "wrong-bed-room-owner", "resource-not-saleable", "manual-review", "correction"]) {
+  const branch = blockFor(section("branchFlows"), `id: ${id}`, "\n  - id:");
+  requireValue(Boolean(branch), "scenario.branch_missing", `branchFlows 缺少 ${id}。`, { id });
+  for (const required of ["blockingReasonCode:", "blockingReasonCopyKey:", "requiredEvidenceRefs:", "allowedNextAction:", "allowedNextActionCopyKey:", "correctionAllowed:", "admissionNoGoItem:", "safeErrorCopyKey:", "explanationKey:", "expectedNoSideEffects: true"]) {
+    requireValue(branch.includes(required), "scenario.branch_semantic_missing", `${id} 缺少 ${required}。`, { id, required });
+  }
+  requireValue(branch.includes("nameZhForReviewOnly:") && !branch.includes("nameZh:"), "scenario.branch_name_review_only", `${id} 必须使用 nameZhForReviewOnly。`, { id });
+}
 requireList("businessIdentity", requiredBusinessIdentity);
 for (const item of forbiddenIdentity) requireValue(section("businessIdentity").includes(`- ${item}`), "scenario.forbidden_identity_missing", `禁止身份缺少 ${item}。`, { item });
 
@@ -176,6 +188,13 @@ for (const required of [
 ]) {
   requireValue(fieldContracts.includes(required), "scenario.field_contract_missing", `fieldContracts 缺少 ${required}。`, { required });
 }
+for (const match of fieldContracts.matchAll(/fieldId:\s*([^\n\r]+)/g)) {
+  const fieldId = match[1].trim();
+  const block = blockFor(fieldContracts.slice(match.index), `fieldId: ${fieldId}`, "\n      - fieldId:");
+  for (const required of ["category:", "editable:", "source:", "fallbackAllowed: false", "ordinaryUserVisible:", "controlSource: generatedSurfaceModelOnly"]) {
+    requireValue(block.includes(required), "scenario.executable_field_control_missing", `${fieldId} 缺少 ${required}。`, { fieldId, required });
+  }
+}
 for (const forbidden of ["route param", "cardId", "sourceCardId", "workspaceCardId", "search label"]) {
   requireValue(section("selectedStableRefRules").includes(`- ${forbidden}`), "scenario.stable_ref_forbidden_source_missing", `selectedStableRefRules 必须禁止 ${forbidden}。`, { forbidden });
 }
@@ -201,9 +220,18 @@ for (const [index, [workItemType, definitionId, commandType]] of requiredMainFlo
   }
 }
 
-requireValue(section("roles").includes("- 宿舍经办人") && section("roles").includes("- 宿舍负责人") && hasLine("thirdRoleAllowed: false"), "scenario.roles", "场景只能包含宿舍经办人和宿舍负责人。");
+const roles = section("roles");
+for (const roleId of ["dormitory.operator", "dormitory.lead"]) {
+  const role = blockFor(roles, `roleId: ${roleId}`, "\n    - roleId:");
+  requireValue(role.includes("labelCopyKey: dormitory.resourceSaleability.role.") && role.includes("nameZhForReviewOnly:"), "scenario.role_copy_key_missing", `${roleId} 必须使用 labelCopyKey 和 review-only 中文。`, { roleId });
+}
+requireValue(hasLine("thirdRoleAllowed: false"), "scenario.roles", "场景只能包含宿舍经办人和宿舍负责人。");
 requireValue(hasLine("admissionPolicyRef: dormitory_l1_internal_pilot_observation"), "scenario.admission_policy_ref", "admissionPolicyRef 必须绑定 L1 internal pilot。");
-requireValue(section("admissionPolicy").includes("internalPilotConfirmAllowed: true") && section("admissionPolicy").includes("productionConfirmAllowed: false"), "scenario.admission_policy", "只允许 internal pilot confirm，不能允许 production confirm。");
+requireValue(section("admissionPolicy").includes("internalPilotConfirmAllowedForReviewOnly: true") && section("admissionPolicy").includes("productionConfirmAllowed: false"), "scenario.admission_policy", "只允许 review-only internal pilot capability，不能允许 production confirm。");
+requireValue(!section("admissionPolicy").includes("internalPilotConfirmAllowed: true"), "scenario.admission_raw_internal_pilot_allowed", "internalPilotConfirmAllowed=true 不得裸露为业务语义。");
+for (const required of ["admissionSurfaceSemantics:", "internalPilotConfirmCapability: serverAdmissionRequired", "missingAdmissionBehavior:", "visibleAllowed: true", "prepareAllowed: false", "confirmAllowed: false", "productionAllowed: false", "userVisibleExplanationKey: explain.visibleNotConfirm", "forbiddenUserCopy:", "- 当前可确认", "- 试点可确认", "- 可以提交确认", "- 生产可确认"]) {
+  requireValue(section("admissionPolicy").includes(required), "scenario.admission_surface_semantics_missing", `admissionPolicy 缺少 ${required}。`, { required });
+}
 requireValue(hasLine("ledgerPolicyRef: ledger.none.v1"), "scenario.ledger_policy", "第一金链 ledgerPolicyRef 必须是 ledger.none.v1。");
 requireValue(hasLine("evidencePolicyRef: evidence.dormitory.resource-saleability.v1"), "scenario.evidence_policy_ref", "必须声明 evidencePolicyRef。");
 for (const evidence of ["room-photo", "room-basic-info", "bed-photo", "room-link-proof", "completion-photo", "verification-check"]) {
@@ -213,6 +241,24 @@ requireValue(hasLine("surfacePolicyRef: surface.generated.dormitory.resource-sal
 requireValue(section("surfacePolicy").includes("consumes: generated surface model") && section("surfacePolicy").includes("fallbackAllowed: false"), "scenario.surface_policy", "Surface policy 必须 generated-only 且 fallbackAllowed=false。");
 for (const output of ["SearchResult", "Lens", "Projection", "Dashboard"]) {
   requireValue(new RegExp(`\\n\\s{2}${escapeRegExp(output)}:\\s*\\n\\s{4}mode: readonly\\b`).test(text), "scenario.read_model_readonly", `${output} 必须只读。`, { output });
+}
+const allowedFacts = section("allowedFacts");
+const userVisibleFacts = between(allowedFacts, "userVisibleFacts:", "traceOnlyFacts:");
+const traceOnlyFacts = between(allowedFacts, "traceOnlyFacts:", "forbiddenFacts:");
+for (const fact of requiredUserVisibleFacts) {
+  requireValue(userVisibleFacts.includes(`- ${fact}`), "scenario.user_visible_fact_missing", `userVisibleFacts 缺少 ${fact}。`, { fact });
+}
+for (const fact of requiredTraceOnlyFacts) {
+  requireValue(traceOnlyFacts.includes(`- ${fact}`), "scenario.trace_only_fact_missing", `traceOnlyFacts 缺少 ${fact}。`, { fact });
+  requireValue(!userVisibleFacts.includes(`- ${fact}`), "scenario.trace_fact_user_visible", `${fact} 不得作为用户可见事实。`, { fact });
+}
+const handoff = section("handoffPolicy");
+for (const required of ["from: Dorm.ResourceReadinessConfirm", "mode: prepare_only", "- lead-reservation.prepare", "- nextSourcePackage.prepare", "- Dorm.CheckinConfirm", "- Dorm.PaymentConfirm", "- Dorm.DepositConfirm", "- Dorm.CheckoutSettlementApprove", "- Finance.CorrectionApply", "- Dorm.PeriodReview"]) {
+  requireValue(handoff.includes(required), "scenario.handoff_policy_missing", `handoffPolicy 缺少 ${required}。`, { required });
+}
+const readSide = section("readSideAcceptance");
+for (const required of ["ReportDataset:", "permissionRequired: true", "lineageRequired: true", "freshnessRequired: true", "sourceFactsRequired: true", "reportDatasetIsNotSourceOfTruth: true", "permissionMissing: BLOCK", "lineageMissing: BLOCK_METRIC_AND_DASHBOARD_USE", "freshnessMissing: STALE_OR_BLOCK", "noBusinessFactWrite: true", "DashboardWidget:", "actionPolicy: readonly_or_navigate_only", "rawDomainEventReadAllowed: false", "rawCommandSubmissionReadAllowed: false"]) {
+  requireValue(readSide.includes(required), "scenario.read_side_contract_missing", `readSideAcceptance 缺少 ${required}。`, { required });
 }
 for (const condition of ["evidence satisfied", "admission satisfied", "generated contracts compiled", "runtime boundary passed", "negative tests passed", "evidence graph proof DAG passed", "release evidence current"]) {
   requireValue(text.includes(`- ${condition}`), "scenario.go_no_go_condition_missing", `GO / NO_GO 条件缺少 ${condition}。`, { condition });
@@ -246,7 +292,7 @@ console.log("Dormitory resource saleability golden chain check: PASS");
 function requireList(sectionName, items) {
   const block = section(sectionName);
   for (const item of items) {
-    requireValue(block.includes(`- ${item}`) || block.includes(`nameZh: ${item}`) || block.includes(`workItemType: ${item}`), "scenario.required_item_missing", `${sectionName} 缺少 ${item}。`, { sectionName, item });
+    requireValue(block.includes(`- ${item}`) || block.includes(`nameZh: ${item}`) || block.includes(`nameZhForReviewOnly: ${item}`) || block.includes(`workItemType: ${item}`), "scenario.required_item_missing", `${sectionName} 缺少 ${item}。`, { sectionName, item });
   }
 }
 
