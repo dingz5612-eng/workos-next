@@ -13,6 +13,7 @@ const commitAttestationPath = "artifacts/oam/evidence/current-oam-commit-attesta
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
 const releaseAttestationPath = "artifacts/oam/evidence/current-oam-release-attestation.json";
 const evidenceLifecycleProofPath = "artifacts/oam/evidence/evidence-lifecycle-proof.json";
+const ciArtifactProvenanceReportPath = "artifacts/oam/checks/ci-artifact-provenance-report.json";
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 const evidenceRootDigestPlaceholder = "__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__";
 const pendingExternalAttestation = "pending_external_attestation";
@@ -148,6 +149,7 @@ const coverageSummary = buildCoverageSummary();
 const mobileBranchRiskKernel = buildMobileBranchRiskKernel();
 const realBrowserEvidence = buildRealBrowserEvidence();
 const mutationTests = readMutationTestsResult();
+const ciArtifactProvenance = readCiArtifactProvenanceReport();
 const sourcePackageCheck = readSourcePackageCheckResult();
 const sourceAuthorityDigest = digestForFiles(sourceAuthorityFiles());
 const generatedContractDigest = generatedContractsHash;
@@ -511,7 +513,7 @@ addEvidence(
 const workstreamProofNodes = buildWorkstreamProofNodes();
 const workstreamGoNoGoFields = buildWorkstreamGoNoGoFields(workstreamProofNodes);
 const p0ClosureProofNodes = buildP0ClosureProofNodes();
-const sourcePackageProofNode = buildSourcePackageProofNode();
+const sourcePackageProofNodes = buildSourcePackageProofNodes();
 const candidateEvidenceObject = {
   ...proof("current-oam-candidate-evidence-object", "当前 OAM Candidate Evidence Object", {
     proofType: "candidate-evidence",
@@ -690,17 +692,9 @@ const finalReport = {
       "入住/收款/押金/退住/财务纠错扩展"
     ],
     sourceFieldGaps: sourcePackageCheck.sourceFieldGaps ?? {
-      pending00Decision: true,
-      compilePreparationAllowed: "false_until_00_approval",
-      gaps: [
-        "buildingId",
-        "roomType",
-        "readinessEvidenceRefs",
-        "readinessNote",
-        "blockedReason",
-        "notSaleableReason",
-        "serviceVerificationRef"
-      ]
+      pending00Decision: false,
+      compilePreparationAllowed: "false_until_gap_resolution",
+      decisions: {}
     },
     compilePreparationDecision: sourcePackageCheck.compilePreparationDecision,
     compilePreparationAllowed: sourcePackageCheck.compilePreparationAllowed,
@@ -711,6 +705,7 @@ const finalReport = {
     releaseAuthority: false,
     nextStageRequires00Review: true
   },
+  ciArtifactProvenance,
   candidateEvidence: summarizeCandidateEvidence(candidateEvidenceObject),
   commitAttestation: summarizeCommitAttestation(commitAttestation),
   failedChecks: [],
@@ -817,7 +812,7 @@ const evidenceGraph = {
   nodes: [
     ...workstreamProofNodes,
     ...p0ClosureProofNodes,
-    sourcePackageProofNode,
+    ...sourcePackageProofNodes,
     ...realBrowserEvidence.nodes
   ],
   edges: realBrowserEvidence.edges
@@ -1497,7 +1492,9 @@ function buildCandidateEvidenceSubject() {
     mutationStatus: mutationTests.status,
     browserL1Status: realBrowserEvidence.summary.l1?.status ?? "missing_or_failed",
     candidateStatus,
-    candidateReadyForCompile: candidateStatus === "PASS",
+    candidateReadyForCompile: false,
+    sourceScenarioPackageReviewStatus: sourcePackageCheck.sourceScenarioPackageReviewStatus ?? "CONDITIONAL_NO_PASS",
+    generatedCompilationReadiness: "NOT_READY_FOR_GENERATED_COMPILE",
     candidateReadyForBusinessImplementation: false,
     candidateReadyForRelease: false,
     notesZh: "Candidate Evidence 只证明本地架构候选闭合；业务落地和发布仍保持 NO_GO。"
@@ -1708,16 +1705,66 @@ function buildP0ClosureProofNodes() {
   });
 }
 
-function buildSourcePackageProofNode() {
+function buildSourcePackageProofNodes() {
   const resultPath = sourcePackageCheck.path ?? "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json";
-  const sources = [
-    "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
-    "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
-    "docs/business/domains/dormitory/dormitory-operating-kernel.json",
-    resultPath,
-    "docs/oam/db-no-side-effects-proof.json",
-    "scripts/oam/check-dormitory-golden-chain-source-package.mjs"
+  const sourcePath = "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml";
+  const matrixPath = "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml";
+  const kernelPath = "docs/business/domains/dormitory/dormitory-operating-kernel.json";
+  const noSideEffectsProofPath = "docs/oam/db-no-side-effects-proof.json";
+  const dependencySpecs = [
+    ["source-package-file-hash", "source_package_file_hash", [sourcePath]],
+    ["scenario-matrix-hash", "scenario_matrix_hash", [matrixPath]],
+    ["dormitory-operating-kernel-hash", "dormitory_operating_kernel_hash", [kernelPath]],
+    ["source-package-checker-result", "source_package_checker_result", [resultPath]],
+    ["language-copy-proof", "language_copy_proof", [
+      "docs/contracts/language/surface-copy-catalog.json",
+      "docs/contracts/language/multilingual-copy-catalog.json",
+      "artifacts/oam/proofs/language/language-glossary-generated-proof.json"
+    ]],
+    ["read-side-envelope-proof", "read_side_envelope_proof", [
+      sourcePath,
+      "artifacts/oam/proofs/read-intelligence/oam-object-envelope-proof.json"
+    ]],
+    ["finance-ledger-none-proof", "finance_ledger_none_proof", [
+      sourcePath,
+      "docs/finance/finance-ledger-kernel.json",
+      noSideEffectsProofPath
+    ]],
+    ["prior-identity-blocker-proof", "prior_identity_blocker_proof", [
+      sourcePath,
+      "docs/contracts/definition/source-id-migration-fence.json",
+      "scripts/oam/check-operation-identity-boundary.mjs"
+    ]],
+    ["no-side-effects-proof", "no_side_effects_proof", [
+      sourcePath,
+      noSideEffectsProofPath
+    ]],
+    ["mutation-result-proof", "mutation_result_proof", [
+      resultPath,
+      "artifacts/oam/authority-cleanup/mutation-tests-result.json"
+    ]],
+    ["source-field-gaps-decision-proof", "source_field_gaps_decision_proof", [
+      sourcePath,
+      resultPath
+    ]],
+    ["branch-flows-no-side-effects-proof", "branch_flows_no_side_effects_proof", [
+      sourcePath,
+      resultPath,
+      noSideEffectsProofPath
+    ]]
   ];
+  const dependencyNodes = dependencySpecs.map(([suffix, proofType, sources]) =>
+    buildSourcePackageDependencyProofNode(`source-package-proof.${suffix}`, proofType, sources)
+  );
+  const dependsOn = dependencyNodes.map((node) => node.id);
+  const sources = [...new Set([
+    sourcePath,
+    matrixPath,
+    kernelPath,
+    resultPath,
+    noSideEffectsProofPath,
+    "scripts/oam/check-dormitory-golden-chain-source-package.mjs"
+  ])];
   const inputHashes = sources.map((file) => ({
     path: file,
     hash: hashFileIfPresent(file)
@@ -1727,26 +1774,30 @@ function buildSourcePackageProofNode() {
     proofType: "source_package_review",
     scope: "compile_preparation_review",
     status: sourcePackageCheck.status,
-    decisionState: sourcePackageCheck.evidenceNodeReady ? "READY_FOR_GENERATOR" : "BLOCKED_BY_SOURCE_P0",
+    decisionState: sourcePackageCheck.evidenceNodeReady ? "READY_FOR_00_FINAL_SOURCE_REVIEW" : "BLOCKED_BY_SOURCE_P0",
     sourceDigest: sourcePackageCheck.digests?.sourceDigest ?? "missing",
     checkerResultDigest: sourcePackageCheck.digests?.checkerResultDigest ?? "missing",
     mutationResultDigest: sourcePackageCheck.digests?.mutationResultDigest ?? "missing",
     sourceToGeneratedProvenancePlanDigest: sourcePackageCheck.digests?.sourceToGeneratedProvenancePlanDigest ?? "missing",
+    sourceFieldGapsDecisionDigest: digestObject(sourcePackageCheck.sourceFieldGaps ?? {}),
+    branchFlowContractDigest: digestObject(sourcePackageCheck.branchFlowContract ?? {}),
+    dependsOn,
     finalGoNoGo: "NO_GO"
   };
   const proofHash = `sha256:${sha256(JSON.stringify(normalizeForDigest(payload)))}`;
-  return {
+  const sourcePackageNode = {
     id: "OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE",
     type: "source_package_review",
     proofType: "source_package_review",
     scope: "compile_preparation_review",
     source: sources,
     hash: proofHash,
-    dependsOn: sources,
+    dependsOn,
     producedBy: "scripts/oam/generate-current-evidence-root.mjs",
     verifiedBy: "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+    binding: sourcePackageProofBinding("OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE"),
     status: sourcePackageCheck.status === "PASS" ? "passed" : "blocked",
-    decisionState: sourcePackageCheck.evidenceNodeReady ? "READY_FOR_GENERATOR" : "BLOCKED_BY_SOURCE_P0",
+    decisionState: sourcePackageCheck.evidenceNodeReady ? "READY_FOR_00_FINAL_SOURCE_REVIEW" : "BLOCKED_BY_SOURCE_P0",
     goNoGo: "NO_GO",
     finalGoNoGo: "NO_GO",
     releaseAuthority: false,
@@ -1755,6 +1806,8 @@ function buildSourcePackageProofNode() {
     checkerResultDigest: sourcePackageCheck.digests?.checkerResultDigest ?? "missing",
     mutationResultDigest: sourcePackageCheck.digests?.mutationResultDigest ?? "missing",
     sourceToGeneratedProvenancePlanDigest: sourcePackageCheck.digests?.sourceToGeneratedProvenancePlanDigest ?? "missing",
+    sourceFieldGapsDecisionDigest: payload.sourceFieldGapsDecisionDigest,
+    branchFlowContractDigest: payload.branchFlowContractDigest,
     inputHashes,
     outputHashes: [{ path: "evidence-node:OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE", hash: proofHash }],
     p0Failures: sourcePackageCheck.p0Failures ?? [],
@@ -1762,6 +1815,62 @@ function buildSourcePackageProofNode() {
     p2Residuals: sourcePackageCheck.p2Residuals ?? [],
     goNoGoImpact: ["finalGoNoGo"],
     notesZh: "宿舍第一金链 Source 场景包复审节点；只准备编译前 00 裁决材料，不授权业务 GO。"
+  };
+  return [...dependencyNodes, sourcePackageNode];
+}
+
+function buildSourcePackageDependencyProofNode(id, proofType, sources) {
+  const inputHashes = sources.map((file) => ({
+    path: file,
+    hash: hashFileIfPresent(file)
+  }));
+  const payload = {
+    id,
+    proofType,
+    scope: "compile_preparation_review",
+    sources,
+    inputHashes,
+    finalGoNoGo: "NO_GO",
+    releaseAuthority: false,
+    businessGoAuthority: false
+  };
+  const hash = `sha256:${sha256(JSON.stringify(normalizeForDigest(payload)))}`;
+  return {
+    id,
+    type: "source_package_dependency_proof",
+    proofType,
+    scope: "compile_preparation_review",
+    source: sources,
+    hash,
+    dependsOn: sources,
+    producedBy: "scripts/oam/generate-current-evidence-root.mjs",
+    verifiedBy: "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+    binding: sourcePackageProofBinding(id),
+    status: sourcePackageCheck.status === "PASS" ? "passed" : "blocked",
+    goNoGo: "NO_GO",
+    finalGoNoGo: "NO_GO",
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    inputHashes,
+    outputHashes: [{ path: `evidence-node:${id}`, hash }],
+    goNoGoImpact: ["finalGoNoGo"],
+    notesZh: "Source 包 proof DAG 依赖节点；只证明编译准备复审输入，不授权业务 GO。"
+  };
+}
+
+function sourcePackageProofBinding(proofId) {
+  return {
+    root: "current-oam-trust-closure-v1",
+    proofId,
+    sourceCommitSha,
+    evidenceRunSha,
+    evidenceLifecycleType,
+    scope: "compile_preparation_review",
+    bindingStatus: releaseBindingStatus,
+    referenceOnly: releaseEvidenceReferenceOnly,
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    finalGoNoGo: "NO_GO"
   };
 }
 
@@ -1943,6 +2052,31 @@ function readMutationTestsResult() {
   };
 }
 
+function readCiArtifactProvenanceReport() {
+  if (!fileExists(ciArtifactProvenanceReportPath)) {
+    return {
+      path: ciArtifactProvenanceReportPath,
+      status: "missing",
+      releaseAuthority: false,
+      finalGoNoGo: "NO_GO",
+      externalArtifactAttestation: "PENDING_EXTERNAL_ATTESTATION",
+      notesZh: "CI artifact provenance report missing; releaseAuthority=false."
+    };
+  }
+  const report = readJson(ciArtifactProvenanceReportPath);
+  return {
+    path: ciArtifactProvenanceReportPath,
+    status: report.githubActions?.artifactContentVerification?.status ?? "unknown",
+    sameHeadRunFound: report.githubActions?.sameHeadRunFound ?? false,
+    artifactMetadataDigest: report.githubActions?.artifactMetadataDigest ?? "pending_external_attestation",
+    workingTreeMatchesOriginMainSource: report.sourceComparison?.workingTreeMatchesOriginMainSource ?? false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO",
+    externalArtifactAttestation: report.releaseDecision?.externalArtifactAttestation ?? "PENDING_EXTERNAL_ATTESTATION",
+    missing: report.githubActions?.artifactContentVerification?.missing ?? []
+  };
+}
+
 function readSourcePackageCheckResult() {
   const sourcePackageResultPath = "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json";
   if (!fileExists(sourcePackageResultPath)) {
@@ -1951,8 +2085,8 @@ function readSourcePackageCheckResult() {
       gateId: "OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE",
       status: "MISSING",
       sourceScenarioPackageReviewStatus: "CONDITIONAL_NO_PASS",
-      compilePreparationDecision: "PENDING_00_DECISION",
-      compilePreparationAllowed: "false_until_00_approval",
+      compilePreparationDecision: "SOURCE_GAPS_DECIDED_00_FINAL_REVIEW_REQUIRED",
+      compilePreparationAllowed: "false_until_00_final_source_review",
       businessFeatureDevelopmentAllowed: false,
       finalGoNoGo: "NO_GO",
       evidenceNodeReady: false,
@@ -1966,17 +2100,9 @@ function readSourcePackageCheckResult() {
       mutation10AStatus: "MISSING",
       generatedContractStatus10B: "PENDING_GENERATED_CONTRACT",
       sourceFieldGaps: {
-        pending00Decision: true,
-        compilePreparationAllowed: "false_until_00_approval",
-        gaps: [
-          "buildingId",
-          "roomType",
-          "readinessEvidenceRefs",
-          "readinessNote",
-          "blockedReason",
-          "notSaleableReason",
-          "serviceVerificationRef"
-        ]
+        pending00Decision: false,
+        compilePreparationAllowed: "false_until_gap_resolution",
+        decisions: {}
       },
       digests: {}
     };

@@ -251,9 +251,23 @@ Invoke-Gate node scripts/check-shared-governance-boundary.mjs
 Invoke-Gate node scripts/oam/check-db-no-side-effects-proof.mjs
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs --self-test
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs
+$previousOamWriteProof = $env:OAM_WRITE_PROOF
+$env:OAM_WRITE_PROOF = "1"
 Invoke-Gate node scripts/oam/check-dormitory-golden-chain-source-package.mjs
+if ($null -eq $previousOamWriteProof) {
+  Remove-Item Env:\OAM_WRITE_PROOF -ErrorAction SilentlyContinue
+} else {
+  $env:OAM_WRITE_PROOF = $previousOamWriteProof
+}
 Invoke-Gate node scripts/business/check-dormitory-operating-kernel.mjs
+$previousOamWriteProof = $env:OAM_WRITE_PROOF
+$env:OAM_WRITE_PROOF = "1"
 Invoke-Gate node scripts/business/check-dormitory-resource-saleability-golden-chain.mjs
+if ($null -eq $previousOamWriteProof) {
+  Remove-Item Env:\OAM_WRITE_PROOF -ErrorAction SilentlyContinue
+} else {
+  $env:OAM_WRITE_PROOF = $previousOamWriteProof
+}
 Invoke-Gate node scripts/business/check-dormitory-scenario-package-matrix.mjs
 Invoke-Gate node scripts/business/check-dormitory-ui-readside-experience.mjs
 Invoke-Gate node scripts/business/check-dormitory-period-correction-closure.mjs
@@ -263,11 +277,18 @@ Invoke-Gate node scripts/business/check-dormitory-derived-contracts.mjs
 Invoke-Gate node scripts/business/check-dormitory-release-train.mjs
 Invoke-Gate node scripts/business/check-dormitory-pilot-scenario-pack.mjs
 Invoke-Gate node scripts/business/check-dormitory-metrics-lens-contract.mjs
+$previousOamWriteProof = $env:OAM_WRITE_PROOF
+$env:OAM_WRITE_PROOF = "1"
 Invoke-Gate node scripts/business/check-dormitory-execution-kernel.mjs
 Invoke-Gate node scripts/business/check-scenario-field-contract.mjs
 Invoke-Gate node scripts/business/check-canonical-scenario-map.mjs
 Invoke-Gate node scripts/business/check-evidence-coverage-contract.mjs
 Invoke-Gate node scripts/business/check-ledger-posting-contract.mjs
+if ($null -eq $previousOamWriteProof) {
+  Remove-Item Env:\OAM_WRITE_PROOF -ErrorAction SilentlyContinue
+} else {
+  $env:OAM_WRITE_PROOF = $previousOamWriteProof
+}
 Invoke-Gate pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1
 Invoke-Gate node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs
 Invoke-Gate node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs

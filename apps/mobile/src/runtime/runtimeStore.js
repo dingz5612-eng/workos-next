@@ -38,9 +38,9 @@ export function applyRuntimeSurfacePayloads(state, payloads = {}) {
     store.queueSource = "runtime-api";
   }
   if (payloads.operationWorkItems) {
-    store.operationWorkItems = payloads.operationWorkItems;
+    store.operationWorkItems = mergeOperationWorkItems(store.operationWorkItems, payloads.operationWorkItems);
     store.workspaces = mergeOperationWorkItemStatuses(store.workspaces, payloads.operationWorkItems);
-    store.workQueue = operationWorkItemsToQueue(payloads.operationWorkItems);
+    store.workQueue = operationWorkItemsToQueue(store.operationWorkItems);
     store.queueSource = "operations-work-items";
   }
   if (payloads.homeSurface) {
@@ -74,6 +74,16 @@ export function mergeOperationWorkItemStatuses(workspaces = [], workItems = []) 
     });
     return { ...workspace, cards };
   });
+}
+
+export function mergeOperationWorkItems(existing = [], incoming = []) {
+  const byId = new Map();
+  for (const item of [...incoming, ...existing]) {
+    const id = item?.workItemId || item?.work_item_id || "";
+    if (!id || byId.has(id)) continue;
+    byId.set(id, item);
+  }
+  return Array.from(byId.values());
 }
 
 function cardWithOperationStatus(card = {}, status = "", item = {}) {

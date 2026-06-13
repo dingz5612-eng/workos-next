@@ -6,6 +6,7 @@ const scenarioPath = "docs/business/domains/dormitory/scenarios/dormitory-resour
 const kernelPath = "docs/business/domains/dormitory/dormitory-operating-kernel.json";
 const authorityIndexPath = "docs/oam/current-authority-index.json";
 const reportPath = "artifacts/oam/checks/dormitory-resource-saleability-golden-chain-result.json";
+const writeProof = process.argv.includes("--write-proof") || process.env.OAM_WRITE_PROOF === "1";
 
 const requiredInScope = [
   "Dorm.RoomSetupConfirm",
@@ -103,7 +104,7 @@ requireValue(hasLine("generated: false"), "scenario.generated_false", "第一金
 requireValue(hasLine("doNotEdit: false"), "scenario.do_not_edit_false", "第一金链场景定稿包不得声明 doNotEdit。");
 requireValue(hasLine("scenarioNameZhForReviewOnly: 宿舍资源可售第一金链"), "scenario.name", "场景名称必须是 review-only 的宿舍资源可售第一金链。");
 requireValue(!/^scenarioNameZh:/m.test(text), "scenario.name_raw_not_allowed", "scenarioNameZh 不得作为用户可见文案权威。");
-requireValue(hasLine("businessGoalZhForReviewOnly: 房间、床位、资源准备达到 L1 internal pilot 可售条件。"), "scenario.goal", "业务目标必须以 review-only 方式绑定 L1 internal pilot 可售条件。");
+requireValue(hasLine("businessGoalZhForReviewOnly: 房间、床位和资源准备完成内部试点检查；这不代表生产可售已放开。"), "scenario.goal", "业务目标必须以 review-only 方式表达内部试点检查，且不得暗示生产可售放开。");
 requireValue(!/^businessGoalZh:/m.test(text), "scenario.goal_raw_not_allowed", "businessGoalZh 不得作为用户可见文案权威。");
 
 requireList("inScope", requiredInScope);
@@ -114,8 +115,26 @@ requireList("branchFlows", requiredBranchFlows);
 for (const id of ["missing-field", "missing-evidence", "untrusted-evidence", "duplicate-room", "wrong-bed-room-owner", "resource-not-saleable", "manual-review", "correction"]) {
   const branch = blockFor(section("branchFlows"), `id: ${id}`, "\n  - id:");
   requireValue(Boolean(branch), "scenario.branch_missing", `branchFlows 缺少 ${id}。`, { id });
-  for (const required of ["blockingReasonCode:", "blockingReasonCopyKey:", "requiredEvidenceRefs:", "allowedNextAction:", "allowedNextActionCopyKey:", "correctionAllowed:", "admissionNoGoItem:", "safeErrorCopyKey:", "explanationKey:", "expectedNoSideEffects: true"]) {
+  for (const required of ["blockingReasonCode:", "blockingReasonCopyKey:", "requiredEvidenceRefs:", "allowedNextAction:", "allowedNextActionCopyKey:", "correctionAllowed:", "admissionNoGoItem:", "safeErrorCopyKey:", "explanationKey:", "expectedNoSideEffects:"]) {
     requireValue(branch.includes(required), "scenario.branch_semantic_missing", `${id} 缺少 ${required}。`, { id, required });
+  }
+  for (const effect of [
+    "no_command_submission",
+    "no_uow_commit",
+    "no_domain_event",
+    "no_workitem_event",
+    "no_ledger_transaction",
+    "no_ledger_entry",
+    "no_outbox",
+    "no_confirmed_transition",
+    "no_next_workitem_dispatch",
+    "no_projection_mutation",
+    "no_lens_mutation",
+    "no_search_mutation",
+    "no_dashboard_mutation",
+    "no_business_evidence_mutation"
+  ]) {
+    requireValue(branch.includes(`- ${effect}`), "scenario.branch_no_side_effect_missing", `${id} 缺少 no-side-effect ${effect}。`, { id, effect });
   }
   requireValue(branch.includes("nameZhForReviewOnly:") && !branch.includes("nameZh:"), "scenario.branch_name_review_only", `${id} 必须使用 nameZhForReviewOnly。`, { id });
 }
@@ -199,7 +218,13 @@ for (const forbidden of ["route param", "cardId", "sourceCardId", "workspaceCard
   requireValue(section("selectedStableRefRules").includes(`- ${forbidden}`), "scenario.stable_ref_forbidden_source_missing", `selectedStableRefRules 必须禁止 ${forbidden}。`, { forbidden });
 }
 requireValue(section("objectIdBinding").includes("oldCardIdRenameBlocked: true"), "scenario.old_card_rename_not_blocked", "objectIdBinding 必须阻断旧 cardId 换名伪装。");
-requireValue(section("sourceFieldGaps").includes("pending00Decision: true") && section("sourceFieldGaps").includes("compilePreparationAllowed: false_until_00_approval"), "scenario.source_field_gap_policy_missing", "sourceFieldGaps 必须等待 00 裁决且不得放行编译准备。");
+requireValue(
+  section("sourceFieldGaps").includes("pending00Decision: false") &&
+    section("sourceFieldGaps").includes("decisions:") &&
+    section("sourceFieldGaps").includes("compilePreparationAllowed: false_until_gap_resolution"),
+  "scenario.source_field_gap_policy_missing",
+  "sourceFieldGaps 必须完成 00 裁决结构化决策，且仍不得放行编译准备。"
+);
 
 const mainFlow = section("mainFlow");
 const workItemsInFlow = [...mainFlow.matchAll(/workItemType:\s*([^\n\r]+)/g)].map((match) => match[1].trim());
@@ -282,7 +307,9 @@ const whitelist = new Set(authorityIndex.classificationModel?.sourceLayerWhiteli
 const topWhitelist = new Set((authorityIndex.sourceLayerWhitelist ?? []).map((item) => item.path));
 requireValue(whitelist.has(scenarioPath) && topWhitelist.has(scenarioPath), "scenario.source_whitelist_missing", "第一金链场景定稿包必须进入 Source Layer 白名单。");
 
-writeReport();
+if (writeProof) {
+  writeReport();
+}
 if (violations.length) {
   for (const item of violations) console.error(`${item.id}: ${item.message}`);
   process.exit(1);

@@ -130,9 +130,7 @@ export async function runSearch(ctx, explicitQuery = null) {
       applyRuntimeSearchResults(ctx.state, query, results);
       const operationItems = operationWorkItemsFromSearchResults(results);
       if (operationItems.length) {
-        applyRuntimeSurfacePayloads(ctx.state, {
-          operationWorkItems: mergeOperationWorkItems(ctx.state.runtimeStore?.operationWorkItems || [], operationItems)
-        });
+        applyRuntimeSurfacePayloads(ctx.state, { operationWorkItems: operationItems });
       }
     } catch {
       // Projection fallback remains available through surface selectors.
@@ -194,16 +192,6 @@ function operationWorkItemsFromSearchResults(results = []) {
       },
       source: "search-kernel-operations"
     }));
-}
-
-function mergeOperationWorkItems(existing = [], incoming = []) {
-  const byId = new Map();
-  for (const item of [...incoming, ...existing]) {
-    const id = item.workItemId || item.work_item_id || "";
-    if (!id || byId.has(id)) continue;
-    byId.set(id, item);
-  }
-  return Array.from(byId.values());
 }
 
 function localizedSearchValue(value) {

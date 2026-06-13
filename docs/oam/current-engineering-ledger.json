@@ -6,9 +6,9 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceLifecyclePolicy": "docs/oam/file-lifecycle-policy.json",
   "defaultPolicy": "unregistered_files_are_not_allowed",
-  "fileCount": 972,
+  "fileCount": 973,
   "identityCounts": {
-    "validation_file": 315,
+    "validation_file": 316,
     "implementation_file": 330,
     "derived_view": 65,
     "authority_file": 241,
@@ -18264,6 +18264,35 @@
       "absorbedBy": "scripts/oam/generate-authority-source-layer-audit.mjs",
       "removalProofGate": "scripts/oam/generate-authority-source-layer-audit.mjs",
       "deletionConditionZh": "当 authority-cleanup 证据被归档且当前门禁不再引用时删除。"
+    },
+    {
+      "path": "scripts/oam/generate-ci-artifact-provenance-report.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/generate-ci-artifact-provenance-report.mjs",
+      "gates": [
+        "scripts/oam/generate-ci-artifact-provenance-report.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/ci-artifact-provenance-report.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/generate-ci-artifact-provenance-report.mjs",
+      "absorbedBy": "scripts/oam/generate-ci-artifact-provenance-report.mjs",
+      "removalProofGate": "scripts/oam/generate-ci-artifact-provenance-report.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
       "path": "scripts/oam/generate-current-engineering-ledger.mjs",

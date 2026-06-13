@@ -141,11 +141,11 @@ if (documents.size === requiredFiles.length) {
   if (!["PASS", "FAIL"].includes(finalReport.architectureGateStatus)) {
     failures.push(`final report architectureGateStatus must be PASS or FAIL, actual: ${finalReport.architectureGateStatus ?? "missing"}.`);
   }
-  if (finalReport.sourceScenarioPackageReviewStatus !== "READY_FOR_00_FINAL_REVIEW" && finalReport.sourceScenarioPackageReviewStatus !== "CONDITIONAL_NO_PASS") {
+  if (finalReport.sourceScenarioPackageReviewStatus !== "READY_FOR_00_FINAL_SOURCE_REVIEW" && finalReport.sourceScenarioPackageReviewStatus !== "CONDITIONAL_NO_PASS") {
     failures.push(`final report sourceScenarioPackageReviewStatus invalid: ${finalReport.sourceScenarioPackageReviewStatus ?? "missing"}.`);
   }
-  if (finalReport.compilePreparationAllowed !== "false_until_00_approval") {
-    failures.push("final report compilePreparationAllowed must remain false_until_00_approval.");
+  if (finalReport.compilePreparationAllowed !== "false_until_00_final_source_review") {
+    failures.push("final report compilePreparationAllowed must remain false_until_00_final_source_review.");
   }
   if (finalReport.businessFeatureDevelopmentAllowed !== false) {
     failures.push("final report businessFeatureDevelopmentAllowed must remain false.");
@@ -704,8 +704,8 @@ function checkDormitoryGoldenChainSourcePackage(finalReport) {
       failures.push(`dormitoryGoldenChainSourcePackage missing ${field}.`);
     }
   }
-  if (section.compilePreparationAllowed !== "false_until_00_approval") {
-    failures.push("dormitoryGoldenChainSourcePackage compilePreparationAllowed must remain false_until_00_approval.");
+  if (section.compilePreparationAllowed !== "false_until_00_final_source_review") {
+    failures.push("dormitoryGoldenChainSourcePackage compilePreparationAllowed must remain false_until_00_final_source_review.");
   }
   if (section.sourceScenarioRef !== "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml") {
     failures.push("dormitoryGoldenChainSourcePackage sourceScenarioRef must bind the first golden-chain Source package.");
@@ -716,8 +716,15 @@ function checkDormitoryGoldenChainSourcePackage(finalReport) {
   if (!Array.isArray(section.excluded) || section.excluded.length === 0) {
     failures.push("dormitoryGoldenChainSourcePackage excluded must list forbidden scope.");
   }
-  if (section.sourceFieldGaps?.pending00Decision !== true || section.sourceFieldGaps?.compilePreparationAllowed !== "false_until_00_approval") {
-    failures.push("dormitoryGoldenChainSourcePackage sourceFieldGaps must remain pending 00 decision.");
+  if (section.sourceFieldGaps?.pending00Decision !== false || section.sourceFieldGaps?.compilePreparationAllowed !== "false_until_gap_resolution") {
+    failures.push("dormitoryGoldenChainSourcePackage sourceFieldGaps must contain resolved decisions and remain compile-blocked.");
+  }
+  const decisions = section.sourceFieldGaps?.decisions ?? {};
+  for (const gap of ["buildingId", "roomType", "readinessEvidenceRefs", "readinessNote", "blockedReason", "notSaleableReason", "serviceVerificationRef"]) {
+    const decision = decisions[gap];
+    if (!decision?.decision || decision.compileBlocking === undefined || !decision.owner || !decision.compilerInputImpact) {
+      failures.push(`dormitoryGoldenChainSourcePackage sourceFieldGaps.${gap} decision is incomplete.`);
+    }
   }
   if (section.businessFeatureDevelopmentAllowed !== false || section.generatedCompilationCompleted !== false) {
     failures.push("dormitoryGoldenChainSourcePackage must not allow business development or generated compilation.");
@@ -879,6 +886,95 @@ function checkEvidenceGraphNodes(graph, finalReport) {
     if (node.type === "browser_e2e_evidence") {
       checkBrowserEvidenceNode(node, finalReport);
     }
+  }
+  checkProofDagResolvableAndAcyclic(nodes);
+  checkSourcePackageProofDag(nodes, finalReport);
+}
+
+function checkProofDagResolvableAndAcyclic(nodes) {
+  const nodeIds = new Set(nodes.map((node) => node.id).filter(Boolean));
+  const graph = new Map();
+  for (const node of nodes) {
+    const id = node.id ?? "<missing>";
+    const nodeDeps = [];
+    for (const dep of node.dependsOn ?? []) {
+      if (nodeIds.has(dep)) {
+        nodeDeps.push(dep);
+      } else if (typeof dep !== "string" || !exists(dep)) {
+        failures.push(`evidence graph node ${id} has unresolved dependsOn: ${dep || "missing"}.`);
+      }
+    }
+    graph.set(id, nodeDeps);
+  }
+  const visiting = new Set();
+  const visited = new Set();
+  const visit = (id, path = []) => {
+    if (visiting.has(id)) {
+      failures.push(`evidence graph proof DAG has a cycle: ${[...path, id].join(" -> ")}.`);
+      return;
+    }
+    if (visited.has(id)) return;
+    visiting.add(id);
+    for (const dep of graph.get(id) ?? []) visit(dep, [...path, id]);
+    visiting.delete(id);
+    visited.add(id);
+  };
+  for (const id of graph.keys()) visit(id);
+}
+
+function checkSourcePackageProofDag(nodes, finalReport) {
+  const nodeIds = new Set(nodes.map((node) => node.id).filter(Boolean));
+  const sourceNode = nodes.find((node) => node.id === "OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE");
+  if (!sourceNode) {
+    failures.push("P0 proof node missing: OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE.");
+    return;
+  }
+  const requiredFields = ["proofType", "source", "hash", "dependsOn", "producedBy", "verifiedBy", "scope", "binding", "status", "finalGoNoGo", "releaseAuthority", "businessGoAuthority"];
+  for (const node of nodes.filter((item) => item.id === sourceNode.id || item.type === "source_package_dependency_proof")) {
+    for (const field of requiredFields) {
+      if (isEmptyProofField(node[field])) {
+        failures.push(`source package proof node ${node.id ?? "<missing>"} missing ${field}.`);
+      }
+    }
+    if (node.scope !== "compile_preparation_review") {
+      failures.push(`source package proof node ${node.id ?? "<missing>"} scope must be compile_preparation_review.`);
+    }
+    if (node.finalGoNoGo !== "NO_GO" || node.releaseAuthority !== false || node.businessGoAuthority !== false) {
+      failures.push(`source package proof node ${node.id ?? "<missing>"} must keep NO_GO/releaseAuthority=false/businessGoAuthority=false.`);
+    }
+    if (node.binding?.releaseAuthority !== false || node.binding?.businessGoAuthority !== false || node.binding?.finalGoNoGo !== "NO_GO") {
+      failures.push(`source package proof node ${node.id ?? "<missing>"} binding must not grant GO or release authority.`);
+    }
+  }
+  const requiredDeps = [
+    "source-package-proof.source-package-file-hash",
+    "source-package-proof.scenario-matrix-hash",
+    "source-package-proof.dormitory-operating-kernel-hash",
+    "source-package-proof.source-package-checker-result",
+    "source-package-proof.language-copy-proof",
+    "source-package-proof.read-side-envelope-proof",
+    "source-package-proof.finance-ledger-none-proof",
+    "source-package-proof.prior-identity-blocker-proof",
+    "source-package-proof.no-side-effects-proof",
+    "source-package-proof.mutation-result-proof",
+    "source-package-proof.source-field-gaps-decision-proof",
+    "source-package-proof.branch-flows-no-side-effects-proof"
+  ];
+  for (const dep of requiredDeps) {
+    if (!nodeIds.has(dep)) {
+      failures.push(`source package proof DAG missing dependency node: ${dep}.`);
+    }
+    if (!(sourceNode.dependsOn ?? []).includes(dep)) {
+      failures.push(`source package proof DAG source node missing dependsOn proof: ${dep}.`);
+    }
+  }
+  for (const dep of sourceNode.dependsOn ?? []) {
+    if (!nodeIds.has(dep)) {
+      failures.push(`source package proof DAG main node must depend on proof node ids, not file refs: ${dep}.`);
+    }
+  }
+  if (finalReport.finalGoNoGo !== "NO_GO") {
+    failures.push("Source package proof stale/NO_GO guard requires Final Report finalGoNoGo=NO_GO.");
   }
 }
 

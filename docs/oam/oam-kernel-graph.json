@@ -21330,6 +21330,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/generate-ci-artifact-provenance-report.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/generate-ci-artifact-provenance-report.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/generate-ci-artifact-provenance-report.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/generate-ci-artifact-provenance-report.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/ci-artifact-provenance-report.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/generate-ci-artifact-provenance-report.mjs",
+      "evidence": "artifacts/oam/checks/ci-artifact-provenance-report.json",
+      "replacementPath": "scripts/oam/generate-ci-artifact-provenance-report.mjs",
+      "absorbedBy": "scripts/oam/generate-ci-artifact-provenance-report.mjs",
+      "removalProofGate": "scripts/oam/generate-ci-artifact-provenance-report.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/generate-current-engineering-ledger.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",

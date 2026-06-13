@@ -9,7 +9,7 @@ vi.mock("../apiClient.js", () => ({
 import { fetchSearchResults, startOperationsWorkspace } from "../apiClient.js";
 import { runSearch, startOperationsWorkspaceCommand } from "../navigationController.js";
 import { routeView } from "../appRouter.js";
-import { applyRuntimeProjection } from "../runtime/runtimeStore.js";
+import { applyRuntimeProjection, applyRuntimeSurfacePayloads } from "../runtime/runtimeStore.js";
 import { createSurfaceCtx, internalPilotAdmissionFixture, runtimeStore, source, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("Operations Runtime start command contract", () => {
@@ -141,6 +141,38 @@ describe("Operations Runtime start command contract", () => {
     expect(ctx.state.lastActionResult).toBeNull();
     expect(visibleText(routeView(ctx))).toContain("提交观察记录");
     expect(visibleText(routeView(ctx))).not.toContain("查看不能提交原因");
+  });
+
+  it("keeps previously opened persisted Operations WorkItems when a new start returns one item", () => {
+    const store = runtimeStore();
+    store.operationWorkItems = [{
+      workItemId: "wi-resource-room",
+      workspaceId: "W-STAY-RESOURCE-001",
+      cardId: "roomSetup",
+      lifecycleState: "ready",
+      ownerRole: "operator"
+    }];
+    store.workQueue = [...store.operationWorkItems];
+    const ctx = createSurfaceCtx({ runtimeStore: store });
+
+    applyRuntimeSurfacePayloads(ctx.state, {
+      operationWorkItems: [{
+        workItemId: "wi-lead-capture",
+        workspaceId: "W-STAY-LEAD-RESERVATION-001",
+        cardId: "leadCapture",
+        lifecycleState: "ready",
+        ownerRole: "operator"
+      }]
+    });
+
+    expect(ctx.state.runtimeStore.operationWorkItems.map((item) => item.workItemId)).toEqual([
+      "wi-lead-capture",
+      "wi-resource-room"
+    ]);
+    expect(ctx.state.runtimeStore.workQueue.map((item) => item.workItemId)).toEqual([
+      "wi-lead-capture",
+      "wi-resource-room"
+    ]);
   });
 
   it("does not expose blocked workspace/card write paths to the mobile client", () => {
