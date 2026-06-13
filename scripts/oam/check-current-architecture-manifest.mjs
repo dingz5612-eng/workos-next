@@ -30,6 +30,11 @@ const requiredEvidenceFiles = [
   "artifacts/oam/proofs/dashboard/dashboard-widget-sourcefacts-proof.json",
   "artifacts/oam/proofs/report/report-dataset-permission-lineage-freshness-proof.json",
   "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+  "artifacts/oam/checks/generated-compile-authorization-result.json",
+  "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
+  "artifacts/oam/checks/generated-contract-consistency-result.json",
+  "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
+  "artifacts/oam/checks/dormitory-candidate-artifact-attestation-package-result.json",
   "docs/oam/generated-compile-candidate-approval.current.json"
 ];
 

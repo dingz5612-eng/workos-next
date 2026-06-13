@@ -6,14 +6,14 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceLifecyclePolicy": "docs/oam/file-lifecycle-policy.json",
   "defaultPolicy": "unregistered_files_are_not_allowed",
-  "fileCount": 977,
+  "fileCount": 980,
   "identityCounts": {
-    "validation_file": 320,
+    "validation_file": 322,
     "implementation_file": 330,
     "derived_view": 65,
     "authority_file": 241,
     "human_manual": 20,
-    "generated_evidence": 1
+    "generated_evidence": 2
   },
   "files": [
     {
@@ -11134,6 +11134,35 @@
       "deletionConditionZh": "当生成层 manifest 编译链删除且消费者、门禁、证据同步删除时删除。"
     },
     {
+      "path": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
+      "currentIdentity": "generated_evidence",
+      "lifecycleState": "active_evidence",
+      "responsibilityScopeZh": "当前 OAM 机器证据。",
+      "forbiddenScopeZh": "不得定义业务事实或人工放行。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "00-review",
+        "scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
+      "gates": [
+        "scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/dormitory-candidate-artifact-attestation-package-result.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
+      "absorbedBy": "scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs",
+      "deletionConditionZh": "当 00 不再需要该候选证据审查包且后续候选包已替代时删除。"
+    },
+    {
       "path": "docs/oam/file-lifecycle-policy.json",
       "currentIdentity": "authority_file",
       "lifecycleState": "active_authority",
@@ -17604,6 +17633,36 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml",
+        "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs",
+      "gates": [
+        "scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/dormitory-candidate-artifact-attestation-package-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs",
+      "deletionConditionZh": "当候选 artifact attestation package gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -18474,6 +18533,35 @@
       "absorbedBy": "scripts/oam/generate-current-evidence-root.mjs",
       "removalProofGate": "scripts/oam/generate-current-evidence-root.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "00-review",
+        "scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs",
+      "gates": [
+        "scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs"
+      ],
+      "evidence": [
+        "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs",
+      "absorbedBy": "scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs",
+      "deletionConditionZh": "当 00 审查包不再作为候选证据审查输入且无消费者、无门禁、无证据引用时删除。"
     },
     {
       "path": "scripts/oam/generate-mobile-branch-risk-ledger.mjs",

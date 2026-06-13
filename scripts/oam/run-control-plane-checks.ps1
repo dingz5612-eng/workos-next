@@ -304,6 +304,7 @@ if (-not (Test-Path "artifacts/oam/test-results/mobile/coverage/coverage-summary
 Invoke-Gate node scripts/oam/generate-mobile-branch-risk-ledger.mjs
 Invoke-Gate node scripts/oam/check-mobile-coverage-policy.mjs
 Invoke-Gate node scripts/oam/check-mobile-critical-branch-scenarios.mjs
+Invoke-Gate node scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs
 Write-GateReport -RunStatus "completed" -Status "passed" -CurrentStage "completed" -CurrentGate ""
 Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs -RecordResult $false
 Invoke-Gate node scripts/oam/check-current-evidence-root.mjs -RecordResult $false

@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 import path from "node:path";
 
 const root = process.cwd();
+const reportPath = "artifacts/oam/checks/generated-contract-consistency-result.json";
 const failures = [];
 const p0 = [
   "Dorm.RoomSetupConfirm",
@@ -100,6 +101,8 @@ if (mobileSurfaceText !== generatedSurfaceText) {
   fail("mobile generated surface input model must be byte-equivalent JSON content to generated surface contract.");
 }
 
+writeReport();
+
 if (failures.length > 0) {
   console.error("Generated contract consistency check: FAIL");
   for (const failure of failures) console.error(`- ${failure}`);
@@ -139,6 +142,26 @@ function exists(file) {
 
 function fail(message) {
   failures.push(message);
+}
+
+function writeReport() {
+  const report = {
+    version: "oam.generated-contract-consistency-result.v1",
+    checkedAtUtc: new Date().toISOString(),
+    status: failures.length === 0 ? "passed" : "failed",
+    requiredGeneratedFiles: requiredGeneratedFiles.map((file) => ({
+      path: file,
+      present: exists(file)
+    })),
+    p0GeneratedCandidateTypes: p0,
+    generatedWorkItemTypes: failures.length === 0 ? generatedTypes : [],
+    failures,
+    finalGoNoGo: "NO_GO",
+    releaseAuthority: false,
+    runtimeConsumptionReady: false
+  };
+  fs.mkdirSync(path.dirname(path.join(root, reportPath)), { recursive: true });
+  fs.writeFileSync(path.join(root, reportPath), `${JSON.stringify(report, null, 2)}\n`, "utf8");
 }
 
 function digest(value) {

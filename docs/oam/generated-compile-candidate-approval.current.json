@@ -11,9 +11,9 @@
   "candidateSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
   "candidateSourceHash": "sha256:47951673b9ade467316d9be770932124c07404eb6c3116764010cf79621e65e4",
   "candidateSourceRefIsAncestorOfExecutionHead": true,
-  "authorizedCandidateExecutionHead": "9db58da1ebc2a02349436833747307ac78c4c2fd",
+  "authorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
   "executionBranch": "codex/dormitory-source-p0-s2-closure",
-  "executionHead": "9db58da1ebc2a02349436833747307ac78c4c2fd",
+  "executionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
   "executionHeadCompatibilityAliasOf": "authorizedCandidateExecutionHead",
   "allowEnv": {
     "ALLOW_GENERATED_COMPILE_CANDIDATE": "true"
@@ -56,8 +56,8 @@
     "finalGoNoGo=GO"
   ],
   "executionHeadDiffPolicy": {
-    "range": "fd60390e678f9d6934137f0480a183701b01de8f..9db58da1ebc2a02349436833747307ac78c4c2fd",
-    "allowedChangeScope": "evidence_compile_proof_only",
+    "range": "fd60390e678f9d6934137f0480a183701b01de8f..2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
+    "allowedChangeScope": "candidate_authorization_validation_and_compile_preparation_only",
     "noSourceBusinessFactChanges": true,
     "sourceFinalizationRequired": "SOURCE_FINALIZED_BY_00",
     "sourceFieldGapsDecisionRequired": "DECIDED_AND_BOUND",

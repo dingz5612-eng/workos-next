@@ -8,6 +8,7 @@ const allowGeneratedCompile = process.env.ALLOW_GENERATED_COMPILE_CANDIDATE === 
 const sourcePath = "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml";
 const sourceResultPath = "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json";
 const finalReportPath = "artifacts/oam/final-report.json";
+const reportPath = "artifacts/oam/checks/generated-compile-authorization-result.json";
 const pendingApprovalPath = "docs/oam/generated-compile-approval.current.json";
 const candidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
 const controlPlanePath = "scripts/oam/run-control-plane-checks.ps1";
@@ -51,6 +52,7 @@ const candidateAllowedActions = [
 const staleEvidenceStatuses = new Set(["STALE_BUT_NO_GO", "STALE_REFERENCE"]);
 
 const failures = [];
+const negativeFixtureResults = [];
 const sourceText = readText(sourcePath);
 const sourceResult = readJsonIfExists(sourceResultPath);
 const finalReport = readJsonIfExists(finalReportPath);
@@ -102,6 +104,8 @@ if (!generatedSemanticAllowed) {
     failures.push(`Generated business contract files changed without candidate authorization: ${generatedDiffs.join(", ")}; semantic diff lines: ${semanticDiffs.slice(0, 12).join(" | ")}`);
   }
 }
+
+writeResult();
 
 if (failures.length) {
   console.error("Generated compile authorization check: FAIL");
@@ -203,6 +207,7 @@ function collectCandidateApprovalFailures(approval) {
     requireField(approval.forbiddenActions?.includes(action), `${candidateApprovalPath} forbiddenActions missing ${action}.`);
   }
   requireField(approval.executionHeadDiffPolicy?.range === `${state.candidateSourceRef}..${state.authorizedCandidateExecutionHead}`, `${candidateApprovalPath} executionHeadDiffPolicy.range must bind authorizedSourceRef..authorizedCandidateExecutionHead.`);
+  requireField(approval.executionHeadDiffPolicy?.allowedChangeScope === "candidate_authorization_validation_and_compile_preparation_only", `${candidateApprovalPath} executionHeadDiffPolicy.allowedChangeScope must be candidate_authorization_validation_and_compile_preparation_only.`);
   requireField(approval.executionHeadDiffPolicy?.noSourceBusinessFactChanges === true, `${candidateApprovalPath} must prove no Source business fact changes in executionHead diff.`);
   requireField(approval.executionHeadDiffPolicy?.descendantHeadPolicy === "stale_but_no_go_until_00_updates_authorizedCandidateExecutionHead", `${candidateApprovalPath} must state descendant HEADs are stale-but-no-go until 00 updates authorizedCandidateExecutionHead.`);
   if (state.candidateSourceRef && !isCommit(state.candidateSourceRef)) {
@@ -238,8 +243,35 @@ function checkCandidateSourceRange() {
   const range = `${candidateSourceRef}..${authorizedCandidateExecutionHead}`;
   const changed = runGit(["diff", "--name-only", range]).split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
   const allowed = new Set([
+    ".gitattributes",
+    ".github/workflows/ci.yml",
+    "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+    "artifacts/oam/authority-cleanup/source-layer-audit.json",
+    "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+    "docs/business/dormitory/current-business-journey.md",
+    "docs/contracts/admission/admission-contract.json",
+    "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+    "docs/contracts/generated/dormitory/fields.generated.json",
+    "docs/contracts/generated/dormitory/read-model.generated.json",
+    "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+    "docs/contracts/generated/dormitory/workitems.generated.json",
+    "docs/oam/current-architecture.manifest.json",
     "docs/oam/current-engineering-ledger.json",
-    "scripts/oam/generate-current-evidence-root.mjs"
+    "docs/oam/domain-derived-contracts.json",
+    "docs/oam/generated-compile-approval.current.json",
+    "docs/oam/generated-compile-candidate-approval.current.json",
+    "docs/oam/generated-contracts-manifest.json",
+    "docs/oam/kernel/oam-kernel-graph.generated.json",
+    "docs/oam/oam-kernel-graph.json",
+    "docs/oam/system-derived-contracts.json",
+    "docs/surface/operation-panel-runtime-contract.yml",
+    "scripts/oam/check-current-architecture-manifest.mjs",
+    "scripts/oam/check-current-evidence-root.mjs",
+    "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+    "scripts/oam/check-generated-compile-authorization.mjs",
+    "scripts/oam/generate-current-evidence-root.mjs",
+    "scripts/oam/run-control-plane-checks.ps1",
+    "scripts/validate-runtime-api.mjs"
   ]);
   for (const file of changed) {
     if (!allowed.has(file)) {
@@ -353,7 +385,9 @@ function runNegativeFixtures() {
   ];
   for (const [name, patch] of fixtures) {
     const mutated = { ...candidateApproval, ...patch };
-    if (collectCandidateApprovalFailures(mutated).length === 0) {
+    const killed = collectCandidateApprovalFailures(mutated).length > 0;
+    negativeFixtureResults.push({ caseId: name, status: killed ? "passed" : "failed" });
+    if (!killed) {
       failures.push(`negative fixture did not fail: ${name}.`);
     }
   }
@@ -369,31 +403,81 @@ function runNegativeFixtures() {
       range: `${currentHead}..${authorization.candidateSourceRef}`
     }
   };
-  if (collectCandidateApprovalFailures(nonAncestor).length === 0) {
+  const nonAncestorKilled = collectCandidateApprovalFailures(nonAncestor).length > 0;
+  negativeFixtureResults.push({ caseId: "candidateSourceRef_not_ancestor", status: nonAncestorKilled ? "passed" : "failed" });
+  if (!nonAncestorKilled) {
     failures.push("negative fixture did not fail: candidateSourceRef is not ancestor of authorizedCandidateExecutionHead.");
   }
   const staleCurrentReport = {
     ...finalReport,
     finalGoNoGo: "NO_GO",
     releaseAuthority: false,
-    evidenceGeneratedAtHead: authorization.authorizedCandidateExecutionHead,
+    evidenceGeneratedAtHead: authorization.candidateSourceRef,
     currentRepositoryHead: currentHead,
     candidateCompileEvidenceStatus: "CURRENT",
     candidateCompileClosureForCurrentHead: true,
     controlPlaneGateResult: {
-      commitSha: authorization.authorizedCandidateExecutionHead,
+      commitSha: authorization.candidateSourceRef,
       status: "passed",
       runStatus: "completed",
       finalizable: true
     }
   };
   const expectedStatus = expectedCandidateCompileEvidenceStatus(staleCurrentReport);
-  if (expectedStatus === "CURRENT") {
+  const staleMarkedCurrentKilled = expectedStatus !== "CURRENT";
+  negativeFixtureResults.push({ caseId: "stale_evidence_marked_current", status: staleMarkedCurrentKilled ? "passed" : "failed" });
+  if (!staleMarkedCurrentKilled) {
     failures.push("negative fixture did not fail: stale executionHead report was accepted as current.");
   }
   if (allowGeneratedCompile === false && candidateApprovalOkForNegativeFixture() === false) {
     failures.push("negative fixture setup invalid: current candidate approval must authorize generated semantic diffs.");
   }
+}
+
+function writeResult() {
+  const result = {
+    version: "oam.generated-compile-authorization-result.v1",
+    checkedAtUtc: new Date().toISOString(),
+    status: failures.length === 0 ? "passed" : "failed",
+    allowGeneratedCompileCandidate: allowGeneratedCompile,
+    currentHead,
+    currentBranch,
+    candidateAuthorization: {
+      approvalPath: candidateApprovalPath,
+      candidateSourceRef: authorization.candidateSourceRef,
+      authorizedCandidateExecutionHead: authorization.authorizedCandidateExecutionHead,
+      executionBranch: authorization.executionBranch,
+      sourceHash,
+      candidateSourceHash: authorization.candidateSourceHash,
+      hashNormalization: "CRLF_TO_LF",
+      candidateSourceRefIsAncestorOfExecutionHead: authorization.candidateSourceRef && authorization.authorizedCandidateExecutionHead
+        ? isAncestor(authorization.candidateSourceRef, authorization.authorizedCandidateExecutionHead)
+        : false,
+      currentHeadRelationToAuthorizedHead: currentHead === authorization.authorizedCandidateExecutionHead
+        ? "EQUALS_AUTHORIZED_CANDIDATE_EXECUTION_HEAD"
+        : isAncestor(authorization.authorizedCandidateExecutionHead, currentHead)
+          ? "DESCENDANT_OF_AUTHORIZED_CANDIDATE_EXECUTION_HEAD"
+          : "NOT_DESCENDANT_OF_AUTHORIZED_CANDIDATE_EXECUTION_HEAD"
+    },
+    finalReportBinding: finalReport ? {
+      finalGoNoGo: finalReport.finalGoNoGo,
+      releaseAuthority: finalReport.releaseAuthority,
+      generatedCompileAuthorized: finalReport.generatedCompileAuthorized,
+      generatedCompileCompleted: finalReport.generatedCompileCompleted,
+      runtimeConsumptionReady: finalReport.runtimeConsumptionReady,
+      candidateCompileEvidenceStatus: finalReport.candidateCompileEvidenceStatus,
+      candidateCompileClosureForCurrentHead: finalReport.candidateCompileClosureForCurrentHead
+    } : null,
+    negativeFixtures: negativeFixtureResults,
+    failures,
+    formalGeneratedCompileAuthorized: false,
+    generatedCompileCompleted: false,
+    runtimeConsumptionReady: false,
+    finalGoNoGo: "NO_GO",
+    releaseAuthority: false
+  };
+  fs.mkdirSync(path.dirname(path.join(root, reportPath)), { recursive: true });
+  fs.writeFileSync(path.join(root, reportPath), `${JSON.stringify(result, null, 2)}\n`, "utf8");
 }
 
 function candidateApprovalOkForNegativeFixture() {

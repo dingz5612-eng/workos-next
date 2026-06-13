@@ -60,6 +60,8 @@ requireFile("scripts/oam/check-cross-domain-conflict-rules.mjs");
 requireFile("scripts/oam/compile-current-kernel-graph.mjs");
 requireFile("scripts/oam/check-generated-contract-consistency.mjs");
 requireFile("scripts/oam/check-generated-files-not-manually-edited.mjs");
+requireFile("scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs");
+requireFile("scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs");
 requireFile("scripts/oam/check-read-intelligence-kernel.mjs");
 requireFile("scripts/oam/check-db-no-side-effects-proof.mjs");
 

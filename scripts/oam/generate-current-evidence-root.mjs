@@ -101,6 +101,11 @@ const requiredEvidenceFiles = [
   "docs/oam/db-no-side-effects-proof.json",
   generatedCompileCandidateApprovalPath,
   "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
+  "artifacts/oam/checks/generated-compile-authorization-result.json",
+  "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
+  "artifacts/oam/checks/generated-contract-consistency-result.json",
+  "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
+  "artifacts/oam/checks/dormitory-candidate-artifact-attestation-package-result.json",
   "artifacts/oam/checks/kernel-responsibility-map-result.json",
   "artifacts/oam/checks/professional-ai-review-seats-result.json",
   "artifacts/oam/checks/codex-execution-channel-policy-result.json",
@@ -1761,12 +1766,15 @@ function buildWorkstreamProofNodes() {
     return {
       id: `workstream-proof.${workstream.id}`,
       type: "workstream_proof",
+      scope: "current_oam_responsibility",
       status: "blocked",
       workstreamId: workstream.id,
       proofType: "current-oam-kernel-responsibility",
       source: sources,
       hash: proofHash,
       dependsOn: sources,
+      producedBy: "scripts/oam/generate-current-evidence-root.mjs",
+      verifiedBy: command,
       command,
       checker: command,
       inputHashes: sourceHashes,
@@ -1776,6 +1784,8 @@ function buildWorkstreamProofNodes() {
       goNoGoImpact: workstream.finalReportFields ?? [],
       notesZh: `工作流 ${workstream.name ?? workstream.id} 的 proof DAG 节点；当前阶段保持 NO_GO，CI 绿色只作为证据。`,
       goNoGo: finalGoNoGo,
+      finalGoNoGo,
+      releaseAuthority: false,
       finalReportFields: workstream.finalReportFields ?? []
     };
   });
@@ -1818,12 +1828,15 @@ function buildP0ClosureProofNodes() {
     return {
       id: `p0-closure-proof.${id}`,
       type: "p0_closure_proof",
+      scope: "current_oam_p0_closure",
       status: "blocked",
       workstreamId: "00-current-oam-p0-closure",
       proofType: "current-oam-branch-governed-p0-closure",
       source: sources,
       hash: proofHash,
       dependsOn: sources,
+      producedBy: "scripts/oam/generate-current-evidence-root.mjs",
+      verifiedBy: command,
       command,
       checker: command,
       inputHashes: sourceHashes,
@@ -1833,6 +1846,8 @@ function buildP0ClosureProofNodes() {
       goNoGoImpact: [field],
       notesZh: `${field} 的 P0 收口 proof DAG 节点；当前阶段保持 NO_GO，CI 绿色不等于 GO。`,
       goNoGo: multiDimensionalGoNoGo[field] ?? "NO_GO",
+      finalGoNoGo,
+      releaseAuthority: false,
       finalReportField: field
     };
   });

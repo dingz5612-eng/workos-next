@@ -225,6 +225,10 @@ jobs:
       - name: OAM total gate
         run: pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/oam/run-control-plane-checks.ps1
 
+      - name: Validate dormitory candidate artifact attestation package
+        if: always()
+        run: node scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs
+
       - name: Generate current OAM evidence root
         if: always()
         run: node scripts/oam/generate-current-evidence-root.mjs
@@ -245,9 +249,12 @@ jobs:
           path: |
             artifacts/oam/evidence/**
             artifacts/oam/proofs/**
+            artifacts/oam/authority-cleanup/**
             artifacts/oam/checks/**
             artifacts/oam/test-results/**
             artifacts/oam/final-report.json
+            docs/oam/db-no-side-effects-proof.json
+            docs/oam/evidence-attestation-packages/**
 
       - name: Diff whitespace check
         run: git diff --check

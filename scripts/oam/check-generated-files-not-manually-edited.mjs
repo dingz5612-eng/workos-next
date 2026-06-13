@@ -5,6 +5,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "workos-generated-check-"));
+const reportPath = "artifacts/oam/checks/generated-files-not-manually-edited-result.json";
 const generatedFiles = [
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
@@ -44,6 +45,8 @@ try {
   fs.rmSync(tempRoot, { recursive: true, force: true });
 }
 
+writeReport();
+
 if (failures.length > 0) {
   console.error("Generated files manual edit check: FAIL");
   for (const failure of failures) console.error(`- ${failure}`);
@@ -51,3 +54,23 @@ if (failures.length > 0) {
 }
 
 console.log("Generated files manual edit check: PASS");
+
+function writeReport() {
+  const report = {
+    version: "oam.generated-files-not-manually-edited-result.v1",
+    checkedAtUtc: new Date().toISOString(),
+    status: failures.length === 0 ? "passed" : "failed",
+    generatedFileCount: generatedFiles.length,
+    failures,
+    generatedFiles: generatedFiles.map((file) => ({
+      path: file,
+      present: fs.existsSync(path.join(root, file)),
+      doNotEditVerifiedBy: "scripts/oam/check-generated-files-not-manually-edited.mjs"
+    })),
+    finalGoNoGo: "NO_GO",
+    releaseAuthority: false,
+    runtimeConsumptionReady: false
+  };
+  fs.mkdirSync(path.dirname(path.join(root, reportPath)), { recursive: true });
+  fs.writeFileSync(path.join(root, reportPath), `${JSON.stringify(report, null, 2)}\n`, "utf8");
+}

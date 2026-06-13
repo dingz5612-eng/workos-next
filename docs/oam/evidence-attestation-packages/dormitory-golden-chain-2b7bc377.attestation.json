@@ -1,0 +1,292 @@
+{
+  "packageVersion": "oam.dormitory-candidate-artifact-attestation.v1",
+  "packageStatus": "CANDIDATE_HEAD_ACCEPTED_BY_00_PENDING_NEW_ARTIFACT_NO_GO",
+  "reviewPackageStatus": "VALID_WITH_P0_RESIDUALS_NO_GO",
+  "generatedAtUtc": "2026-06-13T14:21:44.319Z",
+  "acceptedAuthorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
+  "candidateSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
+  "previousAuthorizedCandidateExecutionHead": "9db58da1ebc2a02349436833747307ac78c4c2fd",
+  "oldArtifactRunId": "27466582674",
+  "oldArtifactName": "workosnext-current-oam-evidence-27466582674",
+  "oldArtifactDigest": "sha256:37f42a6376e2d9d4a6dd0a5c9425c9fb33a3038ebdbb48423d4c1e77a4e7413d",
+  "oldArtifactCompletenessStatus": "BLOCKED_REQUIRED_FILES_MISSING",
+  "oldArtifactMissingRequiredFiles": [
+    "artifacts/oam/checks/generated-compile-authorization-result.json",
+    "artifacts/oam/authority-cleanup/mutation-tests-result.json",
+    "docs/oam/db-no-side-effects-proof.json",
+    "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
+    "artifacts/oam/checks/generated-contract-consistency-result.json"
+  ],
+  "recommendation": "RUN_NEW_CI_ARTIFACT_WITH_REQUIRED_FILES_BEFORE_FORMAL_GENERATED_COMPILE",
+  "reviewTarget": {
+    "branch": "codex/dormitory-source-p0-s2-closure",
+    "reviewHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
+    "ciRunId": "27466582674",
+    "workflowName": "CI",
+    "artifactName": "workosnext-current-oam-evidence-27466582674",
+    "observedGitHubArtifactDigest": "sha256:37f42a6376e2d9d4a6dd0a5c9425c9fb33a3038ebdbb48423d4c1e77a4e7413d",
+    "businessGo": "NO_GO"
+  },
+  "sourceRefs": {
+    "sourceScenarioRef": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+    "authorizedSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
+    "candidateSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
+    "sourceHash": "sha256:c0cb0761d571c0cb2fca3bd7d3507ee2d6cbfa1c29170a9ea36017f1477f33e2",
+    "candidateSourceHash": "sha256:47951673b9ade467316d9be770932124c07404eb6c3116764010cf79621e65e4",
+    "hashNormalization": "CRLF_TO_LF",
+    "sourceFinalizationRequired": "SOURCE_FINALIZED_BY_00",
+    "sourceFieldGapsDecisionRequired": "DECIDED_AND_BOUND"
+  },
+  "candidateRefs": {
+    "candidateHeadDecision": "ACCEPTED_BY_00_FOR_CANDIDATE_EXECUTION_HEAD_ONLY",
+    "authorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
+    "executionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
+    "executionHeadCompatibilityAliasOf": "authorizedCandidateExecutionHead",
+    "previousAuthorizedCandidateExecutionHead": "9db58da1ebc2a02349436833747307ac78c4c2fd",
+    "candidateSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
+    "reviewHeadRelationToAuthorizedHead": "EQUALS_AUTHORIZED_CANDIDATE_EXECUTION_HEAD",
+    "candidateCompileEvidenceStatus": "CURRENT_CANDIDATE_HEAD_PENDING_NEW_ARTIFACT",
+    "candidateCompileClosureForCurrentHead": false,
+    "recommendation": "RUN_NEW_CI_ARTIFACT_WITH_REQUIRED_FILES_BEFORE_FORMAL_GENERATED_COMPILE"
+  },
+  "artifactVerification": {
+    "artifactMode": "historical_old_artifact_reference",
+    "artifactRoot": null,
+    "ciRunId": "27466582674",
+    "artifactName": "workosnext-current-oam-evidence-27466582674",
+    "observedGitHubArtifactDigest": "sha256:37f42a6376e2d9d4a6dd0a5c9425c9fb33a3038ebdbb48423d4c1e77a4e7413d",
+    "githubArtifactDigest": "sha256:37f42a6376e2d9d4a6dd0a5c9425c9fb33a3038ebdbb48423d4c1e77a4e7413d",
+    "githubArtifactMetadataDigest": "sha256:37f42a6376e2d9d4a6dd0a5c9425c9fb33a3038ebdbb48423d4c1e77a4e7413d",
+    "oldArtifactRunId": "27466582674",
+    "oldArtifactName": "workosnext-current-oam-evidence-27466582674",
+    "oldArtifactDigest": "sha256:37f42a6376e2d9d4a6dd0a5c9425c9fb33a3038ebdbb48423d4c1e77a4e7413d",
+    "oldArtifactCompletenessStatus": "BLOCKED_REQUIRED_FILES_MISSING",
+    "oldArtifactMissingRequiredFiles": [
+      "artifacts/oam/checks/generated-compile-authorization-result.json",
+      "artifacts/oam/authority-cleanup/mutation-tests-result.json",
+      "docs/oam/db-no-side-effects-proof.json",
+      "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
+      "artifacts/oam/checks/generated-contract-consistency-result.json"
+    ],
+    "artifactCompletenessStatus": "BLOCKED_REQUIRED_FILES_MISSING",
+    "requiredFileCompletenessStatus": "BLOCKED_REQUIRED_FILES_MISSING",
+    "requiredFileMissingCount": 5,
+    "missingRequiredFiles": [
+      "artifacts/oam/checks/generated-compile-authorization-result.json",
+      "artifacts/oam/authority-cleanup/mutation-tests-result.json",
+      "docs/oam/db-no-side-effects-proof.json",
+      "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
+      "artifacts/oam/checks/generated-contract-consistency-result.json"
+    ],
+    "oldArtifactHistoricalFactRetained": true,
+    "oldArtifactCannotProveNewRequiredFiles": true,
+    "newArtifactRequiredForFormalGeneratedCompileDecision": true,
+    "internalArtifactDigest": "sha256:f25c198c08fdf587c0d9e7936a3f975e81c80ddc52d1c3a4f3738e59163b5147",
+    "evidenceRootDigest": "sha256:b3740d99a7ab0d03bce7f407f642937e406a40ebef701cf225e542dddca25b59",
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  },
+  "requiredFiles": [
+    {
+      "id": "evidenceGraph",
+      "logicalPath": "artifacts/oam/evidence/evidence-graph.json",
+      "artifactPath": "evidence/evidence-graph.json",
+      "present": true,
+      "hash": "sha256:384eddea9b0d07f900595f426dd9e2be55fa8f471e3e2371b5f729cda2cbefe1"
+    },
+    {
+      "id": "releaseEvidenceObject",
+      "logicalPath": "artifacts/oam/evidence/current-oam-release-evidence-object.json",
+      "artifactPath": "evidence/current-oam-release-evidence-object.json",
+      "present": true,
+      "hash": "sha256:5077e6d115c7526a46df44b1400125f9a0ddf74b0287c6a82c13553f920b2959"
+    },
+    {
+      "id": "releaseAttestation",
+      "logicalPath": "artifacts/oam/evidence/current-oam-release-attestation.json",
+      "artifactPath": "evidence/current-oam-release-attestation.json",
+      "present": true,
+      "hash": "sha256:e461e5f920ed8125d7fc9f678b7765b1dd4c0248a67002e5a25b391b1d254ef5"
+    },
+    {
+      "id": "finalReport",
+      "logicalPath": "artifacts/oam/final-report.json",
+      "artifactPath": "final-report.json",
+      "present": true,
+      "hash": "sha256:adfa51d91078aa96124d34616753243ad17263bfe5da9c3f66238d774477401a"
+    },
+    {
+      "id": "sourcePackageResult",
+      "logicalPath": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
+      "artifactPath": "checks/dormitory-golden-chain-source-package-result.json",
+      "present": true,
+      "hash": "sha256:cc46f295f703bedb3b1643ecc6d48303350762a0838e0ca363c67406c11e8124"
+    },
+    {
+      "id": "generatedCompileAuthorizationResult",
+      "logicalPath": "artifacts/oam/checks/generated-compile-authorization-result.json",
+      "artifactPath": "checks/generated-compile-authorization-result.json",
+      "present": false,
+      "hash": null
+    },
+    {
+      "id": "mutationTestsResult",
+      "logicalPath": "artifacts/oam/authority-cleanup/mutation-tests-result.json",
+      "artifactPath": "authority-cleanup/mutation-tests-result.json",
+      "present": false,
+      "hash": null
+    },
+    {
+      "id": "noSideEffectsProof",
+      "logicalPath": "docs/oam/db-no-side-effects-proof.json",
+      "artifactPath": "docs/oam/db-no-side-effects-proof.json",
+      "present": false,
+      "hash": null
+    },
+    {
+      "id": "generatedFilesNotManuallyEditedResult",
+      "logicalPath": "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
+      "artifactPath": "checks/generated-files-not-manually-edited-result.json",
+      "present": false,
+      "hash": null
+    },
+    {
+      "id": "generatedContractConsistencyResult",
+      "logicalPath": "artifacts/oam/checks/generated-contract-consistency-result.json",
+      "artifactPath": "checks/generated-contract-consistency-result.json",
+      "present": false,
+      "hash": null
+    },
+    {
+      "id": "derivedContractConsistencyResult",
+      "logicalPath": "artifacts/oam/checks/derived-contract-consistency-result.json",
+      "artifactPath": "checks/derived-contract-consistency-result.json",
+      "present": true,
+      "hash": "sha256:12eff830f0e45a830938ab191a3b81b9c753562355cb5ef97d866ce4fc8d562f"
+    },
+    {
+      "id": "oamKernelGraphResult",
+      "logicalPath": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "artifactPath": "checks/oam-kernel-graph-result.json",
+      "present": true,
+      "hash": "sha256:5b275ac49447abcbbf610e68952619d53ff04bf4c4ceebd41fbbb4e3ddc31514"
+    },
+    {
+      "id": "dashboardReadonlyReport",
+      "logicalPath": "artifacts/oam/checks/dashboard-readonly-report.json",
+      "artifactPath": "checks/dashboard-readonly-report.json",
+      "present": true,
+      "hash": "sha256:06fbdc803c806c76a8b0a9a58f6ed0bb32f8254662e3decab5bcde8bf3f2e36f"
+    },
+    {
+      "id": "financeTruthReport",
+      "logicalPath": "artifacts/oam/checks/finance-truth-report.json",
+      "artifactPath": "checks/finance-truth-report.json",
+      "present": true,
+      "hash": "sha256:50458a52bdd3e6eb39bf7b2c12c81486e30ab1e491a4a8fb608102f3cf00bbdd"
+    },
+    {
+      "id": "operationIdentityBoundaryResult",
+      "logicalPath": "artifacts/oam/checks/operation-identity-boundary-result.json",
+      "artifactPath": "checks/operation-identity-boundary-result.json",
+      "present": true,
+      "hash": "sha256:60e825ae1b183286d5cd7dec10ae1536081add72c7b508f75e9dbdf50c54bcf1"
+    },
+    {
+      "id": "releaseAttestationResult",
+      "logicalPath": "artifacts/oam/checks/current-oam-release-attestation-result.json",
+      "artifactPath": "checks/current-oam-release-attestation-result.json",
+      "present": true,
+      "hash": "sha256:0bcdf170b2b3a20e8f183d338b9f91087d4dddf01f99f11a63abf462dbf2f3d7"
+    }
+  ],
+  "evidenceBindingReview": {
+    "reviewHeadBoundTo00AcceptedCandidateHead": true,
+    "authorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
+    "candidateSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
+    "finalReportAuthorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
+    "releaseObjectAuthorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  },
+  "gateResults": {
+    "candidateHeadAcceptanceSyncGate": "PASS",
+    "candidateEvidenceRebindGate": "PENDING_NEW_CI_ARTIFACT",
+    "oldArtifactCompleteness": "BLOCKED_REQUIRED_FILES_MISSING",
+    "formalGeneratedCompileAuthorization": "BLOCKED",
+    "runtimeConsumption": "BLOCKED",
+    "businessProduction": "NO_GO",
+    "dormitoryL2": "NO_GO"
+  },
+  "goNoGo": {
+    "generatedCompileCandidateAuthorized": true,
+    "generatedCompileAuthorized": false,
+    "formalGeneratedCompileAuthorized": false,
+    "generatedCompileCompleted": false,
+    "generatedCandidateAcceptedBy00": false,
+    "generatedReleaseAllowed": false,
+    "runtimeConsumptionReady": false,
+    "businessFeatureDevelopmentAllowed": false,
+    "businessProductionGoNoGo": "NO_GO",
+    "dormitoryL2GoNoGo": "NO_GO",
+    "productionConfirmAllowed": false,
+    "productionConfirmGoNoGo": "NO_GO",
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  },
+  "nextDecisionFor00": {
+    "candidateHeadDecision": "ACCEPTED_BY_00_FOR_CANDIDATE_EXECUTION_HEAD_ONLY",
+    "nextDecisionFor00": "STOP_AND_FIX_ARTIFACT_UPLOAD_OR_RESULT_WRITERS",
+    "recommendation": "RUN_NEW_CI_ARTIFACT_WITH_REQUIRED_FILES_BEFORE_FORMAL_GENERATED_COMPILE",
+    "rationale": [
+      "00 accepted 2b7bc3772c7351b34c5ca91258fe388371ab9f6c as the candidate execution head only.",
+      "CI #424 remains a historical immutable artifact and cannot prove the newly required artifact files.",
+      "Formal generated compile authorization, runtime consumption, release authority, Business GO, Dormitory L2, and production_confirm remain blocked."
+    ]
+  },
+  "formalApprovalState": {
+    "generatedCompileAuthorized": false,
+    "generatedCompileCompleted": false,
+    "runtimeConsumptionReady": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  },
+  "residuals": [
+    {
+      "severity": "P0",
+      "id": "CI_ARTIFACT_REQUIRED_FILES_MISSING",
+      "description": "The referenced artifact does not include every file required by the current candidate artifact attestation gate.",
+      "oldArtifactRunId": "27466582674",
+      "oldArtifactName": "workosnext-current-oam-evidence-27466582674",
+      "missingFiles": [
+        "artifacts/oam/checks/generated-compile-authorization-result.json",
+        "artifacts/oam/authority-cleanup/mutation-tests-result.json",
+        "docs/oam/db-no-side-effects-proof.json",
+        "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
+        "artifacts/oam/checks/generated-contract-consistency-result.json"
+      ]
+    },
+    {
+      "severity": "P0",
+      "id": "CI_424_ARTIFACT_REQUIRED_FILES_MISSING_HISTORICAL_FACT",
+      "description": "CI #424 is immutable and predates the newly required result/proof uploads.",
+      "oldArtifactRunId": "27466582674",
+      "oldArtifactName": "workosnext-current-oam-evidence-27466582674",
+      "missingFiles": [
+        "artifacts/oam/checks/generated-compile-authorization-result.json",
+        "artifacts/oam/authority-cleanup/mutation-tests-result.json",
+        "docs/oam/db-no-side-effects-proof.json",
+        "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
+        "artifacts/oam/checks/generated-contract-consistency-result.json"
+      ]
+    }
+  ],
+  "forbiddenInterpretations": [
+    "CI success is not GO",
+    "artifact exists is not GO",
+    "candidate head acceptance is not formal generated compile authorization",
+    "candidate evidence is not runtime consumption",
+    "Evidence Root PASS is not releaseAuthority",
+    "old CI #424 artifact completeness gaps remain historical facts"
+  ]
+}
