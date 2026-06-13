@@ -708,7 +708,7 @@ const finalReport = {
     ],
     sourceFieldGaps: sourcePackageCheck.sourceFieldGaps ?? {
       pending00Decision: false,
-      compilePreparationAllowed: "false_until_gap_resolution",
+      compilePreparationAllowed: "READY_FOR_00_COMPILE_DECISION",
       decisions: {}
     },
     compilePreparationDecision: sourcePackageCheck.compilePreparationDecision,
@@ -2128,7 +2128,7 @@ function readSourcePackageCheckResult() {
       generatedContractStatus10B: "PENDING_GENERATED_CONTRACT",
       sourceFieldGaps: {
         pending00Decision: false,
-        compilePreparationAllowed: "false_until_gap_resolution",
+        compilePreparationAllowed: "READY_FOR_00_COMPILE_DECISION",
         decisions: {}
       },
       digests: {}
@@ -2410,8 +2410,12 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
     "node scripts/oam/check-file-lifecycle-policy.mjs",
     "node scripts/oam/check-authority-source-layer-audit.mjs"
   ]);
+  const generatedCompileAuthorized = sourcePackageCheck.generatedCompilationAllowed === true ||
+    sourcePackageCheck.generatedCompilationAllowed === "true" ||
+    process.env.ALLOW_GENERATED_COMPILE_CANDIDATE === "true";
   const compileGate = gateGroupStatus([
-    "node scripts/business/generate-dormitory-derived-contracts.mjs",
+    "node scripts/oam/check-generated-compile-authorization.mjs",
+    ...(generatedCompileAuthorized ? ["node scripts/business/generate-dormitory-derived-contracts.mjs"] : []),
     "node scripts/oam/generate-system-derived-contracts.mjs",
     "node scripts/oam/compile-current-kernel-graph.mjs",
     "node scripts/oam/check-derived-contract-consistency.mjs",
@@ -2497,8 +2501,8 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
       ],
       blockingReasons: compileGate.blockingReasons,
       nextAction: compileGate.status === "PASS"
-        ? "仅表示 generated 合同可编译且未手改；不能解释为业务 GO。"
-        : "修复 Source 或 generator，再重新生成 generated 合同。"
+        ? "仅表示 generated 元数据、授权门禁和未手改检查闭合；Dormitory generated 编译仍需 00 显式授权，不能解释为业务 GO。"
+        : "修复 Source、generated 编译授权门禁或生成层元数据，再重新生成证据。"
     }),
     runtimeBoundaryStatus: reportStatusEntry({
       status: runtimeGate.status,

@@ -6,9 +6,9 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceLifecyclePolicy": "docs/oam/file-lifecycle-policy.json",
   "defaultPolicy": "unregistered_files_are_not_allowed",
-  "fileCount": 973,
+  "fileCount": 974,
   "identityCounts": {
-    "validation_file": 316,
+    "validation_file": 317,
     "implementation_file": 330,
     "derived_view": 65,
     "authority_file": 241,
@@ -17597,6 +17597,36 @@
       "replacementPath": "scripts/oam/check-file-lifecycle-policy.mjs",
       "absorbedBy": "scripts/oam/check-file-lifecycle-policy.mjs",
       "removalProofGate": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-generated-compile-authorization.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-generated-compile-authorization.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/check-generated-compile-authorization.mjs",
+      "gates": [
+        "scripts/oam/check-generated-compile-authorization.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/final-report.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-generated-compile-authorization.mjs",
+      "absorbedBy": "scripts/oam/check-generated-compile-authorization.mjs",
+      "removalProofGate": "scripts/oam/check-generated-compile-authorization.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
