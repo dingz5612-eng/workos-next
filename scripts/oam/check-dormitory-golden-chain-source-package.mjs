@@ -85,6 +85,7 @@ const definitionRegistry = readText(definitionRegistryPath);
 const noSideEffectsProof = readJson(noSideEffectsProofPath);
 
 checkSourceIdentity();
+checkSourceReviewSemantics();
 checkFinanceLedgerNoneBoundary();
 checkFieldAndStableRefBoundary();
 checkLanguageBoundary();
@@ -151,6 +152,19 @@ const report = {
       "checkerResultDigest",
       "mutationResultDigest",
       "sourceToGeneratedProvenancePlanDigest"
+    ]
+  },
+  sourceFieldGaps: {
+    pending00Decision: true,
+    compilePreparationAllowed: "false_until_00_approval",
+    gaps: [
+      "buildingId",
+      "roomType",
+      "readinessEvidenceRefs",
+      "readinessNote",
+      "blockedReason",
+      "notSaleableReason",
+      "serviceVerificationRef"
     ]
   },
   p1P2Policy: {
@@ -238,6 +252,103 @@ function checkSourceIdentity() {
   }
 }
 
+function checkSourceReviewSemantics() {
+  requireCondition(sourceText.includes("scenarioNameZhForReviewOnly: 宿舍资源可售第一金链"), "source.scenario_name_review_only_missing", "scenarioNameZh must be review-only.", {});
+  requireCondition(!/^scenarioNameZh:/m.test(sourceText), "source.scenario_name裸_zh", "scenarioNameZh must not be a user-visible source of truth.", {});
+  requireCondition(sourceText.includes("businessGoalZhForReviewOnly:"), "source.business_goal_review_only_missing", "businessGoalZh must be review-only.", {});
+  requireCondition(!/^businessGoalZh:/m.test(sourceText), "source.business_goal裸_zh", "businessGoalZh must not be a user-visible source of truth.", {});
+
+  const branchFlows = section(sourceText, "branchFlows");
+  for (const id of [
+    "missing-field",
+    "missing-evidence",
+    "untrusted-evidence",
+    "duplicate-room",
+    "wrong-bed-room-owner",
+    "resource-not-saleable",
+    "manual-review",
+    "correction"
+  ]) {
+    const branch = blockFor(branchFlows, `id: ${id}`, "\n  - id:");
+    requireCondition(Boolean(branch), "source.branch_missing", `branchFlows missing ${id}.`, { id });
+    if (!branch) continue;
+    for (const required of [
+      "nameZhForReviewOnly:",
+      "outcome: NO_GO",
+      "blockingReasonCode:",
+      "blockingReasonCopyKey:",
+      "requiredEvidenceRefs:",
+      "allowedNextAction:",
+      "allowedNextActionCopyKey:",
+      "correctionAllowed:",
+      "admissionNoGoItem:",
+      "safeErrorCopyKey:",
+      "explanationKey:",
+      "expectedNoSideEffects: true"
+    ]) {
+      requireCondition(branch.includes(required), "source.branch_semantic_field_missing", `branch ${id} missing ${required}.`, { id, required });
+    }
+    requireCondition(!branch.includes("nameZh:"), "source.branch_name_not_review_only", `branch ${id} must not expose nameZh as user copy.`, { id });
+  }
+
+  const roles = section(sourceText, "roles");
+  for (const roleId of ["dormitory.operator", "dormitory.lead"]) {
+    const role = blockFor(roles, `roleId: ${roleId}`, "\n    - roleId:");
+    requireCondition(Boolean(role), "source.role_id_missing", `role missing ${roleId}.`, { roleId });
+    requireCondition(role.includes("labelCopyKey: dormitory.resourceSaleability.role.") && role.includes("nameZhForReviewOnly:"), "source.role_copy_key_missing", `role ${roleId} must use labelCopyKey and review-only Chinese.`, { roleId });
+  }
+  requireCondition(!/allowedHumanRoles:\s*\n\s*-\s*宿舍/m.test(roles), "source.role_label_direct_user_copy", "roles must not use direct Chinese labels as source of truth.");
+
+  const facts = section(sourceText, "allowedFacts");
+  const userFacts = between(facts, "userVisibleFacts:", "traceOnlyFacts:");
+  const traceFacts = between(facts, "traceOnlyFacts:", "forbiddenFacts:");
+  for (const fact of ["Room", "Bed", "EvidenceObject"]) {
+    requireCondition(userFacts.includes(`- ${fact}`), "source.user_visible_fact_missing", `allowedFacts.userVisibleFacts missing ${fact}.`, { fact });
+  }
+  for (const fact of ["DomainEvent", "CommandSubmission"]) {
+    requireCondition(traceFacts.includes(`- ${fact}`), "source.trace_only_fact_missing", `allowedFacts.traceOnlyFacts missing ${fact}.`, { fact });
+    requireCondition(!userFacts.includes(`- ${fact}`), "source.trace_fact_user_visible", `${fact} must not be user-visible fact.`, { fact });
+  }
+
+  const admissionPolicy = section(sourceText, "admissionPolicy");
+  requireCondition(admissionPolicy.includes("internalPilotConfirmAllowedForReviewOnly: true"), "source.internal_pilot_review_only_missing", "internal pilot confirm capability must be review-only.");
+  requireCondition(!admissionPolicy.includes("internalPilotConfirmAllowed: true"), "source.internal_pilot_confirm裸_allowed", "internalPilotConfirmAllowed=true must not be naked user/business semantic.");
+  for (const required of [
+    "admissionSurfaceSemantics:",
+    "internalPilotConfirmCapability: serverAdmissionRequired",
+    "missingAdmissionBehavior:",
+    "visibleAllowed: true",
+    "prepareAllowed: false",
+    "confirmAllowed: false",
+    "productionAllowed: false",
+    "userVisibleExplanationKey: explain.visibleNotConfirm",
+    "forbiddenUserCopy:",
+    "- 当前可确认",
+    "- 试点可确认",
+    "- 可以提交确认",
+    "- 生产可确认"
+  ]) {
+    requireCondition(admissionPolicy.includes(required), "source.admission_surface_semantics_missing", `admissionPolicy missing ${required}.`, { required });
+  }
+
+  const fieldContracts = section(sourceText, "fieldContracts");
+  for (const match of fieldContracts.matchAll(/fieldId:\s*([^\n\r]+)/g)) {
+    const fieldId = match[1].trim();
+    const field = blockFor(fieldContracts.slice(match.index), `fieldId: ${fieldId}`, "\n      - fieldId:");
+    for (const required of [
+      "category:",
+      "editable:",
+      "source:",
+      "fallbackAllowed: false",
+      "ordinaryUserVisible:",
+      "controlSource: generatedSurfaceModelOnly"
+    ]) {
+      requireCondition(field.includes(required), "source.executable_field_control_missing", `field ${fieldId} missing ${required}.`, { fieldId, required });
+    }
+  }
+  verifiedControls.push("source-review-semantics");
+}
+
 function checkFinanceLedgerNoneBoundary() {
   const factBlock = section(sourceText, "forbiddenFacts");
   for (const fact of financeFacts) {
@@ -319,8 +430,24 @@ function checkFieldAndStableRefBoundary() {
   const gaps = section(sourceText, "sourceFieldGaps");
   for (const gap of ["buildingId", "roomType", "readinessEvidenceRefs", "readinessNote", "blockedReason", "notSaleableReason", "serviceVerificationRef"]) {
     requireCondition(gaps.includes(`- ${gap}`), "fields.source_gap_missing", `sourceFieldGaps missing ${gap}.`, { gap });
+    requireCondition(!fieldContracts.includes(`fieldId: ${gap}`) && !fieldContracts.includes(`sourceFieldId: ${gap}`), "fields.source_gap_promoted_to_executable", `sourceFieldGaps item must not be executable in this round: ${gap}.`, { gap });
   }
   requireCondition(gaps.includes("pending00Decision: true") && gaps.includes("compilePreparationAllowed: false_until_00_approval"), "fields.source_gap_decision_missing", "sourceFieldGaps must remain pending 00 decision.");
+  const handoff = section(sourceText, "handoffPolicy");
+  for (const required of [
+    "from: Dorm.ResourceReadinessConfirm",
+    "mode: prepare_only",
+    "- lead-reservation.prepare",
+    "- nextSourcePackage.prepare",
+    "- Dorm.CheckinConfirm",
+    "- Dorm.PaymentConfirm",
+    "- Dorm.DepositConfirm",
+    "- Dorm.CheckoutSettlementApprove",
+    "- Finance.CorrectionApply",
+    "- Dorm.PeriodReview"
+  ]) {
+    requireCondition(handoff.includes(required), "handoff.policy_missing", `handoffPolicy missing ${required}.`, { required });
+  }
 
   const matrixResource = blockFor(section(matrixText, "scenarioPackages"), "- packageId: resource-saleability", "\n  - packageId: lead-reservation");
   requireCondition(matrixResource.includes("sourceFieldId: room.basicProfile"), "matrix.room_basic_source_field_missing", "Matrix room.basicProfile missing sourceFieldId.");
@@ -339,7 +466,7 @@ function checkLanguageBoundary() {
     }
   }
   const copyKeys = new Set();
-  for (const match of sourceText.matchAll(/(?:CopyKey:\s*|-\s+)(dormitory\.resourceSaleability\.[A-Za-z0-9_.-]+|explain\.[A-Za-z0-9_.-]+)/g)) {
+  for (const match of sourceText.matchAll(/(?:CopyKey:\s*|-\s+)(dormitory\.resourceSaleability\.[A-Za-z0-9_.-]+|explain\.[A-Za-z0-9_.-]+|operations\.error\.safe\.[A-Za-z0-9_.-]+|evidence\.reason\.[A-Za-z0-9_.-]+)/g)) {
     copyKeys.add(match[1]);
   }
   for (const match of matrixText.matchAll(/labelCopyKey:\s*(dormitory\.resourceSaleability\.[A-Za-z0-9_.-]+)/g)) {
@@ -392,6 +519,18 @@ function checkReadSideEnvelope() {
     "readonly: true",
     "dashboardSummaryIsNotSourceOfTruth: true",
     "sourceFactsRequired: true",
+    "DashboardWidget:",
+    "actionPolicy: readonly_or_navigate_only",
+    "ReportDataset:",
+    "permissionRequired: true",
+    "lineageRequired: true",
+    "freshnessRequired: true",
+    "reportDatasetIsNotSourceOfTruth: true",
+    "permissionMissing: BLOCK",
+    "lineageMissing: BLOCK_METRIC_AND_DASHBOARD_USE",
+    "freshnessMissing: STALE_OR_BLOCK",
+    "noBusinessFactWrite: true",
+    "exportPolicy: internal_review_only",
     "scope: L1_OBSERVATION",
     "notProductionKpi: true"
   ]) {
@@ -399,6 +538,9 @@ function checkReadSideEnvelope() {
   }
   for (const forbidden of ["- confirm", "- writeBusinessFact", "- productionConfirm", "- UI field", "- DashboardSummary", "- page state"]) {
     requireCondition(readSide.includes(forbidden), "readside.forbidden_action_or_input_missing", `readSideAcceptance missing ${forbidden}.`, { forbidden });
+  }
+  for (const required of ["rawDomainEventReadAllowed: false", "rawCommandSubmissionReadAllowed: false"]) {
+    requireCondition(readSide.includes(required), "readside.raw_fact_read_guard_missing", `Metric lineage missing ${required}.`, { required });
   }
   verifiedControls.push("read-side-envelope");
 }
@@ -477,25 +619,16 @@ function checkSourceGeneratedProvenanceDirection() {
       currentPollution.push({ workItemType: mapping.workItemType, scenarioId: mapping.scenarioId });
     }
   }
-  if (currentPollution.length) {
-    p1Residuals.push({
-      id: "derived.current_canonical_map_pending_regeneration",
-      owner: "06-quality-evidence + 00-oam-control",
-      blockingScope: "derived canonical-scenario-map current file",
-      deferredReason: "Generator has been prepared, but this round does not perform formal generated contract compilation.",
-      status: "PENDING_GENERATED_CONTRACT",
-      examples: currentPollution.slice(0, 8)
-    });
-  }
-  if (scenarioFieldContract.sourceScenarioFile === "docs/scenarios/dormitory/golden-pilot.yml") {
-    p1Residuals.push({
-      id: "derived.scenario_field_contract_pending_regeneration",
-      owner: "06-quality-evidence + 00-oam-control",
-      blockingScope: "derived scenario-field-contract current file",
-      deferredReason: "Source package review prepares generator input only; derived contract regeneration is deferred to compiler-preparation decision.",
-      status: "PENDING_GENERATED_CONTRACT"
-    });
-  }
+  requireCondition(
+    currentPollution.length === 0,
+    "derived.future_chain_bound_to_first_source",
+    "future-chain mappings must not bind to the first golden-chain Source package.",
+    { forbiddenTypes: futureChainTypes, examples: currentPollution.slice(0, 8) }
+  );
+  requireCondition(scenarioFieldContract.sourceScenarioFile === "PENDING_SOURCE_PACKAGE_REVIEW", "derived.scenario_field_source_not_pending", "scenario-field-contract sourceScenarioFile must remain PENDING_SOURCE_PACKAGE_REVIEW.");
+  requireCondition(scenarioFieldContract.scenarioFieldContractStatus === "PENDING_SOURCE_PACKAGE_REVIEW", "derived.scenario_field_status_not_pending", "scenarioFieldContractStatus must remain PENDING_SOURCE_PACKAGE_REVIEW.");
+  requireCondition(scenarioFieldContract.firstGoldenChainFieldContractReady === false, "derived.first_chain_field_contract_ready", "firstGoldenChainFieldContractReady must remain false.");
+  requireCondition(scenarioFieldContract.generatedCompilationCompleted === false, "derived.generated_compilation_completed", "generatedCompilationCompleted must remain false.");
   verifiedControls.push("generated-provenance-direction-prepared");
 }
 
@@ -528,6 +661,7 @@ function runSourceMutationCases() {
   expectFail("amount_basis_allowed_fact", () => section(sourceText, "allowedFacts").includes("- AmountBasis"));
   expectFail("golden_pilot_as_source_reference", () => section(sourceText, "sourceReferences").includes("docs/scenarios/dormitory/golden-pilot.yml"));
   expectFail("future_package_uses_first_source_in_generator", () => !generatorText.includes("PENDING_SOURCE_PACKAGE_REVIEW"));
+  expectFail("future_chain_maps_to_first_source", () => (canonicalMap.mappings ?? []).some((mapping) => futureChainTypes.includes(mapping.workItemType) && mapping.sourceScenario === sourcePath));
   expectFail("visible_not_confirm_copy_key_removed", () => !sourceText.includes("- explain.visibleNotConfirm"));
   expectFail("ru_or_ky_copy_missing", () => {
     const copy = (surfaceCopy.copies ?? []).find((item) => item.copyId === "dormitory.resourceSaleability.scenarioName")?.copy;

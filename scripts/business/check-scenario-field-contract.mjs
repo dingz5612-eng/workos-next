@@ -23,6 +23,10 @@ const violations = [
 
 requireValue(contract.productionAllowed === false, violations, "scenario.production_allowed", "场景字段合同不得允许 production。");
 requireValue(contract.domain === "dormitory", violations, "scenario.domain_mismatch", "场景字段合同 domain 必须是 dormitory。");
+requireValue(contract.sourceScenarioFile === "PENDING_SOURCE_PACKAGE_REVIEW", violations, "scenario.source_review_pending", "场景字段合同必须保持 PENDING_SOURCE_PACKAGE_REVIEW。");
+requireValue(contract.scenarioFieldContractStatus === "PENDING_SOURCE_PACKAGE_REVIEW", violations, "scenario.field_contract_status_pending", "scenarioFieldContractStatus 必须保持 PENDING_SOURCE_PACKAGE_REVIEW。");
+requireValue(contract.firstGoldenChainFieldContractReady === false, violations, "scenario.first_golden_chain_not_ready", "firstGoldenChainFieldContractReady 必须为 false。");
+requireValue(contract.generatedCompilationCompleted === false, violations, "scenario.generated_compilation_not_completed", "generatedCompilationCompleted 必须为 false。");
 
 const fieldSets = contract.fieldSets ?? [];
 const fieldByScenario = indexBy(fieldSets, "scenarioId");

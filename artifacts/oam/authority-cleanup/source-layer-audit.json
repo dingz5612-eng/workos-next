@@ -1,10 +1,10 @@
 {
   "version": "authority-cleanup.source-layer-audit.v1",
-  "generatedAtUtc": "2026-06-12T18:08:56.639Z",
+  "generatedAtUtc": "2026-06-13T03:58:05.798Z",
   "fileLifecycleRegistry": {
     "policyPath": "docs/oam/file-lifecycle-policy.json",
     "registryVersion": "oam.file-lifecycle-registry.v1",
-    "registryDigest": "sha256:210dc5f4241bafcffebfab76a389a08de653c7693cb0502af25f914f1f3e4722",
+    "registryDigest": "sha256:bf5246931a2e1df891c62c78d616420e21bb08c5141db9648e3b5e157899a08c",
     "classificationPriority": [
       "sourceWhitelist",
       "exactPath",

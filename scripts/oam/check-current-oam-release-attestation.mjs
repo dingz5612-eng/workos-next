@@ -26,6 +26,10 @@ checkRequiredFields(attestation, "release attestation", [
   "evidenceRootDigest",
   "githubArtifactMetadataDigest",
   "githubArtifactDigestStatus",
+  "externalArtifactAttestation",
+  "evidenceLifecycleType",
+  "releaseEvidenceReferenceOnly",
+  "workspaceDirtyAtGeneration",
   "zipArtifactDigest",
   "releaseAuthority",
   "finalGoNoGo",
@@ -37,6 +41,13 @@ checkRequiredFields(releaseObject, "release evidence object", [
   "evidenceRootDigest",
   "githubArtifactMetadataDigest",
   "githubArtifactDigestStatus",
+  "externalArtifactAttestation",
+  "evidenceLifecycleType",
+  "releaseEvidenceReferenceOnly",
+  "workspaceDirtyAtGeneration",
+  "stale",
+  "referenceOnly",
+  "bindingStatus",
   "zipArtifactDigest",
   "releaseAuthority",
   "finalGoNoGo",
@@ -79,6 +90,14 @@ if (attestation?.githubArtifactMetadataDigest !== releaseObject?.githubArtifactM
 if (attestation?.githubArtifactDigestStatus !== releaseObject?.githubArtifactDigestStatus) {
   violations.push("release attestation githubArtifactDigestStatus must match release evidence object.");
 }
+if (attestation?.externalArtifactAttestation !== releaseObject?.externalArtifactAttestation ||
+  attestation?.externalArtifactAttestation !== finalReport?.externalArtifactAttestation) {
+  violations.push("release attestation externalArtifactAttestation must match release evidence object and final report.");
+}
+if (attestation?.evidenceLifecycleType !== releaseObject?.evidenceLifecycleType ||
+  attestation?.evidenceLifecycleType !== finalReport?.evidenceLifecycleType) {
+  violations.push("release attestation evidenceLifecycleType must match release evidence object and final report.");
+}
 if (attestation?.zipArtifactDigest !== releaseObject?.zipArtifactDigest) {
   violations.push("release attestation zipArtifactDigest must match release evidence object.");
 }
@@ -92,6 +111,9 @@ if (releaseObject?.githubArtifactDigest && releaseObject.githubArtifactDigest !=
 }
 
 if (attestation?.githubArtifactDigestStatus === pendingExternalAttestation) {
+  if (attestation.externalArtifactAttestation !== "PENDING_EXTERNAL_ATTESTATION") {
+    violations.push("pending external attestation must keep externalArtifactAttestation=PENDING_EXTERNAL_ATTESTATION.");
+  }
   if (attestation.githubArtifactMetadataDigest !== pendingExternalAttestation) {
     violations.push("pending external attestation must keep githubArtifactMetadataDigest=pending_external_attestation.");
   }
@@ -99,6 +121,9 @@ if (attestation?.githubArtifactDigestStatus === pendingExternalAttestation) {
     violations.push("pending release object must keep githubArtifactMetadataDigest=pending_external_attestation.");
   }
 } else if (attestation?.githubArtifactDigestStatus === "attested") {
+  if (attestation.externalArtifactAttestation !== "ATTESTED") {
+    violations.push("attested release attestation must use externalArtifactAttestation=ATTESTED.");
+  }
   if (!sha256DigestPattern.test(String(attestation.githubArtifactMetadataDigest ?? ""))) {
     violations.push("attested release attestation must carry sha256 githubArtifactMetadataDigest.");
   }
@@ -108,6 +133,14 @@ if (attestation?.githubArtifactDigestStatus === pendingExternalAttestation) {
 
 if (attestation?.releaseAuthority !== false || releaseObject?.releaseAuthority !== false) {
   violations.push("current OAM release attestation must keep releaseAuthority=false.");
+}
+if (attestation?.evidenceLifecycleType !== "ci-release" &&
+  (releaseObject?.bindingStatus === "current" || releaseObject?.stale === false || releaseObject?.referenceOnly === false)) {
+  violations.push("non-ci release evidence must remain stale/referenceOnly.");
+}
+if ((attestation?.workspaceDirtyAtGeneration === true || releaseObject?.workspaceDirtyAtGeneration === true) &&
+  (attestation?.releaseAuthority !== false || releaseObject?.releaseAuthority !== false)) {
+  violations.push("dirty workspace release attestation must force releaseAuthority=false.");
 }
 if (attestation?.finalGoNoGo !== "NO_GO" || releaseObject?.finalGoNoGo !== "NO_GO" || finalReport?.finalGoNoGo !== "NO_GO") {
   violations.push("release attestation must not convert CI/artifact/final report evidence into GO.");

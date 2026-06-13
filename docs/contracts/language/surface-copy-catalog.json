@@ -615,6 +615,78 @@
       }
     },
     {
+      "copyId": "dormitory.resourceSaleability.action.supplementRequiredInfo",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "补充必填信息",
+        "ru-RU": "Дополнить обязательные данные",
+        "ky-KG": "Милдеттүү маалыматты толуктоо"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.action.supplementRequiredEvidence",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "补充所需证据",
+        "ru-RU": "Дополнить требуемое доказательство",
+        "ky-KG": "Талап кылынган далилди толуктоо"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.action.replaceEvidence",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "更换证据后再提交",
+        "ru-RU": "Заменить доказательство и подать снова",
+        "ky-KG": "Далилди алмаштырып кайра тапшыруу"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.action.contactOwner",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "联系宿舍负责人复核",
+        "ru-RU": "Обратиться к ответственному за общежитие",
+        "ky-KG": "Жатакана жооптуусуна кайрылуу"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.action.readonlyReview",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "只读查看并等待复核",
+        "ru-RU": "Просмотреть только для чтения и ждать проверки",
+        "ky-KG": "Окуп гана көрүп, текшерүүнү күтүү"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.action.openCorrection",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "发起纠错申请",
+        "ru-RU": "Создать запрос на исправление",
+        "ky-KG": "Оңдоо өтүнүчүн баштоо"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.role.operator",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "宿舍经办人",
+        "ru-RU": "Оператор общежития",
+        "ky-KG": "Жатакана оператору"
+      }
+    },
+    {
+      "copyId": "dormitory.resourceSaleability.role.lead",
+      "risk": "medium",
+      "copy": {
+        "zh-CN": "宿舍负责人",
+        "ru-RU": "Ответственный за общежитие",
+        "ky-KG": "Жатакана жооптуусу"
+      }
+    },
+    {
       "copyId": "dormitory.resourceSaleability.field.roomBasicProfile",
       "risk": "medium",
       "copy": {

@@ -12,6 +12,7 @@ const candidateEvidenceObjectPath = "artifacts/oam/evidence/current-oam-candidat
 const commitAttestationPath = "artifacts/oam/evidence/current-oam-commit-attestation.json";
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
 const releaseAttestationPath = "artifacts/oam/evidence/current-oam-release-attestation.json";
+const evidenceLifecycleProofPath = "artifacts/oam/evidence/evidence-lifecycle-proof.json";
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 const evidenceRootDigestPlaceholder = "__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__";
 const pendingExternalAttestation = "pending_external_attestation";
@@ -22,7 +23,24 @@ const workflow = env("GITHUB_WORKFLOW") || "CI";
 const artifactName = artifactNameForRun(ciRunId);
 const githubArtifactMetadataDigest = env("WORKOS_GITHUB_ARTIFACT_METADATA_DIGEST") || env("GITHUB_ARTIFACT_METADATA_DIGEST") || "";
 const zipArtifactDigest = env("WORKOS_ZIP_ARTIFACT_DIGEST") || env("GITHUB_ARTIFACT_ZIP_DIGEST") || "";
-const githubArtifactDigestStatus = githubArtifactMetadataDigest ? "attested" : pendingExternalAttestation;
+const defaultEvidenceLifecycleType = env("GITHUB_ACTIONS") === "true" && githubArtifactMetadataDigest
+  ? "ci-release"
+  : "local-candidate";
+const evidenceLifecycleType = normalizeEvidenceLifecycleType(
+  env("WORKOS_EVIDENCE_MODE") || env("OAM_EVIDENCE_MODE") || defaultEvidenceLifecycleType
+);
+const ciReleaseMode = evidenceLifecycleType === "ci-release";
+if (ciReleaseMode && env("GITHUB_ACTIONS") !== "true") {
+  throw new Error("ci-release evidence mode is only allowed inside GitHub Actions.");
+}
+if (ciReleaseMode && !env("GITHUB_SHA")) {
+  throw new Error("ci-release evidence mode requires GITHUB_SHA.");
+}
+if (ciReleaseMode && !githubArtifactMetadataDigest) {
+  throw new Error("ci-release evidence mode requires WORKOS_GITHUB_ARTIFACT_METADATA_DIGEST or GITHUB_ARTIFACT_METADATA_DIGEST.");
+}
+const githubArtifactDigestStatus = ciReleaseMode && githubArtifactMetadataDigest ? "attested" : pendingExternalAttestation;
+const externalArtifactAttestation = ciReleaseMode && githubArtifactMetadataDigest ? "ATTESTED" : "PENDING_EXTERNAL_ATTESTATION";
 
 const requiredEvidenceFiles = [
   "artifacts/oam/evidence/evidence-graph.json",
@@ -30,6 +48,7 @@ const requiredEvidenceFiles = [
   commitAttestationPath,
   releaseEvidenceObjectPath,
   releaseAttestationPath,
+  evidenceLifecycleProofPath,
   "artifacts/oam/evidence/execution-log.jsonl",
   "artifacts/oam/evidence/current-oam-final-report.json",
   "artifacts/oam/evidence/admission-p0-proof.json",
@@ -108,13 +127,13 @@ const generatedContractFiles = [
 ];
 
 const files = new Map();
-const generatedAt = new Date().toISOString();
 const commitSha = env("GITHUB_SHA") || git("rev-parse HEAD") || "local";
 const sourceCommitSha = commitSha;
 const evidenceRunSha = env("GITHUB_SHA") || git("rev-parse HEAD") || commitSha;
 const currentRepositoryHead = git("rev-parse HEAD") || evidenceRunSha;
 const bindingStale = sourceCommitSha !== currentRepositoryHead || evidenceRunSha !== currentRepositoryHead;
 const branch = env("GITHUB_HEAD_REF") || env("GITHUB_REF_NAME") || git("branch --show-current") || "local";
+const generatedAt = stableEvidenceGeneratedAt();
 const kernelGraphHash = hashFileStrict("docs/oam/oam-kernel-graph.json");
 const generatedContractsHash = digestForDisk(generatedContractFiles);
 const admission = readJson("docs/oam/current-admission-state.json");
@@ -167,6 +186,13 @@ const candidateEvidenceDigest = digestObject({
 const trackedContentDigestValue = trackedContentDigest();
 const unresolvedP0 = p0Ledger.filter((item) => item.status !== "passed");
 const releaseReadiness = buildReleaseReadiness();
+const workspaceDirtyAtGeneration = workspace.summary !== "clean";
+const releaseEvidenceReferenceOnly = evidenceLifecycleType !== "ci-release"
+  || bindingStale
+  || workspaceDirtyAtGeneration
+  || githubArtifactDigestStatus !== "attested";
+const releaseBindingStatus = releaseEvidenceReferenceOnly ? "stale" : "current";
+const evidenceLifecycle = buildEvidenceLifecycle();
 const finalDecision = buildFinalDecision();
 const finalGoNoGo = finalDecision.finalGoNoGo;
 const forcedCurrentStageGoNoGo = {
@@ -509,6 +535,10 @@ const candidateEvidenceObject = {
   candidateReadyForBusinessImplementation: false,
   candidateReadyForRelease: false,
   releaseAuthority: false,
+  evidenceLifecycleType,
+  evidenceLifecycle,
+  releaseEvidenceReferenceOnly,
+  workspaceDirtyAtGeneration,
   githubArtifactDigestStatus: "not_applicable_for_candidate",
   forbiddenBindings: [
     "githubArtifactDigest",
@@ -533,9 +563,39 @@ const commitAttestation = {
   bindingStatus: commitSha === currentRepositoryHead ? "current" : "stale",
   candidateBindingStatus: evidenceSubjectDigest === candidateEvidenceObject.evidenceSubjectDigest ? "current" : "stale",
   releaseAuthority: false,
+  evidenceLifecycleType,
+  evidenceLifecycle,
+  releaseEvidenceReferenceOnly,
+  workspaceDirtyAtGeneration,
   candidateEvidenceObject: candidateEvidenceObjectPath
 };
-const finalReportStatusMatrix = buildFinalReportStatusMatrix(candidateEvidenceObject, commitAttestation);
+let finalReportStatusMatrix = buildFinalReportStatusMatrix(candidateEvidenceObject, commitAttestation);
+const evidenceLifecycleProof = {
+  ...proof("evidence-lifecycle-proof", "Evidence / Release 生命周期分层证明", {
+    proofType: "evidence-lifecycle-proof",
+    purposeZh: "证明本地候选证据、仓库参考快照、CI 发布证据三类生命周期互不越权；本地产物不得冒充 CI release。",
+    lifecyclePolicyRef: "docs/oam/current-architecture.md#23-evidence--release-lifecycle",
+    negativeTests: buildEvidenceLifecycleNegativeTests()
+  }),
+  proofType: "evidence-lifecycle-proof",
+  evidenceLifecycleType,
+  evidenceLifecycle,
+  releaseEvidenceReferenceOnly,
+  workspaceDirtyAtGeneration,
+  githubArtifactDigestStatus,
+  externalArtifactAttestation,
+  releaseAuthority: false,
+  negativeTests: buildEvidenceLifecycleNegativeTests()
+};
+addEvidence(evidenceLifecycleProofPath, evidenceLifecycleProof);
+const architectureGateStatus = controlPlaneGateResult.status === "passed"
+  && controlPlaneGateResult.runStatus === "completed"
+  && controlPlaneGateResult.finalizable === true
+  && !controlPlaneGateResult.stale
+  && (controlPlaneGateResult.failedGateCount ?? 0) === 0
+  && (controlPlaneGateResult.missingRequiredGates ?? []).length === 0
+  ? "PASS"
+  : "FAIL";
 
 const finalReport = {
   ...proof("current-oam-final-report", "当前 OAM 可信运行闭环最终报告", {}),
@@ -551,9 +611,21 @@ const finalReport = {
   latestCommit: commitSha,
   workspaceStatus: workspace.summary,
   workspaceChanges: workspaceEvidence,
+  evidenceLifecycleType,
+  evidenceLifecycle,
+  releaseEvidenceReferenceOnly,
+  workspaceDirtyAtGeneration,
+  releaseBindingStatus,
   releaseReadiness,
   controlPlaneGateResult,
   finalDecision,
+  architectureGateStatus,
+  sourceScenarioPackageReviewStatus: sourcePackageCheck.sourceScenarioPackageReviewStatus,
+  compilePreparationDecision: sourcePackageCheck.compilePreparationDecision,
+  compilePreparationAllowed: sourcePackageCheck.compilePreparationAllowed,
+  businessFeatureDevelopmentAllowed: sourcePackageCheck.businessFeatureDevelopmentAllowed,
+  externalArtifactAttestation,
+  releaseAuthority: false,
   multiStatusVersion: "oam.final-report.multi-status.v1",
   statusMatrix: finalReportStatusMatrix,
   authorityStatus: finalReportStatusMatrix.authorityStatus,
@@ -602,6 +674,43 @@ const finalReport = {
     p2Residuals: sourcePackageCheck.p2Residuals ?? [],
     generatedContractStatus10B: sourcePackageCheck.generatedContractStatus10B ?? "PENDING_GENERATED_CONTRACT"
   },
+  dormitoryGoldenChainSourcePackage: {
+    gateId: sourcePackageCheck.gateId,
+    status: sourcePackageCheck.status,
+    sourceScenarioPackageReviewStatus: sourcePackageCheck.sourceScenarioPackageReviewStatus,
+    sourceScenarioRef: "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+    scope: "compile_preparation_review",
+    excluded: [
+      "宿舍业务功能开发",
+      "generated contracts 正式编译",
+      "Runtime 业务落地",
+      "Business GO",
+      "Dormitory L2",
+      "production_confirm enabled",
+      "入住/收款/押金/退住/财务纠错扩展"
+    ],
+    sourceFieldGaps: sourcePackageCheck.sourceFieldGaps ?? {
+      pending00Decision: true,
+      compilePreparationAllowed: "false_until_00_approval",
+      gaps: [
+        "buildingId",
+        "roomType",
+        "readinessEvidenceRefs",
+        "readinessNote",
+        "blockedReason",
+        "notSaleableReason",
+        "serviceVerificationRef"
+      ]
+    },
+    compilePreparationDecision: sourcePackageCheck.compilePreparationDecision,
+    compilePreparationAllowed: sourcePackageCheck.compilePreparationAllowed,
+    businessFeatureDevelopmentAllowed: sourcePackageCheck.businessFeatureDevelopmentAllowed,
+    generatedCompilationCompleted: false,
+    generatedContractStatus10B: sourcePackageCheck.generatedContractStatus10B ?? "PENDING_GENERATED_CONTRACT",
+    finalGoNoGo: "NO_GO",
+    releaseAuthority: false,
+    nextStageRequires00Review: true
+  },
   candidateEvidence: summarizeCandidateEvidence(candidateEvidenceObject),
   commitAttestation: summarizeCommitAttestation(commitAttestation),
   failedChecks: [],
@@ -631,9 +740,7 @@ const finalReport = {
   finalGoNoGo: forcedCurrentStageGoNoGo.finalGoNoGo,
   noGoReasons: finalDecision.noGoReasons,
   nextStageAllowed: false,
-  nextStageReason: finalGoNoGo === "GO"
-    ? "仅允许进入补强下一阶段准入证据和 P1/P2 收敛；不得进入 Business Production、Dormitory L2 或 production_confirm。"
-    : `不允许进入下一阶段；必须先修复：${finalDecision.noGoReasons.join("；")}`,
+  nextStageReason: `不允许进入下一阶段；必须等待 00 复审裁决并保持业务 GO 阻断。当前 NO_GO 原因：${finalDecision.noGoReasons.join("；")}`,
   p0RuleLedger: p0Ledger
 };
 
@@ -672,6 +779,11 @@ const evidenceGraph = {
       path: releaseEvidenceObjectPath,
       proofType: "release-evidence",
       purposeZh: "CI / release 发布证明，本地保持 releaseAuthority=false。"
+    },
+    {
+      path: evidenceLifecycleProofPath,
+      proofType: "evidence-lifecycle-proof",
+      purposeZh: "证明本地候选、仓库参考快照、CI 发布证据三类生命周期分离。"
     }
   ],
   authorityRefs: [
@@ -721,9 +833,13 @@ const releaseEvidenceObject = {
   sourceCommitSha,
   evidenceRunSha,
   currentRepositoryHead,
-  stale: bindingStale,
-  referenceOnly: bindingStale,
-  bindingStatus: bindingStale ? "stale" : "current",
+  stale: releaseEvidenceReferenceOnly,
+  referenceOnly: releaseEvidenceReferenceOnly,
+  bindingStatus: releaseBindingStatus,
+  evidenceLifecycleType,
+  evidenceLifecycle,
+  releaseEvidenceReferenceOnly,
+  workspaceDirtyAtGeneration,
   githubSha: commitSha,
   githubRunId: ciRunId,
   githubRunAttempt: ciRunAttempt,
@@ -734,6 +850,7 @@ const releaseEvidenceObject = {
   githubArtifactDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
   githubArtifactMetadataDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
   githubArtifactDigestStatus,
+  externalArtifactAttestation,
   zipArtifactDigest: zipArtifactDigest || pendingExternalAttestation,
   releaseAuthority: false,
   evidenceRootDigest: evidenceRootDigestPlaceholder,
@@ -776,6 +893,11 @@ const releaseAttestation = {
   artifactName,
   sourceCommitSha,
   evidenceRunSha,
+  currentRepositoryHead,
+  evidenceLifecycleType,
+  evidenceLifecycle,
+  releaseEvidenceReferenceOnly,
+  workspaceDirtyAtGeneration,
   githubRunId: ciRunId,
   githubRunAttempt: ciRunAttempt,
   githubRefName: branch,
@@ -783,6 +905,7 @@ const releaseAttestation = {
   evidenceRootDigest: evidenceRootDigestPlaceholder,
   githubArtifactMetadataDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
   githubArtifactDigestStatus,
+  externalArtifactAttestation,
   zipArtifactDigest: zipArtifactDigest || pendingExternalAttestation,
   releaseAuthority: false,
   finalGoNoGo: forcedCurrentStageGoNoGo.finalGoNoGo,
@@ -791,6 +914,7 @@ const releaseAttestation = {
 addEvidence(releaseAttestationPath, releaseAttestation);
 addTextEvidence("artifacts/oam/evidence/execution-log.jsonl", executionLogText(digestPlaceholder));
 writeAuxiliaryProofArtifacts();
+refreshCommitAttestationTrackedDigest();
 
 writeAllEvidence();
 
@@ -820,6 +944,38 @@ console.log(`artifactDigest=${artifactDigest}`);
 function writeAuxiliaryProofArtifacts() {
   writeSearchProofArtifacts();
   writeReadIntelligenceProofArtifact();
+}
+
+function refreshCommitAttestationTrackedDigest() {
+  const digest = trackedContentDigest();
+  commitAttestation.sourceTreeDigest = digest;
+  commitAttestation.trackedContentDigest = digest;
+  finalReportStatusMatrix = buildFinalReportStatusMatrix(candidateEvidenceObject, commitAttestation);
+  finalReport.statusMatrix = finalReportStatusMatrix;
+  for (const field of [
+    "authorityStatus",
+    "fileLifecycleStatus",
+    "compileStatus",
+    "runtimeBoundaryStatus",
+    "readSurfaceFinanceStatus",
+    "sourcePackageStatus",
+    "mutationStatus",
+    "browserL1Status",
+    "candidateEvidenceStatus",
+    "commitAttestationStatus",
+    "businessReadinessStatus",
+    "releaseReadinessStatus"
+  ]) {
+    finalReport[field] = finalReportStatusMatrix[field];
+  }
+  finalReport.finalGoNoGoStatus = finalReportStatusMatrix.finalGoNoGo;
+  finalReport.commitAttestation = summarizeCommitAttestation(commitAttestation);
+  evidenceGraph.finalReportStatusMatrix = finalReportStatusMatrix;
+  evidenceGraph.commitAttestation = summarizeCommitAttestation(commitAttestation);
+  files.set(commitAttestationPath, commitAttestation);
+  files.set("artifacts/oam/evidence/evidence-graph.json", evidenceGraph);
+  files.set("artifacts/oam/evidence/current-oam-final-report.json", finalReport);
+  files.set(finalReportPath, finalReport);
 }
 
 function writeSearchProofArtifacts() {
@@ -1022,7 +1178,7 @@ function proof(kind, title, details) {
     title,
     binding: binding(kind),
     summary: {
-      status: finalGoNoGo === "GO" ? "passed" : "blocked",
+      status: "blocked",
       goNoGo: finalGoNoGo,
       businessProduction: admission.businessProduction,
       dormitoryL2: admission.dormitoryProduction,
@@ -1036,6 +1192,101 @@ function proof(kind, title, details) {
   };
 }
 
+function stableEvidenceGeneratedAt() {
+  for (const file of [
+    finalReportPath,
+    releaseEvidenceObjectPath,
+    commitAttestationPath,
+    "artifacts/oam/evidence/evidence-graph.json"
+  ]) {
+    const existing = readJsonIfExists(file);
+    const binding = existing?.binding ?? existing;
+    const existingGeneratedAt = binding?.generatedAt ?? binding?.generatedAtUtc ?? existing?.generatedAtUtc;
+    if (!existingGeneratedAt) continue;
+    if (binding?.sourceCommitSha !== sourceCommitSha) continue;
+    if (binding?.evidenceRunSha !== evidenceRunSha) continue;
+    if (binding?.currentRepositoryHead !== currentRepositoryHead) continue;
+    if (binding?.evidenceLifecycleType !== evidenceLifecycleType) continue;
+    return existingGeneratedAt;
+  }
+  return new Date().toISOString();
+}
+
+function buildEvidenceLifecycle() {
+  const blockers = [];
+  if (evidenceLifecycleType !== "ci-release") blockers.push(`${evidenceLifecycleType}_cannot_publish`);
+  if (bindingStale) blockers.push("source_or_evidence_sha_not_current_head");
+  if (workspaceDirtyAtGeneration) blockers.push("workspace_dirty_at_generation");
+  if (githubArtifactDigestStatus !== "attested") blockers.push("github_artifact_metadata_digest_not_attested");
+  return {
+    schemaVersion: "workosnext.evidence-lifecycle.v1",
+    lifecycleType: evidenceLifecycleType,
+    allowedLifecycleTypes: ["local-candidate", "repository-reference-snapshot", "ci-release"],
+    localCandidate: evidenceLifecycleType === "local-candidate",
+    repositoryReferenceSnapshot: evidenceLifecycleType === "repository-reference-snapshot",
+    ciRelease: evidenceLifecycleType === "ci-release",
+    sourceShaBindingStatus: bindingStale ? "stale" : "current",
+    releaseBindingStatus,
+    releaseEvidenceReferenceOnly,
+    workspaceDirtyAtGeneration,
+    externalArtifactAttestation,
+    githubArtifactDigestStatus,
+    githubArtifactMetadataDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
+    releaseAuthority: false,
+    businessProductionGoNoGo: "NO_GO",
+    productionConfirmAllowed: false,
+    releaseAuthorityAllowedOnlyWhen: [
+      "lifecycleType=ci-release",
+      "GITHUB_SHA present",
+      "GitHub artifact metadata digest attested",
+      "workspace clean at generation",
+      "source/evidence SHA match current HEAD"
+    ],
+    blockers
+  };
+}
+
+function buildEvidenceLifecycleNegativeTests() {
+  return [
+    {
+      caseId: "old-sha-with-current-binding-fails",
+      forbiddenState: "sourceCommitSha/evidenceRunSha differs from currentRepositoryHead while bindingStatus=current",
+      expectedResult: "FAIL",
+      severity: "P0"
+    },
+    {
+      caseId: "dirty-worktree-release-authority-fails",
+      forbiddenState: "workspaceDirtyAtGeneration=true with releaseAuthority=true",
+      expectedResult: "FAIL",
+      severity: "P0"
+    },
+    {
+      caseId: "github-artifact-digest-equals-internal-artifact-digest-fails",
+      forbiddenState: "githubArtifactMetadataDigest equals artifactDigest",
+      expectedResult: "FAIL",
+      severity: "P0"
+    },
+    {
+      caseId: "pending-external-attestation-release-authority-fails",
+      forbiddenState: "githubArtifactDigestStatus=pending_external_attestation with releaseAuthority=true",
+      expectedResult: "FAIL",
+      severity: "P0"
+    },
+    {
+      caseId: "stale-reference-evidence-go-fails",
+      forbiddenState: "stale/referenceOnly evidence with finalGoNoGo=GO",
+      expectedResult: "FAIL",
+      severity: "P0"
+    },
+    {
+      caseId: "ordinary-checker-default-proof-write-fails",
+      forbiddenState: "ordinary checker writes proof/timestamp without --write-proof or OAM_WRITE_PROOF=1",
+      expectedResult: "FAIL",
+      severity: "P1"
+    }
+  ];
+}
+
 function binding(kind) {
   return {
     root: "current-oam-trust-closure-v1",
@@ -1045,9 +1296,14 @@ function binding(kind) {
     sourceCommitSha,
     evidenceRunSha,
     currentRepositoryHead,
-    stale: bindingStale,
-    referenceOnly: bindingStale,
-    bindingStatus: bindingStale ? "stale" : "current",
+    stale: releaseEvidenceReferenceOnly,
+    referenceOnly: releaseEvidenceReferenceOnly,
+    bindingStatus: releaseBindingStatus,
+    sourceShaBindingStatus: bindingStale ? "stale" : "current",
+    evidenceLifecycleType,
+    evidenceLifecycle,
+    releaseEvidenceReferenceOnly,
+    workspaceDirtyAtGeneration,
     commitSha,
     githubSha: commitSha,
     branch,
@@ -1062,6 +1318,7 @@ function binding(kind) {
     githubArtifactDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
     githubArtifactMetadataDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
     githubArtifactDigestStatus,
+    externalArtifactAttestation,
     zipArtifactDigest: zipArtifactDigest || pendingExternalAttestation,
     releaseAuthority: false,
     evidenceRootDigest: evidenceRootDigestPlaceholder,
@@ -1077,21 +1334,27 @@ function evidenceBindingState() {
     sourceCommitSha,
     evidenceRunSha,
     currentRepositoryHead,
-    stale: bindingStale,
-    referenceOnly: bindingStale,
-    bindingStatus: bindingStale ? "stale" : "current",
+    stale: releaseEvidenceReferenceOnly,
+    referenceOnly: releaseEvidenceReferenceOnly,
+    bindingStatus: releaseBindingStatus,
+    sourceShaBindingStatus: bindingStale ? "stale" : "current",
+    evidenceLifecycleType,
+    evidenceLifecycle,
+    releaseEvidenceReferenceOnly,
+    workspaceDirtyAtGeneration,
     artifactDigest: digestPlaceholder,
     githubArtifactMetadataDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
     githubArtifactDigestStatus,
+    externalArtifactAttestation,
     zipArtifactDigest: zipArtifactDigest || pendingExternalAttestation,
     releaseAuthority: false,
     generatedContractsHash,
     evidenceGraphHash: digestPlaceholder,
     finalReportDigest: digestPlaceholder,
     noGoWhenStale: true,
-    notesZh: bindingStale
-      ? "证据绑定的源码提交或运行提交不是当前仓库 HEAD，本产物只能作为 referenceOnly，不得作为 GO 依据。"
-      : "证据绑定当前被验证源码提交、证据运行提交和当前仓库 HEAD。"
+    notesZh: releaseEvidenceReferenceOnly
+      ? `当前 Evidence lifecycle=${evidenceLifecycleType}，本产物只能作为本地候选或仓库参考快照，不得作为 CI release / GO 依据。`
+      : "证据由 CI release 模式绑定当前被验证源码提交、证据运行提交、当前仓库 HEAD 与外部 artifact metadata digest。"
   };
 }
 
@@ -1353,7 +1616,7 @@ function buildWorkstreamProofNodes() {
     }));
     const gateResult = summarizeWorkstreamGates(workstream.gates ?? []);
     const command = gateResult.commands[0]?.command ?? "no-command-bound";
-    const negativeTestResult = finalGoNoGo === "GO" ? "passed" : "blocked";
+    const negativeTestResult = "blocked";
     const proofPayload = {
       workstreamId: workstream.id,
       name: workstream.name,
@@ -1368,7 +1631,7 @@ function buildWorkstreamProofNodes() {
     return {
       id: `workstream-proof.${workstream.id}`,
       type: "workstream_proof",
-      status: finalGoNoGo === "GO" ? "passed" : "blocked",
+      status: "blocked",
       workstreamId: workstream.id,
       proofType: "current-oam-kernel-responsibility",
       source: sources,
@@ -1522,6 +1785,9 @@ function summarizeWorkstreamGates(gates) {
 function hashFileIfPresent(file) {
   if (!file) {
     return `sha256:${sha256("missing:<empty>")}`;
+  }
+  if (normalizeRepoPath(file) === "artifacts/oam/evidence/evidence-graph.json") {
+    return `sha256:${sha256("self-reference:artifacts/oam/evidence/evidence-graph.json")}`;
   }
   if (files.has(file)) {
     return `sha256:${sha256(JSON.stringify(normalizeForDigest(documentForDigest(file, files.get(file)))))}`;
@@ -1699,6 +1965,19 @@ function readSourcePackageCheckResult() {
       p2Residuals: [],
       mutation10AStatus: "MISSING",
       generatedContractStatus10B: "PENDING_GENERATED_CONTRACT",
+      sourceFieldGaps: {
+        pending00Decision: true,
+        compilePreparationAllowed: "false_until_00_approval",
+        gaps: [
+          "buildingId",
+          "roomType",
+          "readinessEvidenceRefs",
+          "readinessNote",
+          "blockedReason",
+          "notSaleableReason",
+          "serviceVerificationRef"
+        ]
+      },
       digests: {}
     };
   }
@@ -2200,16 +2479,21 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
     releaseReadinessStatus: reportStatusEntry({
       status: "NO_GO",
       inputs: [
+        evidenceLifecycleType,
         githubArtifactDigestStatus,
         String(false),
         releaseReadiness.releaseEligible ? "releaseEligible=true" : "releaseEligible=false"
       ],
       proofRefs: [
+        evidenceLifecycleProofPath,
         releaseEvidenceObjectPath,
         releaseAttestationPath
       ],
       blockingReasons: [
-        "githubArtifactDigestStatus=pending_external_attestation，外部 artifact 摘要证明未完成。",
+        githubArtifactDigestStatus === pendingExternalAttestation
+          ? "githubArtifactDigestStatus=pending_external_attestation，外部 artifact 摘要证明未完成。"
+          : "GitHub artifact 外部摘要已证明，但当前仍不授予 releaseAuthority。",
+        `Evidence lifecycle=${evidenceLifecycleType}，bindingStatus=${releaseBindingStatus}；本轮不允许把候选证据解释为业务 GO。`,
         "releaseAuthority=false，不能发布放行。",
         "CI green、artifact exists、browser evidence、Final Report exists 均不等于 GO。"
       ],
@@ -2320,6 +2604,9 @@ function buildFinalDecision() {
   }
   if (bindingStale) {
     addNoGoReason(`Release Evidence Object 未绑定当前 HEAD：sourceCommitSha=${sourceCommitSha}, evidenceRunSha=${evidenceRunSha}, currentRepositoryHead=${currentRepositoryHead}`);
+  }
+  if (releaseEvidenceReferenceOnly) {
+    addNoGoReason(`Evidence lifecycle=${evidenceLifecycleType} 当前只能作为本地候选证据或仓库参考快照；bindingStatus=${releaseBindingStatus}，releaseAuthority=false。`);
   }
   if (githubArtifactDigestStatus === pendingExternalAttestation) {
     addNoGoReason("GitHub artifact 外部摘要证明仍为 pending_external_attestation；releaseAuthority=false，不能发布放行。");
@@ -2725,6 +3012,14 @@ function git(command) {
   } catch {
     return "";
   }
+}
+
+function normalizeEvidenceLifecycleType(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (["local-candidate", "repository-reference-snapshot", "ci-release"].includes(normalized)) {
+    return normalized;
+  }
+  throw new Error(`Unsupported evidence lifecycle mode: ${value || "missing"}`);
 }
 
 function env(name) {
