@@ -3,6 +3,36 @@
   "runtimeModelOnly": true,
   "persistedWorkItemResolutionOrder": ["operationWorkItems", "workQueue", "workspaceId/cardId persisted mapping", "block"],
   "trustedConfirmSheetSource": "persisted WorkItem runtime model",
+  "OperationWorkItemLifecycleContract": {
+    "source": "backend/runtime Operations WorkItem contract",
+    "authoritativeProducer": "Operations Runtime",
+    "consumer": "Surface runtime store",
+    "readonlyForSurface": true,
+    "states": ["ready", "prepared", "blocked", "done", "confirmed", "completed", "committed", "closed", "canceled", "cancelled", "revoked", "removed", "deleted"],
+    "terminalRemovalStates": ["closed", "canceled", "cancelled", "revoked", "removed", "deleted"],
+    "surfaceBehavior": {
+      "terminalRemovalStates": "remove from operationWorkItems and derived workQueue",
+      "nonTerminalStates": "merge by persisted workItemId only"
+    },
+    "forbiddenSurfaceWrites": ["lifecycleState", "business fact", "admission", "ledger", "truth owner"]
+  },
+  "OperationWorkItemRemovalContract": {
+    "source": "backend/runtime Operations WorkItem payload",
+    "fields": ["removedWorkItemIds", "removed_work_item_ids"],
+    "responsibility": "Operations Runtime emits explicit removals when a persisted WorkItem is no longer actionable",
+    "surfaceBehavior": "remove matching persisted workItemId from operationWorkItems and derive workQueue from the remaining operationWorkItems",
+    "workQueueIsDerivedView": true,
+    "workQueueWritesBusinessFacts": false,
+    "forbiddenIdentityInputs": ["cardId", "sourceCardId", "workspaceCardId", "workspaceId/cardId fallback"]
+  },
+  "OperationWorkItemTombstoneContract": {
+    "source": "backend/runtime Operations WorkItem payload",
+    "fields": ["tombstone", "removed", "isDeleted", "lifecycleState", "status"],
+    "tombstoneTrueMeans": "the persisted WorkItem must be removed from mobile runtime state and cannot be confirmed",
+    "surfaceBehavior": "consume only; do not infer business facts or admission from tombstone",
+    "confirmAllowedWhenTombstone": false,
+    "productionConfirmAllowedWhenTombstone": false
+  },
   "admissionDrivenActionState": {
     "requiredTopStatus": ["admissionLabel", "mode", "confirmAllowed", "productionAllowed"],
     "readyMapping": {

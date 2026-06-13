@@ -1,0 +1,31 @@
+{
+  "version": "oam.generated-compile-approval.v1",
+  "currentAuthorityArchitecture": "oam.current",
+  "approvalStatus": "pending_00_generated_compile_authorization",
+  "approvalAuthority": "00",
+  "sourceScenarioRef": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+  "sourceHash": "sha256:f9d3c71a278a3d9ac8a65bb8f45f07aa42a84f154fa848f61028d4eba39228fc",
+  "sourceFinalizationStatus": "SOURCE_FINALIZED_BY_00",
+  "sourceReadyForCompileDecision": true,
+  "generatedCompileAuthorized": false,
+  "generatedCompilationAllowed": false,
+  "generatedCompileCompleted": false,
+  "generatedCompilationCompleted": false,
+  "runtimeConsumptionReady": false,
+  "businessFeatureDevelopmentAllowed": false,
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "allowedWhenApproved": {
+    "requiresSourceHashMatch": true,
+    "requires00ExplicitApproval": true,
+    "requiresGeneratedSemanticDiffReview": true
+  },
+  "forbiddenWhilePending": [
+    "run scripts/business/generate-dormitory-derived-contracts.mjs",
+    "treat Source finalization as generated compile authorization",
+    "treat CI green as GO",
+    "treat Evidence Root PASS as GO",
+    "let Runtime consume Dormitory generated contracts"
+  ]
+}

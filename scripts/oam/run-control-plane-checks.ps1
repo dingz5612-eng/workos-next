@@ -25,6 +25,9 @@ function Get-ExpectedGateCount {
   $scriptPath = if ($PSCommandPath) { $PSCommandPath } else { $MyInvocation.MyCommand.Path }
   $content = Get-Content -Raw -Path $scriptPath
   $count = [regex]::Matches($content, "(?m)^\s*Invoke-Gate\b(?!.*-RecordResult\s+\`$false)").Count
+  if ($env:ALLOW_GENERATED_COMPILE_CANDIDATE -ne "true") {
+    $count -= 1
+  }
   if (Test-Path "artifacts/oam/test-results/mobile/coverage/coverage-summary.json") {
     $count -= 1
   }
@@ -188,7 +191,7 @@ Invoke-Gate node scripts/oam/check-cross-domain-conflict-rules.mjs
 Invoke-Gate node scripts/oam/check-system-operating-kernel.mjs
 Invoke-Gate node scripts/oam/check-generated-compile-authorization.mjs
 if ($env:ALLOW_GENERATED_COMPILE_CANDIDATE -eq "true") {
-  Invoke-Gate node scripts/business/generate-dormitory-derived-contracts.mjs -RecordResult $false
+  Invoke-Gate node scripts/business/generate-dormitory-derived-contracts.mjs
 }
 Invoke-Gate node scripts/oam/compile-current-kernel-graph.mjs
 Invoke-Gate node scripts/oam/check-generated-contract-consistency.mjs

@@ -17,6 +17,9 @@ const commitAttestationPath = "artifacts/oam/evidence/current-oam-commit-attesta
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
 const releaseAttestationPath = "artifacts/oam/evidence/current-oam-release-attestation.json";
 const evidenceLifecycleProofPath = "artifacts/oam/evidence/evidence-lifecycle-proof.json";
+const generatedCompileCandidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
+const expectedGeneratedCompileCandidateSourceRef = "fd60390e678f9d6934137f0480a183701b01de8f";
+const expectedGeneratedCompileCandidateExecutionHead = "9db58da1ebc2a02349436833747307ac78c4c2fd";
 const pendingExternalAttestation = "pending_external_attestation";
 const sha256DigestPattern = /^sha256:[a-f0-9]{64}$/;
 const bareSha256Pattern = /^[a-f0-9]{64}$/;
@@ -77,6 +80,7 @@ const requiredFiles = [
   "docs/read-intelligence/read-intelligence-kernel.json",
   "docs/read-intelligence/read-intelligence-kernel.schema.json",
   "docs/oam/db-no-side-effects-proof.json",
+  generatedCompileCandidateApprovalPath,
   "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
   "artifacts/oam/checks/kernel-responsibility-map-result.json",
   "artifacts/oam/checks/professional-ai-review-seats-result.json",
@@ -150,8 +154,14 @@ if (documents.size === requiredFiles.length) {
   if (finalReport.sourceFieldGapsDecisionStatus !== "DECIDED_AND_BOUND") {
     failures.push("final report sourceFieldGapsDecisionStatus must be DECIDED_AND_BOUND.");
   }
+  if (finalReport.sourceReadyForCompileDecision !== true) {
+    failures.push("final report sourceReadyForCompileDecision must be true for 00 generated compile decision readiness.");
+  }
   if (finalReport.compileDecisionStatus !== "READY_FOR_00_COMPILE_DECISION" || finalReport.compilePreparationAllowed !== "READY_FOR_00_COMPILE_DECISION") {
     failures.push("final report compile status must be READY_FOR_00_COMPILE_DECISION.");
+  }
+  if (finalReport.generatedCompileAuthorized !== false) {
+    failures.push("final report generatedCompileAuthorized must remain false until 00 explicit generated compile approval.");
   }
   if (finalReport.generatedCompilationAllowed !== "false_until_00_explicit_generated_compile_approval") {
     failures.push("final report generatedCompilationAllowed must remain false_until_00_explicit_generated_compile_approval.");
@@ -161,6 +171,12 @@ if (documents.size === requiredFiles.length) {
   }
   if (finalReport.generatedCompilationCompleted !== false || finalReport.generatedContractStatus10B !== "PENDING_GENERATED_CONTRACT") {
     failures.push("final report must keep generated compilation incomplete and contract pending.");
+  }
+  if (finalReport.generatedCompileCompleted !== false) {
+    failures.push("final report generatedCompileCompleted must remain false.");
+  }
+  if (finalReport.runtimeConsumptionReady !== false) {
+    failures.push("final report runtimeConsumptionReady must remain false until generated compile authorization and completion.");
   }
   if (finalReport.businessFeatureDevelopmentAllowed !== false) {
     failures.push("final report businessFeatureDevelopmentAllowed must remain false.");
@@ -175,6 +191,7 @@ if (documents.size === requiredFiles.length) {
     failures.push("final report releaseAuthority must remain false.");
   }
   checkDormitoryGoldenChainSourcePackage(finalReport);
+  checkGeneratedCompileCandidate(finalReport, graph, documents);
 
   checkArtifactName("final report", finalReport.artifactName);
   checkCandidateEvidenceObject(candidateObject, graph, finalReport);
@@ -708,13 +725,17 @@ function checkDormitoryGoldenChainSourcePackage(finalReport) {
     "scope",
     "excluded",
     "sourceFieldGaps",
+    "sourceReadyForCompileDecision",
     "compilePreparationDecision",
     "compileDecisionStatus",
     "compilePreparationAllowed",
+    "generatedCompileAuthorized",
     "generatedCompilationAllowed",
     "generatedCompilationReadiness",
     "businessFeatureDevelopmentAllowed",
+    "generatedCompileCompleted",
     "generatedCompilationCompleted",
+    "runtimeConsumptionReady",
     "generatedContractStatus10B",
     "finalGoNoGo",
     "releaseAuthority",
@@ -748,6 +769,9 @@ function checkDormitoryGoldenChainSourcePackage(finalReport) {
   if (section.sourceFieldGaps?.pending00Decision !== false || section.sourceFieldGaps?.compilePreparationAllowed !== "READY_FOR_00_COMPILE_DECISION") {
     failures.push("dormitoryGoldenChainSourcePackage sourceFieldGaps must contain resolved decisions and be ready only for 00 compile decision.");
   }
+  if (section.sourceReadyForCompileDecision !== true) {
+    failures.push("dormitoryGoldenChainSourcePackage sourceReadyForCompileDecision must be true.");
+  }
   const decisions = section.sourceFieldGaps?.decisions ?? {};
   for (const gap of ["buildingId", "roomType", "readinessEvidenceRefs", "readinessNote", "blockedReason", "notSaleableReason", "serviceVerificationRef"]) {
     const decision = decisions[gap];
@@ -755,11 +779,117 @@ function checkDormitoryGoldenChainSourcePackage(finalReport) {
       failures.push(`dormitoryGoldenChainSourcePackage sourceFieldGaps.${gap} decision is incomplete.`);
     }
   }
+  if (section.generatedCompileAuthorized !== false || section.generatedCompileCompleted !== false || section.runtimeConsumptionReady !== false) {
+    failures.push("dormitoryGoldenChainSourcePackage must keep generated authorization/completion and runtime consumption blocked.");
+  }
   if (section.businessFeatureDevelopmentAllowed !== false || section.generatedCompilationCompleted !== false) {
     failures.push("dormitoryGoldenChainSourcePackage must not allow business development or generated compilation.");
   }
   if (section.finalGoNoGo !== "NO_GO" || section.releaseAuthority !== false || section.nextStageRequires00Review !== true) {
     failures.push("dormitoryGoldenChainSourcePackage must keep NO_GO, releaseAuthority=false, and nextStageRequires00Review=true.");
+  }
+}
+
+function checkGeneratedCompileCandidate(finalReport, graph, documents) {
+  const approval = documents.get(generatedCompileCandidateApprovalPath);
+  if (!approval || typeof approval !== "object") {
+    failures.push(`missing generated compile candidate approval object: ${generatedCompileCandidateApprovalPath}.`);
+    return;
+  }
+  if (approval.approvalType !== "generated_compile_candidate_only" ||
+    approval.generatedCompileCandidateAuthorized !== true ||
+    approval.generatedCompileAuthorized !== false) {
+    failures.push("generated compile candidate approval must authorize only the candidate compile path.");
+  }
+  if (approval.candidateSourceRef !== expectedGeneratedCompileCandidateSourceRef ||
+    approval.executionHead !== expectedGeneratedCompileCandidateExecutionHead) {
+    failures.push("generated compile candidate approval must bind the fixed candidateSourceRef and executionHead.");
+  }
+  if (approval.generatedReleaseAllowed !== false ||
+    approval.runtimeConsumptionAllowed !== "false_until_candidate_accepted_by_00" ||
+    approval.releaseAuthority !== false ||
+    approval.finalGoNoGo !== "NO_GO") {
+    failures.push("generated compile candidate approval must not grant release, runtime consumption, or GO.");
+  }
+
+  const expectedFields = {
+    generatedCompileCandidateAuthorized: true,
+    candidateSourceRef: expectedGeneratedCompileCandidateSourceRef,
+    executionHead: expectedGeneratedCompileCandidateExecutionHead,
+    generatedCompileCandidateStatus: "PASS",
+    generatedCandidateAcceptedBy00: false,
+    generatedReleaseAllowed: false,
+    runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
+    finalGoNoGo: "NO_GO",
+    releaseAuthority: false,
+    productionConfirmAllowed: false,
+    businessProductionGoNoGo: "NO_GO",
+    dormitoryL2GoNoGo: "NO_GO",
+    productionConfirmGoNoGo: "NO_GO"
+  };
+  for (const [field, expected] of Object.entries(expectedFields)) {
+    if (finalReport[field] !== expected) {
+      failures.push(`final report ${field} must be ${expected}, actual ${finalReport[field] ?? "missing"}.`);
+    }
+  }
+
+  const node = (graph?.nodes ?? []).find((item) => item.id === "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-COMPILE-CANDIDATE");
+  if (!node) {
+    failures.push("Evidence Graph missing OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-COMPILE-CANDIDATE proof node.");
+    return;
+  }
+  for (const field of [
+    "proofType",
+    "source",
+    "hash",
+    "dependsOn",
+    "producedBy",
+    "verifiedBy",
+    "scope",
+    "candidateSourceRef",
+    "executionHead",
+    "approvalObjectHash",
+    "generatedManifestHash",
+    "generatedOutputDigest",
+    "finalGoNoGo",
+    "releaseAuthority"
+  ]) {
+    if (isEmptyProofField(node[field])) {
+      failures.push(`generated compile candidate proof node missing ${field}.`);
+    }
+  }
+  if (node.proofType !== "generated_compile_candidate" || node.scope !== "generated_compile_candidate_only") {
+    failures.push("generated compile candidate proof node must use generated_compile_candidate/generated_compile_candidate_only.");
+  }
+  if (node.candidateSourceRef !== expectedGeneratedCompileCandidateSourceRef ||
+    node.executionHead !== expectedGeneratedCompileCandidateExecutionHead) {
+    failures.push("generated compile candidate proof node must bind candidateSourceRef and executionHead.");
+  }
+  if (node.generatedCompileCandidateAuthorized !== true ||
+    node.generatedCandidateAcceptedBy00 !== false ||
+    node.generatedReleaseAllowed !== false ||
+    node.runtimeConsumptionAllowed !== "false_until_candidate_accepted_by_00" ||
+    node.runtimeConsumptionReady !== false) {
+    failures.push("generated compile candidate proof node must stay candidate-only and block runtime consumption.");
+  }
+  if (node.finalGoNoGo !== "NO_GO" || node.goNoGo !== "NO_GO" || node.releaseAuthority !== false || node.businessGoAuthority !== false) {
+    failures.push("generated compile candidate proof node must keep NO_GO/releaseAuthority=false/businessGoAuthority=false.");
+  }
+  if (node.approvalObjectHash !== hashFileText(generatedCompileCandidateApprovalPath)) {
+    failures.push("generated compile candidate proof node approvalObjectHash mismatch.");
+  }
+  if (node.generatedManifestHash !== hashFileText("docs/oam/generated-contracts-manifest.json")) {
+    failures.push("generated compile candidate proof node generatedManifestHash mismatch.");
+  }
+  const expectedOutputDigest = digestFor(new Map(generatedContractFiles().map((file) => [file, readJson(file)])));
+  if (node.generatedOutputDigest !== expectedOutputDigest) {
+    failures.push(`generated compile candidate proof node generatedOutputDigest mismatch: expected ${expectedOutputDigest}, actual ${node.generatedOutputDigest || "missing"}.`);
+  }
+  if (!(node.dependsOn ?? []).includes("OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE")) {
+    failures.push("generated compile candidate proof node must depend on OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE.");
+  }
+  if (!(node.source ?? []).includes(generatedCompileCandidateApprovalPath)) {
+    failures.push("generated compile candidate proof node must cite the approval object.");
   }
 }
 
@@ -964,8 +1094,17 @@ function checkSourcePackageProofDag(nodes, finalReport) {
   if (sourceNode.compileDecisionStatus !== "READY_FOR_00_COMPILE_DECISION") {
     failures.push("source package proof DAG source node compileDecisionStatus must be READY_FOR_00_COMPILE_DECISION.");
   }
+  if (sourceNode.sourceReadyForCompileDecision !== true) {
+    failures.push("source package proof DAG source node sourceReadyForCompileDecision must be true.");
+  }
+  if (sourceNode.generatedCompileAuthorized !== false) {
+    failures.push("source package proof DAG source node generatedCompileAuthorized must remain false.");
+  }
   if (sourceNode.generatedCompilationAllowed !== "false_until_00_explicit_generated_compile_approval") {
     failures.push("source package proof DAG source node generatedCompilationAllowed must remain false_until_00_explicit_generated_compile_approval.");
+  }
+  if (sourceNode.generatedCompileCompleted !== false || sourceNode.runtimeConsumptionReady !== false) {
+    failures.push("source package proof DAG source node must keep generatedCompileCompleted=false and runtimeConsumptionReady=false.");
   }
   const requiredFields = ["proofType", "source", "hash", "dependsOn", "producedBy", "verifiedBy", "scope", "binding", "status", "finalGoNoGo", "releaseAuthority", "businessGoAuthority"];
   for (const node of nodes.filter((item) => item.id === sourceNode.id || item.type === "source_package_dependency_proof")) {
@@ -1128,7 +1267,14 @@ function checkBinding(file, document, expectedDigest) {
     "generatedContractsHash",
     "kernelGraphHash",
     "evidenceGraphHash",
-    "finalReportDigest"
+    "finalReportDigest",
+    "generatedCompileCandidateAuthorized",
+    "candidateSourceRef",
+    "executionHead",
+    "generatedCompileCandidateStatus",
+    "generatedCandidateAcceptedBy00",
+    "generatedReleaseAllowed",
+    "runtimeConsumptionAllowed"
   ]) {
     if (binding[key] === undefined || binding[key] === null || binding[key] === "") {
       failures.push(`${file} binding missing ${key}.`);
@@ -1222,6 +1368,10 @@ function digestFor(fileMap) {
 
 function digestObject(value) {
   return `sha256:${sha256(JSON.stringify(stableForSubjectDigest(value)))}`;
+}
+
+function hashFileText(file) {
+  return `sha256:${sha256(readText(file))}`;
 }
 
 function stableForSubjectDigest(value) {
@@ -1700,6 +1850,10 @@ function checkFinalReportMultiStatus(finalReport, candidateObject, commitAttesta
     "authorityStatus",
     "fileLifecycleStatus",
     "compileStatus",
+    "sourceCompileDecisionReadinessStatus",
+    "generatedCompileAuthorizationStatus",
+    "generatedCompilationStatus",
+    "runtimeConsumptionStatus",
     "runtimeBoundaryStatus",
     "readSurfaceFinanceStatus",
     "sourcePackageStatus",
@@ -1747,7 +1901,19 @@ function checkFinalReportMultiStatus(finalReport, candidateObject, commitAttesta
     failures.push("fileLifecycleStatus must be PASS after File Lifecycle Registry closure.");
   }
   if (matrix.compileStatus?.status !== "PASS") {
-    failures.push("compileStatus must be PASS for generated contract compilation closure.");
+    failures.push("compileStatus must be PASS for generated metadata, authorization-gate, graph, and doNotEdit checks.");
+  }
+  if (matrix.sourceCompileDecisionReadinessStatus?.status !== "PASS") {
+    failures.push("sourceCompileDecisionReadinessStatus must be PASS after 00 Source finalization.");
+  }
+  if (matrix.generatedCompileAuthorizationStatus?.status !== "NO_GO") {
+    failures.push("generatedCompileAuthorizationStatus must remain NO_GO without 00 explicit generated compile approval.");
+  }
+  if (matrix.generatedCompilationStatus?.status !== "NO_GO") {
+    failures.push("generatedCompilationStatus must remain NO_GO before formal generated compile.");
+  }
+  if (matrix.runtimeConsumptionStatus?.status !== "NO_GO") {
+    failures.push("runtimeConsumptionStatus must remain NO_GO until generated compile is authorized and completed.");
   }
   if (matrix.runtimeBoundaryStatus?.status !== "PASS") {
     failures.push("runtimeBoundaryStatus must be PASS for runtime boundary closure.");

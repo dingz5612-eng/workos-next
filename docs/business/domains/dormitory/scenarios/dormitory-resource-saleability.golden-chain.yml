@@ -13,10 +13,14 @@ businessGoalZhForReviewOnly: 房间、床位和资源准备完成内部试点检
 sourceFinalizationStatus: SOURCE_FINALIZED_BY_00
 sourceScenarioPackageReviewStatus: SOURCE_FINALIZED_BY_00
 sourceFieldGapsDecisionStatus: DECIDED_AND_BOUND
+sourceReadyForCompileDecision: true
 compileDecisionStatus: READY_FOR_00_COMPILE_DECISION
+generatedCompileAuthorized: false
 generatedCompilationAllowed: false_until_00_explicit_generated_compile_approval
 generatedContractStatus10B: PENDING_GENERATED_CONTRACT
+generatedCompileCompleted: false
 generatedCompilationCompleted: false
+runtimeConsumptionReady: false
 businessFeatureDevelopmentAllowed: false
 businessProductionGoNoGo: NO_GO
 dormitoryL2GoNoGo: NO_GO
@@ -1179,9 +1183,13 @@ sourceToGeneratedProvenancePlan:
   scenarioMatrixRef: docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml
   sourceKernelRef: docs/business/domains/dormitory/dormitory-operating-kernel.json
   expectedGeneratedStatus: PENDING_GENERATED_CONTRACT
+  sourceReadyForCompileDecision: true
   compilePreparationAllowed: READY_FOR_00_COMPILE_DECISION
+  generatedCompileAuthorized: false
   generatedCompilationAllowed: false_until_00_explicit_generated_compile_approval
+  generatedCompileCompleted: false
   generatedCompilationCompleted: false
+  runtimeConsumptionReady: false
 sourceLevelNoSideEffects:
   rejectedPathBusinessWriteAllowed: false
   rejectedPathAllowedAudit:

@@ -1,0 +1,62 @@
+{
+  "version": "oam.generated-compile-candidate-approval.v1",
+  "currentAuthorityArchitecture": "oam.current",
+  "approvalType": "generated_compile_candidate_only",
+  "approvedBy": "00｜OAM 总控",
+  "approvalStatus": "approved_for_generated_compile_candidate_only",
+  "scope": "generated_compile_candidate_only",
+  "sourceScenarioRef": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+  "sourceHash": "sha256:f9d3c71a278a3d9ac8a65bb8f45f07aa42a84f154fa848f61028d4eba39228fc",
+  "candidateSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
+  "candidateSourceHash": "sha256:47951673b9ade467316d9be770932124c07404eb6c3116764010cf79621e65e4",
+  "candidateSourceRefIsAncestorOfExecutionHead": true,
+  "executionBranch": "codex/dormitory-source-p0-s2-closure",
+  "executionHead": "9db58da1ebc2a02349436833747307ac78c4c2fd",
+  "allowEnv": {
+    "ALLOW_GENERATED_COMPILE_CANDIDATE": "true"
+  },
+  "generatedCompileCandidateAuthorized": true,
+  "generatedCompileAuthorized": false,
+  "generatedCompilationAllowed": "candidate_only_with_ALLOW_GENERATED_COMPILE_CANDIDATE_true",
+  "generatedCompileCompleted": false,
+  "generatedCompilationCompleted": false,
+  "generatedCandidateAcceptedBy00": false,
+  "generatedReleaseAllowed": false,
+  "runtimeConsumptionAllowed": "false_until_candidate_accepted_by_00",
+  "runtimeConsumptionReady": false,
+  "businessFeatureDevelopmentAllowed": false,
+  "businessProductionGoNoGo": "NO_GO",
+  "dormitoryL2GoNoGo": "NO_GO",
+  "productionConfirmAllowed": false,
+  "productionConfirmGoNoGo": "NO_GO",
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "allowedActions": [
+    "run scripts/oam/check-generated-compile-authorization.mjs with ALLOW_GENERATED_COMPILE_CANDIDATE=true",
+    "run scripts/business/generate-dormitory-derived-contracts.mjs as generated compile candidate only",
+    "run scripts/oam/compile-current-kernel-graph.mjs for candidate consistency",
+    "write candidate proof artifacts that remain finalGoNoGo=NO_GO and releaseAuthority=false"
+  ],
+  "forbiddenActions": [
+    "generated release",
+    "business feature development",
+    "runtime rollout",
+    "Lead implementation",
+    "Reservation implementation",
+    "Checkin implementation",
+    "Payment implementation",
+    "Deposit implementation",
+    "Business Production",
+    "Dormitory L2",
+    "production_confirm",
+    "releaseAuthority=true",
+    "finalGoNoGo=GO"
+  ],
+  "executionHeadDiffPolicy": {
+    "range": "fd60390e678f9d6934137f0480a183701b01de8f..9db58da1ebc2a02349436833747307ac78c4c2fd",
+    "allowedChangeScope": "evidence_compile_proof_only",
+    "noSourceBusinessFactChanges": true,
+    "sourceFinalizationRequired": "SOURCE_FINALIZED_BY_00",
+    "sourceFieldGapsDecisionRequired": "DECIDED_AND_BOUND"
+  }
+}

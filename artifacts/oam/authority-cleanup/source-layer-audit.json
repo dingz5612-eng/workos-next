@@ -1,6 +1,6 @@
 {
   "version": "authority-cleanup.source-layer-audit.v1",
-  "generatedAtUtc": "2026-06-13T03:58:05.798Z",
+  "generatedAtUtc": "2026-06-13T09:57:52.602Z",
   "fileLifecycleRegistry": {
     "policyPath": "docs/oam/file-lifecycle-policy.json",
     "registryVersion": "oam.file-lifecycle-registry.v1",
@@ -6271,7 +6271,8 @@
       "deletionRisk": "medium",
       "controlledOldTermUse": false,
       "scanReasons": [
-        "controlled-old-term-scan"
+        "controlled-old-term-scan",
+        "generated-or-derived-marker-scan"
       ],
       "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
     },
@@ -6365,6 +6366,29 @@
         "generated-or-derived-marker-scan"
       ],
       "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-generated-compile-authorization.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        ".github/workflows/ci.yml",
+        "scripts/oam/check-generated-compile-authorization.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。"
     },
     {
       "path": "scripts/oam/check-generated-contract-consistency.mjs",

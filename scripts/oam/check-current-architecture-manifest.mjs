@@ -29,7 +29,8 @@ const requiredEvidenceFiles = [
   "artifacts/oam/proofs/bi-kpi/metric-definition-registry-proof.json",
   "artifacts/oam/proofs/dashboard/dashboard-widget-sourcefacts-proof.json",
   "artifacts/oam/proofs/report/report-dataset-permission-lineage-freshness-proof.json",
-  "artifacts/oam/proofs/language/language-glossary-generated-proof.json"
+  "artifacts/oam/proofs/language/language-glossary-generated-proof.json",
+  "docs/oam/generated-compile-candidate-approval.current.json"
 ];
 
 const requiredBindingFields = [
@@ -51,6 +52,17 @@ const requiredBindingFields = [
   "evidenceGraphHash",
   "finalReportDigest",
   "generatedContractsHash",
+  "sourceReadyForCompileDecision",
+  "generatedCompileAuthorized",
+  "generatedCompileCandidateAuthorized",
+  "candidateSourceRef",
+  "executionHead",
+  "generatedCompileCandidateStatus",
+  "generatedCandidateAcceptedBy00",
+  "generatedReleaseAllowed",
+  "runtimeConsumptionAllowed",
+  "generatedCompileCompleted",
+  "runtimeConsumptionReady",
   "finalGoNoGo",
   "nextStageAllowed"
 ];

@@ -459,18 +459,18 @@ async function findOperationsWorkItem(workspaceId, cardId, options = {}) {
   const item = startedItems.find((candidate) =>
     matchesOperationsWorkItem(candidate, workspaceId, cardId) && isCurrentDefinitionWorkItem(candidate));
   if (!item) {
+    const returned = startedItems.map((candidate) => ({
+      workItemId: workItemIdOf(candidate),
+      workspaceId: workspaceIdOf(candidate),
+      cardId: cardIdOf(candidate),
+      definitionId: definitionIdOf(candidate),
+      definitionMode: definitionModeOf(candidate),
+      admissionReason: admissionReasonOf(candidate)
+    }));
     if (requireStartAdapterResult) {
-      const returned = startedItems.map((candidate) => ({
-        workItemId: workItemIdOf(candidate),
-        workspaceId: workspaceIdOf(candidate),
-        cardId: cardIdOf(candidate),
-        definitionId: definitionIdOf(candidate),
-        definitionMode: definitionModeOf(candidate),
-        admissionReason: admissionReasonOf(candidate)
-      }));
       assert(false, `Operations Workspace Start must return a current WorkItem for ${workspaceId}/${cardId}; returned=${JSON.stringify(returned)}`);
     }
-    return await fallbackForNonStartValidation(workspaceId, cardId);
+    assert(false, `Operations runtime validation requires a persisted current WorkItem for ${workspaceId}/${cardId}; no workspace/card create fallback is allowed; returned=${JSON.stringify(returned)}`);
   }
   assert(item, `Operations Workspace Start did not return a WorkItem for ${workspaceId}/${cardId}`);
   assert(workItemIdOf(item), `Operations WorkItem missing workItemId for ${workspaceId}/${cardId}`);
@@ -498,36 +498,6 @@ function isCurrentDefinitionWorkItem(item) {
     ) &&
     !String(admissionReason).includes("definition_not_resolved") &&
     !String(admissionReason).includes("start_adapter_not_registered");
-}
-
-async function fallbackForNonStartValidation(workspaceId, cardId) {
-  const definition = currentDefinitionForStart(workspaceId, cardId);
-  assert(definition?.definitionId, `Non-Start validation fallback requires a current definitionId for ${workspaceId}/${cardId}`);
-  const created = await postJson("/api/operations/work-items", {
-    workItemId: `validate-${workspaceId}-${cardId}-${Date.now()}`,
-    workItemType: definition.workItemType,
-    targetWorkspaceId: workspaceId,
-    workspaceId,
-    cardId,
-    ownerRole: "operator",
-    payload: {
-      caseId: `case-${workspaceId}`,
-      cardId,
-      templateWorkspaceId: workspaceId,
-      definitionId: definition.definitionId
-    }
-  });
-  assert(workItemIdOf(created), `Operations WorkItem create did not return workItemId for ${workspaceId}/${cardId}`);
-  assert(workspaceIdOf(created) === workspaceId, `created WorkItem workspace mismatch for ${workspaceId}/${cardId}`);
-  assert(cardIdOf(created) === cardId, `created WorkItem card mismatch for ${workspaceId}/${cardId}`);
-  return created;
-}
-
-function currentDefinitionForStart(workspaceId, cardId) {
-  return (definitionRegistry.definitions || []).find((definition) =>
-    definition.workspaceId === workspaceId &&
-    definition.definitionMode === "oam-certification-current" &&
-    (definition.migrationRefs || []).some((ref) => ref.type === "sourceCardId" && ref.value === cardId));
 }
 
 function definitionById(definitionId) {
