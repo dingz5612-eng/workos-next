@@ -10,8 +10,8 @@
     "domainKernel": "docs/oam/kernel-schemas/domain-kernel.schema.json",
     "workItem": "docs/oam/kernel-schemas/workitem.schema.json"
   },
-  "nodeCount": 1298,
-  "edgeCount": 1097,
+  "nodeCount": 1299,
+  "edgeCount": 1098,
   "nodes": [
     {
       "runtimeBinding": "current-oam",
@@ -1609,6 +1609,37 @@
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "replacementPath": ".env.example",
       "absorbedBy": ".env.example",
+      "removalProofGate": "scripts/check-local-path-references.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-local-path-references.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file..gitattributes",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": ".gitattributes",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/check-local-path-references.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/check-local-path-references.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/check-local-path-references.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": ".gitattributes",
+      "absorbedBy": ".gitattributes",
       "removalProofGate": "scripts/check-local-path-references.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
@@ -39807,6 +39838,15 @@
       "edgeType": "owns",
       "allowedDirection": "kernel.release-control -> file..env.example",
       "forbiddenDirection": "file..env.example 不得反向覆盖 kernel.release-control",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.release-control",
+      "to": "file..gitattributes",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.release-control -> file..gitattributes",
+      "forbiddenDirection": "file..gitattributes 不得反向覆盖 kernel.release-control",
       "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json"
     },

@@ -18,9 +18,8 @@ const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-ev
 const releaseAttestationPath = "artifacts/oam/evidence/current-oam-release-attestation.json";
 const evidenceLifecycleProofPath = "artifacts/oam/evidence/evidence-lifecycle-proof.json";
 const generatedCompileCandidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
-const expectedGeneratedCompileCandidateSourceRef = "fd60390e678f9d6934137f0480a183701b01de8f";
-const expectedGeneratedCompileCandidateExecutionHead = "9db58da1ebc2a02349436833747307ac78c4c2fd";
 const pendingExternalAttestation = "pending_external_attestation";
+const candidateCompileEvidenceStatuses = new Set(["CURRENT", "STALE_BUT_NO_GO", "STALE_REFERENCE"]);
 const sha256DigestPattern = /^sha256:[a-f0-9]{64}$/;
 const bareSha256Pattern = /^[a-f0-9]{64}$/;
 const currentWorkspaceDirty = git("status --porcelain").trim().length > 0;
@@ -434,6 +433,15 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
     "kernelGraphHash",
     "evidenceGraphHash",
     "finalReportDigest",
+    "generatedCompileCandidateAuthorized",
+    "authorizedSourceRef",
+    "authorizedCandidateExecutionHead",
+    "candidateSourceRef",
+    "executionHead",
+    "evidenceGeneratedAtHead",
+    "candidateCompileEvidenceStatus",
+    "candidateCompileClosureForCurrentHead",
+    "candidateCompileNextAction",
     "businessProduction",
     "dormitoryL2",
     "productionConfirmAllowed",
@@ -580,6 +588,16 @@ function checkReleaseAttestation(attestation, releaseObject, graph) {
     "externalArtifactAttestation",
     "zipArtifactDigest",
     "releaseAuthority",
+    "generatedCompileCandidateAuthorized",
+    "authorizedSourceRef",
+    "authorizedCandidateExecutionHead",
+    "candidateSourceRef",
+    "executionHead",
+    "evidenceGeneratedAtHead",
+    "currentRepositoryHead",
+    "candidateCompileEvidenceStatus",
+    "candidateCompileClosureForCurrentHead",
+    "candidateCompileNextAction",
     "finalGoNoGo",
     "nextStageAllowed"
   ]) {
@@ -796,14 +814,34 @@ function checkGeneratedCompileCandidate(finalReport, graph, documents) {
     failures.push(`missing generated compile candidate approval object: ${generatedCompileCandidateApprovalPath}.`);
     return;
   }
+  const authorizedSourceRef = approval.authorizedSourceRef ?? approval.candidateSourceRef;
+  const authorizedCandidateExecutionHead = approval.authorizedCandidateExecutionHead ?? approval.executionHead;
   if (approval.approvalType !== "generated_compile_candidate_only" ||
     approval.generatedCompileCandidateAuthorized !== true ||
     approval.generatedCompileAuthorized !== false) {
     failures.push("generated compile candidate approval must authorize only the candidate compile path.");
   }
-  if (approval.candidateSourceRef !== expectedGeneratedCompileCandidateSourceRef ||
-    approval.executionHead !== expectedGeneratedCompileCandidateExecutionHead) {
-    failures.push("generated compile candidate approval must bind the fixed candidateSourceRef and executionHead.");
+  if (!isGitSha(authorizedSourceRef) || !isGitSha(authorizedCandidateExecutionHead)) {
+    failures.push("generated compile candidate approval must bind concrete authorizedSourceRef and authorizedCandidateExecutionHead.");
+  }
+  if (approval.authorizedSourceRef !== approval.candidateSourceRef) {
+    failures.push("generated compile candidate approval authorizedSourceRef must equal candidateSourceRef.");
+  }
+  if (approval.executionHead !== authorizedCandidateExecutionHead ||
+    approval.executionHeadCompatibilityAliasOf !== "authorizedCandidateExecutionHead") {
+    failures.push("generated compile candidate approval executionHead may only remain as an alias of authorizedCandidateExecutionHead.");
+  }
+  if (approval.candidateSourceRefIsAncestorOfExecutionHead !== true) {
+    failures.push("generated compile candidate approval must prove candidateSourceRef is ancestor of authorizedCandidateExecutionHead.");
+  }
+  if (isGitSha(authorizedSourceRef) && isGitSha(authorizedCandidateExecutionHead) &&
+    !gitSucceeds(`merge-base --is-ancestor ${authorizedSourceRef} ${authorizedCandidateExecutionHead}`)) {
+    failures.push("generated compile candidate approval candidateSourceRef must be an ancestor of authorizedCandidateExecutionHead.");
+  }
+  if (isGitSha(authorizedCandidateExecutionHead) &&
+    currentRepositoryHead !== authorizedCandidateExecutionHead &&
+    !gitSucceeds(`merge-base --is-ancestor ${authorizedCandidateExecutionHead} ${currentRepositoryHead}`)) {
+    failures.push("current HEAD must equal or descend from authorizedCandidateExecutionHead for candidate evidence.");
   }
   if (approval.generatedReleaseAllowed !== false ||
     approval.runtimeConsumptionAllowed !== "false_until_candidate_accepted_by_00" ||
@@ -814,8 +852,10 @@ function checkGeneratedCompileCandidate(finalReport, graph, documents) {
 
   const expectedFields = {
     generatedCompileCandidateAuthorized: true,
-    candidateSourceRef: expectedGeneratedCompileCandidateSourceRef,
-    executionHead: expectedGeneratedCompileCandidateExecutionHead,
+    authorizedSourceRef,
+    authorizedCandidateExecutionHead,
+    candidateSourceRef: authorizedSourceRef,
+    executionHead: authorizedCandidateExecutionHead,
     generatedCompileCandidateStatus: "PASS",
     generatedCandidateAcceptedBy00: false,
     generatedReleaseAllowed: false,
@@ -832,6 +872,61 @@ function checkGeneratedCompileCandidate(finalReport, graph, documents) {
       failures.push(`final report ${field} must be ${expected}, actual ${finalReport[field] ?? "missing"}.`);
     }
   }
+  const expectedEvidenceStatus = expectedCandidateCompileEvidenceStatus(finalReport, documents, authorizedCandidateExecutionHead);
+  const expectedClosure = expectedEvidenceStatus === "CURRENT";
+  const expectedNextAction = expectedCandidateCompileNextAction(expectedEvidenceStatus);
+  if (finalReport.evidenceGeneratedAtHead !== (finalReport.evidenceRunSha ?? finalReport.binding?.evidenceRunSha)) {
+    failures.push("final report evidenceGeneratedAtHead must equal the actual evidence run SHA.");
+  }
+  if (finalReport.currentRepositoryHead !== (finalReport.binding?.currentRepositoryHead ?? currentRepositoryHead)) {
+    failures.push("final report currentRepositoryHead must match binding.currentRepositoryHead.");
+  }
+  if (finalReport.candidateCompileEvidenceStatus !== expectedEvidenceStatus ||
+    !candidateCompileEvidenceStatuses.has(finalReport.candidateCompileEvidenceStatus)) {
+    failures.push(`final report candidateCompileEvidenceStatus must be ${expectedEvidenceStatus}, actual ${finalReport.candidateCompileEvidenceStatus ?? "missing"}.`);
+  }
+  if (finalReport.candidateCompileClosureForCurrentHead !== expectedClosure) {
+    failures.push(`final report candidateCompileClosureForCurrentHead must be ${expectedClosure}.`);
+  }
+  if (finalReport.candidateCompileNextAction !== expectedNextAction) {
+    failures.push("final report candidateCompileNextAction must explain the current/stale candidate evidence state.");
+  }
+  if (expectedEvidenceStatus !== "CURRENT" && (finalReport.finalGoNoGo !== "NO_GO" || finalReport.releaseAuthority !== false)) {
+    failures.push("stale generated compile candidate evidence must force finalGoNoGo=NO_GO and releaseAuthority=false.");
+  }
+  const candidateBindingExpectations = {
+    generatedCompileCandidateAuthorized: true,
+    authorizedSourceRef,
+    authorizedCandidateExecutionHead,
+    candidateSourceRef: authorizedSourceRef,
+    executionHead: authorizedCandidateExecutionHead,
+    evidenceGeneratedAtHead: finalReport.evidenceGeneratedAtHead,
+    currentRepositoryHead: finalReport.currentRepositoryHead,
+    candidateCompileEvidenceStatus: expectedEvidenceStatus,
+    candidateCompileClosureForCurrentHead: expectedClosure,
+    candidateCompileNextAction: expectedNextAction,
+    generatedCompileCandidateStatus: "PASS",
+    generatedCandidateAcceptedBy00: false,
+    generatedReleaseAllowed: false,
+    runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00"
+  };
+  for (const [label, state] of [
+    ["evidence graph binding", graph?.binding],
+    ["final report binding", finalReport.binding],
+    ["final report evidenceBinding", finalReport.evidenceBinding],
+    ["release evidence object", documents.get(releaseEvidenceObjectPath)],
+    ["release attestation", documents.get(releaseAttestationPath)]
+  ]) {
+    if (!state || typeof state !== "object") {
+      failures.push(`${label} missing generated compile candidate binding state.`);
+      continue;
+    }
+    for (const [field, expected] of Object.entries(candidateBindingExpectations)) {
+      if (state[field] !== expected) {
+        failures.push(`${label} ${field} must be ${expected}, actual ${state[field] ?? "missing"}.`);
+      }
+    }
+  }
 
   const node = (graph?.nodes ?? []).find((item) => item.id === "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-COMPILE-CANDIDATE");
   if (!node) {
@@ -846,8 +941,15 @@ function checkGeneratedCompileCandidate(finalReport, graph, documents) {
     "producedBy",
     "verifiedBy",
     "scope",
+    "authorizedSourceRef",
+    "authorizedCandidateExecutionHead",
     "candidateSourceRef",
     "executionHead",
+    "evidenceGeneratedAtHead",
+    "currentRepositoryHead",
+    "candidateCompileEvidenceStatus",
+    "candidateCompileClosureForCurrentHead",
+    "candidateCompileNextAction",
     "approvalObjectHash",
     "generatedManifestHash",
     "generatedOutputDigest",
@@ -861,9 +963,18 @@ function checkGeneratedCompileCandidate(finalReport, graph, documents) {
   if (node.proofType !== "generated_compile_candidate" || node.scope !== "generated_compile_candidate_only") {
     failures.push("generated compile candidate proof node must use generated_compile_candidate/generated_compile_candidate_only.");
   }
-  if (node.candidateSourceRef !== expectedGeneratedCompileCandidateSourceRef ||
-    node.executionHead !== expectedGeneratedCompileCandidateExecutionHead) {
-    failures.push("generated compile candidate proof node must bind candidateSourceRef and executionHead.");
+  if (node.authorizedSourceRef !== authorizedSourceRef ||
+    node.candidateSourceRef !== authorizedSourceRef ||
+    node.authorizedCandidateExecutionHead !== authorizedCandidateExecutionHead ||
+    node.executionHead !== authorizedCandidateExecutionHead) {
+    failures.push("generated compile candidate proof node must bind authorized source/execution heads and historical aliases consistently.");
+  }
+  if (node.evidenceGeneratedAtHead !== finalReport.evidenceGeneratedAtHead ||
+    node.currentRepositoryHead !== finalReport.currentRepositoryHead ||
+    node.candidateCompileEvidenceStatus !== expectedEvidenceStatus ||
+    node.candidateCompileClosureForCurrentHead !== expectedClosure ||
+    node.candidateCompileNextAction !== expectedNextAction) {
+    failures.push("generated compile candidate proof node must mirror Final Report current/stale evidence binding state.");
   }
   if (node.generatedCompileCandidateAuthorized !== true ||
     node.generatedCandidateAcceptedBy00 !== false ||
@@ -891,6 +1002,48 @@ function checkGeneratedCompileCandidate(finalReport, graph, documents) {
   if (!(node.source ?? []).includes(generatedCompileCandidateApprovalPath)) {
     failures.push("generated compile candidate proof node must cite the approval object.");
   }
+  const nodeBinding = node.binding ?? {};
+  for (const [field, expected] of Object.entries({
+    authorizedSourceRef,
+    authorizedCandidateExecutionHead,
+    candidateSourceRef: authorizedSourceRef,
+    executionHead: authorizedCandidateExecutionHead,
+    evidenceGeneratedAtHead: finalReport.evidenceGeneratedAtHead,
+    currentRepositoryHead: finalReport.currentRepositoryHead,
+    candidateCompileEvidenceStatus: expectedEvidenceStatus,
+    candidateCompileClosureForCurrentHead: expectedClosure,
+    candidateCompileNextAction: expectedNextAction,
+    finalGoNoGo: "NO_GO",
+    releaseAuthority: false,
+    businessGoAuthority: false
+  })) {
+    if (nodeBinding[field] !== expected) {
+      failures.push(`generated compile candidate proof node binding ${field} must be ${expected}, actual ${nodeBinding[field] ?? "missing"}.`);
+    }
+  }
+}
+
+function expectedCandidateCompileEvidenceStatus(report, documents, authorizedCandidateExecutionHead) {
+  const reportCurrentHead = report.currentRepositoryHead ?? report.binding?.currentRepositoryHead ?? currentRepositoryHead;
+  const evidenceGeneratedAtHead = report.evidenceGeneratedAtHead ?? report.evidenceRunSha ?? report.binding?.evidenceRunSha ?? "";
+  const controlPlane = documents.get(controlPlaneGateResultPath) ?? report.controlPlaneGateResult ?? {};
+  const controlPlaneCurrent = controlPlane.commitSha === reportCurrentHead &&
+    controlPlane.status === "passed" &&
+    controlPlane.runStatus === "completed" &&
+    controlPlane.finalizable === true;
+  if (evidenceGeneratedAtHead !== reportCurrentHead || !controlPlaneCurrent) return "STALE_REFERENCE";
+  if (reportCurrentHead !== authorizedCandidateExecutionHead) return "STALE_BUT_NO_GO";
+  return "CURRENT";
+}
+
+function expectedCandidateCompileNextAction(status) {
+  if (status === "CURRENT") {
+    return "候选编译证据绑定当前 HEAD；仍需 00 后续接受候选后才可进入正式 generated compile 或 Runtime 消费。";
+  }
+  if (status === "STALE_REFERENCE") {
+    return "重新在当前 HEAD 执行候选闭合，或等待外部 CI artifact attestation；保持 NO_GO。";
+  }
+  return "当前 HEAD 是 00 授权执行头的 descendant；等待 00 更新 authorizedCandidateExecutionHead 或保持 stale-but-no-go。";
 }
 
 function expectedReleaseReferenceOnly(state, sourceCommitSha, evidenceRunSha) {
@@ -1269,8 +1422,14 @@ function checkBinding(file, document, expectedDigest) {
     "evidenceGraphHash",
     "finalReportDigest",
     "generatedCompileCandidateAuthorized",
+    "authorizedSourceRef",
+    "authorizedCandidateExecutionHead",
     "candidateSourceRef",
     "executionHead",
+    "evidenceGeneratedAtHead",
+    "candidateCompileEvidenceStatus",
+    "candidateCompileClosureForCurrentHead",
+    "candidateCompileNextAction",
     "generatedCompileCandidateStatus",
     "generatedCandidateAcceptedBy00",
     "generatedReleaseAllowed",
@@ -2079,6 +2238,15 @@ function git(command) {
     return execSync(`git ${command}`, { cwd: root, encoding: "utf8" }).trim();
   } catch {
     return "";
+  }
+}
+
+function gitSucceeds(command) {
+  try {
+    execSync(`git ${command}`, { cwd: root, encoding: "utf8", stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
   }
 }
 

@@ -6,9 +6,9 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceLifecyclePolicy": "docs/oam/file-lifecycle-policy.json",
   "defaultPolicy": "unregistered_files_are_not_allowed",
-  "fileCount": 976,
+  "fileCount": 977,
   "identityCounts": {
-    "validation_file": 319,
+    "validation_file": 320,
     "implementation_file": 330,
     "derived_view": 65,
     "authority_file": 241,
@@ -42,6 +42,35 @@
       "ciReferenceAllowed": true,
       "replacementPath": ".env.example",
       "absorbedBy": ".env.example",
+      "removalProofGate": "scripts/check-local-path-references.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": ".gitattributes",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/check-local-path-references.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file..gitattributes",
+      "gates": [
+        "scripts/check-local-path-references.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": ".gitattributes",
+      "absorbedBy": ".gitattributes",
       "removalProofGate": "scripts/check-local-path-references.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },

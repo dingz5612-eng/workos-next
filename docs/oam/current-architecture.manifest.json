@@ -38,7 +38,8 @@
     "README.md",
     "WorkOSNext.sln",
     ".env.example",
-    ".gitignore"
+    ".gitignore",
+    ".gitattributes"
   ],
   "services": {
     "allowed": [
@@ -370,8 +371,15 @@
       "sourceReadyForCompileDecision",
       "generatedCompileAuthorized",
       "generatedCompileCandidateAuthorized",
+      "authorizedSourceRef",
+      "authorizedCandidateExecutionHead",
       "candidateSourceRef",
       "executionHead",
+      "evidenceGeneratedAtHead",
+      "currentRepositoryHead",
+      "candidateCompileEvidenceStatus",
+      "candidateCompileClosureForCurrentHead",
+      "candidateCompileNextAction",
       "generatedCompileCandidateStatus",
       "generatedCandidateAcceptedBy00",
       "generatedReleaseAllowed",

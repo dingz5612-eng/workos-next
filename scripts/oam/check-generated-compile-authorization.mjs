@@ -12,9 +12,6 @@ const pendingApprovalPath = "docs/oam/generated-compile-approval.current.json";
 const candidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
 const controlPlanePath = "scripts/oam/run-control-plane-checks.ps1";
 const ciWorkflowPath = ".github/workflows/ci.yml";
-const expectedCandidateSourceRef = "fd60390e678f9d6934137f0480a183701b01de8f";
-const expectedExecutionHead = "9db58da1ebc2a02349436833747307ac78c4c2fd";
-const expectedExecutionBranch = "codex/dormitory-source-p0-s2-closure";
 const generatedPaths = [
   "docs/contracts/generated/dormitory",
   "apps/mobile/src/generated/oam"
@@ -51,6 +48,7 @@ const candidateAllowedActions = [
   "run scripts/oam/compile-current-kernel-graph.mjs for candidate consistency",
   "write candidate proof artifacts that remain finalGoNoGo=NO_GO and releaseAuthority=false"
 ];
+const staleEvidenceStatuses = new Set(["STALE_BUT_NO_GO", "STALE_REFERENCE"]);
 
 const failures = [];
 const sourceText = readText(sourcePath);
@@ -60,10 +58,11 @@ const pendingApproval = readJsonIfExists(pendingApprovalPath);
 const candidateApproval = readJsonIfExists(candidateApprovalPath);
 const controlPlaneText = readText(controlPlanePath);
 const ciWorkflowText = readText(ciWorkflowPath);
+const controlPlaneResult = readJsonIfExists("artifacts/oam/checks/control-plane-gate-results.json");
 const sourceHash = digestText(sourceText);
-const candidateSourceHash = digestText(gitShow(`${expectedCandidateSourceRef}:${sourcePath}`));
 const currentHead = runGit(["rev-parse", "HEAD"]).trim();
 const currentBranch = resolveCurrentBranch();
+const authorization = resolveCandidateAuthorization(candidateApproval);
 
 requireText(sourceText, "sourceFinalizationStatus: SOURCE_FINALIZED_BY_00", "Source package must be finalized by 00 before compile candidate authorization.");
 requireText(sourceText, "sourceScenarioPackageReviewStatus: SOURCE_FINALIZED_BY_00", "Source package review status must be finalized by 00.");
@@ -82,44 +81,15 @@ requireText(ciWorkflowText, "scripts/oam/check-generated-compile-authorization.m
 
 checkGenerationGuards();
 checkPendingApprovalObject();
-const candidateApprovalOk = checkCandidateApprovalObject();
+const candidateApprovalFailures = collectCandidateApprovalFailures(candidateApproval);
+failures.push(...candidateApprovalFailures);
+const candidateApprovalOk = candidateApprovalFailures.length === 0;
 checkExecutionFrame(candidateApprovalOk);
 checkCandidateSourceRange();
 checkGeneratedMarkers();
-
-for (const [id, text] of [
-  ["source", sourceText],
-  ["source-result", JSON.stringify(sourceResult ?? {})],
-  ["final-report", JSON.stringify(finalReport ?? {})]
-]) {
-  if (/generatedCompilationCompleted"\s*:\s*true|generatedCompilationCompleted:\s*true/.test(text)) {
-    failures.push(`${id} must not set generatedCompilationCompleted=true.`);
-  }
-  if (/generatedCompileCompleted"\s*:\s*true|generatedCompileCompleted:\s*true/.test(text)) {
-    failures.push(`${id} must not set generatedCompileCompleted=true.`);
-  }
-  if (/generatedCompileAuthorized"\s*:\s*true|generatedCompileAuthorized:\s*true/.test(text)) {
-    failures.push(`${id} must not set formal generatedCompileAuthorized=true.`);
-  }
-  if (/runtimeConsumptionReady"\s*:\s*true|runtimeConsumptionReady:\s*true/.test(text)) {
-    failures.push(`${id} must not set runtimeConsumptionReady=true.`);
-  }
-  if (/generatedContractStatus10B"\s*:\s*"COMPLETED"|generatedContractStatus10B:\s*COMPLETED/.test(text)) {
-    failures.push(`${id} must not set generatedContractStatus10B=COMPLETED.`);
-  }
-  if (/businessFeatureDevelopmentAllowed"\s*:\s*true|businessFeatureDevelopmentAllowed:\s*true/.test(text)) {
-    failures.push(`${id} must not set businessFeatureDevelopmentAllowed=true.`);
-  }
-}
-
-if (finalReport) {
-  if (finalReport.finalGoNoGo !== "NO_GO") failures.push("Final Report finalGoNoGo must remain NO_GO.");
-  if (finalReport.releaseAuthority !== false) failures.push("Final Report releaseAuthority must remain false.");
-  if (finalReport.businessProductionGoNoGo !== "NO_GO" || finalReport.dormitoryL2GoNoGo !== "NO_GO") {
-    failures.push("Final Report businessProductionGoNoGo and dormitoryL2GoNoGo must remain NO_GO.");
-  }
-  if (finalReport.productionConfirmAllowed !== false) failures.push("Final Report productionConfirmAllowed must remain false.");
-}
+checkNoForbiddenStateEscapes();
+checkFinalReportEvidenceBinding();
+runNegativeFixtures();
 
 const generatedSemanticAllowed = allowGeneratedCompile || candidateApprovalOk;
 if (!generatedSemanticAllowed) {
@@ -139,7 +109,7 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log("Generated compile authorization check: PASS");
+console.log("Generated compile authorization check: PASS (candidate authorization, formal generated compile blocking, runtime consumption blocking, evidence current/stale binding)");
 
 function requireText(text, snippet, message) {
   if (!text.includes(snippet)) failures.push(message);
@@ -152,6 +122,19 @@ function readText(file) {
 function readJsonIfExists(file) {
   const full = path.join(root, file);
   return fs.existsSync(full) ? JSON.parse(fs.readFileSync(full, "utf8")) : null;
+}
+
+function resolveCandidateAuthorization(approval) {
+  const candidateSourceRef = approval?.authorizedSourceRef ?? approval?.candidateSourceRef ?? "";
+  const authorizedCandidateExecutionHead = approval?.authorizedCandidateExecutionHead ?? approval?.executionHead ?? "";
+  return {
+    candidateSourceRef,
+    authorizedCandidateExecutionHead,
+    executionBranch: approval?.executionBranch ?? "",
+    candidateSourceHash: candidateSourceRef && isCommit(candidateSourceRef)
+      ? digestText(gitShow(`${candidateSourceRef}:${sourcePath}`))
+      : ""
+  };
 }
 
 function checkPendingApprovalObject() {
@@ -176,77 +159,83 @@ function checkPendingApprovalObject() {
   }
 }
 
-function checkCandidateApprovalObject() {
-  if (!candidateApproval) {
-    if (allowGeneratedCompile) {
-      failures.push(`${candidateApprovalPath} is required before ALLOW_GENERATED_COMPILE_CANDIDATE=true.`);
-    }
-    return false;
-  }
-  let ok = true;
+function collectCandidateApprovalFailures(approval) {
+  const items = [];
   const requireField = (condition, message) => {
-    if (!condition) {
-      failures.push(message);
-      ok = false;
-    }
+    if (!condition) items.push(message);
   };
-  requireField(candidateApproval.version === "oam.generated-compile-candidate-approval.v1", `${candidateApprovalPath} version must be oam.generated-compile-candidate-approval.v1.`);
-  requireField(candidateApproval.currentAuthorityArchitecture === "oam.current", `${candidateApprovalPath} must bind currentAuthorityArchitecture=oam.current.`);
-  requireField(candidateApproval.approvalType === "generated_compile_candidate_only", `${candidateApprovalPath} approvalType must be generated_compile_candidate_only.`);
-  requireField(candidateApproval.approvedBy === "00｜OAM 总控", `${candidateApprovalPath} approvedBy must be 00｜OAM 总控.`);
-  requireField(candidateApproval.approvalStatus === "approved_for_generated_compile_candidate_only", `${candidateApprovalPath} approvalStatus must be approved_for_generated_compile_candidate_only.`);
-  requireField(candidateApproval.scope === "generated_compile_candidate_only", `${candidateApprovalPath} scope must be generated_compile_candidate_only.`);
-  requireField(candidateApproval.sourceScenarioRef === sourcePath, `${candidateApprovalPath} sourceScenarioRef must bind ${sourcePath}.`);
-  requireField(candidateApproval.sourceHash === sourceHash, `${candidateApprovalPath} sourceHash must match current Source package hash ${sourceHash}.`);
-  requireField(candidateApproval.candidateSourceRef === expectedCandidateSourceRef, `${candidateApprovalPath} candidateSourceRef must be ${expectedCandidateSourceRef}.`);
-  requireField(candidateApproval.candidateSourceHash === candidateSourceHash, `${candidateApprovalPath} candidateSourceHash must be ${candidateSourceHash}.`);
-  requireField(candidateApproval.candidateSourceRefIsAncestorOfExecutionHead === true, `${candidateApprovalPath} must prove candidateSourceRef is ancestor of executionHead.`);
-  requireField(candidateApproval.executionBranch === expectedExecutionBranch, `${candidateApprovalPath} executionBranch must be ${expectedExecutionBranch}.`);
-  requireField(candidateApproval.executionHead === expectedExecutionHead, `${candidateApprovalPath} executionHead must be ${expectedExecutionHead}.`);
-  requireField(candidateApproval.allowEnv?.ALLOW_GENERATED_COMPILE_CANDIDATE === "true", `${candidateApprovalPath} allowEnv.ALLOW_GENERATED_COMPILE_CANDIDATE must be true.`);
-  requireField(candidateApproval.generatedCompileCandidateAuthorized === true, `${candidateApprovalPath} must set generatedCompileCandidateAuthorized=true.`);
-  requireField(candidateApproval.generatedCompileAuthorized === false, `${candidateApprovalPath} must keep formal generatedCompileAuthorized=false.`);
-  requireField(candidateApproval.generatedCompileCompleted === false && candidateApproval.generatedCompilationCompleted === false, `${candidateApprovalPath} must keep generated compile completion false.`);
-  requireField(candidateApproval.generatedCandidateAcceptedBy00 === false, `${candidateApprovalPath} must keep generatedCandidateAcceptedBy00=false.`);
-  requireField(candidateApproval.generatedReleaseAllowed === false, `${candidateApprovalPath} must keep generatedReleaseAllowed=false.`);
-  requireField(candidateApproval.runtimeConsumptionAllowed === "false_until_candidate_accepted_by_00", `${candidateApprovalPath} runtimeConsumptionAllowed must be false_until_candidate_accepted_by_00.`);
-  requireField(candidateApproval.runtimeConsumptionReady === false, `${candidateApprovalPath} must keep runtimeConsumptionReady=false.`);
-  requireField(candidateApproval.businessFeatureDevelopmentAllowed === false, `${candidateApprovalPath} must keep businessFeatureDevelopmentAllowed=false.`);
-  requireField(candidateApproval.productionConfirmAllowed === false, `${candidateApprovalPath} must keep productionConfirmAllowed=false.`);
-  requireField(candidateApproval.releaseAuthority === false, `${candidateApprovalPath} must keep releaseAuthority=false.`);
-  requireField(candidateApproval.finalGoNoGo === "NO_GO", `${candidateApprovalPath} must keep finalGoNoGo=NO_GO.`);
-  requireField(Array.isArray(candidateApproval.allowedActions) && arraysEqualAsSets(candidateApproval.allowedActions, candidateAllowedActions), `${candidateApprovalPath} allowedActions must contain only the candidate compile actions.`);
-  requireField(Array.isArray(candidateApproval.forbiddenActions), `${candidateApprovalPath} forbiddenActions must be an array.`);
-  for (const action of forbiddenCandidateActions) {
-    requireField(candidateApproval.forbiddenActions?.includes(action), `${candidateApprovalPath} forbiddenActions missing ${action}.`);
+  if (!approval) {
+    requireField(!allowGeneratedCompile, `${candidateApprovalPath} is required before ALLOW_GENERATED_COMPILE_CANDIDATE=true.`);
+    return items;
   }
-  requireField(candidateApproval.executionHeadDiffPolicy?.range === `${expectedCandidateSourceRef}..${expectedExecutionHead}`, `${candidateApprovalPath} executionHeadDiffPolicy.range must bind candidateSourceRef..executionHead.`);
-  requireField(candidateApproval.executionHeadDiffPolicy?.noSourceBusinessFactChanges === true, `${candidateApprovalPath} must prove no Source business fact changes in executionHead diff.`);
-  return ok;
+  const state = resolveCandidateAuthorization(approval);
+  requireField(approval.version === "oam.generated-compile-candidate-approval.v1", `${candidateApprovalPath} version must be oam.generated-compile-candidate-approval.v1.`);
+  requireField(approval.currentAuthorityArchitecture === "oam.current", `${candidateApprovalPath} must bind currentAuthorityArchitecture=oam.current.`);
+  requireField(approval.approvalType === "generated_compile_candidate_only", `${candidateApprovalPath} approvalType must be generated_compile_candidate_only.`);
+  requireField(approval.approvedBy === "00｜OAM 总控", `${candidateApprovalPath} approvedBy must be 00｜OAM 总控.`);
+  requireField(approval.approvalStatus === "approved_for_generated_compile_candidate_only", `${candidateApprovalPath} approvalStatus must be approved_for_generated_compile_candidate_only.`);
+  requireField(approval.scope === "generated_compile_candidate_only", `${candidateApprovalPath} scope must be generated_compile_candidate_only.`);
+  requireField(approval.sourceScenarioRef === sourcePath, `${candidateApprovalPath} sourceScenarioRef must bind ${sourcePath}.`);
+  requireField(approval.sourceHash === sourceHash, `${candidateApprovalPath} sourceHash must match current Source package hash ${sourceHash}.`);
+  requireField(Boolean(state.candidateSourceRef), `${candidateApprovalPath} authorizedSourceRef/candidateSourceRef is required.`);
+  requireField(approval.authorizedSourceRef === approval.candidateSourceRef, `${candidateApprovalPath} authorizedSourceRef must equal candidateSourceRef.`);
+  requireField(approval.candidateSourceHash === state.candidateSourceHash, `${candidateApprovalPath} candidateSourceHash must be ${state.candidateSourceHash || "a resolvable source hash"}.`);
+  requireField(approval.candidateSourceRefIsAncestorOfExecutionHead === true, `${candidateApprovalPath} must prove candidateSourceRef is ancestor of authorizedCandidateExecutionHead.`);
+  requireField(Boolean(state.authorizedCandidateExecutionHead), `${candidateApprovalPath} authorizedCandidateExecutionHead is required.`);
+  requireField(approval.executionHead === state.authorizedCandidateExecutionHead, `${candidateApprovalPath} executionHead may only remain as a historical alias of authorizedCandidateExecutionHead.`);
+  requireField(approval.executionHeadCompatibilityAliasOf === "authorizedCandidateExecutionHead", `${candidateApprovalPath} must declare executionHeadCompatibilityAliasOf=authorizedCandidateExecutionHead.`);
+  requireField(Boolean(state.executionBranch), `${candidateApprovalPath} executionBranch is required.`);
+  requireField(approval.allowEnv?.ALLOW_GENERATED_COMPILE_CANDIDATE === "true", `${candidateApprovalPath} allowEnv.ALLOW_GENERATED_COMPILE_CANDIDATE must be true.`);
+  requireField(approval.generatedCompileCandidateAuthorized === true, `${candidateApprovalPath} must set generatedCompileCandidateAuthorized=true.`);
+  requireField(approval.generatedCompileAuthorized === false, `${candidateApprovalPath} must keep formal generatedCompileAuthorized=false.`);
+  requireField(approval.generatedCompileCompleted === false && approval.generatedCompilationCompleted === false, `${candidateApprovalPath} must keep generated compile completion false.`);
+  requireField(approval.generatedCandidateAcceptedBy00 === false, `${candidateApprovalPath} must keep generatedCandidateAcceptedBy00=false.`);
+  requireField(approval.generatedReleaseAllowed === false, `${candidateApprovalPath} must keep generatedReleaseAllowed=false.`);
+  requireField(approval.runtimeConsumptionAllowed === "false_until_candidate_accepted_by_00", `${candidateApprovalPath} runtimeConsumptionAllowed must be false_until_candidate_accepted_by_00.`);
+  requireField(approval.runtimeConsumptionReady === false, `${candidateApprovalPath} must keep runtimeConsumptionReady=false.`);
+  requireField(approval.businessFeatureDevelopmentAllowed === false, `${candidateApprovalPath} must keep businessFeatureDevelopmentAllowed=false.`);
+  requireField(approval.productionConfirmAllowed === false, `${candidateApprovalPath} must keep productionConfirmAllowed=false.`);
+  requireField(approval.releaseAuthority === false, `${candidateApprovalPath} must keep releaseAuthority=false.`);
+  requireField(approval.finalGoNoGo === "NO_GO", `${candidateApprovalPath} must keep finalGoNoGo=NO_GO.`);
+  requireField(Array.isArray(approval.allowedActions) && arraysEqualAsSets(approval.allowedActions, candidateAllowedActions), `${candidateApprovalPath} allowedActions must contain only the candidate compile actions.`);
+  requireField(Array.isArray(approval.forbiddenActions), `${candidateApprovalPath} forbiddenActions must be an array.`);
+  for (const action of forbiddenCandidateActions) {
+    requireField(approval.forbiddenActions?.includes(action), `${candidateApprovalPath} forbiddenActions missing ${action}.`);
+  }
+  requireField(approval.executionHeadDiffPolicy?.range === `${state.candidateSourceRef}..${state.authorizedCandidateExecutionHead}`, `${candidateApprovalPath} executionHeadDiffPolicy.range must bind authorizedSourceRef..authorizedCandidateExecutionHead.`);
+  requireField(approval.executionHeadDiffPolicy?.noSourceBusinessFactChanges === true, `${candidateApprovalPath} must prove no Source business fact changes in executionHead diff.`);
+  requireField(approval.executionHeadDiffPolicy?.descendantHeadPolicy === "stale_but_no_go_until_00_updates_authorizedCandidateExecutionHead", `${candidateApprovalPath} must state descendant HEADs are stale-but-no-go until 00 updates authorizedCandidateExecutionHead.`);
+  if (state.candidateSourceRef && !isCommit(state.candidateSourceRef)) {
+    items.push(`candidateSourceRef does not resolve to a commit: ${state.candidateSourceRef}.`);
+  }
+  if (state.authorizedCandidateExecutionHead && !isCommit(state.authorizedCandidateExecutionHead)) {
+    items.push(`authorizedCandidateExecutionHead does not resolve to a commit: ${state.authorizedCandidateExecutionHead}.`);
+  }
+  if (isCommit(state.candidateSourceRef) && isCommit(state.authorizedCandidateExecutionHead) &&
+    !isAncestor(state.candidateSourceRef, state.authorizedCandidateExecutionHead)) {
+    items.push(`candidateSourceRef ${state.candidateSourceRef} must be an ancestor of authorizedCandidateExecutionHead ${state.authorizedCandidateExecutionHead}.`);
+  }
+  return items;
 }
 
 function checkExecutionFrame(candidateApprovalOk) {
-  if (!isCommit(expectedCandidateSourceRef)) failures.push(`candidateSourceRef does not resolve to a commit: ${expectedCandidateSourceRef}.`);
-  if (!isCommit(expectedExecutionHead)) failures.push(`executionHead does not resolve to a commit: ${expectedExecutionHead}.`);
-  if (isCommit(expectedCandidateSourceRef) && isCommit(expectedExecutionHead) &&
-    !isAncestor(expectedCandidateSourceRef, expectedExecutionHead)) {
-    failures.push(`candidateSourceRef ${expectedCandidateSourceRef} must be an ancestor of executionHead ${expectedExecutionHead}.`);
-  }
+  const { candidateSourceRef, authorizedCandidateExecutionHead, executionBranch } = authorization;
+  if (!candidateSourceRef || !authorizedCandidateExecutionHead) return;
   if (allowGeneratedCompile) {
     if (!candidateApprovalOk) failures.push("ALLOW_GENERATED_COMPILE_CANDIDATE=true requires valid candidate-only approval.");
-    if (currentBranch !== expectedExecutionBranch) {
-      failures.push(`Candidate compile env may only run on ${expectedExecutionBranch}; current branch is ${currentBranch}.`);
+    if (currentBranch !== executionBranch) {
+      failures.push(`Candidate compile env may only run on ${executionBranch}; current branch is ${currentBranch}.`);
     }
-    if (currentHead !== expectedExecutionHead) {
-      failures.push(`Candidate compile env must run at executionHead ${expectedExecutionHead}; current HEAD is ${currentHead}.`);
-    }
-  } else if (candidateApproval && currentHead !== expectedExecutionHead && !isAncestor(expectedExecutionHead, currentHead)) {
-    failures.push(`Current HEAD must equal or descend from candidate executionHead ${expectedExecutionHead}; actual ${currentHead}.`);
+  }
+  if (currentHead !== authorizedCandidateExecutionHead && !isAncestor(authorizedCandidateExecutionHead, currentHead)) {
+    failures.push(`Current HEAD must equal or descend from authorizedCandidateExecutionHead ${authorizedCandidateExecutionHead}; actual ${currentHead}.`);
   }
 }
 
 function checkCandidateSourceRange() {
-  const range = `${expectedCandidateSourceRef}..${expectedExecutionHead}`;
+  const { candidateSourceRef, authorizedCandidateExecutionHead } = authorization;
+  if (!candidateSourceRef || !authorizedCandidateExecutionHead || !isCommit(candidateSourceRef) || !isCommit(authorizedCandidateExecutionHead)) return;
+  const range = `${candidateSourceRef}..${authorizedCandidateExecutionHead}`;
   const changed = runGit(["diff", "--name-only", range]).split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
   const allowed = new Set([
     "docs/oam/current-engineering-ledger.json",
@@ -254,9 +243,81 @@ function checkCandidateSourceRange() {
   ]);
   for (const file of changed) {
     if (!allowed.has(file)) {
-      failures.push(`candidateSourceRef..executionHead may only change evidence/compile/proof files; unexpected ${file}.`);
+      failures.push(`authorizedSourceRef..authorizedCandidateExecutionHead may only change evidence/compile/proof files; unexpected ${file}.`);
     }
   }
+}
+
+function checkNoForbiddenStateEscapes() {
+  for (const [id, text] of [
+    ["source", sourceText],
+    ["source-result", JSON.stringify(sourceResult ?? {})],
+    ["final-report", JSON.stringify(finalReport ?? {})]
+  ]) {
+    if (/generatedCompilationCompleted"\s*:\s*true|generatedCompilationCompleted:\s*true/.test(text)) {
+      failures.push(`${id} must not set generatedCompilationCompleted=true.`);
+    }
+    if (/generatedCompileCompleted"\s*:\s*true|generatedCompileCompleted:\s*true/.test(text)) {
+      failures.push(`${id} must not set generatedCompileCompleted=true.`);
+    }
+    if (/generatedCompileAuthorized"\s*:\s*true|generatedCompileAuthorized:\s*true/.test(text)) {
+      failures.push(`${id} must not set formal generatedCompileAuthorized=true.`);
+    }
+    if (/runtimeConsumptionReady"\s*:\s*true|runtimeConsumptionReady:\s*true/.test(text)) {
+      failures.push(`${id} must not set runtimeConsumptionReady=true.`);
+    }
+    if (/generatedContractStatus10B"\s*:\s*"COMPLETED"|generatedContractStatus10B:\s*COMPLETED/.test(text)) {
+      failures.push(`${id} must not set generatedContractStatus10B=COMPLETED.`);
+    }
+    if (/businessFeatureDevelopmentAllowed"\s*:\s*true|businessFeatureDevelopmentAllowed:\s*true/.test(text)) {
+      failures.push(`${id} must not set businessFeatureDevelopmentAllowed=true.`);
+    }
+  }
+
+  if (finalReport) {
+    if (finalReport.finalGoNoGo !== "NO_GO") failures.push("Final Report finalGoNoGo must remain NO_GO.");
+    if (finalReport.releaseAuthority !== false) failures.push("Final Report releaseAuthority must remain false.");
+    if (finalReport.generatedCompileAuthorized !== false) failures.push("Final Report formal generatedCompileAuthorized must remain false.");
+    if (finalReport.generatedCompileCompleted !== false) failures.push("Final Report generatedCompileCompleted must remain false.");
+    if (finalReport.runtimeConsumptionReady !== false) failures.push("Final Report runtimeConsumptionReady must remain false.");
+    if (finalReport.businessProductionGoNoGo !== "NO_GO" || finalReport.dormitoryL2GoNoGo !== "NO_GO") {
+      failures.push("Final Report businessProductionGoNoGo and dormitoryL2GoNoGo must remain NO_GO.");
+    }
+    if (finalReport.productionConfirmAllowed !== false) failures.push("Final Report productionConfirmAllowed must remain false.");
+  }
+}
+
+function checkFinalReportEvidenceBinding() {
+  if (!finalReport || !authorization.authorizedCandidateExecutionHead) return;
+  const expectedStatus = expectedCandidateCompileEvidenceStatus(finalReport);
+  if (finalReport.candidateCompileEvidenceStatus !== expectedStatus) {
+    failures.push(`Final Report candidateCompileEvidenceStatus must be ${expectedStatus}, actual ${finalReport.candidateCompileEvidenceStatus ?? "missing"}.`);
+  }
+  const expectedClosure = expectedStatus === "CURRENT";
+  if (finalReport.candidateCompileClosureForCurrentHead !== expectedClosure) {
+    failures.push(`Final Report candidateCompileClosureForCurrentHead must be ${expectedClosure}.`);
+  }
+  if (expectedStatus !== "CURRENT") {
+    if (!staleEvidenceStatuses.has(finalReport.candidateCompileEvidenceStatus)) {
+      failures.push("Descendant or stale evidence must be marked STALE_BUT_NO_GO or STALE_REFERENCE.");
+    }
+    if (finalReport.finalGoNoGo !== "NO_GO" || finalReport.releaseAuthority !== false) {
+      failures.push("Stale candidate evidence must force finalGoNoGo=NO_GO and releaseAuthority=false.");
+    }
+  }
+}
+
+function expectedCandidateCompileEvidenceStatus(report) {
+  const reportCurrentHead = report.currentRepositoryHead ?? report.binding?.currentRepositoryHead ?? currentHead;
+  const evidenceGeneratedAtHead = report.evidenceGeneratedAtHead ?? report.evidenceRunSha ?? report.binding?.evidenceRunSha ?? "";
+  const cp = report.controlPlaneGateResult ?? controlPlaneResult;
+  const controlPlaneCurrent = cp?.commitSha === reportCurrentHead &&
+    cp?.status === "passed" &&
+    cp?.runStatus === "completed" &&
+    cp?.finalizable === true;
+  if (evidenceGeneratedAtHead !== reportCurrentHead || !controlPlaneCurrent) return "STALE_REFERENCE";
+  if (reportCurrentHead !== authorization.authorizedCandidateExecutionHead) return "STALE_BUT_NO_GO";
+  return "CURRENT";
 }
 
 function checkGenerationGuards() {
@@ -281,6 +342,62 @@ function checkGeneratedMarkers() {
       failures.push(`${file} must contain generated=true and doNotEdit=true.`);
     }
   }
+}
+
+function runNegativeFixtures() {
+  if (!candidateApproval || !authorization.candidateSourceRef || !authorization.authorizedCandidateExecutionHead) return;
+  const fixtures = [
+    ["generatedCompileAuthorized=true", { generatedCompileAuthorized: true }],
+    ["runtimeConsumptionReady=true", { runtimeConsumptionReady: true }],
+    ["finalGoNoGo=GO", { finalGoNoGo: "GO" }]
+  ];
+  for (const [name, patch] of fixtures) {
+    const mutated = { ...candidateApproval, ...patch };
+    if (collectCandidateApprovalFailures(mutated).length === 0) {
+      failures.push(`negative fixture did not fail: ${name}.`);
+    }
+  }
+  const nonAncestor = {
+    ...candidateApproval,
+    authorizedSourceRef: currentHead,
+    candidateSourceRef: currentHead,
+    candidateSourceHash: digestText(gitShow(`${currentHead}:${sourcePath}`)),
+    authorizedCandidateExecutionHead: authorization.candidateSourceRef,
+    executionHead: authorization.candidateSourceRef,
+    executionHeadDiffPolicy: {
+      ...candidateApproval.executionHeadDiffPolicy,
+      range: `${currentHead}..${authorization.candidateSourceRef}`
+    }
+  };
+  if (collectCandidateApprovalFailures(nonAncestor).length === 0) {
+    failures.push("negative fixture did not fail: candidateSourceRef is not ancestor of authorizedCandidateExecutionHead.");
+  }
+  const staleCurrentReport = {
+    ...finalReport,
+    finalGoNoGo: "NO_GO",
+    releaseAuthority: false,
+    evidenceGeneratedAtHead: authorization.authorizedCandidateExecutionHead,
+    currentRepositoryHead: currentHead,
+    candidateCompileEvidenceStatus: "CURRENT",
+    candidateCompileClosureForCurrentHead: true,
+    controlPlaneGateResult: {
+      commitSha: authorization.authorizedCandidateExecutionHead,
+      status: "passed",
+      runStatus: "completed",
+      finalizable: true
+    }
+  };
+  const expectedStatus = expectedCandidateCompileEvidenceStatus(staleCurrentReport);
+  if (expectedStatus === "CURRENT") {
+    failures.push("negative fixture did not fail: stale executionHead report was accepted as current.");
+  }
+  if (allowGeneratedCompile === false && candidateApprovalOkForNegativeFixture() === false) {
+    failures.push("negative fixture setup invalid: current candidate approval must authorize generated semantic diffs.");
+  }
+}
+
+function candidateApprovalOkForNegativeFixture() {
+  return collectCandidateApprovalFailures(candidateApproval).length === 0;
 }
 
 function gitDiffNames(target, scope) {
@@ -329,10 +446,10 @@ function generatedDiffScopes() {
   } else {
     failures.push("Unable to resolve PR/base diff for generated compile authorization gate.");
   }
-  if (isCommit(expectedCandidateSourceRef)) {
-    const candidateRange = `${expectedCandidateSourceRef}..HEAD`;
+  if (isCommit(authorization.candidateSourceRef)) {
+    const candidateRange = `${authorization.candidateSourceRef}..HEAD`;
     scopes.push({
-      id: `candidateSourceRef..HEAD:${expectedCandidateSourceRef}`,
+      id: `authorizedSourceRef..HEAD:${authorization.candidateSourceRef}`,
       nameArgs: ["diff", "--name-only", candidateRange],
       diffArgs: ["diff", "--unified=0", candidateRange]
     });
@@ -362,6 +479,7 @@ function gitRefExists(ref) {
 }
 
 function isCommit(ref) {
+  if (!ref) return false;
   try {
     runGit(["rev-parse", "--verify", `${ref}^{commit}`]);
     return true;

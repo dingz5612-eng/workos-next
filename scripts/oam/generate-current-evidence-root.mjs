@@ -641,8 +641,15 @@ const finalReport = {
   generatedCompileCompleted: false,
   generatedCompilationCompleted: false,
   generatedCompileCandidateAuthorized: generatedCompileCandidate.authorized,
+  authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
+  authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
   candidateSourceRef: generatedCompileCandidate.candidateSourceRef,
   executionHead: generatedCompileCandidate.executionHead,
+  evidenceGeneratedAtHead: generatedCompileCandidate.evidenceGeneratedAtHead,
+  currentRepositoryHead,
+  candidateCompileEvidenceStatus: generatedCompileCandidate.candidateCompileEvidenceStatus,
+  candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
+  candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
   generatedCompileCandidateStatus: generatedCompileCandidate.status,
   generatedCandidateAcceptedBy00: false,
   generatedReleaseAllowed: false,
@@ -906,8 +913,14 @@ const releaseEvidenceObject = {
   sourceReadyForCompileDecision: sourcePackageCheck.sourceReadyForCompileDecision ?? true,
   generatedCompileAuthorized: sourcePackageCheck.generatedCompileAuthorized ?? false,
   generatedCompileCandidateAuthorized: generatedCompileCandidate.authorized,
+  authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
+  authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
   candidateSourceRef: generatedCompileCandidate.candidateSourceRef,
   executionHead: generatedCompileCandidate.executionHead,
+  evidenceGeneratedAtHead: generatedCompileCandidate.evidenceGeneratedAtHead,
+  candidateCompileEvidenceStatus: generatedCompileCandidate.candidateCompileEvidenceStatus,
+  candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
+  candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
   generatedCompileCandidateStatus: generatedCompileCandidate.status,
   generatedCandidateAcceptedBy00: false,
   generatedReleaseAllowed: false,
@@ -970,8 +983,15 @@ const releaseAttestation = {
   sourceReadyForCompileDecision: sourcePackageCheck.sourceReadyForCompileDecision ?? true,
   generatedCompileAuthorized: sourcePackageCheck.generatedCompileAuthorized ?? false,
   generatedCompileCandidateAuthorized: generatedCompileCandidate.authorized,
+  authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
+  authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
   candidateSourceRef: generatedCompileCandidate.candidateSourceRef,
   executionHead: generatedCompileCandidate.executionHead,
+  evidenceGeneratedAtHead: generatedCompileCandidate.evidenceGeneratedAtHead,
+  currentRepositoryHead,
+  candidateCompileEvidenceStatus: generatedCompileCandidate.candidateCompileEvidenceStatus,
+  candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
+  candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
   generatedCompileCandidateStatus: generatedCompileCandidate.status,
   generatedCandidateAcceptedBy00: false,
   generatedReleaseAllowed: false,
@@ -1400,8 +1420,14 @@ function binding(kind) {
     sourceReadyForCompileDecision: sourcePackageCheck.sourceReadyForCompileDecision ?? true,
     generatedCompileAuthorized: sourcePackageCheck.generatedCompileAuthorized ?? false,
     generatedCompileCandidateAuthorized: generatedCompileCandidate.authorized,
+    authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
+    authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
     candidateSourceRef: generatedCompileCandidate.candidateSourceRef,
     executionHead: generatedCompileCandidate.executionHead,
+    evidenceGeneratedAtHead: generatedCompileCandidate.evidenceGeneratedAtHead,
+    candidateCompileEvidenceStatus: generatedCompileCandidate.candidateCompileEvidenceStatus,
+    candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
+    candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
     generatedCompileCandidateStatus: generatedCompileCandidate.status,
     generatedCandidateAcceptedBy00: false,
     generatedReleaseAllowed: false,
@@ -1437,8 +1463,14 @@ function evidenceBindingState() {
     sourceReadyForCompileDecision: sourcePackageCheck.sourceReadyForCompileDecision ?? true,
     generatedCompileAuthorized: sourcePackageCheck.generatedCompileAuthorized ?? false,
     generatedCompileCandidateAuthorized: generatedCompileCandidate.authorized,
+    authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
+    authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
     candidateSourceRef: generatedCompileCandidate.candidateSourceRef,
     executionHead: generatedCompileCandidate.executionHead,
+    evidenceGeneratedAtHead: generatedCompileCandidate.evidenceGeneratedAtHead,
+    candidateCompileEvidenceStatus: generatedCompileCandidate.candidateCompileEvidenceStatus,
+    candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
+    candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
     generatedCompileCandidateStatus: generatedCompileCandidate.status,
     generatedCandidateAcceptedBy00: false,
     generatedReleaseAllowed: false,
@@ -1934,8 +1966,10 @@ function buildSourcePackageProofNodes() {
 
 function buildGeneratedCompileCandidateState() {
   const approval = generatedCompileCandidateApproval ?? {};
-  const candidateSourceRef = approval.candidateSourceRef ?? "missing";
-  const executionHead = approval.executionHead ?? "missing";
+  const authorizedSourceRef = approval.authorizedSourceRef ?? approval.candidateSourceRef ?? "missing";
+  const candidateSourceRef = approval.candidateSourceRef ?? authorizedSourceRef;
+  const authorizedCandidateExecutionHead = approval.authorizedCandidateExecutionHead ?? approval.executionHead ?? "missing";
+  const executionHead = approval.executionHead ?? authorizedCandidateExecutionHead;
   const approvalObjectHash = generatedCompileCandidateApproval
     ? hashFileStrict(generatedCompileCandidateApprovalPath)
     : "missing";
@@ -1943,6 +1977,22 @@ function buildGeneratedCompileCandidateState() {
     ? hashFileStrict("docs/oam/generated-contracts-manifest.json")
     : "missing";
   const generatedOutputDigest = digestForDisk(generatedContractFiles);
+  const controlPlaneCurrent = controlPlaneGateResult.commitSha === currentRepositoryHead &&
+    controlPlaneGateResult.status === "passed" &&
+    controlPlaneGateResult.runStatus === "completed" &&
+    controlPlaneGateResult.finalizable === true;
+  const evidenceGeneratedAtHead = evidenceRunSha;
+  const candidateCompileEvidenceStatus = evidenceGeneratedAtHead !== currentRepositoryHead || !controlPlaneCurrent
+    ? "STALE_REFERENCE"
+    : authorizedCandidateExecutionHead === currentRepositoryHead
+      ? "CURRENT"
+      : "STALE_BUT_NO_GO";
+  const candidateCompileClosureForCurrentHead = candidateCompileEvidenceStatus === "CURRENT";
+  const candidateCompileNextAction = candidateCompileEvidenceStatus === "CURRENT"
+    ? "候选编译证据绑定当前 HEAD；仍需 00 后续接受候选后才可进入正式 generated compile 或 Runtime 消费。"
+    : candidateCompileEvidenceStatus === "STALE_REFERENCE"
+      ? "重新在当前 HEAD 执行候选闭合，或等待外部 CI artifact attestation；保持 NO_GO。"
+      : "当前 HEAD 是 00 授权执行头的 descendant；等待 00 更新 authorizedCandidateExecutionHead 或保持 stale-but-no-go。";
   const authorized = approval.version === "oam.generated-compile-candidate-approval.v1"
     && approval.approvalType === "generated_compile_candidate_only"
     && approval.generatedCompileCandidateAuthorized === true
@@ -1951,8 +2001,9 @@ function buildGeneratedCompileCandidateState() {
     && approval.runtimeConsumptionAllowed === "false_until_candidate_accepted_by_00"
     && approval.releaseAuthority === false
     && approval.finalGoNoGo === "NO_GO"
-    && approval.candidateSourceRef === "fd60390e678f9d6934137f0480a183701b01de8f"
-    && approval.executionHead === "9db58da1ebc2a02349436833747307ac78c4c2fd";
+    && approval.authorizedSourceRef === approval.candidateSourceRef
+    && approval.executionHead === authorizedCandidateExecutionHead
+    && approval.executionHeadCompatibilityAliasOf === "authorizedCandidateExecutionHead";
   const sourceReady = sourcePackageCheck.status === "PASS"
     && sourcePackageCheck.sourceFinalizationStatus === "SOURCE_FINALIZED_BY_00"
     && sourcePackageCheck.sourceFieldGapsDecisionStatus === "DECIDED_AND_BOUND"
@@ -1964,8 +2015,17 @@ function buildGeneratedCompileCandidateState() {
     authorized,
     approvalObjectRef: generatedCompileCandidateApprovalPath,
     approvalObjectHash,
+    authorizedSourceRef,
     candidateSourceRef,
+    authorizedCandidateExecutionHead,
     executionHead,
+    evidenceGeneratedAtHead,
+    currentRepositoryHead,
+    controlPlaneResultHead: controlPlaneGateResult.commitSha ?? "missing",
+    controlPlaneCurrent,
+    candidateCompileEvidenceStatus,
+    candidateCompileClosureForCurrentHead,
+    candidateCompileNextAction,
     generatedManifestHash,
     generatedOutputDigest,
     generatedCandidateAcceptedBy00: false,
@@ -2003,8 +2063,15 @@ function buildGeneratedCompileCandidateProofNodes() {
     proofType: "generated_compile_candidate",
     scope: "generated_compile_candidate_only",
     status: generatedCompileCandidate.status,
+    authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
+    authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
     candidateSourceRef: generatedCompileCandidate.candidateSourceRef,
     executionHead: generatedCompileCandidate.executionHead,
+    evidenceGeneratedAtHead: generatedCompileCandidate.evidenceGeneratedAtHead,
+    currentRepositoryHead,
+    candidateCompileEvidenceStatus: generatedCompileCandidate.candidateCompileEvidenceStatus,
+    candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
+    candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
     approvalObjectHash: generatedCompileCandidate.approvalObjectHash,
     generatedManifestHash: generatedCompileCandidate.generatedManifestHash,
     generatedOutputDigest: generatedCompileCandidate.generatedOutputDigest,
@@ -2030,8 +2097,15 @@ function buildGeneratedCompileCandidateProofNodes() {
     ],
     binding: generatedCompileCandidateBinding(id),
     status: generatedCompileCandidate.status === "PASS" ? "passed" : "blocked",
+    authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
+    authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
     candidateSourceRef: generatedCompileCandidate.candidateSourceRef,
     executionHead: generatedCompileCandidate.executionHead,
+    evidenceGeneratedAtHead: generatedCompileCandidate.evidenceGeneratedAtHead,
+    currentRepositoryHead,
+    candidateCompileEvidenceStatus: generatedCompileCandidate.candidateCompileEvidenceStatus,
+    candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
+    candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
     approvalObjectHash: generatedCompileCandidate.approvalObjectHash,
     generatedManifestHash: generatedCompileCandidate.generatedManifestHash,
     generatedOutputDigest: generatedCompileCandidate.generatedOutputDigest,
@@ -2059,8 +2133,15 @@ function generatedCompileCandidateBinding(proofId) {
     scope: "generated_compile_candidate_only",
     bindingStatus: releaseBindingStatus,
     referenceOnly: releaseEvidenceReferenceOnly,
+    authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
+    authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
     candidateSourceRef: generatedCompileCandidate.candidateSourceRef,
     executionHead: generatedCompileCandidate.executionHead,
+    evidenceGeneratedAtHead: generatedCompileCandidate.evidenceGeneratedAtHead,
+    currentRepositoryHead,
+    candidateCompileEvidenceStatus: generatedCompileCandidate.candidateCompileEvidenceStatus,
+    candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
+    candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
     generatedCandidateAcceptedBy00: false,
     generatedReleaseAllowed: false,
     runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
