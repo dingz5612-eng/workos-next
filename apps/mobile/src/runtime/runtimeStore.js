@@ -38,7 +38,9 @@ export function applyRuntimeSurfacePayloads(state, payloads = {}) {
     store.queueSource = "runtime-api";
   }
   if (payloads.operationWorkItems) {
-    store.operationWorkItems = mergeOperationWorkItems(store.operationWorkItems, payloads.operationWorkItems);
+    const incoming = Array.isArray(payloads.operationWorkItems) ? payloads.operationWorkItems : [];
+    const removedIds = removedOperationWorkItemIds(payloads, incoming);
+    store.operationWorkItems = mergeOperationWorkItems(store.operationWorkItems, incoming, removedIds);
     store.workspaces = mergeOperationWorkItemStatuses(store.workspaces, payloads.operationWorkItems);
     store.workQueue = operationWorkItemsToQueue(store.operationWorkItems);
     store.queueSource = "operations-work-items";
@@ -76,14 +78,45 @@ export function mergeOperationWorkItemStatuses(workspaces = [], workItems = []) 
   });
 }
 
-export function mergeOperationWorkItems(existing = [], incoming = []) {
+export function mergeOperationWorkItems(existing = [], incoming = [], removedIds = new Set()) {
   const byId = new Map();
   for (const item of [...incoming, ...existing]) {
-    const id = item?.workItemId || item?.work_item_id || "";
+    const id = operationWorkItemIdOf(item);
+    if (removedIds.has(id)) continue;
     if (!id || byId.has(id)) continue;
+    if (isRemovedOperationWorkItem(item)) continue;
     byId.set(id, item);
   }
   return Array.from(byId.values());
+}
+
+function removedOperationWorkItemIds(payloads = {}, incoming = []) {
+  const ids = new Set();
+  const explicitIds = [
+    ...(Array.isArray(payloads.removedWorkItemIds) ? payloads.removedWorkItemIds : []),
+    ...(Array.isArray(payloads.removed_work_item_ids) ? payloads.removed_work_item_ids : [])
+  ];
+  for (const id of explicitIds) {
+    const normalized = String(id || "").trim();
+    if (normalized) ids.add(normalized);
+  }
+  for (const item of incoming) {
+    const id = operationWorkItemIdOf(item);
+    if (id && isRemovedOperationWorkItem(item)) ids.add(id);
+  }
+  return ids;
+}
+
+function operationWorkItemIdOf(item = {}) {
+  return String(item?.workItemId || item?.work_item_id || item?.id || "").trim();
+}
+
+function isRemovedOperationWorkItem(item = {}) {
+  const lifecycleState = normalizeOperationLifecycleState(item.lifecycleState || item.lifecycle_state || item.status, "");
+  return item.tombstone === true ||
+    item.removed === true ||
+    item.isDeleted === true ||
+    ["closed", "cancelled", "canceled", "revoked", "removed", "deleted"].includes(lifecycleState);
 }
 
 function cardWithOperationStatus(card = {}, status = "", item = {}) {

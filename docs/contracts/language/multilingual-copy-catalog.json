@@ -60,6 +60,14 @@
       }
     },
     {
+      "copyId": "dormitory.resourceSaleability.status.sourceFinalizedNoCompile",
+      "copy": {
+        "zh-CN": "Source 已由 00 定稿；generated 编译、业务开发和生产确认仍未授权。",
+        "ru-RU": "Source утвержден 00; generated-компиляция, бизнес-разработка и production-подтверждение пока не разрешены.",
+        "ky-KG": "Source 00 тарабынан бекитилди; generated компиляция, бизнес иштеп чыгуу жана production тастыктоо азырынча уруксат эмес."
+      }
+    },
+    {
       "copyId": "dashboard.widget.financeReceived.title",
       "copy": {
         "zh-CN": "收款读数",

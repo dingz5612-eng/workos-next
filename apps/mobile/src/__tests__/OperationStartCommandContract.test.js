@@ -175,6 +175,60 @@ describe("Operations Runtime start command contract", () => {
     ]);
   });
 
+  it("removes a stale persisted Operations WorkItem when runtime returns a tombstone", () => {
+    const store = runtimeStore();
+    store.operationWorkItems = [{
+      workItemId: "wi-resource-room",
+      workspaceId: "W-STAY-RESOURCE-001",
+      cardId: "roomSetup",
+      lifecycleState: "ready",
+      ownerRole: "operator"
+    }];
+    store.workQueue = [...store.operationWorkItems];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-resource-room",
+      selectedWorkspace: "W-STAY-RESOURCE-001",
+      selectedCardId: "roomSetup",
+      runtimeStore: store
+    });
+
+    applyRuntimeSurfacePayloads(ctx.state, {
+      operationWorkItems: [{
+        workItemId: "wi-resource-room",
+        workspaceId: "W-STAY-RESOURCE-001",
+        cardId: "roomSetup",
+        lifecycleState: "closed",
+        tombstone: true
+      }]
+    });
+
+    expect(ctx.state.runtimeStore.operationWorkItems.map((item) => item.workItemId)).not.toContain("wi-resource-room");
+    expect(ctx.state.runtimeStore.workQueue.map((item) => item.workItemId)).not.toContain("wi-resource-room");
+    expect(routeView(ctx)).not.toContain("data-submit-card");
+  });
+
+  it("removes a stale persisted Operations WorkItem when runtime returns removedWorkItemIds", () => {
+    const store = runtimeStore();
+    store.operationWorkItems = [{
+      workItemId: "wi-resource-room",
+      workspaceId: "W-STAY-RESOURCE-001",
+      cardId: "roomSetup",
+      lifecycleState: "ready",
+      ownerRole: "operator"
+    }];
+    store.workQueue = [...store.operationWorkItems];
+    const ctx = createSurfaceCtx({ runtimeStore: store });
+
+    applyRuntimeSurfacePayloads(ctx.state, {
+      operationWorkItems: [],
+      removedWorkItemIds: ["wi-resource-room"]
+    });
+
+    expect(ctx.state.runtimeStore.operationWorkItems.map((item) => item.workItemId)).not.toContain("wi-resource-room");
+    expect(ctx.state.runtimeStore.workQueue.map((item) => item.workItemId)).not.toContain("wi-resource-room");
+  });
+
   it("does not expose blocked workspace/card write paths to the mobile client", () => {
     const runtimePaths = source("../generated/runtimeApiPaths.js");
     const apiClient = source("../apiClient.js");

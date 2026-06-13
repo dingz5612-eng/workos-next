@@ -19,9 +19,9 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceKernelVersion": "oam.system-operating-kernel.v1",
   "sourceGraphVersion": "oam.kernel-graph.v1",
-  "sourceHash": "sha256:84b667a2249909bb51a0d7ab6e95a60c3388614ec8fb4885d0584f31501a6a77",
-  "sourceContentDigest": "sha256:84b667a2249909bb51a0d7ab6e95a60c3388614ec8fb4885d0584f31501a6a77",
-  "kernelGraphHash": "sha256:825d470a225f86e8754d076d0749e2bea5bcd2fa8722f34a5fa0e96211cdcb63",
+  "sourceHash": "sha256:45dea9b6d05b48bac50f1bf4ee3d8e665fe96a0d431413a27ce4af9bbd1951e1",
+  "sourceContentDigest": "sha256:45dea9b6d05b48bac50f1bf4ee3d8e665fe96a0d431413a27ce4af9bbd1951e1",
+  "kernelGraphHash": "sha256:a6785e360875ac61de994d10600a151c7fb2e724a1e9c6b38edc11006a0b42f4",
   "deterministicSort": true,
   "contracts": [
     {
@@ -47,8 +47,8 @@
         "kernel.system",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:84b667a2249909bb51a0d7ab6e95a60c3388614ec8fb4885d0584f31501a6a77",
-      "kernelGraphHash": "sha256:825d470a225f86e8754d076d0749e2bea5bcd2fa8722f34a5fa0e96211cdcb63",
+      "sourceContentDigest": "sha256:45dea9b6d05b48bac50f1bf4ee3d8e665fe96a0d431413a27ce4af9bbd1951e1",
+      "kernelGraphHash": "sha256:a6785e360875ac61de994d10600a151c7fb2e724a1e9c6b38edc11006a0b42f4",
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -56,9 +56,9 @@
       "checker": "scripts/oam/check-derived-contract-consistency.mjs",
       "sourceHashes": {
         "docs/oam/system-operating-kernel.json": "sha256:7f68ee0b45409c126845840223617d3eaf24f2a9af8910fe47d8e35081c63867",
-        "docs/oam/oam-kernel-graph.json": "sha256:825d470a225f86e8754d076d0749e2bea5bcd2fa8722f34a5fa0e96211cdcb63"
+        "docs/oam/oam-kernel-graph.json": "sha256:a6785e360875ac61de994d10600a151c7fb2e724a1e9c6b38edc11006a0b42f4"
       },
-      "compilerInputDigest": "sha256:8032e3c4349c888cf25dafdc6fdd5ab03d81218b688a9539055a33905f7f665d"
+      "compilerInputDigest": "sha256:7141cb1ce5bb4dae155262e8abcc6b99b9c3e28142d0482586b258b3b0ac5151"
     },
     {
       "targetPath": "docs/contracts/oam-responsibility-boundary-matrix.json",
@@ -83,8 +83,8 @@
         "kernel.system",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:84b667a2249909bb51a0d7ab6e95a60c3388614ec8fb4885d0584f31501a6a77",
-      "kernelGraphHash": "sha256:825d470a225f86e8754d076d0749e2bea5bcd2fa8722f34a5fa0e96211cdcb63",
+      "sourceContentDigest": "sha256:45dea9b6d05b48bac50f1bf4ee3d8e665fe96a0d431413a27ce4af9bbd1951e1",
+      "kernelGraphHash": "sha256:a6785e360875ac61de994d10600a151c7fb2e724a1e9c6b38edc11006a0b42f4",
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -92,9 +92,9 @@
       "checker": "scripts/oam/check-derived-contract-consistency.mjs",
       "sourceHashes": {
         "docs/oam/system-operating-kernel.json": "sha256:7f68ee0b45409c126845840223617d3eaf24f2a9af8910fe47d8e35081c63867",
-        "docs/oam/oam-kernel-graph.json": "sha256:825d470a225f86e8754d076d0749e2bea5bcd2fa8722f34a5fa0e96211cdcb63"
+        "docs/oam/oam-kernel-graph.json": "sha256:a6785e360875ac61de994d10600a151c7fb2e724a1e9c6b38edc11006a0b42f4"
       },
-      "compilerInputDigest": "sha256:6ae3d0b76f9b6ad68daf856998c1959fc19ba382542ad11e0cd9259a2077bb7a"
+      "compilerInputDigest": "sha256:3b648497a9b5c74c301d16ae7e4ab99dfb56db7f9b03055bdc6200ea961ffdab"
     },
     {
       "targetPath": "docs/system/current-system-map.md",
@@ -119,8 +119,8 @@
         "kernel.system",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:84b667a2249909bb51a0d7ab6e95a60c3388614ec8fb4885d0584f31501a6a77",
-      "kernelGraphHash": "sha256:825d470a225f86e8754d076d0749e2bea5bcd2fa8722f34a5fa0e96211cdcb63",
+      "sourceContentDigest": "sha256:45dea9b6d05b48bac50f1bf4ee3d8e665fe96a0d431413a27ce4af9bbd1951e1",
+      "kernelGraphHash": "sha256:a6785e360875ac61de994d10600a151c7fb2e724a1e9c6b38edc11006a0b42f4",
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -128,11 +128,11 @@
       "checker": "scripts/oam/check-derived-contract-consistency.mjs",
       "sourceHashes": {
         "docs/oam/system-operating-kernel.json": "sha256:7f68ee0b45409c126845840223617d3eaf24f2a9af8910fe47d8e35081c63867",
-        "docs/oam/oam-kernel-graph.json": "sha256:825d470a225f86e8754d076d0749e2bea5bcd2fa8722f34a5fa0e96211cdcb63"
+        "docs/oam/oam-kernel-graph.json": "sha256:a6785e360875ac61de994d10600a151c7fb2e724a1e9c6b38edc11006a0b42f4"
       },
-      "compilerInputDigest": "sha256:75c604c1dbe295b2585751dfc4c7fe45120e5cb118fb0bf8d0479f099195fd44"
+      "compilerInputDigest": "sha256:9bc7ab770f288e8924e59709e0d831494686e738523048b9a60b72cd20d76b80"
     }
   ],
   "compilerInputDigest": "sha256:a5b8b85bf3fc1a023774841b20b5516cbf1b74c887684ad9da637cb853d8fc22",
-  "outputContentDigest": "sha256:26f705ad371631209796bc7279723a6884408cb71adc043ffc5680f39029283e"
+  "outputContentDigest": "sha256:f18bfa81091232346c69917031b3bac8e403b6acb393f828c7bb2f1c0ded4e41"
 }

@@ -20,6 +20,11 @@ const canonicalOperationsPath = "services/core-api/WorkOS.Api/Runtime/CanonicalO
 const definitionRegistryPath = "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs";
 const noSideEffectsProofPath = "docs/oam/db-no-side-effects-proof.json";
 const writeProof = process.argv.includes("--write-proof") || process.env.OAM_WRITE_PROOF === "1";
+const sourceFinalizationStatus = "SOURCE_FINALIZED_BY_00";
+const sourceFieldGapsDecisionStatus = "DECIDED_AND_BOUND";
+const compileDecisionStatus = "READY_FOR_00_COMPILE_DECISION";
+const generatedCompilationAllowed = "false_until_00_explicit_generated_compile_approval";
+const generatedContractStatus10B = "PENDING_GENERATED_CONTRACT";
 
 const firstChainTypes = [
   "Dorm.RoomSetupConfirm",
@@ -172,6 +177,7 @@ checkLanguageBoundary();
 checkReadSideEnvelope();
 checkPriorIdentityDeletionChain();
 checkAdmissionTrustBoundary();
+checkWorkItemTombstoneResidual();
 checkSourceGeneratedProvenanceDirection();
 checkSourceLevelNoSideEffects();
 runSourceMutationCases();
@@ -200,16 +206,22 @@ const report = {
   p2Residuals,
   evidenceNodeReady: status === "PASS",
   finalGoNoGo: "NO_GO",
-  sourceScenarioPackageReviewStatus: status === "PASS" ? "READY_FOR_00_FINAL_SOURCE_REVIEW" : "CONDITIONAL_NO_PASS",
-  compilePreparationDecision: "SOURCE_GAPS_DECIDED_00_FINAL_REVIEW_REQUIRED",
-  compilePreparationAllowed: "false_until_00_final_source_review",
+  sourceFinalizationStatus: status === "PASS" ? sourceFinalizationStatus : "CONDITIONAL_NO_PASS",
+  sourceScenarioPackageReviewStatus: status === "PASS" ? sourceFinalizationStatus : "CONDITIONAL_NO_PASS",
+  sourceFieldGapsDecisionStatus,
+  compilePreparationDecision: compileDecisionStatus,
+  compileDecisionStatus,
+  compilePreparationAllowed: compileDecisionStatus,
+  generatedCompilationAllowed,
+  generatedCompilationCompleted: false,
   businessFeatureDevelopmentAllowed: false,
   businessProductionGoNoGo: "NO_GO",
   dormitoryL2GoNoGo: "NO_GO",
   productionConfirmAllowed: false,
+  releaseAuthority: false,
   mutation10AStatus: mutationCases.every((item) => item.status === "PASS") ? "PASS" : "FAIL",
   mutationCases,
-  generatedContractStatus10B: "PENDING_GENERATED_CONTRACT",
+  generatedContractStatus10B,
   noSideEffectsStatus: verifiedControls.includes("source-level-no-side-effects") ? "PASS" : "FAIL",
   verifiedControls,
   evidenceGraphNodeContract: {
@@ -218,7 +230,9 @@ const report = {
     scope: "compile_preparation_review",
     releaseAuthority: false,
     businessGoAuthority: false,
-    decisionState: status === "PASS" ? "READY_FOR_00_FINAL_SOURCE_REVIEW" : "BLOCKED_BY_SOURCE_P0",
+    decisionState: status === "PASS" ? sourceFinalizationStatus : "BLOCKED_BY_SOURCE_P0",
+    compileDecisionStatus,
+    generatedCompilationAllowed,
     goNoGoImpact: ["finalGoNoGo"],
     dependsOn: [
       "source-package-proof.source-package-file-hash",
@@ -243,7 +257,7 @@ const report = {
   },
   sourceFieldGaps: {
     pending00Decision: false,
-    compilePreparationAllowed: "false_until_gap_resolution",
+    compilePreparationAllowed: compileDecisionStatus,
     decisions: sourceFieldGapDecisions
   },
   branchFlowContract: {
@@ -265,7 +279,10 @@ const report = {
       sourceScenarioRef: sourcePath,
       scenarioMatrixRef: matrixPath,
       sourceKernelRef: kernelPath,
-      expectedGeneratedStatus: "PENDING_GENERATED_CONTRACT"
+      compilePreparationAllowed: compileDecisionStatus,
+      generatedCompilationAllowed,
+      generatedCompilationCompleted: false,
+      expectedGeneratedStatus: generatedContractStatus10B
     })
   },
   trackedInputs: sourceInputs,
@@ -348,6 +365,24 @@ function checkSourceReviewSemantics() {
   requireCondition(!/^businessGoalZh:/m.test(sourceText), "source.business_goal裸_zh", "businessGoalZh must not be a user-visible source of truth.", {});
   requireCondition(sourceText.includes("businessGoalZhForReviewOnly: 房间、床位和资源准备完成内部试点检查；这不代表生产可售已放开。"), "source.business_goal_review_only_unsafe", "businessGoal review-only text must say internal pilot inspection does not open production saleability.", {});
   requireCondition(!sourceText.includes("达到 L1 internal pilot 可售条件") && !sourceText.includes("达到内部试点可售条件"), "source.business_goal_saleability_implies_go", "businessGoal must not imply internal pilot saleability is opened.", {});
+  for (const [field, value] of [
+    ["sourceFinalizationStatus", sourceFinalizationStatus],
+    ["sourceScenarioPackageReviewStatus", sourceFinalizationStatus],
+    ["sourceFieldGapsDecisionStatus", sourceFieldGapsDecisionStatus],
+    ["compileDecisionStatus", compileDecisionStatus],
+    ["generatedCompilationAllowed", generatedCompilationAllowed],
+    ["generatedContractStatus10B", generatedContractStatus10B],
+    ["generatedCompilationCompleted", "false"],
+    ["businessFeatureDevelopmentAllowed", "false"],
+    ["businessProductionGoNoGo", "NO_GO"],
+    ["dormitoryL2GoNoGo", "NO_GO"],
+    ["productionConfirmAllowed", "false"],
+    ["releaseAuthority", "false"],
+    ["finalGoNoGo", "NO_GO"],
+    ["nextStageAllowed", "false"]
+  ]) {
+    requireCondition(sourceText.includes(`${field}: ${value}`), "source.finalized_status_missing", `Source package missing ${field}: ${value}.`, { field, value });
+  }
 
   const branchFlows = section(sourceText, "branchFlows");
   for (const id of [
@@ -549,7 +584,7 @@ function checkFieldAndStableRefBoundary() {
   requireText(sourceText, "oldCardIdRenameBlocked: true", "fields.old_card_rename_missing", "objectIdBinding must block renamed card identity.");
   const gaps = section(sourceText, "sourceFieldGaps");
   requireCondition(gaps.includes("pending00Decision: false"), "fields.source_gap_pending_not_closed", "sourceFieldGaps.pending00Decision must be false after 00 decision preparation.");
-  requireCondition(gaps.includes("compilePreparationAllowed: false_until_gap_resolution"), "fields.source_gap_compile_guard_missing", "sourceFieldGaps must block compile preparation until gap resolution proof.");
+  requireCondition(gaps.includes(`compilePreparationAllowed: ${compileDecisionStatus}`), "fields.source_gap_compile_decision_missing", "sourceFieldGaps must be ready only for 00 compile decision after decisions are bound.");
   requireCondition(gaps.includes("decisions:"), "fields.source_gap_decisions_missing", "sourceFieldGaps must contain structured decisions.");
   for (const gap of sourceGapIds) {
     const decision = decisionBlock(gaps, gap);
@@ -753,6 +788,21 @@ function checkAdmissionTrustBoundary() {
   verifiedControls.push("admission-trust-server-only");
 }
 
+function checkWorkItemTombstoneResidual() {
+  const backendText = `${operationsRuntime}\n${operationsEndpoints}`;
+  if (!/removedWorkItemIds|removed_work_item_ids|tombstone/i.test(backendText)) {
+    p1Residuals.push({
+      id: "runtime-workitem-tombstone-contract",
+      severity: "P1",
+      status: "open",
+      owner: "02｜架构运行时",
+      message: "Frontend merge consumes closed/canceled/tombstone/removedWorkItemIds, but backend Operations WorkItem payload still needs an explicit tombstone or removedWorkItemIds contract.",
+      blockingCurrentSourceFinalization: false,
+      requiredBeforeGeneratedCompileCandidate: true
+    });
+  }
+}
+
 function checkSourceGeneratedProvenanceDirection() {
   requireCondition(generatorText.includes("PENDING_SOURCE_PACKAGE_REVIEW"), "provenance.generator_pending_source_review_missing", "Generator must mark non-first-chain sourceScenario as pending review.");
   requireCondition(generatorText.includes("PENDING_00_SOURCE_PACKAGE_DECISION"), "provenance.generator_pending_00_missing", "Generator must mark non-first-chain sourceScenarioRef as pending 00 decision.");
@@ -774,6 +824,11 @@ function checkSourceGeneratedProvenanceDirection() {
   requireCondition(scenarioFieldContract.scenarioFieldContractStatus === "PENDING_SOURCE_PACKAGE_REVIEW", "derived.scenario_field_status_not_pending", "scenarioFieldContractStatus must remain PENDING_SOURCE_PACKAGE_REVIEW.");
   requireCondition(scenarioFieldContract.firstGoldenChainFieldContractReady === false, "derived.first_chain_field_contract_ready", "firstGoldenChainFieldContractReady must remain false.");
   requireCondition(scenarioFieldContract.generatedCompilationCompleted === false, "derived.generated_compilation_completed", "generatedCompilationCompleted must remain false.");
+  const provenance = section(sourceText, "sourceToGeneratedProvenancePlan");
+  requireCondition(provenance.includes(`compilePreparationAllowed: ${compileDecisionStatus}`), "provenance.compile_decision_status_missing", "sourceToGeneratedProvenancePlan must be ready only for 00 compile decision.");
+  requireCondition(provenance.includes(`generatedCompilationAllowed: ${generatedCompilationAllowed}`), "provenance.generated_compile_not_authorized", "sourceToGeneratedProvenancePlan must keep generated compilation unauthorized.");
+  requireCondition(provenance.includes("generatedCompilationCompleted: false"), "provenance.generated_compilation_completed", "sourceToGeneratedProvenancePlan must keep generatedCompilationCompleted=false.");
+  requireCondition(provenance.includes("expectedGeneratedStatus: PENDING_GENERATED_CONTRACT"), "provenance.generated_contract_pending", "sourceToGeneratedProvenancePlan must keep generated contract pending.");
   verifiedControls.push("generated-provenance-direction-prepared");
 }
 
@@ -814,6 +869,11 @@ function runSourceMutationCases() {
   expectFail("branch_flow_missing_no_command_submission", () => !section(sourceText, "branchFlows").includes("- no_command_submission"));
   expectFail("correction_bypass_admission_allowed", () => section(sourceText, "branchFlows").includes("bypassAdmissionAllowed: true"));
   expectFail("final_go_no_go_go", () => sourceText.includes("finalGoNoGo: GO"));
+  expectFail("generated_compilation_completed_true", () => sourceText.includes("generatedCompilationCompleted: true"));
+  expectFail("generated_compilation_allowed_true", () => sourceText.includes("generatedCompilationAllowed: true"));
+  expectFail("generated_contract_completed", () => sourceText.includes("generatedContractStatus10B: COMPLETED"));
+  expectFail("business_feature_development_allowed", () => sourceText.includes("businessFeatureDevelopmentAllowed: true"));
+  expectFail("production_confirm_allowed", () => sourceText.includes("productionConfirmAllowed: true"));
   expectFail("visible_not_confirm_copy_key_removed", () => !sourceText.includes("- explain.visibleNotConfirm"));
   expectFail("ru_or_ky_copy_missing", () => {
     const copy = (surfaceCopy.copies ?? []).find((item) => item.copyId === "dormitory.resourceSaleability.scenarioName")?.copy;

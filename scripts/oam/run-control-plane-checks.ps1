@@ -186,7 +186,10 @@ Invoke-Gate node scripts/oam/check-professional-ai-review-seats.mjs
 Invoke-Gate node scripts/oam/check-codex-execution-channel-policy.mjs
 Invoke-Gate node scripts/oam/check-cross-domain-conflict-rules.mjs
 Invoke-Gate node scripts/oam/check-system-operating-kernel.mjs
-Invoke-Gate node scripts/business/generate-dormitory-derived-contracts.mjs
+Invoke-Gate node scripts/oam/check-generated-compile-authorization.mjs
+if ($env:ALLOW_GENERATED_COMPILE_CANDIDATE -eq "true") {
+  Invoke-Gate node scripts/business/generate-dormitory-derived-contracts.mjs -RecordResult $false
+}
 Invoke-Gate node scripts/oam/compile-current-kernel-graph.mjs
 Invoke-Gate node scripts/oam/check-generated-contract-consistency.mjs
 Invoke-Gate node scripts/oam/check-generated-files-not-manually-edited.mjs

@@ -141,11 +141,26 @@ if (documents.size === requiredFiles.length) {
   if (!["PASS", "FAIL"].includes(finalReport.architectureGateStatus)) {
     failures.push(`final report architectureGateStatus must be PASS or FAIL, actual: ${finalReport.architectureGateStatus ?? "missing"}.`);
   }
-  if (finalReport.sourceScenarioPackageReviewStatus !== "READY_FOR_00_FINAL_SOURCE_REVIEW" && finalReport.sourceScenarioPackageReviewStatus !== "CONDITIONAL_NO_PASS") {
+  if (finalReport.sourceFinalizationStatus !== "SOURCE_FINALIZED_BY_00" && finalReport.sourceFinalizationStatus !== "CONDITIONAL_NO_PASS") {
+    failures.push(`final report sourceFinalizationStatus invalid: ${finalReport.sourceFinalizationStatus ?? "missing"}.`);
+  }
+  if (finalReport.sourceScenarioPackageReviewStatus !== "SOURCE_FINALIZED_BY_00" && finalReport.sourceScenarioPackageReviewStatus !== "CONDITIONAL_NO_PASS") {
     failures.push(`final report sourceScenarioPackageReviewStatus invalid: ${finalReport.sourceScenarioPackageReviewStatus ?? "missing"}.`);
   }
-  if (finalReport.compilePreparationAllowed !== "false_until_00_final_source_review") {
-    failures.push("final report compilePreparationAllowed must remain false_until_00_final_source_review.");
+  if (finalReport.sourceFieldGapsDecisionStatus !== "DECIDED_AND_BOUND") {
+    failures.push("final report sourceFieldGapsDecisionStatus must be DECIDED_AND_BOUND.");
+  }
+  if (finalReport.compileDecisionStatus !== "READY_FOR_00_COMPILE_DECISION" || finalReport.compilePreparationAllowed !== "READY_FOR_00_COMPILE_DECISION") {
+    failures.push("final report compile status must be READY_FOR_00_COMPILE_DECISION.");
+  }
+  if (finalReport.generatedCompilationAllowed !== "false_until_00_explicit_generated_compile_approval") {
+    failures.push("final report generatedCompilationAllowed must remain false_until_00_explicit_generated_compile_approval.");
+  }
+  if (finalReport.generatedCompilationReadiness !== "NOT_STARTED_OR_NOT_AUTHORIZED") {
+    failures.push("final report generatedCompilationReadiness must be NOT_STARTED_OR_NOT_AUTHORIZED.");
+  }
+  if (finalReport.generatedCompilationCompleted !== false || finalReport.generatedContractStatus10B !== "PENDING_GENERATED_CONTRACT") {
+    failures.push("final report must keep generated compilation incomplete and contract pending.");
   }
   if (finalReport.businessFeatureDevelopmentAllowed !== false) {
     failures.push("final report businessFeatureDevelopmentAllowed must remain false.");
@@ -686,13 +701,18 @@ function checkDormitoryGoldenChainSourcePackage(finalReport) {
   for (const field of [
     "gateId",
     "status",
+    "sourceFinalizationStatus",
     "sourceScenarioPackageReviewStatus",
+    "sourceFieldGapsDecisionStatus",
     "sourceScenarioRef",
     "scope",
     "excluded",
     "sourceFieldGaps",
     "compilePreparationDecision",
+    "compileDecisionStatus",
     "compilePreparationAllowed",
+    "generatedCompilationAllowed",
+    "generatedCompilationReadiness",
     "businessFeatureDevelopmentAllowed",
     "generatedCompilationCompleted",
     "generatedContractStatus10B",
@@ -704,8 +724,17 @@ function checkDormitoryGoldenChainSourcePackage(finalReport) {
       failures.push(`dormitoryGoldenChainSourcePackage missing ${field}.`);
     }
   }
-  if (section.compilePreparationAllowed !== "false_until_00_final_source_review") {
-    failures.push("dormitoryGoldenChainSourcePackage compilePreparationAllowed must remain false_until_00_final_source_review.");
+  if (section.sourceFinalizationStatus !== "SOURCE_FINALIZED_BY_00" || section.sourceScenarioPackageReviewStatus !== "SOURCE_FINALIZED_BY_00") {
+    failures.push("dormitoryGoldenChainSourcePackage source finalization statuses must be SOURCE_FINALIZED_BY_00.");
+  }
+  if (section.sourceFieldGapsDecisionStatus !== "DECIDED_AND_BOUND") {
+    failures.push("dormitoryGoldenChainSourcePackage sourceFieldGapsDecisionStatus must be DECIDED_AND_BOUND.");
+  }
+  if (section.compileDecisionStatus !== "READY_FOR_00_COMPILE_DECISION" || section.compilePreparationAllowed !== "READY_FOR_00_COMPILE_DECISION") {
+    failures.push("dormitoryGoldenChainSourcePackage compile status must be READY_FOR_00_COMPILE_DECISION.");
+  }
+  if (section.generatedCompilationAllowed !== "false_until_00_explicit_generated_compile_approval" || section.generatedCompilationReadiness !== "NOT_STARTED_OR_NOT_AUTHORIZED") {
+    failures.push("dormitoryGoldenChainSourcePackage must keep generated compilation not authorized.");
   }
   if (section.sourceScenarioRef !== "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml") {
     failures.push("dormitoryGoldenChainSourcePackage sourceScenarioRef must bind the first golden-chain Source package.");
@@ -716,8 +745,8 @@ function checkDormitoryGoldenChainSourcePackage(finalReport) {
   if (!Array.isArray(section.excluded) || section.excluded.length === 0) {
     failures.push("dormitoryGoldenChainSourcePackage excluded must list forbidden scope.");
   }
-  if (section.sourceFieldGaps?.pending00Decision !== false || section.sourceFieldGaps?.compilePreparationAllowed !== "false_until_gap_resolution") {
-    failures.push("dormitoryGoldenChainSourcePackage sourceFieldGaps must contain resolved decisions and remain compile-blocked.");
+  if (section.sourceFieldGaps?.pending00Decision !== false || section.sourceFieldGaps?.compilePreparationAllowed !== "READY_FOR_00_COMPILE_DECISION") {
+    failures.push("dormitoryGoldenChainSourcePackage sourceFieldGaps must contain resolved decisions and be ready only for 00 compile decision.");
   }
   const decisions = section.sourceFieldGaps?.decisions ?? {};
   for (const gap of ["buildingId", "roomType", "readinessEvidenceRefs", "readinessNote", "blockedReason", "notSaleableReason", "serviceVerificationRef"]) {
@@ -928,6 +957,15 @@ function checkSourcePackageProofDag(nodes, finalReport) {
   if (!sourceNode) {
     failures.push("P0 proof node missing: OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE.");
     return;
+  }
+  if (sourceNode.decisionState !== "SOURCE_FINALIZED_BY_00") {
+    failures.push("source package proof DAG source node decisionState must be SOURCE_FINALIZED_BY_00.");
+  }
+  if (sourceNode.compileDecisionStatus !== "READY_FOR_00_COMPILE_DECISION") {
+    failures.push("source package proof DAG source node compileDecisionStatus must be READY_FOR_00_COMPILE_DECISION.");
+  }
+  if (sourceNode.generatedCompilationAllowed !== "false_until_00_explicit_generated_compile_approval") {
+    failures.push("source package proof DAG source node generatedCompilationAllowed must remain false_until_00_explicit_generated_compile_approval.");
   }
   const requiredFields = ["proofType", "source", "hash", "dependsOn", "producedBy", "verifiedBy", "scope", "binding", "status", "finalGoNoGo", "releaseAuthority", "businessGoAuthority"];
   for (const node of nodes.filter((item) => item.id === sourceNode.id || item.type === "source_package_dependency_proof")) {

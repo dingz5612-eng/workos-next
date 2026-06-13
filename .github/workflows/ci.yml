@@ -77,7 +77,10 @@ jobs:
           node scripts/oam/check-codex-execution-channel-policy.mjs
           node scripts/oam/check-cross-domain-conflict-rules.mjs
           node scripts/oam/check-system-operating-kernel.mjs
-          node scripts/business/generate-dormitory-derived-contracts.mjs
+          node scripts/oam/check-generated-compile-authorization.mjs
+          if [ "${ALLOW_GENERATED_COMPILE_CANDIDATE:-}" = "true" ]; then
+            node scripts/business/generate-dormitory-derived-contracts.mjs
+          fi
           node scripts/oam/compile-current-kernel-graph.mjs
           node scripts/oam/check-generated-contract-consistency.mjs
           node scripts/oam/check-generated-files-not-manually-edited.mjs

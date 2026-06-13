@@ -10,8 +10,8 @@
     "domainKernel": "docs/oam/kernel-schemas/domain-kernel.schema.json",
     "workItem": "docs/oam/kernel-schemas/workitem.schema.json"
   },
-  "nodeCount": 1292,
-  "edgeCount": 1095,
+  "nodeCount": 1297,
+  "edgeCount": 1096,
   "nodes": [
     {
       "runtimeBinding": "current-oam",
@@ -20559,6 +20559,38 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-generated-compile-authorization.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-generated-compile-authorization.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-generated-compile-authorization.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-compile-authorization.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/final-report.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-generated-compile-authorization.mjs",
+      "evidence": "artifacts/oam/final-report.json",
+      "replacementPath": "scripts/oam/check-generated-compile-authorization.mjs",
+      "absorbedBy": "scripts/oam/check-generated-compile-authorization.mjs",
+      "removalProofGate": "scripts/oam/check-generated-compile-authorization.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-generated-compile-authorization.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-evidence-contract-refs.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -40480,6 +40512,15 @@
       "edgeType": "owns",
       "allowedDirection": "kernel.release-control -> file.scripts/oam/check-derived-contract-consistency.mjs",
       "forbiddenDirection": "file.scripts/oam/check-derived-contract-consistency.mjs 不得反向覆盖 kernel.release-control",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.release-control",
+      "to": "file.scripts/oam/check-generated-compile-authorization.mjs",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.release-control -> file.scripts/oam/check-generated-compile-authorization.mjs",
+      "forbiddenDirection": "file.scripts/oam/check-generated-compile-authorization.mjs 不得反向覆盖 kernel.release-control",
       "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json"
     },

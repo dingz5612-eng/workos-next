@@ -10,6 +10,20 @@ scenarioNameZhForReviewOnly: 宿舍资源可售第一金链
 goldenChainId: dormitory.resource-saleability.golden-chain.v1
 scenarioId: dormitory.resource-saleability.l1-internal-pilot.v1
 businessGoalZhForReviewOnly: 房间、床位和资源准备完成内部试点检查；这不代表生产可售已放开。
+sourceFinalizationStatus: SOURCE_FINALIZED_BY_00
+sourceScenarioPackageReviewStatus: SOURCE_FINALIZED_BY_00
+sourceFieldGapsDecisionStatus: DECIDED_AND_BOUND
+compileDecisionStatus: READY_FOR_00_COMPILE_DECISION
+generatedCompilationAllowed: false_until_00_explicit_generated_compile_approval
+generatedContractStatus10B: PENDING_GENERATED_CONTRACT
+generatedCompilationCompleted: false
+businessFeatureDevelopmentAllowed: false
+businessProductionGoNoGo: NO_GO
+dormitoryL2GoNoGo: NO_GO
+productionConfirmAllowed: false
+releaseAuthority: false
+finalGoNoGo: NO_GO
+nextStageAllowed: false
 sourceReferences:
   - docs/business/domains/dormitory/dormitory-operating-kernel.json
   - docs/business/admission/business-line-levels.yml
@@ -713,7 +727,7 @@ sourceFieldGaps:
     - 01｜产品业务
     - 02｜架构运行时
   pending00Decision: false
-  compilePreparationAllowed: false_until_gap_resolution
+  compilePreparationAllowed: READY_FOR_00_COMPILE_DECISION
   decisions:
     buildingId:
       decision: add_as_context_readonly_ref
@@ -806,6 +820,7 @@ languageBinding:
     - explain.financeTruthRequired
     - explain.correctionDoesNotBypassAdmission
     - evidence.reason.proofOnly
+    - dormitory.resourceSaleability.status.sourceFinalizedNoCompile
   roleCopyKeys:
     - dormitory.resourceSaleability.role.operator
     - dormitory.resourceSaleability.role.lead
@@ -1164,7 +1179,8 @@ sourceToGeneratedProvenancePlan:
   scenarioMatrixRef: docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml
   sourceKernelRef: docs/business/domains/dormitory/dormitory-operating-kernel.json
   expectedGeneratedStatus: PENDING_GENERATED_CONTRACT
-  compilePreparationAllowed: false_until_00_final_source_review
+  compilePreparationAllowed: READY_FOR_00_COMPILE_DECISION
+  generatedCompilationAllowed: false_until_00_explicit_generated_compile_approval
   generatedCompilationCompleted: false
 sourceLevelNoSideEffects:
   rejectedPathBusinessWriteAllowed: false

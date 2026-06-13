@@ -106,6 +106,24 @@ requireValue(hasLine("scenarioNameZhForReviewOnly: 宿舍资源可售第一金�
 requireValue(!/^scenarioNameZh:/m.test(text), "scenario.name_raw_not_allowed", "scenarioNameZh 不得作为用户可见文案权威。");
 requireValue(hasLine("businessGoalZhForReviewOnly: 房间、床位和资源准备完成内部试点检查；这不代表生产可售已放开。"), "scenario.goal", "业务目标必须以 review-only 方式表达内部试点检查，且不得暗示生产可售放开。");
 requireValue(!/^businessGoalZh:/m.test(text), "scenario.goal_raw_not_allowed", "businessGoalZh 不得作为用户可见文案权威。");
+for (const [field, value] of [
+  ["sourceFinalizationStatus", "SOURCE_FINALIZED_BY_00"],
+  ["sourceScenarioPackageReviewStatus", "SOURCE_FINALIZED_BY_00"],
+  ["sourceFieldGapsDecisionStatus", "DECIDED_AND_BOUND"],
+  ["compileDecisionStatus", "READY_FOR_00_COMPILE_DECISION"],
+  ["generatedCompilationAllowed", "false_until_00_explicit_generated_compile_approval"],
+  ["generatedContractStatus10B", "PENDING_GENERATED_CONTRACT"],
+  ["generatedCompilationCompleted", "false"],
+  ["businessFeatureDevelopmentAllowed", "false"],
+  ["businessProductionGoNoGo", "NO_GO"],
+  ["dormitoryL2GoNoGo", "NO_GO"],
+  ["productionConfirmAllowed", "false"],
+  ["releaseAuthority", "false"],
+  ["finalGoNoGo", "NO_GO"],
+  ["nextStageAllowed", "false"]
+]) {
+  requireValue(hasLine(`${field}: ${value}`), "scenario.source_finalized_status_missing", `Source 定稿状态缺少 ${field}: ${value}。`, { field, value });
+}
 
 requireList("inScope", requiredInScope);
 requireList("outOfScope", requiredOutOfScope);
@@ -221,9 +239,17 @@ requireValue(section("objectIdBinding").includes("oldCardIdRenameBlocked: true")
 requireValue(
   section("sourceFieldGaps").includes("pending00Decision: false") &&
     section("sourceFieldGaps").includes("decisions:") &&
-    section("sourceFieldGaps").includes("compilePreparationAllowed: false_until_gap_resolution"),
+    section("sourceFieldGaps").includes("compilePreparationAllowed: READY_FOR_00_COMPILE_DECISION"),
   "scenario.source_field_gap_policy_missing",
-  "sourceFieldGaps 必须完成 00 裁决结构化决策，且仍不得放行编译准备。"
+  "sourceFieldGaps 必须完成 00 裁决结构化决策，且只进入 00 compile decision。"
+);
+requireValue(
+  section("sourceToGeneratedProvenancePlan").includes("compilePreparationAllowed: READY_FOR_00_COMPILE_DECISION") &&
+    section("sourceToGeneratedProvenancePlan").includes("generatedCompilationAllowed: false_until_00_explicit_generated_compile_approval") &&
+    section("sourceToGeneratedProvenancePlan").includes("generatedCompilationCompleted: false") &&
+    section("sourceToGeneratedProvenancePlan").includes("expectedGeneratedStatus: PENDING_GENERATED_CONTRACT"),
+  "scenario.generated_compile_not_authorized",
+  "Source 已定稿后只能进入 00 compile decision，generated 编译仍未授权。"
 );
 
 const mainFlow = section("mainFlow");
