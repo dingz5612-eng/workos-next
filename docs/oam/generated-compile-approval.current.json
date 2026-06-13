@@ -4,7 +4,7 @@
   "approvalStatus": "pending_00_generated_compile_authorization",
   "approvalAuthority": "00",
   "sourceScenarioRef": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
-  "sourceHash": "sha256:f9d3c71a278a3d9ac8a65bb8f45f07aa42a84f154fa848f61028d4eba39228fc",
+  "sourceHash": "sha256:c0cb0761d571c0cb2fca3bd7d3507ee2d6cbfa1c29170a9ea36017f1477f33e2",
   "sourceFinalizationStatus": "SOURCE_FINALIZED_BY_00",
   "sourceReadyForCompileDecision": true,
   "generatedCompileAuthorized": false,

@@ -519,5 +519,9 @@ function runGit(args) {
 }
 
 function digestText(text) {
-  return `sha256:${crypto.createHash("sha256").update(text).digest("hex")}`;
+  return `sha256:${crypto.createHash("sha256").update(normalizeTextForDigest(text)).digest("hex")}`;
+}
+
+function normalizeTextForDigest(text) {
+  return String(text).replace(/\r\n/g, "\n");
 }
