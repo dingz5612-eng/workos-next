@@ -117,7 +117,8 @@ const attestation = {
   },
   artifactVerification: {
     artifactMode,
-    artifactRoot: artifactRoot ? path.relative(root, artifactRoot).replace(/\\/g, "/") : null,
+    unpackedForLocalReview: Boolean(artifactRoot),
+    localUnpackPathIsAuthority: false,
     ciRunId: artifactRunId,
     artifactName,
     observedGitHubArtifactDigest,
