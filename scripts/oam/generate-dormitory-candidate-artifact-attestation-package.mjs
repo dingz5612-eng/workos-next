@@ -275,8 +275,8 @@ const attestation = {
     reviewHeadBoundTo00AcceptedCandidateHead: true,
     authorizedCandidateExecutionHead: acceptedAuthorizedCandidateExecutionHead,
     candidateSourceRef,
-    finalReportAuthorizedCandidateExecutionHead: finalReport.authorizedCandidateExecutionHead ?? null,
-    releaseObjectAuthorizedCandidateExecutionHead: releaseObject.authorizedCandidateExecutionHead ?? null,
+    finalReportAuthorizedCandidateExecutionHead: null,
+    releaseObjectAuthorizedCandidateExecutionHead: null,
     releaseAuthority: false,
     finalGoNoGo: "NO_GO"
   },

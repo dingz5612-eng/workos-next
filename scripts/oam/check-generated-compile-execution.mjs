@@ -10,6 +10,7 @@ const resultPath = "artifacts/oam/checks/generated-compile-execution-result.json
 const proofPath = "artifacts/oam/evidence/generated-compile-execution-proof.json";
 const formalApprovalPath = "docs/oam/generated-compile-approval.current.json";
 const candidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
+const attestationPackagePath = "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json";
 const sourcePackagePath = "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml";
 const allowedRuntimeGeneratedDiffs = new Set([
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
@@ -69,8 +70,11 @@ const formalApproval = readJson(formalApprovalPath);
 const candidateApproval = readJson(candidateApprovalPath);
 const previousExecutionResult = readJsonIfExists(resultPath);
 const previousExecutionProof = readJsonIfExists(proofPath);
+const previousAttestationPackage = readJsonIfExists(attestationPackagePath);
 const reviewedExecutionHead = previousExecutionResult?.reviewedExecutionHead ??
   previousExecutionProof?.reviewedExecutionHead ??
+  previousAttestationPackage?.generatedCompileExecution?.reviewedExecutionHead ??
+  previousAttestationPackage?.candidateRefs?.formalGeneratedCompileExecutionHead ??
   previousExecutionResult?.currentHead ??
   previousExecutionProof?.currentHead ??
   currentHead;
@@ -463,7 +467,14 @@ function digestForFiles(files) {
 function hashFile(file) {
   const full = path.join(root, file);
   if (!fs.existsSync(full)) return "missing";
-  return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(full)).digest("hex")}`;
+  const content = isTextFile(file)
+    ? fs.readFileSync(full, "utf8").replace(/^\uFEFF/, "").replace(/\r\n/g, "\n").replace(/\r/g, "\n")
+    : fs.readFileSync(full);
+  return `sha256:${crypto.createHash("sha256").update(content).digest("hex")}`;
+}
+
+function isTextFile(file) {
+  return /\.(cjs|js|json|md|mjs|ps1|ts|txt|ya?ml)$/i.test(file);
 }
 
 function digestObject(value) {

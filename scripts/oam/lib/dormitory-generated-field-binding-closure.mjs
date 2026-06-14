@@ -156,7 +156,7 @@ export function buildDormitoryGeneratedFieldBindingClosure({ root = process.cwd(
   const sourcePackageResultDigest = sourcePackageResult
     ? digestSourcePackageResultForClosure(sourcePackageResult)
     : null;
-  const kernelDigest = fileExists(DORMITORY_KERNEL_PATH, root) ? hashFile(DORMITORY_KERNEL_PATH, root) : null;
+  const kernelDigest = kernel ? digestObject(kernel) : null;
   const closureCore = {
     version: "oam.dormitory-generated-field-binding-closure.v1",
     closureType: "generated_semantic_field_binding_closure",
@@ -340,7 +340,10 @@ function readTextIfExists(file, root, missingFiles) {
     missingFiles.push(file);
     return "";
   }
-  return fs.readFileSync(full, "utf8").replace(/^\uFEFF/, "");
+  return fs.readFileSync(full, "utf8")
+    .replace(/^\uFEFF/, "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n");
 }
 
 function fileExists(file, root) {

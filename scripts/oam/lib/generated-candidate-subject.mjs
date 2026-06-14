@@ -446,7 +446,9 @@ function isVolatileDigestKey(key) {
     "snapshotDigest",
     "proofDigest",
     "inputSnapshotDigest",
-    "approvalObjectHash"
+    "approvalObjectHash",
+    "gitDiffNames",
+    "gitUntrackedNames"
   ]).has(key);
 }
 

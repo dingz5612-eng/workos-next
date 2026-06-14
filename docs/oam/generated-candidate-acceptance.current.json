@@ -8,39 +8,39 @@
     "subjectType": "generated_candidate_subject",
     "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
     "decisionRecordHead": null,
-    "currentRepositoryHead": "fb51fc4d97e9c22d2c3df925b37bca197fe94d35",
+    "currentRepositoryHead": "4dbd775b6cb1093f6674d8526a2539f4bb7bf3d5",
     "sourceCandidateHead": "fd60390e678f9d6934137f0480a183701b01de8f",
     "authorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
     "formalAuthorizationHead": "a502565ca5672335dc2ee4398a8d443ac7e3b57a",
     "generatedCompileExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
-    "generatedOutputDigest": "sha256:ce84abf448ad5aefa7ceb9e4a52b831fa6a46d467a6d4d29ce5a33461db39ce2",
-    "generatedFieldBindingClosureDigest": "sha256:1127f2895538b15a6f4107858c23ec03e3db0c56e30d2a374b54a670a86dbd29",
+    "generatedOutputDigest": "sha256:008354c0b1c8e67723c16e2fc2c5e14fe6183cf7568356117c86df8968c14eb6",
+    "generatedFieldBindingClosureDigest": "sha256:524097f49661896a927d673c46e14adc1a30e1ff9c006e698397516028acb665",
     "sourceFieldGapsDecisionDigest": "sha256:87cef694c2cd0bbfb7495d91274a2c9f635893f0f9a9eee2d4abfe938f07761e",
     "evidenceArtifactDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
     "evidenceArtifactMode": "decision_writeback_reference",
     "localEvidenceArtifactDigest": "sha256:d2c5bf085da039cc07a51676827ccbf4c5268254d77e7971298c22603f5d237c",
-    "executionProofDigest": "sha256:1e548498ed356cf9436cc53cf3fc4e26e8f626283ad90398c0e09199b44215b4",
+    "executionProofDigest": "sha256:83a1513d4af86491aa2de4095251c048a630f56ed6aa76691dc2271e56e173fc",
     "evidenceRootDigest": "sha256:087d2a5fbf83591b6920f5bd471b3c205c0d8722c09c0b7a22e33f76033ffc25",
     "requiredEvidenceDigestSet": [
       {
         "id": "generatedCompileExecutionResult",
         "path": "artifacts/oam/checks/generated-compile-execution-result.json",
-        "digest": "sha256:b44be6b1160035edecb7859dd4956c5ecc54b67074f945da1f932815dfbc5c82"
+        "digest": "sha256:6f7d67bcf0f1bc540eacb544cc3a4437f403fe2866b78980088b45434f0f7e19"
       },
       {
         "id": "generatedCompileExecutionProof",
         "path": "artifacts/oam/evidence/generated-compile-execution-proof.json",
-        "digest": "sha256:8506b3e4ee5acfbc31493f537be9c4d6878d6ae09984fe986d8196f2705c1303"
+        "digest": "sha256:173cf55377f7ccdc454c2aabcff3300553576d805eef79a60df42b9b5f668ab8"
       },
       {
         "id": "generatedCompileExecutionSnapshot",
         "path": "artifacts/oam/checks/generated-compile-execution-input-snapshot.json",
-        "digest": "sha256:8ab6b6081929a0e4612d2e8476faaabd8dcc0c2a1b3fe422ecc51b6cfe954ae1"
+        "digest": "sha256:120f899fd9ac305f1a67ddb9bfe3fe9ba31d9b99e73ce492d82bec1575652a48"
       },
       {
         "id": "generatedFieldBindingClosure",
         "path": "artifacts/oam/checks/generated-field-binding-closure-result.json",
-        "digest": "sha256:e6657d46962f5cc4c2c1bce2df3defe84b7274b25b3c629399d0a0caa65b9cc6"
+        "digest": "sha256:56397c82c1b95dbe46acf240884343c1b8436e73400240b539b80ac59925c459"
       },
       {
         "id": "generatedFilesNotManuallyEdited",
@@ -65,7 +65,7 @@
       {
         "id": "dormitoryCandidateAttestationPackage",
         "path": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
-        "digest": "sha256:3e2d3e2d2bfbc42491324c655a1fd211584b45afcfdec4046cedb359ca4267a5"
+        "digest": "sha256:841fd7f9646619e18cf334a77adc0f2c71317f601163faf7501492fe254dd9d6"
       }
     ],
     "requiredGeneratedContractDigestSet": [
@@ -82,7 +82,7 @@
       {
         "id": "generatedFieldBindings",
         "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
-        "digest": "sha256:3409b158d4e64791a95bae4ad6ef04a8b4e30ed264cfaafae79e62fdd5438371"
+        "digest": "sha256:815278f1417b6b6c700891e634521c6935ae58d95923978416ad5dea9d7d1ba5"
       },
       {
         "id": "domainDerivedContracts",
@@ -95,16 +95,16 @@
         "digest": "sha256:90a3f36dcd25ad30f039e0cc71aa7a46e88826edb238baf5e1c618fa2a742698"
       }
     ],
-    "subjectDigest": "sha256:1ab086d34da7c456050edbeecb09aa8c13e910340f0f3acca74b731d6af0f153"
+    "subjectDigest": "sha256:cdcb3c880573718888bfe74abccf4d655849e2b382d08befda6f895a0e4878d5"
   },
   "subjectStatusAtWrite": "NOT_READY_FOR_00_ACCEPTANCE_REVIEW",
   "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
   "decisionRecordHead": null,
-  "decisionWritebackBaseHead": "fb51fc4d97e9c22d2c3df925b37bca197fe94d35",
+  "decisionWritebackBaseHead": "4dbd775b6cb1093f6674d8526a2539f4bb7bf3d5",
   "evidenceArtifactDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
-  "generatedFieldBindingClosureDigest": "sha256:1127f2895538b15a6f4107858c23ec03e3db0c56e30d2a374b54a670a86dbd29",
+  "generatedFieldBindingClosureDigest": "sha256:524097f49661896a927d673c46e14adc1a30e1ff9c006e698397516028acb665",
   "sourceFieldGapsDecisionDigest": "sha256:87cef694c2cd0bbfb7495d91274a2c9f635893f0f9a9eee2d4abfe938f07761e",
-  "executionProofDigest": "sha256:1e548498ed356cf9436cc53cf3fc4e26e8f626283ad90398c0e09199b44215b4",
+  "executionProofDigest": "sha256:83a1513d4af86491aa2de4095251c048a630f56ed6aa76691dc2271e56e173fc",
   "evidenceRootDigest": "sha256:087d2a5fbf83591b6920f5bd471b3c205c0d8722c09c0b7a22e33f76033ffc25",
   "blockingReasons": [
     "subject_status=NOT_READY_FOR_00_ACCEPTANCE_REVIEW",
