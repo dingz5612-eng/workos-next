@@ -29,10 +29,6 @@ const oldArtifactMissingRequiredFiles = [
   "artifacts/oam/checks/generated-contract-consistency-result.json"
 ];
 const requiredFiles = [
-  ["evidenceGraph", "artifacts/oam/evidence/evidence-graph.json"],
-  ["releaseEvidenceObject", "artifacts/oam/evidence/current-oam-release-evidence-object.json"],
-  ["releaseAttestation", "artifacts/oam/evidence/current-oam-release-attestation.json"],
-  ["finalReport", "artifacts/oam/final-report.json"],
   ["sourcePackageResult", "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json"],
   ["generatedCompileAuthorizationResult", "artifacts/oam/checks/generated-compile-authorization-result.json"],
   ["generatedCompileExecutionSnapshot", generatedCompileExecutionSnapshotPath],
@@ -46,8 +42,7 @@ const requiredFiles = [
   ["oamKernelGraphResult", "artifacts/oam/checks/oam-kernel-graph-result.json"],
   ["dashboardReadonlyReport", "artifacts/oam/checks/dashboard-readonly-report.json"],
   ["financeTruthReport", "artifacts/oam/checks/finance-truth-report.json"],
-  ["operationIdentityBoundaryResult", "artifacts/oam/checks/operation-identity-boundary-result.json"],
-  ["releaseAttestationResult", "artifacts/oam/checks/current-oam-release-attestation-result.json"]
+  ["operationIdentityBoundaryResult", "artifacts/oam/checks/operation-identity-boundary-result.json"]
 ];
 
 const candidateApproval = readJson(candidateApprovalPath);

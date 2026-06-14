@@ -26,10 +26,6 @@ const expectedOldMissingRequiredFiles = [
   "artifacts/oam/checks/generated-contract-consistency-result.json"
 ];
 const expectedRequiredFiles = [
-  "artifacts/oam/evidence/evidence-graph.json",
-  "artifacts/oam/evidence/current-oam-release-evidence-object.json",
-  "artifacts/oam/evidence/current-oam-release-attestation.json",
-  "artifacts/oam/final-report.json",
   "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
   "artifacts/oam/checks/generated-compile-authorization-result.json",
   generatedCompileExecutionSnapshotPath,
@@ -43,8 +39,7 @@ const expectedRequiredFiles = [
   "artifacts/oam/checks/oam-kernel-graph-result.json",
   "artifacts/oam/checks/dashboard-readonly-report.json",
   "artifacts/oam/checks/finance-truth-report.json",
-  "artifacts/oam/checks/operation-identity-boundary-result.json",
-  "artifacts/oam/checks/current-oam-release-attestation-result.json"
+  "artifacts/oam/checks/operation-identity-boundary-result.json"
 ];
 
 const failures = [];

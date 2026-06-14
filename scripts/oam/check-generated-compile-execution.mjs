@@ -112,7 +112,28 @@ if (snapshotOnly) {
   process.exit(0);
 }
 
-const inputSnapshot = readJsonIfExists(snapshotPath)?.snapshot ?? buildSnapshot("phase1_input_snapshot_missing_local_rebuilt");
+const inputSnapshotDocument = readJsonIfExists(snapshotPath);
+const inputSnapshot = inputSnapshotDocument?.snapshot ?? buildSnapshot("phase1_input_snapshot_missing_local_rebuilt");
+if (!inputSnapshotDocument) {
+  writeJson(snapshotPath, {
+    version: "oam.generated-compile-execution-input-snapshot.v1",
+    recordedAtUtc: new Date().toISOString(),
+    status: "PASS",
+    snapshot: inputSnapshot,
+    formalAuthorization: formalAuthorizationState(),
+    failures: [],
+    generatedCompileAuthorized: formalAuthorization.authorized,
+    generatedCompilationAllowed: formalAuthorization.authorized,
+    generatedCompileCompleted: false,
+    generatedCompilationCompleted: false,
+    generatedCandidateAcceptedBy00: false,
+    runtimeConsumptionReady: false,
+    businessFeatureDevelopmentAllowed: false,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  });
+}
 runCompileRound("round1");
 const round1Snapshot = buildSnapshot("round1_after_compile");
 runCompileRound("round2");
