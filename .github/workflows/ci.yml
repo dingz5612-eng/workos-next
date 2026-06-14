@@ -85,6 +85,7 @@ jobs:
             node scripts/business/generate-dormitory-derived-contracts.mjs
           fi
           node scripts/oam/compile-current-kernel-graph.mjs
+          node scripts/oam/check-dormitory-golden-chain-source-package.mjs
           node scripts/oam/check-generated-field-binding-closure.mjs
           node scripts/oam/check-generated-contract-consistency.mjs
           node scripts/oam/check-generated-files-not-manually-edited.mjs
