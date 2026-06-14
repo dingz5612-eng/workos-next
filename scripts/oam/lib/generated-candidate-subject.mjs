@@ -206,7 +206,7 @@ export function buildGeneratedCandidateSubject({ root = process.cwd(), currentHe
   };
   const subject = {
     ...subjectCore,
-    subjectDigest: digestObject(subjectCore)
+    subjectDigest: digestObject(normalizeGeneratedCandidateSubjectForIdentity(subjectCore))
   };
   const status = missingFiles.length > 0
     ? "INCOMPLETE"
@@ -290,8 +290,8 @@ export function validateGeneratedCandidateAcceptanceAuthority({
     if (!decisionStatuses.has(acceptance.decisionStatus)) {
       failures.push(`decisionStatus must be PENDING_00_DECISION, NOT_ACCEPTED_BY_00, or ACCEPTED_BY_00, actual ${format(acceptance.decisionStatus)}.`);
     }
-    if (!sameJson(acceptance.generatedCandidateSubject, subjectState.subject)) {
-      failures.push("generatedCandidateSubject must exactly match the shared generated candidate subject.");
+    if (!sameGeneratedCandidateSubject(acceptance.generatedCandidateSubject, subjectState.subject)) {
+      failures.push("generatedCandidateSubject must match the shared generated candidate subject identity.");
     }
     requireEqual(acceptance.reviewedExecutionHead, subjectState.subject.reviewedExecutionHead, "reviewedExecutionHead", failures);
     requireEqual(acceptance.evidenceArtifactDigest, subjectState.subject.evidenceArtifactDigest, "evidenceArtifactDigest", failures);
@@ -533,6 +533,25 @@ function firstPresent(...values) {
 
 function sameJson(left, right) {
   return stableStringify(left) === stableStringify(right);
+}
+
+function sameGeneratedCandidateSubject(left, right) {
+  return stableStringify(normalizeGeneratedCandidateSubjectForIdentity(left)) ===
+    stableStringify(normalizeGeneratedCandidateSubjectForIdentity(right));
+}
+
+function normalizeGeneratedCandidateSubjectForIdentity(subject) {
+  if (Array.isArray(subject)) return subject.map(normalizeGeneratedCandidateSubjectForIdentity);
+  if (subject && typeof subject === "object") {
+    const normalized = {};
+    for (const [key, value] of Object.entries(subject)) {
+      if (key === "currentRepositoryHead") continue;
+      if (key === "subjectDigest") continue;
+      normalized[key] = normalizeGeneratedCandidateSubjectForIdentity(value);
+    }
+    return normalized;
+  }
+  return subject;
 }
 
 function stableStringify(value) {

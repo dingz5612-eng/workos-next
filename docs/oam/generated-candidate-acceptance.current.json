@@ -8,29 +8,29 @@
     "subjectType": "generated_candidate_subject",
     "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
     "decisionRecordHead": null,
-    "currentRepositoryHead": "74e7731831a04ce42b0480ed1284d4eea859471c",
+    "currentRepositoryHead": "fb51fc4d97e9c22d2c3df925b37bca197fe94d35",
     "sourceCandidateHead": "fd60390e678f9d6934137f0480a183701b01de8f",
     "authorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
     "formalAuthorizationHead": "a502565ca5672335dc2ee4398a8d443ac7e3b57a",
     "generatedCompileExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
-    "generatedOutputDigest": "sha256:e13335892463b65eba9b84cca30dbaca229af6089f8f05a7318b33c900bba056",
-    "generatedFieldBindingClosureDigest": "sha256:043358c9b1f022df1a50055c182eaef2cca25b1cdb0a4f1577cf2ec54268cd99",
+    "generatedOutputDigest": "sha256:ce84abf448ad5aefa7ceb9e4a52b831fa6a46d467a6d4d29ce5a33461db39ce2",
+    "generatedFieldBindingClosureDigest": "sha256:1127f2895538b15a6f4107858c23ec03e3db0c56e30d2a374b54a670a86dbd29",
     "sourceFieldGapsDecisionDigest": "sha256:87cef694c2cd0bbfb7495d91274a2c9f635893f0f9a9eee2d4abfe938f07761e",
     "evidenceArtifactDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
     "evidenceArtifactMode": "decision_writeback_reference",
     "localEvidenceArtifactDigest": "sha256:d2c5bf085da039cc07a51676827ccbf4c5268254d77e7971298c22603f5d237c",
-    "executionProofDigest": "sha256:88fcbc1ba6417d4471cfe3e49622f5a09003f5657889d6c6629642c2f9714145",
+    "executionProofDigest": "sha256:1e548498ed356cf9436cc53cf3fc4e26e8f626283ad90398c0e09199b44215b4",
     "evidenceRootDigest": "sha256:087d2a5fbf83591b6920f5bd471b3c205c0d8722c09c0b7a22e33f76033ffc25",
     "requiredEvidenceDigestSet": [
       {
         "id": "generatedCompileExecutionResult",
         "path": "artifacts/oam/checks/generated-compile-execution-result.json",
-        "digest": "sha256:3346c1b772b05a1233289c8d11ed16aa1baaca1eb33dfcaa0c574d065a55d28a"
+        "digest": "sha256:b44be6b1160035edecb7859dd4956c5ecc54b67074f945da1f932815dfbc5c82"
       },
       {
         "id": "generatedCompileExecutionProof",
         "path": "artifacts/oam/evidence/generated-compile-execution-proof.json",
-        "digest": "sha256:d4e25c7f726acd36723b63b159703bd7a17035a7fa9b5365a5fe7efd08862cbd"
+        "digest": "sha256:8506b3e4ee5acfbc31493f537be9c4d6878d6ae09984fe986d8196f2705c1303"
       },
       {
         "id": "generatedCompileExecutionSnapshot",
@@ -40,7 +40,7 @@
       {
         "id": "generatedFieldBindingClosure",
         "path": "artifacts/oam/checks/generated-field-binding-closure-result.json",
-        "digest": "sha256:c569fd2d1dbbaccc7a653967da6feef195505e40be6cbf8079188fbad98b3228"
+        "digest": "sha256:e6657d46962f5cc4c2c1bce2df3defe84b7274b25b3c629399d0a0caa65b9cc6"
       },
       {
         "id": "generatedFilesNotManuallyEdited",
@@ -65,7 +65,7 @@
       {
         "id": "dormitoryCandidateAttestationPackage",
         "path": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
-        "digest": "sha256:f758febcd53b17fdde68e8d836fb3e0b3686d68852f5164ce779604c77e32718"
+        "digest": "sha256:3e2d3e2d2bfbc42491324c655a1fd211584b45afcfdec4046cedb359ca4267a5"
       }
     ],
     "requiredGeneratedContractDigestSet": [
@@ -82,7 +82,7 @@
       {
         "id": "generatedFieldBindings",
         "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
-        "digest": "sha256:c301320658e7ec4066540c7b8bb468db12709ae09d8119472ba177f697bc31ee"
+        "digest": "sha256:3409b158d4e64791a95bae4ad6ef04a8b4e30ed264cfaafae79e62fdd5438371"
       },
       {
         "id": "domainDerivedContracts",
@@ -95,16 +95,16 @@
         "digest": "sha256:90a3f36dcd25ad30f039e0cc71aa7a46e88826edb238baf5e1c618fa2a742698"
       }
     ],
-    "subjectDigest": "sha256:de3e6f4bd409dfda1586205888a7f3e137df7f31ced271cf0d327994992fa304"
+    "subjectDigest": "sha256:1ab086d34da7c456050edbeecb09aa8c13e910340f0f3acca74b731d6af0f153"
   },
   "subjectStatusAtWrite": "NOT_READY_FOR_00_ACCEPTANCE_REVIEW",
   "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
   "decisionRecordHead": null,
-  "decisionWritebackBaseHead": "a724b838ac5a5681d170034da9866b293df630f5",
+  "decisionWritebackBaseHead": "fb51fc4d97e9c22d2c3df925b37bca197fe94d35",
   "evidenceArtifactDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
-  "generatedFieldBindingClosureDigest": "sha256:043358c9b1f022df1a50055c182eaef2cca25b1cdb0a4f1577cf2ec54268cd99",
+  "generatedFieldBindingClosureDigest": "sha256:1127f2895538b15a6f4107858c23ec03e3db0c56e30d2a374b54a670a86dbd29",
   "sourceFieldGapsDecisionDigest": "sha256:87cef694c2cd0bbfb7495d91274a2c9f635893f0f9a9eee2d4abfe938f07761e",
-  "executionProofDigest": "sha256:88fcbc1ba6417d4471cfe3e49622f5a09003f5657889d6c6629642c2f9714145",
+  "executionProofDigest": "sha256:1e548498ed356cf9436cc53cf3fc4e26e8f626283ad90398c0e09199b44215b4",
   "evidenceRootDigest": "sha256:087d2a5fbf83591b6920f5bd471b3c205c0d8722c09c0b7a22e33f76033ffc25",
   "blockingReasons": [
     "subject_status=NOT_READY_FOR_00_ACCEPTANCE_REVIEW",

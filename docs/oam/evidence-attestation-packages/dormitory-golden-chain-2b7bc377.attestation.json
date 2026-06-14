@@ -2,7 +2,7 @@
   "packageVersion": "oam.dormitory-candidate-artifact-attestation.v1",
   "packageStatus": "CANDIDATE_HEAD_ACCEPTED_BY_00_PENDING_NEW_ARTIFACT_NO_GO",
   "reviewPackageStatus": "VALID_WITH_P0_RESIDUALS_NO_GO",
-  "generatedAtUtc": "2026-06-14T12:49:54.127Z",
+  "generatedAtUtc": "2026-06-14T14:45:28.804Z",
   "acceptedAuthorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
   "candidateSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
   "previousAuthorizedCandidateExecutionHead": "9db58da1ebc2a02349436833747307ac78c4c2fd",
@@ -94,16 +94,16 @@
     "resultPath": "artifacts/oam/checks/generated-compile-execution-result.json",
     "proofPath": "artifacts/oam/evidence/generated-compile-execution-proof.json",
     "snapshotPath": "artifacts/oam/checks/generated-compile-execution-input-snapshot.json",
-    "resultDigest": "sha256:0b67040584a9ad4e106951716501e94a1e87550a281d8cda1f4812b66c4a1a92",
-    "proofDigest": "sha256:856c04fc416ec20fe4fe88cfc32b68de483ab88a8dc9f638d6e9e16d71f5d281",
+    "resultDigest": "sha256:3b7c9323a344cbd945a55ad5ed12628e7c89478d6cbb6b4472461a76e9feb20f",
+    "proofDigest": "sha256:b6cb512ca3428d53da3eaa87474a9ea6c6224c004b50784e6684f803f3308e12",
     "snapshotDigest": "sha256:fffb6666279138bda31020a16dafdc4bc8ece3f61f3248a85c1124644387683f",
-    "generatedOutputDigest": "sha256:0cff81d7aceb4a573bb3d3c68ec07091391eb4e992256363f9fe4c2bfdac3250",
+    "generatedOutputDigest": "sha256:ce84abf448ad5aefa7ceb9e4a52b831fa6a46d467a6d4d29ce5a33461db39ce2",
     "manifestDigest": "sha256:836d39e1c46f2da6961907ca0f24d9ab69ffa9463e7860c5ba3f4b48c98a4754",
     "generatedKernelGraphDigest": "sha256:1e16f44a8a7d527eb25210322687a1c33149c9fcfac6e09c969199d5e9a2db88",
     "reproducibility": {
       "status": "PASS",
-      "round1GeneratedOutputDigest": "sha256:0cff81d7aceb4a573bb3d3c68ec07091391eb4e992256363f9fe4c2bfdac3250",
-      "round2GeneratedOutputDigest": "sha256:0cff81d7aceb4a573bb3d3c68ec07091391eb4e992256363f9fe4c2bfdac3250",
+      "round1GeneratedOutputDigest": "sha256:ce84abf448ad5aefa7ceb9e4a52b831fa6a46d467a6d4d29ce5a33461db39ce2",
+      "round2GeneratedOutputDigest": "sha256:ce84abf448ad5aefa7ceb9e4a52b831fa6a46d467a6d4d29ce5a33461db39ce2",
       "sameGeneratedOutputDigest": true,
       "sameDerivedOutputDigest": true,
       "sameKernelGraphDigest": true
@@ -121,9 +121,7 @@
       "noSourceBusinessFactChanges": true,
       "sourceBusinessFactDiffs": [],
       "noRuntimeImplementationChanges": true,
-      "runtimeChanged": [
-        "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
-      ],
+      "runtimeChanged": [],
       "runtimeUntracked": [],
       "allowedRuntimeGeneratedDiffs": [
         "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
@@ -374,7 +372,7 @@
     "predicateAuthorized": true,
     "predicateFailures": [],
     "approvalObjectHash": "sha256:b6fe84036d45472f378340239a747fec52b532ecc78723893aa346892cfac300",
-    "currentRepositoryHead": "338f88ed79b1135d0899dbedf76db411e3753102"
+    "currentRepositoryHead": "fb51fc4d97e9c22d2c3df925b37bca197fe94d35"
   },
   "residuals": [
     {

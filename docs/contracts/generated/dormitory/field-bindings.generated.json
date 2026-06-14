@@ -16,7 +16,7 @@
   "sourceHash": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
   "sourceContentDigest": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
   "compilerInputDigest": "sha256:fb9a556fc3ed4901220279548a4d259ea42731a692d47407501d85f1cdd19f8d",
-  "outputContentDigest": "sha256:4939dd4e2d4931b44975fea562fe970eb056054a868dcd7a97221af0f132125d",
+  "outputContentDigest": "sha256:7b667fecd9da0135dc8b165331d031bace887cc1934d1441f01d02b4dfccfc4c",
   "deterministicSort": true,
   "generatorVersion": "current-oam-kernel-compiler.v1",
   "generatedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
@@ -27,7 +27,7 @@
   "sourcePackageResultRef": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
   "sourceFieldGapsDecisionStatus": "DECIDED_AND_BOUND",
   "sourceFieldGapsDecisionDigest": "sha256:87cef694c2cd0bbfb7495d91274a2c9f635893f0f9a9eee2d4abfe938f07761e",
-  "closureDigest": "sha256:043358c9b1f022df1a50055c182eaef2cca25b1cdb0a4f1577cf2ec54268cd99",
+  "closureDigest": "sha256:1127f2895538b15a6f4107858c23ec03e3db0c56e30d2a374b54a670a86dbd29",
   "requiredFieldIds": [
     "buildingContextRef",
     "readinessEvidenceRefs",
@@ -216,7 +216,7 @@
   },
   "sourceDigests": {
     "sourceScenarioDigest": "sha256:f9d3c71a278a3d9ac8a65bb8f45f07aa42a84f154fa848f61028d4eba39228fc",
-    "sourcePackageResultDigest": "sha256:4639176286fc87508dd29ac14cfae5696b52207d8e812fed4450f3c42f88ee86",
+    "sourcePackageResultDigest": "sha256:e0e9df857daadd0894baf171071d7bd3f4c3ccb4c0bece41bd092364a02bb54c",
     "kernelDigest": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c"
   }
 }

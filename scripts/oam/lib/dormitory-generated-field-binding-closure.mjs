@@ -153,8 +153,8 @@ export function buildDormitoryGeneratedFieldBindingClosure({ root = process.cwd(
     sourceFieldGaps
   });
   const sourceScenarioDigest = sourceText ? digestText(sourceText) : null;
-  const sourcePackageResultDigest = fileExists(SOURCE_PACKAGE_RESULT_PATH, root)
-    ? hashFile(SOURCE_PACKAGE_RESULT_PATH, root)
+  const sourcePackageResultDigest = sourcePackageResult
+    ? digestSourcePackageResultForClosure(sourcePackageResult)
     : null;
   const kernelDigest = fileExists(DORMITORY_KERNEL_PATH, root) ? hashFile(DORMITORY_KERNEL_PATH, root) : null;
   const closureCore = {
@@ -229,6 +229,21 @@ export function digestObject(value) {
 
 export function hashFile(file, root = process.cwd()) {
   return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(path.join(root, file))).digest("hex")}`;
+}
+
+export function digestSourcePackageResultForClosure(sourcePackageResult) {
+  return digestObject({
+    version: "oam.dormitory.source-package-result.semantic-closure-input.v1",
+    resultVersion: sourcePackageResult?.version ?? null,
+    gateId: sourcePackageResult?.gateId ?? null,
+    status: sourcePackageResult?.status ?? null,
+    sourceFinalizationStatus: sourcePackageResult?.sourceFinalizationStatus ?? null,
+    sourceScenarioPackageReviewStatus: sourcePackageResult?.sourceScenarioPackageReviewStatus ?? null,
+    sourceFieldGapsDecisionStatus: sourcePackageResult?.sourceFieldGapsDecisionStatus ?? null,
+    sourceReadyForCompileDecision: sourcePackageResult?.sourceReadyForCompileDecision ?? null,
+    compileDecisionStatus: sourcePackageResult?.compileDecisionStatus ?? null,
+    sourceFieldGaps: sourcePackageResult?.sourceFieldGaps ?? null
+  });
 }
 
 export function writeJson(file, data, root = process.cwd()) {
