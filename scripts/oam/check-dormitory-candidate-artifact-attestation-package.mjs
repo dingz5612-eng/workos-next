@@ -31,6 +31,8 @@ const expectedRequiredFiles = [
   generatedCompileExecutionSnapshotPath,
   generatedCompileExecutionResultPath,
   generatedCompileExecutionProofPath,
+  "docs/contracts/generated/dormitory/field-bindings.generated.json",
+  "artifacts/oam/checks/generated-field-binding-closure-result.json",
   "artifacts/oam/authority-cleanup/mutation-tests-result.json",
   "docs/oam/db-no-side-effects-proof.json",
   "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
@@ -94,6 +96,18 @@ function validateAttestation(document) {
   expectEqual(document.reviewTarget?.reviewHead, acceptedAuthorizedCandidateExecutionHead, "reviewTarget.reviewHead");
   expectEqual(document.reviewTarget?.workflowName, "CI", "reviewTarget.workflowName");
   expectEqual(document.reviewTarget?.businessGo, "NO_GO", "reviewTarget.businessGo");
+  expectIncludes(document.artifactVerification?.artifactMode, [
+    "ci_artifact_authoritative",
+    "local_evidence_candidate",
+    "decision_writeback_reference"
+  ], "artifactVerification.artifactMode");
+  if (document.artifactVerification?.artifactMode !== "ci_artifact_authoritative" &&
+    document.artifactVerification?.localUnpackPathIsAuthority !== false) {
+    failures.push("non-authoritative artifact modes must keep localUnpackPathIsAuthority=false.");
+  }
+  expectEqual(document.artifactVerification?.s4AttestationIsFinalReleaseEvidence, false, "artifactVerification.s4AttestationIsFinalReleaseEvidence");
+  expectEqual(document.artifactVerification?.releaseEvidenceRequiredAfterS4, true, "artifactVerification.releaseEvidenceRequiredAfterS4");
+  expectEqual(document.artifactVerification?.generatedCandidateAcceptedBy00, false, "artifactVerification.generatedCandidateAcceptedBy00");
 
   expectEqual(document.candidateRefs?.candidateHeadDecision, "ACCEPTED_BY_00_FOR_CANDIDATE_EXECUTION_HEAD_ONLY", "candidateRefs.candidateHeadDecision");
   expectEqual(document.candidateRefs?.authorizedCandidateExecutionHead, acceptedAuthorizedCandidateExecutionHead, "candidateRefs.authorizedCandidateExecutionHead");
@@ -126,7 +140,7 @@ function validateAttestation(document) {
   if (missingRequiredFiles.length > 0) {
     expectEqual(document.candidateRefs?.candidateCompileEvidenceStatus, "CURRENT_CANDIDATE_HEAD_PENDING_NEW_ARTIFACT", "candidateRefs.candidateCompileEvidenceStatus");
     expectEqual(document.candidateRefs?.candidateCompileClosureForCurrentHead, false, "candidateRefs.candidateCompileClosureForCurrentHead");
-    expectEqual(document.recommendation, "RUN_NEW_CI_ARTIFACT_WITH_REQUIRED_FILES_BEFORE_FORMAL_GENERATED_COMPILE", "recommendation");
+    expectEqual(document.recommendation, "RUN_NEW_CI_ARTIFACT_WITH_REQUIRED_FILES_BEFORE_GENERATED_CANDIDATE_ACCEPTANCE", "recommendation");
     expectEqual(document.nextDecisionFor00?.nextDecisionFor00, "STOP_AND_FIX_ARTIFACT_UPLOAD_OR_RESULT_WRITERS", "nextDecisionFor00.nextDecisionFor00");
     expectEqual(document.reviewPackageStatus, "VALID_WITH_P0_RESIDUALS_NO_GO", "reviewPackageStatus when files are missing");
   } else {
@@ -162,6 +176,8 @@ function validateAttestation(document) {
   expectEqual(document.goNoGo?.generatedCompileCompleted, generatedCompileExecutionCompleted, "goNoGo.generatedCompileCompleted");
   expectEqual(document.goNoGo?.generatedCompilationCompleted, generatedCompileExecutionCompleted, "goNoGo.generatedCompilationCompleted");
   expectEqual(document.goNoGo?.generatedCandidateAcceptedBy00, false, "goNoGo.generatedCandidateAcceptedBy00");
+  expectEqual(document.goNoGo?.s4AttestationIsFinalReleaseEvidence, false, "goNoGo.s4AttestationIsFinalReleaseEvidence");
+  expectEqual(document.goNoGo?.releaseEvidenceRequiredAfterS4, true, "goNoGo.releaseEvidenceRequiredAfterS4");
   expectEqual(document.goNoGo?.generatedReleaseAllowed, false, "goNoGo.generatedReleaseAllowed");
   expectEqual(document.goNoGo?.runtimeConsumptionReady, false, "goNoGo.runtimeConsumptionReady");
   expectEqual(document.goNoGo?.businessFeatureDevelopmentAllowed, false, "goNoGo.businessFeatureDevelopmentAllowed");

@@ -10,7 +10,7 @@
     "domainKernel": "docs/oam/kernel-schemas/domain-kernel.schema.json",
     "workItem": "docs/oam/kernel-schemas/workitem.schema.json"
   },
-  "nodeCount": 1306,
+  "nodeCount": 1314,
   "edgeCount": 1102,
   "nodes": [
     {
@@ -11612,6 +11612,40 @@
       "graphBinding": "docs/oam/kernel/oam-kernel-graph.generated.json"
     },
     {
+      "nodeId": "file.docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-field-binding-closure.mjs",
+        "scripts/oam/check-generated-contract-consistency.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "absorbedBy": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "removalProofGate": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-generated-field-binding-closure.mjs",
+        "scripts/oam/check-generated-contract-consistency.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
       "runtimeBinding": "generated-contract",
       "testBinding": [
         "scripts/oam/check-generated-contract-consistency.mjs"
@@ -13779,6 +13813,43 @@
       "consumers": [
         "scripts/oam/check-file-lifecycle-policy.mjs",
         "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/oam/generated-candidate-acceptance.current.json",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/generated-candidate-acceptance.current.json",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/generated-candidate-acceptance-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 00 generated candidate acceptance 裁决对象被新裁决取代且无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "evidence": "artifacts/oam/checks/generated-candidate-acceptance-result.json",
+      "replacementPath": "docs/oam/generated-candidate-acceptance.current.json",
+      "absorbedBy": "docs/oam/generated-candidate-acceptance.current.json",
+      "removalProofGate": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "deletionConditionZh": "当 00 generated candidate acceptance 裁决对象被新裁决取代且无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
       ]
     },
     {
@@ -20784,6 +20855,42 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-generated-candidate-acceptance.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/generated-candidate-acceptance-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 generated candidate acceptance gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "evidence": "artifacts/oam/checks/generated-candidate-acceptance-result.json",
+      "replacementPath": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "absorbedBy": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "removalProofGate": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "deletionConditionZh": "当 generated candidate acceptance gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "docs/oam/generated-candidate-acceptance.current.json",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-generated-compile-authorization.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -20874,6 +20981,37 @@
       "removalProofGate": "scripts/oam/check-generated-contract-consistency.mjs",
       "deletionConditionZh": "当且仅当内容已被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
+        "scripts/oam/check-generated-contract-consistency.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-generated-field-binding-closure.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-field-binding-closure.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "absorbedBy": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "removalProofGate": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml",
         "scripts/oam/check-generated-contract-consistency.mjs"
       ]
     },
@@ -21715,6 +21853,35 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/generate-generated-candidate-acceptance.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/generate-generated-candidate-acceptance.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/generate-generated-candidate-acceptance.mjs",
+      "absorbedBy": "scripts/oam/generate-generated-candidate-acceptance.mjs",
+      "removalProofGate": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "docs/oam/generated-candidate-acceptance.current.json"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/generate-mobile-branch-risk-ledger.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -21777,6 +21944,70 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/lib/decision-writeback-policy.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/lib/decision-writeback-policy.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/generated-candidate-acceptance-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 generated candidate decision writeback policy 被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "evidence": "artifacts/oam/checks/generated-candidate-acceptance-result.json",
+      "replacementPath": "scripts/oam/lib/decision-writeback-policy.mjs",
+      "absorbedBy": "scripts/oam/lib/decision-writeback-policy.mjs",
+      "removalProofGate": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "deletionConditionZh": "当 generated candidate decision writeback policy 被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/lib/generated-candidate-subject.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/lib/dormitory-generated-field-binding-closure.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/lib/dormitory-generated-field-binding-closure.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-field-binding-closure.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/lib/dormitory-generated-field-binding-closure.mjs",
+      "absorbedBy": "scripts/oam/lib/dormitory-generated-field-binding-closure.mjs",
+      "removalProofGate": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/compile-current-kernel-graph.mjs",
+        "scripts/oam/check-generated-field-binding-closure.mjs",
+        "scripts/oam/lib/generated-candidate-subject.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/lib/formal-generated-compile-authorization.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -21808,6 +22039,41 @@
         "scripts/oam/formal-generated-compile-authorization-status.mjs",
         "scripts/oam/run-control-plane-checks.ps1",
         ".github/workflows/ci.yml"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/lib/generated-candidate-subject.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/lib/generated-candidate-subject.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/generated-candidate-acceptance-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 generated candidate subject 共享模型被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "evidence": "artifacts/oam/checks/generated-candidate-acceptance-result.json",
+      "replacementPath": "scripts/oam/lib/generated-candidate-subject.mjs",
+      "absorbedBy": "scripts/oam/lib/generated-candidate-subject.mjs",
+      "removalProofGate": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "deletionConditionZh": "当 generated candidate subject 共享模型被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs"
       ]
     },
     {

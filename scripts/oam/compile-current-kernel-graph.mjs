@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { buildGeneratedFieldBindingContract } from "./lib/dormitory-generated-field-binding-closure.mjs";
 
 const root = process.cwd();
 const outputRoot = process.env.WORKOS_KERNEL_COMPILE_OUTPUT_ROOT || root;
@@ -59,6 +60,12 @@ const generated = {
       ledgerEffect: item.ledgerEffect
     }))
   },
+  fieldBindings: buildGeneratedFieldBindingContract({
+    root,
+    metadata: meta("field-bindings.generated", sourceNodeRefs, {
+      generatedSemanticClosure: "dormitory-generated-field-binding-closure.v1"
+    })
+  }),
   workitems: {
     ...meta("workitems.generated", sourceNodeRefs),
     workItems: p0WorkItems.map((item) => ({
@@ -111,6 +118,7 @@ const graph = {
 
 writeJson(`${outputDir}/dormitory-kernel.generated.manifest.json`, generated.manifest);
 writeJson(`${outputDir}/fields.generated.json`, generated.fields);
+writeJson(`${outputDir}/field-bindings.generated.json`, generated.fieldBindings);
 writeJson(`${outputDir}/workitems.generated.json`, generated.workitems);
 writeJson(`${outputDir}/surface-input-model.generated.json`, generated.surfaceInputModel);
 writeJson(`${outputDir}/read-model.generated.json`, generated.readModel);
@@ -196,14 +204,15 @@ function toCandidate(item) {
   };
 }
 
-function meta(kind, refs) {
+function meta(kind, refs, extraInput = {}) {
   const compilerInputDigest = digest({
     generatorVersion,
     kind,
     generatedFrom,
     sourceHash,
     kernelGraphHash,
-    sourceNodeRefs: refs
+    sourceNodeRefs: refs,
+    ...extraInput
   });
   return {
     generated: true,

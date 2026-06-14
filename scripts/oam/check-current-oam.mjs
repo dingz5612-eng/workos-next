@@ -29,6 +29,7 @@ const requiredJson = [
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
+  "docs/contracts/generated/dormitory/field-bindings.generated.json",
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
@@ -36,6 +37,7 @@ const requiredJson = [
   "docs/read-intelligence/read-intelligence-kernel.json",
   "docs/read-intelligence/read-intelligence-kernel.schema.json",
   "docs/oam/db-no-side-effects-proof.json",
+  "docs/oam/generated-candidate-acceptance.current.json",
   "docs/finance/finance-ledger-kernel.json",
   "docs/identity/identity-permission-kernel.json",
   "docs/contracts/oam.current.json",
@@ -53,6 +55,12 @@ requireFile("docs/oam/current-architecture.md");
 requireFile("docs/system/current-system-map.md");
 requireFile("scripts/oam/generate-current-evidence-root.mjs");
 requireFile("scripts/oam/check-current-evidence-root.mjs");
+requireFile("scripts/oam/check-generated-field-binding-closure.mjs");
+requireFile("scripts/oam/check-generated-candidate-acceptance.mjs");
+requireFile("scripts/oam/generate-generated-candidate-acceptance.mjs");
+requireFile("scripts/oam/lib/dormitory-generated-field-binding-closure.mjs");
+requireFile("scripts/oam/lib/generated-candidate-subject.mjs");
+requireFile("scripts/oam/lib/decision-writeback-policy.mjs");
 requireFile("scripts/oam/check-kernel-responsibility-map.mjs");
 requireFile("scripts/oam/check-professional-ai-review-seats.mjs");
 requireFile("scripts/oam/check-codex-execution-channel-policy.mjs");

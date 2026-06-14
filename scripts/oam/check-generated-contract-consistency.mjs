@@ -1,6 +1,12 @@
 import fs from "node:fs";
 import crypto from "node:crypto";
 import path from "node:path";
+import {
+  FIELD_BINDING_CLOSURE_RESULT_PATH,
+  FIELD_BINDINGS_GENERATED_PATH,
+  REQUIRED_GENERATED_FIELD_BINDINGS,
+  buildDormitoryGeneratedFieldBindingClosure
+} from "./lib/dormitory-generated-field-binding-closure.mjs";
 
 const root = process.cwd();
 const reportPath = "artifacts/oam/checks/generated-contract-consistency-result.json";
@@ -16,10 +22,12 @@ const requiredGeneratedFiles = [
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
+  FIELD_BINDINGS_GENERATED_PATH,
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
-  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  FIELD_BINDING_CLOSURE_RESULT_PATH
 ];
 const requiredClassifications = [
   "clientSubmitted",
@@ -39,15 +47,19 @@ const source = readJson("docs/business/domains/dormitory/dormitory-operating-ker
 const graph = readJson("docs/oam/kernel/oam-kernel-graph.generated.json");
 const manifest = readJson("docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json");
 const fields = readJson("docs/contracts/generated/dormitory/fields.generated.json");
+const fieldBindings = readJson(FIELD_BINDINGS_GENERATED_PATH);
 const workitems = readJson("docs/contracts/generated/dormitory/workitems.generated.json");
 const surface = readJson("docs/contracts/generated/dormitory/surface-input-model.generated.json");
 const mobileSurface = readJson("apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json");
 const readModel = readJson("docs/contracts/generated/dormitory/read-model.generated.json");
+const fieldBindingClosureResult = readJson(FIELD_BINDING_CLOSURE_RESULT_PATH);
+const fieldBindingClosure = buildDormitoryGeneratedFieldBindingClosure({ root });
 
 for (const [file, document] of [
   ["docs/oam/kernel/oam-kernel-graph.generated.json", graph],
   ["docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json", manifest],
   ["docs/contracts/generated/dormitory/fields.generated.json", fields],
+  [FIELD_BINDINGS_GENERATED_PATH, fieldBindings],
   ["docs/contracts/generated/dormitory/workitems.generated.json", workitems],
   ["docs/contracts/generated/dormitory/surface-input-model.generated.json", surface],
   ["docs/contracts/generated/dormitory/read-model.generated.json", readModel],
@@ -59,6 +71,8 @@ for (const [file, document] of [
 if ((graph.nodes ?? []).length === 0 || (graph.edges ?? []).length === 0 || graph.nodeCount <= 0 || graph.edgeCount <= 0) {
   fail("generated kernel graph must not be empty.");
 }
+
+checkGeneratedFieldBindingClosure();
 
 const sourceP0 = source.p0GeneratedCandidates ?? [];
 const sourceP0Types = sourceP0.map((item) => item.workItemType).sort();
@@ -142,6 +156,30 @@ function exists(file) {
 
 function fail(message) {
   failures.push(message);
+}
+
+function checkGeneratedFieldBindingClosure() {
+  if (fieldBindingClosure.status !== "PASS") {
+    fail(`generated field binding closure source model must PASS, actual ${fieldBindingClosure.status}.`);
+  }
+  if (fieldBindingClosureResult.status !== "PASS" ||
+    fieldBindingClosureResult.generatedFieldBindingClosureStatus !== "PASS") {
+    fail("generated field binding closure result must PASS before generated contract consistency can PASS.");
+  }
+  if (fieldBindingClosureResult.closureDigest !== fieldBindingClosure.closureDigest ||
+    fieldBindingClosureResult.sourceFieldGapsDecisionDigest !== fieldBindingClosure.sourceFieldGapsDecisionDigest) {
+    fail("generated field binding closure result digests must match shared closure model.");
+  }
+  if (fieldBindings.generatedFieldBindingClosureRequired !== true ||
+    fieldBindings.generatedFieldBindingClosureStatus !== "PASS" ||
+    fieldBindings.closureDigest !== fieldBindingClosure.closureDigest ||
+    fieldBindings.sourceFieldGapsDecisionDigest !== fieldBindingClosure.sourceFieldGapsDecisionDigest) {
+    fail("field-bindings.generated.json must bind the shared generated field binding closure.");
+  }
+  const bindingIds = new Set((fieldBindings.fieldBindings ?? []).map((item) => item.fieldId));
+  for (const spec of REQUIRED_GENERATED_FIELD_BINDINGS) {
+    if (!bindingIds.has(spec.fieldId)) fail(`field-bindings.generated.json missing ${spec.fieldId}.`);
+  }
 }
 
 function writeReport() {

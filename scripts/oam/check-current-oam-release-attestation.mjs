@@ -1,5 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
+import {
+  GENERATED_CANDIDATE_ACCEPTANCE_PATH,
+  GENERATED_CANDIDATE_ACCEPTANCE_RESULT_PATH,
+  validateGeneratedCandidateAcceptanceAuthority
+} from "./lib/generated-candidate-subject.mjs";
+import {
+  FIELD_BINDING_CLOSURE_RESULT_PATH,
+  FIELD_BINDINGS_GENERATED_PATH,
+  buildDormitoryGeneratedFieldBindingClosure
+} from "./lib/dormitory-generated-field-binding-closure.mjs";
 
 const root = process.cwd();
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
@@ -7,6 +17,8 @@ const releaseAttestationPath = "artifacts/oam/evidence/current-oam-release-attes
 const evidenceGraphPath = "artifacts/oam/evidence/evidence-graph.json";
 const finalReportPath = "artifacts/oam/final-report.json";
 const resultPath = "artifacts/oam/checks/current-oam-release-attestation-result.json";
+const generatedCandidateAcceptancePath = GENERATED_CANDIDATE_ACCEPTANCE_PATH;
+const generatedCandidateAcceptanceResultPath = GENERATED_CANDIDATE_ACCEPTANCE_RESULT_PATH;
 const pendingExternalAttestation = "pending_external_attestation";
 const sha256DigestPattern = /^sha256:[a-f0-9]{64}$/;
 const ciRunId = env("GITHUB_RUN_ID") || "local";
@@ -17,6 +29,15 @@ const releaseObject = readJson(releaseEvidenceObjectPath);
 const attestation = readJson(releaseAttestationPath);
 const graph = readJson(evidenceGraphPath);
 const finalReport = readJson(finalReportPath);
+const generatedCandidateAcceptance = readJson(generatedCandidateAcceptancePath);
+const generatedCandidateAcceptanceResult = readJson(generatedCandidateAcceptanceResultPath);
+const generatedFieldBindingClosureResult = readJson(FIELD_BINDING_CLOSURE_RESULT_PATH);
+const generatedFieldBindings = readJson(FIELD_BINDINGS_GENERATED_PATH);
+const generatedFieldBindingClosure = buildDormitoryGeneratedFieldBindingClosure({ root });
+const generatedCandidateAcceptancePredicate = validateGeneratedCandidateAcceptanceAuthority({
+  acceptance: generatedCandidateAcceptance,
+  root
+});
 
 checkRequiredFields(attestation, "release attestation", [
   "schemaVersion",
@@ -145,6 +166,30 @@ if ((attestation?.workspaceDirtyAtGeneration === true || releaseObject?.workspac
 if (attestation?.finalGoNoGo !== "NO_GO" || releaseObject?.finalGoNoGo !== "NO_GO" || finalReport?.finalGoNoGo !== "NO_GO") {
   violations.push("release attestation must not convert CI/artifact/final report evidence into GO.");
 }
+if (generatedCandidateAcceptancePredicate.status !== "PASS" ||
+  generatedCandidateAcceptanceResult?.status !== "PASS") {
+  violations.push("release attestation must only reference a PASS generated candidate acceptance checker result.");
+}
+if (generatedFieldBindingClosure.status !== "PASS" ||
+  generatedFieldBindingClosureResult?.status !== "PASS" ||
+  generatedFieldBindings?.generatedFieldBindingClosureStatus !== "PASS") {
+  violations.push("release attestation requires generated field binding closure PASS.");
+}
+if (finalReport?.generatedFieldBindingClosureRequired !== true ||
+  finalReport?.generatedFieldBindingClosureStatus !== "PASS" ||
+  finalReport?.generatedFieldBindingClosureDigest !== generatedFieldBindingClosure.closureDigest ||
+  finalReport?.sourceFieldGapsDecisionDigest !== generatedFieldBindingClosure.sourceFieldGapsDecisionDigest ||
+  finalReport?.s4AttestationIsFinalReleaseEvidence !== false ||
+  finalReport?.releaseEvidenceRequiredAfterS4 !== true) {
+  violations.push("final report must mirror generated field binding closure and S4 attestation/release-evidence separation.");
+}
+if (finalReport?.generatedCandidateAcceptedBy00 !== generatedCandidateAcceptancePredicate.generatedCandidateAcceptedBy00) {
+  violations.push("final report generatedCandidateAcceptedBy00 must mirror generated candidate acceptance authority.");
+}
+if (generatedCandidateAcceptancePredicate.generatedCandidateAcceptedBy00 === true &&
+  (attestation?.releaseAuthority !== false || releaseObject?.releaseAuthority !== false || finalReport?.releaseAuthority !== false)) {
+  violations.push("generated candidate acceptance must not grant releaseAuthority.");
+}
 if (attestation?.nextStageAllowed !== false || releaseObject?.nextStageAllowed !== false || finalReport?.nextStageAllowed !== false) {
   violations.push("release attestation must keep nextStageAllowed=false.");
 }
@@ -205,6 +250,7 @@ function writeResult(currentViolations) {
       "evidenceRootDigest is the evidence root digest.",
       "githubArtifactMetadataDigest is external GitHub artifact metadata evidence and is not reused as internal digest.",
       "zipArtifactDigest is external zip content evidence and is not reused as internal digest.",
+      "generated candidate acceptance authority is separate from releaseAuthority.",
       "CI green, artifact exists, browser evidence, and Final Report exists do not equal GO."
     ],
     violations: currentViolations

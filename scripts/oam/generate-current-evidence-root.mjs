@@ -3,12 +3,24 @@ import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
 import { validateFormalGeneratedCompileAuthorization } from "./lib/formal-generated-compile-authorization.mjs";
+import {
+  GENERATED_CANDIDATE_ACCEPTANCE_PATH,
+  GENERATED_CANDIDATE_ACCEPTANCE_RESULT_PATH,
+  validateGeneratedCandidateAcceptanceAuthority
+} from "./lib/generated-candidate-subject.mjs";
+import {
+  FIELD_BINDING_CLOSURE_RESULT_PATH,
+  FIELD_BINDINGS_GENERATED_PATH,
+  buildDormitoryGeneratedFieldBindingClosure
+} from "./lib/dormitory-generated-field-binding-closure.mjs";
 
 const root = process.cwd();
 const evidenceDir = "artifacts/oam/evidence";
 const finalReportPath = "artifacts/oam/final-report.json";
 const generatedCompileApprovalPath = "docs/oam/generated-compile-approval.current.json";
 const generatedCompileCandidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
+const generatedCandidateAcceptancePath = GENERATED_CANDIDATE_ACCEPTANCE_PATH;
+const generatedCandidateAcceptanceResultPath = GENERATED_CANDIDATE_ACCEPTANCE_RESULT_PATH;
 const controlPlaneGateResultPath = "artifacts/oam/checks/control-plane-gate-results.json";
 const responsibilityMapPath = "docs/oam/current-oam-kernel-responsibility-map.json";
 const candidateEvidenceObjectPath = "artifacts/oam/evidence/current-oam-candidate-evidence-object.json";
@@ -19,6 +31,8 @@ const evidenceLifecycleProofPath = "artifacts/oam/evidence/evidence-lifecycle-pr
 const generatedCompileExecutionSnapshotPath = "artifacts/oam/checks/generated-compile-execution-input-snapshot.json";
 const generatedCompileExecutionResultPath = "artifacts/oam/checks/generated-compile-execution-result.json";
 const generatedCompileExecutionProofPath = "artifacts/oam/evidence/generated-compile-execution-proof.json";
+const generatedFieldBindingClosureResultPath = FIELD_BINDING_CLOSURE_RESULT_PATH;
+const generatedFieldBindingsPath = FIELD_BINDINGS_GENERATED_PATH;
 const ciArtifactProvenanceReportPath = "artifacts/oam/checks/ci-artifact-provenance-report.json";
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 const evidenceRootDigestPlaceholder = "__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__";
@@ -97,6 +111,7 @@ const requiredEvidenceFiles = [
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
+  generatedFieldBindingsPath,
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
@@ -106,11 +121,14 @@ const requiredEvidenceFiles = [
   "docs/oam/db-no-side-effects-proof.json",
   generatedCompileApprovalPath,
   generatedCompileCandidateApprovalPath,
+  generatedCandidateAcceptancePath,
+  generatedCandidateAcceptanceResultPath,
   "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
   "artifacts/oam/checks/generated-compile-authorization-result.json",
   generatedCompileExecutionSnapshotPath,
   generatedCompileExecutionResultPath,
   generatedCompileExecutionProofPath,
+  generatedFieldBindingClosureResultPath,
   "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
   "artifacts/oam/checks/generated-contract-consistency-result.json",
   "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
@@ -137,6 +155,7 @@ const generatedContractFiles = [
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
+  generatedFieldBindingsPath,
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
@@ -172,6 +191,14 @@ const generatedCompileCandidateApproval = readJsonIfExists(generatedCompileCandi
 const generatedCompileCandidate = buildGeneratedCompileCandidateState();
 const formalGeneratedCompileAuthorization = buildFormalGeneratedCompileAuthorizationState();
 const generatedCompileExecution = buildGeneratedCompileExecutionState();
+const generatedFieldBindingClosure = buildGeneratedFieldBindingClosureState();
+const generatedCandidateAcceptanceAuthority = readJsonIfExists(generatedCandidateAcceptancePath);
+const generatedCandidateAcceptance = validateGeneratedCandidateAcceptanceAuthority({
+  acceptance: generatedCandidateAcceptanceAuthority,
+  root,
+  currentHead: currentRepositoryHead
+});
+const generatedCandidateAcceptedBy00 = generatedCandidateAcceptance.generatedCandidateAcceptedBy00 === true;
 const sourceAuthorityDigest = digestForFiles(sourceAuthorityFiles());
 const generatedContractDigest = generatedContractsHash;
 const fileLifecycleDigest = hashFileStrict("docs/oam/file-lifecycle-policy.json");
@@ -537,7 +564,9 @@ const p0ClosureProofNodes = buildP0ClosureProofNodes();
 const sourcePackageProofNodes = buildSourcePackageProofNodes();
 const generatedCompileCandidateProofNodes = buildGeneratedCompileCandidateProofNodes();
 const formalGeneratedCompileAuthorizationProofNodes = buildFormalGeneratedCompileAuthorizationProofNodes();
+const generatedFieldBindingClosureProofNodes = buildGeneratedFieldBindingClosureProofNodes();
 const generatedCompileExecutionProofNodes = buildGeneratedCompileExecutionProofNodes();
+const generatedCandidateAcceptanceProofNodes = buildGeneratedCandidateAcceptanceProofNodes();
 const candidateEvidenceObject = {
   ...proof("current-oam-candidate-evidence-object", "当前 OAM Candidate Evidence Object", {
     proofType: "candidate-evidence",
@@ -658,6 +687,14 @@ const finalReport = {
   generatedCompilationReadiness: generatedCompileExecution.generatedCompilationReadiness,
   formalGeneratedCompileAuthorization,
   generatedCompileExecution,
+  generatedFieldBindingClosure,
+  generatedFieldBindingClosureRequired: true,
+  generatedFieldBindingClosureStatus: generatedFieldBindingClosure.status,
+  generatedFieldBindingClosureDigest: generatedFieldBindingClosure.generatedFieldBindingClosureDigest,
+  sourceFieldGapsDecisionDigest: generatedFieldBindingClosure.sourceFieldGapsDecisionDigest,
+  s4AttestationIsFinalReleaseEvidence: false,
+  releaseEvidenceRequiredAfterS4: true,
+  generatedCandidateAcceptance,
   generatedContractStatus10B: generatedCompileExecution.generatedContractStatus10B,
   generatedCompileCompleted: generatedCompileExecution.generatedCompileCompleted,
   generatedCompilationCompleted: generatedCompileExecution.generatedCompilationCompleted,
@@ -675,7 +712,7 @@ const finalReport = {
   formalGeneratedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
   formalGeneratedCompilationAllowed: formalGeneratedCompileAuthorization.generatedCompilationAllowed,
   formalGeneratedCompileAuthorizationStatus: formalGeneratedCompileAuthorization.status,
-  generatedCandidateAcceptedBy00: false,
+  generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
   generatedReleaseAllowed: false,
   runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
   runtimeConsumptionReady: sourcePackageCheck.runtimeConsumptionReady ?? false,
@@ -690,6 +727,8 @@ const finalReport = {
   sourceCompileDecisionReadinessStatus: finalReportStatusMatrix.sourceCompileDecisionReadinessStatus,
   generatedCompileAuthorizationStatus: finalReportStatusMatrix.generatedCompileAuthorizationStatus,
   generatedCompilationStatus: finalReportStatusMatrix.generatedCompilationStatus,
+  generatedFieldBindingClosureStatusEntry: finalReportStatusMatrix.generatedFieldBindingClosureStatus,
+  generatedCandidateAcceptanceStatus: finalReportStatusMatrix.generatedCandidateAcceptanceStatus,
   runtimeConsumptionStatus: finalReportStatusMatrix.runtimeConsumptionStatus,
   runtimeBoundaryStatus: finalReportStatusMatrix.runtimeBoundaryStatus,
   readSurfaceFinanceStatus: finalReportStatusMatrix.readSurfaceFinanceStatus,
@@ -868,10 +907,16 @@ const evidenceGraph = {
       path: generatedCompileExecutionProofPath,
       proofType: "generated-compile-execution-proof",
       purposeZh: "formal generated compile execution 证明；只证明生成编译闭合，不接受候选、不开放 Runtime、不授权 GO。"
+    },
+    {
+      path: generatedCandidateAcceptancePath,
+      proofType: "generated-candidate-acceptance-authority",
+      purposeZh: "00 generated candidate acceptance 的唯一 authority；PENDING 时不接受候选、不开放 Runtime、不授权 GO。"
     }
   ],
   authorityRefs: [
     "docs/oam/current-architecture.manifest.json",
+    generatedCandidateAcceptancePath,
     "docs/system/oam-p0-rule-ledger.md",
     ".github/workflows/ci.yml"
   ],
@@ -892,6 +937,7 @@ const evidenceGraph = {
   generatedCompileCandidate,
   formalGeneratedCompileAuthorization,
   generatedCompileExecution,
+  generatedCandidateAcceptance,
   candidateEvidence: summarizeCandidateEvidence(candidateEvidenceObject),
   commitAttestation: summarizeCommitAttestation(commitAttestation),
   responsibilityMap: {
@@ -907,7 +953,9 @@ const evidenceGraph = {
     ...sourcePackageProofNodes,
     ...generatedCompileCandidateProofNodes,
     ...formalGeneratedCompileAuthorizationProofNodes,
+    ...generatedFieldBindingClosureProofNodes,
     ...generatedCompileExecutionProofNodes,
+    ...generatedCandidateAcceptanceProofNodes,
     ...realBrowserEvidence.nodes
   ],
   edges: realBrowserEvidence.edges
@@ -972,7 +1020,7 @@ const releaseEvidenceObject = {
   candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
   candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
   generatedCompileCandidateStatus: generatedCompileCandidate.status,
-  generatedCandidateAcceptedBy00: false,
+  generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
   generatedReleaseAllowed: false,
   runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
   generatedCompileCompleted: false,
@@ -1046,7 +1094,7 @@ const releaseAttestation = {
   candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
   candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
   generatedCompileCandidateStatus: generatedCompileCandidate.status,
-  generatedCandidateAcceptedBy00: false,
+  generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
   generatedReleaseAllowed: false,
   runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
   generatedCompileCompleted: false,
@@ -1485,7 +1533,20 @@ function binding(kind) {
     candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
     candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
     generatedCompileCandidateStatus: generatedCompileCandidate.status,
-    generatedCandidateAcceptedBy00: false,
+    generatedFieldBindingClosureRequired: true,
+    generatedFieldBindingClosureStatus: generatedFieldBindingClosure.status,
+    generatedFieldBindingClosureDigest: generatedFieldBindingClosure.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: generatedFieldBindingClosure.sourceFieldGapsDecisionDigest,
+    s4AttestationIsFinalReleaseEvidence: false,
+    releaseEvidenceRequiredAfterS4: true,
+    generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
+    generatedCandidateAcceptanceDecisionStatus: generatedCandidateAcceptance.decisionStatus,
+    generatedCandidateSubjectDigest: generatedCandidateAcceptance.subjectDigest,
+    reviewedExecutionHead: generatedCandidateAcceptance.reviewedExecutionHead,
+    decisionRecordHead: generatedCandidateAcceptance.decisionRecordHead,
+    generatedOutputDigest: generatedCandidateAcceptance.generatedOutputDigest,
+    evidenceArtifactDigest: generatedCandidateAcceptance.evidenceArtifactDigest,
+    executionProofDigest: generatedCandidateAcceptance.executionProofDigest,
     generatedReleaseAllowed: false,
     runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
     generatedCompileCompleted: false,
@@ -1531,7 +1592,7 @@ function evidenceBindingState() {
     candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
     candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
     generatedCompileCandidateStatus: generatedCompileCandidate.status,
-    generatedCandidateAcceptedBy00: false,
+    generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
     generatedReleaseAllowed: false,
     runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
     generatedCompileCompleted: false,
@@ -1611,13 +1672,17 @@ function setReleaseDigestFields(value, evidenceRootDigest, evidenceGraphHash, fi
     return;
   }
   if (!value || typeof value !== "object") return;
-  if (Object.prototype.hasOwnProperty.call(value, "evidenceRootDigest")) {
+  const candidateAcceptanceSubjectScoped =
+    value.version === "oam.generated-candidate-acceptance-predicate.v1" ||
+    value.proofType === "generated_candidate_acceptance_authority" ||
+    value.scope === "generated_candidate_acceptance_authority_only";
+  if (!candidateAcceptanceSubjectScoped && Object.prototype.hasOwnProperty.call(value, "evidenceRootDigest")) {
     value.evidenceRootDigest = evidenceRootDigest;
   }
-  if (Object.prototype.hasOwnProperty.call(value, "evidenceGraphHash")) {
+  if (!candidateAcceptanceSubjectScoped && Object.prototype.hasOwnProperty.call(value, "evidenceGraphHash")) {
     value.evidenceGraphHash = evidenceGraphHash;
   }
-  if (Object.prototype.hasOwnProperty.call(value, "finalReportDigest")) {
+  if (!candidateAcceptanceSubjectScoped && Object.prototype.hasOwnProperty.call(value, "finalReportDigest")) {
     value.finalReportDigest = finalReportDigest;
   }
   for (const item of Object.values(value)) {
@@ -1691,7 +1756,7 @@ function buildCandidateEvidenceSubject() {
     generatedCompileExecutionStatus: generatedCompileExecution.status,
     generatedCompileCompleted: generatedCompileExecution.generatedCompileCompleted,
     generatedCompilationCompleted: generatedCompileExecution.generatedCompilationCompleted,
-    generatedCandidateAcceptedBy00: false,
+    generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
     candidateReadyForBusinessImplementation: false,
     candidateReadyForRelease: false,
     notesZh: "Candidate Evidence 只证明本地架构候选闭合；业务落地和发布仍保持 NO_GO。"
@@ -2175,6 +2240,11 @@ function buildGeneratedCompileExecutionState() {
   const result = readJsonIfExists(generatedCompileExecutionResultPath);
   const proofDocument = readJsonIfExists(generatedCompileExecutionProofPath);
   const snapshot = readJsonIfExists(generatedCompileExecutionSnapshotPath);
+  const reviewedExecutionHead = result?.reviewedExecutionHead ??
+    proofDocument?.reviewedExecutionHead ??
+    result?.currentHead ??
+    proofDocument?.currentHead ??
+    currentRepositoryHead;
   const resultPass = result?.status === "PASS" && result?.checkerExecutionStatus === "PASS";
   const proofPass = proofDocument?.status === "PASS";
   const formalAuthorized = formalGeneratedCompileAuthorization.authorized === true;
@@ -2214,6 +2284,8 @@ function buildGeneratedCompileExecutionState() {
     proofDigest: fileExists(generatedCompileExecutionProofPath) ? hashFileStrict(generatedCompileExecutionProofPath) : "missing",
     snapshotDigest: fileExists(generatedCompileExecutionSnapshotPath) ? hashFileStrict(generatedCompileExecutionSnapshotPath) : "missing",
     currentHead: result?.currentHead ?? currentRepositoryHead,
+    currentRepositoryHead,
+    reviewedExecutionHead,
     currentBranch: result?.currentBranch ?? branch,
     formalAuthorizationStatus: formalGeneratedCompileAuthorization.status,
     generatedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
@@ -2241,6 +2313,45 @@ function buildGeneratedCompileExecutionState() {
     runtimeConsumptionReady: false,
     businessFeatureDevelopmentAllowed: false,
     productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO",
+    blockingReasons
+  };
+}
+
+function buildGeneratedFieldBindingClosureState() {
+  const closure = buildDormitoryGeneratedFieldBindingClosure({ root });
+  const result = readJsonIfExists(generatedFieldBindingClosureResultPath);
+  const contract = readJsonIfExists(generatedFieldBindingsPath);
+  const resultPass = result?.status === "PASS" &&
+    result?.generatedFieldBindingClosureStatus === "PASS" &&
+    result?.closureDigest === closure.closureDigest &&
+    result?.sourceFieldGapsDecisionDigest === closure.sourceFieldGapsDecisionDigest;
+  const contractPass = contract?.generated === true &&
+    contract?.doNotEdit === true &&
+    contract?.generatedFieldBindingClosureRequired === true &&
+    contract?.generatedFieldBindingClosureStatus === "PASS" &&
+    contract?.closureDigest === closure.closureDigest &&
+    contract?.sourceFieldGapsDecisionDigest === closure.sourceFieldGapsDecisionDigest;
+  const status = closure.status === "PASS" && resultPass && contractPass ? "PASS" : "FAIL";
+  const blockingReasons = [];
+  if (closure.status !== "PASS") blockingReasons.push(`shared closure status is ${closure.status}.`);
+  if (!resultPass) blockingReasons.push(`${generatedFieldBindingClosureResultPath} is missing, not PASS, or digest-stale.`);
+  if (!contractPass) blockingReasons.push(`${generatedFieldBindingsPath} is missing, invalid, or digest-stale.`);
+  return {
+    version: "oam.generated-field-binding-closure-state.v1",
+    status,
+    generatedFieldBindingClosureRequired: true,
+    generatedFieldBindingClosureStatus: status,
+    contractPath: generatedFieldBindingsPath,
+    resultPath: generatedFieldBindingClosureResultPath,
+    generatedFieldBindingClosureDigest: closure.closureDigest,
+    closureDigest: closure.closureDigest,
+    sourceFieldGapsDecisionDigest: closure.sourceFieldGapsDecisionDigest,
+    sourceFieldGapsDecisionStatus: closure.sourceFieldGapsDecisionStatus,
+    requiredFieldIds: closure.requiredFieldIds,
+    fieldCount: closure.fields.length,
+    runtimeConsumptionReady: false,
     releaseAuthority: false,
     finalGoNoGo: "NO_GO",
     blockingReasons
@@ -2412,6 +2523,8 @@ function buildGeneratedCompileExecutionProofNodes() {
     generatedCompileExecutionResultPath,
     generatedCompileExecutionProofPath,
     generatedCompileExecutionSnapshotPath,
+    generatedFieldBindingsPath,
+    generatedFieldBindingClosureResultPath,
     "docs/oam/generated-contracts-manifest.json",
     "docs/oam/kernel/oam-kernel-graph.generated.json",
     "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
@@ -2422,7 +2535,9 @@ function buildGeneratedCompileExecutionProofNodes() {
   const dependsOn = [
     "OAM-DORMITORY-GOLDEN-CHAIN-FORMAL-GENERATED-COMPILE-AUTHORIZATION",
     "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-COMPILE-CANDIDATE",
+    "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-FIELD-BINDING-CLOSURE",
     generatedCompileExecutionProofPath,
+    generatedFieldBindingClosureResultPath,
     "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
     "artifacts/oam/checks/generated-contract-consistency-result.json",
     "artifacts/oam/checks/derived-contract-consistency-result.json",
@@ -2437,6 +2552,8 @@ function buildGeneratedCompileExecutionProofNodes() {
     proofDigest: generatedCompileExecution.proofDigest,
     snapshotDigest: generatedCompileExecution.snapshotDigest,
     generatedOutputDigest: generatedCompileExecution.generatedOutputDigest,
+    generatedFieldBindingClosureDigest: generatedFieldBindingClosure.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: generatedFieldBindingClosure.sourceFieldGapsDecisionDigest,
     generatedCompileAuthorized: generatedCompileExecution.generatedCompileAuthorized,
     generatedCompilationAllowed: generatedCompileExecution.generatedCompilationAllowed,
     generatedCompileCompleted: generatedCompileExecution.generatedCompileCompleted,
@@ -2470,6 +2587,8 @@ function buildGeneratedCompileExecutionProofNodes() {
     proofDigest: generatedCompileExecution.proofDigest,
     snapshotDigest: generatedCompileExecution.snapshotDigest,
     generatedOutputDigest: generatedCompileExecution.generatedOutputDigest,
+    generatedFieldBindingClosureDigest: generatedFieldBindingClosure.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: generatedFieldBindingClosure.sourceFieldGapsDecisionDigest,
     manifestDigest: generatedCompileExecution.manifestDigest,
     generatedKernelGraphDigest: generatedCompileExecution.generatedKernelGraphDigest,
     generatedCompileAuthorized: generatedCompileExecution.generatedCompileAuthorized,
@@ -2490,6 +2609,166 @@ function buildGeneratedCompileExecutionProofNodes() {
     goNoGoImpact: ["generatedCompilationStatus", "finalGoNoGo"],
     notesZh: "Formal generated compile execution proof node; this completes the generated compile evidence layer only and does not accept the generated candidate, open Runtime consumption, or grant GO."
   }];
+}
+
+function buildGeneratedFieldBindingClosureProofNodes() {
+  const id = "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-FIELD-BINDING-CLOSURE";
+  const source = [
+    generatedFieldBindingsPath,
+    generatedFieldBindingClosureResultPath,
+    "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+    "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json"
+  ];
+  const dependsOn = [
+    "OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE",
+    generatedFieldBindingsPath,
+    generatedFieldBindingClosureResultPath
+  ];
+  const payload = {
+    nodeId: id,
+    proofType: "generated_field_binding_closure",
+    scope: "generated_semantic_closure_only",
+    status: generatedFieldBindingClosure.status,
+    generatedFieldBindingClosureRequired: true,
+    generatedFieldBindingClosureDigest: generatedFieldBindingClosure.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: generatedFieldBindingClosure.sourceFieldGapsDecisionDigest,
+    runtimeConsumptionReady: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO",
+    dependsOn
+  };
+  const hash = digestObject(payload);
+  return [{
+    id,
+    type: "generated_field_binding_closure",
+    proofType: "generated_field_binding_closure",
+    scope: "generated_semantic_closure_only",
+    source,
+    hash,
+    dependsOn,
+    producedBy: "scripts/oam/check-generated-field-binding-closure.mjs",
+    verifiedBy: [
+      "scripts/oam/check-generated-field-binding-closure.mjs",
+      "scripts/oam/check-generated-contract-consistency.mjs",
+      "scripts/oam/check-current-evidence-root.mjs"
+    ],
+    binding: {
+      root: "current-oam-trust-closure-v1",
+      proofId: id,
+      generatedFieldBindingsRef: generatedFieldBindingsPath,
+      generatedFieldBindingClosureResultRef: generatedFieldBindingClosureResultPath,
+      generatedFieldBindingClosureRequired: true,
+      generatedFieldBindingClosureStatus: generatedFieldBindingClosure.status,
+      generatedFieldBindingClosureDigest: generatedFieldBindingClosure.generatedFieldBindingClosureDigest,
+      sourceFieldGapsDecisionDigest: generatedFieldBindingClosure.sourceFieldGapsDecisionDigest,
+      runtimeConsumptionReady: false,
+      releaseAuthority: false,
+      finalGoNoGo: "NO_GO"
+    },
+    status: generatedFieldBindingClosure.status === "PASS" ? "passed" : "blocked",
+    generatedFieldBindingClosureRequired: true,
+    generatedFieldBindingClosureStatus: generatedFieldBindingClosure.status,
+    generatedFieldBindingClosureDigest: generatedFieldBindingClosure.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: generatedFieldBindingClosure.sourceFieldGapsDecisionDigest,
+    runtimeConsumptionReady: false,
+    businessFeatureDevelopmentAllowed: false,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    goNoGo: "NO_GO",
+    finalGoNoGo: "NO_GO",
+    businessGoAuthority: false,
+    goNoGoImpact: ["generatedFieldBindingClosureStatus", "finalGoNoGo"],
+    notesZh: "Generated semantic field binding closure node; this proves Source field gaps are bound into generated contracts but does not accept the generated candidate or open Runtime."
+  }];
+}
+
+function buildGeneratedCandidateAcceptanceProofNodes() {
+  const id = "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-CANDIDATE-ACCEPTANCE";
+  const source = [
+    generatedCandidateAcceptancePath,
+    generatedCandidateAcceptanceResultPath,
+    generatedCompileExecutionResultPath,
+    generatedCompileExecutionProofPath,
+    generatedFieldBindingClosureResultPath
+  ];
+  const dependsOn = [
+    "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-COMPILE-EXECUTION",
+    "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-FIELD-BINDING-CLOSURE",
+    generatedCompileExecutionProofPath,
+    generatedFieldBindingClosureResultPath,
+    generatedCandidateAcceptancePath,
+    generatedCandidateAcceptanceResultPath
+  ];
+  const payload = {
+    nodeId: id,
+    proofType: "generated_candidate_acceptance_authority",
+    scope: "generated_candidate_acceptance_authority_only",
+    status: generatedCandidateAcceptance.status,
+    decisionStatus: generatedCandidateAcceptance.decisionStatus,
+    generatedCandidateAcceptedBy00,
+    subjectDigest: generatedCandidateAcceptance.subjectDigest,
+    reviewedExecutionHead: generatedCandidateAcceptance.reviewedExecutionHead,
+    decisionRecordHead: generatedCandidateAcceptance.decisionRecordHead,
+    generatedOutputDigest: generatedCandidateAcceptance.generatedOutputDigest,
+    generatedFieldBindingClosureDigest: generatedCandidateAcceptance.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: generatedCandidateAcceptance.sourceFieldGapsDecisionDigest,
+    evidenceArtifactDigest: generatedCandidateAcceptance.evidenceArtifactDigest,
+    executionProofDigest: generatedCandidateAcceptance.executionProofDigest,
+    evidenceRootDigest: generatedCandidateAcceptance.evidenceRootDigest,
+    runtimeConsumptionReady: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO",
+    dependsOn
+  };
+  const hash = digestObject(payload);
+  return [{
+    id,
+    type: "generated_candidate_acceptance_authority",
+    proofType: "generated_candidate_acceptance_authority",
+    scope: "generated_candidate_acceptance_authority_only",
+    source,
+    hash,
+    dependsOn,
+    producedBy: "scripts/oam/check-generated-candidate-acceptance.mjs",
+    verifiedBy: [
+      "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "scripts/oam/check-current-evidence-root.mjs"
+    ],
+    binding: generatedCandidateAcceptanceBinding(id),
+    status: generatedCandidateAcceptance.generatedCandidateAcceptedBy00 === true ? "passed" : "blocked",
+    decisionStatus: generatedCandidateAcceptance.decisionStatus,
+    generatedCandidateAcceptedBy00,
+    subjectDigest: generatedCandidateAcceptance.subjectDigest,
+    reviewedExecutionHead: generatedCandidateAcceptance.reviewedExecutionHead,
+    decisionRecordHead: generatedCandidateAcceptance.decisionRecordHead,
+    currentRepositoryHead,
+    generatedOutputDigest: generatedCandidateAcceptance.generatedOutputDigest,
+    generatedFieldBindingClosureDigest: generatedCandidateAcceptance.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: generatedCandidateAcceptance.sourceFieldGapsDecisionDigest,
+    evidenceArtifactDigest: generatedCandidateAcceptance.evidenceArtifactDigest,
+    executionProofDigest: generatedCandidateAcceptance.executionProofDigest,
+    evidenceRootDigest: generatedCandidateAcceptance.evidenceRootDigest,
+    runtimeConsumptionReady: false,
+    businessFeatureDevelopmentAllowed: false,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    goNoGo: "NO_GO",
+    finalGoNoGo: "NO_GO",
+    businessGoAuthority: false,
+    nextDecisionFor00: generatedCandidateAcceptanceNextDecisionFor00(),
+    goNoGoImpact: ["generatedCandidateAcceptanceStatus", "finalGoNoGo"],
+    notesZh: "Generated candidate acceptance authority node; PENDING/NOT_ACCEPTED 均不接受候选，ACCEPTED 也不自动开放 Runtime、业务开发、release 或 GO。"
+  }];
+}
+
+function generatedCandidateAcceptanceNextDecisionFor00() {
+  if (generatedCandidateAcceptance.decisionStatus === "ACCEPTED_BY_00") {
+    return "RUNTIME_CONSUMPTION_AUTHORIZATION_REVIEW_REQUIRED";
+  }
+  if (generatedCandidateAcceptance.decisionStatus === "NOT_ACCEPTED_BY_00") {
+    return "GENERATED_CANDIDATE_REMEDIATION_AND_REVIEW_REQUIRED";
+  }
+  return "GENERATED_CANDIDATE_ACCEPTANCE_REVIEW";
 }
 
 function generatedCompileCandidateBinding(proofId) {
@@ -2520,6 +2799,39 @@ function generatedCompileCandidateBinding(proofId) {
   };
 }
 
+function generatedCandidateAcceptanceBinding(proofId) {
+  return {
+    root: "current-oam-trust-closure-v1",
+    proofId,
+    sourceCommitSha,
+    evidenceRunSha,
+    evidenceLifecycleType,
+    scope: "generated_candidate_acceptance_authority_only",
+    bindingStatus: releaseBindingStatus,
+    referenceOnly: releaseEvidenceReferenceOnly,
+    acceptanceAuthorityRef: generatedCandidateAcceptancePath,
+    acceptanceResultRef: generatedCandidateAcceptanceResultPath,
+    decisionStatus: generatedCandidateAcceptance.decisionStatus,
+    generatedCandidateAcceptedBy00,
+    subjectDigest: generatedCandidateAcceptance.subjectDigest,
+    reviewedExecutionHead: generatedCandidateAcceptance.reviewedExecutionHead,
+    decisionRecordHead: generatedCandidateAcceptance.decisionRecordHead,
+    currentRepositoryHead,
+    generatedOutputDigest: generatedCandidateAcceptance.generatedOutputDigest,
+    generatedFieldBindingClosureDigest: generatedCandidateAcceptance.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: generatedCandidateAcceptance.sourceFieldGapsDecisionDigest,
+    evidenceArtifactDigest: generatedCandidateAcceptance.evidenceArtifactDigest,
+    executionProofDigest: generatedCandidateAcceptance.executionProofDigest,
+    evidenceRootDigest: generatedCandidateAcceptance.evidenceRootDigest,
+    runtimeConsumptionReady: false,
+    businessFeatureDevelopmentAllowed: false,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    finalGoNoGo: "NO_GO"
+  };
+}
+
 function generatedCompileExecutionBinding(proofId) {
   return {
     root: "current-oam-trust-closure-v1",
@@ -2539,6 +2851,8 @@ function generatedCompileExecutionBinding(proofId) {
     proofDigest: generatedCompileExecution.proofDigest,
     snapshotDigest: generatedCompileExecution.snapshotDigest,
     generatedOutputDigest: generatedCompileExecution.generatedOutputDigest,
+    generatedFieldBindingClosureDigest: generatedFieldBindingClosure.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: generatedFieldBindingClosure.sourceFieldGapsDecisionDigest,
     generatedCompileAuthorized: generatedCompileExecution.generatedCompileAuthorized,
     generatedCompilationAllowed: generatedCompileExecution.generatedCompilationAllowed,
     generatedCompileCompleted: generatedCompileExecution.generatedCompileCompleted,
@@ -3186,6 +3500,9 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
   const generatedCompileAllowedBy00 = formalGeneratedCompileAuthorization.authorized === true;
   const generatedCompileCompleted = generatedCompileExecution.generatedCompileCompleted === true &&
     generatedCompileExecution.generatedCompilationCompleted === true;
+  const generatedFieldBindingClosurePassed = generatedFieldBindingClosure.status === "PASS";
+  const generatedCandidateAcceptanceCheckPassed = generatedCandidateAcceptance.status === "PASS";
+  const generatedCandidateAccepted = generatedCandidateAcceptance.generatedCandidateAcceptedBy00 === true;
   const runtimeConsumptionReady = sourcePackageCheck.runtimeConsumptionReady === true;
   const browserL1Passed = realBrowserEvidence.summary.l1?.status === "passed";
   const candidatePassed = candidate.candidateStatus === "PASS";
@@ -3303,6 +3620,42 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
       nextAction: generatedCompileCompleted
         ? "提交给 00 做 generated candidate acceptance review；Runtime consumption、业务开发和 GO 仍保持阻断。"
         : "等待 00 授权后才可运行宿舍 generated contracts 正式编译。"
+    }),
+    generatedFieldBindingClosureStatus: reportStatusEntry({
+      status: generatedFieldBindingClosurePassed ? "PASS" : "NO_GO",
+      inputs: [
+        generatedFieldBindingsPath,
+        generatedFieldBindingClosureResultPath,
+        generatedFieldBindingClosure.generatedFieldBindingClosureDigest,
+        generatedFieldBindingClosure.sourceFieldGapsDecisionDigest
+      ],
+      proofRefs: [
+        generatedFieldBindingsPath,
+        generatedFieldBindingClosureResultPath,
+        "scripts/oam/check-generated-field-binding-closure.mjs"
+      ],
+      blockingReasons: generatedFieldBindingClosurePassed ? [] : generatedFieldBindingClosure.blockingReasons,
+      nextAction: generatedFieldBindingClosurePassed
+        ? "Generated semantic closure is bound; this is not generated candidate acceptance, runtime readiness, or release GO."
+        : "Fix generated field binding closure before generated candidate acceptance review."
+    }),
+    generatedCandidateAcceptanceStatus: reportStatusEntry({
+      status: generatedCandidateAccepted ? "PASS" : "NO_GO",
+      inputs: [
+        generatedCandidateAcceptancePath,
+        generatedCandidateAcceptanceResultPath,
+        generatedCandidateAcceptance.decisionStatus,
+        String(generatedCandidateAcceptance.generatedCandidateAcceptedBy00)
+      ],
+      proofRefs: [
+        generatedCandidateAcceptancePath,
+        generatedCandidateAcceptanceResultPath,
+        "scripts/oam/check-generated-candidate-acceptance.mjs"
+      ],
+      blockingReasons: generatedCandidateAcceptanceBlockingReasons(),
+      nextAction: generatedCandidateAccepted
+        ? "仅表示 00 已接受不可变 Generated Candidate Subject；runtime、business、release、production 仍需独立裁决。"
+        : generatedCandidateAcceptanceNextAction()
     }),
     runtimeConsumptionStatus: reportStatusEntry({
       status: runtimeConsumptionReady ? "PASS" : "NO_GO",
@@ -3500,6 +3853,37 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
       nextAction: "最终保持 NO_GO；不得开始宿舍业务落地、不得发布、不得把任一单项 PASS 解释为 GO。"
     })
   };
+}
+
+function generatedCandidateAcceptanceBlockingReasons() {
+  if (generatedCandidateAcceptedBy00) return [];
+  if (generatedCandidateAcceptance.status !== "PASS") {
+    return ["generated candidate acceptance checker 尚未 PASS。"];
+  }
+  if (generatedCandidateAcceptance.decisionStatus === "NOT_ACCEPTED_BY_00") {
+    return [
+      "00 已裁决 NOT_ACCEPTED_BY_00；generated candidate 不可被 runtime、business、release 或 GO 消费。",
+      ...(generatedCandidateAcceptanceAuthority?.blockingReasons ?? [])
+    ];
+  }
+  if (generatedCandidateAcceptance.decisionStatus === "PENDING_00_DECISION") {
+    return [
+      "generated candidate acceptance authority 当前为 PENDING_00_DECISION；不能由 CI success、Evidence Root PASS 或 S4 execution PASS 推断 accepted。"
+    ];
+  }
+  return [
+    `generated candidate acceptance authority 当前为 ${generatedCandidateAcceptance.decisionStatus}，但 generatedCandidateAcceptedBy00=false。`
+  ];
+}
+
+function generatedCandidateAcceptanceNextAction() {
+  if (generatedCandidateAcceptance.decisionStatus === "NOT_ACCEPTED_BY_00") {
+    return "先完成 blockingReasons 指向的修复和 authoritative CI artifact，再重新提交 00 generated candidate acceptance review。";
+  }
+  if (generatedCandidateAcceptance.decisionStatus === "PENDING_00_DECISION") {
+    return "等待 00 对 generated-candidate-acceptance.current.json 做显式 acceptance 裁决。";
+  }
+  return "保持 generated candidate acceptance 阻断；不得进入 runtime、business、release 或 GO。";
 }
 
 function reportStatusEntry(input) {

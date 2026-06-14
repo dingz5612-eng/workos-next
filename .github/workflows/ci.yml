@@ -85,6 +85,7 @@ jobs:
             node scripts/business/generate-dormitory-derived-contracts.mjs
           fi
           node scripts/oam/compile-current-kernel-graph.mjs
+          node scripts/oam/check-generated-field-binding-closure.mjs
           node scripts/oam/check-generated-contract-consistency.mjs
           node scripts/oam/check-generated-files-not-manually-edited.mjs
           node scripts/oam/check-oam-kernel-graph.mjs
@@ -232,6 +233,7 @@ jobs:
         run: |
           node scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs
           node scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs
+          node scripts/oam/check-generated-candidate-acceptance.mjs
 
       - name: Generate current OAM evidence root
         if: always()
@@ -258,6 +260,8 @@ jobs:
             artifacts/oam/test-results/**
             artifacts/oam/final-report.json
             docs/oam/db-no-side-effects-proof.json
+            docs/oam/generated-candidate-acceptance.current.json
+            docs/contracts/generated/dormitory/field-bindings.generated.json
             docs/oam/evidence-attestation-packages/**
 
       - name: Diff whitespace check

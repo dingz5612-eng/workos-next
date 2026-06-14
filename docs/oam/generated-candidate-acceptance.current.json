@@ -1,0 +1,164 @@
+{
+  "version": "oam.generated-candidate-acceptance.v1",
+  "decisionType": "generated_candidate_acceptance",
+  "decisionStatus": "NOT_ACCEPTED_BY_00",
+  "generatedCandidateAcceptedBy00": false,
+  "generatedCandidateSubject": {
+    "version": "oam.generated-candidate-subject.v1",
+    "subjectType": "generated_candidate_subject",
+    "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
+    "decisionRecordHead": null,
+    "currentRepositoryHead": "74e7731831a04ce42b0480ed1284d4eea859471c",
+    "sourceCandidateHead": "fd60390e678f9d6934137f0480a183701b01de8f",
+    "authorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
+    "formalAuthorizationHead": "a502565ca5672335dc2ee4398a8d443ac7e3b57a",
+    "generatedCompileExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
+    "generatedOutputDigest": "sha256:e13335892463b65eba9b84cca30dbaca229af6089f8f05a7318b33c900bba056",
+    "generatedFieldBindingClosureDigest": "sha256:157de44b6a1ac9ff9240265929747a55db0dc3fe25019999907daa807162161e",
+    "sourceFieldGapsDecisionDigest": "sha256:87cef694c2cd0bbfb7495d91274a2c9f635893f0f9a9eee2d4abfe938f07761e",
+    "evidenceArtifactDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
+    "evidenceArtifactMode": "decision_writeback_reference",
+    "localEvidenceArtifactDigest": "sha256:d2c5bf085da039cc07a51676827ccbf4c5268254d77e7971298c22603f5d237c",
+    "executionProofDigest": "sha256:88fcbc1ba6417d4471cfe3e49622f5a09003f5657889d6c6629642c2f9714145",
+    "evidenceRootDigest": "sha256:087d2a5fbf83591b6920f5bd471b3c205c0d8722c09c0b7a22e33f76033ffc25",
+    "requiredEvidenceDigestSet": [
+      {
+        "id": "generatedCompileExecutionResult",
+        "path": "artifacts/oam/checks/generated-compile-execution-result.json",
+        "digest": "sha256:3346c1b772b05a1233289c8d11ed16aa1baaca1eb33dfcaa0c574d065a55d28a"
+      },
+      {
+        "id": "generatedCompileExecutionProof",
+        "path": "artifacts/oam/evidence/generated-compile-execution-proof.json",
+        "digest": "sha256:d4e25c7f726acd36723b63b159703bd7a17035a7fa9b5365a5fe7efd08862cbd"
+      },
+      {
+        "id": "generatedCompileExecutionSnapshot",
+        "path": "artifacts/oam/checks/generated-compile-execution-input-snapshot.json",
+        "digest": "sha256:8ab6b6081929a0e4612d2e8476faaabd8dcc0c2a1b3fe422ecc51b6cfe954ae1"
+      },
+      {
+        "id": "generatedFieldBindingClosure",
+        "path": "artifacts/oam/checks/generated-field-binding-closure-result.json",
+        "digest": "sha256:b88a35bbff5fd930e80091d5a6d179a044eb0d0294f7c2d9a5afcfb987f34b00"
+      },
+      {
+        "id": "generatedFilesNotManuallyEdited",
+        "path": "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
+        "digest": "sha256:0e106ebeec3d3bbc49c256f9ca96584acdedf1d131662bf9f4121574aae5d8e2"
+      },
+      {
+        "id": "generatedContractConsistency",
+        "path": "artifacts/oam/checks/generated-contract-consistency-result.json",
+        "digest": "sha256:7b2a790a6dc1db9103204d49d0906f4173da4d3158962af2298fa498126cf2d7"
+      },
+      {
+        "id": "derivedContractConsistency",
+        "path": "artifacts/oam/checks/derived-contract-consistency-result.json",
+        "digest": "sha256:b5edd5a1ea012849d8991cc0fe392ea0c1a1bbc0f85298c4d90cfb5a5672ec49"
+      },
+      {
+        "id": "oamKernelGraph",
+        "path": "artifacts/oam/checks/oam-kernel-graph-result.json",
+        "digest": "sha256:883738e585d9f171a7196c276628337d192dd3d95604f4e1f6dc66b3e6bd3eec"
+      },
+      {
+        "id": "dormitoryCandidateAttestationPackage",
+        "path": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
+        "digest": "sha256:f758febcd53b17fdde68e8d836fb3e0b3686d68852f5164ce779604c77e32718"
+      }
+    ],
+    "requiredGeneratedContractDigestSet": [
+      {
+        "id": "generatedContractsManifest",
+        "path": "docs/oam/generated-contracts-manifest.json",
+        "digest": "sha256:6d890d70405a27e1be5ce0120c60302520d51ddcbcece64b62fa8c7eb3c1b139"
+      },
+      {
+        "id": "generatedKernelGraph",
+        "path": "docs/oam/kernel/oam-kernel-graph.generated.json",
+        "digest": "sha256:c66984a6772af292477e1108f673afa24333fa3e4a3560fdea7b15b38be29e5b"
+      },
+      {
+        "id": "generatedFieldBindings",
+        "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+        "digest": "sha256:041053b378ca66774d6e8ff40894ba211f1eb56444300497c0e8147ada8332ed"
+      },
+      {
+        "id": "domainDerivedContracts",
+        "path": "docs/oam/domain-derived-contracts.json",
+        "digest": "sha256:0bf8c6a55a243cfbd07923dd9f3b4f099ff570511f451bbb69a6395a8430f72c"
+      },
+      {
+        "id": "systemDerivedContracts",
+        "path": "docs/oam/system-derived-contracts.json",
+        "digest": "sha256:90a3f36dcd25ad30f039e0cc71aa7a46e88826edb238baf5e1c618fa2a742698"
+      }
+    ],
+    "subjectDigest": "sha256:15ee03022de73d01a5a69f88ecb3ee9e0c8b5c586c00680eb1ec93ba3d5b3d2f"
+  },
+  "subjectStatusAtWrite": "NOT_READY_FOR_00_ACCEPTANCE_REVIEW",
+  "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
+  "decisionRecordHead": null,
+  "decisionWritebackBaseHead": "74e7731831a04ce42b0480ed1284d4eea859471c",
+  "evidenceArtifactDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
+  "generatedFieldBindingClosureDigest": "sha256:157de44b6a1ac9ff9240265929747a55db0dc3fe25019999907daa807162161e",
+  "sourceFieldGapsDecisionDigest": "sha256:87cef694c2cd0bbfb7495d91274a2c9f635893f0f9a9eee2d4abfe938f07761e",
+  "executionProofDigest": "sha256:88fcbc1ba6417d4471cfe3e49622f5a09003f5657889d6c6629642c2f9714145",
+  "evidenceRootDigest": "sha256:087d2a5fbf83591b6920f5bd471b3c205c0d8722c09c0b7a22e33f76033ffc25",
+  "blockingReasons": [
+    "subject_status=NOT_READY_FOR_00_ACCEPTANCE_REVIEW",
+    "evidenceArtifactMode=decision_writeback_reference",
+    "ci_artifact_authoritative_required_before_generated_candidate_acceptance",
+    "artifactCompletenessStatus=BLOCKED_REQUIRED_FILES_MISSING",
+    "missing_required_files=docs/contracts/generated/dormitory/field-bindings.generated.json,artifacts/oam/checks/generated-field-binding-closure-result.json"
+  ],
+  "explicitNegativeAuthorities": {
+    "runtimeConsumptionReady": false,
+    "businessFeatureDevelopmentAllowed": false,
+    "businessProductionGoNoGo": "NO_GO",
+    "dormitoryL2GoNoGo": "NO_GO",
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  },
+  "acceptanceRecord": null,
+  "historicalAppendix": {
+    "deprecatedAliasReferences": [
+      {
+        "source": "docs/oam/generated-compile-candidate-approval.current.json",
+        "field": "executionHead",
+        "aliasOf": "authorizedCandidateExecutionHead",
+        "participation": "deprecated_alias_reference_only_not_current_acceptance_authority"
+      },
+      {
+        "source": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
+        "field": "candidateRefs.executionHead",
+        "aliasOf": "authorizedCandidateExecutionHead",
+        "participation": "deprecated_alias_reference_only_not_current_acceptance_authority"
+      },
+      {
+        "source": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
+        "field": "previousAuthorizedCandidateExecutionHead",
+        "aliasOf": null,
+        "participation": "appendix_reference_only_not_current_acceptance_authority"
+      },
+      {
+        "source": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
+        "field": "artifactVerification.artifactMode",
+        "aliasOf": null,
+        "participation": "appendix_reference_only_not_current_acceptance_authority"
+      }
+    ],
+    "note": "Deprecated aliases are retained only as appendix references and do not participate in current generated candidate acceptance authority."
+  },
+  "nextDecisionRequired": "generated_candidate_remediation_and_review_required",
+  "forbiddenInterpretations": [
+    "CI success is not generated candidate acceptance",
+    "artifact exists is not generated candidate acceptance",
+    "Evidence Root PASS is not generated candidate acceptance",
+    "S4 execution PASS is not generated candidate acceptance",
+    "acceptance authority does not open runtime consumption",
+    "acceptance authority does not grant releaseAuthority or final GO"
+  ]
+}

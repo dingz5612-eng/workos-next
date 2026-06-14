@@ -22,6 +22,7 @@ const generatedOutputFiles = [
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
+  "docs/contracts/generated/dormitory/field-bindings.generated.json",
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
@@ -38,12 +39,14 @@ const generatorAndCheckerFiles = [
   "scripts/oam/compile-current-kernel-graph.mjs",
   "scripts/oam/generate-system-derived-contracts.mjs",
   "scripts/oam/check-generated-files-not-manually-edited.mjs",
+  "scripts/oam/check-generated-field-binding-closure.mjs",
   "scripts/oam/check-generated-contract-consistency.mjs",
   "scripts/oam/check-derived-contract-consistency.mjs",
   "scripts/oam/check-oam-kernel-graph.mjs",
   "scripts/oam/check-generated-compile-authorization.mjs",
   "scripts/oam/check-generated-compile-execution.mjs",
-  "scripts/oam/lib/formal-generated-compile-authorization.mjs"
+  "scripts/oam/lib/formal-generated-compile-authorization.mjs",
+  "scripts/oam/lib/dormitory-generated-field-binding-closure.mjs"
 ];
 const compileCommands = [
   ["node", ["scripts/business/generate-dormitory-derived-contracts.mjs"]],
@@ -51,6 +54,7 @@ const compileCommands = [
   ["node", ["scripts/oam/generate-system-derived-contracts.mjs"]]
 ];
 const requiredPreGateResults = [
+  ["generatedFieldBindingClosure", "artifacts/oam/checks/generated-field-binding-closure-result.json"],
   ["generatedFilesNotManuallyEdited", "artifacts/oam/checks/generated-files-not-manually-edited-result.json"],
   ["generatedContractConsistency", "artifacts/oam/checks/generated-contract-consistency-result.json"],
   ["derivedContractConsistency", "artifacts/oam/checks/derived-contract-consistency-result.json"],
@@ -63,6 +67,13 @@ const currentHead = git(["rev-parse", "HEAD"]);
 const currentBranch = git(["branch", "--show-current"]);
 const formalApproval = readJson(formalApprovalPath);
 const candidateApproval = readJson(candidateApprovalPath);
+const previousExecutionResult = readJsonIfExists(resultPath);
+const previousExecutionProof = readJsonIfExists(proofPath);
+const reviewedExecutionHead = previousExecutionResult?.reviewedExecutionHead ??
+  previousExecutionProof?.reviewedExecutionHead ??
+  previousExecutionResult?.currentHead ??
+  previousExecutionProof?.currentHead ??
+  currentHead;
 const formalAuthorization = validateFormalGeneratedCompileAuthorization({
   approval: formalApproval,
   candidateApproval,
@@ -151,6 +162,8 @@ const proof = {
   generatedAtUtc: new Date().toISOString(),
   status,
   currentHead,
+  currentRepositoryHead: currentHead,
+  reviewedExecutionHead,
   currentBranch,
   formalAuthorization: formalAuthorizationState(),
   inputSnapshot,
@@ -215,6 +228,8 @@ writeJson(resultPath, {
   checkerExecutionStatus: status,
   proofPath,
   currentHead,
+  currentRepositoryHead: currentHead,
+  reviewedExecutionHead,
   currentBranch,
   formalAuthorization: proof.formalAuthorization,
   generatedOutputDigest: round2Snapshot.generatedOutputDigest,

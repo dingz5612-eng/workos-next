@@ -3,6 +3,16 @@ import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
 import { validateFormalGeneratedCompileAuthorization } from "./lib/formal-generated-compile-authorization.mjs";
+import {
+  GENERATED_CANDIDATE_ACCEPTANCE_PATH,
+  GENERATED_CANDIDATE_ACCEPTANCE_RESULT_PATH,
+  validateGeneratedCandidateAcceptanceAuthority
+} from "./lib/generated-candidate-subject.mjs";
+import {
+  FIELD_BINDING_CLOSURE_RESULT_PATH,
+  FIELD_BINDINGS_GENERATED_PATH,
+  buildDormitoryGeneratedFieldBindingClosure
+} from "./lib/dormitory-generated-field-binding-closure.mjs";
 
 const root = process.cwd();
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
@@ -20,9 +30,13 @@ const releaseAttestationPath = "artifacts/oam/evidence/current-oam-release-attes
 const evidenceLifecycleProofPath = "artifacts/oam/evidence/evidence-lifecycle-proof.json";
 const generatedCompileApprovalPath = "docs/oam/generated-compile-approval.current.json";
 const generatedCompileCandidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
+const generatedCandidateAcceptancePath = GENERATED_CANDIDATE_ACCEPTANCE_PATH;
+const generatedCandidateAcceptanceResultPath = GENERATED_CANDIDATE_ACCEPTANCE_RESULT_PATH;
 const generatedCompileExecutionSnapshotPath = "artifacts/oam/checks/generated-compile-execution-input-snapshot.json";
 const generatedCompileExecutionResultPath = "artifacts/oam/checks/generated-compile-execution-result.json";
 const generatedCompileExecutionProofPath = "artifacts/oam/evidence/generated-compile-execution-proof.json";
+const generatedFieldBindingClosureResultPath = FIELD_BINDING_CLOSURE_RESULT_PATH;
+const generatedFieldBindingsPath = FIELD_BINDINGS_GENERATED_PATH;
 const pendingExternalAttestation = "pending_external_attestation";
 const candidateCompileEvidenceStatuses = new Set(["CURRENT", "STALE_BUT_NO_GO", "STALE_REFERENCE"]);
 const sha256DigestPattern = /^sha256:[a-f0-9]{64}$/;
@@ -77,6 +91,7 @@ const requiredFiles = [
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
+  generatedFieldBindingsPath,
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
@@ -86,11 +101,14 @@ const requiredFiles = [
   "docs/oam/db-no-side-effects-proof.json",
   generatedCompileApprovalPath,
   generatedCompileCandidateApprovalPath,
+  generatedCandidateAcceptancePath,
+  generatedCandidateAcceptanceResultPath,
   "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
   "artifacts/oam/checks/generated-compile-authorization-result.json",
   generatedCompileExecutionSnapshotPath,
   generatedCompileExecutionResultPath,
   generatedCompileExecutionProofPath,
+  generatedFieldBindingClosureResultPath,
   "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
   "artifacts/oam/checks/generated-contract-consistency-result.json",
   "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
@@ -143,6 +161,12 @@ if (documents.size === requiredFiles.length) {
     candidateApprovalPath: generatedCompileCandidateApprovalPath
   });
   const generatedCompileExecution = generatedCompileExecutionState(documents, formalAuthorization);
+  const generatedFieldBindingClosure = generatedFieldBindingClosureState(documents);
+  const generatedCandidateAcceptance = validateGeneratedCandidateAcceptanceAuthority({
+    acceptance: documents.get(generatedCandidateAcceptancePath),
+    root,
+    currentHead: currentRepositoryHead
+  });
 
   if (!expectedDigest || expectedDigest !== actualDigest) {
     failures.push(`artifact digest mismatch: expected ${expectedDigest || "missing"}, actual ${actualDigest}`);
@@ -228,7 +252,9 @@ if (documents.size === requiredFiles.length) {
   checkSourceFormalGeneratedCompileSemanticSeparation(finalReport, generatedCompileExecution);
   checkGeneratedCompileCandidate(finalReport, graph, documents);
   checkFormalGeneratedCompileAuthorization(finalReport, graph, documents, formalAuthorization);
+  checkGeneratedFieldBindingClosure(finalReport, graph, documents, generatedFieldBindingClosure);
   checkGeneratedCompileExecution(finalReport, graph, documents, generatedCompileExecution);
+  checkGeneratedCandidateAcceptance(finalReport, graph, documents, generatedCandidateAcceptance);
 
   checkArtifactName("final report", finalReport.artifactName);
   checkCandidateEvidenceObject(candidateObject, graph, finalReport);
@@ -1240,8 +1266,15 @@ function generatedCompileExecutionState(documents, formalAuthorization) {
   if (snapshot?.status !== "PASS") {
     failures.push("generated compile execution input snapshot must be PASS.");
   }
-  if (result?.currentHead !== currentRepositoryHead || proof?.currentHead !== currentRepositoryHead) {
-    failures.push("generated compile execution result/proof must bind current HEAD.");
+  const resultReviewedExecutionHead = result?.reviewedExecutionHead ?? result?.currentHead;
+  const proofReviewedExecutionHead = proof?.reviewedExecutionHead ?? proof?.currentHead;
+  if (!isGitSha(resultReviewedExecutionHead) || !isGitSha(proofReviewedExecutionHead)) {
+    failures.push("generated compile execution result/proof must bind a concrete reviewedExecutionHead.");
+  } else if (resultReviewedExecutionHead !== proofReviewedExecutionHead) {
+    failures.push("generated compile execution result/proof reviewedExecutionHead must match.");
+  } else if (currentRepositoryHead !== resultReviewedExecutionHead &&
+    !gitSucceeds(`merge-base --is-ancestor ${resultReviewedExecutionHead} ${currentRepositoryHead}`)) {
+    failures.push("current HEAD must equal or descend from S4 reviewedExecutionHead for evidence writeback.");
   }
   if (result?.proofPath !== generatedCompileExecutionProofPath) {
     failures.push("generated compile execution result must reference generated compile execution proof path.");
@@ -1252,10 +1285,84 @@ function generatedCompileExecutionState(documents, formalAuthorization) {
     result,
     proof,
     snapshot,
+    reviewedExecutionHead: resultReviewedExecutionHead,
     resultPass,
     proofPass,
     noForbiddenEscalation
   };
+}
+
+function generatedFieldBindingClosureState(documents) {
+  const closure = buildDormitoryGeneratedFieldBindingClosure({ root });
+  const result = documents.get(generatedFieldBindingClosureResultPath);
+  const contract = documents.get(generatedFieldBindingsPath);
+  const resultPass = result?.status === "PASS" &&
+    result?.generatedFieldBindingClosureStatus === "PASS" &&
+    result?.closureDigest === closure.closureDigest &&
+    result?.sourceFieldGapsDecisionDigest === closure.sourceFieldGapsDecisionDigest;
+  const contractPass = contract?.generated === true &&
+    contract?.doNotEdit === true &&
+    contract?.generatedFieldBindingClosureRequired === true &&
+    contract?.generatedFieldBindingClosureStatus === "PASS" &&
+    contract?.closureDigest === closure.closureDigest &&
+    contract?.sourceFieldGapsDecisionDigest === closure.sourceFieldGapsDecisionDigest;
+  return {
+    status: closure.status === "PASS" && resultPass && contractPass ? "PASS" : "FAIL",
+    closure,
+    result,
+    contract,
+    generatedFieldBindingClosureDigest: closure.closureDigest,
+    sourceFieldGapsDecisionDigest: closure.sourceFieldGapsDecisionDigest
+  };
+}
+
+function checkGeneratedFieldBindingClosure(finalReport, graph, documents, state) {
+  if (state.status !== "PASS") {
+    failures.push("generated field binding closure must PASS and bind generated contract/result digests.");
+  }
+  if (finalReport.generatedFieldBindingClosureRequired !== true ||
+    finalReport.generatedFieldBindingClosureStatus !== "PASS" ||
+    finalReport.generatedFieldBindingClosureDigest !== state.generatedFieldBindingClosureDigest ||
+    finalReport.sourceFieldGapsDecisionDigest !== state.sourceFieldGapsDecisionDigest ||
+    finalReport.s4AttestationIsFinalReleaseEvidence !== false ||
+    finalReport.releaseEvidenceRequiredAfterS4 !== true ||
+    finalReport.runtimeConsumptionReady !== false ||
+    finalReport.finalGoNoGo !== "NO_GO") {
+    failures.push("final report generated field binding closure fields must mirror closure state and keep runtime/release/GO blocked.");
+  }
+  if (finalReport.statusMatrix?.generatedFieldBindingClosureStatus?.status !== "PASS") {
+    failures.push("final report statusMatrix.generatedFieldBindingClosureStatus must be PASS.");
+  }
+  const node = (graph.nodes ?? []).find((item) => item.id === "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-FIELD-BINDING-CLOSURE");
+  if (!node) {
+    failures.push("evidence graph missing generated field binding closure node.");
+    return;
+  }
+  if (node.scope !== "generated_semantic_closure_only" ||
+    node.generatedFieldBindingClosureStatus !== "PASS" ||
+    node.generatedFieldBindingClosureDigest !== state.generatedFieldBindingClosureDigest ||
+    node.sourceFieldGapsDecisionDigest !== state.sourceFieldGapsDecisionDigest ||
+    node.runtimeConsumptionReady !== false ||
+    node.releaseAuthority !== false ||
+    node.finalGoNoGo !== "NO_GO") {
+    failures.push("generated field binding closure node must mirror closure state and keep runtime/release/GO blocked.");
+  }
+  const binding = node.binding ?? {};
+  for (const [field, expected] of Object.entries({
+    generatedFieldBindingsRef: generatedFieldBindingsPath,
+    generatedFieldBindingClosureResultRef: generatedFieldBindingClosureResultPath,
+    generatedFieldBindingClosureRequired: true,
+    generatedFieldBindingClosureStatus: "PASS",
+    generatedFieldBindingClosureDigest: state.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: state.sourceFieldGapsDecisionDigest,
+    runtimeConsumptionReady: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  })) {
+    if (binding[field] !== expected) {
+      failures.push(`generated field binding closure binding ${field} must be ${expected}, actual ${binding[field] ?? "missing"}.`);
+    }
+  }
 }
 
 function checkGeneratedCompileExecution(finalReport, graph, documents, state) {
@@ -1281,6 +1388,10 @@ function checkGeneratedCompileExecution(finalReport, graph, documents, state) {
   if (!sha256DigestPattern.test(String(result.generatedOutputDigest ?? "")) ||
     finalReport.generatedCompileExecution?.generatedOutputDigest !== result.generatedOutputDigest) {
     failures.push("generated compile execution output digest must be sha256 and mirrored in final report.");
+  }
+  const reviewedExecutionHead = result.reviewedExecutionHead ?? result.currentHead;
+  if (finalReport.generatedCompileExecution?.reviewedExecutionHead !== reviewedExecutionHead) {
+    failures.push("final report generatedCompileExecution.reviewedExecutionHead must mirror S4 result/proof reviewedExecutionHead.");
   }
   if (result.reproducibility?.sameGeneratedOutputDigest !== true ||
     result.reproducibility?.sameDerivedOutputDigest !== true ||
@@ -1355,6 +1466,110 @@ function checkGeneratedCompileExecution(finalReport, graph, documents, state) {
   }
   if (!JSON.stringify(graph).includes(generatedCompileExecutionProofPath)) {
     failures.push("evidence graph must reference generated compile execution proof path.");
+  }
+}
+
+function checkGeneratedCandidateAcceptance(finalReport, graph, documents, state) {
+  const acceptance = documents.get(generatedCandidateAcceptancePath);
+  const result = documents.get(generatedCandidateAcceptanceResultPath);
+  if (!acceptance || !result) {
+    failures.push("generated candidate acceptance authority/result is missing.");
+    return;
+  }
+  if (state.status !== "PASS" || result.status !== "PASS") {
+    failures.push("generated candidate acceptance checker must PASS.");
+  }
+  if (state.decisionStatus !== acceptance.decisionStatus ||
+    result.decisionStatus !== acceptance.decisionStatus) {
+    failures.push("generated candidate acceptance decisionStatus must match authority, checker result, and predicate state.");
+  }
+  if (finalReport.generatedCandidateAcceptance?.decisionStatus !== state.decisionStatus ||
+    finalReport.generatedCandidateAcceptance?.subjectDigest !== state.subjectDigest ||
+    finalReport.generatedCandidateAcceptance?.reviewedExecutionHead !== state.reviewedExecutionHead ||
+    finalReport.generatedCandidateAcceptance?.generatedOutputDigest !== state.generatedOutputDigest ||
+    finalReport.generatedCandidateAcceptance?.generatedFieldBindingClosureDigest !== state.generatedFieldBindingClosureDigest ||
+    finalReport.generatedCandidateAcceptance?.sourceFieldGapsDecisionDigest !== state.sourceFieldGapsDecisionDigest ||
+    finalReport.generatedCandidateAcceptance?.evidenceArtifactDigest !== state.evidenceArtifactDigest ||
+    finalReport.generatedCandidateAcceptance?.executionProofDigest !== state.executionProofDigest ||
+    finalReport.generatedCandidateAcceptance?.evidenceRootDigest !== state.evidenceRootDigest) {
+    failures.push("final report generatedCandidateAcceptance must mirror the shared acceptance predicate.");
+  }
+  if (finalReport.generatedCandidateAcceptedBy00 !== state.generatedCandidateAcceptedBy00) {
+    failures.push("final report generatedCandidateAcceptedBy00 must be read from generated-candidate-acceptance.current.json.");
+  }
+  if (state.decisionStatus === "PENDING_00_DECISION" && finalReport.generatedCandidateAcceptedBy00 !== false) {
+    failures.push("PENDING_00_DECISION must keep generatedCandidateAcceptedBy00=false.");
+  }
+  if (finalReport.runtimeConsumptionReady !== false ||
+    finalReport.businessFeatureDevelopmentAllowed !== false ||
+    finalReport.productionConfirmAllowed !== false ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.finalGoNoGo !== "NO_GO") {
+    failures.push("generated candidate acceptance authority must not open runtime/business/production/release/GO.");
+  }
+  const matrixStatus = finalReport.statusMatrix?.generatedCandidateAcceptanceStatus?.status;
+  const expectedMatrixStatus = state.generatedCandidateAcceptedBy00 ? "PASS" : "NO_GO";
+  if (matrixStatus !== expectedMatrixStatus) {
+    failures.push(`generatedCandidateAcceptanceStatus must be ${expectedMatrixStatus}, actual ${matrixStatus ?? "missing"}.`);
+  }
+  const node = (graph.nodes ?? []).find((item) => item.id === "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-CANDIDATE-ACCEPTANCE");
+  if (!node) {
+    failures.push("evidence graph missing generated candidate acceptance authority node.");
+    return;
+  }
+  if (node.scope !== "generated_candidate_acceptance_authority_only" ||
+    node.decisionStatus !== state.decisionStatus ||
+    node.generatedCandidateAcceptedBy00 !== state.generatedCandidateAcceptedBy00 ||
+    node.subjectDigest !== state.subjectDigest ||
+    node.reviewedExecutionHead !== state.reviewedExecutionHead ||
+    node.generatedOutputDigest !== state.generatedOutputDigest ||
+    node.generatedFieldBindingClosureDigest !== state.generatedFieldBindingClosureDigest ||
+    node.sourceFieldGapsDecisionDigest !== state.sourceFieldGapsDecisionDigest ||
+    node.evidenceArtifactDigest !== state.evidenceArtifactDigest ||
+    node.executionProofDigest !== state.executionProofDigest ||
+    node.evidenceRootDigest !== state.evidenceRootDigest ||
+    node.runtimeConsumptionReady !== false ||
+    node.businessFeatureDevelopmentAllowed !== false ||
+    node.productionConfirmAllowed !== false ||
+    node.releaseAuthority !== false ||
+    node.finalGoNoGo !== "NO_GO") {
+    failures.push("generated candidate acceptance node must mirror the predicate and keep runtime/business/release/GO blocked.");
+  }
+  for (const dep of [
+    "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-COMPILE-EXECUTION",
+    generatedCompileExecutionProofPath,
+    generatedCandidateAcceptancePath,
+    generatedCandidateAcceptanceResultPath
+  ]) {
+    if (!(node.dependsOn ?? []).includes(dep)) {
+      failures.push(`generated candidate acceptance node missing dependency: ${dep}.`);
+    }
+  }
+  const binding = node.binding ?? {};
+  for (const [field, expected] of Object.entries({
+    acceptanceAuthorityRef: generatedCandidateAcceptancePath,
+    acceptanceResultRef: generatedCandidateAcceptanceResultPath,
+    decisionStatus: state.decisionStatus,
+    generatedCandidateAcceptedBy00: state.generatedCandidateAcceptedBy00,
+    subjectDigest: state.subjectDigest,
+    reviewedExecutionHead: state.reviewedExecutionHead,
+    decisionRecordHead: state.decisionRecordHead,
+    generatedOutputDigest: state.generatedOutputDigest,
+    generatedFieldBindingClosureDigest: state.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: state.sourceFieldGapsDecisionDigest,
+    evidenceArtifactDigest: state.evidenceArtifactDigest,
+    executionProofDigest: state.executionProofDigest,
+    evidenceRootDigest: state.evidenceRootDigest,
+    runtimeConsumptionReady: false,
+    businessFeatureDevelopmentAllowed: false,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    finalGoNoGo: "NO_GO"
+  })) {
+    if (binding[field] !== expected) {
+      failures.push(`generated candidate acceptance binding ${field} must be ${expected}, actual ${binding[field] ?? "missing"}.`);
+    }
   }
 }
 
@@ -1664,6 +1879,7 @@ function generatedContractFiles() {
     "docs/oam/kernel/oam-kernel-graph.generated.json",
     "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
     "docs/contracts/generated/dormitory/fields.generated.json",
+    generatedFieldBindingsPath,
     "docs/contracts/generated/dormitory/workitems.generated.json",
     "docs/contracts/generated/dormitory/surface-input-model.generated.json",
     "docs/contracts/generated/dormitory/read-model.generated.json",
@@ -1743,10 +1959,24 @@ function checkBinding(file, document, expectedDigest) {
     "candidateCompileClosureForCurrentHead",
     "candidateCompileNextAction",
     "generatedCompileCandidateStatus",
+    "generatedFieldBindingClosureRequired",
+    "generatedFieldBindingClosureStatus",
+    "generatedFieldBindingClosureDigest",
+    "sourceFieldGapsDecisionDigest",
+    "s4AttestationIsFinalReleaseEvidence",
+    "releaseEvidenceRequiredAfterS4",
     "generatedCandidateAcceptedBy00",
+    "generatedCandidateAcceptanceDecisionStatus",
+    "generatedCandidateSubjectDigest",
+    "reviewedExecutionHead",
+    "decisionRecordHead",
+    "generatedOutputDigest",
+    "evidenceArtifactDigest",
+    "executionProofDigest",
     "generatedReleaseAllowed",
     "runtimeConsumptionAllowed"
   ]) {
+    if (key === "decisionRecordHead" && Object.hasOwn(binding, key)) continue;
     if (binding[key] === undefined || binding[key] === null || binding[key] === "") {
       failures.push(`${file} binding missing ${key}.`);
     }

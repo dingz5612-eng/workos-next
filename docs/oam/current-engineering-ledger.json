@@ -6,9 +6,9 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceLifecyclePolicy": "docs/oam/file-lifecycle-policy.json",
   "defaultPolicy": "unregistered_files_are_not_allowed",
-  "fileCount": 983,
+  "fileCount": 991,
   "identityCounts": {
-    "validation_file": 325,
+    "validation_file": 333,
     "implementation_file": 330,
     "derived_view": 65,
     "authority_file": 241,
@@ -9184,6 +9184,39 @@
       "deletionConditionZh": "当且仅当内容已被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-generated-field-binding-closure.mjs",
+        "scripts/oam/check-generated-contract-consistency.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        ".github/workflows/ci.yml"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "gates": [
+        "scripts/oam/check-generated-field-binding-closure.mjs",
+        "scripts/oam/check-generated-contract-consistency.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "absorbedBy": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "removalProofGate": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/contracts/generated/dormitory/fields.generated.json",
       "currentIdentity": "derived_view",
       "lifecycleState": "derived_view",
@@ -11190,6 +11223,40 @@
       "absorbedBy": "docs/oam/file-lifecycle-policy.json",
       "removalProofGate": "scripts/oam/check-file-lifecycle-policy.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/oam/generated-candidate-acceptance.current.json",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.docs/oam/generated-candidate-acceptance.current.json",
+      "gates": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/generated-candidate-acceptance-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/generated-candidate-acceptance.current.json",
+      "absorbedBy": "docs/oam/generated-candidate-acceptance.current.json",
+      "removalProofGate": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "deletionConditionZh": "当 00 generated candidate acceptance 裁决对象被新裁决取代且无门禁、无证据引用时删除。"
     },
     {
       "path": "docs/oam/generated-compile-approval.current.json",
@@ -17752,6 +17819,39 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "docs/oam/generated-candidate-acceptance.current.json",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/check-generated-candidate-acceptance.mjs",
+      "gates": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/generated-candidate-acceptance-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "absorbedBy": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "removalProofGate": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "deletionConditionZh": "当 generated candidate acceptance gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-generated-compile-authorization.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -17839,6 +17939,36 @@
       "absorbedBy": "scripts/oam/check-generated-contract-consistency.mjs",
       "removalProofGate": "scripts/oam/check-generated-contract-consistency.mjs",
       "deletionConditionZh": "当且仅当内容已被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml",
+        "scripts/oam/check-generated-contract-consistency.mjs"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/check-generated-field-binding-closure.mjs",
+      "gates": [
+        "scripts/oam/check-generated-field-binding-closure.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "absorbedBy": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "removalProofGate": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
       "path": "scripts/oam/check-generated-files-not-manually-edited.mjs",
@@ -18626,6 +18756,34 @@
       "deletionConditionZh": "当 00 审查包不再作为候选证据审查输入且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/generate-generated-candidate-acceptance.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "docs/oam/generated-candidate-acceptance.current.json"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/generate-generated-candidate-acceptance.mjs",
+      "gates": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/generate-generated-candidate-acceptance.mjs",
+      "absorbedBy": "scripts/oam/generate-generated-candidate-acceptance.mjs",
+      "removalProofGate": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/generate-mobile-branch-risk-ledger.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -18684,6 +18842,67 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/lib/decision-writeback-policy.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/lib/generated-candidate-subject.mjs"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/lib/decision-writeback-policy.mjs",
+      "gates": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/generated-candidate-acceptance-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/lib/decision-writeback-policy.mjs",
+      "absorbedBy": "scripts/oam/lib/decision-writeback-policy.mjs",
+      "removalProofGate": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "deletionConditionZh": "当 generated candidate decision writeback policy 被当前权威替代且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/lib/dormitory-generated-field-binding-closure.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/compile-current-kernel-graph.mjs",
+        "scripts/oam/check-generated-field-binding-closure.mjs",
+        "scripts/oam/lib/generated-candidate-subject.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/lib/dormitory-generated-field-binding-closure.mjs",
+      "gates": [
+        "scripts/oam/check-generated-field-binding-closure.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/lib/dormitory-generated-field-binding-closure.mjs",
+      "absorbedBy": "scripts/oam/lib/dormitory-generated-field-binding-closure.mjs",
+      "removalProofGate": "scripts/oam/check-generated-field-binding-closure.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/lib/formal-generated-compile-authorization.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -18713,6 +18932,38 @@
       "absorbedBy": "scripts/oam/lib/formal-generated-compile-authorization.mjs",
       "removalProofGate": "scripts/oam/check-generated-compile-authorization.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/lib/generated-candidate-subject.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/lib/generated-candidate-subject.mjs",
+      "gates": [
+        "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/generated-candidate-acceptance-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/lib/generated-candidate-subject.mjs",
+      "absorbedBy": "scripts/oam/lib/generated-candidate-subject.mjs",
+      "removalProofGate": "scripts/oam/check-generated-candidate-acceptance.mjs",
+      "deletionConditionZh": "当 generated candidate subject 共享模型被当前权威替代且无消费者、无门禁、无证据引用时删除。"
     },
     {
       "path": "scripts/oam/normalize-authority-classification.mjs",

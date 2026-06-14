@@ -86,16 +86,16 @@ function Write-GateReport {
   $finalizable = $RunStatus -eq "completed" -and $effectiveStatus -eq "passed" -and $completedGateCount -eq $script:ExpectedGateCount
   $blockingReasons = @()
   if ($RunStatus -eq "running") {
-    $blockingReasons += "Control Plane 仍在运行，不能作为最终裁决。"
+    $blockingReasons += "Control Plane is still running and cannot be used as final adjudication."
   }
   if ($RunStatus -eq "failed") {
-    $blockingReasons += "Control Plane 已失败，不能作为最终 PASS。"
+    $blockingReasons += "Control Plane failed and cannot be used as final PASS."
   }
   if ($completedGateCount -ne $script:ExpectedGateCount) {
-    $blockingReasons += "Control Plane 已完成 gate 数量与 expectedGateCount 不一致：completed=${completedGateCount}, expected=$($script:ExpectedGateCount)。"
+    $blockingReasons += "Control Plane completed gate count does not match expectedGateCount: completed=${completedGateCount}, expected=$($script:ExpectedGateCount)."
   }
   if ($failed.Count -gt 0) {
-    $blockingReasons += "Control Plane 失败 gate 数量：$($failed.Count)。"
+    $blockingReasons += "Control Plane failed gate count: $($failed.Count)."
   }
   if ($script:TerminalFailureMessage) {
     $blockingReasons += $script:TerminalFailureMessage
@@ -125,7 +125,9 @@ function Write-GateReport {
     New-Item -ItemType Directory -Path $dir | Out-Null
   }
   $tempPath = "$($script:GateReportPath).tmp"
-  $report | ConvertTo-Json -Depth 8 | Set-Content -Path $tempPath -Encoding UTF8
+  $json = $report | ConvertTo-Json -Depth 8
+  $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+  [System.IO.File]::WriteAllText((Resolve-Path -LiteralPath (Split-Path -Parent $tempPath)).Path + [System.IO.Path]::DirectorySeparatorChar + (Split-Path -Leaf $tempPath), $json, $utf8NoBom)
   Move-Item -LiteralPath $tempPath -Destination $script:GateReportPath -Force
 }
 
@@ -162,7 +164,7 @@ function Invoke-Gate {
       Write-GateReport -RunStatus "running"
     }
   } catch {
-    $script:TerminalFailureMessage = "Control Plane 当前 gate 失败：$commandLine。$($_.Exception.Message)"
+    $script:TerminalFailureMessage = "Control Plane current gate failed: $commandLine. $($_.Exception.Message)"
     if ($RecordResult) {
       $script:GateResults += [ordered]@{
         command = $commandLine
@@ -203,6 +205,7 @@ if ($env:ALLOW_GENERATED_COMPILE_CANDIDATE -eq "true" -or (Test-FormalGeneratedC
   Invoke-Gate node scripts/business/generate-dormitory-derived-contracts.mjs
 }
 Invoke-Gate node scripts/oam/compile-current-kernel-graph.mjs
+Invoke-Gate node scripts/oam/check-generated-field-binding-closure.mjs
 Invoke-Gate node scripts/oam/check-generated-contract-consistency.mjs
 Invoke-Gate node scripts/oam/check-generated-files-not-manually-edited.mjs
 Invoke-Gate node scripts/oam/check-oam-kernel-graph.mjs
@@ -316,6 +319,7 @@ Invoke-Gate node scripts/oam/check-mobile-coverage-policy.mjs
 Invoke-Gate node scripts/oam/check-mobile-critical-branch-scenarios.mjs
 Invoke-Gate node scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs
 Invoke-Gate node scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs
+Invoke-Gate node scripts/oam/check-generated-candidate-acceptance.mjs
 Write-GateReport -RunStatus "completed" -Status "passed" -CurrentStage "completed" -CurrentGate ""
 Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs -RecordResult $false
 Invoke-Gate node scripts/oam/check-current-evidence-root.mjs -RecordResult $false
