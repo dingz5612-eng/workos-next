@@ -14,7 +14,7 @@
     "formalAuthorizationHead": "a502565ca5672335dc2ee4398a8d443ac7e3b57a",
     "generatedCompileExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
     "generatedOutputDigest": "sha256:e13335892463b65eba9b84cca30dbaca229af6089f8f05a7318b33c900bba056",
-    "generatedFieldBindingClosureDigest": "sha256:157de44b6a1ac9ff9240265929747a55db0dc3fe25019999907daa807162161e",
+    "generatedFieldBindingClosureDigest": "sha256:043358c9b1f022df1a50055c182eaef2cca25b1cdb0a4f1577cf2ec54268cd99",
     "sourceFieldGapsDecisionDigest": "sha256:87cef694c2cd0bbfb7495d91274a2c9f635893f0f9a9eee2d4abfe938f07761e",
     "evidenceArtifactDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
     "evidenceArtifactMode": "decision_writeback_reference",
@@ -40,7 +40,7 @@
       {
         "id": "generatedFieldBindingClosure",
         "path": "artifacts/oam/checks/generated-field-binding-closure-result.json",
-        "digest": "sha256:b88a35bbff5fd930e80091d5a6d179a044eb0d0294f7c2d9a5afcfb987f34b00"
+        "digest": "sha256:c569fd2d1dbbaccc7a653967da6feef195505e40be6cbf8079188fbad98b3228"
       },
       {
         "id": "generatedFilesNotManuallyEdited",
@@ -82,7 +82,7 @@
       {
         "id": "generatedFieldBindings",
         "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
-        "digest": "sha256:041053b378ca66774d6e8ff40894ba211f1eb56444300497c0e8147ada8332ed"
+        "digest": "sha256:c301320658e7ec4066540c7b8bb468db12709ae09d8119472ba177f697bc31ee"
       },
       {
         "id": "domainDerivedContracts",
@@ -95,14 +95,14 @@
         "digest": "sha256:90a3f36dcd25ad30f039e0cc71aa7a46e88826edb238baf5e1c618fa2a742698"
       }
     ],
-    "subjectDigest": "sha256:15ee03022de73d01a5a69f88ecb3ee9e0c8b5c586c00680eb1ec93ba3d5b3d2f"
+    "subjectDigest": "sha256:de3e6f4bd409dfda1586205888a7f3e137df7f31ced271cf0d327994992fa304"
   },
   "subjectStatusAtWrite": "NOT_READY_FOR_00_ACCEPTANCE_REVIEW",
   "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
   "decisionRecordHead": null,
-  "decisionWritebackBaseHead": "74e7731831a04ce42b0480ed1284d4eea859471c",
+  "decisionWritebackBaseHead": "a724b838ac5a5681d170034da9866b293df630f5",
   "evidenceArtifactDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
-  "generatedFieldBindingClosureDigest": "sha256:157de44b6a1ac9ff9240265929747a55db0dc3fe25019999907daa807162161e",
+  "generatedFieldBindingClosureDigest": "sha256:043358c9b1f022df1a50055c182eaef2cca25b1cdb0a4f1577cf2ec54268cd99",
   "sourceFieldGapsDecisionDigest": "sha256:87cef694c2cd0bbfb7495d91274a2c9f635893f0f9a9eee2d4abfe938f07761e",
   "executionProofDigest": "sha256:88fcbc1ba6417d4471cfe3e49622f5a09003f5657889d6c6629642c2f9714145",
   "evidenceRootDigest": "sha256:087d2a5fbf83591b6920f5bd471b3c205c0d8722c09c0b7a22e33f76033ffc25",

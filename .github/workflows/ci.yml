@@ -85,7 +85,7 @@ jobs:
             node scripts/business/generate-dormitory-derived-contracts.mjs
           fi
           node scripts/oam/compile-current-kernel-graph.mjs
-          node scripts/oam/check-dormitory-golden-chain-source-package.mjs
+          node scripts/oam/check-dormitory-golden-chain-source-package.mjs --write-proof
           node scripts/oam/check-generated-field-binding-closure.mjs
           node scripts/oam/check-generated-contract-consistency.mjs
           node scripts/oam/check-generated-files-not-manually-edited.mjs
@@ -167,7 +167,7 @@ jobs:
           node scripts/business/check-dormitory-release-train.mjs
           node scripts/business/check-dormitory-pilot-scenario-pack.mjs
           node scripts/business/check-dormitory-metrics-lens-contract.mjs
-          node scripts/oam/check-dormitory-golden-chain-source-package.mjs
+          node scripts/oam/check-dormitory-golden-chain-source-package.mjs --write-proof
           node scripts/business/check-dormitory-execution-kernel.mjs
           node scripts/business/check-scenario-field-contract.mjs
           node scripts/business/check-canonical-scenario-map.mjs
