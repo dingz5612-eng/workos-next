@@ -56,6 +56,7 @@ requireFile("docs/system/current-system-map.md");
 requireFile("scripts/oam/generate-current-evidence-root.mjs");
 requireFile("scripts/oam/check-current-evidence-root.mjs");
 requireFile("scripts/oam/check-generated-field-binding-closure.mjs");
+requireFile("scripts/oam/check-s5-semantic-digest-idempotency.mjs");
 requireFile("scripts/oam/check-generated-candidate-acceptance.mjs");
 requireFile("scripts/oam/generate-generated-candidate-acceptance.mjs");
 requireFile("scripts/oam/lib/dormitory-generated-field-binding-closure.mjs");

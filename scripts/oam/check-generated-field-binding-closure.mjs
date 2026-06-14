@@ -68,14 +68,37 @@ function validateGeneratedContract(document) {
   requireEqual(document.generated, true, "field-bindings.generated.generated");
   requireEqual(document.doNotEdit, true, "field-bindings.generated.doNotEdit");
   requireEqual(document.kind, "field-bindings.generated", "field-bindings.generated.kind");
-  requireEqual(document.generatedFieldBindingClosureRequired, true, "generatedFieldBindingClosureRequired");
-  requireEqual(document.generatedFieldBindingClosureStatus, "PASS", "generatedFieldBindingClosureStatus");
-  requireEqual(document.sourceFieldGapsDecisionStatus, "DECIDED_AND_BOUND", "sourceFieldGapsDecisionStatus");
+  requireEqual(document.canonicalClosureVersion, closure.canonicalClosureVersion, "canonicalClosureVersion");
   requireEqual(document.sourceFieldGapsDecisionDigest, closure.sourceFieldGapsDecisionDigest, "sourceFieldGapsDecisionDigest");
-  requireEqual(document.closureDigest, closure.closureDigest, "closureDigest");
-  requireEqual(document.semanticRules?.runtimeConsumptionReady, false, "semanticRules.runtimeConsumptionReady");
-  requireEqual(document.semanticRules?.releaseAuthority, false, "semanticRules.releaseAuthority");
-  requireEqual(document.semanticRules?.finalGoNoGo, "NO_GO", "semanticRules.finalGoNoGo");
+  requireEqual(document.generatedFieldBindingClosureDigest, closure.closureDigest, "generatedFieldBindingClosureDigest");
+  requireEqual(document.lineageImpact?.runtimeConsumptionReady, false, "lineageImpact.runtimeConsumptionReady");
+  requireEqual(document.lineageImpact?.releaseAuthority, false, "lineageImpact.releaseAuthority");
+  requireEqual(document.lineageImpact?.finalGoNoGo, "NO_GO", "lineageImpact.finalGoNoGo");
+
+  for (const forbiddenField of [
+    "sourcePackageResultRef",
+    "sourcePackageResultDigest",
+    "closureDigest",
+    "semanticClosureVersion",
+    "sourceDigests",
+    "semanticRules"
+  ]) {
+    if (Object.prototype.hasOwnProperty.call(document, forbiddenField)) {
+      failures.push(`field-bindings.generated.json must not bind ${forbiddenField}.`);
+    }
+  }
+  const refs = Array.isArray(document.sourceSemanticRefs) ? document.sourceSemanticRefs : [];
+  if (refs.length === 0) failures.push("field-bindings.generated.json must bind sourceSemanticRefs.");
+  for (const ref of refs) {
+    if (!ref.tracked || String(ref.path ?? "").startsWith("artifacts/oam/")) {
+      failures.push(`sourceSemanticRefs must use tracked semantic inputs only: ${ref.path ?? "missing"}.`);
+    }
+  }
+  for (const key of ["forbiddenSources", "branchOutputSemantics", "lineageImpact"]) {
+    if (!document[key] || typeof document[key] !== "object") {
+      failures.push(`field-bindings.generated.json missing ${key}.`);
+    }
+  }
 
   const bindings = Array.isArray(document.fieldBindings) ? document.fieldBindings : [];
   const byId = new Map(bindings.map((item) => [item.fieldId, item]));

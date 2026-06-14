@@ -2,7 +2,7 @@
   "packageVersion": "oam.dormitory-candidate-artifact-attestation.v1",
   "packageStatus": "READY_FOR_00_GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_NO_GO",
   "reviewPackageStatus": "VALID_CURRENT_CANDIDATE_HEAD_NO_GO",
-  "generatedAtUtc": "2026-06-14T16:42:31.067Z",
+  "generatedAtUtc": "2026-06-14T18:31:48.548Z",
   "acceptedAuthorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
   "candidateSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
   "previousAuthorizedCandidateExecutionHead": "9db58da1ebc2a02349436833747307ac78c4c2fd",
@@ -92,16 +92,16 @@
     "resultPath": "artifacts/oam/checks/generated-compile-execution-result.json",
     "proofPath": "artifacts/oam/evidence/generated-compile-execution-proof.json",
     "snapshotPath": "artifacts/oam/checks/generated-compile-execution-input-snapshot.json",
-    "resultDigest": "sha256:e2faf9f9257aa611c3010ade396499608bad2ecb39ce4d364230ce66d8f49a2a",
-    "proofDigest": "sha256:4feeb641aed0f0cc280d4c12e95bb3d933f937a09f5cb94b14d940c78a7091ca",
+    "resultDigest": "sha256:7012d36b8256db575d767f6913b1258045515e3e9c6a1f24a23e1cb2c540755d",
+    "proofDigest": "sha256:04b1ce5a710a775ccc8b9c39ba4e382b299385bbd8dd25f95dd89b02bf7232f8",
     "snapshotDigest": "sha256:e4e3331aa81f09c68980ac200905b10626a088449e2516b53b8e37ff782cd5e5",
-    "generatedOutputDigest": "sha256:008354c0b1c8e67723c16e2fc2c5e14fe6183cf7568356117c86df8968c14eb6",
-    "manifestDigest": "sha256:836d39e1c46f2da6961907ca0f24d9ab69ffa9463e7860c5ba3f4b48c98a4754",
-    "generatedKernelGraphDigest": "sha256:1e16f44a8a7d527eb25210322687a1c33149c9fcfac6e09c969199d5e9a2db88",
+    "generatedOutputDigest": "sha256:d792037298b9b2f2ea0a0c8672ba5011d199c1b18d294313709cbc905fa15689",
+    "manifestDigest": "sha256:0eba6f30413e60912e4082b93f6842cbf21deb4a5884cc62ad8980423e5d1595",
+    "generatedKernelGraphDigest": "sha256:8aa542c0b7a50b3f96e3bee67e67c5ab2fee6f35541f4ac923a3e119129b3a38",
     "reproducibility": {
       "status": "PASS",
-      "round1GeneratedOutputDigest": "sha256:008354c0b1c8e67723c16e2fc2c5e14fe6183cf7568356117c86df8968c14eb6",
-      "round2GeneratedOutputDigest": "sha256:008354c0b1c8e67723c16e2fc2c5e14fe6183cf7568356117c86df8968c14eb6",
+      "round1GeneratedOutputDigest": "sha256:d792037298b9b2f2ea0a0c8672ba5011d199c1b18d294313709cbc905fa15689",
+      "round2GeneratedOutputDigest": "sha256:d792037298b9b2f2ea0a0c8672ba5011d199c1b18d294313709cbc905fa15689",
       "sameGeneratedOutputDigest": true,
       "sameDerivedOutputDigest": true,
       "sameKernelGraphDigest": true
@@ -370,7 +370,7 @@
     "predicateAuthorized": true,
     "predicateFailures": [],
     "approvalObjectHash": "sha256:b6fe84036d45472f378340239a747fec52b532ecc78723893aa346892cfac300",
-    "currentRepositoryHead": "28deaff765762474e8bffd098d7159ee0e2298b3"
+    "currentRepositoryHead": "245a70c27113a3bf4d30e9e8f377d76fe645e101"
   },
   "residuals": [
     {

@@ -172,7 +172,7 @@ if (generatedCandidateAcceptancePredicate.status !== "PASS" ||
 }
 if (generatedFieldBindingClosure.status !== "PASS" ||
   generatedFieldBindingClosureResult?.status !== "PASS" ||
-  generatedFieldBindings?.generatedFieldBindingClosureStatus !== "PASS") {
+  generatedFieldBindings?.generatedFieldBindingClosureDigest !== generatedFieldBindingClosure.closureDigest) {
   violations.push("release attestation requires generated field binding closure PASS.");
 }
 if (finalReport?.generatedFieldBindingClosureRequired !== true ||

@@ -11622,6 +11622,7 @@
       ],
       "gateBinding": [
         "scripts/oam/check-generated-field-binding-closure.mjs",
+        "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
         "scripts/oam/check-generated-contract-consistency.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
@@ -11639,6 +11640,7 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
         "scripts/oam/check-generated-field-binding-closure.mjs",
+        "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
         "scripts/oam/check-generated-contract-consistency.mjs",
         "scripts/oam/generate-current-evidence-root.mjs",
         "scripts/oam/check-current-evidence-root.mjs",
@@ -13823,11 +13825,13 @@
       "runtimeBinding": "kernel.release-control",
       "testBinding": [
         "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
         "scripts/oam/check-current-evidence-root.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ],
       "gateBinding": [
         "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
         "scripts/oam/check-current-evidence-root.mjs"
       ],
       "evidenceBinding": "artifacts/oam/checks/generated-candidate-acceptance-result.json",
@@ -13845,6 +13849,7 @@
       "deletionConditionZh": "当 00 generated candidate acceptance 裁决对象被新裁决取代且无门禁、无证据引用时删除。",
       "consumers": [
         "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
         "scripts/oam/generate-current-evidence-root.mjs",
         "scripts/oam/check-current-evidence-root.mjs",
         "scripts/oam/check-current-oam-release-attestation.mjs",
@@ -21012,6 +21017,7 @@
       "consumers": [
         "scripts/oam/run-control-plane-checks.ps1",
         ".github/workflows/ci.yml",
+        "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
         "scripts/oam/check-generated-contract-consistency.mjs"
       ]
     },
@@ -21414,6 +21420,38 @@
       "consumers": [
         "scripts/oam/check-runtime-governance-v2.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-s5-semantic-digest-idempotency.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-s5-semantic-digest-idempotency.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/s5-semantic-digest-idempotency-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 S5 semantic digest idempotency gate 被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
+      "evidence": "artifacts/oam/checks/s5-semantic-digest-idempotency-result.json",
+      "replacementPath": "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
+      "absorbedBy": "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
+      "removalProofGate": "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
+      "deletionConditionZh": "当 S5 semantic digest idempotency gate 被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml",
+        "docs/oam/current-architecture.manifest.json",
+        "scripts/oam/check-current-oam.mjs"
       ]
     },
     {

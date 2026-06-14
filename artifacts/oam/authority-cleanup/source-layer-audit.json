@@ -1,6 +1,6 @@
 {
   "version": "authority-cleanup.source-layer-audit.v1",
-  "generatedAtUtc": "2026-06-14T12:11:48.285Z",
+  "generatedAtUtc": "2026-06-14T17:40:05.669Z",
   "fileLifecycleRegistry": {
     "policyPath": "docs/oam/file-lifecycle-policy.json",
     "registryVersion": "oam.file-lifecycle-registry.v1",
@@ -2962,6 +2962,7 @@
         "scripts/oam/check-current-evidence-root.mjs",
         "scripts/oam/check-generated-contract-consistency.mjs",
         "scripts/oam/check-generated-field-binding-closure.mjs",
+        "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
         "scripts/oam/generate-current-evidence-root.mjs"
       ],
       "recommendedAction": "keep_as_generated_contract",
@@ -3932,6 +3933,7 @@
         "scripts/oam/check-current-evidence-root.mjs",
         "scripts/oam/check-current-oam-release-attestation.mjs",
         "scripts/oam/check-generated-candidate-acceptance.mjs",
+        "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
         "scripts/oam/generate-current-evidence-root.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ],
@@ -6499,6 +6501,7 @@
       "downstreamConsumers": [
         ".github/workflows/ci.yml",
         "scripts/oam/check-generated-contract-consistency.mjs",
+        "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ],
       "recommendedAction": "keep_as_tooling",

@@ -234,6 +234,8 @@ jobs:
         run: |
           node scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs
           node scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs
+          node scripts/oam/generate-generated-candidate-acceptance.mjs
+          node scripts/oam/check-s5-semantic-digest-idempotency.mjs
           node scripts/oam/check-generated-candidate-acceptance.mjs
 
       - name: Generate current OAM evidence root

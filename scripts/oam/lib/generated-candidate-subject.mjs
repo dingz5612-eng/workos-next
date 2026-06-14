@@ -8,7 +8,6 @@ import {
   isGitSha
 } from "./decision-writeback-policy.mjs";
 import {
-  FIELD_BINDING_CLOSURE_RESULT_PATH,
   FIELD_BINDINGS_GENERATED_PATH,
   buildDormitoryGeneratedFieldBindingClosure
 } from "./dormitory-generated-field-binding-closure.mjs";
@@ -39,7 +38,6 @@ const requiredEvidenceDigestFiles = [
   ["generatedCompileExecutionResult", GENERATED_COMPILE_EXECUTION_RESULT_PATH],
   ["generatedCompileExecutionProof", GENERATED_COMPILE_EXECUTION_PROOF_PATH],
   ["generatedCompileExecutionSnapshot", GENERATED_COMPILE_EXECUTION_SNAPSHOT_PATH],
-  ["generatedFieldBindingClosure", FIELD_BINDING_CLOSURE_RESULT_PATH],
   ["generatedFilesNotManuallyEdited", "artifacts/oam/checks/generated-files-not-manually-edited-result.json"],
   ["generatedContractConsistency", "artifacts/oam/checks/generated-contract-consistency-result.json"],
   ["derivedContractConsistency", "artifacts/oam/checks/derived-contract-consistency-result.json"],
@@ -71,7 +69,9 @@ export function buildGeneratedCandidateSubject({ root = process.cwd(), currentHe
   const evidenceGraph = readJsonIfExists("artifacts/oam/evidence/evidence-graph.json", root);
   const currentRepositoryHead = currentHead ?? git(["rev-parse", "HEAD"], root);
   const fieldBindingClosure = buildDormitoryGeneratedFieldBindingClosure({ root });
-  const fieldBindingClosureResult = read(FIELD_BINDING_CLOSURE_RESULT_PATH);
+  const fieldBindingContractDigest = fileExists(FIELD_BINDINGS_GENERATED_PATH, root)
+    ? stableFileDigest(FIELD_BINDINGS_GENERATED_PATH, root)
+    : "missing";
 
   const reviewedExecutionHead = firstPresent(
     result?.reviewedExecutionHead,
@@ -127,8 +127,9 @@ export function buildGeneratedCandidateSubject({ root = process.cwd(), currentHe
   requireDigest(evidenceArtifactDigest, "evidenceArtifactDigest", failures);
   requireDigest(fieldBindingClosure.closureDigest, "generatedFieldBindingClosureDigest", failures);
   requireDigest(fieldBindingClosure.sourceFieldGapsDecisionDigest, "sourceFieldGapsDecisionDigest", failures);
+  requireDigest(fieldBindingContractDigest, "fieldBindingContractDigest", failures);
   requireDigest(evidenceRootDigest, "evidenceRootDigest", failures);
-  if (fieldBindingClosure.status !== "PASS" || fieldBindingClosureResult?.status !== "PASS") {
+  if (fieldBindingClosure.status !== "PASS") {
     failures.push("generated field binding closure must PASS before generated candidate acceptance can be reviewed.");
   }
 
@@ -196,6 +197,7 @@ export function buildGeneratedCandidateSubject({ root = process.cwd(), currentHe
     generatedOutputDigest,
     generatedFieldBindingClosureDigest: fieldBindingClosure.closureDigest,
     sourceFieldGapsDecisionDigest: fieldBindingClosure.sourceFieldGapsDecisionDigest,
+    fieldBindingContractDigest,
     evidenceArtifactDigest,
     evidenceArtifactMode: artifactMode,
     localEvidenceArtifactDigest,
@@ -360,6 +362,7 @@ export function validateGeneratedCandidateAcceptanceAuthority({
     generatedOutputDigest: subjectState.subject.generatedOutputDigest,
     generatedFieldBindingClosureDigest: subjectState.subject.generatedFieldBindingClosureDigest,
     sourceFieldGapsDecisionDigest: subjectState.subject.sourceFieldGapsDecisionDigest,
+    fieldBindingContractDigest: subjectState.subject.fieldBindingContractDigest,
     evidenceArtifactDigest: subjectState.subject.evidenceArtifactDigest,
     executionProofDigest: subjectState.subject.executionProofDigest,
     evidenceRootDigest: subjectState.subject.evidenceRootDigest,
@@ -410,6 +413,10 @@ function buildDigestSet(items, root, missingFiles) {
     }
     return { id, path: file, digest: stableFileDigest(file, root) };
   });
+}
+
+function fileExists(file, root) {
+  return fs.existsSync(path.join(root, file));
 }
 
 function stableFileDigest(file, root) {

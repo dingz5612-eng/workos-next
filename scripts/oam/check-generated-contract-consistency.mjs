@@ -170,9 +170,8 @@ function checkGeneratedFieldBindingClosure() {
     fieldBindingClosureResult.sourceFieldGapsDecisionDigest !== fieldBindingClosure.sourceFieldGapsDecisionDigest) {
     fail("generated field binding closure result digests must match shared closure model.");
   }
-  if (fieldBindings.generatedFieldBindingClosureRequired !== true ||
-    fieldBindings.generatedFieldBindingClosureStatus !== "PASS" ||
-    fieldBindings.closureDigest !== fieldBindingClosure.closureDigest ||
+  if (fieldBindings.canonicalClosureVersion !== fieldBindingClosure.canonicalClosureVersion ||
+    fieldBindings.generatedFieldBindingClosureDigest !== fieldBindingClosure.closureDigest ||
     fieldBindings.sourceFieldGapsDecisionDigest !== fieldBindingClosure.sourceFieldGapsDecisionDigest) {
     fail("field-bindings.generated.json must bind the shared generated field binding closure.");
   }

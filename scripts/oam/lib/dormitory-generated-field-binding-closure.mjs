@@ -5,10 +5,13 @@ import path from "node:path";
 export const DORMITORY_SOURCE_SCENARIO_PATH =
   "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml";
 export const DORMITORY_KERNEL_PATH = "docs/business/domains/dormitory/dormitory-operating-kernel.json";
-export const SOURCE_PACKAGE_RESULT_PATH = "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json";
+export const GENERATED_COMPILE_APPROVAL_PATH = "docs/oam/generated-compile-approval.current.json";
+export const GENERATED_COMPILE_CANDIDATE_APPROVAL_PATH = "docs/oam/generated-compile-candidate-approval.current.json";
 export const FIELD_BINDINGS_GENERATED_PATH = "docs/contracts/generated/dormitory/field-bindings.generated.json";
 export const FIELD_BINDING_CLOSURE_RESULT_PATH =
   "artifacts/oam/checks/generated-field-binding-closure-result.json";
+export const CANONICAL_CLOSURE_VERSION = "oam.dormitory-source-semantic-closure.v1";
+export const SOURCE_FIELD_GAPS_DECISION_VERSION = "oam.dormitory.source-field-gaps-decision.semantic.v1";
 
 export const REQUIRED_GENERATED_FIELD_BINDINGS = [
   {
@@ -121,56 +124,120 @@ export function buildDormitoryGeneratedFieldBindingClosure({ root = process.cwd(
   const failures = [];
   const missingFiles = [];
   const sourceText = readTextIfExists(DORMITORY_SOURCE_SCENARIO_PATH, root, missingFiles);
-  const sourcePackageResult = readJsonIfExists(SOURCE_PACKAGE_RESULT_PATH, root, missingFiles);
   const kernel = readJsonIfExists(DORMITORY_KERNEL_PATH, root, missingFiles);
+  const formalApproval = readJsonIfExists(GENERATED_COMPILE_APPROVAL_PATH, root, missingFiles);
+  const candidateApproval = readJsonIfExists(GENERATED_COMPILE_CANDIDATE_APPROVAL_PATH, root, missingFiles);
 
   const fieldBindingsSection = section(sourceText, "fieldBindings");
   const sourceFieldGapsSection = section(sourceText, "sourceFieldGaps");
   if (!fieldBindingsSection) failures.push("Source scenario must contain fieldBindings.");
   if (!sourceFieldGapsSection) failures.push("Source scenario must contain sourceFieldGaps.");
-  if (sourcePackageResult?.status !== "PASS") failures.push("Source package result must be PASS.");
-  if (sourcePackageResult?.sourceFieldGapsDecisionStatus !== "DECIDED_AND_BOUND") {
-    failures.push("Source field gaps decision status must be DECIDED_AND_BOUND.");
-  }
-  if (sourcePackageResult?.sourceFieldGaps?.pending00Decision !== false) {
+
+  const sourceFinalizationStatus = readScalar(sourceText, "sourceFinalizationStatus");
+  const sourceReadyForCompileDecision = readScalar(sourceText, "sourceReadyForCompileDecision");
+  const compileDecisionStatus = readScalar(sourceText, "compileDecisionStatus");
+  const sourceFieldGaps = buildSourceFieldGapsModel({
+    sourceFieldGapsSection,
+    failures
+  });
+  const sourceFieldGapsDecisionStatus = sourceFieldGaps?.sourceFieldGapsDecisionStatus ?? null;
+
+  requireEqual(sourceFinalizationStatus, "SOURCE_FINALIZED_BY_00", "sourceFinalizationStatus", failures);
+  requireEqual(sourceReadyForCompileDecision, true, "sourceReadyForCompileDecision", failures);
+  requireEqual(compileDecisionStatus, "READY_FOR_00_COMPILE_DECISION", "compileDecisionStatus", failures);
+  if (sourceFieldGaps?.pending00Decision !== false) {
     failures.push("Source field gaps must have pending00Decision=false.");
   }
+  requireEqual(
+    candidateApproval?.executionHeadDiffPolicy?.sourceFieldGapsDecisionRequired,
+    "DECIDED_AND_BOUND",
+    "candidateApproval.executionHeadDiffPolicy.sourceFieldGapsDecisionRequired",
+    failures
+  );
+  requireEqual(formalApproval?.sourceFinalizationStatus, sourceFinalizationStatus, "formalApproval.sourceFinalizationStatus", failures);
+  requireEqual(formalApproval?.sourceReadyForCompileDecision, sourceReadyForCompileDecision, "formalApproval.sourceReadyForCompileDecision", failures);
+  requireEqual(formalApproval?.generatedCandidateAcceptedBy00, false, "formalApproval.generatedCandidateAcceptedBy00", failures);
+  requireEqual(formalApproval?.runtimeConsumptionReady, false, "formalApproval.runtimeConsumptionReady", failures);
+  requireEqual(formalApproval?.releaseAuthority, false, "formalApproval.releaseAuthority", failures);
+  requireEqual(formalApproval?.finalGoNoGo, "NO_GO", "formalApproval.finalGoNoGo", failures);
+  requireEqual(candidateApproval?.generatedCandidateAcceptedBy00, false, "candidateApproval.generatedCandidateAcceptedBy00", failures);
+  requireEqual(candidateApproval?.runtimeConsumptionReady, false, "candidateApproval.runtimeConsumptionReady", failures);
+  requireEqual(candidateApproval?.releaseAuthority, false, "candidateApproval.releaseAuthority", failures);
+  requireEqual(candidateApproval?.finalGoNoGo, "NO_GO", "candidateApproval.finalGoNoGo", failures);
 
   const fields = REQUIRED_GENERATED_FIELD_BINDINGS.map((spec) =>
     buildFieldBinding(spec, {
       sourceText,
       fieldBindingsSection,
       sourceFieldGapsSection,
-      sourcePackageResult,
+      sourceFieldGaps,
       failures
     })
   );
 
-  const sourceFieldGaps = sourcePackageResult?.sourceFieldGaps ?? null;
   const sourceFieldGapsDecisionDigest = digestObject({
-    version: "oam.dormitory.source-field-gaps-decision.v1",
-    sourceFieldGapsDecisionStatus: sourcePackageResult?.sourceFieldGapsDecisionStatus ?? null,
+    version: SOURCE_FIELD_GAPS_DECISION_VERSION,
+    sourceScenarioRef: DORMITORY_SOURCE_SCENARIO_PATH,
+    sourceFinalizationStatus,
+    sourceReadyForCompileDecision,
+    compileDecisionStatus,
+    sourceFieldGapsDecisionStatus,
     sourceFieldGaps
   });
   const sourceScenarioDigest = sourceText ? digestText(sourceText) : null;
-  const sourcePackageResultDigest = sourcePackageResult
-    ? digestSourcePackageResultForClosure(sourcePackageResult)
-    : null;
   const kernelDigest = kernel ? digestObject(kernel) : null;
+  const formalApprovalSemantic = normalizeFormalApprovalForSemanticClosure(formalApproval);
+  const candidateApprovalSemantic = normalizeCandidateApprovalForSemanticClosure(candidateApproval);
+  const sourceSemanticRefs = [
+    {
+      id: "dormitorySourceScenario",
+      path: DORMITORY_SOURCE_SCENARIO_PATH,
+      tracked: true,
+      semanticDigest: sourceScenarioDigest
+    },
+    {
+      id: "dormitoryOperatingKernel",
+      path: DORMITORY_KERNEL_PATH,
+      tracked: true,
+      semanticDigest: kernelDigest
+    },
+    {
+      id: "generatedCompileApproval",
+      path: GENERATED_COMPILE_APPROVAL_PATH,
+      tracked: true,
+      semanticDigest: formalApproval ? digestObject(formalApprovalSemantic) : null
+    },
+    {
+      id: "generatedCompileCandidateApproval",
+      path: GENERATED_COMPILE_CANDIDATE_APPROVAL_PATH,
+      tracked: true,
+      semanticDigest: candidateApproval ? digestObject(candidateApprovalSemantic) : null
+    }
+  ];
+  const forbiddenSources = buildForbiddenSources(fields);
+  const branchOutputSemantics = buildBranchOutputSemantics(fields, fieldBindingsSection);
+  const lineageImpact = {
+    sourceFinalizationStatus,
+    sourceReadyForCompileDecision,
+    compileDecisionStatus,
+    generatedCandidateAcceptedBy00: false,
+    runtimeConsumptionReady: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  };
   const closureCore = {
-    version: "oam.dormitory-generated-field-binding-closure.v1",
+    version: CANONICAL_CLOSURE_VERSION,
+    canonicalClosureVersion: CANONICAL_CLOSURE_VERSION,
     closureType: "generated_semantic_field_binding_closure",
-    sourceScenarioRef: DORMITORY_SOURCE_SCENARIO_PATH,
-    sourceScenarioDigest,
-    sourcePackageResultRef: SOURCE_PACKAGE_RESULT_PATH,
-    sourcePackageResultDigest,
-    sourceFieldGapsDecisionStatus: sourcePackageResult?.sourceFieldGapsDecisionStatus ?? null,
+    sourceSemanticRefs,
+    sourceFieldGapsDecisionStatus,
     sourceFieldGapsDecisionDigest,
-    kernelRef: DORMITORY_KERNEL_PATH,
-    kernelDigest,
     p0GeneratedCandidates: (kernel?.p0GeneratedCandidates ?? []).map((item) => item.workItemType).sort(),
     requiredFieldIds: REQUIRED_GENERATED_FIELD_BINDINGS.map((item) => item.fieldId),
-    fields
+    fields,
+    forbiddenSources,
+    branchOutputSemantics,
+    lineageImpact
   };
   const closureDigest = digestObject(closureCore);
   const status = missingFiles.length > 0
@@ -193,29 +260,14 @@ export function buildGeneratedFieldBindingContract({ root = process.cwd(), metad
   const closure = buildDormitoryGeneratedFieldBindingClosure({ root });
   return {
     ...metadata,
-    semanticClosureVersion: closure.version,
-    generatedFieldBindingClosureRequired: true,
-    generatedFieldBindingClosureStatus: closure.status,
-    sourceScenarioRef: closure.sourceScenarioRef,
-    sourcePackageResultRef: closure.sourcePackageResultRef,
-    sourceFieldGapsDecisionStatus: closure.sourceFieldGapsDecisionStatus,
+    canonicalClosureVersion: closure.canonicalClosureVersion,
     sourceFieldGapsDecisionDigest: closure.sourceFieldGapsDecisionDigest,
-    closureDigest: closure.closureDigest,
-    requiredFieldIds: closure.requiredFieldIds,
+    generatedFieldBindingClosureDigest: closure.closureDigest,
+    sourceSemanticRefs: closure.sourceSemanticRefs,
     fieldBindings: closure.fields,
-    semanticRules: {
-      fieldsGeneratedOwnsClassificationOnly: true,
-      fieldBindingsGeneratedOwnsSourceEvidenceAndBranchOutputSemantics: true,
-      surfaceInputModelMayNotSubstituteBindingAuthority: true,
-      runtimeConsumptionReady: false,
-      releaseAuthority: false,
-      finalGoNoGo: "NO_GO"
-    },
-    sourceDigests: {
-      sourceScenarioDigest: closure.sourceScenarioDigest,
-      sourcePackageResultDigest: closure.sourcePackageResultDigest,
-      kernelDigest: closure.kernelDigest
-    }
+    forbiddenSources: closure.forbiddenSources,
+    branchOutputSemantics: closure.branchOutputSemantics,
+    lineageImpact: closure.lineageImpact
   };
 }
 
@@ -229,21 +281,6 @@ export function digestObject(value) {
 
 export function hashFile(file, root = process.cwd()) {
   return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(path.join(root, file))).digest("hex")}`;
-}
-
-export function digestSourcePackageResultForClosure(sourcePackageResult) {
-  return digestObject({
-    version: "oam.dormitory.source-package-result.semantic-closure-input.v1",
-    resultVersion: sourcePackageResult?.version ?? null,
-    gateId: sourcePackageResult?.gateId ?? null,
-    status: sourcePackageResult?.status ?? null,
-    sourceFinalizationStatus: sourcePackageResult?.sourceFinalizationStatus ?? null,
-    sourceScenarioPackageReviewStatus: sourcePackageResult?.sourceScenarioPackageReviewStatus ?? null,
-    sourceFieldGapsDecisionStatus: sourcePackageResult?.sourceFieldGapsDecisionStatus ?? null,
-    sourceReadyForCompileDecision: sourcePackageResult?.sourceReadyForCompileDecision ?? null,
-    compileDecisionStatus: sourcePackageResult?.compileDecisionStatus ?? null,
-    sourceFieldGaps: sourcePackageResult?.sourceFieldGaps ?? null
-  });
 }
 
 export function writeJson(file, data, root = process.cwd()) {
@@ -264,12 +301,12 @@ export function readJsonIfExists(file, root = process.cwd(), missingFiles = null
 function buildFieldBinding(spec, context) {
   const bindingBlock = mappingBlock(context.fieldBindingsSection, spec.fieldId, 2);
   const decisionBlockText = decisionBlock(context.sourceFieldGapsSection, spec.sourceGapId);
-  const resultDecision = context.sourcePackageResult?.sourceFieldGaps?.decisions?.[spec.sourceGapId] ?? null;
+  const resultDecision = context.sourceFieldGaps?.decisions?.[spec.sourceGapId] ?? null;
   const sourceContractBlock = fieldContractBlock(context.sourceText, spec.fieldId);
 
   if (!bindingBlock) context.failures.push(`Source fieldBindings.${spec.fieldId} is missing.`);
   if (!decisionBlockText) context.failures.push(`Source sourceFieldGaps.decisions.${spec.sourceGapId} is missing.`);
-  if (!resultDecision) context.failures.push(`Source package result sourceFieldGaps.decisions.${spec.sourceGapId} is missing.`);
+  if (!resultDecision) context.failures.push(`Source sourceFieldGaps.decisions.${spec.sourceGapId} semantic decision is missing.`);
 
   requireEqual(resultDecision?.decision, spec.expectedDecision, `${spec.sourceGapId}.decision`, context.failures);
   requireEqual(
@@ -334,6 +371,104 @@ function buildFieldBinding(spec, context) {
   };
 }
 
+function buildSourceFieldGapsModel({ sourceFieldGapsSection, failures }) {
+  if (!sourceFieldGapsSection) return null;
+  const decisions = {};
+  for (const spec of REQUIRED_GENERATED_FIELD_BINDINGS) {
+    const block = decisionBlock(sourceFieldGapsSection, spec.sourceGapId);
+    if (!block) {
+      failures.push(`sourceFieldGaps.decisions.${spec.sourceGapId} is missing.`);
+      continue;
+    }
+    decisions[spec.sourceGapId] = {
+      decision: readScalar(block, "decision"),
+      owner: readScalar(block, "owner"),
+      compileBlocking: readScalar(block, "compileBlocking"),
+      compilerInputImpact: readScalar(block, "compilerInputImpact"),
+      bindingRef: readScalar(block, "bindingRef"),
+      source: readScalar(block, "source"),
+      userEditable: readScalar(block, "userEditable"),
+      rawManualInputAllowed: readScalar(block, "rawManualInputAllowed"),
+      userSubmitted: readScalar(block, "userSubmitted"),
+      forbiddenSources: readList(block, "forbiddenSources")
+    };
+  }
+  return {
+    version: SOURCE_FIELD_GAPS_DECISION_VERSION,
+    sourceFieldGapsDecisionStatus: "DECIDED_AND_BOUND",
+    pending00Decision: readScalar(sourceFieldGapsSection, "pending00Decision"),
+    compilePreparationAllowed: readScalar(sourceFieldGapsSection, "compilePreparationAllowed"),
+    decisions
+  };
+}
+
+function normalizeFormalApprovalForSemanticClosure(approval) {
+  if (!approval) return null;
+  return {
+    version: approval.version ?? null,
+    approvalStatus: approval.approvalStatus ?? null,
+    approvalDecision: approval.approvalDecision ?? null,
+    approvalScope: approval.approvalScope ?? null,
+    sourceScenarioRef: approval.sourceScenarioRef ?? null,
+    sourceHash: approval.sourceHash ?? null,
+    sourceFinalizationStatus: approval.sourceFinalizationStatus ?? null,
+    sourceReadyForCompileDecision: approval.sourceReadyForCompileDecision ?? null,
+    candidateSourceRef: approval.candidateSourceRef ?? null,
+    approvedFormalAuthorizationHead: approval.approvedFormalAuthorizationHead ?? null,
+    authorizedCandidateExecutionHead: approval.authorizedCandidateExecutionHead ?? null,
+    generatedCompileAuthorized: approval.generatedCompileAuthorized ?? null,
+    generatedCompilationAllowed: approval.generatedCompilationAllowed ?? null,
+    generatedCandidateAcceptedBy00: approval.generatedCandidateAcceptedBy00 ?? null,
+    runtimeConsumptionReady: approval.runtimeConsumptionReady ?? null,
+    releaseAuthority: approval.releaseAuthority ?? null,
+    finalGoNoGo: approval.finalGoNoGo ?? null
+  };
+}
+
+function normalizeCandidateApprovalForSemanticClosure(approval) {
+  if (!approval) return null;
+  return {
+    version: approval.version ?? null,
+    approvalType: approval.approvalType ?? null,
+    approvalStatus: approval.approvalStatus ?? null,
+    scope: approval.scope ?? null,
+    sourceScenarioRef: approval.sourceScenarioRef ?? null,
+    sourceHash: approval.sourceHash ?? null,
+    authorizedSourceRef: approval.authorizedSourceRef ?? null,
+    candidateSourceRef: approval.candidateSourceRef ?? null,
+    authorizedCandidateExecutionHead: approval.authorizedCandidateExecutionHead ?? null,
+    generatedCompileCandidateAuthorized: approval.generatedCompileCandidateAuthorized ?? null,
+    sourceFieldGapsDecisionRequired: approval.executionHeadDiffPolicy?.sourceFieldGapsDecisionRequired ?? null,
+    generatedCandidateAcceptedBy00: approval.generatedCandidateAcceptedBy00 ?? null,
+    runtimeConsumptionReady: approval.runtimeConsumptionReady ?? null,
+    releaseAuthority: approval.releaseAuthority ?? null,
+    finalGoNoGo: approval.finalGoNoGo ?? null
+  };
+}
+
+function buildForbiddenSources(fields) {
+  return Object.fromEntries(fields.map((field) => [
+    field.fieldId,
+    [...new Set(field.forbiddenSources ?? [])].sort()
+  ]));
+}
+
+function buildBranchOutputSemantics(fields, fieldBindingsSection) {
+  return Object.fromEntries(fields
+    .filter((field) => field.branchOutputOnly)
+    .map((field) => {
+      const bindingBlock = mappingBlock(fieldBindingsSection, field.fieldId, 2);
+      return [field.fieldId, {
+        sourceBindingRef: field.sourceBindingRef,
+        sourceDecisionRef: field.sourceDecisionRef,
+        branchOutputScope: field.branchOutputScope,
+        userSubmitted: false,
+        compilerInput: "branchOutputOnly",
+        mapsTo: readList(bindingBlock, "mapsTo")
+      }];
+    }));
+}
+
 function readTextIfExists(file, root, missingFiles) {
   const full = path.join(root, file);
   if (!fs.existsSync(full)) {
@@ -344,10 +479,6 @@ function readTextIfExists(file, root, missingFiles) {
     .replace(/^\uFEFF/, "")
     .replace(/\r\n/g, "\n")
     .replace(/\r/g, "\n");
-}
-
-function fileExists(file, root) {
-  return fs.existsSync(path.join(root, file));
 }
 
 function digestText(text) {

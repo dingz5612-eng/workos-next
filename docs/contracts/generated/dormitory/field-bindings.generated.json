@@ -2,7 +2,7 @@
   "generated": true,
   "doNotEdit": true,
   "kind": "field-bindings.generated",
-  "kernelGraphHash": "sha256:6eb1b9e9eedca4be1ccb1485c47670f640bee455d9ee166a688e412817517ca8",
+  "kernelGraphHash": "sha256:0f4281f41fa9c09c272ec890866c31180346ac8d7d988eb591a87f5756e401d9",
   "sourceNodeRefs": [
     "dormitory.workItem.Dorm.RoomSetupConfirm",
     "dormitory.workItem.Dorm.BedSetupConfirm",
@@ -15,25 +15,39 @@
   ],
   "sourceHash": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
   "sourceContentDigest": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-  "compilerInputDigest": "sha256:fb9a556fc3ed4901220279548a4d259ea42731a692d47407501d85f1cdd19f8d",
-  "outputContentDigest": "sha256:e9ba482cca30d4ebaa0b2d6c1020332ceb2b5e17d290ad88c75d23cdc109edb5",
+  "compilerInputDigest": "sha256:e7d4f92f2a4d2f4719bbebfaf11c5f216119f08e0dc3fcaadf328699814347c6",
+  "outputContentDigest": "sha256:ac2344b3c1ba2d5cbea17027608271275bcf487500770fbd37170f0c928d540a",
   "deterministicSort": true,
   "generatorVersion": "current-oam-kernel-compiler.v1",
   "generatedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
-  "semanticClosureVersion": "oam.dormitory-generated-field-binding-closure.v1",
-  "generatedFieldBindingClosureRequired": true,
-  "generatedFieldBindingClosureStatus": "PASS",
-  "sourceScenarioRef": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
-  "sourcePackageResultRef": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
-  "sourceFieldGapsDecisionStatus": "DECIDED_AND_BOUND",
-  "sourceFieldGapsDecisionDigest": "sha256:87cef694c2cd0bbfb7495d91274a2c9f635893f0f9a9eee2d4abfe938f07761e",
-  "closureDigest": "sha256:524097f49661896a927d673c46e14adc1a30e1ff9c006e698397516028acb665",
-  "requiredFieldIds": [
-    "buildingContextRef",
-    "readinessEvidenceRefs",
-    "serviceVerificationRef",
-    "blockedReason",
-    "notSaleableReason"
+  "canonicalClosureVersion": "oam.dormitory-source-semantic-closure.v1",
+  "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
+  "generatedFieldBindingClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
+  "sourceSemanticRefs": [
+    {
+      "id": "dormitorySourceScenario",
+      "path": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "tracked": true,
+      "semanticDigest": "sha256:c0cb0761d571c0cb2fca3bd7d3507ee2d6cbfa1c29170a9ea36017f1477f33e2"
+    },
+    {
+      "id": "dormitoryOperatingKernel",
+      "path": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "tracked": true,
+      "semanticDigest": "sha256:033782c69e589a2dcb1592bf9fdfad88c3988e21982a38e48a423a6d031cead8"
+    },
+    {
+      "id": "generatedCompileApproval",
+      "path": "docs/oam/generated-compile-approval.current.json",
+      "tracked": true,
+      "semanticDigest": "sha256:2f3d04a01a02bb4937db87e3cdb24abaace62572f5ca7f581888fad7b4923811"
+    },
+    {
+      "id": "generatedCompileCandidateApproval",
+      "path": "docs/oam/generated-compile-candidate-approval.current.json",
+      "tracked": true,
+      "semanticDigest": "sha256:5542dce523c2e0f0f1db8bce404039a472cde85fe934f952301ff63dbdefe7d7"
+    }
   ],
   "fieldBindings": [
     {
@@ -206,17 +220,85 @@
       "finalGoNoGo": "NO_GO"
     }
   ],
-  "semanticRules": {
-    "fieldsGeneratedOwnsClassificationOnly": true,
-    "fieldBindingsGeneratedOwnsSourceEvidenceAndBranchOutputSemantics": true,
-    "surfaceInputModelMayNotSubstituteBindingAuthority": true,
+  "forbiddenSources": {
+    "buildingContextRef": [
+      "cardId",
+      "route param",
+      "search label",
+      "sourceCardId",
+      "user raw ID input",
+      "workspaceCardId"
+    ],
+    "readinessEvidenceRefs": [
+      "cardId",
+      "ordinary user input",
+      "raw manual input",
+      "route param",
+      "search label",
+      "sourceCardId",
+      "workspaceCardId"
+    ],
+    "serviceVerificationRef": [
+      "cardId",
+      "ordinary user input",
+      "raw manual input",
+      "route param",
+      "search label",
+      "sourceCardId",
+      "workspaceCardId"
+    ],
+    "blockedReason": [
+      "cardId",
+      "ordinary user input",
+      "raw manual input",
+      "route param",
+      "search label",
+      "sourceCardId",
+      "workspaceCardId"
+    ],
+    "notSaleableReason": [
+      "cardId",
+      "ordinary user input",
+      "raw manual input",
+      "route param",
+      "search label",
+      "sourceCardId",
+      "workspaceCardId"
+    ]
+  },
+  "branchOutputSemantics": {
+    "blockedReason": {
+      "sourceBindingRef": "fieldBindings.blockedReason",
+      "sourceDecisionRef": "sourceFieldGaps.decisions.blockedReason",
+      "branchOutputScope": "all_no_go_branches",
+      "userSubmitted": false,
+      "compilerInput": "branchOutputOnly",
+      "mapsTo": [
+        "branchFlows.blockingReasonCode",
+        "branchFlows.blockingReasonCopyKey",
+        "branchFlows.admissionNoGoItem"
+      ]
+    },
+    "notSaleableReason": {
+      "sourceBindingRef": "fieldBindings.notSaleableReason",
+      "sourceDecisionRef": "sourceFieldGaps.decisions.notSaleableReason",
+      "branchOutputScope": "resource-not-saleable",
+      "userSubmitted": false,
+      "compilerInput": "branchOutputOnly",
+      "mapsTo": [
+        "branchFlows.resource-not-saleable.outcome",
+        "branchFlows.resource-not-saleable.blockingReasonCode",
+        "branchFlows.resource-not-saleable.blockingReasonCopyKey"
+      ]
+    }
+  },
+  "lineageImpact": {
+    "sourceFinalizationStatus": "SOURCE_FINALIZED_BY_00",
+    "sourceReadyForCompileDecision": true,
+    "compileDecisionStatus": "READY_FOR_00_COMPILE_DECISION",
+    "generatedCandidateAcceptedBy00": false,
     "runtimeConsumptionReady": false,
     "releaseAuthority": false,
     "finalGoNoGo": "NO_GO"
-  },
-  "sourceDigests": {
-    "sourceScenarioDigest": "sha256:c0cb0761d571c0cb2fca3bd7d3507ee2d6cbfa1c29170a9ea36017f1477f33e2",
-    "sourcePackageResultDigest": "sha256:e0e9df857daadd0894baf171071d7bd3f4c3ccb4c0bece41bd092364a02bb54c",
-    "kernelDigest": "sha256:033782c69e589a2dcb1592bf9fdfad88c3988e21982a38e48a423a6d031cead8"
   }
 }

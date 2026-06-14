@@ -2329,9 +2329,8 @@ function buildGeneratedFieldBindingClosureState() {
     result?.sourceFieldGapsDecisionDigest === closure.sourceFieldGapsDecisionDigest;
   const contractPass = contract?.generated === true &&
     contract?.doNotEdit === true &&
-    contract?.generatedFieldBindingClosureRequired === true &&
-    contract?.generatedFieldBindingClosureStatus === "PASS" &&
-    contract?.closureDigest === closure.closureDigest &&
+    contract?.canonicalClosureVersion === closure.canonicalClosureVersion &&
+    contract?.generatedFieldBindingClosureDigest === closure.closureDigest &&
     contract?.sourceFieldGapsDecisionDigest === closure.sourceFieldGapsDecisionDigest;
   const status = closure.status === "PASS" && resultPass && contractPass ? "PASS" : "FAIL";
   const blockingReasons = [];

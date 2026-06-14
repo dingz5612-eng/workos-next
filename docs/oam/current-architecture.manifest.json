@@ -342,6 +342,7 @@
       "artifacts/oam/checks/generated-compile-authorization-result.json",
       "docs/contracts/generated/dormitory/field-bindings.generated.json",
       "artifacts/oam/checks/generated-field-binding-closure-result.json",
+      "artifacts/oam/checks/s5-semantic-digest-idempotency-result.json",
       "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
       "artifacts/oam/checks/generated-contract-consistency-result.json",
       "docs/oam/generated-candidate-acceptance.current.json",
