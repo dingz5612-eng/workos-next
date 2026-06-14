@@ -2,10 +2,12 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
+import { validateFormalGeneratedCompileAuthorization } from "./lib/formal-generated-compile-authorization.mjs";
 
 const root = process.cwd();
 const evidenceDir = "artifacts/oam/evidence";
 const finalReportPath = "artifacts/oam/final-report.json";
+const generatedCompileApprovalPath = "docs/oam/generated-compile-approval.current.json";
 const generatedCompileCandidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
 const controlPlaneGateResultPath = "artifacts/oam/checks/control-plane-gate-results.json";
 const responsibilityMapPath = "docs/oam/current-oam-kernel-responsibility-map.json";
@@ -14,6 +16,9 @@ const commitAttestationPath = "artifacts/oam/evidence/current-oam-commit-attesta
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
 const releaseAttestationPath = "artifacts/oam/evidence/current-oam-release-attestation.json";
 const evidenceLifecycleProofPath = "artifacts/oam/evidence/evidence-lifecycle-proof.json";
+const generatedCompileExecutionSnapshotPath = "artifacts/oam/checks/generated-compile-execution-input-snapshot.json";
+const generatedCompileExecutionResultPath = "artifacts/oam/checks/generated-compile-execution-result.json";
+const generatedCompileExecutionProofPath = "artifacts/oam/evidence/generated-compile-execution-proof.json";
 const ciArtifactProvenanceReportPath = "artifacts/oam/checks/ci-artifact-provenance-report.json";
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 const evidenceRootDigestPlaceholder = "__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__";
@@ -99,9 +104,13 @@ const requiredEvidenceFiles = [
   "docs/read-intelligence/read-intelligence-kernel.json",
   "docs/read-intelligence/read-intelligence-kernel.schema.json",
   "docs/oam/db-no-side-effects-proof.json",
+  generatedCompileApprovalPath,
   generatedCompileCandidateApprovalPath,
   "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
   "artifacts/oam/checks/generated-compile-authorization-result.json",
+  generatedCompileExecutionSnapshotPath,
+  generatedCompileExecutionResultPath,
+  generatedCompileExecutionProofPath,
   "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
   "artifacts/oam/checks/generated-contract-consistency-result.json",
   "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
@@ -158,8 +167,11 @@ const realBrowserEvidence = buildRealBrowserEvidence();
 const mutationTests = readMutationTestsResult();
 const ciArtifactProvenance = readCiArtifactProvenanceReport();
 const sourcePackageCheck = readSourcePackageCheckResult();
+const generatedCompileApproval = readJsonIfExists(generatedCompileApprovalPath);
 const generatedCompileCandidateApproval = readJsonIfExists(generatedCompileCandidateApprovalPath);
 const generatedCompileCandidate = buildGeneratedCompileCandidateState();
+const formalGeneratedCompileAuthorization = buildFormalGeneratedCompileAuthorizationState();
+const generatedCompileExecution = buildGeneratedCompileExecutionState();
 const sourceAuthorityDigest = digestForFiles(sourceAuthorityFiles());
 const generatedContractDigest = generatedContractsHash;
 const fileLifecycleDigest = hashFileStrict("docs/oam/file-lifecycle-policy.json");
@@ -524,6 +536,8 @@ const workstreamGoNoGoFields = buildWorkstreamGoNoGoFields(workstreamProofNodes)
 const p0ClosureProofNodes = buildP0ClosureProofNodes();
 const sourcePackageProofNodes = buildSourcePackageProofNodes();
 const generatedCompileCandidateProofNodes = buildGeneratedCompileCandidateProofNodes();
+const formalGeneratedCompileAuthorizationProofNodes = buildFormalGeneratedCompileAuthorizationProofNodes();
+const generatedCompileExecutionProofNodes = buildGeneratedCompileExecutionProofNodes();
 const candidateEvidenceObject = {
   ...proof("current-oam-candidate-evidence-object", "当前 OAM Candidate Evidence Object", {
     proofType: "candidate-evidence",
@@ -639,12 +653,14 @@ const finalReport = {
   compilePreparationDecision: sourcePackageCheck.compilePreparationDecision,
   compileDecisionStatus: sourcePackageCheck.compileDecisionStatus,
   compilePreparationAllowed: sourcePackageCheck.compilePreparationAllowed,
-  generatedCompileAuthorized: sourcePackageCheck.generatedCompileAuthorized ?? false,
-  generatedCompilationAllowed: sourcePackageCheck.generatedCompilationAllowed,
-  generatedCompilationReadiness: "NOT_STARTED_OR_NOT_AUTHORIZED",
-  generatedContractStatus10B: sourcePackageCheck.generatedContractStatus10B ?? "PENDING_GENERATED_CONTRACT",
-  generatedCompileCompleted: false,
-  generatedCompilationCompleted: false,
+  generatedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
+  generatedCompilationAllowed: formalGeneratedCompileAuthorization.generatedCompilationAllowed,
+  generatedCompilationReadiness: generatedCompileExecution.generatedCompilationReadiness,
+  formalGeneratedCompileAuthorization,
+  generatedCompileExecution,
+  generatedContractStatus10B: generatedCompileExecution.generatedContractStatus10B,
+  generatedCompileCompleted: generatedCompileExecution.generatedCompileCompleted,
+  generatedCompilationCompleted: generatedCompileExecution.generatedCompilationCompleted,
   generatedCompileCandidateAuthorized: generatedCompileCandidate.authorized,
   authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
   authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
@@ -656,6 +672,9 @@ const finalReport = {
   candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
   candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
   generatedCompileCandidateStatus: generatedCompileCandidate.status,
+  formalGeneratedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
+  formalGeneratedCompilationAllowed: formalGeneratedCompileAuthorization.generatedCompilationAllowed,
+  formalGeneratedCompileAuthorizationStatus: formalGeneratedCompileAuthorization.status,
   generatedCandidateAcceptedBy00: false,
   generatedReleaseAllowed: false,
   runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
@@ -792,8 +811,10 @@ const finalReport = {
   unresolvedP2: [],
   finalGoNoGo: forcedCurrentStageGoNoGo.finalGoNoGo,
   noGoReasons: finalDecision.noGoReasons,
+  formalGeneratedCompileNextStageAllowed: formalGeneratedCompileAuthorization.authorized,
+  formalGeneratedCompileNextStageScope: "formal_generated_compile_gates_only",
   nextStageAllowed: false,
-  nextStageReason: `不允许进入下一阶段；必须等待 00 复审裁决并保持业务 GO 阻断。当前 NO_GO 原因：${finalDecision.noGoReasons.join("；")}`,
+  nextStageReason: `不允许进入 runtime、release 或业务下一阶段；formal generated compile authorization gates 可执行。当前 NO_GO 原因：${finalDecision.noGoReasons.join("；")}`,
   p0RuleLedger: p0Ledger
 };
 
@@ -842,6 +863,11 @@ const evidenceGraph = {
       path: generatedCompileCandidateApprovalPath,
       proofType: "generated-compile-candidate-approval",
       purposeZh: "00 只授权 generated compile candidate，不授权 release、runtime 消费或业务 GO。"
+    },
+    {
+      path: generatedCompileExecutionProofPath,
+      proofType: "generated-compile-execution-proof",
+      purposeZh: "formal generated compile execution 证明；只证明生成编译闭合，不接受候选、不开放 Runtime、不授权 GO。"
     }
   ],
   authorityRefs: [
@@ -864,6 +890,8 @@ const evidenceGraph = {
   finalReportStatusMatrix,
   mutationTests,
   generatedCompileCandidate,
+  formalGeneratedCompileAuthorization,
+  generatedCompileExecution,
   candidateEvidence: summarizeCandidateEvidence(candidateEvidenceObject),
   commitAttestation: summarizeCommitAttestation(commitAttestation),
   responsibilityMap: {
@@ -878,6 +906,8 @@ const evidenceGraph = {
     ...p0ClosureProofNodes,
     ...sourcePackageProofNodes,
     ...generatedCompileCandidateProofNodes,
+    ...formalGeneratedCompileAuthorizationProofNodes,
+    ...generatedCompileExecutionProofNodes,
     ...realBrowserEvidence.nodes
   ],
   edges: realBrowserEvidence.edges
@@ -916,7 +946,22 @@ const releaseEvidenceObject = {
   evidenceRootDigest: evidenceRootDigestPlaceholder,
   generatedContractsHash,
   sourceReadyForCompileDecision: sourcePackageCheck.sourceReadyForCompileDecision ?? true,
-  generatedCompileAuthorized: sourcePackageCheck.generatedCompileAuthorized ?? false,
+  generatedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
+  generatedCompilationAllowed: formalGeneratedCompileAuthorization.generatedCompilationAllowed,
+  generatedCompilationReadiness: formalGeneratedCompileAuthorization.generatedCompilationReadiness,
+  formalGeneratedCompileAuthorization,
+  generatedCompileExecution: {
+    status: "NO_GO",
+    generatedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
+    generatedCompilationAllowed: formalGeneratedCompileAuthorization.generatedCompilationAllowed,
+    generatedCompilationReadiness: formalGeneratedCompileAuthorization.generatedCompilationReadiness,
+    generatedCompileCompleted: false,
+    generatedCompilationCompleted: false,
+    generatedCandidateAcceptedBy00: false,
+    runtimeConsumptionReady: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  },
   generatedCompileCandidateAuthorized: generatedCompileCandidate.authorized,
   authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
   authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
@@ -986,7 +1031,10 @@ const releaseAttestation = {
   zipArtifactDigest: zipArtifactDigest || pendingExternalAttestation,
   releaseAuthority: false,
   sourceReadyForCompileDecision: sourcePackageCheck.sourceReadyForCompileDecision ?? true,
-  generatedCompileAuthorized: sourcePackageCheck.generatedCompileAuthorized ?? false,
+  generatedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
+  generatedCompilationAllowed: formalGeneratedCompileAuthorization.generatedCompilationAllowed,
+  generatedCompilationReadiness: formalGeneratedCompileAuthorization.generatedCompilationReadiness,
+  formalGeneratedCompileAuthorizationStatus: formalGeneratedCompileAuthorization.status,
   generatedCompileCandidateAuthorized: generatedCompileCandidate.authorized,
   authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
   authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
@@ -1423,7 +1471,10 @@ function binding(kind) {
     evidenceRootDigest: evidenceRootDigestPlaceholder,
     generatedContractsHash,
     sourceReadyForCompileDecision: sourcePackageCheck.sourceReadyForCompileDecision ?? true,
-    generatedCompileAuthorized: sourcePackageCheck.generatedCompileAuthorized ?? false,
+    generatedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
+    generatedCompilationAllowed: formalGeneratedCompileAuthorization.generatedCompilationAllowed,
+    generatedCompilationReadiness: formalGeneratedCompileAuthorization.generatedCompilationReadiness,
+    formalGeneratedCompileAuthorizationStatus: formalGeneratedCompileAuthorization.status,
     generatedCompileCandidateAuthorized: generatedCompileCandidate.authorized,
     authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
     authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
@@ -1466,7 +1517,10 @@ function evidenceBindingState() {
     releaseAuthority: false,
     generatedContractsHash,
     sourceReadyForCompileDecision: sourcePackageCheck.sourceReadyForCompileDecision ?? true,
-    generatedCompileAuthorized: sourcePackageCheck.generatedCompileAuthorized ?? false,
+    generatedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
+    generatedCompilationAllowed: formalGeneratedCompileAuthorization.generatedCompilationAllowed,
+    generatedCompilationReadiness: formalGeneratedCompileAuthorization.generatedCompilationReadiness,
+    formalGeneratedCompileAuthorizationStatus: formalGeneratedCompileAuthorization.status,
     generatedCompileCandidateAuthorized: generatedCompileCandidate.authorized,
     authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
     authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
@@ -1630,9 +1684,14 @@ function buildCandidateEvidenceSubject() {
     mutationStatus: mutationTests.status,
     browserL1Status: realBrowserEvidence.summary.l1?.status ?? "missing_or_failed",
     candidateStatus,
-    candidateReadyForCompile: false,
+    candidateReadyForCompile: formalGeneratedCompileAuthorization.authorized,
     sourceScenarioPackageReviewStatus: sourcePackageCheck.sourceScenarioPackageReviewStatus ?? "CONDITIONAL_NO_PASS",
-    generatedCompilationReadiness: "NOT_STARTED_OR_NOT_AUTHORIZED",
+    formalGeneratedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
+    generatedCompilationReadiness: generatedCompileExecution.generatedCompilationReadiness,
+    generatedCompileExecutionStatus: generatedCompileExecution.status,
+    generatedCompileCompleted: generatedCompileExecution.generatedCompileCompleted,
+    generatedCompilationCompleted: generatedCompileExecution.generatedCompilationCompleted,
+    generatedCandidateAcceptedBy00: false,
     candidateReadyForBusinessImplementation: false,
     candidateReadyForRelease: false,
     notesZh: "Candidate Evidence 只证明本地架构候选闭合；业务落地和发布仍保持 NO_GO。"
@@ -2052,6 +2111,140 @@ function buildGeneratedCompileCandidateState() {
   };
 }
 
+function buildFormalGeneratedCompileAuthorizationState() {
+  const approval = generatedCompileApproval ?? {};
+  const approvalObjectHash = generatedCompileApproval
+    ? hashFileStrict(generatedCompileApprovalPath)
+    : "missing";
+  const predicate = validateFormalGeneratedCompileAuthorization({
+    approval,
+    candidateApproval: generatedCompileCandidateApproval,
+    currentHead: currentRepositoryHead,
+    approvalPath: generatedCompileApprovalPath,
+    candidateApprovalPath: generatedCompileCandidateApprovalPath
+  });
+  const authorized = predicate.authorized && generatedCompileCandidate.authorized === true;
+  const predicateFailures = authorized
+    ? []
+    : [
+        ...predicate.failures,
+        ...(generatedCompileCandidate.authorized === true ? [] : ["generated compile candidate approval is not authorized"])
+      ];
+  return {
+    version: "oam.formal-generated-compile-authorization-state.v1",
+    status: authorized ? "PASS" : "NO_GO",
+    authorized,
+    predicateVersion: predicate.version,
+    headBindingStatus: predicate.headBindingStatus,
+    predicateFailures,
+    approvalObjectRef: generatedCompileApprovalPath,
+    approvalObjectHash,
+    approvalStatus: approval.approvalStatus ?? "missing",
+    approvalDecision: approval.approvalDecision ?? "missing",
+    approvalScope: approval.approvalScope ?? "missing",
+    currentHEAD: approval.currentHEAD ?? "missing",
+    reviewedRef: approval.reviewedRef ?? "missing",
+    currentRepositoryHead,
+    candidateSourceRef: approval.candidateSourceRef ?? "missing",
+    authorizedCandidateExecutionHead: approval.authorizedCandidateExecutionHead ?? "missing",
+    candidateArtifactRunId: approval.candidateArtifactRunId ?? "missing",
+    candidateArtifactName: approval.candidateArtifactName ?? "missing",
+    candidateArtifactGithubDigest: approval.candidateArtifactGithubDigest ?? "missing",
+    candidateArtifactInternalReleaseEvidenceDigest: approval.candidateArtifactInternalReleaseEvidenceDigest ?? "missing",
+    artifactDigestDistinction: approval.artifactDigestDistinction ?? "",
+    generatedCompileAuthorized: authorized,
+    generatedCompilationAllowed: authorized,
+    generatedCompilationReadiness: authorized
+      ? "AUTHORIZED_PENDING_GENERATED_COMPILE_EXECUTION"
+      : "NOT_STARTED_OR_NOT_AUTHORIZED",
+    generatedCompileCompleted: false,
+    generatedCompilationCompleted: false,
+    generatedCandidateAcceptedBy00: false,
+    generatedReleaseAllowed: false,
+    runtimeConsumptionReady: false,
+    businessFeatureDevelopmentAllowed: false,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  };
+}
+
+function buildGeneratedCompileExecutionState() {
+  const result = readJsonIfExists(generatedCompileExecutionResultPath);
+  const proofDocument = readJsonIfExists(generatedCompileExecutionProofPath);
+  const snapshot = readJsonIfExists(generatedCompileExecutionSnapshotPath);
+  const resultPass = result?.status === "PASS" && result?.checkerExecutionStatus === "PASS";
+  const proofPass = proofDocument?.status === "PASS";
+  const formalAuthorized = formalGeneratedCompileAuthorization.authorized === true;
+  const noForbiddenEscalation =
+    result?.generatedCandidateAcceptedBy00 === false &&
+    result?.runtimeConsumptionReady === false &&
+    result?.businessFeatureDevelopmentAllowed === false &&
+    result?.productionConfirmAllowed === false &&
+    result?.releaseAuthority === false &&
+    result?.finalGoNoGo === "NO_GO" &&
+    proofDocument?.generatedCandidateAcceptedBy00 === false &&
+    proofDocument?.runtimeConsumptionReady === false &&
+    proofDocument?.businessFeatureDevelopmentAllowed === false &&
+    proofDocument?.productionConfirmAllowed === false &&
+    proofDocument?.releaseAuthority === false &&
+    proofDocument?.finalGoNoGo === "NO_GO";
+  const completed = formalAuthorized &&
+    resultPass &&
+    proofPass &&
+    result?.generatedCompileCompleted === true &&
+    result?.generatedCompilationCompleted === true &&
+    proofDocument?.generatedCompileCompleted === true &&
+    proofDocument?.generatedCompilationCompleted === true &&
+    noForbiddenEscalation;
+  const blockingReasons = [];
+  if (!formalAuthorized) blockingReasons.push("formal generated compile authorization is not exact-head PASS.");
+  if (!resultPass) blockingReasons.push(`${generatedCompileExecutionResultPath} is missing or not PASS.`);
+  if (!proofPass) blockingReasons.push(`${generatedCompileExecutionProofPath} is missing or not PASS.`);
+  if (!noForbiddenEscalation) blockingReasons.push("generated compile execution proof attempted forbidden candidate/runtime/business/release/GO escalation.");
+  return {
+    version: "oam.generated-compile-execution-state.v1",
+    status: completed ? "PASS" : "NO_GO",
+    resultPath: generatedCompileExecutionResultPath,
+    proofPath: generatedCompileExecutionProofPath,
+    snapshotPath: generatedCompileExecutionSnapshotPath,
+    resultDigest: fileExists(generatedCompileExecutionResultPath) ? hashFileStrict(generatedCompileExecutionResultPath) : "missing",
+    proofDigest: fileExists(generatedCompileExecutionProofPath) ? hashFileStrict(generatedCompileExecutionProofPath) : "missing",
+    snapshotDigest: fileExists(generatedCompileExecutionSnapshotPath) ? hashFileStrict(generatedCompileExecutionSnapshotPath) : "missing",
+    currentHead: result?.currentHead ?? currentRepositoryHead,
+    currentBranch: result?.currentBranch ?? branch,
+    formalAuthorizationStatus: formalGeneratedCompileAuthorization.status,
+    generatedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
+    generatedCompilationAllowed: formalGeneratedCompileAuthorization.generatedCompilationAllowed,
+    generatedCompilationReadiness: completed
+      ? "FORMAL_GENERATED_COMPILE_EXECUTED_PENDING_00_GENERATED_CANDIDATE_ACCEPTANCE"
+      : formalGeneratedCompileAuthorization.generatedCompilationReadiness,
+    generatedCompileCompleted: completed,
+    generatedCompilationCompleted: completed,
+    generatedContractStatus10B: completed
+      ? "GENERATED_COMPILE_EXECUTED_PENDING_00_CANDIDATE_ACCEPTANCE"
+      : sourcePackageCheck.generatedContractStatus10B ?? "PENDING_GENERATED_CONTRACT",
+    generatedOutputDigest: result?.generatedOutputDigest ?? generatedContractsHash,
+    manifestDigest: result?.manifestDigest ?? (fileExists("docs/oam/generated-contracts-manifest.json") ? hashFileStrict("docs/oam/generated-contracts-manifest.json") : "missing"),
+    generatedKernelGraphDigest: result?.generatedKernelGraphDigest ?? (fileExists("docs/oam/kernel/oam-kernel-graph.generated.json") ? hashFileStrict("docs/oam/kernel/oam-kernel-graph.generated.json") : "missing"),
+    reproducibility: result?.reproducibility ?? proofDocument?.reproducibility ?? null,
+    noManualEditProof: result?.noManualEditProof ?? proofDocument?.noManualEditProof ?? null,
+    consistencyProof: result?.consistencyProof ?? proofDocument?.consistencyProof ?? null,
+    driftProof: result?.driftProof ?? proofDocument?.driftProof ?? null,
+    inputSnapshotStatus: snapshot?.status ?? "missing",
+    nextDecisionFor00: completed ? "GENERATED_CANDIDATE_ACCEPTANCE_REVIEW" : "FORMAL_GENERATED_COMPILE_EXECUTION",
+    generatedCandidateAcceptedBy00: false,
+    generatedReleaseAllowed: false,
+    runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
+    runtimeConsumptionReady: false,
+    businessFeatureDevelopmentAllowed: false,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO",
+    blockingReasons
+  };
+}
+
 function buildGeneratedCompileCandidateProofNodes() {
   if (!generatedCompileCandidateApproval) return [];
   const id = "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-COMPILE-CANDIDATE";
@@ -2138,6 +2331,165 @@ function buildGeneratedCompileCandidateProofNodes() {
   }];
 }
 
+function buildFormalGeneratedCompileAuthorizationProofNodes() {
+  if (!generatedCompileApproval) return [];
+  const id = "OAM-DORMITORY-GOLDEN-CHAIN-FORMAL-GENERATED-COMPILE-AUTHORIZATION";
+  const source = [
+    generatedCompileApprovalPath,
+    generatedCompileCandidateApprovalPath,
+    "artifacts/oam/checks/generated-compile-authorization-result.json",
+    "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
+    "artifacts/oam/checks/dormitory-candidate-artifact-attestation-package-result.json"
+  ];
+  const dependsOn = [
+    "OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE",
+    "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-COMPILE-CANDIDATE",
+    generatedCompileApprovalPath,
+    "artifacts/oam/checks/generated-compile-authorization-result.json"
+  ];
+  const payload = {
+    nodeId: id,
+    proofType: "formal_generated_compile_authorization",
+    scope: "formal_generated_compile_authorization_only",
+    status: formalGeneratedCompileAuthorization.status,
+    approvalObjectHash: formalGeneratedCompileAuthorization.approvalObjectHash,
+    reviewedRef: formalGeneratedCompileAuthorization.reviewedRef,
+    candidateSourceRef: formalGeneratedCompileAuthorization.candidateSourceRef,
+    authorizedCandidateExecutionHead: formalGeneratedCompileAuthorization.authorizedCandidateExecutionHead,
+    generatedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
+    generatedCompilationAllowed: formalGeneratedCompileAuthorization.generatedCompilationAllowed,
+    generatedCompileCompleted: false,
+    generatedCandidateAcceptedBy00: false,
+    runtimeConsumptionReady: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO",
+    dependsOn
+  };
+  const hash = digestObject(payload);
+  return [{
+    id,
+    type: "formal_generated_compile_authorization",
+    proofType: "formal_generated_compile_authorization",
+    scope: "formal_generated_compile_authorization_only",
+    source,
+    hash,
+    dependsOn,
+    producedBy: "00 formal generated compile authorization writeback",
+    verifiedBy: [
+      "scripts/oam/check-generated-compile-authorization.mjs",
+      "scripts/oam/check-current-evidence-root.mjs"
+    ],
+    binding: formalGeneratedCompileAuthorizationBinding(id),
+    status: formalGeneratedCompileAuthorization.status === "PASS" ? "passed" : "blocked",
+    approvalObjectHash: formalGeneratedCompileAuthorization.approvalObjectHash,
+    approvalStatus: formalGeneratedCompileAuthorization.approvalStatus,
+    approvalDecision: formalGeneratedCompileAuthorization.approvalDecision,
+    reviewedRef: formalGeneratedCompileAuthorization.reviewedRef,
+    candidateSourceRef: formalGeneratedCompileAuthorization.candidateSourceRef,
+    authorizedCandidateExecutionHead: formalGeneratedCompileAuthorization.authorizedCandidateExecutionHead,
+    generatedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
+    generatedCompilationAllowed: formalGeneratedCompileAuthorization.generatedCompilationAllowed,
+    generatedCompilationReadiness: formalGeneratedCompileAuthorization.generatedCompilationReadiness,
+    generatedCompileCompleted: false,
+    generatedCandidateAcceptedBy00: false,
+    generatedReleaseAllowed: false,
+    runtimeConsumptionReady: false,
+    businessFeatureDevelopmentAllowed: false,
+    goNoGo: "NO_GO",
+    finalGoNoGo: "NO_GO",
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    goNoGoImpact: ["generatedCompileAuthorizationStatus", "finalGoNoGo"],
+    notesZh: "Formal generated compile authorization proof node; this does not accept the generated candidate, open Runtime consumption, or grant GO."
+  }];
+}
+
+function buildGeneratedCompileExecutionProofNodes() {
+  const id = "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-COMPILE-EXECUTION";
+  const source = [
+    generatedCompileExecutionResultPath,
+    generatedCompileExecutionProofPath,
+    generatedCompileExecutionSnapshotPath,
+    "docs/oam/generated-contracts-manifest.json",
+    "docs/oam/kernel/oam-kernel-graph.generated.json",
+    "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
+    "artifacts/oam/checks/generated-contract-consistency-result.json",
+    "artifacts/oam/checks/derived-contract-consistency-result.json",
+    "artifacts/oam/checks/oam-kernel-graph-result.json"
+  ];
+  const dependsOn = [
+    "OAM-DORMITORY-GOLDEN-CHAIN-FORMAL-GENERATED-COMPILE-AUTHORIZATION",
+    "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-COMPILE-CANDIDATE",
+    generatedCompileExecutionProofPath,
+    "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
+    "artifacts/oam/checks/generated-contract-consistency-result.json",
+    "artifacts/oam/checks/derived-contract-consistency-result.json",
+    "artifacts/oam/checks/oam-kernel-graph-result.json"
+  ];
+  const payload = {
+    nodeId: id,
+    proofType: "formal_generated_compile_execution",
+    scope: "formal_generated_compile_execution_only",
+    status: generatedCompileExecution.status,
+    resultDigest: generatedCompileExecution.resultDigest,
+    proofDigest: generatedCompileExecution.proofDigest,
+    snapshotDigest: generatedCompileExecution.snapshotDigest,
+    generatedOutputDigest: generatedCompileExecution.generatedOutputDigest,
+    generatedCompileAuthorized: generatedCompileExecution.generatedCompileAuthorized,
+    generatedCompilationAllowed: generatedCompileExecution.generatedCompilationAllowed,
+    generatedCompileCompleted: generatedCompileExecution.generatedCompileCompleted,
+    generatedCompilationCompleted: generatedCompileExecution.generatedCompilationCompleted,
+    generatedCandidateAcceptedBy00: false,
+    runtimeConsumptionReady: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO",
+    dependsOn
+  };
+  const hash = digestObject(payload);
+  return [{
+    id,
+    type: "formal_generated_compile_execution",
+    proofType: "formal_generated_compile_execution",
+    scope: "formal_generated_compile_execution_only",
+    source,
+    hash,
+    dependsOn,
+    producedBy: "scripts/oam/check-generated-compile-execution.mjs",
+    verifiedBy: [
+      "scripts/oam/check-generated-compile-execution.mjs",
+      "scripts/oam/check-current-evidence-root.mjs"
+    ],
+    binding: generatedCompileExecutionBinding(id),
+    status: generatedCompileExecution.status === "PASS" ? "passed" : "blocked",
+    resultPath: generatedCompileExecution.resultPath,
+    proofPath: generatedCompileExecution.proofPath,
+    snapshotPath: generatedCompileExecution.snapshotPath,
+    resultDigest: generatedCompileExecution.resultDigest,
+    proofDigest: generatedCompileExecution.proofDigest,
+    snapshotDigest: generatedCompileExecution.snapshotDigest,
+    generatedOutputDigest: generatedCompileExecution.generatedOutputDigest,
+    manifestDigest: generatedCompileExecution.manifestDigest,
+    generatedKernelGraphDigest: generatedCompileExecution.generatedKernelGraphDigest,
+    generatedCompileAuthorized: generatedCompileExecution.generatedCompileAuthorized,
+    generatedCompilationAllowed: generatedCompileExecution.generatedCompilationAllowed,
+    generatedCompilationReadiness: generatedCompileExecution.generatedCompilationReadiness,
+    generatedCompileCompleted: generatedCompileExecution.generatedCompileCompleted,
+    generatedCompilationCompleted: generatedCompileExecution.generatedCompilationCompleted,
+    generatedCandidateAcceptedBy00: false,
+    generatedReleaseAllowed: false,
+    runtimeConsumptionReady: false,
+    businessFeatureDevelopmentAllowed: false,
+    productionConfirmAllowed: false,
+    goNoGo: "NO_GO",
+    finalGoNoGo: "NO_GO",
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    nextDecisionFor00: generatedCompileExecution.nextDecisionFor00,
+    goNoGoImpact: ["generatedCompilationStatus", "finalGoNoGo"],
+    notesZh: "Formal generated compile execution proof node; this completes the generated compile evidence layer only and does not accept the generated candidate, open Runtime consumption, or grant GO."
+  }];
+}
+
 function generatedCompileCandidateBinding(proofId) {
   return {
     root: "current-oam-trust-closure-v1",
@@ -2160,6 +2512,65 @@ function generatedCompileCandidateBinding(proofId) {
     generatedCandidateAcceptedBy00: false,
     generatedReleaseAllowed: false,
     runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    finalGoNoGo: "NO_GO"
+  };
+}
+
+function generatedCompileExecutionBinding(proofId) {
+  return {
+    root: "current-oam-trust-closure-v1",
+    proofId,
+    sourceCommitSha,
+    evidenceRunSha,
+    evidenceLifecycleType,
+    scope: "formal_generated_compile_execution_only",
+    bindingStatus: releaseBindingStatus,
+    referenceOnly: releaseEvidenceReferenceOnly,
+    formalApprovalObjectRef: generatedCompileApprovalPath,
+    formalApprovalObjectHash: formalGeneratedCompileAuthorization.approvalObjectHash,
+    resultPath: generatedCompileExecution.resultPath,
+    proofPath: generatedCompileExecution.proofPath,
+    snapshotPath: generatedCompileExecution.snapshotPath,
+    resultDigest: generatedCompileExecution.resultDigest,
+    proofDigest: generatedCompileExecution.proofDigest,
+    snapshotDigest: generatedCompileExecution.snapshotDigest,
+    generatedOutputDigest: generatedCompileExecution.generatedOutputDigest,
+    generatedCompileAuthorized: generatedCompileExecution.generatedCompileAuthorized,
+    generatedCompilationAllowed: generatedCompileExecution.generatedCompilationAllowed,
+    generatedCompileCompleted: generatedCompileExecution.generatedCompileCompleted,
+    generatedCompilationCompleted: generatedCompileExecution.generatedCompilationCompleted,
+    generatedCandidateAcceptedBy00: false,
+    runtimeConsumptionReady: false,
+    businessFeatureDevelopmentAllowed: false,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    finalGoNoGo: "NO_GO"
+  };
+}
+
+function formalGeneratedCompileAuthorizationBinding(proofId) {
+  return {
+    root: "current-oam-trust-closure-v1",
+    proofId,
+    sourceCommitSha,
+    evidenceRunSha,
+    evidenceLifecycleType,
+    scope: "formal_generated_compile_authorization_only",
+    bindingStatus: releaseBindingStatus,
+    referenceOnly: releaseEvidenceReferenceOnly,
+    approvalObjectRef: generatedCompileApprovalPath,
+    approvalObjectHash: formalGeneratedCompileAuthorization.approvalObjectHash,
+    reviewedRef: formalGeneratedCompileAuthorization.reviewedRef,
+    candidateSourceRef: formalGeneratedCompileAuthorization.candidateSourceRef,
+    authorizedCandidateExecutionHead: formalGeneratedCompileAuthorization.authorizedCandidateExecutionHead,
+    generatedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
+    generatedCompilationAllowed: formalGeneratedCompileAuthorization.generatedCompilationAllowed,
+    generatedCompileCompleted: false,
+    generatedCandidateAcceptedBy00: false,
+    runtimeConsumptionReady: false,
     releaseAuthority: false,
     businessGoAuthority: false,
     finalGoNoGo: "NO_GO"
@@ -2735,8 +3146,7 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
     "node scripts/oam/check-file-lifecycle-policy.mjs",
     "node scripts/oam/check-authority-source-layer-audit.mjs"
   ]);
-  const generatedCompileAuthorized = sourcePackageCheck.generatedCompilationAllowed === true ||
-    sourcePackageCheck.generatedCompilationAllowed === "true" ||
+  const generatedCompileAuthorized = formalGeneratedCompileAuthorization.authorized ||
     process.env.ALLOW_GENERATED_COMPILE_CANDIDATE === "true";
   const compileGate = gateGroupStatus([
     "node scripts/oam/check-generated-compile-authorization.mjs",
@@ -2746,7 +3156,8 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
     "node scripts/oam/check-derived-contract-consistency.mjs",
     "node scripts/oam/check-generated-contract-consistency.mjs",
     "node scripts/oam/check-generated-files-not-manually-edited.mjs",
-    "node scripts/oam/check-oam-kernel-graph.mjs"
+    "node scripts/oam/check-oam-kernel-graph.mjs",
+    "node scripts/oam/check-generated-compile-execution.mjs"
   ]);
   const runtimeGate = gateGroupStatus([
     "node scripts/check-api-boundaries.mjs",
@@ -2770,11 +3181,9 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
   const mutationPassed = mutationTests.status === "passed";
   const sourcePackagePassed = sourcePackageCheck.status === "PASS" && sourcePackageGate.status === "PASS";
   const sourceCompileDecisionReady = sourcePackagePassed && sourcePackageCheck.sourceReadyForCompileDecision !== false;
-  const generatedCompileAllowedBy00 = sourcePackageCheck.generatedCompileAuthorized === true ||
-    sourcePackageCheck.generatedCompilationAllowed === true ||
-    sourcePackageCheck.generatedCompilationAllowed === "true";
-  const generatedCompileCompleted = sourcePackageCheck.generatedCompileCompleted === true ||
-    sourcePackageCheck.generatedCompilationCompleted === true;
+  const generatedCompileAllowedBy00 = formalGeneratedCompileAuthorization.authorized === true;
+  const generatedCompileCompleted = generatedCompileExecution.generatedCompileCompleted === true &&
+    generatedCompileExecution.generatedCompilationCompleted === true;
   const runtimeConsumptionReady = sourcePackageCheck.runtimeConsumptionReady === true;
   const browserL1Passed = realBrowserEvidence.summary.l1?.status === "passed";
   const candidatePassed = candidate.candidateStatus === "PASS";
@@ -2855,38 +3264,42 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
       status: generatedCompileAllowedBy00 ? "PASS" : "NO_GO",
       inputs: [
         "docs/oam/generated-compile-approval.current.json",
-        String(sourcePackageCheck.generatedCompileAuthorized ?? false),
-        String(sourcePackageCheck.generatedCompilationAllowed ?? "")
+        formalGeneratedCompileAuthorization.approvalStatus,
+        String(formalGeneratedCompileAuthorization.generatedCompileAuthorized),
+        String(formalGeneratedCompileAuthorization.generatedCompilationAllowed)
       ],
       proofRefs: [
         "docs/oam/generated-compile-approval.current.json",
         "scripts/oam/check-generated-compile-authorization.mjs"
       ],
       blockingReasons: generatedCompileAllowedBy00 ? [] : [
-        "等待 00 显式 generated compile 授权；当前 generatedCompileAuthorized=false。",
+        "等待 00 显式 generated compile 授权；formal approval object 尚未通过。",
         "Source 定稿不等于 generated 编译授权。"
       ],
       nextAction: generatedCompileAllowedBy00
-        ? "仅在 00 授权对象与 Source hash 匹配后进入 generated 编译候选。"
+        ? "仅允许执行 formal generated compile gates；不得解释为 generated candidate accepted、Runtime consumption 或 GO。"
         : "保持 generated 编译阻断；未授权时只能检查 hash/digest 元数据和 doNotEdit。"
     }),
     generatedCompilationStatus: reportStatusEntry({
       status: generatedCompileCompleted ? "PASS" : "NO_GO",
       inputs: [
-        String(sourcePackageCheck.generatedCompileCompleted ?? false),
-        String(sourcePackageCheck.generatedCompilationCompleted ?? false),
-        sourcePackageCheck.generatedContractStatus10B ?? "PENDING_GENERATED_CONTRACT"
+        generatedCompileExecutionResultPath,
+        generatedCompileExecutionProofPath,
+        String(generatedCompileExecution.generatedCompileCompleted),
+        String(generatedCompileExecution.generatedCompilationCompleted),
+        generatedCompileExecution.generatedContractStatus10B
       ],
       proofRefs: [
-        "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
-        "scripts/oam/check-generated-compile-authorization.mjs"
+        generatedCompileExecutionResultPath,
+        generatedCompileExecutionProofPath,
+        "scripts/oam/check-generated-compile-execution.mjs"
       ],
       blockingReasons: generatedCompileCompleted ? [] : [
-        "Dormitory generated contracts 尚未获得 00 授权，正式编译未执行。",
-        "generatedContractStatus10B=PENDING_GENERATED_CONTRACT。"
+        "Dormitory generated contracts 已获 formal authorization，但 S4 formal generated compile execution 结果尚未 PASS。",
+        "generatedContractStatus10B 仍不是 GENERATED_COMPILE_EXECUTED_PENDING_00_CANDIDATE_ACCEPTANCE。"
       ],
       nextAction: generatedCompileCompleted
-        ? "继续执行 generated 合同一致性与 runtime 消费验证。"
+        ? "提交给 00 做 generated candidate acceptance review；Runtime consumption、业务开发和 GO 仍保持阻断。"
         : "等待 00 授权后才可运行宿舍 generated contracts 正式编译。"
     }),
     runtimeConsumptionStatus: reportStatusEntry({
@@ -2901,7 +3314,7 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
         "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json"
       ],
       blockingReasons: runtimeConsumptionReady ? [] : [
-        "runtimeConsumptionReady=false；Runtime 不得消费未授权、未完成的 Dormitory generated 编译结果。"
+        "runtimeConsumptionReady=false；S4 只完成 generated compile execution，仍需 00 接受 generated candidate 后才可进入 Runtime consumption。"
       ],
       nextAction: runtimeConsumptionReady
         ? "Runtime 只能消费已授权且已编译验证的 generated 合同。"

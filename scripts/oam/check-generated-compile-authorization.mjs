@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { validateFormalGeneratedCompileAuthorization } from "./lib/formal-generated-compile-authorization.mjs";
 
 const root = process.cwd();
 const allowGeneratedCompile = process.env.ALLOW_GENERATED_COMPILE_CANDIDATE === "true";
@@ -11,6 +12,8 @@ const finalReportPath = "artifacts/oam/final-report.json";
 const reportPath = "artifacts/oam/checks/generated-compile-authorization-result.json";
 const pendingApprovalPath = "docs/oam/generated-compile-approval.current.json";
 const candidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
+const generatedCompileExecutionResultPath = "artifacts/oam/checks/generated-compile-execution-result.json";
+const generatedCompileExecutionProofPath = "artifacts/oam/evidence/generated-compile-execution-proof.json";
 const controlPlanePath = "scripts/oam/run-control-plane-checks.ps1";
 const ciWorkflowPath = ".github/workflows/ci.yml";
 const generatedPaths = [
@@ -56,7 +59,10 @@ const negativeFixtureResults = [];
 const sourceText = readText(sourcePath);
 const sourceResult = readJsonIfExists(sourceResultPath);
 const finalReport = readJsonIfExists(finalReportPath);
+const generatedCompileExecutionResult = readJsonIfExists(generatedCompileExecutionResultPath);
+const generatedCompileExecutionProof = readJsonIfExists(generatedCompileExecutionProofPath);
 const pendingApproval = readJsonIfExists(pendingApprovalPath);
+const formalApproval = pendingApproval;
 const candidateApproval = readJsonIfExists(candidateApprovalPath);
 const controlPlaneText = readText(controlPlanePath);
 const ciWorkflowText = readText(ciWorkflowPath);
@@ -65,14 +71,39 @@ const sourceHash = digestText(sourceText);
 const currentHead = runGit(["rev-parse", "HEAD"]).trim();
 const currentBranch = resolveCurrentBranch();
 const authorization = resolveCandidateAuthorization(candidateApproval);
+const formalAuthorization = validateFormalGeneratedCompileAuthorization({
+  approval: formalApproval,
+  candidateApproval,
+  currentHead,
+  approvalPath: pendingApprovalPath,
+  candidateApprovalPath
+});
+const formalGeneratedCompileAuthorized = formalAuthorization.authorized;
+const generatedCompileExecutionCompleted = formalGeneratedCompileAuthorized &&
+  generatedCompileExecutionResult?.status === "PASS" &&
+  generatedCompileExecutionProof?.status === "PASS" &&
+  generatedCompileExecutionResult?.generatedCompileCompleted === true &&
+  generatedCompileExecutionResult?.generatedCompilationCompleted === true &&
+  generatedCompileExecutionProof?.generatedCompileCompleted === true &&
+  generatedCompileExecutionProof?.generatedCompilationCompleted === true &&
+  generatedCompileExecutionResult?.generatedCandidateAcceptedBy00 === false &&
+  generatedCompileExecutionResult?.runtimeConsumptionReady === false &&
+  generatedCompileExecutionResult?.businessFeatureDevelopmentAllowed === false &&
+  generatedCompileExecutionResult?.releaseAuthority === false &&
+  generatedCompileExecutionResult?.finalGoNoGo === "NO_GO" &&
+  generatedCompileExecutionProof?.generatedCandidateAcceptedBy00 === false &&
+  generatedCompileExecutionProof?.runtimeConsumptionReady === false &&
+  generatedCompileExecutionProof?.businessFeatureDevelopmentAllowed === false &&
+  generatedCompileExecutionProof?.releaseAuthority === false &&
+  generatedCompileExecutionProof?.finalGoNoGo === "NO_GO";
 
 requireText(sourceText, "sourceFinalizationStatus: SOURCE_FINALIZED_BY_00", "Source package must be finalized by 00 before compile candidate authorization.");
 requireText(sourceText, "sourceScenarioPackageReviewStatus: SOURCE_FINALIZED_BY_00", "Source package review status must be finalized by 00.");
 requireText(sourceText, "sourceFieldGapsDecisionStatus: DECIDED_AND_BOUND", "Source field gaps must be decided and bound before compile candidate authorization.");
 requireText(sourceText, "sourceReadyForCompileDecision: true", "Source package must be ready only for 00 compile decision.");
 requireText(sourceText, "compileDecisionStatus: READY_FOR_00_COMPILE_DECISION", "Source package may only be ready for 00 compile decision.");
-requireText(sourceText, "generatedCompileAuthorized: false", "Formal generated compile authorization must remain false.");
-requireText(sourceText, "generatedCompilationAllowed: false_until_00_explicit_generated_compile_approval", "Formal generated compilation must remain unauthorized.");
+requireText(sourceText, "generatedCompileAuthorized: false", "Source package must not self-authorize generated compile.");
+requireText(sourceText, "generatedCompilationAllowed: false_until_00_explicit_generated_compile_approval", "Source package must keep generated compilation blocked until the separate 00 approval object authorizes it.");
 requireText(sourceText, "generatedContractStatus10B: PENDING_GENERATED_CONTRACT", "Generated contract status must remain pending.");
 requireText(sourceText, "generatedCompileCompleted: false", "Generated compile must remain incomplete.");
 requireText(sourceText, "generatedCompilationCompleted: false", "Generated compilation must remain incomplete.");
@@ -82,7 +113,7 @@ requireText(controlPlaneText, "scripts/oam/check-generated-compile-authorization
 requireText(ciWorkflowText, "scripts/oam/check-generated-compile-authorization.mjs", "CI must include the generated compile authorization gate.");
 
 checkGenerationGuards();
-checkPendingApprovalObject();
+checkFormalApprovalObject();
 const candidateApprovalFailures = collectCandidateApprovalFailures(candidateApproval);
 failures.push(...candidateApprovalFailures);
 const candidateApprovalOk = candidateApprovalFailures.length === 0;
@@ -113,7 +144,7 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log("Generated compile authorization check: PASS (candidate authorization, formal generated compile blocking, runtime consumption blocking, evidence current/stale binding)");
+console.log("Generated compile authorization check: PASS (formal generated compile authorization writeback, runtime consumption blocking, evidence current/stale binding)");
 
 function requireText(text, snippet, message) {
   if (!text.includes(snippet)) failures.push(message);
@@ -141,11 +172,9 @@ function resolveCandidateAuthorization(approval) {
   };
 }
 
-function checkPendingApprovalObject() {
+function checkFormalApprovalObject() {
   if (!pendingApproval) return;
-  if (pendingApproval.version !== "oam.generated-compile-approval.v1") {
-    failures.push(`${pendingApprovalPath} version must be oam.generated-compile-approval.v1.`);
-  }
+  failures.push(...formalAuthorization.failures);
   if (pendingApproval.currentAuthorityArchitecture !== "oam.current") {
     failures.push(`${pendingApprovalPath} must bind currentAuthorityArchitecture=oam.current.`);
   }
@@ -154,12 +183,6 @@ function checkPendingApprovalObject() {
   }
   if (pendingApproval.sourceHash !== sourceHash) {
     failures.push(`${pendingApprovalPath} sourceHash must match current Source package hash ${sourceHash}.`);
-  }
-  if (pendingApproval.approvalStatus !== "pending_00_generated_compile_authorization") {
-    failures.push(`${pendingApprovalPath} must remain pending; candidate authorization belongs in ${candidateApprovalPath}.`);
-  }
-  if (pendingApproval.generatedCompileAuthorized !== false || pendingApproval.generatedCompilationAllowed !== false) {
-    failures.push(`${pendingApprovalPath} must keep generatedCompileAuthorized=false and generatedCompilationAllowed=false.`);
   }
 }
 
@@ -287,13 +310,19 @@ function checkNoForbiddenStateEscapes() {
     ["final-report", JSON.stringify(finalReport ?? {})]
   ]) {
     if (/generatedCompilationCompleted"\s*:\s*true|generatedCompilationCompleted:\s*true/.test(text)) {
-      failures.push(`${id} must not set generatedCompilationCompleted=true.`);
+      if (!(id === "final-report" && generatedCompileExecutionCompleted)) {
+        failures.push(`${id} must not set generatedCompilationCompleted=true outside the S4 execution proof/final report layer.`);
+      }
     }
     if (/generatedCompileCompleted"\s*:\s*true|generatedCompileCompleted:\s*true/.test(text)) {
-      failures.push(`${id} must not set generatedCompileCompleted=true.`);
+      if (!(id === "final-report" && generatedCompileExecutionCompleted)) {
+        failures.push(`${id} must not set generatedCompileCompleted=true outside the S4 execution proof/final report layer.`);
+      }
     }
     if (/generatedCompileAuthorized"\s*:\s*true|generatedCompileAuthorized:\s*true/.test(text)) {
-      failures.push(`${id} must not set formal generatedCompileAuthorized=true.`);
+      if (!(id === "final-report" && formalGeneratedCompileAuthorized)) {
+        failures.push(`${id} must not set formal generatedCompileAuthorized=true outside the 00 formal approval path.`);
+      }
     }
     if (/runtimeConsumptionReady"\s*:\s*true|runtimeConsumptionReady:\s*true/.test(text)) {
       failures.push(`${id} must not set runtimeConsumptionReady=true.`);
@@ -309,8 +338,15 @@ function checkNoForbiddenStateEscapes() {
   if (finalReport) {
     if (finalReport.finalGoNoGo !== "NO_GO") failures.push("Final Report finalGoNoGo must remain NO_GO.");
     if (finalReport.releaseAuthority !== false) failures.push("Final Report releaseAuthority must remain false.");
-    if (finalReport.generatedCompileAuthorized !== false) failures.push("Final Report formal generatedCompileAuthorized must remain false.");
-    if (finalReport.generatedCompileCompleted !== false) failures.push("Final Report generatedCompileCompleted must remain false.");
+    if (finalReport.generatedCompileAuthorized === true && !formalGeneratedCompileAuthorized) {
+      failures.push("Final Report formal generatedCompileAuthorized=true requires the 00 formal approval object.");
+    }
+    if (finalReport.generatedCompileCompleted === true && !generatedCompileExecutionCompleted) {
+      failures.push("Final Report generatedCompileCompleted=true requires S4 generated compile execution proof PASS.");
+    }
+    if (finalReport.generatedCompilationCompleted === true && !generatedCompileExecutionCompleted) {
+      failures.push("Final Report generatedCompilationCompleted=true requires S4 generated compile execution proof PASS.");
+    }
     if (finalReport.runtimeConsumptionReady !== false) failures.push("Final Report runtimeConsumptionReady must remain false.");
     if (finalReport.businessProductionGoNoGo !== "NO_GO" || finalReport.dormitoryL2GoNoGo !== "NO_GO") {
       failures.push("Final Report businessProductionGoNoGo and dormitoryL2GoNoGo must remain NO_GO.");
@@ -354,12 +390,14 @@ function expectedCandidateCompileEvidenceStatus(report) {
 
 function checkGenerationGuards() {
   if (!controlPlaneText.includes("scripts/business/generate-dormitory-derived-contracts.mjs")) return;
-  if (!/\$env:ALLOW_GENERATED_COMPILE_CANDIDATE\s+-eq\s+["']true["']/.test(controlPlaneText)) {
-    failures.push("Control Plane must guard Dormitory generated contract generation behind ALLOW_GENERATED_COMPILE_CANDIDATE=true.");
+  if (!/\$env:ALLOW_GENERATED_COMPILE_CANDIDATE\s+-eq\s+["']true["']/.test(controlPlaneText) ||
+    !controlPlaneText.includes("scripts/oam/formal-generated-compile-authorization-status.mjs --print-authorized")) {
+    failures.push("Control Plane must guard Dormitory generated contract generation behind candidate env or the canonical formal generated compile authorization predicate CLI.");
   }
   if (ciWorkflowText.includes("scripts/business/generate-dormitory-derived-contracts.mjs") &&
-    !/ALLOW_GENERATED_COMPILE_CANDIDATE:-\}"\s*=\s*"true"/.test(ciWorkflowText)) {
-    failures.push("CI must guard Dormitory generated contract generation behind ALLOW_GENERATED_COMPILE_CANDIDATE=true.");
+    (!/ALLOW_GENERATED_COMPILE_CANDIDATE:-\}"\s*=\s*"true"/.test(ciWorkflowText) ||
+      !ciWorkflowText.includes("scripts/oam/formal-generated-compile-authorization-status.mjs --print-authorized"))) {
+    failures.push("CI must guard Dormitory generated contract generation behind candidate env or the canonical formal generated compile authorization predicate CLI.");
   }
 }
 
@@ -429,6 +467,43 @@ function runNegativeFixtures() {
   if (!staleMarkedCurrentKilled) {
     failures.push("negative fixture did not fail: stale executionHead report was accepted as current.");
   }
+  if (formalApproval && authorization.authorizedCandidateExecutionHead) {
+    const descendantCurrentHeadButApprovalBoundToAncestor = {
+      ...formalApproval,
+      currentHEAD: authorization.authorizedCandidateExecutionHead,
+      reviewedRef: authorization.authorizedCandidateExecutionHead
+    };
+    const staleFormal = validateFormalGeneratedCompileAuthorization({
+      approval: descendantCurrentHeadButApprovalBoundToAncestor,
+      candidateApproval,
+      currentHead,
+      approvalPath: pendingApprovalPath,
+      candidateApprovalPath
+    });
+    negativeFixtureResults.push({
+      caseId: "formal_approval_descendant_current_head_not_exact",
+      status: staleFormal.authorized ? "failed" : "passed"
+    });
+    if (staleFormal.authorized) {
+      failures.push("negative fixture did not fail: formal approval was inherited by a descendant/non-exact HEAD.");
+    }
+
+    for (const [caseId, patch] of [
+      ["formal_generatedCompilationCompleted_true", { generatedCompilationCompleted: true }],
+      ["formal_candidateArtifactEvidenceCompleted_false", { candidateArtifactEvidenceCompleted: false }],
+      ["formal_productionConfirmAllowed_true", { productionConfirmAllowed: true }]
+    ]) {
+      const result = validateFormalGeneratedCompileAuthorization({
+        approval: { ...formalApproval, ...patch },
+        candidateApproval,
+        currentHead,
+        approvalPath: pendingApprovalPath,
+        candidateApprovalPath
+      });
+      negativeFixtureResults.push({ caseId, status: result.authorized ? "failed" : "passed" });
+      if (result.authorized) failures.push(`negative fixture did not fail: ${caseId}.`);
+    }
+  }
   if (allowGeneratedCompile === false && candidateApprovalOkForNegativeFixture() === false) {
     failures.push("negative fixture setup invalid: current candidate approval must authorize generated semantic diffs.");
   }
@@ -459,6 +534,33 @@ function writeResult() {
           ? "DESCENDANT_OF_AUTHORIZED_CANDIDATE_EXECUTION_HEAD"
           : "NOT_DESCENDANT_OF_AUTHORIZED_CANDIDATE_EXECUTION_HEAD"
     },
+    formalAuthorization: formalApproval ? {
+      predicateVersion: formalAuthorization.version,
+      predicateStatus: formalAuthorization.status,
+      predicateHeadBindingStatus: formalAuthorization.headBindingStatus,
+      predicateFailures: formalAuthorization.failures,
+      approvalPath: pendingApprovalPath,
+      approvalStatus: formalApproval.approvalStatus ?? null,
+      approvalDecision: formalApproval.approvalDecision ?? null,
+      approvalScope: formalApproval.approvalScope ?? null,
+      currentHEAD: formalApproval.currentHEAD ?? null,
+      reviewedRef: formalApproval.reviewedRef ?? null,
+      candidateSourceRef: formalApproval.candidateSourceRef ?? null,
+      authorizedCandidateExecutionHead: formalApproval.authorizedCandidateExecutionHead ?? null,
+      generatedCompileAuthorized: formalApproval.generatedCompileAuthorized ?? null,
+      generatedCompilationAllowed: formalApproval.generatedCompilationAllowed ?? null,
+      generatedCompileCompleted: formalApproval.generatedCompileCompleted ?? null,
+      generatedCompilationCompleted: formalApproval.generatedCompilationCompleted ?? null,
+      candidateArtifactEvidenceCompleted: formalApproval.candidateArtifactEvidenceCompleted ?? null,
+      candidateArtifactEvidenceCompletionStatus: formalApproval.candidateArtifactEvidenceCompletionStatus ?? null,
+      generatedCandidateAcceptedBy00: formalApproval.generatedCandidateAcceptedBy00 ?? null,
+      runtimeConsumptionReady: formalApproval.runtimeConsumptionReady ?? null,
+      businessFeatureDevelopmentAllowed: formalApproval.businessFeatureDevelopmentAllowed ?? null,
+      productionConfirmAllowed: formalApproval.productionConfirmAllowed ?? null,
+      releaseAuthority: formalApproval.releaseAuthority ?? null,
+      finalGoNoGo: formalApproval.finalGoNoGo ?? null,
+      artifactDigestDistinction: formalApproval.artifactDigestDistinction ?? null
+    } : null,
     finalReportBinding: finalReport ? {
       finalGoNoGo: finalReport.finalGoNoGo,
       releaseAuthority: finalReport.releaseAuthority,
@@ -470,8 +572,11 @@ function writeResult() {
     } : null,
     negativeFixtures: negativeFixtureResults,
     failures,
-    formalGeneratedCompileAuthorized: false,
-    generatedCompileCompleted: false,
+    formalGeneratedCompileAuthorized,
+    generatedCompileAuthorized: formalGeneratedCompileAuthorized,
+    generatedCompilationAllowed: formalGeneratedCompileAuthorized,
+    generatedCompileCompleted: generatedCompileExecutionCompleted,
+    generatedCompilationCompleted: generatedCompileExecutionCompleted,
     runtimeConsumptionReady: false,
     finalGoNoGo: "NO_GO",
     releaseAuthority: false

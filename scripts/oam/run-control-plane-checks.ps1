@@ -25,13 +25,22 @@ function Get-ExpectedGateCount {
   $scriptPath = if ($PSCommandPath) { $PSCommandPath } else { $MyInvocation.MyCommand.Path }
   $content = Get-Content -Raw -Path $scriptPath
   $count = [regex]::Matches($content, "(?m)^\s*Invoke-Gate\b(?!.*-RecordResult\s+\`$false)").Count
-  if ($env:ALLOW_GENERATED_COMPILE_CANDIDATE -ne "true") {
+  if ($env:ALLOW_GENERATED_COMPILE_CANDIDATE -ne "true" -and -not (Test-FormalGeneratedCompileAuthorized)) {
     $count -= 1
   }
   if (Test-Path "artifacts/oam/test-results/mobile/coverage/coverage-summary.json") {
     $count -= 1
   }
   return $count
+}
+
+function Test-FormalGeneratedCompileAuthorized {
+  try {
+    $authorized = & node scripts/oam/formal-generated-compile-authorization-status.mjs --print-authorized
+    return (($authorized -join "").Trim() -eq "true")
+  } catch {
+    return $false
+  }
 }
 
 function Get-StageForCommand {
@@ -190,7 +199,7 @@ Invoke-Gate node scripts/oam/check-codex-execution-channel-policy.mjs
 Invoke-Gate node scripts/oam/check-cross-domain-conflict-rules.mjs
 Invoke-Gate node scripts/oam/check-system-operating-kernel.mjs
 Invoke-Gate node scripts/oam/check-generated-compile-authorization.mjs
-if ($env:ALLOW_GENERATED_COMPILE_CANDIDATE -eq "true") {
+if ($env:ALLOW_GENERATED_COMPILE_CANDIDATE -eq "true" -or (Test-FormalGeneratedCompileAuthorized)) {
   Invoke-Gate node scripts/business/generate-dormitory-derived-contracts.mjs
 }
 Invoke-Gate node scripts/oam/compile-current-kernel-graph.mjs
@@ -204,6 +213,7 @@ Invoke-Gate node scripts/oam/check-file-lifecycle-policy.mjs
 Invoke-Gate node scripts/oam/check-retired-reference-blocker.mjs
 Invoke-Gate node scripts/oam/generate-system-derived-contracts.mjs
 Invoke-Gate node scripts/oam/check-derived-contract-consistency.mjs
+Invoke-Gate node scripts/oam/check-generated-compile-execution.mjs
 Invoke-Gate node scripts/oam/check-system-handoff-contract.mjs
 Invoke-Gate node scripts/oam/check-system-failure-routing-contract.mjs
 Invoke-Gate node scripts/oam/check-current-engineering-ledger.mjs
@@ -304,6 +314,7 @@ if (-not (Test-Path "artifacts/oam/test-results/mobile/coverage/coverage-summary
 Invoke-Gate node scripts/oam/generate-mobile-branch-risk-ledger.mjs
 Invoke-Gate node scripts/oam/check-mobile-coverage-policy.mjs
 Invoke-Gate node scripts/oam/check-mobile-critical-branch-scenarios.mjs
+Invoke-Gate node scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs
 Invoke-Gate node scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs
 Write-GateReport -RunStatus "completed" -Status "passed" -CurrentStage "completed" -CurrentGate ""
 Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs -RecordResult $false

@@ -80,7 +80,8 @@ jobs:
           node scripts/oam/check-cross-domain-conflict-rules.mjs
           node scripts/oam/check-system-operating-kernel.mjs
           node scripts/oam/check-generated-compile-authorization.mjs
-          if [ "${ALLOW_GENERATED_COMPILE_CANDIDATE:-}" = "true" ]; then
+          FORMAL_GENERATED_COMPILE_AUTHORIZED="$(node scripts/oam/formal-generated-compile-authorization-status.mjs --print-authorized)"
+          if [ "${ALLOW_GENERATED_COMPILE_CANDIDATE:-}" = "true" ] || [ "${FORMAL_GENERATED_COMPILE_AUTHORIZED}" = "true" ]; then
             node scripts/business/generate-dormitory-derived-contracts.mjs
           fi
           node scripts/oam/compile-current-kernel-graph.mjs
@@ -94,6 +95,7 @@ jobs:
           node scripts/oam/check-retired-reference-blocker.mjs
           node scripts/oam/generate-system-derived-contracts.mjs
           node scripts/oam/check-derived-contract-consistency.mjs
+          node scripts/oam/check-generated-compile-execution.mjs
           node scripts/oam/check-system-handoff-contract.mjs
           node scripts/oam/check-system-failure-routing-contract.mjs
           node scripts/oam/check-current-engineering-ledger.mjs
@@ -227,7 +229,9 @@ jobs:
 
       - name: Validate dormitory candidate artifact attestation package
         if: always()
-        run: node scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs
+        run: |
+          node scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs
+          node scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs
 
       - name: Generate current OAM evidence root
         if: always()

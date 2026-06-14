@@ -1,9 +1,17 @@
+import { execFileSync } from "node:child_process";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { validateFormalGeneratedCompileAuthorization } from "./lib/formal-generated-compile-authorization.mjs";
 
 const root = process.cwd();
 const packagePath = "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json";
 const resultPath = "artifacts/oam/checks/dormitory-candidate-artifact-attestation-package-result.json";
+const candidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
+const formalApprovalPath = "docs/oam/generated-compile-approval.current.json";
+const generatedCompileExecutionSnapshotPath = "artifacts/oam/checks/generated-compile-execution-input-snapshot.json";
+const generatedCompileExecutionResultPath = "artifacts/oam/checks/generated-compile-execution-result.json";
+const generatedCompileExecutionProofPath = "artifacts/oam/evidence/generated-compile-execution-proof.json";
 const acceptedAuthorizedCandidateExecutionHead = "2b7bc3772c7351b34c5ca91258fe388371ab9f6c";
 const previousAuthorizedCandidateExecutionHead = "9db58da1ebc2a02349436833747307ac78c4c2fd";
 const candidateSourceRef = "fd60390e678f9d6934137f0480a183701b01de8f";
@@ -24,6 +32,9 @@ const expectedRequiredFiles = [
   "artifacts/oam/final-report.json",
   "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
   "artifacts/oam/checks/generated-compile-authorization-result.json",
+  generatedCompileExecutionSnapshotPath,
+  generatedCompileExecutionResultPath,
+  generatedCompileExecutionProofPath,
   "artifacts/oam/authority-cleanup/mutation-tests-result.json",
   "docs/oam/db-no-side-effects-proof.json",
   "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
@@ -38,6 +49,8 @@ const expectedRequiredFiles = [
 
 const failures = [];
 let attestation = null;
+const currentHead = runGit(["rev-parse", "HEAD"]);
+const candidateApproval = readJson(candidateApprovalPath);
 
 try {
   attestation = readJson(packagePath);
@@ -60,8 +73,20 @@ function validateAttestation(document) {
   expectEqual(document.packageVersion, "oam.dormitory-candidate-artifact-attestation.v1", "packageVersion");
   expectIncludes(document.packageStatus, [
     "CANDIDATE_HEAD_ACCEPTED_BY_00_PENDING_NEW_ARTIFACT_NO_GO",
-    "CANDIDATE_HEAD_ACCEPTED_BY_00_ARTIFACT_COMPLETE_NO_GO"
+    "CANDIDATE_HEAD_ACCEPTED_BY_00_ARTIFACT_COMPLETE_NO_GO",
+    "FORMAL_GENERATED_COMPILE_AUTHORIZED_NO_GO",
+    "READY_FOR_00_GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_NO_GO"
   ], "packageStatus");
+  const formalPredicate = validateFormalApprovalState(document.formalApprovalState);
+  const formalGeneratedCompileAuthorized = formalPredicate.authorized;
+  const generatedCompileExecutionCompleted = document.generatedCompileExecution?.status === "PASS" &&
+    document.generatedCompileExecution?.generatedCompileCompleted === true &&
+    document.generatedCompileExecution?.generatedCompilationCompleted === true &&
+    document.generatedCompileExecution?.generatedCandidateAcceptedBy00 === false &&
+    document.generatedCompileExecution?.runtimeConsumptionReady === false &&
+    document.generatedCompileExecution?.businessFeatureDevelopmentAllowed === false &&
+    document.generatedCompileExecution?.releaseAuthority === false &&
+    document.generatedCompileExecution?.finalGoNoGo === "NO_GO";
   expectIncludes(document.reviewPackageStatus, [
     "VALID_WITH_P0_RESIDUALS_NO_GO",
     "VALID_CURRENT_CANDIDATE_HEAD_NO_GO"
@@ -111,7 +136,20 @@ function validateAttestation(document) {
     expectEqual(document.reviewPackageStatus, "VALID_WITH_P0_RESIDUALS_NO_GO", "reviewPackageStatus when files are missing");
   } else {
     expectEqual(document.artifactVerification?.artifactCompletenessStatus, "PASS", "artifactVerification.artifactCompletenessStatus");
-    expectEqual(document.nextDecisionFor00?.nextDecisionFor00, "FORMAL_GENERATED_COMPILE_AUTHORIZATION_REVIEW", "nextDecisionFor00.nextDecisionFor00");
+    expectEqual(
+      document.nextDecisionFor00?.nextDecisionFor00,
+      generatedCompileExecutionCompleted
+        ? "GENERATED_CANDIDATE_ACCEPTANCE_REVIEW"
+        : formalGeneratedCompileAuthorized
+        ? "GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_AFTER_FORMAL_GENERATED_COMPILE_GATES"
+        : "FORMAL_GENERATED_COMPILE_AUTHORIZATION_REVIEW",
+      "nextDecisionFor00.nextDecisionFor00"
+    );
+    if (generatedCompileExecutionCompleted) {
+      expectEqual(document.packageStatus, "READY_FOR_00_GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_NO_GO", "packageStatus after S4 execution");
+      expectEqual(document.candidateRefs?.candidateCompileEvidenceStatus, "FORMAL_GENERATED_COMPILE_EXECUTED_PENDING_00_GENERATED_CANDIDATE_ACCEPTANCE", "candidateRefs.candidateCompileEvidenceStatus after S4 execution");
+      expectEqual(document.recommendation, "SUBMIT_TO_00_FOR_GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_NO_RUNTIME_NO_GO", "recommendation after S4 execution");
+    }
   }
 
   expectEqual(document.oldArtifactRunId, oldArtifactRunId, "oldArtifactRunId");
@@ -124,9 +162,10 @@ function validateAttestation(document) {
   expectArrayEqual([...(document.artifactVerification?.oldArtifactMissingRequiredFiles ?? [])].sort(), [...expectedOldMissingRequiredFiles].sort(), "artifactVerification.oldArtifactMissingRequiredFiles");
 
   expectEqual(document.goNoGo?.generatedCompileCandidateAuthorized, true, "goNoGo.generatedCompileCandidateAuthorized");
-  expectEqual(document.goNoGo?.generatedCompileAuthorized, false, "goNoGo.generatedCompileAuthorized");
-  expectEqual(document.goNoGo?.formalGeneratedCompileAuthorized, false, "goNoGo.formalGeneratedCompileAuthorized");
-  expectEqual(document.goNoGo?.generatedCompileCompleted, false, "goNoGo.generatedCompileCompleted");
+  expectEqual(document.goNoGo?.generatedCompileAuthorized, formalGeneratedCompileAuthorized, "goNoGo.generatedCompileAuthorized");
+  expectEqual(document.goNoGo?.formalGeneratedCompileAuthorized, formalGeneratedCompileAuthorized, "goNoGo.formalGeneratedCompileAuthorized");
+  expectEqual(document.goNoGo?.generatedCompileCompleted, generatedCompileExecutionCompleted, "goNoGo.generatedCompileCompleted");
+  expectEqual(document.goNoGo?.generatedCompilationCompleted, generatedCompileExecutionCompleted, "goNoGo.generatedCompilationCompleted");
   expectEqual(document.goNoGo?.generatedCandidateAcceptedBy00, false, "goNoGo.generatedCandidateAcceptedBy00");
   expectEqual(document.goNoGo?.generatedReleaseAllowed, false, "goNoGo.generatedReleaseAllowed");
   expectEqual(document.goNoGo?.runtimeConsumptionReady, false, "goNoGo.runtimeConsumptionReady");
@@ -137,11 +176,139 @@ function validateAttestation(document) {
   expectEqual(document.goNoGo?.releaseAuthority, false, "goNoGo.releaseAuthority");
   expectEqual(document.goNoGo?.finalGoNoGo, "NO_GO", "goNoGo.finalGoNoGo");
   expectEqual(document.nextDecisionFor00?.candidateHeadDecision, "ACCEPTED_BY_00_FOR_CANDIDATE_EXECUTION_HEAD_ONLY", "nextDecisionFor00.candidateHeadDecision");
+  validateGeneratedCompileExecution(document.generatedCompileExecution, generatedCompileExecutionCompleted);
+  validateFormalApprovalNegativeFixtures(document.formalApprovalState);
 
   if (document.artifactVerification?.artifactCompletenessStatus === "PASS" && missingRequiredFiles.length > 0) {
     failures.push("artifact completeness cannot be PASS when missingRequiredFiles is non-empty.");
   }
   failOnForbiddenEscapes(document);
+}
+
+function validateGeneratedCompileExecution(section, completed) {
+  if (!section || typeof section !== "object") {
+    failures.push("generatedCompileExecution section must be present.");
+    return;
+  }
+  expectEqual(section.resultPath, generatedCompileExecutionResultPath, "generatedCompileExecution.resultPath");
+  expectEqual(section.proofPath, generatedCompileExecutionProofPath, "generatedCompileExecution.proofPath");
+  expectEqual(section.snapshotPath, generatedCompileExecutionSnapshotPath, "generatedCompileExecution.snapshotPath");
+  expectEqual(section.generatedCompileCompleted, completed, "generatedCompileExecution.generatedCompileCompleted");
+  expectEqual(section.generatedCompilationCompleted, completed, "generatedCompileExecution.generatedCompilationCompleted");
+  expectEqual(section.generatedCandidateAcceptedBy00, false, "generatedCompileExecution.generatedCandidateAcceptedBy00");
+  expectEqual(section.runtimeConsumptionReady, false, "generatedCompileExecution.runtimeConsumptionReady");
+  expectEqual(section.businessFeatureDevelopmentAllowed, false, "generatedCompileExecution.businessFeatureDevelopmentAllowed");
+  expectEqual(section.productionConfirmAllowed, false, "generatedCompileExecution.productionConfirmAllowed");
+  expectEqual(section.releaseAuthority, false, "generatedCompileExecution.releaseAuthority");
+  expectEqual(section.finalGoNoGo, "NO_GO", "generatedCompileExecution.finalGoNoGo");
+  if (completed) {
+    expectEqual(section.status, "PASS", "generatedCompileExecution.status");
+    expectEqual(section.nextDecisionFor00, "GENERATED_CANDIDATE_ACCEPTANCE_REVIEW", "generatedCompileExecution.nextDecisionFor00");
+    if (!/^sha256:[a-f0-9]{64}$/.test(String(section.generatedOutputDigest ?? ""))) {
+      failures.push("generatedCompileExecution.generatedOutputDigest must be sha256 after S4 completion.");
+    }
+    if (section.reproducibility?.sameGeneratedOutputDigest !== true ||
+      section.reproducibility?.sameDerivedOutputDigest !== true ||
+      section.reproducibility?.sameKernelGraphDigest !== true) {
+      failures.push("generatedCompileExecution reproducibility proof must show matching digests.");
+    }
+    if (section.driftProof?.noSourceBusinessFactChanges !== true ||
+      section.driftProof?.noRuntimeImplementationChanges !== true) {
+      failures.push("generatedCompileExecution drift proof must keep source/runtime unchanged.");
+    }
+  }
+}
+
+function validateFormalApprovalState(state) {
+  if (!state || typeof state !== "object") {
+    failures.push("formalApprovalState must be present and complete.");
+    return { authorized: false, failures: ["formalApprovalState missing"] };
+  }
+  const result = validateFormalGeneratedCompileAuthorization({
+    approval: state,
+    candidateApproval,
+    currentHead,
+    approvalPath: "formalApprovalState",
+    candidateApprovalPath
+  });
+  if (state.approvalObjectHash !== hashFile(formalApprovalPath)) {
+    failures.push("formalApprovalState.approvalObjectHash must match docs/oam/generated-compile-approval.current.json.");
+  }
+  const approvalFile = readJson(formalApprovalPath);
+  for (const field of [
+    "version",
+    "approvalStatus",
+    "approvalDecision",
+    "approvalScope",
+    "currentHEAD",
+    "reviewedRef",
+    "candidateSourceRef",
+    "authorizedCandidateExecutionHead",
+    "candidateArtifactRunId",
+    "candidateArtifactName",
+    "candidateArtifactGithubDigest",
+    "candidateArtifactInternalReleaseEvidenceDigest",
+    "artifactDigestDistinction",
+    "generatedCompileAuthorized",
+    "generatedCompilationAllowed",
+    "generatedCompileCompleted",
+    "generatedCompilationCompleted",
+    "candidateArtifactEvidenceCompleted",
+    "candidateArtifactEvidenceCompletionStatus",
+    "generatedCandidateAcceptedBy00",
+    "generatedReleaseAllowed",
+    "runtimeConsumptionReady",
+    "businessFeatureDevelopmentAllowed",
+    "productionConfirmAllowed",
+    "releaseAuthority",
+    "finalGoNoGo"
+  ]) {
+    if (state[field] !== approvalFile[field]) {
+      failures.push(`formalApprovalState.${field} must equal ${formalApprovalPath}.${field}.`);
+    }
+  }
+  if (state.currentRepositoryHead !== currentHead) {
+    failures.push(`formalApprovalState.currentRepositoryHead must be current HEAD ${currentHead}.`);
+  }
+  if (state.predicateAuthorized !== result.authorized ||
+    state.predicateStatus !== result.status ||
+    state.predicateHeadBindingStatus !== result.headBindingStatus) {
+    failures.push("formalApprovalState predicate fields must mirror the canonical formal authorization predicate.");
+  }
+  if (JSON.stringify(state.predicateFailures ?? []) !== JSON.stringify(result.failures)) {
+    failures.push("formalApprovalState.predicateFailures must mirror canonical predicate failures.");
+  }
+  if (!result.authorized) {
+    for (const failure of result.failures) failures.push(failure);
+  }
+  return result;
+}
+
+function validateFormalApprovalNegativeFixtures(state) {
+  if (!state || typeof state !== "object") return;
+  const fixtures = [
+    ["approvalStatus", { approvalStatus: "pending_00_formal_generated_compile_authorization_review" }],
+    ["approvalDecision", { approvalDecision: "PENDING" }],
+    ["approvalScope", { approvalScope: "runtime_consumption" }],
+    ["generatedCompilationCompleted", { generatedCompilationCompleted: true }],
+    ["productionConfirmAllowed", { productionConfirmAllowed: true }],
+    ["candidateArtifactEvidenceCompleted", { candidateArtifactEvidenceCompleted: false }],
+    ["candidateArtifactEvidenceCompletionStatus", { candidateArtifactEvidenceCompletionStatus: "false" }],
+    ["currentHEAD", { currentHEAD: acceptedAuthorizedCandidateExecutionHead, reviewedRef: acceptedAuthorizedCandidateExecutionHead }],
+    ["artifactDigestDistinction", { artifactDigestDistinction: "" }]
+  ];
+  for (const [field, patch] of fixtures) {
+    const result = validateFormalGeneratedCompileAuthorization({
+      approval: { ...state, ...patch },
+      candidateApproval,
+      currentHead,
+      approvalPath: `formalApprovalState.${field}`,
+      candidateApprovalPath
+    });
+    if (result.authorized) {
+      failures.push(`formalApprovalState negative fixture must fail when ${field} is tampered.`);
+    }
+  }
 }
 
 function failOnForbiddenEscapes(document) {
@@ -151,8 +318,8 @@ function failOnForbiddenEscapes(document) {
   if (new RegExp(`"authorizedCandidateExecutionHead"\\s*:\\s*"${previousAuthorizedCandidateExecutionHead}"`).test(serialized)) {
     failures.push("package must not use the old 9db58da authorizedCandidateExecutionHead as current authority.");
   }
-  if (/"formalGeneratedCompileAuthorized"\s*:\s*true|"generatedCompileAuthorized"\s*:\s*true/.test(serialized)) {
-    failures.push("package must not claim formal generated compile authorization.");
+  if (/"generatedCandidateAcceptedBy00"\s*:\s*true/.test(serialized)) {
+    failures.push("package must not claim generatedCandidateAcceptedBy00=true.");
   }
   if (/"runtimeConsumptionReady"\s*:\s*true/.test(serialized)) {
     failures.push("package must not claim runtime consumption readiness.");
@@ -195,7 +362,11 @@ function writeResult() {
     nextDecisionFor00: attestation?.nextDecisionFor00?.nextDecisionFor00 ?? null,
     generatedCompileCandidateAuthorized: attestation?.goNoGo?.generatedCompileCandidateAuthorized ?? null,
     generatedCompileAuthorized: attestation?.goNoGo?.generatedCompileAuthorized ?? null,
+    formalGeneratedCompileAuthorized: attestation?.goNoGo?.formalGeneratedCompileAuthorized ?? null,
     generatedCompileCompleted: attestation?.goNoGo?.generatedCompileCompleted ?? null,
+    generatedCompilationCompleted: attestation?.goNoGo?.generatedCompilationCompleted ?? null,
+    generatedCompileExecutionStatus: attestation?.generatedCompileExecution?.status ?? null,
+    generatedCompileExecutionProof: attestation?.generatedCompileExecution?.proofPath ?? null,
     generatedCandidateAcceptedBy00: attestation?.goNoGo?.generatedCandidateAcceptedBy00 ?? null,
     generatedReleaseAllowed: attestation?.goNoGo?.generatedReleaseAllowed ?? null,
     runtimeConsumptionReady: attestation?.goNoGo?.runtimeConsumptionReady ?? null,
@@ -214,6 +385,14 @@ function writeResult() {
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(root, relativePath), "utf8"));
+}
+
+function hashFile(relativePath) {
+  return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(path.join(root, relativePath))).digest("hex")}`;
+}
+
+function runGit(args) {
+  return execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
 }
 
 function expectEqual(actual, expected, label) {

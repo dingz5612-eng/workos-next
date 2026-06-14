@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
+import { validateFormalGeneratedCompileAuthorization } from "./lib/formal-generated-compile-authorization.mjs";
 
 const root = process.cwd();
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
@@ -17,7 +18,11 @@ const commitAttestationPath = "artifacts/oam/evidence/current-oam-commit-attesta
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
 const releaseAttestationPath = "artifacts/oam/evidence/current-oam-release-attestation.json";
 const evidenceLifecycleProofPath = "artifacts/oam/evidence/evidence-lifecycle-proof.json";
+const generatedCompileApprovalPath = "docs/oam/generated-compile-approval.current.json";
 const generatedCompileCandidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
+const generatedCompileExecutionSnapshotPath = "artifacts/oam/checks/generated-compile-execution-input-snapshot.json";
+const generatedCompileExecutionResultPath = "artifacts/oam/checks/generated-compile-execution-result.json";
+const generatedCompileExecutionProofPath = "artifacts/oam/evidence/generated-compile-execution-proof.json";
 const pendingExternalAttestation = "pending_external_attestation";
 const candidateCompileEvidenceStatuses = new Set(["CURRENT", "STALE_BUT_NO_GO", "STALE_REFERENCE"]);
 const sha256DigestPattern = /^sha256:[a-f0-9]{64}$/;
@@ -79,9 +84,13 @@ const requiredFiles = [
   "docs/read-intelligence/read-intelligence-kernel.json",
   "docs/read-intelligence/read-intelligence-kernel.schema.json",
   "docs/oam/db-no-side-effects-proof.json",
+  generatedCompileApprovalPath,
   generatedCompileCandidateApprovalPath,
   "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
   "artifacts/oam/checks/generated-compile-authorization-result.json",
+  generatedCompileExecutionSnapshotPath,
+  generatedCompileExecutionResultPath,
+  generatedCompileExecutionProofPath,
   "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
   "artifacts/oam/checks/generated-contract-consistency-result.json",
   "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
@@ -120,11 +129,20 @@ if (documents.size === requiredFiles.length) {
   const releaseObject = documents.get(releaseEvidenceObjectPath);
   const releaseAttestation = documents.get(releaseAttestationPath);
   const evidenceLifecycleProof = documents.get(evidenceLifecycleProofPath);
+  const formalApproval = documents.get(generatedCompileApprovalPath);
   const mutationTestsResult = documents.get("artifacts/oam/authority-cleanup/mutation-tests-result.json");
   const responsibilityMap = documents.get("docs/oam/current-oam-kernel-responsibility-map.json");
   const controlPlaneGateResult = documents.get(controlPlaneGateResultPath);
   const expectedDigest = graph?.binding?.artifactDigest;
   const actualDigest = digestFor(documents);
+  const formalAuthorization = validateFormalGeneratedCompileAuthorization({
+    approval: formalApproval,
+    candidateApproval: documents.get(generatedCompileCandidateApprovalPath),
+    currentHead: currentRepositoryHead,
+    approvalPath: generatedCompileApprovalPath,
+    candidateApprovalPath: generatedCompileCandidateApprovalPath
+  });
+  const generatedCompileExecution = generatedCompileExecutionState(documents, formalAuthorization);
 
   if (!expectedDigest || expectedDigest !== actualDigest) {
     failures.push(`artifact digest mismatch: expected ${expectedDigest || "missing"}, actual ${actualDigest}`);
@@ -164,23 +182,35 @@ if (documents.size === requiredFiles.length) {
   if (finalReport.compileDecisionStatus !== "READY_FOR_00_COMPILE_DECISION" || finalReport.compilePreparationAllowed !== "READY_FOR_00_COMPILE_DECISION") {
     failures.push("final report compile status must be READY_FOR_00_COMPILE_DECISION.");
   }
-  if (finalReport.generatedCompileAuthorized !== false) {
-    failures.push("final report generatedCompileAuthorized must remain false until 00 explicit generated compile approval.");
+  const formalGeneratedCompileAuthorized = formalAuthorization.authorized;
+  if (finalReport.generatedCompileAuthorized !== formalGeneratedCompileAuthorized) {
+    failures.push(`final report generatedCompileAuthorized must mirror formal approval (${formalGeneratedCompileAuthorized}).`);
   }
-  if (finalReport.generatedCompilationAllowed !== "false_until_00_explicit_generated_compile_approval") {
-    failures.push("final report generatedCompilationAllowed must remain false_until_00_explicit_generated_compile_approval.");
+  if (finalReport.generatedCompilationAllowed !== formalGeneratedCompileAuthorized) {
+    failures.push(`final report generatedCompilationAllowed must mirror formal approval (${formalGeneratedCompileAuthorized}).`);
   }
-  if (finalReport.generatedCompilationReadiness !== "NOT_STARTED_OR_NOT_AUTHORIZED") {
-    failures.push("final report generatedCompilationReadiness must be NOT_STARTED_OR_NOT_AUTHORIZED.");
+  const expectedGeneratedCompilationReadiness = generatedCompileExecution.completed
+    ? "FORMAL_GENERATED_COMPILE_EXECUTED_PENDING_00_GENERATED_CANDIDATE_ACCEPTANCE"
+    : formalGeneratedCompileAuthorized
+      ? "AUTHORIZED_PENDING_GENERATED_COMPILE_EXECUTION"
+      : "NOT_STARTED_OR_NOT_AUTHORIZED";
+  if (finalReport.generatedCompilationReadiness !== expectedGeneratedCompilationReadiness) {
+    failures.push(`final report generatedCompilationReadiness must be ${expectedGeneratedCompilationReadiness}.`);
   }
-  if (finalReport.generatedCompilationCompleted !== false || finalReport.generatedContractStatus10B !== "PENDING_GENERATED_CONTRACT") {
-    failures.push("final report must keep generated compilation incomplete and contract pending.");
+  if (finalReport.generatedCompilationCompleted !== generatedCompileExecution.completed) {
+    failures.push(`final report generatedCompilationCompleted must mirror S4 execution proof (${generatedCompileExecution.completed}).`);
   }
-  if (finalReport.generatedCompileCompleted !== false) {
-    failures.push("final report generatedCompileCompleted must remain false.");
+  if (finalReport.generatedCompileCompleted !== generatedCompileExecution.completed) {
+    failures.push(`final report generatedCompileCompleted must mirror S4 execution proof (${generatedCompileExecution.completed}).`);
+  }
+  const expectedGeneratedContractStatus10B = generatedCompileExecution.completed
+    ? "GENERATED_COMPILE_EXECUTED_PENDING_00_CANDIDATE_ACCEPTANCE"
+    : "PENDING_GENERATED_CONTRACT";
+  if (finalReport.generatedContractStatus10B !== expectedGeneratedContractStatus10B) {
+    failures.push(`final report generatedContractStatus10B must be ${expectedGeneratedContractStatus10B}.`);
   }
   if (finalReport.runtimeConsumptionReady !== false) {
-    failures.push("final report runtimeConsumptionReady must remain false until generated compile authorization and completion.");
+    failures.push("final report runtimeConsumptionReady must remain false until 00 accepts the generated candidate.");
   }
   if (finalReport.businessFeatureDevelopmentAllowed !== false) {
     failures.push("final report businessFeatureDevelopmentAllowed must remain false.");
@@ -195,7 +225,10 @@ if (documents.size === requiredFiles.length) {
     failures.push("final report releaseAuthority must remain false.");
   }
   checkDormitoryGoldenChainSourcePackage(finalReport);
+  checkSourceFormalGeneratedCompileSemanticSeparation(finalReport, generatedCompileExecution);
   checkGeneratedCompileCandidate(finalReport, graph, documents);
+  checkFormalGeneratedCompileAuthorization(finalReport, graph, documents, formalAuthorization);
+  checkGeneratedCompileExecution(finalReport, graph, documents, generatedCompileExecution);
 
   checkArtifactName("final report", finalReport.artifactName);
   checkCandidateEvidenceObject(candidateObject, graph, finalReport);
@@ -813,6 +846,47 @@ function checkDormitoryGoldenChainSourcePackage(finalReport) {
   }
 }
 
+function checkSourceFormalGeneratedCompileSemanticSeparation(finalReport, generatedCompileExecution) {
+  for (const [label, section] of [
+    ["sourcePackageReview", finalReport.sourcePackageReview],
+    ["dormitoryGoldenChainSourcePackage", finalReport.dormitoryGoldenChainSourcePackage]
+  ]) {
+    if (!section || typeof section !== "object") {
+      failures.push(`final report missing ${label} source-only section.`);
+      continue;
+    }
+    if (section.generatedCompileAuthorized !== false) {
+      failures.push(`${label} must keep generatedCompileAuthorized=false; formal authorization belongs only to the formal authorization/top-level sections.`);
+    }
+    if (section.generatedCompilationAllowed !== "false_until_00_explicit_generated_compile_approval") {
+      failures.push(`${label} must keep generatedCompilationAllowed=false_until_00_explicit_generated_compile_approval.`);
+    }
+    if (section.generatedCompilationReadiness !== "NOT_STARTED_OR_NOT_AUTHORIZED") {
+      failures.push(`${label} must keep generatedCompilationReadiness=NOT_STARTED_OR_NOT_AUTHORIZED.`);
+    }
+    if ("formalGeneratedCompileAuthorizationStatus" in section ||
+      "formalGeneratedCompileAuthorization" in section ||
+      "formalGeneratedCompileAuthorized" in section) {
+      failures.push(`${label} must not contain formal generated compile authorization fields.`);
+    }
+  }
+
+  const execution = finalReport.generatedCompileExecution;
+  if (!execution || typeof execution !== "object") {
+    failures.push("final report missing generatedCompileExecution section.");
+  } else if (execution.status !== generatedCompileExecution.status ||
+    execution.generatedCompileCompleted !== generatedCompileExecution.completed ||
+    execution.generatedCompilationCompleted !== generatedCompileExecution.completed ||
+    execution.generatedCandidateAcceptedBy00 !== false ||
+    execution.runtimeConsumptionReady !== false ||
+    execution.businessFeatureDevelopmentAllowed !== false ||
+    execution.productionConfirmAllowed !== false ||
+    execution.releaseAuthority !== false ||
+    execution.finalGoNoGo !== "NO_GO") {
+    failures.push("generatedCompileExecution must mirror S4 execution completion while keeping candidate acceptance, runtime, business, release, and GO blocked.");
+  }
+}
+
 function checkGeneratedCompileCandidate(finalReport, graph, documents) {
   const approval = documents.get(generatedCompileCandidateApprovalPath);
   if (!approval || typeof approval !== "object") {
@@ -1049,6 +1123,239 @@ function expectedCandidateCompileNextAction(status) {
     return "重新在当前 HEAD 执行候选闭合，或等待外部 CI artifact attestation；保持 NO_GO。";
   }
   return "当前 HEAD 是 00 授权执行头的 descendant；等待 00 更新 authorizedCandidateExecutionHead 或保持 stale-but-no-go。";
+}
+
+function checkFormalGeneratedCompileAuthorization(finalReport, graph, documents, formalAuthorization) {
+  const approval = documents.get(generatedCompileApprovalPath);
+  if (!approval || typeof approval !== "object") {
+    failures.push(`missing formal generated compile approval object: ${generatedCompileApprovalPath}.`);
+    return;
+  }
+  const candidateApproval = documents.get(generatedCompileCandidateApprovalPath) ?? {};
+  const authorizedCandidateExecutionHead = candidateApproval.authorizedCandidateExecutionHead ?? candidateApproval.executionHead;
+  const expectedAuthorized = formalAuthorization.authorized;
+  if (!expectedAuthorized) {
+    for (const failure of formalAuthorization.failures) failures.push(failure);
+  }
+  if (approval.candidateSourceRef !== candidateApproval.candidateSourceRef ||
+    approval.authorizedCandidateExecutionHead !== authorizedCandidateExecutionHead) {
+    failures.push("formal generated compile approval must bind the same candidateSourceRef and authorizedCandidateExecutionHead as the candidate approval.");
+  }
+  if (!String(approval.artifactDigestDistinction ?? "").includes("GitHub artifact digest differs from internal release evidence artifactDigest")) {
+    failures.push("formal generated compile approval must document GitHub artifact digest != internal release evidence artifactDigest.");
+  }
+  if (finalReport.formalGeneratedCompileAuthorized !== expectedAuthorized ||
+    finalReport.formalGeneratedCompilationAllowed !== expectedAuthorized ||
+    finalReport.formalGeneratedCompileAuthorizationStatus !== (expectedAuthorized ? "PASS" : "NO_GO")) {
+    failures.push(`final report must expose formal generated compile authorization as ${expectedAuthorized ? "PASS/true" : "NO_GO/false"}.`);
+  }
+  if (finalReport.generatedCandidateAcceptedBy00 !== false ||
+    finalReport.generatedReleaseAllowed !== false ||
+    finalReport.runtimeConsumptionReady !== false ||
+    finalReport.businessFeatureDevelopmentAllowed !== false ||
+    finalReport.productionConfirmAllowed !== false ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.finalGoNoGo !== "NO_GO") {
+    failures.push("formal approval must not expand into candidate acceptance, runtime, business development, release authority, production_confirm, or GO.");
+  }
+
+  const node = (graph.nodes ?? []).find((item) => item.id === "OAM-DORMITORY-GOLDEN-CHAIN-FORMAL-GENERATED-COMPILE-AUTHORIZATION");
+  if (!node) {
+    failures.push("evidence graph missing formal generated compile authorization proof node.");
+    return;
+  }
+  if (node.status !== (expectedAuthorized ? "passed" : "blocked") ||
+    node.scope !== "formal_generated_compile_authorization_only" ||
+    node.generatedCompileAuthorized !== expectedAuthorized ||
+    node.generatedCompilationAllowed !== expectedAuthorized ||
+    node.generatedCompileCompleted !== false ||
+    node.generatedCandidateAcceptedBy00 !== false ||
+    node.runtimeConsumptionReady !== false ||
+    node.releaseAuthority !== false ||
+    node.finalGoNoGo !== "NO_GO") {
+    failures.push("formal generated compile authorization proof node must pass only authorization and keep completion/runtime/release/GO blocked.");
+  }
+  if (node.approvalObjectHash !== hashFileText(generatedCompileApprovalPath)) {
+    failures.push("formal generated compile authorization proof node approvalObjectHash mismatch.");
+  }
+  for (const dep of [
+    "OAM-DORMITORY-GOLDEN-CHAIN-SOURCE-PACKAGE",
+    "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-COMPILE-CANDIDATE",
+    generatedCompileApprovalPath,
+    "artifacts/oam/checks/generated-compile-authorization-result.json"
+  ]) {
+    if (!(node.dependsOn ?? []).includes(dep)) {
+      failures.push(`formal generated compile authorization proof node missing dependency: ${dep}.`);
+    }
+  }
+  const binding = node.binding ?? {};
+  for (const [field, expected] of Object.entries({
+    approvalObjectHash: hashFileText(generatedCompileApprovalPath),
+    candidateSourceRef: approval.candidateSourceRef,
+    authorizedCandidateExecutionHead: approval.authorizedCandidateExecutionHead,
+    generatedCompileAuthorized: expectedAuthorized,
+    generatedCompilationAllowed: expectedAuthorized,
+    generatedCompileCompleted: false,
+    generatedCandidateAcceptedBy00: false,
+    runtimeConsumptionReady: false,
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    finalGoNoGo: "NO_GO"
+  })) {
+    if (binding[field] !== expected) {
+      failures.push(`formal generated compile authorization binding ${field} must be ${expected}, actual ${binding[field] ?? "missing"}.`);
+    }
+  }
+}
+
+function generatedCompileExecutionState(documents, formalAuthorization) {
+  const result = documents.get(generatedCompileExecutionResultPath);
+  const proof = documents.get(generatedCompileExecutionProofPath);
+  const snapshot = documents.get(generatedCompileExecutionSnapshotPath);
+  const resultPass = result?.status === "PASS" && result?.checkerExecutionStatus === "PASS";
+  const proofPass = proof?.status === "PASS";
+  const noForbiddenEscalation =
+    result?.generatedCandidateAcceptedBy00 === false &&
+    result?.runtimeConsumptionReady === false &&
+    result?.businessFeatureDevelopmentAllowed === false &&
+    result?.productionConfirmAllowed === false &&
+    result?.releaseAuthority === false &&
+    result?.finalGoNoGo === "NO_GO" &&
+    proof?.generatedCandidateAcceptedBy00 === false &&
+    proof?.runtimeConsumptionReady === false &&
+    proof?.businessFeatureDevelopmentAllowed === false &&
+    proof?.productionConfirmAllowed === false &&
+    proof?.releaseAuthority === false &&
+    proof?.finalGoNoGo === "NO_GO";
+  const completed = formalAuthorization.authorized === true &&
+    resultPass &&
+    proofPass &&
+    result?.generatedCompileAuthorized === true &&
+    result?.generatedCompilationAllowed === true &&
+    result?.generatedCompileCompleted === true &&
+    result?.generatedCompilationCompleted === true &&
+    proof?.generatedCompileCompleted === true &&
+    proof?.generatedCompilationCompleted === true &&
+    noForbiddenEscalation;
+  if (snapshot?.status !== "PASS") {
+    failures.push("generated compile execution input snapshot must be PASS.");
+  }
+  if (result?.currentHead !== currentRepositoryHead || proof?.currentHead !== currentRepositoryHead) {
+    failures.push("generated compile execution result/proof must bind current HEAD.");
+  }
+  if (result?.proofPath !== generatedCompileExecutionProofPath) {
+    failures.push("generated compile execution result must reference generated compile execution proof path.");
+  }
+  return {
+    status: completed ? "PASS" : "NO_GO",
+    completed,
+    result,
+    proof,
+    snapshot,
+    resultPass,
+    proofPass,
+    noForbiddenEscalation
+  };
+}
+
+function checkGeneratedCompileExecution(finalReport, graph, documents, state) {
+  const result = documents.get(generatedCompileExecutionResultPath);
+  const proofDocument = documents.get(generatedCompileExecutionProofPath);
+  if (!result || !proofDocument) {
+    failures.push("generated compile execution result/proof is missing.");
+    return;
+  }
+  if (!state.completed) {
+    failures.push("generated compile execution must be completed/PASS after S4 execution closure.");
+  }
+  if (finalReport.generatedCompileExecution?.resultPath !== generatedCompileExecutionResultPath ||
+    finalReport.generatedCompileExecution?.proofPath !== generatedCompileExecutionProofPath ||
+    finalReport.generatedCompileExecution?.snapshotPath !== generatedCompileExecutionSnapshotPath) {
+    failures.push("final report generatedCompileExecution must reference S4 result/proof/snapshot paths.");
+  }
+  if (finalReport.generatedCompileExecution?.resultDigest !== hashFileText(generatedCompileExecutionResultPath) ||
+    finalReport.generatedCompileExecution?.proofDigest !== hashFileText(generatedCompileExecutionProofPath) ||
+    finalReport.generatedCompileExecution?.snapshotDigest !== hashFileText(generatedCompileExecutionSnapshotPath)) {
+    failures.push("final report generatedCompileExecution digests must match S4 result/proof/snapshot files.");
+  }
+  if (!sha256DigestPattern.test(String(result.generatedOutputDigest ?? "")) ||
+    finalReport.generatedCompileExecution?.generatedOutputDigest !== result.generatedOutputDigest) {
+    failures.push("generated compile execution output digest must be sha256 and mirrored in final report.");
+  }
+  if (result.reproducibility?.sameGeneratedOutputDigest !== true ||
+    result.reproducibility?.sameDerivedOutputDigest !== true ||
+    result.reproducibility?.sameKernelGraphDigest !== true) {
+    failures.push("generated compile execution reproducibility proof must show matching output, derived, and kernel graph digests.");
+  }
+  if (!["PASS", "passed"].includes(result.noManualEditProof?.status)) {
+    failures.push("generated compile execution must bind no-manual-edit proof PASS.");
+  }
+  for (const [label, status] of Object.entries(result.consistencyProof ?? {})) {
+    if (!["PASS", "passed"].includes(status)) {
+      failures.push(`generated compile execution consistency proof ${label} must be PASS.`);
+    }
+  }
+  if (result.driftProof?.noSourceBusinessFactChanges !== true ||
+    result.driftProof?.noRuntimeImplementationChanges !== true) {
+    failures.push("generated compile execution must prove no source business fact or runtime implementation drift.");
+  }
+  const node = (graph.nodes ?? []).find((item) => item.id === "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-COMPILE-EXECUTION");
+  if (!node) {
+    failures.push("evidence graph missing generated compile execution proof node.");
+    return;
+  }
+  if (node.scope !== "formal_generated_compile_execution_only" ||
+    node.status !== "passed" ||
+    node.generatedCompileAuthorized !== true ||
+    node.generatedCompilationAllowed !== true ||
+    node.generatedCompileCompleted !== true ||
+    node.generatedCompilationCompleted !== true ||
+    node.generatedCandidateAcceptedBy00 !== false ||
+    node.runtimeConsumptionReady !== false ||
+    node.businessFeatureDevelopmentAllowed !== false ||
+    node.productionConfirmAllowed !== false ||
+    node.releaseAuthority !== false ||
+    node.finalGoNoGo !== "NO_GO") {
+    failures.push("generated compile execution proof node must complete only execution and keep candidate/runtime/business/release/GO blocked.");
+  }
+  for (const dep of [
+    "OAM-DORMITORY-GOLDEN-CHAIN-FORMAL-GENERATED-COMPILE-AUTHORIZATION",
+    "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-COMPILE-CANDIDATE",
+    generatedCompileExecutionProofPath,
+    "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
+    "artifacts/oam/checks/generated-contract-consistency-result.json",
+    "artifacts/oam/checks/derived-contract-consistency-result.json",
+    "artifacts/oam/checks/oam-kernel-graph-result.json"
+  ]) {
+    if (!(node.dependsOn ?? []).includes(dep)) {
+      failures.push(`generated compile execution proof node missing dependency: ${dep}.`);
+    }
+  }
+  const binding = node.binding ?? {};
+  for (const [field, expected] of Object.entries({
+    resultDigest: hashFileText(generatedCompileExecutionResultPath),
+    proofDigest: hashFileText(generatedCompileExecutionProofPath),
+    snapshotDigest: hashFileText(generatedCompileExecutionSnapshotPath),
+    generatedOutputDigest: result.generatedOutputDigest,
+    generatedCompileAuthorized: true,
+    generatedCompilationAllowed: true,
+    generatedCompileCompleted: true,
+    generatedCompilationCompleted: true,
+    generatedCandidateAcceptedBy00: false,
+    runtimeConsumptionReady: false,
+    businessFeatureDevelopmentAllowed: false,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    finalGoNoGo: "NO_GO"
+  })) {
+    if (binding[field] !== expected) {
+      failures.push(`generated compile execution binding ${field} must be ${expected}, actual ${binding[field] ?? "missing"}.`);
+    }
+  }
+  if (!JSON.stringify(graph).includes(generatedCompileExecutionProofPath)) {
+    failures.push("evidence graph must reference generated compile execution proof path.");
+  }
 }
 
 function expectedReleaseReferenceOnly(state, sourceCommitSha, evidenceRunSha) {
@@ -1502,7 +1809,8 @@ function checkBinding(file, document, expectedDigest) {
 }
 
 function requiresEvidenceBinding(file) {
-  return file.startsWith("artifacts/oam/evidence/") || file === "artifacts/oam/final-report.json";
+  return (file.startsWith("artifacts/oam/evidence/") && file !== generatedCompileExecutionProofPath) ||
+    file === "artifacts/oam/final-report.json";
 }
 
 function checkSummaries(file, document) {
@@ -2070,14 +2378,19 @@ function checkFinalReportMultiStatus(finalReport, candidateObject, commitAttesta
   if (matrix.sourceCompileDecisionReadinessStatus?.status !== "PASS") {
     failures.push("sourceCompileDecisionReadinessStatus must be PASS after 00 Source finalization.");
   }
-  if (matrix.generatedCompileAuthorizationStatus?.status !== "NO_GO") {
-    failures.push("generatedCompileAuthorizationStatus must remain NO_GO without 00 explicit generated compile approval.");
+  const expectedGeneratedCompileAuthorizationStatus = finalReport.formalGeneratedCompileAuthorized === true ? "PASS" : "NO_GO";
+  if (matrix.generatedCompileAuthorizationStatus?.status !== expectedGeneratedCompileAuthorizationStatus) {
+    failures.push(`generatedCompileAuthorizationStatus must be ${expectedGeneratedCompileAuthorizationStatus} for the current formal approval state.`);
   }
-  if (matrix.generatedCompilationStatus?.status !== "NO_GO") {
-    failures.push("generatedCompilationStatus must remain NO_GO before formal generated compile.");
+  const expectedGeneratedCompilationStatus = finalReport.generatedCompileExecution?.generatedCompileCompleted === true &&
+    finalReport.generatedCompileExecution?.generatedCompilationCompleted === true
+    ? "PASS"
+    : "NO_GO";
+  if (matrix.generatedCompilationStatus?.status !== expectedGeneratedCompilationStatus) {
+    failures.push(`generatedCompilationStatus must be ${expectedGeneratedCompilationStatus} for the current S4 execution state.`);
   }
   if (matrix.runtimeConsumptionStatus?.status !== "NO_GO") {
-    failures.push("runtimeConsumptionStatus must remain NO_GO until generated compile is authorized and completed.");
+    failures.push("runtimeConsumptionStatus must remain NO_GO until 00 accepts the generated candidate.");
   }
   if (matrix.runtimeBoundaryStatus?.status !== "PASS") {
     failures.push("runtimeBoundaryStatus must be PASS for runtime boundary closure.");

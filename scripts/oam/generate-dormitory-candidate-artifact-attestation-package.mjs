@@ -1,11 +1,19 @@
+import { execFileSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import {
+  formalApprovalStateForPackage,
+  validateFormalGeneratedCompileAuthorization
+} from "./lib/formal-generated-compile-authorization.mjs";
 
 const root = process.cwd();
 const outputPath = "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json";
 const candidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
 const formalApprovalPath = "docs/oam/generated-compile-approval.current.json";
+const generatedCompileExecutionSnapshotPath = "artifacts/oam/checks/generated-compile-execution-input-snapshot.json";
+const generatedCompileExecutionResultPath = "artifacts/oam/checks/generated-compile-execution-result.json";
+const generatedCompileExecutionProofPath = "artifacts/oam/evidence/generated-compile-execution-proof.json";
 const branch = "codex/dormitory-source-p0-s2-closure";
 const acceptedAuthorizedCandidateExecutionHead = "2b7bc3772c7351b34c5ca91258fe388371ab9f6c";
 const candidateSourceRef = "fd60390e678f9d6934137f0480a183701b01de8f";
@@ -27,6 +35,9 @@ const requiredFiles = [
   ["finalReport", "artifacts/oam/final-report.json"],
   ["sourcePackageResult", "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json"],
   ["generatedCompileAuthorizationResult", "artifacts/oam/checks/generated-compile-authorization-result.json"],
+  ["generatedCompileExecutionSnapshot", generatedCompileExecutionSnapshotPath],
+  ["generatedCompileExecutionResult", generatedCompileExecutionResultPath],
+  ["generatedCompileExecutionProof", generatedCompileExecutionProofPath],
   ["mutationTestsResult", "artifacts/oam/authority-cleanup/mutation-tests-result.json"],
   ["noSideEffectsProof", "docs/oam/db-no-side-effects-proof.json"],
   ["generatedFilesNotManuallyEditedResult", "artifacts/oam/checks/generated-files-not-manually-edited-result.json"],
@@ -41,6 +52,34 @@ const requiredFiles = [
 
 const candidateApproval = readJson(candidateApprovalPath);
 const formalApproval = readJsonIfExists(formalApprovalPath) ?? {};
+const currentHead = runGit(["rev-parse", "HEAD"]);
+const formalAuthorization = validateFormalGeneratedCompileAuthorization({
+  approval: formalApproval,
+  candidateApproval,
+  currentHead,
+  approvalPath: formalApprovalPath,
+  candidateApprovalPath
+});
+const formalGeneratedCompileAuthorized = formalAuthorization.authorized;
+const generatedCompileExecutionResult = readJsonIfExists(generatedCompileExecutionResultPath) ?? {};
+const generatedCompileExecutionProof = readJsonIfExists(generatedCompileExecutionProofPath) ?? {};
+const generatedCompileExecutionCompleted = formalGeneratedCompileAuthorized &&
+  generatedCompileExecutionResult.status === "PASS" &&
+  generatedCompileExecutionProof.status === "PASS" &&
+  generatedCompileExecutionResult.generatedCompileCompleted === true &&
+  generatedCompileExecutionResult.generatedCompilationCompleted === true &&
+  generatedCompileExecutionProof.generatedCompileCompleted === true &&
+  generatedCompileExecutionProof.generatedCompilationCompleted === true &&
+  generatedCompileExecutionResult.generatedCandidateAcceptedBy00 === false &&
+  generatedCompileExecutionResult.runtimeConsumptionReady === false &&
+  generatedCompileExecutionResult.businessFeatureDevelopmentAllowed === false &&
+  generatedCompileExecutionResult.releaseAuthority === false &&
+  generatedCompileExecutionResult.finalGoNoGo === "NO_GO" &&
+  generatedCompileExecutionProof.generatedCandidateAcceptedBy00 === false &&
+  generatedCompileExecutionProof.runtimeConsumptionReady === false &&
+  generatedCompileExecutionProof.businessFeatureDevelopmentAllowed === false &&
+  generatedCompileExecutionProof.releaseAuthority === false &&
+  generatedCompileExecutionProof.finalGoNoGo === "NO_GO";
 const finalReport = readJsonIfExists("artifacts/oam/final-report.json") ?? {};
 const releaseObject = readJsonIfExists("artifacts/oam/evidence/current-oam-release-evidence-object.json") ?? {};
 const graph = readJsonIfExists("artifacts/oam/evidence/evidence-graph.json") ?? {};
@@ -51,28 +90,44 @@ const artifactRoot = normalizeOptionalPath(process.env.WORKOS_DORMITORY_ATTESTAT
 const artifactRunId = process.env.WORKOS_DORMITORY_ATTESTATION_ARTIFACT_RUN_ID || oldArtifactRunId;
 const artifactName = process.env.WORKOS_DORMITORY_ATTESTATION_ARTIFACT_NAME || oldArtifactName;
 const observedGitHubArtifactDigest = process.env.WORKOS_DORMITORY_ATTESTATION_ARTIFACT_DIGEST || oldArtifactDigest;
-const artifactMode = artifactRoot ? "provided_artifact_root" : "historical_old_artifact_reference";
+const artifactMode = artifactRoot ? "provided_artifact_root" : "local_evidence_root_with_historical_old_artifact_reference";
 const fileEntries = requiredFiles.map(([id, logicalPath]) => buildFileEntry(id, logicalPath));
 const missingRequiredFiles = fileEntries.filter((file) => file.present !== true).map((file) => file.logicalPath);
 const artifactCompletenessStatus = missingRequiredFiles.length === 0 ? "PASS" : "BLOCKED_REQUIRED_FILES_MISSING";
 const reviewPackageStatus = artifactCompletenessStatus === "PASS"
   ? "VALID_CURRENT_CANDIDATE_HEAD_NO_GO"
   : "VALID_WITH_P0_RESIDUALS_NO_GO";
-const candidateCompileEvidenceStatus = artifactCompletenessStatus === "PASS"
-  ? "CURRENT_CANDIDATE_HEAD_ARTIFACT_COMPLETE_PENDING_00_FORMAL_GENERATED_COMPILE_REVIEW"
-  : "CURRENT_CANDIDATE_HEAD_PENDING_NEW_ARTIFACT";
-const recommendation = artifactCompletenessStatus === "PASS"
-  ? "SUBMIT_TO_00_FOR_FORMAL_GENERATED_COMPILE_AUTHORIZATION_REVIEW"
-  : "RUN_NEW_CI_ARTIFACT_WITH_REQUIRED_FILES_BEFORE_FORMAL_GENERATED_COMPILE";
-const nextDecisionFor00 = artifactCompletenessStatus === "PASS"
-  ? "FORMAL_GENERATED_COMPILE_AUTHORIZATION_REVIEW"
-  : "STOP_AND_FIX_ARTIFACT_UPLOAD_OR_RESULT_WRITERS";
+const candidateCompileEvidenceStatus = generatedCompileExecutionCompleted
+  ? "FORMAL_GENERATED_COMPILE_EXECUTED_PENDING_00_GENERATED_CANDIDATE_ACCEPTANCE"
+  : formalGeneratedCompileAuthorized
+  ? "FORMAL_GENERATED_COMPILE_AUTHORIZATION_APPROVED_PENDING_GENERATED_COMPILE_GATES"
+  : artifactCompletenessStatus === "PASS"
+    ? "CURRENT_CANDIDATE_HEAD_ARTIFACT_COMPLETE_PENDING_00_FORMAL_GENERATED_COMPILE_REVIEW"
+    : "CURRENT_CANDIDATE_HEAD_PENDING_NEW_ARTIFACT";
+const recommendation = generatedCompileExecutionCompleted
+  ? "SUBMIT_TO_00_FOR_GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_NO_RUNTIME_NO_GO"
+  : formalGeneratedCompileAuthorized
+  ? "RUN_FORMAL_GENERATED_COMPILE_GATES_NO_RUNTIME_NO_GO"
+  : artifactCompletenessStatus === "PASS"
+    ? "SUBMIT_TO_00_FOR_FORMAL_GENERATED_COMPILE_AUTHORIZATION_REVIEW"
+    : "RUN_NEW_CI_ARTIFACT_WITH_REQUIRED_FILES_BEFORE_FORMAL_GENERATED_COMPILE";
+const nextDecisionFor00 = generatedCompileExecutionCompleted
+  ? "GENERATED_CANDIDATE_ACCEPTANCE_REVIEW"
+  : formalGeneratedCompileAuthorized
+  ? "GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_AFTER_FORMAL_GENERATED_COMPILE_GATES"
+  : artifactCompletenessStatus === "PASS"
+    ? "FORMAL_GENERATED_COMPILE_AUTHORIZATION_REVIEW"
+    : "STOP_AND_FIX_ARTIFACT_UPLOAD_OR_RESULT_WRITERS";
 
 const attestation = {
   packageVersion: "oam.dormitory-candidate-artifact-attestation.v1",
-  packageStatus: artifactCompletenessStatus === "PASS"
-    ? "CANDIDATE_HEAD_ACCEPTED_BY_00_ARTIFACT_COMPLETE_NO_GO"
-    : "CANDIDATE_HEAD_ACCEPTED_BY_00_PENDING_NEW_ARTIFACT_NO_GO",
+  packageStatus: generatedCompileExecutionCompleted
+    ? "READY_FOR_00_GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_NO_GO"
+    : formalGeneratedCompileAuthorized
+    ? "FORMAL_GENERATED_COMPILE_AUTHORIZED_NO_GO"
+    : artifactCompletenessStatus === "PASS"
+      ? "CANDIDATE_HEAD_ACCEPTED_BY_00_ARTIFACT_COMPLETE_NO_GO"
+      : "CANDIDATE_HEAD_ACCEPTED_BY_00_PENDING_NEW_ARTIFACT_NO_GO",
   reviewPackageStatus,
   generatedAtUtc: new Date().toISOString(),
   acceptedAuthorizedCandidateExecutionHead,
@@ -87,6 +142,7 @@ const attestation = {
   reviewTarget: {
     branch,
     reviewHead: acceptedAuthorizedCandidateExecutionHead,
+    formalGeneratedCompileExecutionHead: currentHead,
     ciRunId: artifactRunId,
     workflowName: "CI",
     artifactName,
@@ -141,6 +197,35 @@ const attestation = {
     releaseAuthority: false,
     finalGoNoGo: "NO_GO"
   },
+  generatedCompileExecution: {
+    status: generatedCompileExecutionCompleted ? "PASS" : "NO_GO",
+    resultPath: generatedCompileExecutionResultPath,
+    proofPath: generatedCompileExecutionProofPath,
+    snapshotPath: generatedCompileExecutionSnapshotPath,
+    resultDigest: fileExists(generatedCompileExecutionResultPath) ? hashFile(path.join(root, generatedCompileExecutionResultPath)) : null,
+    proofDigest: fileExists(generatedCompileExecutionProofPath) ? hashFile(path.join(root, generatedCompileExecutionProofPath)) : null,
+    snapshotDigest: fileExists(generatedCompileExecutionSnapshotPath) ? hashFile(path.join(root, generatedCompileExecutionSnapshotPath)) : null,
+    generatedOutputDigest: generatedCompileExecutionResult.generatedOutputDigest ?? null,
+    manifestDigest: generatedCompileExecutionResult.manifestDigest ?? null,
+    generatedKernelGraphDigest: generatedCompileExecutionResult.generatedKernelGraphDigest ?? null,
+    reproducibility: generatedCompileExecutionResult.reproducibility ?? null,
+    noManualEditProof: generatedCompileExecutionResult.noManualEditProof ?? null,
+    consistencyProof: generatedCompileExecutionResult.consistencyProof ?? null,
+    driftProof: generatedCompileExecutionResult.driftProof ?? null,
+    generatedCompileAuthorized: formalGeneratedCompileAuthorized,
+    generatedCompilationAllowed: formalGeneratedCompileAuthorized,
+    generatedCompileCompleted: generatedCompileExecutionCompleted,
+    generatedCompilationCompleted: generatedCompileExecutionCompleted,
+    generatedCandidateAcceptedBy00: false,
+    runtimeConsumptionReady: false,
+    businessFeatureDevelopmentAllowed: false,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO",
+    nextDecisionFor00: generatedCompileExecutionCompleted
+      ? "GENERATED_CANDIDATE_ACCEPTANCE_REVIEW"
+      : "FORMAL_GENERATED_COMPILE_EXECUTION"
+  },
   requiredFiles: fileEntries,
   evidenceBindingReview: {
     reviewHeadBoundTo00AcceptedCandidateHead: true,
@@ -155,16 +240,18 @@ const attestation = {
     candidateHeadAcceptanceSyncGate: "PASS",
     candidateEvidenceRebindGate: artifactCompletenessStatus === "PASS" ? "PASS" : "PENDING_NEW_CI_ARTIFACT",
     oldArtifactCompleteness: "BLOCKED_REQUIRED_FILES_MISSING",
-    formalGeneratedCompileAuthorization: "BLOCKED",
+    formalGeneratedCompileAuthorization: formalGeneratedCompileAuthorized ? "PASS" : "BLOCKED",
+    generatedCompileExecution: generatedCompileExecutionCompleted ? "PASS" : "BLOCKED",
     runtimeConsumption: "BLOCKED",
     businessProduction: "NO_GO",
     dormitoryL2: "NO_GO"
   },
   goNoGo: {
     generatedCompileCandidateAuthorized: true,
-    generatedCompileAuthorized: false,
-    formalGeneratedCompileAuthorized: false,
-    generatedCompileCompleted: false,
+    generatedCompileAuthorized: formalGeneratedCompileAuthorized,
+    formalGeneratedCompileAuthorized: formalGeneratedCompileAuthorized,
+    generatedCompileCompleted: generatedCompileExecutionCompleted,
+    generatedCompilationCompleted: generatedCompileExecutionCompleted,
     generatedCandidateAcceptedBy00: false,
     generatedReleaseAllowed: false,
     runtimeConsumptionReady: false,
@@ -183,21 +270,26 @@ const attestation = {
     rationale: [
       "00 accepted 2b7bc3772c7351b34c5ca91258fe388371ab9f6c as the candidate execution head only.",
       "CI #424 remains a historical immutable artifact and cannot prove the newly required artifact files.",
-      "Formal generated compile authorization, runtime consumption, release authority, Business GO, Dormitory L2, and production_confirm remain blocked."
+      formalGeneratedCompileAuthorized
+        ? generatedCompileExecutionCompleted
+          ? "Formal generated compile execution is complete and reproducible; generated candidate acceptance, runtime consumption, release authority, Business GO, Dormitory L2, and production_confirm remain blocked pending 00 generated candidate acceptance review."
+          : "00 approved formal generated compile authorization; generated candidate acceptance, runtime consumption, release authority, Business GO, Dormitory L2, and production_confirm remain blocked."
+        : "Formal generated compile authorization, runtime consumption, release authority, Business GO, Dormitory L2, and production_confirm remain blocked."
     ]
   },
   formalApprovalState: {
-    generatedCompileAuthorized: formalApproval.generatedCompileAuthorized ?? false,
-    generatedCompileCompleted: formalApproval.generatedCompileCompleted ?? false,
-    runtimeConsumptionReady: formalApproval.runtimeConsumptionReady ?? false,
-    releaseAuthority: formalApproval.releaseAuthority ?? false,
-    finalGoNoGo: formalApproval.finalGoNoGo ?? "NO_GO"
+    ...formalApprovalStateForPackage(
+      formalApproval,
+      formalAuthorization,
+      fileExists(formalApprovalPath) ? hashFile(path.join(root, formalApprovalPath)) : null
+    ),
+    currentRepositoryHead: currentHead
   },
   residuals: buildResiduals(missingRequiredFiles),
   forbiddenInterpretations: [
     "CI success is not GO",
     "artifact exists is not GO",
-    "candidate head acceptance is not formal generated compile authorization",
+    "formal generated compile authorization is not generated candidate acceptance",
     "candidate evidence is not runtime consumption",
     "Evidence Root PASS is not releaseAuthority",
     "old CI #424 artifact completeness gaps remain historical facts"
@@ -224,13 +316,15 @@ function buildFileEntry(id, logicalPath) {
     };
   }
   const previous = previousRequiredFiles.get(logicalPath) ?? {};
-  const present = !oldArtifactMissingRequiredFiles.includes(logicalPath);
+  const localPath = path.join(root, logicalPath);
+  const present = fs.existsSync(localPath);
   return {
     id,
     logicalPath,
     artifactPath: previous.artifactPath ?? defaultArtifactPath(logicalPath),
     present,
-    hash: present ? previous.hash ?? null : null
+    hash: present ? hashFile(localPath) : null,
+    historicalOldArtifactMissing: oldArtifactMissingRequiredFiles.includes(logicalPath)
   };
 }
 
@@ -291,4 +385,12 @@ function normalizeOptionalPath(value) {
 
 function hashFile(file) {
   return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex")}`;
+}
+
+function fileExists(file) {
+  return fs.existsSync(path.join(root, file));
+}
+
+function runGit(args) {
+  return execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
 }
