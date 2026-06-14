@@ -82,18 +82,26 @@ const generatedCompileExecutionCompleted = formalGeneratedCompileAuthorized &&
   generatedCompileExecutionProof.businessFeatureDevelopmentAllowed === false &&
   generatedCompileExecutionProof.releaseAuthority === false &&
   generatedCompileExecutionProof.finalGoNoGo === "NO_GO";
+const artifactRoot = normalizeOptionalPath(process.env.WORKOS_DORMITORY_ATTESTATION_ARTIFACT_ROOT ?? "");
 const finalReport = readJsonIfExists("artifacts/oam/final-report.json") ?? {};
 const releaseObject = readJsonIfExists("artifacts/oam/evidence/current-oam-release-evidence-object.json") ?? {};
 const graph = readJsonIfExists("artifacts/oam/evidence/evidence-graph.json") ?? {};
+const artifactFinalReport = artifactRoot ? readArtifactJsonIfExists("artifacts/oam/final-report.json") ?? {} : {};
+const artifactReleaseObject = artifactRoot
+  ? readArtifactJsonIfExists("artifacts/oam/evidence/current-oam-release-evidence-object.json") ?? {}
+  : {};
+const artifactGraph = artifactRoot ? readArtifactJsonIfExists("artifacts/oam/evidence/evidence-graph.json") ?? {} : {};
 const previousPackage = readJsonIfExists(outputPath) ?? {};
 const previousRequiredFiles = new Map((previousPackage.requiredFiles ?? []).map((file) => [file.logicalPath, file]));
 
-const artifactRoot = normalizeOptionalPath(process.env.WORKOS_DORMITORY_ATTESTATION_ARTIFACT_ROOT ?? "");
 const preservePreviousArtifactReference = !artifactRoot &&
   ["ci_artifact_authoritative", "decision_writeback_reference"].includes(previousPackage?.artifactVerification?.artifactMode);
 const artifactRunId = process.env.WORKOS_DORMITORY_ATTESTATION_ARTIFACT_RUN_ID ||
   (preservePreviousArtifactReference ? previousPackage.artifactVerification?.ciRunId : null) ||
   oldArtifactRunId;
+const artifactHeadSha = process.env.WORKOS_DORMITORY_ATTESTATION_ARTIFACT_HEAD_SHA ||
+  (preservePreviousArtifactReference ? previousPackage.artifactVerification?.ciArtifactHeadSha : null) ||
+  null;
 const artifactName = process.env.WORKOS_DORMITORY_ATTESTATION_ARTIFACT_NAME ||
   (preservePreviousArtifactReference ? previousPackage.artifactVerification?.artifactName : null) ||
   oldArtifactName;
@@ -103,7 +111,7 @@ const observedGitHubArtifactDigest = process.env.WORKOS_DORMITORY_ATTESTATION_AR
 const artifactMode = artifactRoot
   ? "ci_artifact_authoritative"
   : preservePreviousArtifactReference
-    ? "decision_writeback_reference"
+    ? previousPackage.artifactVerification?.artifactMode
     : "local_evidence_candidate";
 const fileEntries = requiredFiles.map(([id, logicalPath]) => buildFileEntry(id, logicalPath));
 const missingRequiredFiles = fileEntries.filter((file) => file.present !== true).map((file) => file.logicalPath);
@@ -198,6 +206,7 @@ const attestation = {
     unpackedForLocalReview: Boolean(artifactRoot),
     localUnpackPathIsAuthority: artifactMode === "ci_artifact_authoritative",
     ciRunId: artifactRunId,
+    ciArtifactHeadSha: artifactHeadSha,
     artifactName,
     observedGitHubArtifactDigest,
     githubArtifactDigest: observedGitHubArtifactDigest,
@@ -214,10 +223,14 @@ const attestation = {
     oldArtifactHistoricalFactRetained: true,
     oldArtifactCannotProveNewRequiredFiles: true,
     newArtifactRequiredForFormalGeneratedCompileDecision: artifactCompletenessStatus !== "PASS",
-    internalArtifactDigest: preservePreviousArtifactReference
+    internalArtifactDigest: artifactRoot
+      ? artifactReleaseObject.artifactDigest ?? artifactGraph.binding?.artifactDigest ?? artifactFinalReport.artifactDigest ?? null
+      : preservePreviousArtifactReference
       ? previousPackage.artifactVerification?.internalArtifactDigest ?? null
       : graph.binding?.artifactDigest ?? finalReport.artifactDigest ?? null,
-    evidenceRootDigest: preservePreviousArtifactReference
+    evidenceRootDigest: artifactRoot
+      ? artifactReleaseObject.evidenceRootDigest ?? artifactGraph.binding?.evidenceRootDigest ?? null
+      : preservePreviousArtifactReference
       ? previousPackage.artifactVerification?.evidenceRootDigest ?? null
       : releaseObject.evidenceRootDigest ?? graph.binding?.evidenceRootDigest ?? null,
     s4AttestationIsFinalReleaseEvidence: false,
@@ -430,6 +443,12 @@ function readJson(file) {
 
 function readJsonIfExists(file) {
   const full = path.join(root, file);
+  return fs.existsSync(full) ? JSON.parse(fs.readFileSync(full, "utf8")) : null;
+}
+
+function readArtifactJsonIfExists(file) {
+  if (!artifactRoot) return null;
+  const full = path.join(artifactRoot, resolveArtifactPath(file));
   return fs.existsSync(full) ? JSON.parse(fs.readFileSync(full, "utf8")) : null;
 }
 

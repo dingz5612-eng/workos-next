@@ -1,7 +1,7 @@
 {
   "version": "oam.generated-candidate-acceptance.v1",
   "decisionType": "generated_candidate_acceptance",
-  "decisionStatus": "NOT_ACCEPTED_BY_00",
+  "decisionStatus": "PENDING_00_DECISION",
   "generatedCandidateAcceptedBy00": false,
   "generatedCandidateSubject": {
     "version": "oam.generated-candidate-subject.v1",
@@ -16,11 +16,11 @@
     "generatedOutputDigest": "sha256:008354c0b1c8e67723c16e2fc2c5e14fe6183cf7568356117c86df8968c14eb6",
     "generatedFieldBindingClosureDigest": "sha256:524097f49661896a927d673c46e14adc1a30e1ff9c006e698397516028acb665",
     "sourceFieldGapsDecisionDigest": "sha256:87cef694c2cd0bbfb7495d91274a2c9f635893f0f9a9eee2d4abfe938f07761e",
-    "evidenceArtifactDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
-    "evidenceArtifactMode": "decision_writeback_reference",
-    "localEvidenceArtifactDigest": "sha256:d2c5bf085da039cc07a51676827ccbf4c5268254d77e7971298c22603f5d237c",
+    "evidenceArtifactDigest": "sha256:6562f58720ad514fd0a84137ac3c4527ef99af1dc231010f5f9c46d0a8f7c0e8",
+    "evidenceArtifactMode": "ci_artifact_authoritative",
+    "localEvidenceArtifactDigest": "sha256:2dc200fb6d42c93a06b88ca97b87d864f1f0aa2a0abf0e0e52d7d0accbc98c28",
     "executionProofDigest": "sha256:83a1513d4af86491aa2de4095251c048a630f56ed6aa76691dc2271e56e173fc",
-    "evidenceRootDigest": "sha256:087d2a5fbf83591b6920f5bd471b3c205c0d8722c09c0b7a22e33f76033ffc25",
+    "evidenceRootDigest": "sha256:96917a9966d6895e1e58b910942fa3e8439bfb3c8a9d3c28226ec453d3f69679",
     "requiredEvidenceDigestSet": [
       {
         "id": "generatedCompileExecutionResult",
@@ -65,7 +65,7 @@
       {
         "id": "dormitoryCandidateAttestationPackage",
         "path": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
-        "digest": "sha256:841fd7f9646619e18cf334a77adc0f2c71317f601163faf7501492fe254dd9d6"
+        "digest": "sha256:72b369577b1b220991501d92d0973de7f8e979375faa497d512269f558331eca"
       }
     ],
     "requiredGeneratedContractDigestSet": [
@@ -95,24 +95,18 @@
         "digest": "sha256:90a3f36dcd25ad30f039e0cc71aa7a46e88826edb238baf5e1c618fa2a742698"
       }
     ],
-    "subjectDigest": "sha256:cdcb3c880573718888bfe74abccf4d655849e2b382d08befda6f895a0e4878d5"
+    "subjectDigest": "sha256:f5a5330deb861b84632bdac2bfeb1107f5531ecc4331ea8ee7d3c15f85a0f34b"
   },
-  "subjectStatusAtWrite": "NOT_READY_FOR_00_ACCEPTANCE_REVIEW",
+  "subjectStatusAtWrite": "READY_FOR_00_ACCEPTANCE_REVIEW",
   "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
   "decisionRecordHead": null,
-  "decisionWritebackBaseHead": "4dbd775b6cb1093f6674d8526a2539f4bb7bf3d5",
-  "evidenceArtifactDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
+  "decisionWritebackBaseHead": "28deaff765762474e8bffd098d7159ee0e2298b3",
+  "evidenceArtifactDigest": "sha256:6562f58720ad514fd0a84137ac3c4527ef99af1dc231010f5f9c46d0a8f7c0e8",
   "generatedFieldBindingClosureDigest": "sha256:524097f49661896a927d673c46e14adc1a30e1ff9c006e698397516028acb665",
   "sourceFieldGapsDecisionDigest": "sha256:87cef694c2cd0bbfb7495d91274a2c9f635893f0f9a9eee2d4abfe938f07761e",
   "executionProofDigest": "sha256:83a1513d4af86491aa2de4095251c048a630f56ed6aa76691dc2271e56e173fc",
-  "evidenceRootDigest": "sha256:087d2a5fbf83591b6920f5bd471b3c205c0d8722c09c0b7a22e33f76033ffc25",
-  "blockingReasons": [
-    "subject_status=NOT_READY_FOR_00_ACCEPTANCE_REVIEW",
-    "evidenceArtifactMode=decision_writeback_reference",
-    "ci_artifact_authoritative_required_before_generated_candidate_acceptance",
-    "artifactCompletenessStatus=BLOCKED_REQUIRED_FILES_MISSING",
-    "missing_required_files=docs/contracts/generated/dormitory/field-bindings.generated.json,artifacts/oam/checks/generated-field-binding-closure-result.json"
-  ],
+  "evidenceRootDigest": "sha256:96917a9966d6895e1e58b910942fa3e8439bfb3c8a9d3c28226ec453d3f69679",
+  "blockingReasons": [],
   "explicitNegativeAuthorities": {
     "runtimeConsumptionReady": false,
     "businessFeatureDevelopmentAllowed": false,
@@ -152,7 +146,7 @@
     ],
     "note": "Deprecated aliases are retained only as appendix references and do not participate in current generated candidate acceptance authority."
   },
-  "nextDecisionRequired": "generated_candidate_remediation_and_review_required",
+  "nextDecisionRequired": "00_generated_candidate_acceptance_decision",
   "forbiddenInterpretations": [
     "CI success is not generated candidate acceptance",
     "artifact exists is not generated candidate acceptance",

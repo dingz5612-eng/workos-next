@@ -1,8 +1,8 @@
 {
   "packageVersion": "oam.dormitory-candidate-artifact-attestation.v1",
-  "packageStatus": "CANDIDATE_HEAD_ACCEPTED_BY_00_PENDING_NEW_ARTIFACT_NO_GO",
-  "reviewPackageStatus": "VALID_WITH_P0_RESIDUALS_NO_GO",
-  "generatedAtUtc": "2026-06-14T16:21:31.453Z",
+  "packageStatus": "READY_FOR_00_GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_NO_GO",
+  "reviewPackageStatus": "VALID_CURRENT_CANDIDATE_HEAD_NO_GO",
+  "generatedAtUtc": "2026-06-14T16:42:31.067Z",
   "acceptedAuthorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
   "candidateSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
   "previousAuthorizedCandidateExecutionHead": "9db58da1ebc2a02349436833747307ac78c4c2fd",
@@ -17,15 +17,15 @@
     "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
     "artifacts/oam/checks/generated-contract-consistency-result.json"
   ],
-  "recommendation": "RUN_NEW_CI_ARTIFACT_WITH_REQUIRED_FILES_BEFORE_GENERATED_CANDIDATE_ACCEPTANCE",
+  "recommendation": "SUBMIT_TO_00_FOR_GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_NO_RUNTIME_NO_GO",
   "reviewTarget": {
     "branch": "codex/dormitory-source-p0-s2-closure",
     "reviewHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
     "formalGeneratedCompileExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
-    "ciRunId": "27495112814",
+    "ciRunId": "27504925780",
     "workflowName": "CI",
-    "artifactName": "workosnext-current-oam-evidence-27495112814",
-    "observedGitHubArtifactDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
+    "artifactName": "workosnext-current-oam-evidence-27504925780",
+    "observedGitHubArtifactDigest": "sha256:6562f58720ad514fd0a84137ac3c4527ef99af1dc231010f5f9c46d0a8f7c0e8",
     "businessGo": "NO_GO"
   },
   "sourceRefs": {
@@ -46,19 +46,20 @@
     "previousAuthorizedCandidateExecutionHead": "9db58da1ebc2a02349436833747307ac78c4c2fd",
     "candidateSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
     "reviewHeadRelationToAuthorizedHead": "EQUALS_AUTHORIZED_CANDIDATE_EXECUTION_HEAD",
-    "candidateCompileEvidenceStatus": "CURRENT_CANDIDATE_HEAD_PENDING_NEW_ARTIFACT",
+    "candidateCompileEvidenceStatus": "FORMAL_GENERATED_COMPILE_EXECUTED_PENDING_00_GENERATED_CANDIDATE_ACCEPTANCE",
     "candidateCompileClosureForCurrentHead": false,
-    "recommendation": "RUN_NEW_CI_ARTIFACT_WITH_REQUIRED_FILES_BEFORE_GENERATED_CANDIDATE_ACCEPTANCE"
+    "recommendation": "SUBMIT_TO_00_FOR_GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_NO_RUNTIME_NO_GO"
   },
   "artifactVerification": {
-    "artifactMode": "decision_writeback_reference",
+    "artifactMode": "ci_artifact_authoritative",
     "unpackedForLocalReview": false,
-    "localUnpackPathIsAuthority": false,
-    "ciRunId": "27495112814",
-    "artifactName": "workosnext-current-oam-evidence-27495112814",
-    "observedGitHubArtifactDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
-    "githubArtifactDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
-    "githubArtifactMetadataDigest": "sha256:42dd494ef2f78b93e766d8e0b4647742aaea2970c76f5c39a66899e18c6d721e",
+    "localUnpackPathIsAuthority": true,
+    "ciRunId": "27504925780",
+    "ciArtifactHeadSha": "28deaff765762474e8bffd098d7159ee0e2298b3",
+    "artifactName": "workosnext-current-oam-evidence-27504925780",
+    "observedGitHubArtifactDigest": "sha256:6562f58720ad514fd0a84137ac3c4527ef99af1dc231010f5f9c46d0a8f7c0e8",
+    "githubArtifactDigest": "sha256:6562f58720ad514fd0a84137ac3c4527ef99af1dc231010f5f9c46d0a8f7c0e8",
+    "githubArtifactMetadataDigest": "sha256:6562f58720ad514fd0a84137ac3c4527ef99af1dc231010f5f9c46d0a8f7c0e8",
     "oldArtifactRunId": "27466582674",
     "oldArtifactName": "workosnext-current-oam-evidence-27466582674",
     "oldArtifactDigest": "sha256:37f42a6376e2d9d4a6dd0a5c9425c9fb33a3038ebdbb48423d4c1e77a4e7413d",
@@ -70,18 +71,15 @@
       "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
       "artifacts/oam/checks/generated-contract-consistency-result.json"
     ],
-    "artifactCompletenessStatus": "BLOCKED_REQUIRED_FILES_MISSING",
-    "requiredFileCompletenessStatus": "BLOCKED_REQUIRED_FILES_MISSING",
-    "requiredFileMissingCount": 2,
-    "missingRequiredFiles": [
-      "docs/contracts/generated/dormitory/field-bindings.generated.json",
-      "artifacts/oam/checks/generated-field-binding-closure-result.json"
-    ],
+    "artifactCompletenessStatus": "PASS",
+    "requiredFileCompletenessStatus": "PASS",
+    "requiredFileMissingCount": 0,
+    "missingRequiredFiles": [],
     "oldArtifactHistoricalFactRetained": true,
     "oldArtifactCannotProveNewRequiredFiles": true,
-    "newArtifactRequiredForFormalGeneratedCompileDecision": true,
-    "internalArtifactDigest": "sha256:d2c5bf085da039cc07a51676827ccbf4c5268254d77e7971298c22603f5d237c",
-    "evidenceRootDigest": "sha256:087d2a5fbf83591b6920f5bd471b3c205c0d8722c09c0b7a22e33f76033ffc25",
+    "newArtifactRequiredForFormalGeneratedCompileDecision": false,
+    "internalArtifactDigest": "sha256:2dc200fb6d42c93a06b88ca97b87d864f1f0aa2a0abf0e0e52d7d0accbc98c28",
+    "evidenceRootDigest": "sha256:96917a9966d6895e1e58b910942fa3e8439bfb3c8a9d3c28226ec453d3f69679",
     "s4AttestationIsFinalReleaseEvidence": false,
     "releaseEvidenceRequiredAfterS4": true,
     "generatedCandidateAcceptedBy00": false,
@@ -94,8 +92,8 @@
     "resultPath": "artifacts/oam/checks/generated-compile-execution-result.json",
     "proofPath": "artifacts/oam/evidence/generated-compile-execution-proof.json",
     "snapshotPath": "artifacts/oam/checks/generated-compile-execution-input-snapshot.json",
-    "resultDigest": "sha256:0ca128763d724d2cda596f4e626a168382743e7801863db3798f56c88ecc9c83",
-    "proofDigest": "sha256:afd8044b76a56b6b9805432463179a52f2da4019aecfaffbadddc2f1df7a6d0b",
+    "resultDigest": "sha256:e2faf9f9257aa611c3010ade396499608bad2ecb39ce4d364230ce66d8f49a2a",
+    "proofDigest": "sha256:4feeb641aed0f0cc280d4c12e95bb3d933f937a09f5cb94b14d940c78a7091ca",
     "snapshotDigest": "sha256:e4e3331aa81f09c68980ac200905b10626a088449e2516b53b8e37ff782cd5e5",
     "generatedOutputDigest": "sha256:008354c0b1c8e67723c16e2fc2c5e14fe6183cf7568356117c86df8968c14eb6",
     "manifestDigest": "sha256:836d39e1c46f2da6961907ca0f24d9ab69ffa9463e7860c5ba3f4b48c98a4754",
@@ -145,7 +143,7 @@
       "logicalPath": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
       "artifactPath": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
       "present": true,
-      "hash": "sha256:697d513ebafff02ffa47928630a93caea4f9ea9c2e576b01498747a3214f5d3a",
+      "hash": "sha256:58a725fb49164f5f8a97ef348106835ddf784d5690020c1ccc135e2e5a633fd2",
       "historicalOldArtifactMissing": false
     },
     {
@@ -153,7 +151,7 @@
       "logicalPath": "artifacts/oam/checks/generated-compile-authorization-result.json",
       "artifactPath": "artifacts/oam/checks/generated-compile-authorization-result.json",
       "present": true,
-      "hash": "sha256:69523795303a28359111c8fb5d4eb52a5271fd0f8f0a1db9f1a601141cbb161d",
+      "hash": "sha256:9b7da2ca918b2003eb1be12ba3740a7353622c48bccc5bf9717e441a6bed0081",
       "historicalOldArtifactMissing": true
     },
     {
@@ -161,7 +159,7 @@
       "logicalPath": "artifacts/oam/checks/generated-compile-execution-input-snapshot.json",
       "artifactPath": "artifacts/oam/checks/generated-compile-execution-input-snapshot.json",
       "present": true,
-      "hash": "sha256:6a4d0722d83f6592bdcc5365ba938c1898fe39c00c1ff80487ac74f7499bb3a9",
+      "hash": "sha256:d14b56ef49e2d8518bbcd5d0c1e90097d15c63180aa42b2ae20f71141af8a8a9",
       "historicalOldArtifactMissing": false
     },
     {
@@ -169,7 +167,7 @@
       "logicalPath": "artifacts/oam/checks/generated-compile-execution-result.json",
       "artifactPath": "artifacts/oam/checks/generated-compile-execution-result.json",
       "present": true,
-      "hash": "sha256:a3823e5c3a29b3b64a698eca1e39ad114ef1d597bd202c74eb8eebea916c31d2",
+      "hash": "sha256:6ad2381b997f42883db5bb36723839a15158496246c22c2f1ca2dc9f6453420e",
       "historicalOldArtifactMissing": false
     },
     {
@@ -177,23 +175,23 @@
       "logicalPath": "artifacts/oam/evidence/generated-compile-execution-proof.json",
       "artifactPath": "artifacts/oam/evidence/generated-compile-execution-proof.json",
       "present": true,
-      "hash": "sha256:45e3ee8a45ab0b21dc96c323ce6580500048aa330cd08cc11164c2efabdc4cd7",
+      "hash": "sha256:6b959b9987909047a7c5b43bed649a523ebff1d07e8f069f97bc87804e298cc2",
       "historicalOldArtifactMissing": false
     },
     {
       "id": "generatedFieldBindingContract",
       "logicalPath": "docs/contracts/generated/dormitory/field-bindings.generated.json",
       "artifactPath": "docs/contracts/generated/dormitory/field-bindings.generated.json",
-      "present": false,
-      "hash": null,
+      "present": true,
+      "hash": "sha256:51b951594acf44e2a8527d420d7e3d83f86e97103252141269db8e3c6aad258f",
       "historicalOldArtifactMissing": false
     },
     {
       "id": "generatedFieldBindingClosureResult",
       "logicalPath": "artifacts/oam/checks/generated-field-binding-closure-result.json",
-      "artifactPath": "checks/generated-field-binding-closure-result.json",
-      "present": false,
-      "hash": null,
+      "artifactPath": "artifacts/oam/checks/generated-field-binding-closure-result.json",
+      "present": true,
+      "hash": "sha256:fa86ec022a73cecc594d2c191bfcaffde842f8b36aa11a5c2649f4c5765801f5",
       "historicalOldArtifactMissing": false
     },
     {
@@ -217,7 +215,7 @@
       "logicalPath": "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
       "artifactPath": "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
       "present": true,
-      "hash": "sha256:d136af87ac26aeba5d144a58778b8fc1973d411c401b6c28715696dfeb9e42ee",
+      "hash": "sha256:dd122d4beffe65363d4f826619c7c1d6cc7c0a6aa2f2878c9c6129b0399351fc",
       "historicalOldArtifactMissing": true
     },
     {
@@ -225,7 +223,7 @@
       "logicalPath": "artifacts/oam/checks/generated-contract-consistency-result.json",
       "artifactPath": "artifacts/oam/checks/generated-contract-consistency-result.json",
       "present": true,
-      "hash": "sha256:e46e6aa7f5472a056ce5749d72d49df850140a883686a96845ae633f7855bee7",
+      "hash": "sha256:106b9542d1872f9aa2ef525afd14a2af9d1b92a177036e984d213552989e1059",
       "historicalOldArtifactMissing": true
     },
     {
@@ -233,7 +231,7 @@
       "logicalPath": "artifacts/oam/checks/derived-contract-consistency-result.json",
       "artifactPath": "artifacts/oam/checks/derived-contract-consistency-result.json",
       "present": true,
-      "hash": "sha256:9d97d7ff7ca11e545976dc1761dec7d6ca4894e69632d226e79ce77e86dd4059",
+      "hash": "sha256:ed6eb974de1312e5aef654119d5c4b676dda1ed4a9bde5655bd880be248ed9a1",
       "historicalOldArtifactMissing": false
     },
     {
@@ -241,7 +239,7 @@
       "logicalPath": "artifacts/oam/checks/oam-kernel-graph-result.json",
       "artifactPath": "artifacts/oam/checks/oam-kernel-graph-result.json",
       "present": true,
-      "hash": "sha256:c746793c5aa311767770fe7f7a6b2fd7b8a98bbd1b382b19c8791b456bba94b3",
+      "hash": "sha256:d0e4561757990d44d033f99f3e2adf1d2f0e70b32d074ec25e4e18de3df8a0cc",
       "historicalOldArtifactMissing": false
     },
     {
@@ -249,7 +247,7 @@
       "logicalPath": "artifacts/oam/checks/dashboard-readonly-report.json",
       "artifactPath": "artifacts/oam/checks/dashboard-readonly-report.json",
       "present": true,
-      "hash": "sha256:177542677228c8fa25f52cf6c8230fba20adae025cc901efd9ad99f29b8b9e9b",
+      "hash": "sha256:0e32557349b9e1e26ef4e39c40491dfeff613f1048f90f7c9d47787fa60a2f7a",
       "historicalOldArtifactMissing": false
     },
     {
@@ -257,7 +255,7 @@
       "logicalPath": "artifacts/oam/checks/finance-truth-report.json",
       "artifactPath": "artifacts/oam/checks/finance-truth-report.json",
       "present": true,
-      "hash": "sha256:2bdb7e84ee831b4ad810e9224226812fb2c675a3e748a8491735ceb1ef476275",
+      "hash": "sha256:008d2bd6b2319f25ca7e0759816445ef247077ebbc3a018925fb918e497bc9c6",
       "historicalOldArtifactMissing": false
     },
     {
@@ -265,7 +263,7 @@
       "logicalPath": "artifacts/oam/checks/operation-identity-boundary-result.json",
       "artifactPath": "artifacts/oam/checks/operation-identity-boundary-result.json",
       "present": true,
-      "hash": "sha256:f07c67fb319a725043be1ad0e8f32efb52a22f4379a1f454dbd4f3b12d1cbfc7",
+      "hash": "sha256:07a8dc9c32c22ad693a41be6283ce1752781d9575a0e4c4cbf3c65166fa7618c",
       "historicalOldArtifactMissing": false
     }
   ],
@@ -300,7 +298,7 @@
   },
   "gateResults": {
     "candidateHeadAcceptanceSyncGate": "PASS",
-    "candidateEvidenceRebindGate": "PENDING_NEW_CI_ARTIFACT",
+    "candidateEvidenceRebindGate": "PASS",
     "oldArtifactCompleteness": "BLOCKED_REQUIRED_FILES_MISSING",
     "formalGeneratedCompileAuthorization": "PASS",
     "generatedCompileExecution": "PASS",
@@ -329,8 +327,8 @@
   },
   "nextDecisionFor00": {
     "candidateHeadDecision": "ACCEPTED_BY_00_FOR_CANDIDATE_EXECUTION_HEAD_ONLY",
-    "nextDecisionFor00": "STOP_AND_FIX_ARTIFACT_UPLOAD_OR_RESULT_WRITERS",
-    "recommendation": "RUN_NEW_CI_ARTIFACT_WITH_REQUIRED_FILES_BEFORE_GENERATED_CANDIDATE_ACCEPTANCE",
+    "nextDecisionFor00": "GENERATED_CANDIDATE_ACCEPTANCE_REVIEW",
+    "recommendation": "SUBMIT_TO_00_FOR_GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_NO_RUNTIME_NO_GO",
     "rationale": [
       "00 accepted 2b7bc3772c7351b34c5ca91258fe388371ab9f6c as the candidate execution head only.",
       "CI #424 remains a historical immutable artifact and cannot prove the newly required artifact files.",
@@ -372,20 +370,9 @@
     "predicateAuthorized": true,
     "predicateFailures": [],
     "approvalObjectHash": "sha256:b6fe84036d45472f378340239a747fec52b532ecc78723893aa346892cfac300",
-    "currentRepositoryHead": "4dbd775b6cb1093f6674d8526a2539f4bb7bf3d5"
+    "currentRepositoryHead": "28deaff765762474e8bffd098d7159ee0e2298b3"
   },
   "residuals": [
-    {
-      "severity": "P0",
-      "id": "CI_ARTIFACT_REQUIRED_FILES_MISSING",
-      "description": "The referenced artifact does not include every file required by the current candidate artifact attestation gate.",
-      "oldArtifactRunId": "27466582674",
-      "oldArtifactName": "workosnext-current-oam-evidence-27466582674",
-      "missingFiles": [
-        "docs/contracts/generated/dormitory/field-bindings.generated.json",
-        "artifacts/oam/checks/generated-field-binding-closure-result.json"
-      ]
-    },
     {
       "severity": "P0",
       "id": "CI_424_ARTIFACT_REQUIRED_FILES_MISSING_HISTORICAL_FACT",
