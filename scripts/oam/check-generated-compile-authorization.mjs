@@ -468,24 +468,23 @@ function runNegativeFixtures() {
     failures.push("negative fixture did not fail: stale executionHead report was accepted as current.");
   }
   if (formalApproval && authorization.authorizedCandidateExecutionHead) {
-    const descendantCurrentHeadButApprovalBoundToAncestor = {
+    const descendantCurrentHeadWithoutPolicy = {
       ...formalApproval,
-      currentHEAD: authorization.authorizedCandidateExecutionHead,
-      reviewedRef: authorization.authorizedCandidateExecutionHead
+      currentHeadDescendantPolicy: ""
     };
     const staleFormal = validateFormalGeneratedCompileAuthorization({
-      approval: descendantCurrentHeadButApprovalBoundToAncestor,
+      approval: descendantCurrentHeadWithoutPolicy,
       candidateApproval,
       currentHead,
       approvalPath: pendingApprovalPath,
       candidateApprovalPath
     });
     negativeFixtureResults.push({
-      caseId: "formal_approval_descendant_current_head_not_exact",
+      caseId: "formal_approval_descendant_current_head_missing_policy",
       status: staleFormal.authorized ? "failed" : "passed"
     });
     if (staleFormal.authorized) {
-      failures.push("negative fixture did not fail: formal approval was inherited by a descendant/non-exact HEAD.");
+      failures.push("negative fixture did not fail: formal approval descendant execution was accepted without the S4 writeback policy.");
     }
 
     for (const [caseId, patch] of [
@@ -545,6 +544,8 @@ function writeResult() {
       approvalScope: formalApproval.approvalScope ?? null,
       currentHEAD: formalApproval.currentHEAD ?? null,
       reviewedRef: formalApproval.reviewedRef ?? null,
+      approvedFormalAuthorizationHead: formalApproval.approvedFormalAuthorizationHead ?? null,
+      currentHeadDescendantPolicy: formalApproval.currentHeadDescendantPolicy ?? null,
       candidateSourceRef: formalApproval.candidateSourceRef ?? null,
       authorizedCandidateExecutionHead: formalApproval.authorizedCandidateExecutionHead ?? null,
       generatedCompileAuthorized: formalApproval.generatedCompileAuthorized ?? null,

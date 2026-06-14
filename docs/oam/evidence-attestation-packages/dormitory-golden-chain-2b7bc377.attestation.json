@@ -2,7 +2,7 @@
   "packageVersion": "oam.dormitory-candidate-artifact-attestation.v1",
   "packageStatus": "READY_FOR_00_GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_NO_GO",
   "reviewPackageStatus": "VALID_CURRENT_CANDIDATE_HEAD_NO_GO",
-  "generatedAtUtc": "2026-06-14T09:14:57.229Z",
+  "generatedAtUtc": "2026-06-14T09:31:00.691Z",
   "acceptedAuthorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
   "candidateSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
   "previousAuthorizedCandidateExecutionHead": "9db58da1ebc2a02349436833747307ac78c4c2fd",
@@ -21,7 +21,7 @@
   "reviewTarget": {
     "branch": "codex/dormitory-source-p0-s2-closure",
     "reviewHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
-    "formalGeneratedCompileExecutionHead": "a502565ca5672335dc2ee4398a8d443ac7e3b57a",
+    "formalGeneratedCompileExecutionHead": "d989376c65d557344237db7974aa0075fcba01eb",
     "ciRunId": "27466582674",
     "workflowName": "CI",
     "artifactName": "workosnext-current-oam-evidence-27466582674",
@@ -77,8 +77,8 @@
     "oldArtifactHistoricalFactRetained": true,
     "oldArtifactCannotProveNewRequiredFiles": true,
     "newArtifactRequiredForFormalGeneratedCompileDecision": false,
-    "internalArtifactDigest": "sha256:bbc7529cfd704ae695806780080afcb034dfec32d16689298e926916ff3a0f2d",
-    "evidenceRootDigest": "sha256:4b823940e00b36648f3f88460588c1f3c6bb5bd06f9e70dccdd71d6d38c3f638",
+    "internalArtifactDigest": "sha256:769c2d30a1583787ecbc0bcf33b9cbebee9f03ec9b7f69ba6fd455fb3d19f160",
+    "evidenceRootDigest": "sha256:30100240d5560e4805be429c6dc948425c670feec2ea0e317c2d90b677a0dbd6",
     "releaseAuthority": false,
     "finalGoNoGo": "NO_GO"
   },
@@ -87,8 +87,8 @@
     "resultPath": "artifacts/oam/checks/generated-compile-execution-result.json",
     "proofPath": "artifacts/oam/evidence/generated-compile-execution-proof.json",
     "snapshotPath": "artifacts/oam/checks/generated-compile-execution-input-snapshot.json",
-    "resultDigest": "sha256:89a63147ec9b0bf8487bac8b2dc079cc08c68c6411ad0b33f20a29eb9d6c0fb6",
-    "proofDigest": "sha256:8e97a1cb99cc783f57b1166836692d981f002b4677b32aeb8067c8062e80abbf",
+    "resultDigest": "sha256:fea305ec5b07e8cafd1861ca31ee7dbb51dd0ce93a2dd1a8c3ef79dd0b6f38a2",
+    "proofDigest": "sha256:6c4a9d013a4c4ed2909179b63e55c4c21bfa7ea835e020559fcbbf837ff6c2d7",
     "snapshotDigest": "sha256:fffb6666279138bda31020a16dafdc4bc8ece3f61f3248a85c1124644387683f",
     "generatedOutputDigest": "sha256:29503692016609d90ef17effa29d5ddc882c601e8f70513286768a0dced4af61",
     "manifestDigest": "sha256:af5dd0f05322ca1538c4a4889d224d8e986411b3ea1e98cfd20baf8763a0f4c7",
@@ -114,9 +114,7 @@
       "noSourceBusinessFactChanges": true,
       "sourceBusinessFactDiffs": [],
       "noRuntimeImplementationChanges": true,
-      "runtimeChanged": [
-        "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
-      ],
+      "runtimeChanged": [],
       "runtimeUntracked": [],
       "allowedRuntimeGeneratedDiffs": [
         "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
@@ -140,7 +138,7 @@
       "logicalPath": "artifacts/oam/evidence/evidence-graph.json",
       "artifactPath": "artifacts/oam/evidence/evidence-graph.json",
       "present": true,
-      "hash": "sha256:0cd594a255c00ed828619a1f5d6e3133c8bfb94989e973235fea38ee1b2e6a30",
+      "hash": "sha256:e670ec84dec399e6c279b22ebe2401b814e28edb2866f3d6d8d3371f3d0960d4",
       "historicalOldArtifactMissing": false
     },
     {
@@ -148,7 +146,7 @@
       "logicalPath": "artifacts/oam/evidence/current-oam-release-evidence-object.json",
       "artifactPath": "artifacts/oam/evidence/current-oam-release-evidence-object.json",
       "present": true,
-      "hash": "sha256:30ef5f53ef3c7f55f9aa4fc5cf8156379969279259ca4dbb600a9efeb91211b4",
+      "hash": "sha256:4e46b0daed9c0120c02c39bb7d065607f124ec8284253d30bd87a4604502a8bb",
       "historicalOldArtifactMissing": false
     },
     {
@@ -156,7 +154,7 @@
       "logicalPath": "artifacts/oam/evidence/current-oam-release-attestation.json",
       "artifactPath": "artifacts/oam/evidence/current-oam-release-attestation.json",
       "present": true,
-      "hash": "sha256:c0ac13c492489148975d0d434aaca1800c7eaab2629fb72ec105725133e9ec81",
+      "hash": "sha256:a6ed0b65437778fa472be22e1b059ec865dc83f48f3f46ad4b2b4e8382a90e53",
       "historicalOldArtifactMissing": false
     },
     {
@@ -164,7 +162,7 @@
       "logicalPath": "artifacts/oam/final-report.json",
       "artifactPath": "artifacts/oam/final-report.json",
       "present": true,
-      "hash": "sha256:36277aa286904a879447bf74331b0b2aac01592c4e09959e90b23c0f191885ae",
+      "hash": "sha256:e2681b1575942169b68817ae3bac7f0ad233e535217aa38808daa3b0f6f2291f",
       "historicalOldArtifactMissing": false
     },
     {
@@ -172,7 +170,7 @@
       "logicalPath": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
       "artifactPath": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
       "present": true,
-      "hash": "sha256:a7c13626e8890140c953d0a3098b8eb8b5691f33096c2a2b412fd262f18c74e6",
+      "hash": "sha256:226d18e6280a7e124d8e82609569bb2ceb63d9fc8e3584c445aa1b7bf7817e6f",
       "historicalOldArtifactMissing": false
     },
     {
@@ -180,7 +178,7 @@
       "logicalPath": "artifacts/oam/checks/generated-compile-authorization-result.json",
       "artifactPath": "artifacts/oam/checks/generated-compile-authorization-result.json",
       "present": true,
-      "hash": "sha256:c6e922d9cb2aecd4d49f7a4618544a3ef665902341152fc86e42d826038cc9ea",
+      "hash": "sha256:a48d28ddaa6dd4c509b752e098d39af8cfcb453f25d1c73b7a583630cbd51bed",
       "historicalOldArtifactMissing": true
     },
     {
@@ -196,7 +194,7 @@
       "logicalPath": "artifacts/oam/checks/generated-compile-execution-result.json",
       "artifactPath": "checks/generated-compile-execution-result.json",
       "present": true,
-      "hash": "sha256:89a63147ec9b0bf8487bac8b2dc079cc08c68c6411ad0b33f20a29eb9d6c0fb6",
+      "hash": "sha256:fea305ec5b07e8cafd1861ca31ee7dbb51dd0ce93a2dd1a8c3ef79dd0b6f38a2",
       "historicalOldArtifactMissing": false
     },
     {
@@ -204,7 +202,7 @@
       "logicalPath": "artifacts/oam/evidence/generated-compile-execution-proof.json",
       "artifactPath": "evidence/generated-compile-execution-proof.json",
       "present": true,
-      "hash": "sha256:8e97a1cb99cc783f57b1166836692d981f002b4677b32aeb8067c8062e80abbf",
+      "hash": "sha256:6c4a9d013a4c4ed2909179b63e55c4c21bfa7ea835e020559fcbbf837ff6c2d7",
       "historicalOldArtifactMissing": false
     },
     {
@@ -228,7 +226,7 @@
       "logicalPath": "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
       "artifactPath": "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
       "present": true,
-      "hash": "sha256:0b8871c81fb6c443f14b5194a456dcaba274d7e90a2b872b37eec632763bc346",
+      "hash": "sha256:d56b6ccc441bd025d3876b2966f1266c406a726c4d55b4b8d8fcab48b47112fc",
       "historicalOldArtifactMissing": true
     },
     {
@@ -236,7 +234,7 @@
       "logicalPath": "artifacts/oam/checks/generated-contract-consistency-result.json",
       "artifactPath": "artifacts/oam/checks/generated-contract-consistency-result.json",
       "present": true,
-      "hash": "sha256:26b446f5bb376d5b078620fd98e95664c465e7f7cfdc68cd8660d17e864d4792",
+      "hash": "sha256:3919f5cbdd18be8843f22ebf58ee6e8f1bfb55d7f62a81447251319efa6bf277",
       "historicalOldArtifactMissing": true
     },
     {
@@ -244,7 +242,7 @@
       "logicalPath": "artifacts/oam/checks/derived-contract-consistency-result.json",
       "artifactPath": "artifacts/oam/checks/derived-contract-consistency-result.json",
       "present": true,
-      "hash": "sha256:462f2207f61ef6b1de830a501a81bb8ff8b3e59e434eb389b3f5bddf691966d1",
+      "hash": "sha256:29469075bb4631772964fababb3b5a7fbfd2d13c99ba7f84677487f271815e10",
       "historicalOldArtifactMissing": false
     },
     {
@@ -252,7 +250,7 @@
       "logicalPath": "artifacts/oam/checks/oam-kernel-graph-result.json",
       "artifactPath": "artifacts/oam/checks/oam-kernel-graph-result.json",
       "present": true,
-      "hash": "sha256:3ce6d346d11454a000c10410847cb5fac011e98b066f7aa32c66a26da0f46e7a",
+      "hash": "sha256:d14cccb40e15d8ed5a05d74b4c56d2dfc24ab52fe9f0a4d532fd5df7795bf3c2",
       "historicalOldArtifactMissing": false
     },
     {
@@ -260,7 +258,7 @@
       "logicalPath": "artifacts/oam/checks/dashboard-readonly-report.json",
       "artifactPath": "artifacts/oam/checks/dashboard-readonly-report.json",
       "present": true,
-      "hash": "sha256:5f21076d71b8201bf6103941cabd4b47a411145a989d307fa3004efbdec8510f",
+      "hash": "sha256:be75c03fa87003ecbcce473d7fbf677cb4d5213799566f4581d55dfc4baa2eaf",
       "historicalOldArtifactMissing": false
     },
     {
@@ -268,7 +266,7 @@
       "logicalPath": "artifacts/oam/checks/finance-truth-report.json",
       "artifactPath": "artifacts/oam/checks/finance-truth-report.json",
       "present": true,
-      "hash": "sha256:2757ddac9b76e936f24cf883d7af5cac28fd1db37a52be4f81bab4e71e97a80d",
+      "hash": "sha256:cb9d9cf6609969cd7149f3575807415d3eda84f9f363118e955bb3a025bb2f42",
       "historicalOldArtifactMissing": false
     },
     {
@@ -276,7 +274,7 @@
       "logicalPath": "artifacts/oam/checks/operation-identity-boundary-result.json",
       "artifactPath": "artifacts/oam/checks/operation-identity-boundary-result.json",
       "present": true,
-      "hash": "sha256:c734e580296ea4bf50bfb19af4f4c414674758424c29300a60e1a0f9e6d3adbc",
+      "hash": "sha256:bc1f8689d7f773f1a424c35e7878ddf81e69d2d1b9b12b0308539e14c9d21727",
       "historicalOldArtifactMissing": false
     },
     {
@@ -284,7 +282,7 @@
       "logicalPath": "artifacts/oam/checks/current-oam-release-attestation-result.json",
       "artifactPath": "artifacts/oam/checks/current-oam-release-attestation-result.json",
       "present": true,
-      "hash": "sha256:32d401c771a87b3b638cebf1c793cbfe6542ee82611c282f563327f029ddac36",
+      "hash": "sha256:662afebea63a7669153c35cc3211285ae7179541fbeb56a73d25ab994d596a77",
       "historicalOldArtifactMissing": false
     }
   ],
@@ -341,6 +339,8 @@
     "approvalScope": "formal_generated_compile_authorization_only",
     "currentHEAD": "a502565ca5672335dc2ee4398a8d443ac7e3b57a",
     "reviewedRef": "a502565ca5672335dc2ee4398a8d443ac7e3b57a",
+    "approvedFormalAuthorizationHead": "a502565ca5672335dc2ee4398a8d443ac7e3b57a",
+    "currentHeadDescendantPolicy": "allow_s4_formal_generated_compile_execution_writeback_descendants_without_runtime_or_go",
     "candidateSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
     "authorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
     "candidateArtifactRunId": "27469980556",
@@ -363,11 +363,11 @@
     "finalGoNoGo": "NO_GO",
     "predicateVersion": "oam.formal-generated-compile-authorization-predicate.v1",
     "predicateStatus": "PASS",
-    "predicateHeadBindingStatus": "EXACT_CURRENT_HEAD",
+    "predicateHeadBindingStatus": "EXACT_REVIEWED_HEAD_WITH_S4_EXECUTION_WRITEBACK_DESCENDANT",
     "predicateAuthorized": true,
     "predicateFailures": [],
-    "approvalObjectHash": "sha256:97af759c91cca1f0f8d34e2097fb6c78bba30aa8fe7874021cd78ca1e81ebfbc",
-    "currentRepositoryHead": "a502565ca5672335dc2ee4398a8d443ac7e3b57a"
+    "approvalObjectHash": "sha256:b6fe84036d45472f378340239a747fec52b532ecc78723893aa346892cfac300",
+    "currentRepositoryHead": "d989376c65d557344237db7974aa0075fcba01eb"
   },
   "residuals": [
     {

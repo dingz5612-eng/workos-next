@@ -292,6 +292,8 @@ function formalAuthorizationState() {
     approvalScope: formalApproval.approvalScope ?? null,
     currentHEAD: formalApproval.currentHEAD ?? null,
     reviewedRef: formalApproval.reviewedRef ?? null,
+    approvedFormalAuthorizationHead: formalApproval.approvedFormalAuthorizationHead ?? null,
+    currentHeadDescendantPolicy: formalApproval.currentHeadDescendantPolicy ?? null,
     candidateSourceRef: formalApproval.candidateSourceRef ?? null,
     authorizedCandidateExecutionHead: formalApproval.authorizedCandidateExecutionHead ?? null,
     generatedCompileAuthorized: formalApproval.generatedCompileAuthorized ?? null,

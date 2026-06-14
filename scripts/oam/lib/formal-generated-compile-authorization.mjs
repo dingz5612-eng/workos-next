@@ -1,5 +1,8 @@
+import { execFileSync } from "node:child_process";
+
 const shaPattern = /^[a-f0-9]{40}$/;
 const digestPattern = /^sha256:[a-f0-9]{64}$/;
+const descendantPolicy = "allow_s4_formal_generated_compile_execution_writeback_descendants_without_runtime_or_go";
 
 export const FORMAL_GENERATED_COMPILE_APPROVAL_PATH = "docs/oam/generated-compile-approval.current.json";
 export const GENERATED_COMPILE_CANDIDATE_APPROVAL_PATH = "docs/oam/generated-compile-candidate-approval.current.json";
@@ -15,6 +18,7 @@ export function validateFormalGeneratedCompileAuthorization({
   const fail = (message) => failures.push(message);
   const candidateSourceRef = candidateApproval?.candidateSourceRef ?? candidateApproval?.authorizedSourceRef ?? null;
   const authorizedCandidateExecutionHead = candidateApproval?.authorizedCandidateExecutionHead ?? candidateApproval?.executionHead ?? null;
+  let headBindingStatus = "STALE_OR_INVALID_FORMAL_AUTHORIZATION";
 
   if (!approval || typeof approval !== "object") {
     fail(`${approvalPath} is missing or invalid.`);
@@ -29,10 +33,20 @@ export function validateFormalGeneratedCompileAuthorization({
     if (approval.currentHEAD !== approval.reviewedRef) {
       fail(`${approvalPath}.currentHEAD must exactly equal reviewedRef.`);
     }
+    if (approval.approvedFormalAuthorizationHead && approval.approvedFormalAuthorizationHead !== approval.currentHEAD) {
+      fail(`${approvalPath}.approvedFormalAuthorizationHead must exactly match currentHEAD/reviewedRef.`);
+    }
     if (!isGitSha(currentHead)) {
       fail(`current HEAD must be a concrete 40-char git SHA for formal generated compile authorization.`);
-    } else if (approval.currentHEAD !== currentHead || approval.reviewedRef !== currentHead) {
+    } else if (approval.currentHEAD === currentHead && approval.reviewedRef === currentHead) {
+      headBindingStatus = "EXACT_CURRENT_HEAD";
+    } else if (approval.currentHeadDescendantPolicy === descendantPolicy && isAncestor(approval.currentHEAD, currentHead)) {
+      headBindingStatus = "EXACT_REVIEWED_HEAD_WITH_S4_EXECUTION_WRITEBACK_DESCENDANT";
+    } else {
       fail(`${approvalPath} is stale for current HEAD: approval currentHEAD/reviewedRef=${approval.currentHEAD ?? "missing"}/${approval.reviewedRef ?? "missing"}, currentHead=${currentHead}.`);
+    }
+    if (approval.currentHEAD !== currentHead && approval.currentHeadDescendantPolicy !== descendantPolicy) {
+      fail(`${approvalPath}.currentHeadDescendantPolicy must be ${descendantPolicy} when S4 execution/writeback runs on a descendant HEAD.`);
     }
 
     requireEqual(approval.generatedCompileAuthorized, true, `${approvalPath}.generatedCompileAuthorized`, fail);
@@ -79,7 +93,7 @@ export function validateFormalGeneratedCompileAuthorization({
     version: "oam.formal-generated-compile-authorization-predicate.v1",
     authorized,
     status: authorized ? "PASS" : "NO_GO",
-    headBindingStatus: authorized ? "EXACT_CURRENT_HEAD" : "STALE_OR_INVALID_FORMAL_AUTHORIZATION",
+    headBindingStatus: authorized ? headBindingStatus : "STALE_OR_INVALID_FORMAL_AUTHORIZATION",
     currentHead: currentHead ?? null,
     approvalCurrentHEAD: approval?.currentHEAD ?? null,
     approvalReviewedRef: approval?.reviewedRef ?? null,
@@ -111,6 +125,8 @@ export function formalApprovalStateForPackage(approval, predicate, approvalObjec
     approvalScope: approval?.approvalScope ?? "missing",
     currentHEAD: approval?.currentHEAD ?? "missing",
     reviewedRef: approval?.reviewedRef ?? "missing",
+    approvedFormalAuthorizationHead: approval?.approvedFormalAuthorizationHead ?? "missing",
+    currentHeadDescendantPolicy: approval?.currentHeadDescendantPolicy ?? "missing",
     candidateSourceRef: approval?.candidateSourceRef ?? "missing",
     authorizedCandidateExecutionHead: approval?.authorizedCandidateExecutionHead ?? "missing",
     candidateArtifactRunId: approval?.candidateArtifactRunId ?? "missing",
@@ -142,6 +158,17 @@ export function formalApprovalStateForPackage(approval, predicate, approvalObjec
 
 export function isGitSha(value) {
   return shaPattern.test(String(value ?? ""));
+}
+
+function isAncestor(ancestor, descendant) {
+  if (!isGitSha(ancestor) || !isGitSha(descendant)) return false;
+  if (ancestor === descendant) return true;
+  try {
+    execFileSync("git", ["merge-base", "--is-ancestor", ancestor, descendant], { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function requireEqual(actual, expected, label, fail) {

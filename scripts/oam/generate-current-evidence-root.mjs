@@ -2144,6 +2144,8 @@ function buildFormalGeneratedCompileAuthorizationState() {
     approvalScope: approval.approvalScope ?? "missing",
     currentHEAD: approval.currentHEAD ?? "missing",
     reviewedRef: approval.reviewedRef ?? "missing",
+    approvedFormalAuthorizationHead: approval.approvedFormalAuthorizationHead ?? "missing",
+    currentHeadDescendantPolicy: approval.currentHeadDescendantPolicy ?? "missing",
     currentRepositoryHead,
     candidateSourceRef: approval.candidateSourceRef ?? "missing",
     authorizedCandidateExecutionHead: approval.authorizedCandidateExecutionHead ?? "missing",

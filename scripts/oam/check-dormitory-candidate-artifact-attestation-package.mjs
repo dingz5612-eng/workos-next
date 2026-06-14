@@ -242,6 +242,8 @@ function validateFormalApprovalState(state) {
     "approvalScope",
     "currentHEAD",
     "reviewedRef",
+    "approvedFormalAuthorizationHead",
+    "currentHeadDescendantPolicy",
     "candidateSourceRef",
     "authorizedCandidateExecutionHead",
     "candidateArtifactRunId",
