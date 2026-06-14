@@ -8,7 +8,7 @@
     "subjectType": "generated_candidate_subject",
     "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
     "decisionRecordHead": null,
-    "currentRepositoryHead": "245a70c27113a3bf4d30e9e8f377d76fe645e101",
+    "currentRepositoryHead": "ef5215d9b1a1485ef87af2f65ecd99b92eda7303",
     "sourceCandidateHead": "fd60390e678f9d6934137f0480a183701b01de8f",
     "authorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
     "formalAuthorizationHead": "a502565ca5672335dc2ee4398a8d443ac7e3b57a",
@@ -17,11 +17,11 @@
     "generatedFieldBindingClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
     "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
     "fieldBindingContractDigest": "sha256:cab56e48544f8bdfeaeaba8de7a2782d9574fef914314048a4a678badef80a69",
-    "evidenceArtifactDigest": "sha256:6562f58720ad514fd0a84137ac3c4527ef99af1dc231010f5f9c46d0a8f7c0e8",
+    "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
     "evidenceArtifactMode": "ci_artifact_authoritative",
-    "localEvidenceArtifactDigest": "sha256:2dc200fb6d42c93a06b88ca97b87d864f1f0aa2a0abf0e0e52d7d0accbc98c28",
+    "localEvidenceArtifactDigest": "sha256:6b36fb9cdf1ef68e66dd94556e2eb48f1b8c4722a9b2e9cf1216140eb9b4419e",
     "executionProofDigest": "sha256:a38a670184445133842a1a331576538d5f38257f489f64cefa0b248d880fd257",
-    "evidenceRootDigest": "sha256:96917a9966d6895e1e58b910942fa3e8439bfb3c8a9d3c28226ec453d3f69679",
+    "evidenceRootDigest": "sha256:bfa305859e0a92dd9f0ac72a5d6f86102c70af67003f61ca72f73949762e081d",
     "requiredEvidenceDigestSet": [
       {
         "id": "generatedCompileExecutionResult",
@@ -61,7 +61,7 @@
       {
         "id": "dormitoryCandidateAttestationPackage",
         "path": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
-        "digest": "sha256:ea1b808140f42b0af622cac6ad554e5661f8b74ab7190aaf1558a84461668ba9"
+        "digest": "sha256:1f53c401dd49f7e732370a1d48d5be025565b78c42295586d87d88c2a53c8b6a"
       }
     ],
     "requiredGeneratedContractDigestSet": [
@@ -91,17 +91,17 @@
         "digest": "sha256:e44fe49a0e4db9d97baf65d65218a18d76a8851260245a5988031297529f12a9"
       }
     ],
-    "subjectDigest": "sha256:05ae77f6cb1a09ccc3fe316f7a83b46f4b2d638c371733ba32b21bc779973fdb"
+    "subjectDigest": "sha256:4356c251418849065af1b67dfa005f5fc2bfa753f76d91e027a3b83e40ed2fe9"
   },
   "subjectStatusAtWrite": "NOT_READY_FOR_00_ACCEPTANCE_REVIEW",
   "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
   "decisionRecordHead": null,
-  "decisionWritebackBaseHead": "245a70c27113a3bf4d30e9e8f377d76fe645e101",
-  "evidenceArtifactDigest": "sha256:6562f58720ad514fd0a84137ac3c4527ef99af1dc231010f5f9c46d0a8f7c0e8",
+  "decisionWritebackBaseHead": "ef5215d9b1a1485ef87af2f65ecd99b92eda7303",
+  "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
   "generatedFieldBindingClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
   "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
   "executionProofDigest": "sha256:a38a670184445133842a1a331576538d5f38257f489f64cefa0b248d880fd257",
-  "evidenceRootDigest": "sha256:96917a9966d6895e1e58b910942fa3e8439bfb3c8a9d3c28226ec453d3f69679",
+  "evidenceRootDigest": "sha256:bfa305859e0a92dd9f0ac72a5d6f86102c70af67003f61ca72f73949762e081d",
   "blockingReasons": [
     "decision=s5_2c_local_commit_bound_not_authoritative_ci_artifact_yet",
     "current_s5_2_changes_not_yet_submitted_to_authoritative_ci_artifact",
