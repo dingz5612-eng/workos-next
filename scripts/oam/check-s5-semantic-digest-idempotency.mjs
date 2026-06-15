@@ -162,8 +162,11 @@ function compareState(left, right, label) {
 }
 
 function checkNegativeAuthorities(state) {
-  if (state.generatedCandidateAcceptedBy00 !== false) {
-    failures.push("generatedCandidateAcceptedBy00 must remain false.");
+  if (state.decisionStatus === "ACCEPTED_BY_00" && state.generatedCandidateAcceptedBy00 !== true) {
+    failures.push("generatedCandidateAcceptedBy00 must be true when decisionStatus=ACCEPTED_BY_00.");
+  }
+  if (state.decisionStatus !== "ACCEPTED_BY_00" && state.generatedCandidateAcceptedBy00 !== false) {
+    failures.push("generatedCandidateAcceptedBy00 must remain false unless decisionStatus=ACCEPTED_BY_00.");
   }
   if (state.runtimeConsumptionReady !== false) {
     failures.push("runtimeConsumptionReady must remain false.");

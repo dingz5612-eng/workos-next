@@ -962,7 +962,6 @@ function checkGeneratedCompileCandidate(finalReport, graph, documents) {
     candidateSourceRef: authorizedSourceRef,
     executionHead: authorizedCandidateExecutionHead,
     generatedCompileCandidateStatus: "PASS",
-    generatedCandidateAcceptedBy00: false,
     generatedReleaseAllowed: false,
     runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
     finalGoNoGo: "NO_GO",
@@ -1011,7 +1010,7 @@ function checkGeneratedCompileCandidate(finalReport, graph, documents) {
     candidateCompileClosureForCurrentHead: expectedClosure,
     candidateCompileNextAction: expectedNextAction,
     generatedCompileCandidateStatus: "PASS",
-    generatedCandidateAcceptedBy00: false,
+    generatedCandidateAcceptedBy00: finalReport.generatedCandidateAcceptedBy00 === true,
     generatedReleaseAllowed: false,
     runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00"
   };
@@ -1175,14 +1174,13 @@ function checkFormalGeneratedCompileAuthorization(finalReport, graph, documents,
     finalReport.formalGeneratedCompileAuthorizationStatus !== (expectedAuthorized ? "PASS" : "NO_GO")) {
     failures.push(`final report must expose formal generated compile authorization as ${expectedAuthorized ? "PASS/true" : "NO_GO/false"}.`);
   }
-  if (finalReport.generatedCandidateAcceptedBy00 !== false ||
-    finalReport.generatedReleaseAllowed !== false ||
+  if (finalReport.generatedReleaseAllowed !== false ||
     finalReport.runtimeConsumptionReady !== false ||
     finalReport.businessFeatureDevelopmentAllowed !== false ||
     finalReport.productionConfirmAllowed !== false ||
     finalReport.releaseAuthority !== false ||
     finalReport.finalGoNoGo !== "NO_GO") {
-    failures.push("formal approval must not expand into candidate acceptance, runtime, business development, release authority, production_confirm, or GO.");
+    failures.push("formal approval must not expand into runtime, business development, release authority, production_confirm, or GO.");
   }
 
   const node = (graph.nodes ?? []).find((item) => item.id === "OAM-DORMITORY-GOLDEN-CHAIN-FORMAL-GENERATED-COMPILE-AUTHORIZATION");

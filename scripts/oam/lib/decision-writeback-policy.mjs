@@ -1,4 +1,7 @@
 import { execFileSync } from "node:child_process";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
 const shaPattern = /^[a-f0-9]{40}$/;
 
@@ -26,6 +29,7 @@ const allowedDecisionWritebackFiles = new Set([
 
 export function evaluateDecisionWritebackPolicy({
   reviewedExecutionHead,
+  decisionWritebackBaseHead,
   decisionRecordHead,
   currentRepositoryHead,
   decisionStatus,
@@ -34,6 +38,9 @@ export function evaluateDecisionWritebackPolicy({
   const failures = [];
   const warnings = [];
   const normalizedDecisionStatus = decisionStatus ?? "PENDING_00_DECISION";
+  const effectiveDecisionRecordHead = isGitSha(decisionRecordHead)
+    ? decisionRecordHead
+    : currentRepositoryHead;
 
   if (normalizedDecisionStatus === "PENDING_00_DECISION" || normalizedDecisionStatus === "NOT_ACCEPTED_BY_00") {
     return {
@@ -43,8 +50,11 @@ export function evaluateDecisionWritebackPolicy({
       allowed: true,
       decisionWritebackRequired: false,
       reviewedExecutionHead: reviewedExecutionHead ?? null,
+      decisionWritebackBaseHead: decisionWritebackBaseHead ?? null,
       decisionRecordHead: decisionRecordHead ?? null,
+      effectiveDecisionRecordHead: null,
       currentRepositoryHead: currentRepositoryHead ?? null,
+      diffBasis: null,
       allowedDecisionWritebackFiles: [...allowedDecisionWritebackFiles].sort(),
       changedFiles: [],
       forbiddenFiles: [],
@@ -59,20 +69,27 @@ export function evaluateDecisionWritebackPolicy({
   if (!isGitSha(reviewedExecutionHead)) {
     failures.push("reviewedExecutionHead must be a concrete git SHA.");
   }
-  if (!isGitSha(decisionRecordHead)) {
-    failures.push("decisionRecordHead must be a concrete git SHA when decisionStatus=ACCEPTED_BY_00.");
+  if (!isGitSha(decisionWritebackBaseHead)) {
+    failures.push("decisionWritebackBaseHead must be a concrete git SHA when decisionStatus=ACCEPTED_BY_00.");
   }
-  if (isGitSha(reviewedExecutionHead) && isGitSha(decisionRecordHead) &&
-    !isAncestor(reviewedExecutionHead, decisionRecordHead, root)) {
-    failures.push("decisionRecordHead must equal or descend from reviewedExecutionHead.");
+  if (!isGitSha(effectiveDecisionRecordHead)) {
+    failures.push("effectiveDecisionRecordHead must be a concrete git SHA when decisionStatus=ACCEPTED_BY_00.");
+  }
+  if (isGitSha(reviewedExecutionHead) && isGitSha(effectiveDecisionRecordHead) &&
+    !isAncestor(reviewedExecutionHead, effectiveDecisionRecordHead, root)) {
+    failures.push("effectiveDecisionRecordHead must equal or descend from reviewedExecutionHead.");
+  }
+  if (isGitSha(decisionWritebackBaseHead) && isGitSha(effectiveDecisionRecordHead) &&
+    !isAncestor(decisionWritebackBaseHead, effectiveDecisionRecordHead, root)) {
+    failures.push("effectiveDecisionRecordHead must equal or descend from decisionWritebackBaseHead.");
   }
   if (isGitSha(decisionRecordHead) && isGitSha(currentRepositoryHead) &&
     !isAncestor(decisionRecordHead, currentRepositoryHead, root)) {
     warnings.push("currentRepositoryHead is not a descendant of decisionRecordHead; treating current checkout as reference-only.");
   }
 
-  const changedFiles = isGitSha(reviewedExecutionHead) && isGitSha(decisionRecordHead)
-    ? diffNames(reviewedExecutionHead, decisionRecordHead, root)
+  const changedFiles = isGitSha(decisionWritebackBaseHead) && isGitSha(effectiveDecisionRecordHead)
+    ? diffNames(decisionWritebackBaseHead, effectiveDecisionRecordHead, root)
     : [];
   const forbiddenFiles = changedFiles.filter((file) => !isAllowedDecisionWritebackFile(file));
   if (forbiddenFiles.length > 0) {
@@ -86,14 +103,108 @@ export function evaluateDecisionWritebackPolicy({
     allowed: failures.length === 0,
     decisionWritebackRequired: true,
     reviewedExecutionHead: reviewedExecutionHead ?? null,
+    decisionWritebackBaseHead: decisionWritebackBaseHead ?? null,
     decisionRecordHead: decisionRecordHead ?? null,
+    effectiveDecisionRecordHead: effectiveDecisionRecordHead ?? null,
     currentRepositoryHead: currentRepositoryHead ?? null,
+    diffBasis: "decisionWritebackBaseHead_to_effectiveDecisionRecordHead",
     allowedDecisionWritebackFiles: [...allowedDecisionWritebackFiles].sort(),
     changedFiles,
     forbiddenFiles,
     warnings,
     failures
   };
+}
+
+export function runDecisionWritebackPolicySelfTest() {
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "workosnext-decision-writeback-policy-"));
+  try {
+    git(["init"], tempRoot);
+    git(["config", "user.email", "oam-policy-self-test@example.invalid"], tempRoot);
+    git(["config", "user.name", "OAM Policy Self-Test"], tempRoot);
+
+    writeFixture(tempRoot, "docs/oam/generated-candidate-acceptance.current.json", { decisionStatus: "PENDING_00_DECISION" });
+    writeFixture(tempRoot, "docs/contracts/generated/dormitory/field-bindings.generated.json", { version: 1 });
+    git(["add", "."], tempRoot);
+    git(["commit", "-m", "reviewed execution"], tempRoot);
+    const reviewedExecutionHead = git(["rev-parse", "HEAD"], tempRoot);
+
+    writeFixture(tempRoot, "docs/contracts/generated/dormitory/field-bindings.generated.json", { version: 2 });
+    writeFixture(tempRoot, "src/dormitory-business.js", "export const businessChange = true;\n");
+    git(["add", "."], tempRoot);
+    git(["commit", "-m", "historical generated changes"], tempRoot);
+    const decisionWritebackBaseHead = git(["rev-parse", "HEAD"], tempRoot);
+
+    writeFixture(tempRoot, "docs/oam/generated-candidate-acceptance.current.json", { decisionStatus: "ACCEPTED_BY_00" });
+    writeFixture(tempRoot, "artifacts/oam/final-report.json", { decisionStatus: "ACCEPTED_BY_00" });
+    git(["add", "."], tempRoot);
+    git(["commit", "-m", "allowed decision writeback"], tempRoot);
+    const allowedDecisionRecordHead = git(["rev-parse", "HEAD"], tempRoot);
+
+    const historicalChangesAllowed = evaluateDecisionWritebackPolicy({
+      reviewedExecutionHead,
+      decisionWritebackBaseHead,
+      decisionRecordHead: allowedDecisionRecordHead,
+      currentRepositoryHead: allowedDecisionRecordHead,
+      decisionStatus: "ACCEPTED_BY_00",
+      root: tempRoot
+    });
+
+    git(["checkout", "-B", "bad-writeback", decisionWritebackBaseHead], tempRoot);
+    writeFixture(tempRoot, "docs/contracts/generated/dormitory/field-bindings.generated.json", { forbiddenDecisionWriteback: true });
+    git(["add", "."], tempRoot);
+    git(["commit", "-m", "forbidden decision writeback"], tempRoot);
+    const forbiddenDecisionRecordHead = git(["rev-parse", "HEAD"], tempRoot);
+
+    const forbiddenWritebackRejected = evaluateDecisionWritebackPolicy({
+      reviewedExecutionHead,
+      decisionWritebackBaseHead,
+      decisionRecordHead: forbiddenDecisionRecordHead,
+      currentRepositoryHead: forbiddenDecisionRecordHead,
+      decisionStatus: "ACCEPTED_BY_00",
+      root: tempRoot
+    });
+
+    const missingBaseRejected = evaluateDecisionWritebackPolicy({
+      reviewedExecutionHead,
+      decisionRecordHead: allowedDecisionRecordHead,
+      currentRepositoryHead: allowedDecisionRecordHead,
+      decisionStatus: "ACCEPTED_BY_00",
+      root: tempRoot
+    });
+
+    const failures = [];
+    if (historicalChangesAllowed.allowed !== true) {
+      failures.push("historical reviewed..record changes must not fail when base..record contains only allowed files.");
+    }
+    if (historicalChangesAllowed.diffBasis !== "decisionWritebackBaseHead_to_effectiveDecisionRecordHead") {
+      failures.push("policy must report decisionWritebackBaseHead_to_effectiveDecisionRecordHead diff basis.");
+    }
+    if (historicalChangesAllowed.changedFiles.some((file) => file === "src/dormitory-business.js")) {
+      failures.push("policy must not diff reviewedExecutionHead..decisionRecordHead for accepted writeback.");
+    }
+    if (forbiddenWritebackRejected.allowed !== false ||
+      !forbiddenWritebackRejected.forbiddenFiles.includes("docs/contracts/generated/dormitory/field-bindings.generated.json")) {
+      failures.push("policy must reject forbidden files in decisionWritebackBaseHead..effectiveDecisionRecordHead.");
+    }
+    if (missingBaseRejected.allowed !== false ||
+      !missingBaseRejected.failures.some((failure) => failure.includes("decisionWritebackBaseHead"))) {
+      failures.push("policy must reject ACCEPTED_BY_00 without decisionWritebackBaseHead.");
+    }
+
+    return {
+      version: "oam.generated-candidate-decision-writeback-policy-self-test.v1",
+      status: failures.length === 0 ? "PASS" : "FAIL",
+      cases: {
+        historicalChangesAllowed,
+        forbiddenWritebackRejected,
+        missingBaseRejected
+      },
+      failures
+    };
+  } finally {
+    fs.rmSync(tempRoot, { recursive: true, force: true });
+  }
 }
 
 export function isAllowedDecisionWritebackFile(file) {
@@ -123,7 +234,8 @@ function diffNames(from, to, root) {
   try {
     return execFileSync("git", ["diff", "--name-only", `${from}..${to}`], {
       cwd: root,
-      encoding: "utf8"
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"]
     })
       .split(/\r?\n/)
       .map((item) => item.trim().replace(/\\/g, "/"))
@@ -132,6 +244,20 @@ function diffNames(from, to, root) {
   } catch {
     return [];
   }
+}
+
+function writeFixture(root, file, value) {
+  const full = path.join(root, file);
+  fs.mkdirSync(path.dirname(full), { recursive: true });
+  fs.writeFileSync(full, typeof value === "string" ? value : `${JSON.stringify(value, null, 2)}\n`, "utf8");
+}
+
+function git(args, root) {
+  return execFileSync("git", args, {
+    cwd: root,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"]
+  }).trim();
 }
 
 function format(value) {

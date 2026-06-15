@@ -337,6 +337,7 @@ export function validateGeneratedCandidateAcceptanceAuthority({
 
   const decisionWritebackPolicy = evaluateDecisionWritebackPolicy({
     reviewedExecutionHead: subjectState.subject.reviewedExecutionHead,
+    decisionWritebackBaseHead: acceptance?.decisionWritebackBaseHead ?? null,
     decisionRecordHead: acceptance?.decisionRecordHead ?? null,
     currentRepositoryHead,
     decisionStatus: acceptance?.decisionStatus ?? "PENDING_00_DECISION",
@@ -516,6 +517,11 @@ function checkAcceptanceRecord(acceptance, subject, failures) {
   }
   requireEqual(record.decision, "ACCEPTED_BY_00", "acceptanceRecord.decision", failures);
   requireEqual(record.acceptedSubjectDigest, subject.subjectDigest, "acceptanceRecord.acceptedSubjectDigest", failures);
+  requireEqual(record.scope, "generated_candidate_acceptance_only", "acceptanceRecord.scope", failures);
+  requireEqual(record.runtimeConsumptionGranted, false, "acceptanceRecord.runtimeConsumptionGranted", failures);
+  requireEqual(record.businessGoGranted, false, "acceptanceRecord.businessGoGranted", failures);
+  requireEqual(record.releaseGranted, false, "acceptanceRecord.releaseGranted", failures);
+  requireEqual(record.finalGoNoGoGranted, false, "acceptanceRecord.finalGoNoGoGranted", failures);
   if (!["00", "00_OAM_CONTROL", "00｜OAM 总控"].includes(record.acceptedBy)) {
     failures.push("acceptanceRecord.acceptedBy must be 00.");
   }

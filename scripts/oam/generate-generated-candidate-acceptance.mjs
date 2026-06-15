@@ -3,6 +3,7 @@ import {
   GENERATED_CANDIDATE_ACCEPTANCE_PATH,
   buildInitialGeneratedCandidateAcceptance,
   readJsonIfExists,
+  validateGeneratedCandidateAcceptanceAuthority,
   writeJson
 } from "./lib/generated-candidate-subject.mjs";
 
@@ -11,8 +12,20 @@ const currentHead = gitHead();
 const existingAcceptance = readJsonIfExists(GENERATED_CANDIDATE_ACCEPTANCE_PATH, root);
 
 if (existingAcceptance?.decisionStatus === "ACCEPTED_BY_00") {
-  console.error("Refused to overwrite existing ACCEPTED_BY_00 generated candidate acceptance authority.");
-  process.exit(1);
+  const validation = validateGeneratedCandidateAcceptanceAuthority({
+    acceptance: existingAcceptance,
+    root,
+    currentHead
+  });
+  if (validation.status !== "PASS") {
+    console.error("Existing ACCEPTED_BY_00 generated candidate acceptance authority is stale or invalid; refusing to overwrite.");
+    for (const failure of validation.failures) console.error(`- ${failure}`);
+    process.exit(1);
+  }
+  console.log(
+    `Generated candidate acceptance authority preserved: ${GENERATED_CANDIDATE_ACCEPTANCE_PATH} (${existingAcceptance.decisionStatus}, generatedCandidateAcceptedBy00=${existingAcceptance.generatedCandidateAcceptedBy00}, subjectStatus=${validation.subjectStatus})`
+  );
+  process.exit(0);
 }
 
 const authority = buildInitialGeneratedCandidateAcceptance({ root, currentHead });
