@@ -325,7 +325,15 @@ function checkNoForbiddenStateEscapes() {
       }
     }
     if (/runtimeConsumptionReady"\s*:\s*true|runtimeConsumptionReady:\s*true/.test(text)) {
-      failures.push(`${id} must not set runtimeConsumptionReady=true.`);
+      if (!(id === "final-report" &&
+        finalReport?.runtimeAdmissionStatus === "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION" &&
+        finalReport?.runtimeConsumptionReady === true &&
+        finalReport?.businessFeatureDevelopmentAllowed === false &&
+        finalReport?.productionConfirmAllowed === false &&
+        finalReport?.releaseAuthority === false &&
+        finalReport?.finalGoNoGo === "NO_GO")) {
+        failures.push(`${id} must not set runtimeConsumptionReady=true.`);
+      }
     }
     if (/generatedContractStatus10B"\s*:\s*"COMPLETED"|generatedContractStatus10B:\s*COMPLETED/.test(text)) {
       failures.push(`${id} must not set generatedContractStatus10B=COMPLETED.`);
@@ -347,7 +355,17 @@ function checkNoForbiddenStateEscapes() {
     if (finalReport.generatedCompilationCompleted === true && !generatedCompileExecutionCompleted) {
       failures.push("Final Report generatedCompilationCompleted=true requires S4 generated compile execution proof PASS.");
     }
-    if (finalReport.runtimeConsumptionReady !== false) failures.push("Final Report runtimeConsumptionReady must remain false.");
+    if (finalReport.runtimeConsumptionReady === true) {
+      if (finalReport.runtimeAdmissionStatus !== "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION" ||
+        finalReport.businessFeatureDevelopmentAllowed !== false ||
+        finalReport.productionConfirmAllowed !== false ||
+        finalReport.releaseAuthority !== false ||
+        finalReport.finalGoNoGo !== "NO_GO") {
+        failures.push("Final Report runtimeConsumptionReady=true requires S7 test-only runtime admission while keeping business/production/release/GO blocked.");
+      }
+    } else if (finalReport.runtimeConsumptionReady !== false) {
+      failures.push("Final Report runtimeConsumptionReady must be boolean true or false.");
+    }
     if (finalReport.businessProductionGoNoGo !== "NO_GO" || finalReport.dormitoryL2GoNoGo !== "NO_GO") {
       failures.push("Final Report businessProductionGoNoGo and dormitoryL2GoNoGo must remain NO_GO.");
     }

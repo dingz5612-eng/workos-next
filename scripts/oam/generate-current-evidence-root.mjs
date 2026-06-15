@@ -13,6 +13,12 @@ import {
   FIELD_BINDINGS_GENERATED_PATH,
   buildDormitoryGeneratedFieldBindingClosure
 } from "./lib/dormitory-generated-field-binding-closure.mjs";
+import {
+  DORMITORY_RUNTIME_ADMISSION_PATH,
+  DORMITORY_RUNTIME_ADMISSION_RESULT_PATH,
+  DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH,
+  validateDormitoryRuntimeAdmissionAuthority
+} from "./lib/dormitory-runtime-admission.mjs";
 
 const root = process.cwd();
 const evidenceDir = "artifacts/oam/evidence";
@@ -21,6 +27,9 @@ const generatedCompileApprovalPath = "docs/oam/generated-compile-approval.curren
 const generatedCompileCandidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
 const generatedCandidateAcceptancePath = GENERATED_CANDIDATE_ACCEPTANCE_PATH;
 const generatedCandidateAcceptanceResultPath = GENERATED_CANDIDATE_ACCEPTANCE_RESULT_PATH;
+const dormitoryRuntimeAdmissionPath = DORMITORY_RUNTIME_ADMISSION_PATH;
+const dormitoryRuntimeAdmissionResultPath = DORMITORY_RUNTIME_ADMISSION_RESULT_PATH;
+const dormitoryRuntimeTestOnlyProofPath = DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH;
 const controlPlaneGateResultPath = "artifacts/oam/checks/control-plane-gate-results.json";
 const responsibilityMapPath = "docs/oam/current-oam-kernel-responsibility-map.json";
 const candidateEvidenceObjectPath = "artifacts/oam/evidence/current-oam-candidate-evidence-object.json";
@@ -123,6 +132,9 @@ const requiredEvidenceFiles = [
   generatedCompileCandidateApprovalPath,
   generatedCandidateAcceptancePath,
   generatedCandidateAcceptanceResultPath,
+  dormitoryRuntimeAdmissionPath,
+  dormitoryRuntimeAdmissionResultPath,
+  dormitoryRuntimeTestOnlyProofPath,
   "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
   "artifacts/oam/checks/generated-compile-authorization-result.json",
   generatedCompileExecutionSnapshotPath,
@@ -199,6 +211,13 @@ const generatedCandidateAcceptance = validateGeneratedCandidateAcceptanceAuthori
   currentHead: currentRepositoryHead
 });
 const generatedCandidateAcceptedBy00 = generatedCandidateAcceptance.generatedCandidateAcceptedBy00 === true;
+const dormitoryRuntimeAdmissionAuthority = readJsonIfExists(dormitoryRuntimeAdmissionPath);
+const dormitoryRuntimeAdmission = validateDormitoryRuntimeAdmissionAuthority({
+  authority: dormitoryRuntimeAdmissionAuthority,
+  root,
+  currentHead: currentRepositoryHead
+});
+const runtimeConsumptionReady = dormitoryRuntimeAdmission.runtimeConsumptionReady === true;
 const sourceAuthorityDigest = digestForFiles(sourceAuthorityFiles());
 const generatedContractDigest = generatedContractsHash;
 const fileLifecycleDigest = hashFileStrict("docs/oam/file-lifecycle-policy.json");
@@ -567,6 +586,7 @@ const formalGeneratedCompileAuthorizationProofNodes = buildFormalGeneratedCompil
 const generatedFieldBindingClosureProofNodes = buildGeneratedFieldBindingClosureProofNodes();
 const generatedCompileExecutionProofNodes = buildGeneratedCompileExecutionProofNodes();
 const generatedCandidateAcceptanceProofNodes = buildGeneratedCandidateAcceptanceProofNodes();
+const dormitoryRuntimeAdmissionProofNodes = buildDormitoryRuntimeAdmissionProofNodes();
 const candidateEvidenceObject = {
   ...proof("current-oam-candidate-evidence-object", "当前 OAM Candidate Evidence Object", {
     proofType: "candidate-evidence",
@@ -695,6 +715,8 @@ const finalReport = {
   s4AttestationIsFinalReleaseEvidence: false,
   releaseEvidenceRequiredAfterS4: true,
   generatedCandidateAcceptance,
+  dormitoryRuntimeAdmission,
+  runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
   generatedContractStatus10B: generatedCompileExecution.generatedContractStatus10B,
   generatedCompileCompleted: generatedCompileExecution.generatedCompileCompleted,
   generatedCompilationCompleted: generatedCompileExecution.generatedCompilationCompleted,
@@ -714,8 +736,8 @@ const finalReport = {
   formalGeneratedCompileAuthorizationStatus: formalGeneratedCompileAuthorization.status,
   generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
   generatedReleaseAllowed: false,
-  runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
-  runtimeConsumptionReady: sourcePackageCheck.runtimeConsumptionReady ?? false,
+  runtimeConsumptionAllowed: runtimeConsumptionReady ? "test_only_consumption_only" : "false_until_runtime_admission_approved",
+  runtimeConsumptionReady,
   businessFeatureDevelopmentAllowed: sourcePackageCheck.businessFeatureDevelopmentAllowed,
   externalArtifactAttestation,
   releaseAuthority: false,
@@ -729,6 +751,7 @@ const finalReport = {
   generatedCompilationStatus: finalReportStatusMatrix.generatedCompilationStatus,
   generatedFieldBindingClosureStatusEntry: finalReportStatusMatrix.generatedFieldBindingClosureStatus,
   generatedCandidateAcceptanceStatus: finalReportStatusMatrix.generatedCandidateAcceptanceStatus,
+  runtimeAdmissionStatusEntry: finalReportStatusMatrix.runtimeAdmissionStatus,
   runtimeConsumptionStatus: finalReportStatusMatrix.runtimeConsumptionStatus,
   runtimeBoundaryStatus: finalReportStatusMatrix.runtimeBoundaryStatus,
   readSurfaceFinanceStatus: finalReportStatusMatrix.readSurfaceFinanceStatus,
@@ -956,6 +979,7 @@ const evidenceGraph = {
     ...generatedFieldBindingClosureProofNodes,
     ...generatedCompileExecutionProofNodes,
     ...generatedCandidateAcceptanceProofNodes,
+    ...dormitoryRuntimeAdmissionProofNodes,
     ...realBrowserEvidence.nodes
   ],
   edges: realBrowserEvidence.edges
@@ -1022,9 +1046,13 @@ const releaseEvidenceObject = {
   generatedCompileCandidateStatus: generatedCompileCandidate.status,
   generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
   generatedReleaseAllowed: false,
-  runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
+  runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
+  runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
+  runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
+  testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
+  runtimeConsumptionAllowed: runtimeConsumptionReady ? "test_only_consumption_only" : "false_until_runtime_admission_approved",
   generatedCompileCompleted: false,
-  runtimeConsumptionReady: sourcePackageCheck.runtimeConsumptionReady ?? false,
+  runtimeConsumptionReady,
   kernelGraphHash,
   evidenceGraphHash: digestPlaceholder,
   finalReportDigest: digestPlaceholder,
@@ -1096,13 +1124,18 @@ const releaseAttestation = {
   generatedCompileCandidateStatus: generatedCompileCandidate.status,
   generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
   generatedReleaseAllowed: false,
-  runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
+  runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
+  runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
+  runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
+  testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
+  runtimeConsumptionAllowed: runtimeConsumptionReady ? "test_only_consumption_only" : "false_until_runtime_admission_approved",
   generatedCompileCompleted: false,
-  runtimeConsumptionReady: sourcePackageCheck.runtimeConsumptionReady ?? false,
+  runtimeConsumptionReady,
   finalGoNoGo: forcedCurrentStageGoNoGo.finalGoNoGo,
   nextStageAllowed: false
 };
 addEvidence(releaseAttestationPath, releaseAttestation);
+addEvidence(dormitoryRuntimeTestOnlyProofPath, buildDormitoryRuntimeTestOnlyEvidenceProof());
 addTextEvidence("artifacts/oam/evidence/execution-log.jsonl", executionLogText(digestPlaceholder));
 writeAuxiliaryProofArtifacts();
 refreshCommitAttestationTrackedDigest();
@@ -1150,6 +1183,7 @@ function refreshCommitAttestationTrackedDigest() {
     "sourceCompileDecisionReadinessStatus",
     "generatedCompileAuthorizationStatus",
     "generatedCompilationStatus",
+    "generatedCandidateAcceptanceStatus",
     "runtimeConsumptionStatus",
     "runtimeBoundaryStatus",
     "readSurfaceFinanceStatus",
@@ -1163,6 +1197,7 @@ function refreshCommitAttestationTrackedDigest() {
   ]) {
     finalReport[field] = finalReportStatusMatrix[field];
   }
+  finalReport.runtimeAdmissionStatusEntry = finalReportStatusMatrix.runtimeAdmissionStatus;
   finalReport.finalGoNoGoStatus = finalReportStatusMatrix.finalGoNoGo;
   finalReport.commitAttestation = summarizeCommitAttestation(commitAttestation);
   evidenceGraph.finalReportStatusMatrix = finalReportStatusMatrix;
@@ -1542,15 +1577,19 @@ function binding(kind) {
     generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
     generatedCandidateAcceptanceDecisionStatus: generatedCandidateAcceptance.decisionStatus,
     generatedCandidateSubjectDigest: generatedCandidateAcceptance.subjectDigest,
+    runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
+    runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
+    runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
+    testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
     reviewedExecutionHead: generatedCandidateAcceptance.reviewedExecutionHead,
     decisionRecordHead: generatedCandidateAcceptance.decisionRecordHead,
     generatedOutputDigest: generatedCandidateAcceptance.generatedOutputDigest,
     evidenceArtifactDigest: generatedCandidateAcceptance.evidenceArtifactDigest,
     executionProofDigest: generatedCandidateAcceptance.executionProofDigest,
     generatedReleaseAllowed: false,
-    runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
+    runtimeConsumptionAllowed: runtimeConsumptionReady ? "test_only_consumption_only" : "false_until_runtime_admission_approved",
     generatedCompileCompleted: false,
-    runtimeConsumptionReady: sourcePackageCheck.runtimeConsumptionReady ?? false,
+    runtimeConsumptionReady,
     kernelGraphHash,
     evidenceGraphHash: digestPlaceholder,
     finalReportDigest: digestPlaceholder
@@ -1594,9 +1633,13 @@ function evidenceBindingState() {
     generatedCompileCandidateStatus: generatedCompileCandidate.status,
     generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
     generatedReleaseAllowed: false,
-    runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
+    runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
+    runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
+    runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
+    testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
+    runtimeConsumptionAllowed: runtimeConsumptionReady ? "test_only_consumption_only" : "false_until_runtime_admission_approved",
     generatedCompileCompleted: false,
-    runtimeConsumptionReady: sourcePackageCheck.runtimeConsumptionReady ?? false,
+    runtimeConsumptionReady,
     evidenceGraphHash: digestPlaceholder,
     finalReportDigest: digestPlaceholder,
     noGoWhenStale: true,
@@ -2770,6 +2813,107 @@ function generatedCandidateAcceptanceNextDecisionFor00() {
   return "GENERATED_CANDIDATE_ACCEPTANCE_REVIEW";
 }
 
+function buildDormitoryRuntimeTestOnlyEvidenceProof() {
+  const semanticProof = readJsonIfExists(dormitoryRuntimeTestOnlyProofPath) ?? {};
+  return {
+    ...semanticProof,
+    proofType: "dormitory_first_golden_chain_test_only_consumption",
+    status: "PASS",
+    runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
+    generatedCandidateAcceptedBy00,
+    acceptedSubjectDigest: dormitoryRuntimeAdmission.acceptedSubjectDigest,
+    generatedCandidateSubjectDigest: dormitoryRuntimeAdmission.generatedCandidateSubjectDigest,
+    consumedGeneratedContracts: dormitoryRuntimeAdmission.consumedGeneratedContracts,
+    allowedOperationCases: dormitoryRuntimeAdmission.allowedOperationCases,
+    runtimeConsumptionReady,
+    businessFeatureDevelopmentAllowed: false,
+    dormitoryFirstGoldenChainLandingGoNoGo: "NO_GO",
+    productionConfirmAllowed: false,
+    financePostingAllowed: false,
+    dormitoryL2Allowed: false,
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    finalGoNoGo: "NO_GO",
+    binding: binding("dormitory-runtime-test-only-consumption-proof"),
+    gateSummary,
+    testSummary,
+    coverageSummary
+  };
+}
+
+function buildDormitoryRuntimeAdmissionProofNodes() {
+  const id = "OAM-DORMITORY-GOLDEN-CHAIN-RUNTIME-ADMISSION";
+  const source = [
+    dormitoryRuntimeAdmissionPath,
+    dormitoryRuntimeAdmissionResultPath,
+    dormitoryRuntimeTestOnlyProofPath,
+    generatedCandidateAcceptancePath,
+    generatedCandidateAcceptanceResultPath
+  ];
+  const dependsOn = [
+    "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-CANDIDATE-ACCEPTANCE",
+    dormitoryRuntimeAdmissionPath,
+    dormitoryRuntimeAdmissionResultPath,
+    dormitoryRuntimeTestOnlyProofPath,
+    generatedCandidateAcceptancePath,
+    generatedCandidateAcceptanceResultPath
+  ];
+  const payload = {
+    nodeId: id,
+    proofType: "dormitory_runtime_admission_authority",
+    scope: "dormitory_first_golden_chain_test_only_consumption",
+    status: dormitoryRuntimeAdmission.status,
+    runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
+    runtimeConsumptionReady,
+    generatedCandidateAcceptedBy00,
+    acceptedSubjectDigest: dormitoryRuntimeAdmission.acceptedSubjectDigest,
+    generatedCandidateSubjectDigest: dormitoryRuntimeAdmission.generatedCandidateSubjectDigest,
+    allowedOperationCases: dormitoryRuntimeAdmission.allowedOperationCases,
+    consumedGeneratedContracts: dormitoryRuntimeAdmission.consumedGeneratedContracts,
+    businessFeatureDevelopmentAllowed: false,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO",
+    dependsOn
+  };
+  const hash = digestObject(payload);
+  return [{
+    id,
+    type: "dormitory_runtime_admission_authority",
+    proofType: "dormitory_runtime_admission_authority",
+    scope: "dormitory_first_golden_chain_test_only_consumption",
+    source,
+    hash,
+    dependsOn,
+    producedBy: "scripts/oam/check-dormitory-runtime-admission.mjs",
+    verifiedBy: [
+      "scripts/oam/check-dormitory-runtime-admission.mjs",
+      "scripts/oam/check-current-evidence-root.mjs"
+    ],
+    binding: dormitoryRuntimeAdmissionBinding(id),
+    status: runtimeConsumptionReady ? "passed" : "blocked",
+    runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
+    generatedCandidateAcceptedBy00,
+    acceptedSubjectDigest: dormitoryRuntimeAdmission.acceptedSubjectDigest,
+    generatedCandidateSubjectDigest: dormitoryRuntimeAdmission.generatedCandidateSubjectDigest,
+    runtimeConsumptionReady,
+    runtimeConsumptionMode: runtimeConsumptionReady ? "test_only_consumption" : "pending_runtime_admission_review",
+    allowedOperationCases: dormitoryRuntimeAdmission.allowedOperationCases,
+    consumedGeneratedContracts: dormitoryRuntimeAdmission.consumedGeneratedContracts,
+    businessFeatureDevelopmentAllowed: false,
+    dormitoryFirstGoldenChainLandingGoNoGo: "NO_GO",
+    productionConfirmAllowed: false,
+    financePostingAllowed: false,
+    dormitoryL2Allowed: false,
+    releaseAuthority: false,
+    goNoGo: "NO_GO",
+    finalGoNoGo: "NO_GO",
+    businessGoAuthority: false,
+    goNoGoImpact: ["runtimeAdmissionStatus", "runtimeConsumptionStatus", "finalGoNoGo"],
+    notesZh: "Dormitory runtime admission authority node; 只允许宿舍第一金链 test-only consumption，不开放业务落地、Finance posting、Dormitory L2、production_confirm、release 或 GO。"
+  }];
+}
+
 function generatedCompileCandidateBinding(proofId) {
   return {
     root: "current-oam-trust-closure-v1",
@@ -2792,6 +2936,38 @@ function generatedCompileCandidateBinding(proofId) {
     generatedCandidateAcceptedBy00: false,
     generatedReleaseAllowed: false,
     runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    finalGoNoGo: "NO_GO"
+  };
+}
+
+function dormitoryRuntimeAdmissionBinding(proofId) {
+  return {
+    root: "current-oam-trust-closure-v1",
+    proofId,
+    sourceCommitSha,
+    evidenceRunSha,
+    evidenceLifecycleType,
+    scope: "dormitory_first_golden_chain_test_only_consumption",
+    bindingStatus: releaseBindingStatus,
+    referenceOnly: releaseEvidenceReferenceOnly,
+    runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
+    runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
+    testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
+    runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
+    generatedCandidateAcceptedBy00,
+    acceptedSubjectDigest: dormitoryRuntimeAdmission.acceptedSubjectDigest,
+    generatedCandidateSubjectDigest: dormitoryRuntimeAdmission.generatedCandidateSubjectDigest,
+    allowedOperationCases: dormitoryRuntimeAdmission.allowedOperationCases,
+    consumedGeneratedContracts: dormitoryRuntimeAdmission.consumedGeneratedContracts,
+    runtimeConsumptionReady,
+    runtimeConsumptionMode: runtimeConsumptionReady ? "test_only_consumption" : "pending_runtime_admission_review",
+    businessFeatureDevelopmentAllowed: false,
+    dormitoryFirstGoldenChainLandingGoNoGo: "NO_GO",
+    productionConfirmAllowed: false,
+    financePostingAllowed: false,
+    dormitoryL2Allowed: false,
     releaseAuthority: false,
     businessGoAuthority: false,
     finalGoNoGo: "NO_GO"
@@ -3502,7 +3678,8 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
   const generatedFieldBindingClosurePassed = generatedFieldBindingClosure.status === "PASS";
   const generatedCandidateAcceptanceCheckPassed = generatedCandidateAcceptance.status === "PASS";
   const generatedCandidateAccepted = generatedCandidateAcceptance.generatedCandidateAcceptedBy00 === true;
-  const runtimeConsumptionReady = sourcePackageCheck.runtimeConsumptionReady === true;
+  const runtimeAdmissionPassed = dormitoryRuntimeAdmission.status === "PASS" &&
+    dormitoryRuntimeAdmission.runtimeAdmissionStatus === "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION";
   const browserL1Passed = realBrowserEvidence.summary.l1?.status === "passed";
   const candidatePassed = candidate.candidateStatus === "PASS";
   const commitCurrent = attestation.bindingStatus === "current" && attestation.candidateBindingStatus === "current";
@@ -3656,22 +3833,45 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
         ? "仅表示 00 已接受不可变 Generated Candidate Subject；runtime、business、release、production 仍需独立裁决。"
         : generatedCandidateAcceptanceNextAction()
     }),
+    runtimeAdmissionStatus: reportStatusEntry({
+      status: runtimeAdmissionPassed ? "PASS" : "NO_GO",
+      inputs: [
+        dormitoryRuntimeAdmissionPath,
+        dormitoryRuntimeAdmissionResultPath,
+        dormitoryRuntimeAdmission.runtimeAdmissionStatus,
+        String(dormitoryRuntimeAdmission.runtimeConsumptionReady)
+      ],
+      proofRefs: [
+        dormitoryRuntimeAdmissionPath,
+        dormitoryRuntimeAdmissionResultPath,
+        dormitoryRuntimeTestOnlyProofPath,
+        "scripts/oam/check-dormitory-runtime-admission.mjs"
+      ],
+      blockingReasons: runtimeAdmissionPassed ? [] : [
+        "Dormitory runtime admission 尚未批准 test-only consumption；runtimeConsumptionReady 必须由 dormitory-runtime-admission.current.json 决定。"
+      ],
+      nextAction: runtimeAdmissionPassed
+        ? "仅允许宿舍第一金链 test-only runtime consumption；不得开放业务落地、production、release 或 GO。"
+        : "提交 00 runtime admission review；不得直接进入业务开发或生产确认。"
+    }),
     runtimeConsumptionStatus: reportStatusEntry({
       status: runtimeConsumptionReady ? "PASS" : "NO_GO",
       inputs: [
-        String(sourcePackageCheck.runtimeConsumptionReady ?? false),
-        "generatedCompileAuthorizationStatus",
-        "generatedCompilationStatus"
+        dormitoryRuntimeAdmissionPath,
+        dormitoryRuntimeAdmission.runtimeAdmissionStatus,
+        String(dormitoryRuntimeAdmission.runtimeConsumptionReady),
+        "generatedCandidateAcceptanceStatus"
       ],
       proofRefs: [
-        "artifacts/oam/final-report.json",
-        "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json"
+        dormitoryRuntimeAdmissionPath,
+        dormitoryRuntimeAdmissionResultPath,
+        dormitoryRuntimeTestOnlyProofPath
       ],
       blockingReasons: runtimeConsumptionReady ? [] : [
-        "runtimeConsumptionReady=false；S4 只完成 generated compile execution，仍需 00 接受 generated candidate 后才可进入 Runtime consumption。"
+        "runtimeConsumptionReady=false；只有 dormitory-runtime-admission.current.json 可批准 test-only runtime consumption。"
       ],
       nextAction: runtimeConsumptionReady
-        ? "Runtime 只能消费已授权且已编译验证的 generated 合同。"
+        ? "Runtime 只能 test-only 消费已接受的 generated contracts；业务、production、release、final GO 仍阻断。"
         : "保持 Runtime 消费阻断，不能开始业务落地。"
     }),
     runtimeBoundaryStatus: reportStatusEntry({
@@ -3834,6 +4034,7 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
         "sourceCompileDecisionReadinessStatus",
         "generatedCompileAuthorizationStatus",
         "generatedCompilationStatus",
+        "runtimeAdmissionStatus",
         "runtimeConsumptionStatus",
         "runtimeBoundaryStatus",
         "sourcePackageStatus",

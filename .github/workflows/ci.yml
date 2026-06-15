@@ -238,6 +238,7 @@ jobs:
           node scripts/oam/check-s5-semantic-digest-idempotency.mjs
           node scripts/oam/check-generated-candidate-acceptance.mjs --self-test
           node scripts/oam/check-generated-candidate-acceptance.mjs
+          node scripts/oam/check-dormitory-runtime-admission.mjs
 
       - name: Generate current OAM evidence root
         if: always()

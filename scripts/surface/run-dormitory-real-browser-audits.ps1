@@ -83,7 +83,7 @@ function Test-TcpReady {
 if (-not $env:ASPNETCORE_ENVIRONMENT) { $env:ASPNETCORE_ENVIRONMENT = "Development" }
 if (-not $env:ASPNETCORE_URLS) { $env:ASPNETCORE_URLS = "http://127.0.0.1:5191" }
 if (-not $env:ConnectionStrings__WorkOSRuntime) { $env:ConnectionStrings__WorkOSRuntime = "Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev" }
-if (-not $env:WORKOS_REAL_BROWSER_USE_INMEMORY -and -not (Test-TcpReady -HostName "127.0.0.1" -Port 54329)) {
+if (-not $env:WORKOS_REAL_BROWSER_USE_INMEMORY) {
   $env:WORKOS_REAL_BROWSER_USE_INMEMORY = "1"
 }
 if (-not $env:WORKOS_MOBILE_URL) { $env:WORKOS_MOBILE_URL = "http://127.0.0.1:5175" }

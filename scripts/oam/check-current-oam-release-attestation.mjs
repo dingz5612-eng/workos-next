@@ -10,6 +10,12 @@ import {
   FIELD_BINDINGS_GENERATED_PATH,
   buildDormitoryGeneratedFieldBindingClosure
 } from "./lib/dormitory-generated-field-binding-closure.mjs";
+import {
+  DORMITORY_RUNTIME_ADMISSION_PATH,
+  DORMITORY_RUNTIME_ADMISSION_RESULT_PATH,
+  DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH,
+  validateDormitoryRuntimeAdmissionAuthority
+} from "./lib/dormitory-runtime-admission.mjs";
 
 const root = process.cwd();
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
@@ -19,6 +25,9 @@ const finalReportPath = "artifacts/oam/final-report.json";
 const resultPath = "artifacts/oam/checks/current-oam-release-attestation-result.json";
 const generatedCandidateAcceptancePath = GENERATED_CANDIDATE_ACCEPTANCE_PATH;
 const generatedCandidateAcceptanceResultPath = GENERATED_CANDIDATE_ACCEPTANCE_RESULT_PATH;
+const dormitoryRuntimeAdmissionPath = DORMITORY_RUNTIME_ADMISSION_PATH;
+const dormitoryRuntimeAdmissionResultPath = DORMITORY_RUNTIME_ADMISSION_RESULT_PATH;
+const dormitoryRuntimeTestOnlyProofPath = DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH;
 const pendingExternalAttestation = "pending_external_attestation";
 const sha256DigestPattern = /^sha256:[a-f0-9]{64}$/;
 const ciRunId = env("GITHUB_RUN_ID") || "local";
@@ -31,12 +40,20 @@ const graph = readJson(evidenceGraphPath);
 const finalReport = readJson(finalReportPath);
 const generatedCandidateAcceptance = readJson(generatedCandidateAcceptancePath);
 const generatedCandidateAcceptanceResult = readJson(generatedCandidateAcceptanceResultPath);
+const dormitoryRuntimeAdmission = readJson(dormitoryRuntimeAdmissionPath);
+const dormitoryRuntimeAdmissionResult = readJson(dormitoryRuntimeAdmissionResultPath);
+const dormitoryRuntimeTestOnlyProof = readJson(dormitoryRuntimeTestOnlyProofPath);
 const generatedFieldBindingClosureResult = readJson(FIELD_BINDING_CLOSURE_RESULT_PATH);
 const generatedFieldBindings = readJson(FIELD_BINDINGS_GENERATED_PATH);
 const generatedFieldBindingClosure = buildDormitoryGeneratedFieldBindingClosure({ root });
 const generatedCandidateAcceptancePredicate = validateGeneratedCandidateAcceptanceAuthority({
   acceptance: generatedCandidateAcceptance,
   root
+});
+const dormitoryRuntimeAdmissionPredicate = validateDormitoryRuntimeAdmissionAuthority({
+  authority: dormitoryRuntimeAdmission,
+  root,
+  writeProof: false
 });
 
 checkRequiredFields(attestation, "release attestation", [
@@ -186,9 +203,32 @@ if (finalReport?.generatedFieldBindingClosureRequired !== true ||
 if (finalReport?.generatedCandidateAcceptedBy00 !== generatedCandidateAcceptancePredicate.generatedCandidateAcceptedBy00) {
   violations.push("final report generatedCandidateAcceptedBy00 must mirror generated candidate acceptance authority.");
 }
+if (dormitoryRuntimeAdmissionPredicate.status !== "PASS" ||
+  dormitoryRuntimeAdmissionResult?.status !== "PASS" ||
+  dormitoryRuntimeTestOnlyProof?.status !== "PASS") {
+  violations.push("release attestation must only reference a PASS dormitory runtime admission checker and proof.");
+}
+if (finalReport?.runtimeAdmissionStatus !== dormitoryRuntimeAdmissionPredicate.runtimeAdmissionStatus ||
+  finalReport?.runtimeConsumptionReady !== dormitoryRuntimeAdmissionPredicate.runtimeConsumptionReady ||
+  attestation?.runtimeAdmissionStatus !== dormitoryRuntimeAdmissionPredicate.runtimeAdmissionStatus ||
+  releaseObject?.runtimeAdmissionStatus !== dormitoryRuntimeAdmissionPredicate.runtimeAdmissionStatus ||
+  attestation?.runtimeAdmissionAuthorityRef !== dormitoryRuntimeAdmissionPath ||
+  releaseObject?.runtimeAdmissionAuthorityRef !== dormitoryRuntimeAdmissionPath ||
+  attestation?.runtimeAdmissionResultRef !== dormitoryRuntimeAdmissionResultPath ||
+  releaseObject?.runtimeAdmissionResultRef !== dormitoryRuntimeAdmissionResultPath ||
+  attestation?.testOnlyConsumptionProofRef !== dormitoryRuntimeTestOnlyProofPath ||
+  releaseObject?.testOnlyConsumptionProofRef !== dormitoryRuntimeTestOnlyProofPath) {
+  violations.push("release attestation, release object, and final report must mirror dormitory runtime admission authority.");
+}
 if (generatedCandidateAcceptancePredicate.generatedCandidateAcceptedBy00 === true &&
   (attestation?.releaseAuthority !== false || releaseObject?.releaseAuthority !== false || finalReport?.releaseAuthority !== false)) {
   violations.push("generated candidate acceptance must not grant releaseAuthority.");
+}
+if (dormitoryRuntimeAdmissionPredicate.runtimeConsumptionReady === true &&
+  (attestation?.releaseAuthority !== false || releaseObject?.releaseAuthority !== false || finalReport?.releaseAuthority !== false ||
+    finalReport?.businessFeatureDevelopmentAllowed !== false || finalReport?.productionConfirmAllowed !== false ||
+    finalReport?.finalGoNoGo !== "NO_GO")) {
+  violations.push("runtime admission must not grant business development, production confirmation, releaseAuthority, or final GO.");
 }
 if (attestation?.nextStageAllowed !== false || releaseObject?.nextStageAllowed !== false || finalReport?.nextStageAllowed !== false) {
   violations.push("release attestation must keep nextStageAllowed=false.");

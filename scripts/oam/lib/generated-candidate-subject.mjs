@@ -283,6 +283,10 @@ export function validateGeneratedCandidateAcceptanceAuthority({
   const warnings = [];
   const subjectState = buildGeneratedCandidateSubject({ root, currentHead });
   const currentRepositoryHead = subjectState.currentRepositoryHead;
+  const acceptedDecision = acceptance?.decisionStatus === "ACCEPTED_BY_00";
+  const effectiveSubject = acceptedDecision && acceptance?.generatedCandidateSubject
+    ? acceptance.generatedCandidateSubject
+    : subjectState.subject;
 
   if (!acceptance || typeof acceptance !== "object") {
     failures.push(`${GENERATED_CANDIDATE_ACCEPTANCE_PATH} is missing or invalid.`);
@@ -292,15 +296,23 @@ export function validateGeneratedCandidateAcceptanceAuthority({
     if (!decisionStatuses.has(acceptance.decisionStatus)) {
       failures.push(`decisionStatus must be PENDING_00_DECISION, NOT_ACCEPTED_BY_00, or ACCEPTED_BY_00, actual ${format(acceptance.decisionStatus)}.`);
     }
-    if (!sameGeneratedCandidateSubject(acceptance.generatedCandidateSubject, subjectState.subject)) {
+    if (!acceptedDecision && !sameGeneratedCandidateSubject(acceptance.generatedCandidateSubject, subjectState.subject)) {
       failures.push("generatedCandidateSubject must match the shared generated candidate subject identity.");
     }
-    requireEqual(acceptance.reviewedExecutionHead, subjectState.subject.reviewedExecutionHead, "reviewedExecutionHead", failures);
-    requireEqual(acceptance.evidenceArtifactDigest, subjectState.subject.evidenceArtifactDigest, "evidenceArtifactDigest", failures);
-    requireEqual(acceptance.generatedFieldBindingClosureDigest, subjectState.subject.generatedFieldBindingClosureDigest, "generatedFieldBindingClosureDigest", failures);
-    requireEqual(acceptance.sourceFieldGapsDecisionDigest, subjectState.subject.sourceFieldGapsDecisionDigest, "sourceFieldGapsDecisionDigest", failures);
-    requireEqual(acceptance.executionProofDigest, subjectState.subject.executionProofDigest, "executionProofDigest", failures);
-    requireEqual(acceptance.evidenceRootDigest, subjectState.subject.evidenceRootDigest, "evidenceRootDigest", failures);
+    if (acceptedDecision) {
+      requireEqual(
+        acceptance.generatedCandidateSubject?.subjectDigest,
+        digestObject(normalizeGeneratedCandidateSubjectForIdentity(acceptance.generatedCandidateSubject)),
+        "generatedCandidateSubject.subjectDigest",
+        failures
+      );
+    }
+    requireEqual(acceptance.reviewedExecutionHead, effectiveSubject.reviewedExecutionHead, "reviewedExecutionHead", failures);
+    requireEqual(acceptance.evidenceArtifactDigest, effectiveSubject.evidenceArtifactDigest, "evidenceArtifactDigest", failures);
+    requireEqual(acceptance.generatedFieldBindingClosureDigest, effectiveSubject.generatedFieldBindingClosureDigest, "generatedFieldBindingClosureDigest", failures);
+    requireEqual(acceptance.sourceFieldGapsDecisionDigest, effectiveSubject.sourceFieldGapsDecisionDigest, "sourceFieldGapsDecisionDigest", failures);
+    requireEqual(acceptance.executionProofDigest, effectiveSubject.executionProofDigest, "executionProofDigest", failures);
+    requireEqual(acceptance.evidenceRootDigest, effectiveSubject.evidenceRootDigest, "evidenceRootDigest", failures);
     checkNegativeAuthorities(acceptance, failures);
 
     if (acceptance.decisionStatus === "PENDING_00_DECISION") {
@@ -322,7 +334,7 @@ export function validateGeneratedCandidateAcceptanceAuthority({
 
     if (acceptance.decisionStatus === "ACCEPTED_BY_00") {
       requireEqual(acceptance.generatedCandidateAcceptedBy00, true, "generatedCandidateAcceptedBy00", failures);
-      checkAcceptanceRecord(acceptance, subjectState.subject, failures);
+      checkAcceptanceRecord(acceptance, effectiveSubject, failures);
       if (subjectState.status !== "READY_FOR_00_ACCEPTANCE_REVIEW") {
         failures.push(`ACCEPTED_BY_00 requires subject READY_FOR_00_ACCEPTANCE_REVIEW, actual ${subjectState.status}.`);
       }
@@ -336,7 +348,7 @@ export function validateGeneratedCandidateAcceptanceAuthority({
   warnings.push(...subjectState.warnings);
 
   const decisionWritebackPolicy = evaluateDecisionWritebackPolicy({
-    reviewedExecutionHead: subjectState.subject.reviewedExecutionHead,
+    reviewedExecutionHead: effectiveSubject.reviewedExecutionHead,
     decisionWritebackBaseHead: acceptance?.decisionWritebackBaseHead ?? null,
     decisionRecordHead: acceptance?.decisionRecordHead ?? null,
     currentRepositoryHead,
@@ -355,20 +367,22 @@ export function validateGeneratedCandidateAcceptanceAuthority({
     decisionStatus,
     generatedCandidateAcceptedBy00: acceptance?.generatedCandidateAcceptedBy00 === true,
     subjectStatus: subjectState.status,
-    generatedCandidateSubject: subjectState.subject,
-    subjectDigest: subjectState.subject.subjectDigest,
-    reviewedExecutionHead: subjectState.subject.reviewedExecutionHead,
+    generatedCandidateSubject: effectiveSubject,
+    currentGeneratedCandidateSubject: subjectState.subject,
+    subjectDigest: effectiveSubject.subjectDigest,
+    currentSubjectDigest: subjectState.subject.subjectDigest,
+    reviewedExecutionHead: effectiveSubject.reviewedExecutionHead,
     decisionRecordHead: acceptance?.decisionRecordHead ?? null,
     currentRepositoryHead,
-    generatedOutputDigest: subjectState.subject.generatedOutputDigest,
-    generatedFieldBindingClosureDigest: subjectState.subject.generatedFieldBindingClosureDigest,
-    sourceFieldGapsDecisionDigest: subjectState.subject.sourceFieldGapsDecisionDigest,
-    fieldBindingContractDigest: subjectState.subject.fieldBindingContractDigest,
-    evidenceArtifactDigest: subjectState.subject.evidenceArtifactDigest,
-    executionProofDigest: subjectState.subject.executionProofDigest,
-    evidenceRootDigest: subjectState.subject.evidenceRootDigest,
-    requiredEvidenceDigestSet: subjectState.subject.requiredEvidenceDigestSet,
-    requiredGeneratedContractDigestSet: subjectState.subject.requiredGeneratedContractDigestSet,
+    generatedOutputDigest: effectiveSubject.generatedOutputDigest,
+    generatedFieldBindingClosureDigest: effectiveSubject.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: effectiveSubject.sourceFieldGapsDecisionDigest,
+    fieldBindingContractDigest: effectiveSubject.fieldBindingContractDigest,
+    evidenceArtifactDigest: effectiveSubject.evidenceArtifactDigest,
+    executionProofDigest: effectiveSubject.executionProofDigest,
+    evidenceRootDigest: effectiveSubject.evidenceRootDigest,
+    requiredEvidenceDigestSet: effectiveSubject.requiredEvidenceDigestSet,
+    requiredGeneratedContractDigestSet: effectiveSubject.requiredGeneratedContractDigestSet,
     decisionWritebackPolicy,
     deprecatedAliasReferences: subjectState.deprecatedAliasReferences,
     runtimeConsumptionReady: false,

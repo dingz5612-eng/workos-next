@@ -95,7 +95,7 @@
   },
   "subjectStatusAtWrite": "READY_FOR_00_ACCEPTANCE_REVIEW",
   "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
-  "decisionRecordHead": null,
+  "decisionRecordHead": "9de341dca1bda66c62da7ff18a03e43e8234dfd6",
   "decisionWritebackBaseHead": "6cc6abe215f222e08022f242837aaba01baadba6",
   "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
   "generatedFieldBindingClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",

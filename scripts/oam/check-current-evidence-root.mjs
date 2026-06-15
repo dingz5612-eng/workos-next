@@ -13,6 +13,12 @@ import {
   FIELD_BINDINGS_GENERATED_PATH,
   buildDormitoryGeneratedFieldBindingClosure
 } from "./lib/dormitory-generated-field-binding-closure.mjs";
+import {
+  DORMITORY_RUNTIME_ADMISSION_PATH,
+  DORMITORY_RUNTIME_ADMISSION_RESULT_PATH,
+  DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH,
+  validateDormitoryRuntimeAdmissionAuthority
+} from "./lib/dormitory-runtime-admission.mjs";
 
 const root = process.cwd();
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
@@ -32,6 +38,9 @@ const generatedCompileApprovalPath = "docs/oam/generated-compile-approval.curren
 const generatedCompileCandidateApprovalPath = "docs/oam/generated-compile-candidate-approval.current.json";
 const generatedCandidateAcceptancePath = GENERATED_CANDIDATE_ACCEPTANCE_PATH;
 const generatedCandidateAcceptanceResultPath = GENERATED_CANDIDATE_ACCEPTANCE_RESULT_PATH;
+const dormitoryRuntimeAdmissionPath = DORMITORY_RUNTIME_ADMISSION_PATH;
+const dormitoryRuntimeAdmissionResultPath = DORMITORY_RUNTIME_ADMISSION_RESULT_PATH;
+const dormitoryRuntimeTestOnlyProofPath = DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH;
 const generatedCompileExecutionSnapshotPath = "artifacts/oam/checks/generated-compile-execution-input-snapshot.json";
 const generatedCompileExecutionResultPath = "artifacts/oam/checks/generated-compile-execution-result.json";
 const generatedCompileExecutionProofPath = "artifacts/oam/evidence/generated-compile-execution-proof.json";
@@ -103,6 +112,9 @@ const requiredFiles = [
   generatedCompileCandidateApprovalPath,
   generatedCandidateAcceptancePath,
   generatedCandidateAcceptanceResultPath,
+  dormitoryRuntimeAdmissionPath,
+  dormitoryRuntimeAdmissionResultPath,
+  dormitoryRuntimeTestOnlyProofPath,
   "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
   "artifacts/oam/checks/generated-compile-authorization-result.json",
   generatedCompileExecutionSnapshotPath,
@@ -166,6 +178,12 @@ if (documents.size === requiredFiles.length) {
     acceptance: documents.get(generatedCandidateAcceptancePath),
     root,
     currentHead: currentRepositoryHead
+  });
+  const dormitoryRuntimeAdmission = validateDormitoryRuntimeAdmissionAuthority({
+    authority: documents.get(dormitoryRuntimeAdmissionPath),
+    root,
+    currentHead: currentRepositoryHead,
+    writeProof: false
   });
 
   if (!expectedDigest || expectedDigest !== actualDigest) {
@@ -233,8 +251,8 @@ if (documents.size === requiredFiles.length) {
   if (finalReport.generatedContractStatus10B !== expectedGeneratedContractStatus10B) {
     failures.push(`final report generatedContractStatus10B must be ${expectedGeneratedContractStatus10B}.`);
   }
-  if (finalReport.runtimeConsumptionReady !== false) {
-    failures.push("final report runtimeConsumptionReady must remain false until 00 accepts the generated candidate.");
+  if (finalReport.runtimeConsumptionReady !== dormitoryRuntimeAdmission.runtimeConsumptionReady) {
+    failures.push("final report runtimeConsumptionReady must mirror dormitory runtime admission authority.");
   }
   if (finalReport.businessFeatureDevelopmentAllowed !== false) {
     failures.push("final report businessFeatureDevelopmentAllowed must remain false.");
@@ -255,12 +273,13 @@ if (documents.size === requiredFiles.length) {
   checkGeneratedFieldBindingClosure(finalReport, graph, documents, generatedFieldBindingClosure);
   checkGeneratedCompileExecution(finalReport, graph, documents, generatedCompileExecution);
   checkGeneratedCandidateAcceptance(finalReport, graph, documents, generatedCandidateAcceptance);
+  checkDormitoryRuntimeAdmission(finalReport, graph, documents, dormitoryRuntimeAdmission);
 
   checkArtifactName("final report", finalReport.artifactName);
   checkCandidateEvidenceObject(candidateObject, graph, finalReport);
   checkCommitAttestation(commitAttestation, candidateObject, graph, finalReport);
-  checkReleaseEvidenceObject(releaseObject, graph, finalReport, documents);
-  checkReleaseAttestation(releaseAttestation, releaseObject, graph);
+  checkReleaseEvidenceObject(releaseObject, graph, finalReport, documents, dormitoryRuntimeAdmission);
+  checkReleaseAttestation(releaseAttestation, releaseObject, graph, dormitoryRuntimeAdmission);
   checkEvidenceLifecycleProof(evidenceLifecycleProof, graph, finalReport, releaseObject);
   checkReadonlyOrdinaryCheckers();
   checkEvidenceBindingConsistency(graph, releaseObject, finalReport, expectedDigest);
@@ -460,7 +479,7 @@ function checkCommitAttestation(attestation, candidateObject, graph, finalReport
   }
 }
 
-function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocuments) {
+function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocuments, runtimeAdmission) {
   if (!releaseObject || typeof releaseObject !== "object") {
     failures.push("release evidence object is missing or invalid.");
     return;
@@ -506,6 +525,11 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
     "candidateCompileEvidenceStatus",
     "candidateCompileClosureForCurrentHead",
     "candidateCompileNextAction",
+    "runtimeAdmissionStatus",
+    "runtimeAdmissionAuthorityRef",
+    "runtimeAdmissionResultRef",
+    "testOnlyConsumptionProofRef",
+    "runtimeConsumptionReady",
     "businessProduction",
     "dormitoryL2",
     "productionConfirmAllowed",
@@ -594,6 +618,13 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
   if (releaseObject.productionConfirmAllowed !== false) {
     failures.push("release evidence object productionConfirmAllowed must remain false.");
   }
+  if (releaseObject.runtimeAdmissionStatus !== runtimeAdmission.runtimeAdmissionStatus ||
+    releaseObject.runtimeAdmissionAuthorityRef !== dormitoryRuntimeAdmissionPath ||
+    releaseObject.runtimeAdmissionResultRef !== dormitoryRuntimeAdmissionResultPath ||
+    releaseObject.testOnlyConsumptionProofRef !== dormitoryRuntimeTestOnlyProofPath ||
+    releaseObject.runtimeConsumptionReady !== runtimeAdmission.runtimeConsumptionReady) {
+    failures.push("release evidence object runtime admission fields must mirror dormitory runtime admission authority.");
+  }
   if (releaseObject.releaseEvidenceRole !== "ci_release_attestation_only") {
     failures.push("release evidence object must declare role ci_release_attestation_only.");
   }
@@ -634,7 +665,7 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
   }
 }
 
-function checkReleaseAttestation(attestation, releaseObject, graph) {
+function checkReleaseAttestation(attestation, releaseObject, graph, runtimeAdmission) {
   if (!attestation || typeof attestation !== "object") {
     failures.push("release attestation is missing or invalid.");
     return;
@@ -662,6 +693,11 @@ function checkReleaseAttestation(attestation, releaseObject, graph) {
     "candidateCompileEvidenceStatus",
     "candidateCompileClosureForCurrentHead",
     "candidateCompileNextAction",
+    "runtimeAdmissionStatus",
+    "runtimeAdmissionAuthorityRef",
+    "runtimeAdmissionResultRef",
+    "testOnlyConsumptionProofRef",
+    "runtimeConsumptionReady",
     "finalGoNoGo",
     "nextStageAllowed"
   ]) {
@@ -686,6 +722,13 @@ function checkReleaseAttestation(attestation, releaseObject, graph) {
   }
   if (attestation.zipArtifactDigest !== releaseObject?.zipArtifactDigest) {
     failures.push("release attestation zipArtifactDigest must match release evidence object.");
+  }
+  if (attestation.runtimeAdmissionStatus !== runtimeAdmission.runtimeAdmissionStatus ||
+    attestation.runtimeAdmissionAuthorityRef !== dormitoryRuntimeAdmissionPath ||
+    attestation.runtimeAdmissionResultRef !== dormitoryRuntimeAdmissionResultPath ||
+    attestation.testOnlyConsumptionProofRef !== dormitoryRuntimeTestOnlyProofPath ||
+    attestation.runtimeConsumptionReady !== runtimeAdmission.runtimeConsumptionReady) {
+    failures.push("release attestation runtime admission fields must mirror dormitory runtime admission authority.");
   }
   if (attestation.githubArtifactMetadataDigest === attestation.artifactDigest) {
     failures.push("release attestation githubArtifactMetadataDigest must not equal internal artifactDigest.");
@@ -963,7 +1006,6 @@ function checkGeneratedCompileCandidate(finalReport, graph, documents) {
     executionHead: authorizedCandidateExecutionHead,
     generatedCompileCandidateStatus: "PASS",
     generatedReleaseAllowed: false,
-    runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00",
     finalGoNoGo: "NO_GO",
     releaseAuthority: false,
     productionConfirmAllowed: false,
@@ -1012,7 +1054,7 @@ function checkGeneratedCompileCandidate(finalReport, graph, documents) {
     generatedCompileCandidateStatus: "PASS",
     generatedCandidateAcceptedBy00: finalReport.generatedCandidateAcceptedBy00 === true,
     generatedReleaseAllowed: false,
-    runtimeConsumptionAllowed: "false_until_candidate_accepted_by_00"
+    runtimeConsumptionAllowed: finalReport.runtimeConsumptionAllowed
   };
   for (const [label, state] of [
     ["evidence graph binding", graph?.binding],
@@ -1175,12 +1217,11 @@ function checkFormalGeneratedCompileAuthorization(finalReport, graph, documents,
     failures.push(`final report must expose formal generated compile authorization as ${expectedAuthorized ? "PASS/true" : "NO_GO/false"}.`);
   }
   if (finalReport.generatedReleaseAllowed !== false ||
-    finalReport.runtimeConsumptionReady !== false ||
     finalReport.businessFeatureDevelopmentAllowed !== false ||
     finalReport.productionConfirmAllowed !== false ||
     finalReport.releaseAuthority !== false ||
     finalReport.finalGoNoGo !== "NO_GO") {
-    failures.push("formal approval must not expand into runtime, business development, release authority, production_confirm, or GO.");
+    failures.push("formal approval must not expand into business development, release authority, production_confirm, or GO.");
   }
 
   const node = (graph.nodes ?? []).find((item) => item.id === "OAM-DORMITORY-GOLDEN-CHAIN-FORMAL-GENERATED-COMPILE-AUTHORIZATION");
@@ -1323,9 +1364,8 @@ function checkGeneratedFieldBindingClosure(finalReport, graph, documents, state)
     finalReport.sourceFieldGapsDecisionDigest !== state.sourceFieldGapsDecisionDigest ||
     finalReport.s4AttestationIsFinalReleaseEvidence !== false ||
     finalReport.releaseEvidenceRequiredAfterS4 !== true ||
-    finalReport.runtimeConsumptionReady !== false ||
     finalReport.finalGoNoGo !== "NO_GO") {
-    failures.push("final report generated field binding closure fields must mirror closure state and keep runtime/release/GO blocked.");
+    failures.push("final report generated field binding closure fields must mirror closure state and keep release/GO blocked.");
   }
   if (finalReport.statusMatrix?.generatedFieldBindingClosureStatus?.status !== "PASS") {
     failures.push("final report statusMatrix.generatedFieldBindingClosureStatus must be PASS.");
@@ -1497,12 +1537,11 @@ function checkGeneratedCandidateAcceptance(finalReport, graph, documents, state)
   if (state.decisionStatus === "PENDING_00_DECISION" && finalReport.generatedCandidateAcceptedBy00 !== false) {
     failures.push("PENDING_00_DECISION must keep generatedCandidateAcceptedBy00=false.");
   }
-  if (finalReport.runtimeConsumptionReady !== false ||
-    finalReport.businessFeatureDevelopmentAllowed !== false ||
+  if (finalReport.businessFeatureDevelopmentAllowed !== false ||
     finalReport.productionConfirmAllowed !== false ||
     finalReport.releaseAuthority !== false ||
     finalReport.finalGoNoGo !== "NO_GO") {
-    failures.push("generated candidate acceptance authority must not open runtime/business/production/release/GO.");
+    failures.push("generated candidate acceptance authority must not open business/production/release/GO.");
   }
   const matrixStatus = finalReport.statusMatrix?.generatedCandidateAcceptanceStatus?.status;
   const expectedMatrixStatus = state.generatedCandidateAcceptedBy00 ? "PASS" : "NO_GO";
@@ -1566,6 +1605,98 @@ function checkGeneratedCandidateAcceptance(finalReport, graph, documents, state)
   })) {
     if (binding[field] !== expected) {
       failures.push(`generated candidate acceptance binding ${field} must be ${expected}, actual ${binding[field] ?? "missing"}.`);
+    }
+  }
+}
+
+function checkDormitoryRuntimeAdmission(finalReport, graph, documents, state) {
+  const authority = documents.get(dormitoryRuntimeAdmissionPath);
+  const result = documents.get(dormitoryRuntimeAdmissionResultPath);
+  const proof = documents.get(dormitoryRuntimeTestOnlyProofPath);
+  if (!authority || !result || !proof) {
+    failures.push("dormitory runtime admission authority/result/proof is missing.");
+    return;
+  }
+  if (state.status !== "PASS" || result.status !== "PASS") {
+    failures.push("dormitory runtime admission checker must PASS.");
+  }
+  if (state.runtimeAdmissionStatus !== authority.runtimeAdmissionStatus ||
+    result.runtimeAdmissionStatus !== authority.runtimeAdmissionStatus) {
+    failures.push("runtimeAdmissionStatus must match authority, checker result, and predicate state.");
+  }
+  if (authority.runtimeConsumptionReady !== state.runtimeConsumptionReady ||
+    result.runtimeConsumptionReady !== state.runtimeConsumptionReady ||
+    finalReport.runtimeConsumptionReady !== state.runtimeConsumptionReady) {
+    failures.push("runtimeConsumptionReady must be read from dormitory-runtime-admission.current.json.");
+  }
+  if (finalReport.runtimeAdmissionStatus !== state.runtimeAdmissionStatus ||
+    finalReport.dormitoryRuntimeAdmission?.runtimeAdmissionStatus !== state.runtimeAdmissionStatus ||
+    finalReport.dormitoryRuntimeAdmission?.acceptedSubjectDigest !== state.acceptedSubjectDigest ||
+    finalReport.dormitoryRuntimeAdmission?.generatedCandidateSubjectDigest !== state.generatedCandidateSubjectDigest) {
+    failures.push("Final Report dormitoryRuntimeAdmission must mirror runtime admission predicate.");
+  }
+  if (finalReport.businessFeatureDevelopmentAllowed !== false ||
+    finalReport.productionConfirmAllowed !== false ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.finalGoNoGo !== "NO_GO") {
+    failures.push("runtime admission must not open business/production/release/GO.");
+  }
+  if (finalReport.statusMatrix?.runtimeAdmissionStatus?.status !== "PASS" ||
+    finalReport.statusMatrix?.runtimeConsumptionStatus?.status !== "PASS") {
+    failures.push("runtime admission and runtime consumption status entries must PASS after test-only admission approval.");
+  }
+  const node = (graph.nodes ?? []).find((item) => item.id === "OAM-DORMITORY-GOLDEN-CHAIN-RUNTIME-ADMISSION");
+  if (!node) {
+    failures.push("evidence graph missing dormitory runtime admission authority node.");
+    return;
+  }
+  if (node.scope !== "dormitory_first_golden_chain_test_only_consumption" ||
+    node.runtimeAdmissionStatus !== state.runtimeAdmissionStatus ||
+    node.generatedCandidateAcceptedBy00 !== true ||
+    node.acceptedSubjectDigest !== state.acceptedSubjectDigest ||
+    node.generatedCandidateSubjectDigest !== state.generatedCandidateSubjectDigest ||
+    node.runtimeConsumptionReady !== state.runtimeConsumptionReady ||
+    node.businessFeatureDevelopmentAllowed !== false ||
+    node.dormitoryFirstGoldenChainLandingGoNoGo !== "NO_GO" ||
+    node.productionConfirmAllowed !== false ||
+    node.financePostingAllowed !== false ||
+    node.dormitoryL2Allowed !== false ||
+    node.releaseAuthority !== false ||
+    node.finalGoNoGo !== "NO_GO") {
+    failures.push("runtime admission node must mirror predicate and keep business/production/finance/L2/release/GO blocked.");
+  }
+  for (const dep of [
+    "OAM-DORMITORY-GOLDEN-CHAIN-GENERATED-CANDIDATE-ACCEPTANCE",
+    dormitoryRuntimeAdmissionPath,
+    dormitoryRuntimeAdmissionResultPath,
+    dormitoryRuntimeTestOnlyProofPath
+  ]) {
+    if (!(node.dependsOn ?? []).includes(dep)) {
+      failures.push(`runtime admission node missing dependency: ${dep}.`);
+    }
+  }
+  const binding = node.binding ?? {};
+  for (const [field, expected] of Object.entries({
+    runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
+    runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
+    testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
+    runtimeAdmissionStatus: state.runtimeAdmissionStatus,
+    generatedCandidateAcceptedBy00: true,
+    acceptedSubjectDigest: state.acceptedSubjectDigest,
+    generatedCandidateSubjectDigest: state.generatedCandidateSubjectDigest,
+    runtimeConsumptionReady: state.runtimeConsumptionReady,
+    runtimeConsumptionMode: "test_only_consumption",
+    businessFeatureDevelopmentAllowed: false,
+    dormitoryFirstGoldenChainLandingGoNoGo: "NO_GO",
+    productionConfirmAllowed: false,
+    financePostingAllowed: false,
+    dormitoryL2Allowed: false,
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    finalGoNoGo: "NO_GO"
+  })) {
+    if (binding[field] !== expected) {
+      failures.push(`runtime admission binding ${field} must be ${expected}, actual ${binding[field] ?? "missing"}.`);
     }
   }
 }
@@ -1965,13 +2096,18 @@ function checkBinding(file, document, expectedDigest) {
     "generatedCandidateAcceptedBy00",
     "generatedCandidateAcceptanceDecisionStatus",
     "generatedCandidateSubjectDigest",
+    "runtimeAdmissionStatus",
+    "runtimeAdmissionAuthorityRef",
+    "runtimeAdmissionResultRef",
+    "testOnlyConsumptionProofRef",
     "reviewedExecutionHead",
     "decisionRecordHead",
     "generatedOutputDigest",
     "evidenceArtifactDigest",
     "executionProofDigest",
     "generatedReleaseAllowed",
-    "runtimeConsumptionAllowed"
+    "runtimeConsumptionAllowed",
+    "runtimeConsumptionReady"
   ]) {
     if (key === "decisionRecordHead" && Object.hasOwn(binding, key)) continue;
     if (binding[key] === undefined || binding[key] === null || binding[key] === "") {
@@ -2552,6 +2688,7 @@ function checkFinalReportMultiStatus(finalReport, candidateObject, commitAttesta
     "sourceCompileDecisionReadinessStatus",
     "generatedCompileAuthorizationStatus",
     "generatedCompilationStatus",
+    "runtimeAdmissionStatus",
     "runtimeConsumptionStatus",
     "runtimeBoundaryStatus",
     "readSurfaceFinanceStatus",
@@ -2579,9 +2716,12 @@ function checkFinalReportMultiStatus(finalReport, candidateObject, commitAttesta
     const entry = matrix[field];
     validateFinalReportStatusEntry(`statusMatrix.${field}`, entry);
     if (field !== "finalGoNoGo") {
-      validateFinalReportStatusEntry(field, finalReport[field]);
-      if (JSON.stringify(finalReport[field]) !== JSON.stringify(entry)) {
-        failures.push(`final report ${field} must mirror statusMatrix.${field}.`);
+      const finalReportEntry = field === "runtimeAdmissionStatus"
+        ? finalReport.runtimeAdmissionStatusEntry
+        : finalReport[field];
+      validateFinalReportStatusEntry(field === "runtimeAdmissionStatus" ? "runtimeAdmissionStatusEntry" : field, finalReportEntry);
+      if (JSON.stringify(finalReportEntry) !== JSON.stringify(entry)) {
+        failures.push(`final report ${field === "runtimeAdmissionStatus" ? "runtimeAdmissionStatusEntry" : field} must mirror statusMatrix.${field}.`);
       }
     }
   }
@@ -2616,8 +2756,11 @@ function checkFinalReportMultiStatus(finalReport, candidateObject, commitAttesta
   if (matrix.generatedCompilationStatus?.status !== expectedGeneratedCompilationStatus) {
     failures.push(`generatedCompilationStatus must be ${expectedGeneratedCompilationStatus} for the current S4 execution state.`);
   }
-  if (matrix.runtimeConsumptionStatus?.status !== "NO_GO") {
-    failures.push("runtimeConsumptionStatus must remain NO_GO until 00 accepts the generated candidate.");
+  if (matrix.runtimeAdmissionStatus?.status !== "PASS") {
+    failures.push("runtimeAdmissionStatus must be PASS after S7 test-only runtime admission approval.");
+  }
+  if (matrix.runtimeConsumptionStatus?.status !== "PASS") {
+    failures.push("runtimeConsumptionStatus must be PASS after S7 test-only runtime admission approval.");
   }
   if (matrix.runtimeBoundaryStatus?.status !== "PASS") {
     failures.push("runtimeBoundaryStatus must be PASS for runtime boundary closure.");

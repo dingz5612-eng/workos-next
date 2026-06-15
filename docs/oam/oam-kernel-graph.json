@@ -10,7 +10,7 @@
     "domainKernel": "docs/oam/kernel-schemas/domain-kernel.schema.json",
     "workItem": "docs/oam/kernel-schemas/workitem.schema.json"
   },
-  "nodeCount": 1314,
+  "nodeCount": 1318,
   "edgeCount": 1102,
   "nodes": [
     {
@@ -13757,6 +13757,43 @@
       "graphBinding": "file.docs/oam/domain-derived-contracts.json"
     },
     {
+      "nodeId": "file.docs/oam/dormitory-runtime-admission.current.json",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/dormitory-runtime-admission.current.json",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-runtime-admission.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-runtime-admission.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/dormitory-runtime-admission-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 dormitory runtime admission authority 被当前权威替代且无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-runtime-admission.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-runtime-admission-result.json",
+      "replacementPath": "docs/oam/dormitory-runtime-admission.current.json",
+      "absorbedBy": "docs/oam/dormitory-runtime-admission.current.json",
+      "removalProofGate": "scripts/oam/check-dormitory-runtime-admission.mjs",
+      "deletionConditionZh": "当 dormitory runtime admission authority 被当前权威替代且无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-runtime-admission.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
       "nodeId": "file.docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -20798,6 +20835,42 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-dormitory-runtime-admission.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-dormitory-runtime-admission.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-runtime-admission.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-runtime-admission.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/dormitory-runtime-admission-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 dormitory runtime admission gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-runtime-admission.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-runtime-admission-result.json",
+      "replacementPath": "scripts/oam/check-dormitory-runtime-admission.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-runtime-admission.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-runtime-admission.mjs",
+      "deletionConditionZh": "当 dormitory runtime admission gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "docs/oam/dormitory-runtime-admission.current.json",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-evidence-contract-refs.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -22043,6 +22116,41 @@
         "scripts/oam/lib/generated-candidate-subject.mjs",
         "scripts/oam/generate-current-evidence-root.mjs",
         "scripts/oam/check-current-evidence-root.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/lib/dormitory-runtime-admission.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/lib/dormitory-runtime-admission.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-runtime-admission.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-runtime-admission.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/dormitory-runtime-admission-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 dormitory runtime admission 共享模型被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-runtime-admission.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-runtime-admission-result.json",
+      "replacementPath": "scripts/oam/lib/dormitory-runtime-admission.mjs",
+      "absorbedBy": "scripts/oam/lib/dormitory-runtime-admission.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-runtime-admission.mjs",
+      "deletionConditionZh": "当 dormitory runtime admission 共享模型被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-runtime-admission.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs"
       ]
     },
     {

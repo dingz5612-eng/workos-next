@@ -98,7 +98,8 @@ if (snapshotOnly) {
     if (finalReport.generatedCompileCompleted !== false || finalReport.generatedCompilationCompleted !== false) {
       failures.push("phase1 snapshot must be taken before generated compile completion is recorded.");
     }
-    if (finalReport.runtimeConsumptionReady !== false ||
+    if ((finalReport.runtimeConsumptionReady === true &&
+      finalReport.runtimeAdmissionStatus !== "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION") ||
       finalReport.businessFeatureDevelopmentAllowed !== false ||
       finalReport.releaseAuthority !== false ||
       finalReport.finalGoNoGo !== "NO_GO") {

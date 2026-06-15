@@ -38,6 +38,7 @@ const requiredJson = [
   "docs/read-intelligence/read-intelligence-kernel.schema.json",
   "docs/oam/db-no-side-effects-proof.json",
   "docs/oam/generated-candidate-acceptance.current.json",
+  "docs/oam/dormitory-runtime-admission.current.json",
   "docs/finance/finance-ledger-kernel.json",
   "docs/identity/identity-permission-kernel.json",
   "docs/contracts/oam.current.json",
@@ -59,9 +60,11 @@ requireFile("scripts/oam/check-generated-field-binding-closure.mjs");
 requireFile("scripts/oam/check-s5-semantic-digest-idempotency.mjs");
 requireFile("scripts/oam/check-generated-candidate-acceptance.mjs");
 requireFile("scripts/oam/generate-generated-candidate-acceptance.mjs");
+requireFile("scripts/oam/check-dormitory-runtime-admission.mjs");
 requireFile("scripts/oam/lib/dormitory-generated-field-binding-closure.mjs");
 requireFile("scripts/oam/lib/generated-candidate-subject.mjs");
 requireFile("scripts/oam/lib/decision-writeback-policy.mjs");
+requireFile("scripts/oam/lib/dormitory-runtime-admission.mjs");
 requireFile("scripts/oam/check-kernel-responsibility-map.mjs");
 requireFile("scripts/oam/check-professional-ai-review-seats.mjs");
 requireFile("scripts/oam/check-codex-execution-channel-policy.mjs");
