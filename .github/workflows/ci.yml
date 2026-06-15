@@ -239,6 +239,7 @@ jobs:
           node scripts/oam/check-generated-candidate-acceptance.mjs --self-test
           node scripts/oam/check-generated-candidate-acceptance.mjs
           node scripts/oam/check-dormitory-runtime-admission.mjs
+          node scripts/oam/check-dormitory-first-golden-chain-landing.mjs
 
       - name: Generate current OAM evidence root
         if: always()
@@ -266,6 +267,8 @@ jobs:
             artifacts/oam/final-report.json
             docs/oam/db-no-side-effects-proof.json
             docs/oam/generated-candidate-acceptance.current.json
+            docs/oam/dormitory-runtime-admission.current.json
+            docs/oam/dormitory-first-golden-chain-landing.current.json
             docs/contracts/generated/dormitory/field-bindings.generated.json
             docs/oam/evidence-attestation-packages/**
 

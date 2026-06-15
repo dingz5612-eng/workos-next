@@ -6,9 +6,9 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceLifecyclePolicy": "docs/oam/file-lifecycle-policy.json",
   "defaultPolicy": "unregistered_files_are_not_allowed",
-  "fileCount": 995,
+  "fileCount": 998,
   "identityCounts": {
-    "validation_file": 337,
+    "validation_file": 340,
     "implementation_file": 330,
     "derived_view": 65,
     "authority_file": 241,
@@ -11169,6 +11169,40 @@
       "deletionConditionZh": "当生成层 manifest 编译链删除且消费者、门禁、证据同步删除时删除。"
     },
     {
+      "path": "docs/oam/dormitory-first-golden-chain-landing.current.json",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.docs/oam/dormitory-first-golden-chain-landing.current.json",
+      "gates": [
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/dormitory-first-golden-chain-landing-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/dormitory-first-golden-chain-landing.current.json",
+      "absorbedBy": "docs/oam/dormitory-first-golden-chain-landing.current.json",
+      "removalProofGate": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "deletionConditionZh": "当 dormitory first golden chain business landing authority 被当前权威替代且无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/oam/dormitory-runtime-admission.current.json",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -17768,6 +17802,39 @@
       "deletionConditionZh": "当候选 artifact attestation package gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "docs/oam/dormitory-first-golden-chain-landing.current.json",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "gates": [
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/dormitory-first-golden-chain-landing-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "deletionConditionZh": "当 dormitory first golden chain business landing gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -18972,6 +19039,38 @@
       "absorbedBy": "scripts/oam/lib/decision-writeback-policy.mjs",
       "removalProofGate": "scripts/oam/check-generated-candidate-acceptance.mjs",
       "deletionConditionZh": "当 generated candidate decision writeback policy 被当前权威替代且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/lib/dormitory-first-golden-chain-landing.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/lib/dormitory-first-golden-chain-landing.mjs",
+      "gates": [
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/dormitory-first-golden-chain-landing-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/lib/dormitory-first-golden-chain-landing.mjs",
+      "absorbedBy": "scripts/oam/lib/dormitory-first-golden-chain-landing.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "deletionConditionZh": "当 dormitory first golden chain business landing 共享模型被当前权威替代且无消费者、无门禁、无证据引用时删除。"
     },
     {
       "path": "scripts/oam/lib/dormitory-generated-field-binding-closure.mjs",

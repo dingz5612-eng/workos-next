@@ -19,6 +19,13 @@ import {
   DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH,
   validateDormitoryRuntimeAdmissionAuthority
 } from "./lib/dormitory-runtime-admission.mjs";
+import {
+  DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_PATH,
+  DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_RESULT_PATH,
+  DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_PROOF_PATH,
+  DORMITORY_L1_LANDING_APPROVED_STATUS,
+  validateDormitoryFirstGoldenChainLandingAuthority
+} from "./lib/dormitory-first-golden-chain-landing.mjs";
 
 const root = process.cwd();
 const evidenceDir = "artifacts/oam/evidence";
@@ -30,6 +37,9 @@ const generatedCandidateAcceptanceResultPath = GENERATED_CANDIDATE_ACCEPTANCE_RE
 const dormitoryRuntimeAdmissionPath = DORMITORY_RUNTIME_ADMISSION_PATH;
 const dormitoryRuntimeAdmissionResultPath = DORMITORY_RUNTIME_ADMISSION_RESULT_PATH;
 const dormitoryRuntimeTestOnlyProofPath = DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH;
+const dormitoryFirstGoldenChainLandingPath = DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_PATH;
+const dormitoryFirstGoldenChainLandingResultPath = DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_RESULT_PATH;
+const dormitoryFirstGoldenChainLandingProofPath = DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_PROOF_PATH;
 const controlPlaneGateResultPath = "artifacts/oam/checks/control-plane-gate-results.json";
 const responsibilityMapPath = "docs/oam/current-oam-kernel-responsibility-map.json";
 const candidateEvidenceObjectPath = "artifacts/oam/evidence/current-oam-candidate-evidence-object.json";
@@ -135,6 +145,9 @@ const requiredEvidenceFiles = [
   dormitoryRuntimeAdmissionPath,
   dormitoryRuntimeAdmissionResultPath,
   dormitoryRuntimeTestOnlyProofPath,
+  dormitoryFirstGoldenChainLandingPath,
+  dormitoryFirstGoldenChainLandingResultPath,
+  dormitoryFirstGoldenChainLandingProofPath,
   "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
   "artifacts/oam/checks/generated-compile-authorization-result.json",
   generatedCompileExecutionSnapshotPath,
@@ -218,6 +231,16 @@ const dormitoryRuntimeAdmission = validateDormitoryRuntimeAdmissionAuthority({
   currentHead: currentRepositoryHead
 });
 const runtimeConsumptionReady = dormitoryRuntimeAdmission.runtimeConsumptionReady === true;
+const dormitoryFirstGoldenChainLandingAuthority = readJsonIfExists(dormitoryFirstGoldenChainLandingPath);
+const dormitoryFirstGoldenChainLanding = validateDormitoryFirstGoldenChainLandingAuthority({
+  authority: dormitoryFirstGoldenChainLandingAuthority,
+  root,
+  currentHead: currentRepositoryHead
+});
+const businessFeatureDevelopmentAllowed =
+  dormitoryFirstGoldenChainLanding.businessFeatureDevelopmentAllowed === true;
+const dormitoryFirstGoldenChainLandingGoNoGo =
+  dormitoryFirstGoldenChainLanding.dormitoryFirstGoldenChainLandingGoNoGo === "GO" ? "GO" : "NO_GO";
 const sourceAuthorityDigest = digestForFiles(sourceAuthorityFiles());
 const generatedContractDigest = generatedContractsHash;
 const fileLifecycleDigest = hashFileStrict("docs/oam/file-lifecycle-policy.json");
@@ -587,6 +610,7 @@ const generatedFieldBindingClosureProofNodes = buildGeneratedFieldBindingClosure
 const generatedCompileExecutionProofNodes = buildGeneratedCompileExecutionProofNodes();
 const generatedCandidateAcceptanceProofNodes = buildGeneratedCandidateAcceptanceProofNodes();
 const dormitoryRuntimeAdmissionProofNodes = buildDormitoryRuntimeAdmissionProofNodes();
+const dormitoryFirstGoldenChainLandingProofNodes = buildDormitoryFirstGoldenChainLandingProofNodes();
 const candidateEvidenceObject = {
   ...proof("current-oam-candidate-evidence-object", "当前 OAM Candidate Evidence Object", {
     proofType: "candidate-evidence",
@@ -717,6 +741,9 @@ const finalReport = {
   generatedCandidateAcceptance,
   dormitoryRuntimeAdmission,
   runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
+  dormitoryFirstGoldenChainLanding,
+  dormitoryFirstGoldenChainLandingStatus: dormitoryFirstGoldenChainLanding.landingStatus,
+  dormitoryFirstGoldenChainLandingGoNoGo,
   generatedContractStatus10B: generatedCompileExecution.generatedContractStatus10B,
   generatedCompileCompleted: generatedCompileExecution.generatedCompileCompleted,
   generatedCompilationCompleted: generatedCompileExecution.generatedCompilationCompleted,
@@ -738,7 +765,7 @@ const finalReport = {
   generatedReleaseAllowed: false,
   runtimeConsumptionAllowed: runtimeConsumptionReady ? "test_only_consumption_only" : "false_until_runtime_admission_approved",
   runtimeConsumptionReady,
-  businessFeatureDevelopmentAllowed: sourcePackageCheck.businessFeatureDevelopmentAllowed,
+  businessFeatureDevelopmentAllowed,
   externalArtifactAttestation,
   releaseAuthority: false,
   multiStatusVersion: "oam.final-report.multi-status.v1",
@@ -752,6 +779,7 @@ const finalReport = {
   generatedFieldBindingClosureStatusEntry: finalReportStatusMatrix.generatedFieldBindingClosureStatus,
   generatedCandidateAcceptanceStatus: finalReportStatusMatrix.generatedCandidateAcceptanceStatus,
   runtimeAdmissionStatusEntry: finalReportStatusMatrix.runtimeAdmissionStatus,
+  dormitoryFirstGoldenChainLandingStatusEntry: finalReportStatusMatrix.dormitoryFirstGoldenChainLandingStatus,
   runtimeConsumptionStatus: finalReportStatusMatrix.runtimeConsumptionStatus,
   runtimeBoundaryStatus: finalReportStatusMatrix.runtimeBoundaryStatus,
   readSurfaceFinanceStatus: finalReportStatusMatrix.readSurfaceFinanceStatus,
@@ -935,11 +963,18 @@ const evidenceGraph = {
       path: generatedCandidateAcceptancePath,
       proofType: "generated-candidate-acceptance-authority",
       purposeZh: "00 generated candidate acceptance 的唯一 authority；PENDING 时不接受候选、不开放 Runtime、不授权 GO。"
+    },
+    {
+      path: dormitoryFirstGoldenChainLandingPath,
+      proofType: "dormitory-first-golden-chain-business-landing-authority",
+      purposeZh: "宿舍第一金链 L1 业务落地唯一 authority；只开放 Room/Bed/ResourceReadiness 三核业务落地，不开放 production、release 或 final GO。"
     }
   ],
   authorityRefs: [
     "docs/oam/current-architecture.manifest.json",
     generatedCandidateAcceptancePath,
+    dormitoryRuntimeAdmissionPath,
+    dormitoryFirstGoldenChainLandingPath,
     "docs/system/oam-p0-rule-ledger.md",
     ".github/workflows/ci.yml"
   ],
@@ -980,6 +1015,7 @@ const evidenceGraph = {
     ...generatedCompileExecutionProofNodes,
     ...generatedCandidateAcceptanceProofNodes,
     ...dormitoryRuntimeAdmissionProofNodes,
+    ...dormitoryFirstGoldenChainLandingProofNodes,
     ...realBrowserEvidence.nodes
   ],
   edges: realBrowserEvidence.edges
@@ -1050,9 +1086,15 @@ const releaseEvidenceObject = {
   runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
   runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
   testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
+  dormitoryFirstGoldenChainLandingStatus: dormitoryFirstGoldenChainLanding.landingStatus,
+  businessLandingAuthorityRef: dormitoryFirstGoldenChainLandingPath,
+  businessLandingResultRef: dormitoryFirstGoldenChainLandingResultPath,
+  businessLandingProofRef: dormitoryFirstGoldenChainLandingProofPath,
   runtimeConsumptionAllowed: runtimeConsumptionReady ? "test_only_consumption_only" : "false_until_runtime_admission_approved",
   generatedCompileCompleted: false,
   runtimeConsumptionReady,
+  businessFeatureDevelopmentAllowed,
+  dormitoryFirstGoldenChainLandingGoNoGo,
   kernelGraphHash,
   evidenceGraphHash: digestPlaceholder,
   finalReportDigest: digestPlaceholder,
@@ -1128,14 +1170,21 @@ const releaseAttestation = {
   runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
   runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
   testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
+  dormitoryFirstGoldenChainLandingStatus: dormitoryFirstGoldenChainLanding.landingStatus,
+  businessLandingAuthorityRef: dormitoryFirstGoldenChainLandingPath,
+  businessLandingResultRef: dormitoryFirstGoldenChainLandingResultPath,
+  businessLandingProofRef: dormitoryFirstGoldenChainLandingProofPath,
   runtimeConsumptionAllowed: runtimeConsumptionReady ? "test_only_consumption_only" : "false_until_runtime_admission_approved",
   generatedCompileCompleted: false,
   runtimeConsumptionReady,
+  businessFeatureDevelopmentAllowed,
+  dormitoryFirstGoldenChainLandingGoNoGo,
   finalGoNoGo: forcedCurrentStageGoNoGo.finalGoNoGo,
   nextStageAllowed: false
 };
 addEvidence(releaseAttestationPath, releaseAttestation);
 addEvidence(dormitoryRuntimeTestOnlyProofPath, buildDormitoryRuntimeTestOnlyEvidenceProof());
+addEvidence(dormitoryFirstGoldenChainLandingProofPath, buildDormitoryFirstGoldenChainBusinessLandingEvidenceProof());
 addTextEvidence("artifacts/oam/evidence/execution-log.jsonl", executionLogText(digestPlaceholder));
 writeAuxiliaryProofArtifacts();
 refreshCommitAttestationTrackedDigest();
@@ -1198,6 +1247,8 @@ function refreshCommitAttestationTrackedDigest() {
     finalReport[field] = finalReportStatusMatrix[field];
   }
   finalReport.runtimeAdmissionStatusEntry = finalReportStatusMatrix.runtimeAdmissionStatus;
+  finalReport.dormitoryFirstGoldenChainLandingStatusEntry =
+    finalReportStatusMatrix.dormitoryFirstGoldenChainLandingStatus;
   finalReport.finalGoNoGoStatus = finalReportStatusMatrix.finalGoNoGo;
   finalReport.commitAttestation = summarizeCommitAttestation(commitAttestation);
   evidenceGraph.finalReportStatusMatrix = finalReportStatusMatrix;
@@ -1581,6 +1632,10 @@ function binding(kind) {
     runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
     runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
     testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
+    dormitoryFirstGoldenChainLandingStatus: dormitoryFirstGoldenChainLanding.landingStatus,
+    businessLandingAuthorityRef: dormitoryFirstGoldenChainLandingPath,
+    businessLandingResultRef: dormitoryFirstGoldenChainLandingResultPath,
+    businessLandingProofRef: dormitoryFirstGoldenChainLandingProofPath,
     reviewedExecutionHead: generatedCandidateAcceptance.reviewedExecutionHead,
     decisionRecordHead: generatedCandidateAcceptance.decisionRecordHead,
     generatedOutputDigest: generatedCandidateAcceptance.generatedOutputDigest,
@@ -1590,6 +1645,8 @@ function binding(kind) {
     runtimeConsumptionAllowed: runtimeConsumptionReady ? "test_only_consumption_only" : "false_until_runtime_admission_approved",
     generatedCompileCompleted: false,
     runtimeConsumptionReady,
+    businessFeatureDevelopmentAllowed,
+    dormitoryFirstGoldenChainLandingGoNoGo,
     kernelGraphHash,
     evidenceGraphHash: digestPlaceholder,
     finalReportDigest: digestPlaceholder
@@ -1637,9 +1694,15 @@ function evidenceBindingState() {
     runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
     runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
     testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
+    dormitoryFirstGoldenChainLandingStatus: dormitoryFirstGoldenChainLanding.landingStatus,
+    businessLandingAuthorityRef: dormitoryFirstGoldenChainLandingPath,
+    businessLandingResultRef: dormitoryFirstGoldenChainLandingResultPath,
+    businessLandingProofRef: dormitoryFirstGoldenChainLandingProofPath,
     runtimeConsumptionAllowed: runtimeConsumptionReady ? "test_only_consumption_only" : "false_until_runtime_admission_approved",
     generatedCompileCompleted: false,
     runtimeConsumptionReady,
+    businessFeatureDevelopmentAllowed,
+    dormitoryFirstGoldenChainLandingGoNoGo,
     evidenceGraphHash: digestPlaceholder,
     finalReportDigest: digestPlaceholder,
     noGoWhenStale: true,
@@ -2914,6 +2977,120 @@ function buildDormitoryRuntimeAdmissionProofNodes() {
   }];
 }
 
+function buildDormitoryFirstGoldenChainBusinessLandingEvidenceProof() {
+  const semanticProof = readJsonIfExists(dormitoryFirstGoldenChainLandingProofPath) ?? {};
+  return {
+    ...semanticProof,
+    version: "oam.dormitory-first-golden-chain-business-landing-proof.v1",
+    proofType: "dormitory_first_golden_chain_l1_business_landing",
+    status: "PASS",
+    landingStatus: dormitoryFirstGoldenChainLanding.landingStatus,
+    landingScope: dormitoryFirstGoldenChainLanding.landingScope,
+    runtimeAdmissionStatus: dormitoryFirstGoldenChainLanding.runtimeAdmissionStatus,
+    generatedCandidateAcceptedBy00,
+    runtimeConsumptionReady,
+    acceptedSubjectDigest: dormitoryFirstGoldenChainLanding.acceptedSubjectDigest,
+    generatedCandidateSubjectDigest: dormitoryFirstGoldenChainLanding.generatedCandidateSubjectDigest,
+    generatedFieldBindingClosureDigest: dormitoryFirstGoldenChainLanding.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: dormitoryFirstGoldenChainLanding.sourceFieldGapsDecisionDigest,
+    allowedLandingWorkItemTypes: dormitoryFirstGoldenChainLanding.allowedLandingWorkItemTypes,
+    orderedBusinessChain: dormitoryFirstGoldenChainLanding.orderedBusinessChain,
+    consumedGeneratedContracts: dormitoryFirstGoldenChainLanding.consumedGeneratedContracts,
+    businessFeatureDevelopmentAllowed,
+    dormitoryFirstGoldenChainLandingGoNoGo,
+    businessProductionGoNoGo: "NO_GO",
+    productionConfirmAllowed: false,
+    financePostingAllowed: false,
+    dormitoryL2Allowed: false,
+    releaseAuthority: false,
+    businessGoAuthority: true,
+    finalGoNoGo: "NO_GO",
+    binding: binding("dormitory-first-golden-chain-business-landing-proof"),
+    gateSummary,
+    testSummary,
+    coverageSummary
+  };
+}
+
+function buildDormitoryFirstGoldenChainLandingProofNodes() {
+  const id = "OAM-DORMITORY-GOLDEN-CHAIN-BUSINESS-LANDING";
+  const source = [
+    dormitoryFirstGoldenChainLandingPath,
+    dormitoryFirstGoldenChainLandingResultPath,
+    dormitoryFirstGoldenChainLandingProofPath,
+    dormitoryRuntimeAdmissionPath,
+    dormitoryRuntimeAdmissionResultPath,
+    dormitoryRuntimeTestOnlyProofPath
+  ];
+  const dependsOn = [
+    "OAM-DORMITORY-GOLDEN-CHAIN-RUNTIME-ADMISSION",
+    dormitoryFirstGoldenChainLandingPath,
+    dormitoryFirstGoldenChainLandingResultPath,
+    dormitoryFirstGoldenChainLandingProofPath,
+    dormitoryRuntimeAdmissionPath,
+    dormitoryRuntimeAdmissionResultPath,
+    dormitoryRuntimeTestOnlyProofPath
+  ];
+  const payload = {
+    nodeId: id,
+    proofType: "dormitory_first_golden_chain_business_landing_authority",
+    scope: "dormitory_l1_first_golden_chain_only",
+    status: dormitoryFirstGoldenChainLanding.status,
+    landingStatus: dormitoryFirstGoldenChainLanding.landingStatus,
+    runtimeAdmissionStatus: dormitoryFirstGoldenChainLanding.runtimeAdmissionStatus,
+    generatedCandidateAcceptedBy00,
+    runtimeConsumptionReady,
+    businessFeatureDevelopmentAllowed,
+    dormitoryFirstGoldenChainLandingGoNoGo,
+    allowedLandingWorkItemTypes: dormitoryFirstGoldenChainLanding.allowedLandingWorkItemTypes,
+    orderedBusinessChain: dormitoryFirstGoldenChainLanding.orderedBusinessChain,
+    acceptedSubjectDigest: dormitoryFirstGoldenChainLanding.acceptedSubjectDigest,
+    generatedCandidateSubjectDigest: dormitoryFirstGoldenChainLanding.generatedCandidateSubjectDigest,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO",
+    dependsOn
+  };
+  const hash = digestObject(payload);
+  return [{
+    id,
+    type: "dormitory_first_golden_chain_business_landing_authority",
+    proofType: "dormitory_first_golden_chain_business_landing_authority",
+    scope: "dormitory_l1_first_golden_chain_only",
+    source,
+    hash,
+    dependsOn,
+    producedBy: "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+    verifiedBy: [
+      "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "scripts/oam/check-current-evidence-root.mjs"
+    ],
+    binding: dormitoryFirstGoldenChainLandingBinding(id),
+    status: dormitoryFirstGoldenChainLandingGoNoGo === "GO" ? "passed" : "blocked",
+    landingStatus: dormitoryFirstGoldenChainLanding.landingStatus,
+    runtimeAdmissionStatus: dormitoryFirstGoldenChainLanding.runtimeAdmissionStatus,
+    generatedCandidateAcceptedBy00,
+    runtimeConsumptionReady,
+    acceptedSubjectDigest: dormitoryFirstGoldenChainLanding.acceptedSubjectDigest,
+    generatedCandidateSubjectDigest: dormitoryFirstGoldenChainLanding.generatedCandidateSubjectDigest,
+    allowedLandingWorkItemTypes: dormitoryFirstGoldenChainLanding.allowedLandingWorkItemTypes,
+    orderedBusinessChain: dormitoryFirstGoldenChainLanding.orderedBusinessChain,
+    consumedGeneratedContracts: dormitoryFirstGoldenChainLanding.consumedGeneratedContracts,
+    businessFeatureDevelopmentAllowed,
+    dormitoryFirstGoldenChainLandingGoNoGo,
+    businessProductionGoNoGo: "NO_GO",
+    productionConfirmAllowed: false,
+    financePostingAllowed: false,
+    dormitoryL2Allowed: false,
+    releaseAuthority: false,
+    goNoGo: dormitoryFirstGoldenChainLandingGoNoGo,
+    finalGoNoGo: "NO_GO",
+    businessGoAuthority: true,
+    goNoGoImpact: ["dormitoryFirstGoldenChainLandingStatus", "businessFeatureDevelopmentAllowed", "finalGoNoGo"],
+    notesZh: "Dormitory first golden chain L1 business landing authority node; 只开放 RoomSetupConfirm -> BedSetupConfirm -> ResourceReadinessConfirm 三核业务落地，不开放 Finance、Dormitory L2、production_confirm、release 或 final GO。"
+  }];
+}
+
 function generatedCompileCandidateBinding(proofId) {
   return {
     root: "current-oam-trust-closure-v1",
@@ -2970,6 +3147,43 @@ function dormitoryRuntimeAdmissionBinding(proofId) {
     dormitoryL2Allowed: false,
     releaseAuthority: false,
     businessGoAuthority: false,
+    finalGoNoGo: "NO_GO"
+  };
+}
+
+function dormitoryFirstGoldenChainLandingBinding(proofId) {
+  return {
+    root: "current-oam-trust-closure-v1",
+    proofId,
+    sourceCommitSha,
+    evidenceRunSha,
+    evidenceLifecycleType,
+    scope: "dormitory_l1_first_golden_chain_only",
+    bindingStatus: releaseBindingStatus,
+    referenceOnly: releaseEvidenceReferenceOnly,
+    businessLandingAuthorityRef: dormitoryFirstGoldenChainLandingPath,
+    businessLandingResultRef: dormitoryFirstGoldenChainLandingResultPath,
+    businessLandingProofRef: dormitoryFirstGoldenChainLandingProofPath,
+    runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
+    runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
+    runtimeAdmissionStatus: dormitoryFirstGoldenChainLanding.runtimeAdmissionStatus,
+    landingStatus: dormitoryFirstGoldenChainLanding.landingStatus,
+    generatedCandidateAcceptedBy00,
+    runtimeConsumptionReady,
+    acceptedSubjectDigest: dormitoryFirstGoldenChainLanding.acceptedSubjectDigest,
+    generatedCandidateSubjectDigest: dormitoryFirstGoldenChainLanding.generatedCandidateSubjectDigest,
+    generatedFieldBindingClosureDigest: dormitoryFirstGoldenChainLanding.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: dormitoryFirstGoldenChainLanding.sourceFieldGapsDecisionDigest,
+    allowedLandingWorkItemTypes: dormitoryFirstGoldenChainLanding.allowedLandingWorkItemTypes,
+    orderedBusinessChain: dormitoryFirstGoldenChainLanding.orderedBusinessChain,
+    businessFeatureDevelopmentAllowed,
+    dormitoryFirstGoldenChainLandingGoNoGo,
+    businessProductionGoNoGo: "NO_GO",
+    productionConfirmAllowed: false,
+    financePostingAllowed: false,
+    dormitoryL2Allowed: false,
+    releaseAuthority: false,
+    businessGoAuthority: true,
     finalGoNoGo: "NO_GO"
   };
 }
@@ -3680,6 +3894,10 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
   const generatedCandidateAccepted = generatedCandidateAcceptance.generatedCandidateAcceptedBy00 === true;
   const runtimeAdmissionPassed = dormitoryRuntimeAdmission.status === "PASS" &&
     dormitoryRuntimeAdmission.runtimeAdmissionStatus === "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION";
+  const dormitoryFirstGoldenChainLandingPassed = dormitoryFirstGoldenChainLanding.status === "PASS" &&
+    dormitoryFirstGoldenChainLanding.landingStatus === DORMITORY_L1_LANDING_APPROVED_STATUS &&
+    dormitoryFirstGoldenChainLanding.businessFeatureDevelopmentAllowed === true &&
+    dormitoryFirstGoldenChainLanding.dormitoryFirstGoldenChainLandingGoNoGo === "GO";
   const browserL1Passed = realBrowserEvidence.summary.l1?.status === "passed";
   const candidatePassed = candidate.candidateStatus === "PASS";
   const commitCurrent = attestation.bindingStatus === "current" && attestation.candidateBindingStatus === "current";
@@ -3853,6 +4071,28 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
       nextAction: runtimeAdmissionPassed
         ? "仅允许宿舍第一金链 test-only runtime consumption；不得开放业务落地、production、release 或 GO。"
         : "提交 00 runtime admission review；不得直接进入业务开发或生产确认。"
+    }),
+    dormitoryFirstGoldenChainLandingStatus: reportStatusEntry({
+      status: dormitoryFirstGoldenChainLandingPassed ? "PASS" : "NO_GO",
+      inputs: [
+        dormitoryFirstGoldenChainLandingPath,
+        dormitoryFirstGoldenChainLandingResultPath,
+        dormitoryFirstGoldenChainLanding.landingStatus,
+        String(dormitoryFirstGoldenChainLanding.businessFeatureDevelopmentAllowed),
+        dormitoryFirstGoldenChainLanding.dormitoryFirstGoldenChainLandingGoNoGo
+      ],
+      proofRefs: [
+        dormitoryFirstGoldenChainLandingPath,
+        dormitoryFirstGoldenChainLandingResultPath,
+        dormitoryFirstGoldenChainLandingProofPath,
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs"
+      ],
+      blockingReasons: dormitoryFirstGoldenChainLandingPassed ? [] : [
+        "Dormitory L1 first golden chain business landing 尚未批准；businessFeatureDevelopmentAllowed 必须由 dormitory-first-golden-chain-landing.current.json 决定。"
+      ],
+      nextAction: dormitoryFirstGoldenChainLandingPassed
+        ? "仅允许 RoomSetupConfirm -> BedSetupConfirm -> ResourceReadinessConfirm 三核 L1 业务落地；production、Finance、Dormitory L2、release、final GO 仍阻断。"
+        : "提交 00 business landing review；不得把 runtimeConsumptionReady 解释为业务落地 GO。"
     }),
     runtimeConsumptionStatus: reportStatusEntry({
       status: runtimeConsumptionReady ? "PASS" : "NO_GO",

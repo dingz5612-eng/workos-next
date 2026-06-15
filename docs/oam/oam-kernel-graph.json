@@ -10,7 +10,7 @@
     "domainKernel": "docs/oam/kernel-schemas/domain-kernel.schema.json",
     "workItem": "docs/oam/kernel-schemas/workitem.schema.json"
   },
-  "nodeCount": 1318,
+  "nodeCount": 1321,
   "edgeCount": 1102,
   "nodes": [
     {
@@ -13757,6 +13757,43 @@
       "graphBinding": "file.docs/oam/domain-derived-contracts.json"
     },
     {
+      "nodeId": "file.docs/oam/dormitory-first-golden-chain-landing.current.json",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/dormitory-first-golden-chain-landing.current.json",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/dormitory-first-golden-chain-landing-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 dormitory first golden chain business landing authority 被当前权威替代且无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-first-golden-chain-landing-result.json",
+      "replacementPath": "docs/oam/dormitory-first-golden-chain-landing.current.json",
+      "absorbedBy": "docs/oam/dormitory-first-golden-chain-landing.current.json",
+      "removalProofGate": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "deletionConditionZh": "当 dormitory first golden chain business landing authority 被当前权威替代且无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
       "nodeId": "file.docs/oam/dormitory-runtime-admission.current.json",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -20802,6 +20839,42 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/dormitory-first-golden-chain-landing-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 dormitory first golden chain business landing gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-first-golden-chain-landing-result.json",
+      "replacementPath": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "deletionConditionZh": "当 dormitory first golden chain business landing gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "docs/oam/dormitory-first-golden-chain-landing.current.json",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-dormitory-golden-chain-source-package.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -22083,6 +22156,41 @@
       "consumers": [
         "scripts/oam/check-generated-candidate-acceptance.mjs",
         "scripts/oam/lib/generated-candidate-subject.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/lib/dormitory-first-golden-chain-landing.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/lib/dormitory-first-golden-chain-landing.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/dormitory-first-golden-chain-landing-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 dormitory first golden chain business landing 共享模型被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-first-golden-chain-landing-result.json",
+      "replacementPath": "scripts/oam/lib/dormitory-first-golden-chain-landing.mjs",
+      "absorbedBy": "scripts/oam/lib/dormitory-first-golden-chain-landing.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "deletionConditionZh": "当 dormitory first golden chain business landing 共享模型被当前权威替代且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "scripts/oam/check-current-oam-release-attestation.mjs"
       ]
     },
     {

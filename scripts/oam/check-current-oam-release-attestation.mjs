@@ -16,6 +16,12 @@ import {
   DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH,
   validateDormitoryRuntimeAdmissionAuthority
 } from "./lib/dormitory-runtime-admission.mjs";
+import {
+  DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_PATH,
+  DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_RESULT_PATH,
+  DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_PROOF_PATH,
+  validateDormitoryFirstGoldenChainLandingAuthority
+} from "./lib/dormitory-first-golden-chain-landing.mjs";
 
 const root = process.cwd();
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
@@ -28,6 +34,9 @@ const generatedCandidateAcceptanceResultPath = GENERATED_CANDIDATE_ACCEPTANCE_RE
 const dormitoryRuntimeAdmissionPath = DORMITORY_RUNTIME_ADMISSION_PATH;
 const dormitoryRuntimeAdmissionResultPath = DORMITORY_RUNTIME_ADMISSION_RESULT_PATH;
 const dormitoryRuntimeTestOnlyProofPath = DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH;
+const dormitoryFirstGoldenChainLandingPath = DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_PATH;
+const dormitoryFirstGoldenChainLandingResultPath = DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_RESULT_PATH;
+const dormitoryFirstGoldenChainLandingProofPath = DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_PROOF_PATH;
 const pendingExternalAttestation = "pending_external_attestation";
 const sha256DigestPattern = /^sha256:[a-f0-9]{64}$/;
 const ciRunId = env("GITHUB_RUN_ID") || "local";
@@ -43,6 +52,9 @@ const generatedCandidateAcceptanceResult = readJson(generatedCandidateAcceptance
 const dormitoryRuntimeAdmission = readJson(dormitoryRuntimeAdmissionPath);
 const dormitoryRuntimeAdmissionResult = readJson(dormitoryRuntimeAdmissionResultPath);
 const dormitoryRuntimeTestOnlyProof = readJson(dormitoryRuntimeTestOnlyProofPath);
+const dormitoryFirstGoldenChainLanding = readJson(dormitoryFirstGoldenChainLandingPath);
+const dormitoryFirstGoldenChainLandingResult = readJson(dormitoryFirstGoldenChainLandingResultPath);
+const dormitoryFirstGoldenChainLandingProof = readJson(dormitoryFirstGoldenChainLandingProofPath);
 const generatedFieldBindingClosureResult = readJson(FIELD_BINDING_CLOSURE_RESULT_PATH);
 const generatedFieldBindings = readJson(FIELD_BINDINGS_GENERATED_PATH);
 const generatedFieldBindingClosure = buildDormitoryGeneratedFieldBindingClosure({ root });
@@ -52,6 +64,11 @@ const generatedCandidateAcceptancePredicate = validateGeneratedCandidateAcceptan
 });
 const dormitoryRuntimeAdmissionPredicate = validateDormitoryRuntimeAdmissionAuthority({
   authority: dormitoryRuntimeAdmission,
+  root,
+  writeProof: false
+});
+const dormitoryFirstGoldenChainLandingPredicate = validateDormitoryFirstGoldenChainLandingAuthority({
+  authority: dormitoryFirstGoldenChainLanding,
   root,
   writeProof: false
 });
@@ -70,6 +87,12 @@ checkRequiredFields(attestation, "release attestation", [
   "workspaceDirtyAtGeneration",
   "zipArtifactDigest",
   "releaseAuthority",
+  "dormitoryFirstGoldenChainLandingStatus",
+  "businessLandingAuthorityRef",
+  "businessLandingResultRef",
+  "businessLandingProofRef",
+  "businessFeatureDevelopmentAllowed",
+  "dormitoryFirstGoldenChainLandingGoNoGo",
   "finalGoNoGo",
   "nextStageAllowed"
 ]);
@@ -88,6 +111,12 @@ checkRequiredFields(releaseObject, "release evidence object", [
   "bindingStatus",
   "zipArtifactDigest",
   "releaseAuthority",
+  "dormitoryFirstGoldenChainLandingStatus",
+  "businessLandingAuthorityRef",
+  "businessLandingResultRef",
+  "businessLandingProofRef",
+  "businessFeatureDevelopmentAllowed",
+  "dormitoryFirstGoldenChainLandingGoNoGo",
   "finalGoNoGo",
   "nextStageAllowed"
 ]);
@@ -220,15 +249,37 @@ if (finalReport?.runtimeAdmissionStatus !== dormitoryRuntimeAdmissionPredicate.r
   releaseObject?.testOnlyConsumptionProofRef !== dormitoryRuntimeTestOnlyProofPath) {
   violations.push("release attestation, release object, and final report must mirror dormitory runtime admission authority.");
 }
+if (dormitoryFirstGoldenChainLandingPredicate.status !== "PASS" ||
+  dormitoryFirstGoldenChainLandingResult?.status !== "PASS" ||
+  dormitoryFirstGoldenChainLandingProof?.status !== "PASS") {
+  violations.push("release attestation must only reference a PASS dormitory first golden chain landing checker and proof.");
+}
+if (finalReport?.dormitoryFirstGoldenChainLandingStatus !== dormitoryFirstGoldenChainLandingPredicate.landingStatus ||
+  finalReport?.businessFeatureDevelopmentAllowed !== dormitoryFirstGoldenChainLandingPredicate.businessFeatureDevelopmentAllowed ||
+  finalReport?.dormitoryFirstGoldenChainLandingGoNoGo !== dormitoryFirstGoldenChainLandingPredicate.dormitoryFirstGoldenChainLandingGoNoGo ||
+  attestation?.dormitoryFirstGoldenChainLandingStatus !== dormitoryFirstGoldenChainLandingPredicate.landingStatus ||
+  releaseObject?.dormitoryFirstGoldenChainLandingStatus !== dormitoryFirstGoldenChainLandingPredicate.landingStatus ||
+  attestation?.businessLandingAuthorityRef !== dormitoryFirstGoldenChainLandingPath ||
+  releaseObject?.businessLandingAuthorityRef !== dormitoryFirstGoldenChainLandingPath ||
+  attestation?.businessLandingResultRef !== dormitoryFirstGoldenChainLandingResultPath ||
+  releaseObject?.businessLandingResultRef !== dormitoryFirstGoldenChainLandingResultPath ||
+  attestation?.businessLandingProofRef !== dormitoryFirstGoldenChainLandingProofPath ||
+  releaseObject?.businessLandingProofRef !== dormitoryFirstGoldenChainLandingProofPath ||
+  attestation?.businessFeatureDevelopmentAllowed !== dormitoryFirstGoldenChainLandingPredicate.businessFeatureDevelopmentAllowed ||
+  releaseObject?.businessFeatureDevelopmentAllowed !== dormitoryFirstGoldenChainLandingPredicate.businessFeatureDevelopmentAllowed ||
+  attestation?.dormitoryFirstGoldenChainLandingGoNoGo !== dormitoryFirstGoldenChainLandingPredicate.dormitoryFirstGoldenChainLandingGoNoGo ||
+  releaseObject?.dormitoryFirstGoldenChainLandingGoNoGo !== dormitoryFirstGoldenChainLandingPredicate.dormitoryFirstGoldenChainLandingGoNoGo) {
+  violations.push("release attestation, release object, and final report must mirror dormitory first golden chain landing authority.");
+}
 if (generatedCandidateAcceptancePredicate.generatedCandidateAcceptedBy00 === true &&
   (attestation?.releaseAuthority !== false || releaseObject?.releaseAuthority !== false || finalReport?.releaseAuthority !== false)) {
   violations.push("generated candidate acceptance must not grant releaseAuthority.");
 }
 if (dormitoryRuntimeAdmissionPredicate.runtimeConsumptionReady === true &&
   (attestation?.releaseAuthority !== false || releaseObject?.releaseAuthority !== false || finalReport?.releaseAuthority !== false ||
-    finalReport?.businessFeatureDevelopmentAllowed !== false || finalReport?.productionConfirmAllowed !== false ||
+    finalReport?.productionConfirmAllowed !== false ||
     finalReport?.finalGoNoGo !== "NO_GO")) {
-  violations.push("runtime admission must not grant business development, production confirmation, releaseAuthority, or final GO.");
+  violations.push("runtime admission must not grant production confirmation, releaseAuthority, or final GO.");
 }
 if (attestation?.nextStageAllowed !== false || releaseObject?.nextStageAllowed !== false || finalReport?.nextStageAllowed !== false) {
   violations.push("release attestation must keep nextStageAllowed=false.");

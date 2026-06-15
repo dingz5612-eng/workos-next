@@ -324,6 +324,7 @@ Invoke-Gate node scripts/oam/check-s5-semantic-digest-idempotency.mjs
 Invoke-Gate node scripts/oam/check-generated-candidate-acceptance.mjs --self-test
 Invoke-Gate node scripts/oam/check-generated-candidate-acceptance.mjs
 Invoke-Gate node scripts/oam/check-dormitory-runtime-admission.mjs
+Invoke-Gate node scripts/oam/check-dormitory-first-golden-chain-landing.mjs
 Write-GateReport -RunStatus "completed" -Status "passed" -CurrentStage "completed" -CurrentGate ""
 Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs -RecordResult $false
 Invoke-Gate node scripts/oam/check-current-evidence-root.mjs -RecordResult $false

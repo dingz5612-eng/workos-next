@@ -100,10 +100,19 @@ if (snapshotOnly) {
     }
     if ((finalReport.runtimeConsumptionReady === true &&
       finalReport.runtimeAdmissionStatus !== "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION") ||
-      finalReport.businessFeatureDevelopmentAllowed !== false ||
       finalReport.releaseAuthority !== false ||
       finalReport.finalGoNoGo !== "NO_GO") {
-      failures.push("phase1 snapshot observed forbidden runtime/business/release/GO state.");
+      failures.push("phase1 snapshot observed forbidden runtime/release/GO state.");
+    }
+    if (finalReport.businessFeatureDevelopmentAllowed === true &&
+      (finalReport.dormitoryFirstGoldenChainLandingStatus !== "APPROVED_DORMITORY_L1_FIRST_GOLDEN_CHAIN" ||
+        finalReport.dormitoryFirstGoldenChainLandingGoNoGo !== "GO" ||
+        finalReport.businessProductionGoNoGo !== "NO_GO" ||
+        finalReport.dormitoryL2GoNoGo !== "NO_GO" ||
+        finalReport.productionConfirmAllowed !== false ||
+        finalReport.releaseAuthority !== false ||
+        finalReport.finalGoNoGo !== "NO_GO")) {
+      failures.push("phase1 snapshot observed businessFeatureDevelopmentAllowed=true without S8 L1 business landing authority.");
     }
   }
   writeJson(snapshotPath, {

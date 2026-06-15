@@ -328,7 +328,6 @@ function checkNoForbiddenStateEscapes() {
       if (!(id === "final-report" &&
         finalReport?.runtimeAdmissionStatus === "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION" &&
         finalReport?.runtimeConsumptionReady === true &&
-        finalReport?.businessFeatureDevelopmentAllowed === false &&
         finalReport?.productionConfirmAllowed === false &&
         finalReport?.releaseAuthority === false &&
         finalReport?.finalGoNoGo === "NO_GO")) {
@@ -339,7 +338,17 @@ function checkNoForbiddenStateEscapes() {
       failures.push(`${id} must not set generatedContractStatus10B=COMPLETED.`);
     }
     if (/businessFeatureDevelopmentAllowed"\s*:\s*true|businessFeatureDevelopmentAllowed:\s*true/.test(text)) {
-      failures.push(`${id} must not set businessFeatureDevelopmentAllowed=true.`);
+      if (!(id === "final-report" &&
+        finalReport?.dormitoryFirstGoldenChainLandingStatus === "APPROVED_DORMITORY_L1_FIRST_GOLDEN_CHAIN" &&
+        finalReport?.businessFeatureDevelopmentAllowed === true &&
+        finalReport?.dormitoryFirstGoldenChainLandingGoNoGo === "GO" &&
+        finalReport?.businessProductionGoNoGo === "NO_GO" &&
+        finalReport?.dormitoryL2GoNoGo === "NO_GO" &&
+        finalReport?.productionConfirmAllowed === false &&
+        finalReport?.releaseAuthority === false &&
+        finalReport?.finalGoNoGo === "NO_GO")) {
+        failures.push(`${id} must not set businessFeatureDevelopmentAllowed=true.`);
+      }
     }
   }
 
@@ -357,14 +366,23 @@ function checkNoForbiddenStateEscapes() {
     }
     if (finalReport.runtimeConsumptionReady === true) {
       if (finalReport.runtimeAdmissionStatus !== "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION" ||
-        finalReport.businessFeatureDevelopmentAllowed !== false ||
         finalReport.productionConfirmAllowed !== false ||
         finalReport.releaseAuthority !== false ||
         finalReport.finalGoNoGo !== "NO_GO") {
-        failures.push("Final Report runtimeConsumptionReady=true requires S7 test-only runtime admission while keeping business/production/release/GO blocked.");
+        failures.push("Final Report runtimeConsumptionReady=true requires S7 test-only runtime admission while keeping production/release/GO blocked.");
       }
     } else if (finalReport.runtimeConsumptionReady !== false) {
       failures.push("Final Report runtimeConsumptionReady must be boolean true or false.");
+    }
+    if (finalReport.businessFeatureDevelopmentAllowed === true &&
+      (finalReport.dormitoryFirstGoldenChainLandingStatus !== "APPROVED_DORMITORY_L1_FIRST_GOLDEN_CHAIN" ||
+        finalReport.dormitoryFirstGoldenChainLandingGoNoGo !== "GO" ||
+        finalReport.businessProductionGoNoGo !== "NO_GO" ||
+        finalReport.dormitoryL2GoNoGo !== "NO_GO" ||
+        finalReport.productionConfirmAllowed !== false ||
+        finalReport.releaseAuthority !== false ||
+        finalReport.finalGoNoGo !== "NO_GO")) {
+      failures.push("Final Report businessFeatureDevelopmentAllowed=true requires S8 L1 business landing while keeping production, Dormitory L2, release, and final GO blocked.");
     }
     if (finalReport.businessProductionGoNoGo !== "NO_GO" || finalReport.dormitoryL2GoNoGo !== "NO_GO") {
       failures.push("Final Report businessProductionGoNoGo and dormitoryL2GoNoGo must remain NO_GO.");
