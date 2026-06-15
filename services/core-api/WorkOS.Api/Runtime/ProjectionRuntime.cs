@@ -55,7 +55,7 @@ public sealed partial class ProjectionRuntime
     }
 
     public WorkspaceProjection StartResourceSetup() =>
-        StartWorkspace("W-STAY-RESOURCE");
+        StartWorkspace(AcceptedCapabilityRuntimeProjection.WorkspaceId);
 
     public WorkspaceProjection StartWorkspace(string templateWorkspaceId)
     {

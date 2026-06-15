@@ -6,6 +6,7 @@ import { completedRecordActionPolicy } from "../operationRecordPolicy.js";
 import { operationFieldId } from "../operationFieldKernel.js";
 import { lensIdsForWorkspace, lensPreview, lensTitle } from "../runtimeLensCatalog.js";
 import { buildOperationActionState } from "../operationActionState.js";
+import { FIRST_GOLDEN_CHAIN_STEPS, defaultBedTypeForCount, isBedSetupCardId, isFirstGoldenChainWorkspaceId, runtimeWorkItemMatchesCapabilityCard } from "../capabilityProjection.js";
 import { activeCardForWorkspace, activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { checkoutServiceMobilePanel, checkoutServiceOperationAddon } from "./checkoutServiceView.js";
 import { EvidenceStateVM, OperationStepRail } from "./experienceComponents.js";
@@ -79,7 +80,7 @@ export function workspaceView(ctx) {
 function operationAdmissionContext(workspace = {}, card = {}, ctx = {}) {
   const workItem = (ctx.state.runtimeStore?.operationWorkItems || []).find((item) =>
     item.workspaceId === workspace.id &&
-    (item.cardId === card.id || item.sourceCardId === card.id || item.workspaceCardId === card.id));
+    runtimeWorkItemMatchesCapabilityCard(item, card.id));
   return {
     ...(workItem || {}),
     workspace,
@@ -119,6 +120,12 @@ export function completedWorkspaceRecord(item, card, ctx) {
   const fieldsMissing = fieldRows.length > 0 && fieldRows.every((row) => !row.hasValue);
   const recordEvidence = evidenceForRecord(item, selectedStep);
   const evidenceText = recordEvidence.length ? recordEvidence.map((entry) => ctx.localTerm(entry)).join(" · ") : ctx.tr("noRequiredEvidence");
+  const firstGoldenChainCompleted = isFirstGoldenChainWorkspaceId(item.id) &&
+    FIRST_GOLDEN_CHAIN_STEPS.every((step) =>
+      isTerminalCardStatus((item.cards || []).find((candidate) => candidate.id === step.cardId)?.status));
+  const firstGoldenChainCompletionBanner = firstGoldenChainCompleted
+    ? `<section class="operation-state" data-capability-completion="Dormitory.FirstGoldenChain"><b>第一金链内测完成</b><p>仅代表 test-only runtime consumption proof 完成；不代表上线、发布或最终放行。</p></section>`
+    : "";
   return `<section class="completed-record-control" data-component="completedWorkspaceRecord" data-surface="completed-workspace-record" data-lifecycle-state="${ctx.escapeAttr(selectedStep.status)}" data-admission-decision="visible_readonly_completed" data-runtime-decision="work_item_terminal:${ctx.escapeAttr(selectedStep.status)}">
     ${OperationStepRail(item, selectedStep, ctx, {
       surface: "completed-workspace-route",
@@ -135,6 +142,7 @@ export function completedWorkspaceRecord(item, card, ctx) {
         <b>${ctx.tr(selectedStep.status)}</b>
         <p>${ctx.tr("completedReviewBeforeCorrection")}</p>
       </section>
+      ${firstGoldenChainCompletionBanner}
       ${fieldRows.length ? `<section class="completed-record-facts">
       <b>${ctx.tr("businessFields")}</b>
       ${fieldsMissing ? `<p class="record-sync-warning">${ctx.tr("recordFieldsNotSynced")}</p>` : ""}
@@ -476,7 +484,7 @@ export function operationControl(field, item, card, disabled, ctx) {
   if (carriedReadonly && (forcedReadonly || fieldState.source === "caseContext")) {
     return contextCarriedControl(field, fieldId, fieldState, labelClass, label, required, invalid, ctx);
   }
-  if (card.id === "bedSetup" && fieldId === "bedLabels") {
+  if (isBedSetupCardId(card.id) && fieldId === "bedLabels") {
     return bedLayoutDerivedControl(field, item, card, labelClass, label, value, required, invalid, disabled, help, ctx);
   }
   if (kind === "searchSelect") return `<label class="${labelClass} search-select"><span>${label} · ${ctx.tr("searchableSelect")}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" list="${ctx.escapeAttr(fieldId)}Options" value="${ctx.escapeAttr(value)}" ${required} ${invalid} ${disabled} /><datalist id="${ctx.escapeAttr(fieldId)}Options">${options.map((entry) => `<option value="${ctx.escapeAttr(entry.value)}" label="${ctx.escapeAttr(entry.label)}">`).join("")}</datalist>${help ? `<small>${help}</small>` : ""}</label>`;
@@ -519,7 +527,7 @@ function bedLayoutDerivedControl(field, item, card, labelClass, label, value, re
   const bedCountField = (card.fields?.business || []).find((candidate) => operationFieldId(candidate) === "bedCount") || { id: "bedCount", label: { "zh-CN": "床位数" } };
   const bedTypeField = (card.fields?.business || []).find((candidate) => operationFieldId(candidate) === "bedType") || { id: "bedType", label: { "zh-CN": "床铺生成方式" } };
   const bedCount = operationFieldState(bedCountField, item, card, ctx).value || values.bedCount || "";
-  const pattern = operationFieldState(bedTypeField, item, card, ctx).value || "bunk_pair";
+  const pattern = operationFieldState(bedTypeField, item, card, ctx).value || defaultBedTypeForCount(bedCount);
   const labelsValue = value || generatedBedLabelsForCount(bedCount);
   const layout = bedLayoutForLabels(labelsValue, pattern, ctx.state.lang);
   const layoutValue = serializeBedLayout(layout);
@@ -547,26 +555,26 @@ function contextCarriedControl(field, fieldId, fieldState, labelClass, label, re
 
 function operationFieldLabel(field, fieldId, card, ctx, requiredForOperation = field.required) {
   const required = requiredForOperation ? `<em class="required-mark">${ctx.tr("requiredMark")}</em>` : "";
-  if (card?.id === "bedSetup" && fieldId === "bedType") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedType") {
     return `${ctx.tr("bedTypeTemplateLabel")}${required}`;
   }
-  if (card?.id === "bedSetup" && fieldId === "bedLabels") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedLabels") {
     return `${ctx.tr("bedLayoutPreviewLabel")}${required}`;
   }
-  if (card?.id === "bedSetup" && fieldId === "bedStatus") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedStatus") {
     return `${ctx.tr("bedStatusTemplateLabel")}${required}`;
   }
   return `${ctx.localTerm(field)}${required}`;
 }
 
 function operationFieldHelp(field, fieldId, card, ctx) {
-  if (card?.id === "bedSetup" && fieldId === "bedType") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedType") {
     return ctx.tr("bedTypeTemplateHelp");
   }
-  if (card?.id === "bedSetup" && fieldId === "bedLabels") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedLabels") {
     return ctx.tr("bedLayoutGeneratedHelp");
   }
-  if (card?.id === "bedSetup" && fieldId === "bedStatus") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedStatus") {
     return ctx.tr("bedStatusTemplateHelp");
   }
   return ctx.tx(field.help);

@@ -1,5 +1,6 @@
 import { bedLayoutForCount, labelForBedType, normalizeBedTypePattern } from "./controls/bedLabelControls.js";
 import { optionsForField } from "./controls/fieldControls.js";
+import { defaultBedTypeForCount, generatedFieldLabel, generatedFieldOrderForCard, isBedSetupCardId } from "./capabilityProjection.js";
 
 const operationFieldAliases = {
   "楼栋": "buildingName",
@@ -10,6 +11,8 @@ const operationFieldAliases = {
   "房间类型": "roomType",
   "容量": "capacity",
   "床位数": "bedCount",
+  "capacity": "capacity",
+  "楼层": "floor",
   "bedId": "bedId",
   "bedNo": "bedNo",
   "bedLabel": "bedLabel",
@@ -43,6 +46,7 @@ const operationFieldAliases = {
   "生效日期": "effectiveFrom",
   "价格备注": "rateNote",
   "可售状态": "availabilityStatus",
+  "就绪状态": "readinessState",
   "紧急程度": "urgency",
   "负责人": "ownerName",
   "是否阻断可售": "blocksAvailability",
@@ -578,14 +582,16 @@ export function taskFieldForId(card, fieldId, ctx) {
 }
 
 export function syntheticTaskField(fieldId, ctx = {}) {
+  const generatedLabel = generatedFieldLabel(fieldId, ctx.state?.lang || "zh-CN");
   return {
     id: fieldId,
     label: {
-      "zh-CN": taskFallbackLabels["zh-CN"][fieldId] || fieldId,
-      "ru-RU": taskFallbackLabels["ru-RU"][fieldId] || taskFallbackLabels["zh-CN"][fieldId] || fieldId,
-      "ky-KG": taskFallbackLabels["ky-KG"][fieldId] || taskFallbackLabels["zh-CN"][fieldId] || fieldId
+      "zh-CN": taskFallbackLabels["zh-CN"][fieldId] || generatedFieldLabel(fieldId, "zh-CN") || fieldId,
+      "ru-RU": taskFallbackLabels["ru-RU"][fieldId] || generatedFieldLabel(fieldId, "ru-RU") || taskFallbackLabels["zh-CN"][fieldId] || fieldId,
+      "ky-KG": taskFallbackLabels["ky-KG"][fieldId] || generatedFieldLabel(fieldId, "ky-KG") || taskFallbackLabels["zh-CN"][fieldId] || fieldId
     },
-    ui: fieldId === "bedType" ? { control: "select", optionSet: "bunkType", defaultValue: "bunk_pair" } : {}
+    ui: fieldId === "bedType" ? { control: "select", optionSet: "bunkType", defaultValue: "whole" } : {},
+    generatedLabel
   };
 }
 
@@ -610,10 +616,11 @@ export function taskFieldAliases(fieldId, field, ctx) {
 }
 
 export function taskDisplayLabel(field, fieldId, card, ctx) {
-  if (card?.id === "bedSetup" && fieldId === "bedType") return ctx.tr?.("bedTypeTemplateLabel") || taskFallbackLabels["zh-CN"].bedType;
-  if (card?.id === "bedSetup" && fieldId === "bedLabels") return ctx.tr?.("bedLayoutPreviewLabel") || taskFallbackLabels["zh-CN"].bedLabels;
+  const generated = generatedFieldLabel(fieldId, ctx.state?.lang || "zh-CN");
+  if (isBedSetupCardId(card?.id) && fieldId === "bedType") return ctx.tr?.("bedTypeTemplateLabel") || taskFallbackLabels["zh-CN"].bedType;
+  if (isBedSetupCardId(card?.id) && fieldId === "bedLabels") return ctx.tr?.("bedLayoutPreviewLabel") || taskFallbackLabels["zh-CN"].bedLabels;
   if (fieldId === "capacity") return taskFallbackLabels[ctx.state?.lang]?.bedCount || taskFallbackLabels["zh-CN"].bedCount;
-  return localizedFieldText(field?.label, ctx) || taskFallbackLabels[ctx.state?.lang]?.[fieldId] || taskFallbackLabels["zh-CN"][fieldId] || fieldId;
+  return localizedFieldText(field?.label, ctx) || taskFallbackLabels[ctx.state?.lang]?.[fieldId] || taskFallbackLabels["zh-CN"][fieldId] || generated || fieldId;
 }
 
 export function taskDisplayValue(field, fieldId, value, ctx) {
@@ -625,13 +632,14 @@ export function taskDisplayValue(field, fieldId, value, ctx) {
 export function bedLayoutPreviewValue(count, pattern, ctx) {
   const parsed = Number(count);
   if (!Number.isFinite(parsed) || parsed <= 0) return "";
-  return bedLayoutForCount(parsed, pattern, ctx.state?.lang || "zh-CN")
+  return bedLayoutForCount(parsed, pattern || defaultBedTypeForCount(parsed), ctx.state?.lang || "zh-CN")
     .map((entry) => `${entry.label} · ${entry.typeLabel || labelForBedType(entry.type, ctx.state?.lang || "zh-CN")}`)
     .join(" / ");
 }
 
 export function preferredTaskFieldIds(cardId = "") {
-  return preferredFieldsByCard[cardId] || [];
+  const generatedOrder = generatedFieldOrderForCard(cardId);
+  return generatedOrder.length ? generatedOrder : preferredFieldsByCard[cardId] || [];
 }
 
 export function isLowValueTaskField(field, ctx) {

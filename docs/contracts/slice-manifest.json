@@ -2,6 +2,14 @@
   "version": "0.14.0-accommodation-workos",
   "slices": [
     {
+      "id": "Dormitory.FirstGoldenChain",
+      "workspaceId": "Dormitory.FirstGoldenChain",
+      "cards": ["Dorm.RoomSetupConfirm", "Dorm.BedSetupConfirm", "Dorm.ResourceReadinessConfirm"],
+      "events": ["Dorm.RoomSetupConfirmed", "Dorm.BedSetupConfirmed", "Dorm.ResourceReadinessConfirmed"],
+      "ownsAggregates": ["AcceptedCapabilityRuntimeProjection"],
+      "status": "runtime-test-admitted"
+    },
+    {
       "id": "Accommodation.ResourceSetup",
       "workspaceId": "W-STAY-RESOURCE",
       "cards": ["roomSetup", "bedSetup", "rateSetup", "roomReadiness", "roomBlock", "roomRelease"],

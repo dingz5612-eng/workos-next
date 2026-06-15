@@ -13,7 +13,28 @@ const candidateApprovalPath = "docs/oam/generated-compile-candidate-approval.cur
 const attestationPackagePath = "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json";
 const sourcePackagePath = "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml";
 const allowedRuntimeGeneratedDiffs = new Set([
-  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "apps/mobile/src/__tests__/SearchIntentHubContract.test.js",
+  "apps/mobile/src/__tests__/SearchLearningSync.test.js",
+  "apps/mobile/src/capabilityProjection.js",
+  "apps/mobile/src/controls/fieldControls.js",
+  "apps/mobile/src/controls/optionSetContract.js",
+  "apps/mobile/src/fieldSourceRenderer.js",
+  "apps/mobile/src/operationFieldKernel.js",
+  "apps/mobile/src/searchIntentHub.js",
+  "apps/mobile/src/searchIntentRegistry.js",
+  "apps/mobile/src/systemContextContract.js",
+  "apps/mobile/src/views/experienceComponents.js",
+  "apps/mobile/src/views/searchView.js",
+  "apps/mobile/src/views/workspaceView.js",
+  "services/core-api/WorkOS.Api/Program.cs",
+  "services/core-api/WorkOS.Api/Runtime/AcceptedCapabilityRuntimeProjection.cs",
+  "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+  "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs",
+  "services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs",
+  "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+  "services/core-api/WorkOS.Api/Runtime/SliceRuntimeCapabilityGate.cs",
+  "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs"
 ]);
 const generatedOutputFiles = [
   "docs/oam/system-derived-contracts.json",

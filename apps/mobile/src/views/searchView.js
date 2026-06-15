@@ -1,6 +1,7 @@
 import { selectRuntimeWorkspaces, selectSearchSurfaceResults, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
 import { buildSearchResultVM, rankSearchResults } from "../searchIntentHub.js";
 import { isAccommodationResourceSetupQuery, searchIntentSuggestions, searchIntentTerms } from "../searchIntentRegistry.js";
+import { capabilityCommandCatalog } from "../capabilityProjection.js";
 import { buildBusinessAnchor } from "../businessAnchorKernel.js";
 import { BusinessSummaryHeader, BusinessTaskOverview } from "./experienceComponents.js";
 
@@ -52,6 +53,9 @@ function workosSearchSections(ctx) {
   const workspaceResults = query ? selectSearchSurfaceResults(state, query).filter((workspace) => workspaceMatchesQuery(workspace, query, ctx)) : workspaces;
   const activeWorkspaceResults = workspaceResults.filter((workspace) => !isTerminalWorkspace(workspace));
   const commands = activeCommands(workspaces, ctx);
+  if (query && isAccommodationResourceSetupQuery(query)) {
+    return [section("activeCommands", commands)];
+  }
   const recoveryItems = unfinishedRecoveryItems(queue, ctx);
   const recoveryKeys = new Set(recoveryItems.map(queueEntryKey));
   const queueWithoutRecovery = queue.filter((item) => !recoveryKeys.has(queueEntryKey(item)));
@@ -186,11 +190,8 @@ function searchKernelAdmissionForCommand(ctx = {}, command = {}) {
 
 function dormitoryCommandCatalog(ctx) {
   return [
-    command("W-STAY-RESOURCE", "roomSetup", {
-      title: { "zh-CN": "新增住宿房源", "ru-RU": "Добавить комнату", "ky-KG": "Бөлмө кошуу" },
-      subtitle: { "zh-CN": "先录房号和床位数，价格和可租状态后面再补。", "ru-RU": "Сначала внесите номер комнаты и число коек. Тарифы и готовность заполните дальше.", "ky-KG": "Алгач бөлмө номерин жана койка санын жазыңыз. Баа жана даярдык кийин толтурулат." },
-      nextAction: { "zh-CN": "先填房号", "ru-RU": "Начать с номера комнаты", "ky-KG": "Бөлмө номеринен баштоо" }
-    }, searchIntentTerms("accommodationResourceSetup")),
+    ...capabilityCommandCatalog().map((item) =>
+      command(item.templateWorkspaceId, item.firstCardId, item, searchIntentTerms("accommodationResourceSetup"))),
     command("W-STAY-LEAD-RESERVATION", "leadCapture", {
       title: { "zh-CN": "登记咨询和预订", "ru-RU": "Записать заявку и бронь", "ky-KG": "Суроо жана бронь каттоо" },
       subtitle: { "zh-CN": "先把来访咨询记清楚，再决定预订、取消或转入住。", "ru-RU": "Сначала зафиксируйте обращение, затем бронь, отмена или заселение.", "ky-KG": "Адегенде кайрылууну так жазыңыз, анан бронь, жокко чыгаруу же кирүү." },
@@ -428,7 +429,7 @@ function workspaceMatchesQuery(workspace = {}, query = "", ctx = {}) {
     workspace.cards?.map((card) => `${card.id} ${tx(card.title, ctx)} ${card.status || ""}`).join(" ")
   ].join(" ").toLocaleLowerCase();
   if (isAccommodationResourceSetupQuery(normalized)) {
-    return /(roomsetup|房间配置|房间床位配置|创建住宿资源|住宿资源建档)/i.test(text);
+    return /(Dorm\.RoomSetupConfirm|roomsetup|房间配置|房间床位配置|房间配置确认)/i.test(text);
   }
   if ((workspace._score || workspace.score || 0) > 0) return true;
   return text.includes(normalized)

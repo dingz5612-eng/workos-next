@@ -375,5 +375,12 @@
       "nextActionZh": "补空态、证据缺失、只读完成态、结算阻断和异常费用展示矩阵。",
       "riskDescriptionZh": "若退住服务页分支缺测，用户可能把未满足条件的退住或结算动作视为可提交。"
     }
-  ]
+  ],
+  "sourceFileDeferrals": {
+    "apps/mobile/src/capabilityProjection.js": {
+      "allowDeferral": true,
+      "deferralReasonZh": "允许短期暂缓；该文件是第一金链 accepted capability bundle 到移动端展示的只读投影适配器，本轮已有 OAM gate 和真实浏览器审计覆盖主闭环。",
+      "nextActionZh": "下一轮补充 capabilityProjection 专用单测，覆盖三步顺序、字段来源、旧入口隔离和 bundle digest 不匹配降级。"
+    }
+  }
 }

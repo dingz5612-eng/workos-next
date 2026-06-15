@@ -58,6 +58,48 @@
     "releaseAuthority",
     "finalGoNoGo",
     "Finance posting",
-    "Dormitory L2"
-  ]
+    "Dormitory L2",
+    "test-only runtime admission is not business landing",
+    "local in-memory browser PASS is not CI/Postgres/production-like PASS"
+  ],
+  "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+  "runtimeConsumedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+  "runtimeConsumedFilesDigestList": [
+    {
+      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "digest": "sha256:cab56e48544f8bdfeaeaba8de7a2782d9574fef914314048a4a678badef80a69"
+    }
+  ],
+  "acceptedRuntimeConsumableDigests": [
+    {
+      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "digest": "sha256:cab56e48544f8bdfeaeaba8de7a2782d9574fef914314048a4a678badef80a69"
+    }
+  ],
+  "bundleDigestMatch": true,
+  "runtimeConsumptionReadyAuthority": "runtimeConsumedBundleDigest_equals_acceptedGeneratedBundleDigest",
+  "environmentProfileId": "local.in_memory.browser_evidence",
+  "environmentProfileRef": "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
+  "environmentProfile": {
+    "environmentProfileId": "local.in_memory.browser_evidence",
+    "environmentKind": "local",
+    "runtimeStorageMode": "in_memory",
+    "backgroundWorkerMode": "local_development_hosted",
+    "browserMode": "playwright_chromium_headless",
+    "apiBaseUrl": "http://127.0.0.1:5191",
+    "mobileBaseUrl": "http://127.0.0.1:5175",
+    "ciRunId": null,
+    "localRunId": "local",
+    "artifactDigest": "local_candidate_reference_only",
+    "workspaceDirtyStatus": "dirty_at_generation_allowed_local_only",
+    "evidenceSemantics": {
+      "localTestOnlyEvidence": true,
+      "ciEvidence": false,
+      "postgresEvidence": false,
+      "productionLikeEvidence": false,
+      "businessLandingEvidence": false,
+      "productionConfirmationEvidence": false,
+      "releaseEvidence": false
+    }
+  }
 }

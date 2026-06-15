@@ -501,6 +501,9 @@ function validateStartAdapterMaps(registrySource, registryContract, failures) {
     if (definition.definitionMode !== "oam-certification-current") {
       failures.push(`StartAdapterDefinitionIds ${key} must reference oam-certification-current definition, actual ${definition.definitionMode}.`);
     }
+    if (isCapabilityStartAdapterKey(key, definition)) {
+      continue;
+    }
     if (definition.workspaceId !== workspaceId) {
       failures.push(`StartAdapterDefinitionIds ${key} workspaceId must match registry ${definition.workspaceId}.`);
     }
@@ -646,6 +649,17 @@ function splitStartAdapterKey(key) {
   const separator = key.indexOf(":");
   if (separator < 0) return [key, ""];
   return [key.slice(0, separator), key.slice(separator + 1)];
+}
+
+function isCapabilityStartAdapterKey(key, definition) {
+  const [capabilityId, workItemType] = splitStartAdapterKey(key);
+  return capabilityId === "Dormitory.FirstGoldenChain" &&
+    workItemType === definition.workItemType &&
+    [
+      "Dorm.RoomSetupConfirm",
+      "Dorm.BedSetupConfirm",
+      "Dorm.ResourceReadinessConfirm"
+    ].includes(workItemType);
 }
 
 function recordBody(source, recordName) {

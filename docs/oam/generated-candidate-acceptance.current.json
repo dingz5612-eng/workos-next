@@ -136,6 +136,42 @@
       "productionConfirmAllowed",
       "Dormitory L2 GO",
       "business production GO"
+    ],
+    "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+    "acceptedGeneratedFiles": [
+      {
+        "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+        "digest": "sha256:cab56e48544f8bdfeaeaba8de7a2782d9574fef914314048a4a678badef80a69"
+      },
+      {
+        "path": "docs/oam/domain-derived-contracts.json",
+        "digest": "sha256:ab565660d52f2f3fd07d5656c5b675afea2489c9d7e32f54ccfc19170f74bcae"
+      },
+      {
+        "path": "docs/oam/generated-contracts-manifest.json",
+        "digest": "sha256:57543101e05c024f6c32f96dff5ab86cd54489d7519797b1875d3cc088bc1f3d"
+      },
+      {
+        "path": "docs/oam/kernel/oam-kernel-graph.generated.json",
+        "digest": "sha256:7c932e854402c29d22c3bd8ddd82a731ab4f9a4101f08e649f24d8df3a88925a"
+      },
+      {
+        "path": "docs/oam/system-derived-contracts.json",
+        "digest": "sha256:e44fe49a0e4db9d97baf65d65218a18d76a8851260245a5988031297529f12a9"
+      }
+    ],
+    "acceptedRuntimeConsumableDigests": [
+      {
+        "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+        "digest": "sha256:cab56e48544f8bdfeaeaba8de7a2782d9574fef914314048a4a678badef80a69"
+      }
+    ],
+    "forbiddenInterpretations": [
+      "runtime ready is not implied",
+      "business landing is not implied",
+      "production confirm is not implied",
+      "release authority is not implied",
+      "final GO is not implied"
     ]
   },
   "historicalAppendix": {
@@ -167,12 +203,12 @@
     ],
     "note": "Deprecated aliases are retained only as appendix references and do not participate in current generated candidate acceptance authority."
   },
-  "nextDecisionRequired": "S7_RUNTIME_ADMISSION_REVIEW_REQUIRED_AFTER_GENERATED_CANDIDATE_ACCEPTANCE",
+  "nextDecisionRequired": "runtime_test_admission_review_required_after_generated_bundle_acceptance",
   "forbiddenInterpretations": [
     "CI success is not generated candidate acceptance",
     "artifact exists is not generated candidate acceptance",
     "Evidence Root PASS is not generated candidate acceptance",
-    "S4 execution PASS is not generated candidate acceptance",
+    "formal_compile_execution PASS is not generated candidate acceptance",
     "acceptance authority does not open runtime consumption",
     "acceptance authority does not grant releaseAuthority or final GO",
     "NOT_ACCEPTED_BY_00 is not runtime authorization",
@@ -183,7 +219,12 @@
     "generated candidate acceptance does not open runtime consumption",
     "generated candidate acceptance does not grant business feature development",
     "generated candidate acceptance does not grant releaseAuthority or final GO",
-    "generated candidate acceptance does not grant production confirmation"
+    "generated candidate acceptance does not grant production confirmation",
+    "runtime ready is not implied",
+    "business landing is not implied",
+    "production confirm is not implied",
+    "release authority is not implied",
+    "final GO is not implied"
   ],
   "runtimeConsumptionReady": false,
   "businessFeatureDevelopmentAllowed": false,
@@ -191,5 +232,93 @@
   "dormitoryL2GoNoGo": "NO_GO",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
-  "finalGoNoGo": "NO_GO"
+  "finalGoNoGo": "NO_GO",
+  "acceptedSubjectDigest": "sha256:4356c251418849065af1b67dfa005f5fc2bfa753f76d91e027a3b83e40ed2fe9",
+  "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+  "acceptedGeneratedContractBundle": {
+    "version": "oam.generated-contract-bundle.v1",
+    "bundleType": "GeneratedContractBundle",
+    "bundleRole": "accepted_generated_contract_bundle",
+    "capabilityId": "Dormitory.FirstGoldenChain",
+    "sourceClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
+    "compilerInputDigest": "sha256:0dce1c3bb626e2bd02e5c2ba13e8cf9f6aa62187e1c7dde9c3352f4613795d1a",
+    "compilerVersion": "oam.generated-layer-manifest-compiler.v1+oam.generated-contract-bundle.v1",
+    "generatedFiles": [
+      "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "docs/oam/domain-derived-contracts.json",
+      "docs/oam/generated-contracts-manifest.json",
+      "docs/oam/kernel/oam-kernel-graph.generated.json",
+      "docs/oam/system-derived-contracts.json"
+    ],
+    "generatedFileDigests": [
+      {
+        "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+        "digest": "sha256:cab56e48544f8bdfeaeaba8de7a2782d9574fef914314048a4a678badef80a69"
+      },
+      {
+        "path": "docs/oam/domain-derived-contracts.json",
+        "digest": "sha256:ab565660d52f2f3fd07d5656c5b675afea2489c9d7e32f54ccfc19170f74bcae"
+      },
+      {
+        "path": "docs/oam/generated-contracts-manifest.json",
+        "digest": "sha256:57543101e05c024f6c32f96dff5ab86cd54489d7519797b1875d3cc088bc1f3d"
+      },
+      {
+        "path": "docs/oam/kernel/oam-kernel-graph.generated.json",
+        "digest": "sha256:7c932e854402c29d22c3bd8ddd82a731ab4f9a4101f08e649f24d8df3a88925a"
+      },
+      {
+        "path": "docs/oam/system-derived-contracts.json",
+        "digest": "sha256:e44fe49a0e4db9d97baf65d65218a18d76a8851260245a5988031297529f12a9"
+      }
+    ],
+    "fieldBindingClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
+    "executionProofDigest": "sha256:a38a670184445133842a1a331576538d5f38257f489f64cefa0b248d880fd257",
+    "runtimeConsumableDigests": [
+      {
+        "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+        "digest": "sha256:cab56e48544f8bdfeaeaba8de7a2782d9574fef914314048a4a678badef80a69"
+      }
+    ],
+    "generatedOutputDigest": "sha256:d792037298b9b2f2ea0a0c8672ba5011d199c1b18d294313709cbc905fa15689",
+    "generatedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e"
+  },
+  "acceptedGeneratedFiles": [
+    {
+      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "digest": "sha256:cab56e48544f8bdfeaeaba8de7a2782d9574fef914314048a4a678badef80a69"
+    },
+    {
+      "path": "docs/oam/domain-derived-contracts.json",
+      "digest": "sha256:ab565660d52f2f3fd07d5656c5b675afea2489c9d7e32f54ccfc19170f74bcae"
+    },
+    {
+      "path": "docs/oam/generated-contracts-manifest.json",
+      "digest": "sha256:57543101e05c024f6c32f96dff5ab86cd54489d7519797b1875d3cc088bc1f3d"
+    },
+    {
+      "path": "docs/oam/kernel/oam-kernel-graph.generated.json",
+      "digest": "sha256:7c932e854402c29d22c3bd8ddd82a731ab4f9a4101f08e649f24d8df3a88925a"
+    },
+    {
+      "path": "docs/oam/system-derived-contracts.json",
+      "digest": "sha256:e44fe49a0e4db9d97baf65d65218a18d76a8851260245a5988031297529f12a9"
+    }
+  ],
+  "acceptedRuntimeConsumableDigests": [
+    {
+      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "digest": "sha256:cab56e48544f8bdfeaeaba8de7a2782d9574fef914314048a4a678badef80a69"
+    }
+  ],
+  "currentGeneratedCandidateDivergence": {
+    "acceptedSubjectDigest": "sha256:4356c251418849065af1b67dfa005f5fc2bfa753f76d91e027a3b83e40ed2fe9",
+    "currentSubjectDigest": "sha256:9af6ccf615f39c0b0beaffee1a99c9e27a86aaf9ea0ff9de407a602155a67d22",
+    "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+    "currentGeneratedOutputDigest": "sha256:9cf0c3d3d6d8b47e4f46e808a5d451ee2a918726163087144b4bf24c190cb7fa",
+    "acceptedGeneratedOutputDigest": "sha256:d792037298b9b2f2ea0a0c8672ba5011d199c1b18d294313709cbc905fa15689",
+    "acceptedBundleRemainsImmutable": true,
+    "currentGeneratedOutputIsDifferentCandidate": true,
+    "runtimeMustNotAutoConsumeCurrentGeneratedFiles": true
+  }
 }

@@ -20,7 +20,6 @@ const optionValueLabels = {
   technicalState: {
     ready: "可入住",
     not_ready: "未准备",
-    repair: "需维修",
     repair_required: "需维修"
   },
   bunkType: {
@@ -65,7 +64,7 @@ const optionValueLabels = {
 };
 
 const preferredDefaults = {
-  bunkType: "bunk_pair"
+  bunkType: "whole"
 };
 
 export function canonicalOptionLabels(optionSet) {

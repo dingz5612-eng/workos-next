@@ -20,7 +20,7 @@ describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
     expect(html).not.toContain("Release Control");
     expect(html).not.toContain("Finance admin");
 
-    expect(searchView(ctx({ view: "search", query: "新增住宿房源" }))).toContain("主动办理");
+    expect(searchView(ctx({ view: "search", query: "新增房间" }))).toContain("主动办理");
   });
 
   it("keeps learning and evidence libraries in Me instead of Search results", () => {

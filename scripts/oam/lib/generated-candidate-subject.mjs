@@ -11,6 +11,10 @@ import {
   FIELD_BINDINGS_GENERATED_PATH,
   buildDormitoryGeneratedFieldBindingClosure
 } from "./dormitory-generated-field-binding-closure.mjs";
+import {
+  buildGeneratedContractBundle,
+  validateGeneratedContractBundle
+} from "./generated-contract-bundle.mjs";
 
 export const GENERATED_CANDIDATE_ACCEPTANCE_PATH = "docs/oam/generated-candidate-acceptance.current.json";
 export const GENERATED_CANDIDATE_ACCEPTANCE_RESULT_PATH = "artifacts/oam/checks/generated-candidate-acceptance-result.json";
@@ -156,7 +160,7 @@ export function buildGeneratedCandidateSubject({ root = process.cwd(), currentHe
     proof?.releaseAuthority !== false ||
     result?.finalGoNoGo !== "NO_GO" ||
     proof?.finalGoNoGo !== "NO_GO") {
-    failures.push("S4 execution result/proof must keep candidate acceptance, runtime, release, and GO blocked.");
+    failures.push("formal compile execution result/proof must keep candidate acceptance, runtime, release, and GO blocked.");
   }
   if (isGitSha(reviewedExecutionHead) && isGitSha(currentRepositoryHead) &&
     !isAncestor(reviewedExecutionHead, currentRepositoryHead, root)) {
@@ -267,7 +271,7 @@ export function buildInitialGeneratedCandidateAcceptance({ root = process.cwd(),
       "CI success is not generated candidate acceptance",
       "artifact exists is not generated candidate acceptance",
       "Evidence Root PASS is not generated candidate acceptance",
-      "S4 execution PASS is not generated candidate acceptance",
+      "formal_compile_execution PASS is not generated candidate acceptance",
       "acceptance authority does not open runtime consumption",
       "acceptance authority does not grant releaseAuthority or final GO"
     ]
@@ -287,6 +291,18 @@ export function validateGeneratedCandidateAcceptanceAuthority({
   const effectiveSubject = acceptedDecision && acceptance?.generatedCandidateSubject
     ? acceptance.generatedCandidateSubject
     : subjectState.subject;
+  const acceptedGeneratedBundle = acceptedDecision
+    ? buildGeneratedContractBundle({
+        root,
+        subject: effectiveSubject,
+        bundleRole: "accepted_generated_contract_bundle"
+      })
+    : null;
+  const currentGeneratedBundle = buildGeneratedContractBundle({
+    root,
+    subject: subjectState.subject,
+    bundleRole: "current_generated_contract_bundle"
+  });
 
   if (!acceptance || typeof acceptance !== "object") {
     failures.push(`${GENERATED_CANDIDATE_ACCEPTANCE_PATH} is missing or invalid.`);
@@ -335,6 +351,13 @@ export function validateGeneratedCandidateAcceptanceAuthority({
     if (acceptance.decisionStatus === "ACCEPTED_BY_00") {
       requireEqual(acceptance.generatedCandidateAcceptedBy00, true, "generatedCandidateAcceptedBy00", failures);
       checkAcceptanceRecord(acceptance, effectiveSubject, failures);
+      checkAcceptedGeneratedContractBundle(
+        acceptance,
+        acceptedGeneratedBundle,
+        effectiveSubject,
+        subjectState.subject,
+        failures
+      );
       if (subjectState.status !== "READY_FOR_00_ACCEPTANCE_REVIEW") {
         failures.push(`ACCEPTED_BY_00 requires subject READY_FOR_00_ACCEPTANCE_REVIEW, actual ${subjectState.status}.`);
       }
@@ -375,6 +398,10 @@ export function validateGeneratedCandidateAcceptanceAuthority({
     decisionRecordHead: acceptance?.decisionRecordHead ?? null,
     currentRepositoryHead,
     generatedOutputDigest: effectiveSubject.generatedOutputDigest,
+    acceptedGeneratedBundleDigest: acceptedGeneratedBundle?.generatedBundleDigest ?? acceptance?.acceptedGeneratedBundleDigest ?? null,
+    currentGeneratedBundleDigest: currentGeneratedBundle.generatedBundleDigest,
+    acceptedGeneratedFiles: acceptance?.acceptedGeneratedFiles ?? acceptedGeneratedBundle?.generatedFileDigests ?? [],
+    acceptedRuntimeConsumableDigests: acceptance?.acceptedRuntimeConsumableDigests ?? acceptedGeneratedBundle?.runtimeConsumableDigests ?? [],
     generatedFieldBindingClosureDigest: effectiveSubject.generatedFieldBindingClosureDigest,
     sourceFieldGapsDecisionDigest: effectiveSubject.sourceFieldGapsDecisionDigest,
     fieldBindingContractDigest: effectiveSubject.fieldBindingContractDigest,
@@ -409,6 +436,18 @@ export function readJsonIfExists(file, root = process.cwd(), missingFiles = null
 export function writeJson(file, data, root = process.cwd()) {
   const full = path.join(root, file);
   fs.mkdirSync(path.dirname(full), { recursive: true });
+  if (data && typeof data === "object" && data.checkedAtUtc && fs.existsSync(full)) {
+    try {
+      const previous = JSON.parse(fs.readFileSync(full, "utf8").replace(/^\uFEFF/, ""));
+      if (previous?.checkedAtUtc &&
+        stableStringify(normalizeForStableResultWrite(previous)) ===
+          stableStringify(normalizeForStableResultWrite(data))) {
+        data = { ...data, checkedAtUtc: previous.checkedAtUtc };
+      }
+    } catch {
+      // Fall through and write the fresh result.
+    }
+  }
   fs.writeFileSync(full, `${JSON.stringify(data, null, 2)}\n`, "utf8");
 }
 
@@ -447,6 +486,19 @@ function normalizeForStableDigest(value) {
     for (const [key, child] of Object.entries(value)) {
       if (isVolatileDigestKey(key)) continue;
       normalized[key] = normalizeForStableDigest(child);
+    }
+    return normalized;
+  }
+  return value;
+}
+
+function normalizeForStableResultWrite(value) {
+  if (Array.isArray(value)) return value.map(normalizeForStableResultWrite);
+  if (value && typeof value === "object") {
+    const normalized = {};
+    for (const [key, child] of Object.entries(value)) {
+      if (key === "checkedAtUtc") continue;
+      normalized[key] = normalizeForStableResultWrite(child);
     }
     return normalized;
   }
@@ -544,6 +596,80 @@ function checkAcceptanceRecord(acceptance, subject, failures) {
   }
 }
 
+function checkAcceptedGeneratedContractBundle(acceptance, bundle, acceptedSubject, currentSubject, failures) {
+  const bundleValidation = validateGeneratedContractBundle({
+    bundle,
+    subject: acceptedSubject
+  });
+  failures.push(...bundleValidation.failures.map((failure) => `acceptedGeneratedContractBundle.${failure}`));
+  requireEqual(
+    acceptance.acceptedGeneratedBundleDigest,
+    bundle.generatedBundleDigest,
+    "acceptedGeneratedBundleDigest",
+    failures
+  );
+  requireEqual(
+    acceptance.acceptanceRecord?.acceptedGeneratedBundleDigest,
+    bundle.generatedBundleDigest,
+    "acceptanceRecord.acceptedGeneratedBundleDigest",
+    failures
+  );
+  requireJsonEqual(
+    acceptance.acceptedGeneratedFiles,
+    bundle.generatedFileDigests,
+    "acceptedGeneratedFiles",
+    failures
+  );
+  requireJsonEqual(
+    acceptance.acceptedRuntimeConsumableDigests,
+    bundle.runtimeConsumableDigests,
+    "acceptedRuntimeConsumableDigests",
+    failures
+  );
+  requireJsonEqual(
+    acceptance.acceptanceRecord?.acceptedRuntimeConsumableDigests,
+    bundle.runtimeConsumableDigests,
+    "acceptanceRecord.acceptedRuntimeConsumableDigests",
+    failures
+  );
+  const requiredForbiddenInterpretations = [
+    "runtime ready is not implied",
+    "business landing is not implied",
+    "production confirm is not implied",
+    "release authority is not implied",
+    "final GO is not implied"
+  ];
+  const interpretations = [
+    ...(acceptance.forbiddenInterpretations ?? []),
+    ...(acceptance.acceptanceRecord?.forbiddenInterpretations ?? [])
+  ];
+  for (const item of requiredForbiddenInterpretations) {
+    if (!interpretations.includes(item)) {
+      failures.push(`forbiddenInterpretations must include ${format(item)}.`);
+    }
+  }
+  if (currentSubject?.subjectDigest !== acceptedSubject?.subjectDigest) {
+    requireEqual(
+      acceptance.currentGeneratedCandidateDivergence?.acceptedBundleRemainsImmutable,
+      true,
+      "currentGeneratedCandidateDivergence.acceptedBundleRemainsImmutable",
+      failures
+    );
+    requireEqual(
+      acceptance.currentGeneratedCandidateDivergence?.currentGeneratedOutputIsDifferentCandidate,
+      true,
+      "currentGeneratedCandidateDivergence.currentGeneratedOutputIsDifferentCandidate",
+      failures
+    );
+    requireEqual(
+      acceptance.currentGeneratedCandidateDivergence?.runtimeMustNotAutoConsumeCurrentGeneratedFiles,
+      true,
+      "currentGeneratedCandidateDivergence.runtimeMustNotAutoConsumeCurrentGeneratedFiles",
+      failures
+    );
+  }
+}
+
 function requireGitSha(value, label, failures) {
   if (!isGitSha(value)) failures.push(`${label} must be a concrete git SHA.`);
 }
@@ -554,6 +680,12 @@ function requireDigest(value, label, failures) {
 
 function requireEqual(actual, expected, label, failures) {
   if (actual !== expected) failures.push(`${label} must be ${format(expected)}, actual ${format(actual)}.`);
+}
+
+function requireJsonEqual(actual, expected, label, failures) {
+  if (stableStringify(actual) !== stableStringify(expected)) {
+    failures.push(`${label} must equal ${format(expected)}, actual ${format(actual)}.`);
+  }
 }
 
 function firstPresent(...values) {

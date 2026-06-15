@@ -2,47 +2,44 @@ import { describe, expect, it } from "vitest";
 import { openWorkItem, setView } from "../navigationController.js";
 import { buildSearchResultVM, rankSearchResults } from "../searchIntentHub.js";
 import { searchView } from "../views/searchView.js";
+import { FIRST_GOLDEN_CHAIN_STEPS, FIRST_GOLDEN_CHAIN_WORKSPACE_ID } from "../capabilityProjection.js";
 import { createSurfaceCtx, internalPilotAdmissionFixture, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("OAM Surface search intent hub contract", () => {
-  it("renders a WorkItem action button and opens the persisted operation panel", () => {
+  it("renders the accepted capability start command through Search Kernel admission", () => {
     const ctx = withSearchKernelAdmission(createSurfaceCtx({ view: "search", query: "创建房间" }));
     const html = searchView(ctx);
 
     expect(html).toContain("主动办理");
-    expect(html).toContain("新增住宿房源");
+    expect(html).toContain("新增房间");
     expect(html).not.toContain("工作内容");
     expect(html).not.toContain("处理：");
-    expect(html).toContain("先填房号");
-    expect(html).toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
-    expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
-    expect(html).toContain(">继续观察记录</button>");
-
-    openWorkItem("W-STAY-RESOURCE:roomSetup", ctx);
-
-    expect(ctx.state.view).toBe("operationPanel");
-    expect(ctx.state.selectedWorkItemId).toBe("W-STAY-RESOURCE:roomSetup");
+    expect(html).toContain("先确认房间号");
+    expect(html).toContain(`data-start-operations-workspace="${FIRST_GOLDEN_CHAIN_WORKSPACE_ID}"`);
+    expect(html).toContain(`data-first-card-id="${FIRST_GOLDEN_CHAIN_STEPS[0].cardId}"`);
+    expect(html).not.toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
+    expect(html).toContain(">开始观察记录</button>");
   });
 
-  it("routes the explicit accommodation resource wording to the Operations start command", () => {
-    const html = searchView(withSearchKernelAdmission(createSurfaceCtx({ view: "search", query: "新增住宿房源" })));
+  it("routes the explicit current capability wording to the Operations start command", () => {
+    const html = searchView(withSearchKernelAdmission(createSurfaceCtx({ view: "search", query: "新增房间" })));
     const text = visibleText(html);
 
     expect(html).toContain('data-search-section="activeCommands"');
-    expect(html).toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
-    expect(text).toContain("新增住宿房源");
+    expect(html).toContain(`data-start-operations-workspace="${FIRST_GOLDEN_CHAIN_WORKSPACE_ID}"`);
+    expect(text).toContain("新增房间");
     expect(text).toContain("开始观察记录");
   });
 
   it("uses Search Kernel admission for active commands without local command admission", () => {
-    const ctx = createSurfaceCtx({ view: "search", query: "新增住宿房源" });
+    const ctx = createSurfaceCtx({ view: "search", query: "新增房间" });
     ctx.state.runtimeStore.commandAdmission = null;
     ctx.state.runtimeStore.businessLineAdmission = null;
     ctx.state.runtimeStore.searchResultsByQuery = {
-      "新增住宿房源": [{
+      "新增房间": [{
         resultType: "workspaceCardCompatibility",
-        workspaceId: "W-STAY-RESOURCE",
-        cardId: "roomSetup",
+        workspaceId: FIRST_GOLDEN_CHAIN_WORKSPACE_ID,
+        cardId: FIRST_GOLDEN_CHAIN_STEPS[0].cardId,
         admission: {
           ...internalPilotAdmissionFixture(),
           confirmAllowed: false,
@@ -59,19 +56,19 @@ describe("OAM Surface search intent hub contract", () => {
     const html = searchView(ctx);
     const text = visibleText(html);
 
-    expect(html).toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
+    expect(html).toContain(`data-start-operations-workspace="${FIRST_GOLDEN_CHAIN_WORKSPACE_ID}"`);
     expect(text).toContain("开始观察记录");
   });
 
   it("keeps active commands readonly when no backend Search Kernel admission exists", () => {
-    const ctx = createSurfaceCtx({ view: "search", query: "新增住宿房源" });
+    const ctx = createSurfaceCtx({ view: "search", query: "新增房间" });
     ctx.state.runtimeStore.commandAdmission = internalPilotAdmissionFixture();
     ctx.state.runtimeStore.businessLineAdmission = null;
     ctx.state.runtimeStore.searchResultsByQuery = {};
 
     const html = searchView(ctx);
 
-    expect(html).not.toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
+    expect(html).not.toContain(`data-start-operations-workspace="${FIRST_GOLDEN_CHAIN_WORKSPACE_ID}"`);
     expect(html).toContain('data-view="learning"');
   });
 
@@ -79,12 +76,12 @@ describe("OAM Surface search intent hub contract", () => {
     const html = searchView(createSurfaceCtx({
       view: "search",
       query: "",
-      recentSearches: ["我要创建住宿资源", "21 号房间"]
+      recentSearches: ["我要创建房间", "21 号房间"]
     }));
     const text = visibleText(html);
 
-    expect(html).toContain('data-search-query="新增住宿房源"');
-    expect(html).toContain('data-search-query="我要创建住宿资源"');
+    expect(html).toContain('data-search-query="新增房间"');
+    expect(html).toContain('data-search-query="我要创建房间"');
     expect(text).toContain("常用搜索");
     expect(text).toContain("最近搜索");
   });
@@ -122,8 +119,8 @@ describe("OAM Surface search intent hub contract", () => {
   it("ranks room creation before generic object results", () => {
     const ctx = createSurfaceCtx({ query: "创建房间" });
     const vm = rankSearchResults([
-      { resultType: "room", title: "房间对象", workspaceId: "W-STAY-RESOURCE" },
-      { resultType: "workItem", title: "创建房间", workItemId: "W-STAY-RESOURCE:roomSetup" }
+      { resultType: "room", title: "房间对象", workspaceId: FIRST_GOLDEN_CHAIN_WORKSPACE_ID },
+      { resultType: "workItem", title: "创建房间", workItemId: "wi-room-setup", workspaceId: FIRST_GOLDEN_CHAIN_WORKSPACE_ID, cardId: FIRST_GOLDEN_CHAIN_STEPS[0].cardId, workItemType: FIRST_GOLDEN_CHAIN_STEPS[0].workItemType }
     ], ctx.state.query);
 
     expect(vm[0].resultType).toBe("workItem");
@@ -150,7 +147,8 @@ describe("OAM Surface search intent hub contract", () => {
 
     const text = visibleText(searchView(ctx));
 
-    expect(text).toContain("房间床位配置");
+    expect(text).toContain("新增房间");
+    expect(text).toContain("先确认房间号");
     expect(text).not.toContain("我要办理退住结算");
     expect(text).not.toContain("人工处理记录");
   });
@@ -465,8 +463,8 @@ describe("OAM Surface search intent hub contract", () => {
   });
 
   it("localizes active room commands without English fallback", () => {
-    const ru = visibleText(searchView(withSearchKernelAdmission(createSurfaceCtx({ view: "search", lang: "ru-RU", query: "комната" }))));
-    const ky = visibleText(searchView(withSearchKernelAdmission(createSurfaceCtx({ view: "search", lang: "ky-KG", query: "бөлмө" }))));
+    const ru = visibleText(searchView(withSearchKernelAdmission(createSurfaceCtx({ view: "search", lang: "ru-RU", query: "добавить комнату" }))));
+    const ky = visibleText(searchView(withSearchKernelAdmission(createSurfaceCtx({ view: "search", lang: "ky-KG", query: "бөлмө кошуу" }))));
 
     expect(ru).toContain("Можно начать самому");
     expect(ru).toContain("Добавить комнату");
@@ -499,8 +497,8 @@ describe("OAM Surface search intent hub contract", () => {
 
 function withSearchKernelAdmission(ctx, options = {}) {
   const query = options.query || ctx.state.query;
-  const workspaceId = options.workspaceId || "W-STAY-RESOURCE";
-  const cardId = options.cardId || "roomSetup";
+  const workspaceId = options.workspaceId || FIRST_GOLDEN_CHAIN_WORKSPACE_ID;
+  const cardId = options.cardId || FIRST_GOLDEN_CHAIN_STEPS[0].cardId;
   const admission = {
     ...internalPilotAdmissionFixture(),
     ...(options.admission || {})

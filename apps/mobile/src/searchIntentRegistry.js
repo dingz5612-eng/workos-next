@@ -1,37 +1,25 @@
+import { FIRST_GOLDEN_CHAIN_STEPS, FIRST_GOLDEN_CHAIN_WORKSPACE_ID } from "./capabilityProjection.js";
+
 const searchIntents = {
   accommodationResourceSetup: {
     intentId: "accommodationResourceSetup",
     commandId: "startOperationsWorkspace",
-    templateWorkspaceId: "W-STAY-RESOURCE",
-    firstCardId: "roomSetup",
+    templateWorkspaceId: FIRST_GOLDEN_CHAIN_WORKSPACE_ID,
+    firstCardId: FIRST_GOLDEN_CHAIN_STEPS[0].cardId,
     title: {
-      "zh-CN": "新增住宿房源",
+      "zh-CN": "新增房间",
       "ru-RU": "Добавить комнату",
       "ky-KG": "Бөлмө кошуу"
     },
     suggestionGroups: ["frequent", "team"],
     terms: [
-      "新增住宿房源",
-      "新增房源",
-      "添加房源",
-      "创建住宿资源",
-      "新增住宿资源",
-      "住宿资源建档",
-      "房源建档",
+      "新增房间",
+      "创建房间",
       "宿舍建档",
       "房间建档",
-      "创建房间",
-      "新增房间",
       "新建房间",
       "配置房间",
-      "宿舍房间",
-      "住宿房源",
-      "住宿资源",
-      "房源",
-      "房间",
-      "房号",
-      "床位",
-      "资源建档",
+      "宿舍第一金链",
       "room setup",
       "create room",
       "add room",
@@ -43,10 +31,7 @@ const searchIntents = {
       "chuangjian fangjian",
       "добавить комнату",
       "создать комнату",
-      "комната",
-      "койки",
-      "бөлмө",
-      "койка"
+      "бөлмө кошуу"
     ]
   }
 };

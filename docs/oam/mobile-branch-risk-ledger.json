@@ -53,8 +53,8 @@
     "totalCoveredFiles": 67,
     "registeredFiles": 16,
     "unregisteredFiles": 51,
-    "newSourceFiles": 0,
-    "missingCoverageSourceFiles": 11,
+    "newSourceFiles": 1,
+    "missingCoverageSourceFiles": 12,
     "p0Files": 6,
     "p1Files": 5,
     "p2Files": 4,
@@ -3822,6 +3822,35 @@
     }
   ],
   "missingCoverageSourceFiles": [
+    {
+      "filePath": "apps/mobile/src/capabilityProjection.js",
+      "coverage": null,
+      "policy": {
+        "status": "unregistered",
+        "layer": "未登记",
+        "targetBranchCoveragePct": null,
+        "currentStageHardBaselinePct": null,
+        "nextStageTargetPct": null,
+        "affectsBusinessWrite": null,
+        "affectsAdmissionRejection": null,
+        "affectsSearchReadonly": null,
+        "affectsDeviceTrust": null,
+        "affectsOrdinaryMobileUser": null,
+        "testFiles": []
+      },
+      "source": {
+        "isNewSourceFile": true,
+        "gitStatus": "??",
+        "isCoveredByCoverageSummary": false
+      },
+      "risk": {
+        "level": "未登记",
+        "descriptionZh": "移动端源码文件未出现在 coverage-summary 中，需要确认测试收集范围。",
+        "allowDeferral": false,
+        "deferralReasonZh": "未登记且未进入覆盖率产物，缺少中文暂缓原因。",
+        "nextActionZh": "补充测试收集、policy 登记或中文暂缓原因。"
+      }
+    },
     {
       "filePath": "apps/mobile/src/coachController.js",
       "coverage": null,

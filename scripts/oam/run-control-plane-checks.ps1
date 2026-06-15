@@ -1,5 +1,6 @@
 $ErrorActionPreference = "Stop"
 $script:GateResults = @()
+$script:AdvisoryGateResults = @()
 $script:GateReportPath = "artifacts/oam/checks/control-plane-gate-results.json"
 $script:RunStartedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
 $script:ExpectedGateCount = 0
@@ -118,6 +119,7 @@ function Write-GateReport {
     currentGate = $CurrentGate
     blockingReasons = $blockingReasons
     gates = $script:GateResults
+    advisoryGates = $script:AdvisoryGateResults
   }
 
   $dir = Split-Path -Parent $script:GateReportPath
@@ -180,6 +182,47 @@ function Invoke-Gate {
   }
 }
 
+function Invoke-AdvisoryGate {
+  param(
+    [Parameter(Mandatory = $true, Position = 0)]
+    [string] $Command,
+    [Parameter(ValueFromRemainingArguments = $true, Position = 1)]
+    [string[]] $Arguments
+  )
+
+  $commandLine = "$Command $($Arguments -join ' ')".Trim()
+  $startedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+  $script:CurrentGate = $commandLine
+  $script:CurrentStage = Get-StageForCommand -CommandLine $commandLine
+  Write-GateReport -RunStatus "running"
+  try {
+    & $Command @Arguments
+    $exitCode = $LASTEXITCODE
+    if ($exitCode -ne 0) {
+      throw "Advisory gate failed with exit code ${exitCode}: $commandLine"
+    }
+    $script:AdvisoryGateResults += [ordered]@{
+      command = $commandLine
+      laneMode = "advisory"
+      status = "passed"
+      exitCode = 0
+      startedAtUtc = $startedAtUtc
+      endedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+    }
+  } catch {
+    $script:AdvisoryGateResults += [ordered]@{
+      command = $commandLine
+      laneMode = "advisory"
+      status = "advisory_failed"
+      exitCode = if ($null -ne $LASTEXITCODE) { $LASTEXITCODE } else { 1 }
+      startedAtUtc = $startedAtUtc
+      endedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+      message = $_.Exception.Message
+    }
+  }
+  Write-GateReport -RunStatus "running"
+}
+
 $script:ExpectedGateCount = Get-ExpectedGateCount
 $script:CurrentStage = "initializing"
 $script:CurrentGate = ""
@@ -187,6 +230,17 @@ Write-GateReport -RunStatus "running"
 
 Invoke-Gate node scripts/oam/check-current-oam.mjs
 Invoke-Gate node scripts/oam/check-current-architecture-manifest.mjs
+Invoke-Gate node scripts/oam/check-authority-ledger-append-only.mjs
+Invoke-Gate node scripts/oam/check-current-projection-from-ledger.mjs
+Invoke-Gate node scripts/oam/check-no-active-legacy-identity.mjs
+Invoke-Gate node scripts/oam/check-no-active-path-legacy-identity.mjs
+Invoke-Gate node scripts/oam/check-no-current-capability-uses-legacy-seed.mjs
+Invoke-Gate node scripts/oam/check-no-stage-number-authority-leak.mjs
+Invoke-Gate node scripts/oam/check-no-stage-number-active-authority.mjs
+Invoke-Gate node scripts/oam/check-compatibility-box-boundary.mjs
+Invoke-Gate node scripts/oam/check-capability-state-machine-transition.mjs
+Invoke-Gate node scripts/oam/check-control-plane-lane-boundary.mjs
+Invoke-Gate node scripts/oam/check-gate-taxonomy.mjs
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs --self-test
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs
 Invoke-Gate node scripts/oam/check-current-authority-index.mjs
@@ -308,9 +362,6 @@ if ($null -eq $previousOamWriteProof) {
 } else {
   $env:OAM_WRITE_PROOF = $previousOamWriteProof
 }
-Invoke-Gate pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1
-Invoke-Gate node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs
-Invoke-Gate node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs
 if (-not (Test-Path "artifacts/oam/test-results/mobile/coverage/coverage-summary.json")) {
   Invoke-Gate npm --prefix apps/mobile run test:coverage
 }
@@ -322,9 +373,28 @@ Invoke-Gate node scripts/oam/check-dormitory-candidate-artifact-attestation-pack
 Invoke-Gate node scripts/oam/generate-generated-candidate-acceptance.mjs
 Invoke-Gate node scripts/oam/check-s5-semantic-digest-idempotency.mjs
 Invoke-Gate node scripts/oam/check-generated-candidate-acceptance.mjs --self-test
+Invoke-Gate node scripts/oam/check-generated-bundle-content-addressed.mjs
+Invoke-Gate node scripts/oam/check-single-capability-bundle-digest.mjs
 Invoke-Gate node scripts/oam/check-generated-candidate-acceptance.mjs
-Invoke-Gate node scripts/oam/check-dormitory-runtime-admission.mjs
-Invoke-Gate node scripts/oam/check-dormitory-first-golden-chain-landing.mjs
+Invoke-Gate node scripts/oam/check-runtime-consumes-accepted-bundle.mjs
+Invoke-Gate node scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs
+Invoke-Gate node scripts/oam/check-dormitory-runtime-admission.mjs --write-proof
+Invoke-Gate node scripts/oam/check-environment-profile-authority.mjs
+Invoke-Gate node scripts/oam/check-runtime-stability-lane.mjs
+Invoke-Gate node scripts/oam/check-runtime-implementation-drift-policy.mjs
+Invoke-Gate node scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs
+Invoke-Gate node scripts/oam/check-test-plan-generated-from-capability.mjs
+Invoke-AdvisoryGate pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1
+Invoke-Gate node scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs
+Invoke-AdvisoryGate node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs
+Invoke-AdvisoryGate node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs
+Invoke-Gate node scripts/oam/check-evidence-is-projection-only.mjs
+Invoke-Gate node scripts/oam/check-release-authority-is-only-final-go-source.mjs
+Invoke-Gate node scripts/oam/check-evidence-writer-boundary.mjs
+Invoke-AdvisoryGate node scripts/oam/check-current-head-authoritative-artifact-reconciliation.mjs
+Invoke-AdvisoryGate node scripts/oam/check-dormitory-first-golden-chain-landing.mjs
+Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs -RecordResult $false
+Invoke-Gate node scripts/oam/check-evidence-digest-chain-single-source.mjs
 Write-GateReport -RunStatus "completed" -Status "passed" -CurrentStage "completed" -CurrentGate ""
 Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs -RecordResult $false
 Invoke-Gate node scripts/oam/check-current-evidence-root.mjs -RecordResult $false

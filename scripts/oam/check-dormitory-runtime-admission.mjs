@@ -11,7 +11,8 @@ const authority = readJsonIfExists(DORMITORY_RUNTIME_ADMISSION_PATH, root);
 const result = validateDormitoryRuntimeAdmissionAuthority({
   authority,
   root,
-  currentHead: gitHead()
+  currentHead: gitHead(),
+  writeProof: process.argv.includes("--write-proof") || process.env.OAM_WRITE_PROOF === "1"
 });
 
 writeJson(DORMITORY_RUNTIME_ADMISSION_RESULT_PATH, result, root);

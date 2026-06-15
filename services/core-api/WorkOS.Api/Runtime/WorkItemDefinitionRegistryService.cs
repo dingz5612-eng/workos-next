@@ -8,6 +8,9 @@ public sealed class WorkItemDefinitionRegistryService
     private static readonly IReadOnlyDictionary<string, string> StartAdapterDefinitionIds =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
+            ["Dormitory.FirstGoldenChain:Dorm.RoomSetupConfirm"] = "definition.dormitory.roomSetupConfirm.v1",
+            ["Dormitory.FirstGoldenChain:Dorm.BedSetupConfirm"] = "definition.dormitory.bedSetupConfirm.v1",
+            ["Dormitory.FirstGoldenChain:Dorm.ResourceReadinessConfirm"] = "definition.dormitory.resourceReadinessConfirm.v1",
             ["W-DORM-MAINLINE:cert.roomSetupConfirm"] = "definition.dormitory.roomSetupConfirm.v1",
             ["W-DORM-MAINLINE:cert.leadCapture"] = "definition.dormitory.leadCapture.v1",
             ["W-DORM-MAINLINE:cert.checkinConfirm"] = "definition.dormitory.checkinConfirm.v1",

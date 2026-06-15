@@ -195,6 +195,9 @@ function validateStartAdapterMaps() {
     if (definition.definitionMode !== "oam-certification-current") {
       fail("start_adapter_definition_not_current", `StartAdapterDefinitionIds ${key} must reference current definition ${definitionId}.`);
     }
+    if (isCapabilityStartAdapterKey(key, definition)) {
+      continue;
+    }
     if (definition.workspaceId !== workspaceId) {
       fail("start_adapter_workspace_mismatch", `StartAdapterDefinitionIds ${key} workspace must match registry ${definition.workspaceId}.`);
     }
@@ -257,6 +260,17 @@ function splitStartAdapterKey(key) {
   const separator = key.indexOf(":");
   if (separator < 0) return [key, ""];
   return [key.slice(0, separator), key.slice(separator + 1)];
+}
+
+function isCapabilityStartAdapterKey(key, definition) {
+  const [capabilityId, workItemType] = splitStartAdapterKey(key);
+  return capabilityId === "Dormitory.FirstGoldenChain" &&
+    workItemType === definition.workItemType &&
+    [
+      "Dorm.RoomSetupConfirm",
+      "Dorm.BedSetupConfirm",
+      "Dorm.ResourceReadinessConfirm"
+    ].includes(workItemType);
 }
 
 function requireMigrationRefs(item, label) {

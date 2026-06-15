@@ -1,0 +1,97 @@
+{
+  "version": "oam.gate-lane-taxonomy.v1",
+  "orchestratorMode": "capability_state_machine_with_gate_lanes",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "currentPreInternalRequiredLanes": [
+    "authority-hard",
+    "generated-hard",
+    "runtime-test-hard",
+    "evidence-projection"
+  ],
+  "laneDisplayNames": {
+    "authority-hard": "Authority Lane",
+    "generated-hard": "Generated Bundle Lane",
+    "runtime-test-hard": "Runtime Test Lane",
+    "business-landing-hard": "Business Landing Lane",
+    "runtime-stability-hard": "Runtime Stability Lane",
+    "browser-hardening": "Browser Hardening Lane",
+    "release-hard": "Release Lane",
+    "nightly-advisory": "Nightly Advisory Lane",
+    "evidence-projection": "Evidence Projection Lane"
+  },
+  "currentPreInternalRequiredLaneDisplayNames": [
+    "Authority Lane",
+    "Generated Bundle Lane",
+    "Runtime Test Lane",
+    "Evidence Projection Lane"
+  ],
+  "lanes": {
+    "authority-hard": [
+      "node scripts/oam/check-authority-ledger-append-only.mjs",
+      "node scripts/oam/check-current-projection-from-ledger.mjs",
+      "node scripts/oam/check-no-active-legacy-identity.mjs",
+      "node scripts/oam/check-no-active-path-legacy-identity.mjs",
+      "node scripts/oam/check-no-current-capability-uses-legacy-seed.mjs",
+      "node scripts/oam/check-no-stage-number-authority-leak.mjs",
+      "node scripts/oam/check-no-stage-number-active-authority.mjs",
+      "node scripts/oam/check-compatibility-box-boundary.mjs",
+      "node scripts/oam/check-capability-state-machine-transition.mjs"
+    ],
+    "generated-hard": [
+      "node scripts/oam/check-generated-bundle-content-addressed.mjs",
+      "node scripts/oam/check-single-capability-bundle-digest.mjs",
+      "node scripts/oam/check-generated-candidate-acceptance.mjs"
+    ],
+    "runtime-test-hard": [
+      "node scripts/oam/check-runtime-consumes-accepted-bundle.mjs",
+      "node scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs",
+      "node scripts/oam/check-dormitory-runtime-admission.mjs",
+      "node scripts/oam/check-environment-profile-authority.mjs"
+    ],
+    "business-landing-hard": [
+      "node scripts/oam/check-dormitory-first-golden-chain-landing.mjs"
+    ],
+    "runtime-stability-hard": [
+      "node scripts/oam/check-runtime-stability-lane.mjs",
+      "node scripts/oam/check-runtime-implementation-drift-policy.mjs"
+    ],
+    "browser-hardening": [
+      "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1",
+      "node scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs",
+      "node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs",
+      "node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs"
+    ],
+    "release-hard": [
+      "node scripts/oam/check-current-head-authoritative-artifact-reconciliation.mjs",
+      "node scripts/oam/check-current-oam-release-attestation.mjs"
+    ],
+    "nightly-advisory": [
+      "npm --prefix apps/mobile run test:coverage",
+      "node scripts/oam/check-mobile-coverage-policy.mjs",
+      "node scripts/oam/check-mobile-critical-branch-scenarios.mjs"
+    ],
+    "evidence-projection": [
+      "node scripts/oam/check-test-plan-generated-from-capability.mjs",
+      "node scripts/oam/check-evidence-is-projection-only.mjs",
+      "node scripts/oam/check-release-authority-is-only-final-go-source.mjs",
+      "node scripts/oam/check-evidence-writer-boundary.mjs",
+      "node scripts/oam/check-evidence-digest-chain-single-source.mjs",
+      "node scripts/oam/check-current-evidence-root.mjs"
+    ]
+  },
+  "laneBoundaryRules": {
+    "browserHardeningMayNotBlockGeneratedAcceptance": true,
+    "browserHardeningMayNotBlockRuntimeTestAdmission": true,
+    "runtimeImplementationPatchMayNotEnterGeneratedAcceptance": true,
+    "runtimeStabilityLaneMayPatchHandwrittenRuntimeImplementation": true,
+    "evidenceProjectionHasNoDecisionAuthority": true
+  },
+  "forbiddenInterpretations": [
+    "browser hardening PASS is not generated acceptance",
+    "browser hardening PASS is not runtime test admission",
+    "runtime stability PASS is not business landing",
+    "local evidence PASS is not authoritative artifact-backed PASS",
+    "Evidence Root PASS is projection only",
+    "Release Evidence Object PASS is projection only"
+  ]
+}

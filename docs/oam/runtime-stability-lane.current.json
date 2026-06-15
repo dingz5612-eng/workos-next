@@ -1,0 +1,49 @@
+{
+  "version": "oam.runtime-stability-lane.v1",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "lane": "runtime-stability-hard",
+  "status": "READY_NO_ACTIVE_RUNTIME_STABILITY_PATCH",
+  "allowedPatchScope": [
+    "services/core-api/WorkOS.Api",
+    "services/core-api/WorkOS.Api/Runtime",
+    "apps/mobile/src/runtime",
+    "apps/mobile/src/views",
+    "apps/mobile/src/controls"
+  ],
+  "forbiddenPatchScope": [
+    "docs/contracts/generated",
+    "apps/mobile/src/generated",
+    "docs/oam/generated-candidate-acceptance.current.json",
+    "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json"
+  ],
+  "driftPolicy": {
+    "generatedContractsMayChange": false,
+    "generatedBundleDigestMayChange": false,
+    "businessSemanticsMayChange": false,
+    "businessGoMayOpen": false,
+    "productionConfirmationMayOpen": false,
+    "releaseGoMayOpen": false,
+    "browserHarnessWorkaroundAllowed": false,
+    "runtimeReadProjectionStabilityOnly": true
+  },
+  "currentKnownRuntimeStabilityIssue": {
+    "issueClass": "runtime_read_projection_stability",
+    "example": "/api/workspaces live collection concurrent serialization",
+    "activePatchInThisChange": false,
+    "resolutionMode": "runtime_stability_lane_ready_no_browser_harness_bypass"
+  },
+  "negativeAuthorities": {
+    "businessFeatureDevelopmentAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  },
+  "forbiddenInterpretations": [
+    "runtime stability PASS is not generated candidate acceptance",
+    "runtime stability PASS is not business landing",
+    "runtime stability PASS is not production confirmation",
+    "runtime stability PASS is not release authority",
+    "runtime stability PASS is not final GO",
+    "browser harness bypass is not a runtime stability fix"
+  ]
+}

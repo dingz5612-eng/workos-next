@@ -57,6 +57,34 @@ const generatedCompileExecutionResultPath = "artifacts/oam/checks/generated-comp
 const generatedCompileExecutionProofPath = "artifacts/oam/evidence/generated-compile-execution-proof.json";
 const generatedFieldBindingClosureResultPath = FIELD_BINDING_CLOSURE_RESULT_PATH;
 const generatedFieldBindingsPath = FIELD_BINDINGS_GENERATED_PATH;
+const firstGoldenChainTestPlanPath = "docs/contracts/generated/dormitory/test-plan.generated.json";
+const firstGoldenChainBrowserAuditReportPath =
+  "artifacts/oam/evidence/dormitory-first-golden-chain-real-browser/first-golden-chain-real-browser-report.json";
+const firstGoldenChainBrowserAuditScreenshotIndexPath =
+  "artifacts/oam/evidence/dormitory-first-golden-chain-real-browser/screenshot-index.json";
+const firstGoldenChainBrowserAuditResultPath =
+  "artifacts/oam/checks/dormitory-first-golden-chain-real-browser-result.json";
+const testPlanGeneratedFromCapabilityResultPath =
+  "artifacts/oam/checks/test-plan-generated-from-capability-result.json";
+const evidenceDigestChainSingleSourceResultPath =
+  "artifacts/oam/checks/evidence-digest-chain-single-source-result.json";
+const capabilityStateMachinePath = "docs/oam/capabilities/dormitory-first-golden-chain.state-machine.json";
+const gateLaneTaxonomyPath = "docs/oam/control-plane/gate-lane-taxonomy.current.json";
+const runtimeStabilityLanePath = "docs/oam/runtime-stability-lane.current.json";
+const evidenceProjectionPolicyPath = "docs/oam/evidence-projection-policy.current.json";
+const environmentProfilePath = "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json";
+const generatedBundleContentAddressedResultPath = "artifacts/oam/checks/generated-bundle-content-addressed-result.json";
+const runtimeConsumesAcceptedBundleResultPath = "artifacts/oam/checks/runtime-consumes-accepted-bundle-result.json";
+const environmentProfileAuthorityResultPath = "artifacts/oam/checks/environment-profile-authority-result.json";
+const capabilityStateMachineTransitionResultPath = "artifacts/oam/checks/capability-state-machine-transition-result.json";
+const controlPlaneLaneBoundaryResultPath = "artifacts/oam/checks/control-plane-lane-boundary-result.json";
+const gateTaxonomyResultPath = "artifacts/oam/checks/gate-taxonomy-result.json";
+const runtimeStabilityLaneResultPath = "artifacts/oam/checks/runtime-stability-lane-result.json";
+const runtimeImplementationDriftPolicyResultPath = "artifacts/oam/checks/runtime-implementation-drift-policy-result.json";
+const evidenceIsProjectionOnlyResultPath = "artifacts/oam/checks/evidence-is-projection-only-result.json";
+const releaseAuthorityFinalGoSourceResultPath = "artifacts/oam/checks/release-authority-is-only-final-go-source-result.json";
+const currentHeadAuthoritativeArtifactReconciliationResultPath =
+  "artifacts/oam/checks/current-head-authoritative-artifact-reconciliation-result.json";
 const pendingExternalAttestation = "pending_external_attestation";
 const candidateCompileEvidenceStatuses = new Set(["CURRENT", "STALE_BUT_NO_GO", "STALE_REFERENCE"]);
 const sha256DigestPattern = /^sha256:[a-f0-9]{64}$/;
@@ -116,6 +144,11 @@ const requiredFiles = [
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  firstGoldenChainTestPlanPath,
+  firstGoldenChainBrowserAuditReportPath,
+  firstGoldenChainBrowserAuditResultPath,
+  testPlanGeneratedFromCapabilityResultPath,
+  evidenceDigestChainSingleSourceResultPath,
   "docs/read-intelligence/read-intelligence-kernel.json",
   "docs/read-intelligence/read-intelligence-kernel.schema.json",
   "docs/oam/db-no-side-effects-proof.json",
@@ -139,6 +172,22 @@ const requiredFiles = [
   "artifacts/oam/checks/generated-contract-consistency-result.json",
   "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
   "artifacts/oam/checks/dormitory-candidate-artifact-attestation-package-result.json",
+  capabilityStateMachinePath,
+  gateLaneTaxonomyPath,
+  runtimeStabilityLanePath,
+  evidenceProjectionPolicyPath,
+  environmentProfilePath,
+  generatedBundleContentAddressedResultPath,
+  runtimeConsumesAcceptedBundleResultPath,
+  environmentProfileAuthorityResultPath,
+  capabilityStateMachineTransitionResultPath,
+  controlPlaneLaneBoundaryResultPath,
+  gateTaxonomyResultPath,
+  runtimeStabilityLaneResultPath,
+  runtimeImplementationDriftPolicyResultPath,
+  evidenceIsProjectionOnlyResultPath,
+  releaseAuthorityFinalGoSourceResultPath,
+  currentHeadAuthoritativeArtifactReconciliationResultPath,
   "artifacts/oam/checks/kernel-responsibility-map-result.json",
   "artifacts/oam/checks/professional-ai-review-seats-result.json",
   "artifacts/oam/checks/codex-execution-channel-policy-result.json",
@@ -264,10 +313,10 @@ if (documents.size === requiredFiles.length) {
     failures.push(`final report generatedCompilationReadiness must be ${expectedGeneratedCompilationReadiness}.`);
   }
   if (finalReport.generatedCompilationCompleted !== generatedCompileExecution.completed) {
-    failures.push(`final report generatedCompilationCompleted must mirror S4 execution proof (${generatedCompileExecution.completed}).`);
+    failures.push(`final report generatedCompilationCompleted must mirror formal compile execution proof (${generatedCompileExecution.completed}).`);
   }
   if (finalReport.generatedCompileCompleted !== generatedCompileExecution.completed) {
-    failures.push(`final report generatedCompileCompleted must mirror S4 execution proof (${generatedCompileExecution.completed}).`);
+    failures.push(`final report generatedCompileCompleted must mirror formal compile execution proof (${generatedCompileExecution.completed}).`);
   }
   const expectedGeneratedContractStatus10B = generatedCompileExecution.completed
     ? "GENERATED_COMPILE_EXECUTED_PENDING_00_CANDIDATE_ACCEPTANCE"
@@ -324,6 +373,7 @@ if (documents.size === requiredFiles.length) {
   checkFinalReportGoNoGoFields(finalReport, responsibilityMap);
   checkWorkstreamProofNodes(graph, responsibilityMap, finalReport);
   checkRealBrowserEvidence(graph, finalReport);
+  checkCapabilityDigestChain(graph, finalReport, releaseObject, documents);
 
   if (finalReport.businessProductionStatus !== "BLOCKED") {
     failures.push("Business Production must remain BLOCKED.");
@@ -547,6 +597,12 @@ function checkReleaseEvidenceObject(
     "zipArtifactDigest",
     "releaseAuthority",
     "evidenceRootDigest",
+    "capabilityDigestChain",
+    "runtimeProjectionDigest",
+    "surfaceProjectionDigest",
+    "searchProjectionDigest",
+    "testPlanDigest",
+    "browserAuditDigest",
     "generatedContractsHash",
     "kernelGraphHash",
     "evidenceGraphHash",
@@ -555,7 +611,6 @@ function checkReleaseEvidenceObject(
     "authorizedSourceRef",
     "authorizedCandidateExecutionHead",
     "candidateSourceRef",
-    "executionHead",
     "evidenceGeneratedAtHead",
     "candidateCompileEvidenceStatus",
     "candidateCompileClosureForCurrentHead",
@@ -736,7 +791,6 @@ function checkReleaseAttestation(attestation, releaseObject, graph, runtimeAdmis
     "authorizedSourceRef",
     "authorizedCandidateExecutionHead",
     "candidateSourceRef",
-    "executionHead",
     "evidenceGeneratedAtHead",
     "currentRepositoryHead",
     "candidateCompileEvidenceStatus",
@@ -1015,7 +1069,7 @@ function checkSourceFormalGeneratedCompileSemanticSeparation(finalReport, genera
     execution.productionConfirmAllowed !== false ||
     execution.releaseAuthority !== false ||
     execution.finalGoNoGo !== "NO_GO") {
-    failures.push("generatedCompileExecution must mirror S4 execution completion while keeping candidate acceptance, runtime, business, release, and GO blocked.");
+    failures.push("generatedCompileExecution must mirror formal compile execution completion while keeping candidate acceptance, runtime, business, release, and GO blocked.");
   }
 }
 
@@ -1066,7 +1120,6 @@ function checkGeneratedCompileCandidate(finalReport, graph, documents) {
     authorizedSourceRef,
     authorizedCandidateExecutionHead,
     candidateSourceRef: authorizedSourceRef,
-    executionHead: authorizedCandidateExecutionHead,
     generatedCompileCandidateStatus: "PASS",
     generatedReleaseAllowed: false,
     finalGoNoGo: "NO_GO",
@@ -1108,7 +1161,6 @@ function checkGeneratedCompileCandidate(finalReport, graph, documents) {
     authorizedSourceRef,
     authorizedCandidateExecutionHead,
     candidateSourceRef: authorizedSourceRef,
-    executionHead: authorizedCandidateExecutionHead,
     evidenceGeneratedAtHead: finalReport.evidenceGeneratedAtHead,
     currentRepositoryHead: finalReport.currentRepositoryHead,
     candidateCompileEvidenceStatus: expectedEvidenceStatus,
@@ -1375,7 +1427,7 @@ function generatedCompileExecutionState(documents, formalAuthorization) {
     failures.push("generated compile execution result/proof reviewedExecutionHead must match.");
   } else if (currentRepositoryHead !== resultReviewedExecutionHead &&
     !gitSucceeds(`merge-base --is-ancestor ${resultReviewedExecutionHead} ${currentRepositoryHead}`)) {
-    failures.push("current HEAD must equal or descend from S4 reviewedExecutionHead for evidence writeback.");
+    failures.push("current HEAD must equal or descend from formal compile execution reviewedExecutionHead for evidence writeback.");
   }
   if (result?.proofPath !== generatedCompileExecutionProofPath) {
     failures.push("generated compile execution result must reference generated compile execution proof path.");
@@ -1424,8 +1476,8 @@ function checkGeneratedFieldBindingClosure(finalReport, graph, documents, state)
     finalReport.generatedFieldBindingClosureStatus !== "PASS" ||
     finalReport.generatedFieldBindingClosureDigest !== state.generatedFieldBindingClosureDigest ||
     finalReport.sourceFieldGapsDecisionDigest !== state.sourceFieldGapsDecisionDigest ||
-    finalReport.s4AttestationIsFinalReleaseEvidence !== false ||
-    finalReport.releaseEvidenceRequiredAfterS4 !== true ||
+    finalReport.candidateAttestationIsReleaseEvidence !== false ||
+    finalReport.releaseEvidenceRequiredAfterCandidateEvidence !== true ||
     finalReport.finalGoNoGo !== "NO_GO") {
     failures.push("final report generated field binding closure fields must mirror closure state and keep release/GO blocked.");
   }
@@ -1472,17 +1524,17 @@ function checkGeneratedCompileExecution(finalReport, graph, documents, state) {
     return;
   }
   if (!state.completed) {
-    failures.push("generated compile execution must be completed/PASS after S4 execution closure.");
+    failures.push("generated compile execution must be completed/PASS after formal compile execution closure.");
   }
   if (finalReport.generatedCompileExecution?.resultPath !== generatedCompileExecutionResultPath ||
     finalReport.generatedCompileExecution?.proofPath !== generatedCompileExecutionProofPath ||
     finalReport.generatedCompileExecution?.snapshotPath !== generatedCompileExecutionSnapshotPath) {
-    failures.push("final report generatedCompileExecution must reference S4 result/proof/snapshot paths.");
+    failures.push("final report generatedCompileExecution must reference formal compile execution result/proof/snapshot paths.");
   }
   if (finalReport.generatedCompileExecution?.resultDigest !== hashFileText(generatedCompileExecutionResultPath) ||
     finalReport.generatedCompileExecution?.proofDigest !== hashFileText(generatedCompileExecutionProofPath) ||
     finalReport.generatedCompileExecution?.snapshotDigest !== hashFileText(generatedCompileExecutionSnapshotPath)) {
-    failures.push("final report generatedCompileExecution digests must match S4 result/proof/snapshot files.");
+    failures.push("final report generatedCompileExecution digests must match formal compile execution result/proof/snapshot files.");
   }
   if (!sha256DigestPattern.test(String(result.generatedOutputDigest ?? "")) ||
     finalReport.generatedCompileExecution?.generatedOutputDigest !== result.generatedOutputDigest) {
@@ -1490,7 +1542,7 @@ function checkGeneratedCompileExecution(finalReport, graph, documents, state) {
   }
   const reviewedExecutionHead = result.reviewedExecutionHead ?? result.currentHead;
   if (finalReport.generatedCompileExecution?.reviewedExecutionHead !== reviewedExecutionHead) {
-    failures.push("final report generatedCompileExecution.reviewedExecutionHead must mirror S4 result/proof reviewedExecutionHead.");
+    failures.push("final report generatedCompileExecution.reviewedExecutionHead must mirror formal compile execution result/proof reviewedExecutionHead.");
   }
   if (result.reproducibility?.sameGeneratedOutputDigest !== true ||
     result.reproducibility?.sameDerivedOutputDigest !== true ||
@@ -1583,15 +1635,9 @@ function checkGeneratedCandidateAcceptance(finalReport, graph, documents, state)
     failures.push("generated candidate acceptance decisionStatus must match authority, checker result, and predicate state.");
   }
   if (finalReport.generatedCandidateAcceptance?.decisionStatus !== state.decisionStatus ||
-    finalReport.generatedCandidateAcceptance?.subjectDigest !== state.subjectDigest ||
-    finalReport.generatedCandidateAcceptance?.reviewedExecutionHead !== state.reviewedExecutionHead ||
-    finalReport.generatedCandidateAcceptance?.generatedOutputDigest !== state.generatedOutputDigest ||
-    finalReport.generatedCandidateAcceptance?.generatedFieldBindingClosureDigest !== state.generatedFieldBindingClosureDigest ||
-    finalReport.generatedCandidateAcceptance?.sourceFieldGapsDecisionDigest !== state.sourceFieldGapsDecisionDigest ||
-    finalReport.generatedCandidateAcceptance?.evidenceArtifactDigest !== state.evidenceArtifactDigest ||
-    finalReport.generatedCandidateAcceptance?.executionProofDigest !== state.executionProofDigest ||
-    finalReport.generatedCandidateAcceptance?.evidenceRootDigest !== state.evidenceRootDigest) {
-    failures.push("final report generatedCandidateAcceptance must mirror the shared acceptance predicate.");
+    finalReport.generatedCandidateAcceptance?.generatedCandidateAcceptedBy00 !== state.generatedCandidateAcceptedBy00 ||
+    finalReport.generatedCandidateAcceptance?.acceptedGeneratedBundleDigest !== state.acceptedGeneratedBundleDigest) {
+    failures.push("final report generatedCandidateAcceptance must mirror accepted GeneratedContractBundle authority.");
   }
   if (finalReport.generatedCandidateAcceptedBy00 !== state.generatedCandidateAcceptedBy00) {
     failures.push("final report generatedCandidateAcceptedBy00 must be read from generated-candidate-acceptance.current.json.");
@@ -1617,14 +1663,7 @@ function checkGeneratedCandidateAcceptance(finalReport, graph, documents, state)
   if (node.scope !== "generated_candidate_acceptance_authority_only" ||
     node.decisionStatus !== state.decisionStatus ||
     node.generatedCandidateAcceptedBy00 !== state.generatedCandidateAcceptedBy00 ||
-    node.subjectDigest !== state.subjectDigest ||
-    node.reviewedExecutionHead !== state.reviewedExecutionHead ||
-    node.generatedOutputDigest !== state.generatedOutputDigest ||
-    node.generatedFieldBindingClosureDigest !== state.generatedFieldBindingClosureDigest ||
-    node.sourceFieldGapsDecisionDigest !== state.sourceFieldGapsDecisionDigest ||
-    node.evidenceArtifactDigest !== state.evidenceArtifactDigest ||
-    node.executionProofDigest !== state.executionProofDigest ||
-    node.evidenceRootDigest !== state.evidenceRootDigest ||
+    node.acceptedGeneratedBundleDigest !== state.acceptedGeneratedBundleDigest ||
     node.runtimeConsumptionReady !== false ||
     node.businessFeatureDevelopmentAllowed !== false ||
     node.productionConfirmAllowed !== false ||
@@ -1648,15 +1687,7 @@ function checkGeneratedCandidateAcceptance(finalReport, graph, documents, state)
     acceptanceResultRef: generatedCandidateAcceptanceResultPath,
     decisionStatus: state.decisionStatus,
     generatedCandidateAcceptedBy00: state.generatedCandidateAcceptedBy00,
-    subjectDigest: state.subjectDigest,
-    reviewedExecutionHead: state.reviewedExecutionHead,
-    decisionRecordHead: state.decisionRecordHead,
-    generatedOutputDigest: state.generatedOutputDigest,
-    generatedFieldBindingClosureDigest: state.generatedFieldBindingClosureDigest,
-    sourceFieldGapsDecisionDigest: state.sourceFieldGapsDecisionDigest,
-    evidenceArtifactDigest: state.evidenceArtifactDigest,
-    executionProofDigest: state.executionProofDigest,
-    evidenceRootDigest: state.evidenceRootDigest,
+    acceptedGeneratedBundleDigest: state.acceptedGeneratedBundleDigest,
     runtimeConsumptionReady: false,
     businessFeatureDevelopmentAllowed: false,
     productionConfirmAllowed: false,
@@ -1692,8 +1723,9 @@ function checkDormitoryRuntimeAdmission(finalReport, graph, documents, state) {
   }
   if (finalReport.runtimeAdmissionStatus !== state.runtimeAdmissionStatus ||
     finalReport.dormitoryRuntimeAdmission?.runtimeAdmissionStatus !== state.runtimeAdmissionStatus ||
-    finalReport.dormitoryRuntimeAdmission?.acceptedSubjectDigest !== state.acceptedSubjectDigest ||
-    finalReport.dormitoryRuntimeAdmission?.generatedCandidateSubjectDigest !== state.generatedCandidateSubjectDigest) {
+    finalReport.dormitoryRuntimeAdmission?.acceptedGeneratedBundleDigest !== state.acceptedGeneratedBundleDigest ||
+    finalReport.dormitoryRuntimeAdmission?.runtimeConsumedBundleDigest !== state.runtimeConsumedBundleDigest ||
+    finalReport.dormitoryRuntimeAdmission?.bundleDigestMatch !== state.bundleDigestMatch) {
     failures.push("Final Report dormitoryRuntimeAdmission must mirror runtime admission predicate.");
   }
   if (finalReport.dormitoryRuntimeAdmission?.businessFeatureDevelopmentAllowed !== false) {
@@ -1716,8 +1748,11 @@ function checkDormitoryRuntimeAdmission(finalReport, graph, documents, state) {
   if (node.scope !== "dormitory_first_golden_chain_test_only_consumption" ||
     node.runtimeAdmissionStatus !== state.runtimeAdmissionStatus ||
     node.generatedCandidateAcceptedBy00 !== true ||
-    node.acceptedSubjectDigest !== state.acceptedSubjectDigest ||
-    node.generatedCandidateSubjectDigest !== state.generatedCandidateSubjectDigest ||
+    node.acceptedGeneratedBundleDigest !== state.acceptedGeneratedBundleDigest ||
+    node.runtimeConsumedBundleDigest !== state.runtimeConsumedBundleDigest ||
+    !sameJson(node.runtimeConsumedFilesDigestList, state.runtimeConsumedFilesDigestList) ||
+    !sameJson(node.acceptedRuntimeConsumableDigests, state.acceptedRuntimeConsumableDigests) ||
+    node.bundleDigestMatch !== state.bundleDigestMatch ||
     node.runtimeConsumptionReady !== state.runtimeConsumptionReady ||
     node.businessFeatureDevelopmentAllowed !== false ||
     node.dormitoryFirstGoldenChainLandingGoNoGo !== "NO_GO" ||
@@ -1745,8 +1780,9 @@ function checkDormitoryRuntimeAdmission(finalReport, graph, documents, state) {
     testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
     runtimeAdmissionStatus: state.runtimeAdmissionStatus,
     generatedCandidateAcceptedBy00: true,
-    acceptedSubjectDigest: state.acceptedSubjectDigest,
-    generatedCandidateSubjectDigest: state.generatedCandidateSubjectDigest,
+    acceptedGeneratedBundleDigest: state.acceptedGeneratedBundleDigest,
+    runtimeConsumedBundleDigest: state.runtimeConsumedBundleDigest,
+    bundleDigestMatch: state.bundleDigestMatch,
     runtimeConsumptionReady: state.runtimeConsumptionReady,
     runtimeConsumptionMode: "test_only_consumption",
     businessFeatureDevelopmentAllowed: false,
@@ -1782,7 +1818,7 @@ function checkDormitoryFirstGoldenChainLanding(finalReport, graph, documents, st
     result.runtimeConsumptionReady !== true ||
     proof.runtimeConsumptionReady !== true ||
     finalReport.runtimeConsumptionReady !== true) {
-    failures.push("S8 business landing requires S7 runtimeConsumptionReady=true.");
+    failures.push("business landing admission requires runtime_test_admission runtimeConsumptionReady=true.");
   }
   if (state.landingStatus !== DORMITORY_L1_LANDING_APPROVED_STATUS ||
     finalReport.dormitoryFirstGoldenChainLandingStatus !== state.landingStatus ||
@@ -2185,6 +2221,7 @@ function generatedContractFiles() {
     "docs/contracts/generated/dormitory/workitems.generated.json",
     "docs/contracts/generated/dormitory/surface-input-model.generated.json",
     "docs/contracts/generated/dormitory/read-model.generated.json",
+    firstGoldenChainTestPlanPath,
     "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
   ];
 }
@@ -2255,7 +2292,6 @@ function checkBinding(file, document, expectedDigest) {
     "authorizedSourceRef",
     "authorizedCandidateExecutionHead",
     "candidateSourceRef",
-    "executionHead",
     "evidenceGeneratedAtHead",
     "candidateCompileEvidenceStatus",
     "candidateCompileClosureForCurrentHead",
@@ -2265,11 +2301,10 @@ function checkBinding(file, document, expectedDigest) {
     "generatedFieldBindingClosureStatus",
     "generatedFieldBindingClosureDigest",
     "sourceFieldGapsDecisionDigest",
-    "s4AttestationIsFinalReleaseEvidence",
-    "releaseEvidenceRequiredAfterS4",
+    "candidateAttestationIsReleaseEvidence",
+    "releaseEvidenceRequiredAfterCandidateEvidence",
     "generatedCandidateAcceptedBy00",
     "generatedCandidateAcceptanceDecisionStatus",
-    "generatedCandidateSubjectDigest",
     "runtimeAdmissionStatus",
     "runtimeAdmissionAuthorityRef",
     "runtimeAdmissionResultRef",
@@ -2346,6 +2381,9 @@ function checkBinding(file, document, expectedDigest) {
 }
 
 function requiresEvidenceBinding(file) {
+  if (file === firstGoldenChainBrowserAuditReportPath || file === firstGoldenChainBrowserAuditScreenshotIndexPath) {
+    return false;
+  }
   return (file.startsWith("artifacts/oam/evidence/") && file !== generatedCompileExecutionProofPath) ||
     file === "artifacts/oam/final-report.json";
 }
@@ -2543,10 +2581,10 @@ function checkRealBrowserEvidence(graph, finalReport) {
     failures.push("evidence graph missing real browser evidence summary.");
     return;
   }
-  const requirePassed = false;
+  const requirePassed = true;
   const reasons = finalReport.finalDecision?.noGoReasons ?? finalReport.noGoReasons ?? [];
   if (summary.status !== "passed" && requirePassed) {
-    failures.push(`real browser evidence summary must be passed, actual: ${summary.status}`);
+    failures.push(`first golden chain real browser evidence summary must be passed, actual: ${summary.status}`);
   }
   if (summary.status !== "passed" && !reasons.some((reason) => /真实浏览器|real browser/i.test(reason))) {
     failures.push("real browser evidence is not passed but Final Report does not record a NO_GO reason.");
@@ -2554,30 +2592,151 @@ function checkRealBrowserEvidence(graph, finalReport) {
   if (summary.singleWriter !== "scripts/oam/generate-current-evidence-root.mjs") {
     failures.push("real browser evidence must be written by the current evidence root generator.");
   }
-  for (const [key, gate] of [
-    ["l1", "DORM-L1-BROWSER-E2E"],
-    ["tenScenario", "DORMITORY-TEN-SCENARIO-REAL-BROWSER"]
-  ]) {
-    const item = summary[key];
-    if (!item) {
-      failures.push(`real browser evidence missing ${key}.`);
-      continue;
+  const current = summary.firstGoldenChain ?? summary.l1;
+  if (!current) {
+    failures.push("real browser evidence missing firstGoldenChain current main audit.");
+  } else {
+    const gate = "DORMITORY-FIRST-GOLDEN-CHAIN-REAL-BROWSER";
+    if (current.status !== "passed") failures.push("first golden chain browser evidence must be passed.");
+    if (!current.report || !exists(current.report)) {
+      failures.push(`first golden chain browser evidence report is missing: ${current.report || "(empty)"}`);
     }
-    if (item.status !== "passed" && requirePassed) failures.push(`${key} browser evidence must be passed.`);
-    if (!item.report || !exists(item.report)) failures.push(`${key} browser evidence report is missing: ${item.report || "(empty)"}`);
-    if ((item.scenarioCount ?? 0) <= 0) failures.push(`${key} browser evidence has no scenarios.`);
-    if ((item.screenshotHashCount ?? 0) <= 0) failures.push(`${key} browser evidence has no screenshot hashes.`);
+    if ((current.scenarioCount ?? 0) !== 1) failures.push("first golden chain browser evidence must contain exactly one current capability scenario.");
+    if ((current.screenshotHashCount ?? 0) <= 0) failures.push("first golden chain browser evidence has no screenshot hashes.");
+    if (current.scenarioScope?.currentMainGate !== true) failures.push("first golden chain browser evidence must be the current main gate.");
+    if (current.scenarioScope?.legacyTenScenarioAsMainGate !== false ||
+      current.scenarioScope?.legacyAllStepsAsMainGate !== false) {
+      failures.push("legacy ten-scenario/all-steps browser audits must not be current main gates.");
+    }
     const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
     if (!node) {
       failures.push(`evidence graph missing node for ${gate}.`);
+    } else {
+      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+      if (!node.refs?.includes(current.report)) failures.push(`${gate} node missing report ref.`);
+    }
+    const browserReport = current.report && exists(current.report) ? readJson(current.report) : null;
+    checkFirstGoldenChainBrowserReport(browserReport, current, node);
+  }
+
+  for (const [key, gate] of [
+    ["tenScenario", "DORMITORY-TEN-SCENARIO-REAL-BROWSER"],
+    ["legacyL1", "DORM-L1-BROWSER-E2E"]
+  ]) {
+    const item = summary[key];
+    if (!item) {
       continue;
     }
-    if (node.status !== "passed" && requirePassed) failures.push(`${gate} node must be passed.`);
-    if (node.headSha !== finalReport.latestCommit && requirePassed) failures.push(`${gate} node commit does not match final report.`);
-    if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
-    if (!node.refs?.includes(item.report)) failures.push(`${gate} node missing report ref.`);
-    const browserReport = exists(item.report) ? readJson(item.report) : null;
-    checkBrowserAuditLevel(`${key} browser evidence`, browserReport, item, node);
+    if (item.currentMainGate === true || item.scenarioScope?.currentMainGate === true) {
+      failures.push(`${key} browser evidence must not be a current main gate.`);
+    }
+    if (item.lane !== "legacy_regression_only") failures.push(`${key} browser evidence must be legacy_regression_only.`);
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (node?.scenarioScope?.currentMainGate === true) failures.push(`${gate} graph node must not be current main gate.`);
+  }
+}
+
+function checkFirstGoldenChainBrowserReport(report, summary, node) {
+  if (!report || typeof report !== "object") {
+    failures.push("first golden chain browser report is missing or invalid.");
+    return;
+  }
+  if (report.status !== "passed") failures.push("first golden chain browser report status must be passed.");
+  if (report.capabilityId !== "Dormitory.FirstGoldenChain") {
+    failures.push(`first golden chain browser report capabilityId invalid: ${report.capabilityId ?? "missing"}.`);
+  }
+  if (report.productionConfirmAllowed !== false || report.releaseAuthority !== false || report.finalGoNoGo !== "NO_GO") {
+    failures.push("first golden chain browser report must keep production/release/final GO closed.");
+  }
+  if (report.legacyBrowserAuditLane?.tenScenarioAsMainGate !== false ||
+    report.legacyBrowserAuditLane?.allStepsAsMainGate !== false) {
+    failures.push("first golden chain browser report must keep legacy audits out of the main gate.");
+  }
+  const steps = (report.steps ?? [])
+    .filter((step) => /-ready$/.test(String(step.stepId ?? "")))
+    .map((step) => step.domState?.cardId)
+    .filter(Boolean);
+  const expectedSteps = ["Dorm.RoomSetupConfirm", "Dorm.BedSetupConfirm", "Dorm.ResourceReadinessConfirm"];
+  if (JSON.stringify(steps) !== JSON.stringify(expectedSteps)) {
+    failures.push(`first golden chain browser report steps must be exactly ${expectedSteps.join(" -> ")}.`);
+  }
+  if (!JSON.stringify(report).includes("第一金链内测完成")) {
+    failures.push("first golden chain browser report must prove 第一金链内测完成 is visible.");
+  }
+  if (summary.businessGoAllowed !== false || node?.businessGoAllowed !== false) {
+    failures.push("first golden chain browser evidence must keep businessGoAllowed=false.");
+  }
+}
+
+function checkCapabilityDigestChain(graph, finalReport, releaseObject, docs) {
+  const testPlanResult = docs.get(testPlanGeneratedFromCapabilityResultPath);
+  const browserResult = docs.get(firstGoldenChainBrowserAuditResultPath);
+  const digestChainResult = docs.get(evidenceDigestChainSingleSourceResultPath);
+  if (testPlanResult?.status !== "PASS") {
+    failures.push("test plan generated-from-capability result must be PASS.");
+  }
+  if (browserResult?.status !== "PASS") {
+    failures.push("first golden chain browser audit result must be PASS.");
+  }
+  if (digestChainResult?.status !== "PASS") {
+    failures.push("evidence digest chain single-source result must be PASS.");
+  }
+  const graphChain = graph.capabilityDigestChain;
+  if (!graphChain) {
+    failures.push("evidence graph missing capabilityDigestChain.");
+    return;
+  }
+  for (const [label, chain] of [
+    ["final report", finalReport.capabilityDigestChain],
+    ["release evidence object", releaseObject?.capabilityDigestChain]
+  ]) {
+    if (!chain) {
+      failures.push(`${label} missing capabilityDigestChain.`);
+      continue;
+    }
+    for (const field of [
+      "capabilityId",
+      "acceptedGeneratedBundleDigest",
+      "runtimeProjectionDigest",
+      "surfaceProjectionDigest",
+      "searchProjectionDigest",
+      "testPlanDigest",
+      "browserAuditDigest",
+      "evidenceRootDigest",
+      "productionConfirmAllowed",
+      "releaseAuthority",
+      "finalGoNoGo"
+    ]) {
+      if (chain[field] !== graphChain[field]) {
+        failures.push(`${label} capabilityDigestChain.${field} must match evidence graph.`);
+      }
+    }
+  }
+  if (graphChain.capabilityId !== "Dormitory.FirstGoldenChain") {
+    failures.push("capability digest chain must bind Dormitory.FirstGoldenChain.");
+  }
+  for (const field of [
+    "acceptedGeneratedBundleDigest",
+    "runtimeProjectionDigest",
+    "surfaceProjectionDigest",
+    "searchProjectionDigest",
+    "testPlanDigest",
+    "browserAuditDigest",
+    "evidenceRootDigest"
+  ]) {
+    if (!sha256DigestPattern.test(String(graphChain[field] ?? ""))) {
+      failures.push(`capability digest chain ${field} must be a sha256 digest.`);
+    }
+  }
+  if (graphChain.runtimeConsumptionReady !== false && graphChain.runtimeConsumptionReady !== "test_only") {
+    failures.push("capability digest chain runtimeConsumptionReady must be false or test_only.");
+  }
+  if (graphChain.productionConfirmAllowed !== false ||
+    graphChain.releaseAuthority !== false ||
+    graphChain.finalGoNoGo !== "NO_GO") {
+    failures.push("capability digest chain must keep production/release/final GO closed.");
   }
 }
 
@@ -2936,16 +3095,16 @@ function checkFinalReportMultiStatus(finalReport, candidateObject, commitAttesta
     ? "PASS"
     : "NO_GO";
   if (matrix.generatedCompilationStatus?.status !== expectedGeneratedCompilationStatus) {
-    failures.push(`generatedCompilationStatus must be ${expectedGeneratedCompilationStatus} for the current S4 execution state.`);
+    failures.push(`generatedCompilationStatus must be ${expectedGeneratedCompilationStatus} for the current formal compile execution state.`);
   }
   if (matrix.runtimeAdmissionStatus?.status !== "PASS") {
-    failures.push("runtimeAdmissionStatus must be PASS after S7 test-only runtime admission approval.");
+    failures.push("runtimeAdmissionStatus must be PASS after runtime_test_admission approval.");
   }
   if (matrix.dormitoryFirstGoldenChainLandingStatus?.status !== "PASS") {
-    failures.push("dormitoryFirstGoldenChainLandingStatus must be PASS after S8 business landing approval.");
+    failures.push("dormitoryFirstGoldenChainLandingStatus must be PASS after business_landing_admission approval.");
   }
   if (matrix.runtimeConsumptionStatus?.status !== "PASS") {
-    failures.push("runtimeConsumptionStatus must be PASS after S7 test-only runtime admission approval.");
+    failures.push("runtimeConsumptionStatus must be PASS after runtime_test_admission approval.");
   }
   if (matrix.runtimeBoundaryStatus?.status !== "PASS") {
     failures.push("runtimeBoundaryStatus must be PASS for runtime boundary closure.");
@@ -3146,6 +3305,18 @@ function isEmptyProofField(value) {
 function isNonEmptySource(value) {
   if (Array.isArray(value)) return value.length > 0 && value.every((item) => String(item ?? "").trim().length > 0);
   return String(value ?? "").trim().length > 0;
+}
+
+function sameJson(left, right) {
+  return stableStringify(left) === stableStringify(right);
+}
+
+function stableStringify(value) {
+  if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
+  if (value && typeof value === "object") {
+    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableStringify(value[key])}`).join(",")}}`;
+  }
+  return JSON.stringify(value);
 }
 
 function sha256(value) {

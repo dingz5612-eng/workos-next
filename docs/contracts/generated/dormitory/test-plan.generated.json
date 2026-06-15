@@ -1,0 +1,109 @@
+{
+  "version": "oam.dormitory-first-golden-chain-test-plan.generated.v1",
+  "generatedBy": "scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+  "runtimeProjectionDigest": "sha256:b977350c6021a8f3d317806746eb1a18c7a118f3e884ec3a410db03568a11f20",
+  "surfaceProjectionDigest": "sha256:45672237f1e2d39cc32b78a28c9afff6d6a21607001fd9ac5126cad483a764be",
+  "searchProjectionDigest": "sha256:a9ff4dc5689c5b3f99e7141ec578fe40bff8de29b9364ac666f5a3bffd192df9",
+  "mainGatePolicy": {
+    "currentMainGate": "dormitory_first_golden_chain_capability_only",
+    "legacyScenarioMainGate": false,
+    "legacyFullPathAuditMainGate": false,
+    "legacyBrowserAuditLane": "reference_only_regression"
+  },
+  "scope": {
+    "includedWorkItems": [
+      {
+        "step": "1/3",
+        "workItemType": "Dorm.RoomSetupConfirm",
+        "cardId": "Dorm.RoomSetupConfirm",
+        "title": "RoomSetupConfirm"
+      },
+      {
+        "step": "2/3",
+        "workItemType": "Dorm.BedSetupConfirm",
+        "cardId": "Dorm.BedSetupConfirm",
+        "title": "BedSetupConfirm"
+      },
+      {
+        "step": "3/3",
+        "workItemType": "Dorm.ResourceReadinessConfirm",
+        "cardId": "Dorm.ResourceReadinessConfirm",
+        "title": "ResourceReadinessConfirm"
+      }
+    ],
+    "excludedLegacyWorkItemCategories": [
+      "pricing_setup",
+      "blocking_flow",
+      "release_flow"
+    ],
+    "businessLandingAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  },
+  "browserAudit": {
+    "runner": "scripts/surface/run-dormitory-first-golden-chain-real-browser-audit.mjs",
+    "checker": "scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs",
+    "evidenceRoot": "artifacts/oam/evidence/dormitory-first-golden-chain-real-browser",
+    "query": "新增房间",
+    "account": "dormOperator",
+    "environment": "local_test_only"
+  },
+  "testCases": [
+    {
+      "id": "dormitory.first_golden_chain.1.RoomSetupConfirm",
+      "step": "1/3",
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "expectedVisibleStepLabel": "1/3",
+      "requiresBrowserProof": true,
+      "forbiddenVisibleTerms": [
+        "价格配置",
+        "房间床位阻断",
+        "房间床位释放",
+        "生产确认",
+        "发布确认",
+        "Final GO"
+      ]
+    },
+    {
+      "id": "dormitory.first_golden_chain.2.BedSetupConfirm",
+      "step": "2/3",
+      "workItemType": "Dorm.BedSetupConfirm",
+      "expectedVisibleStepLabel": "2/3",
+      "requiresBrowserProof": true,
+      "forbiddenVisibleTerms": [
+        "价格配置",
+        "房间床位阻断",
+        "房间床位释放",
+        "生产确认",
+        "发布确认",
+        "Final GO"
+      ]
+    },
+    {
+      "id": "dormitory.first_golden_chain.3.ResourceReadinessConfirm",
+      "step": "3/3",
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "expectedVisibleStepLabel": "3/3",
+      "requiresBrowserProof": true,
+      "forbiddenVisibleTerms": [
+        "价格配置",
+        "房间床位阻断",
+        "房间床位释放",
+        "生产确认",
+        "发布确认",
+        "Final GO"
+      ]
+    }
+  ],
+  "forbiddenInterpretations": [
+    "browser audit PASS is not business landing",
+    "browser audit PASS is not production confirmation",
+    "browser audit PASS is not release authority",
+    "browser audit PASS is not final GO",
+    "legacy browser audits are reference-only regression evidence"
+  ],
+  "testPlanDigest": "sha256:982407578f8067591fab6090e7507864d6a48cf208eed9c64d21c517a7d95536"
+}

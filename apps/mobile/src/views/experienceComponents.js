@@ -17,6 +17,7 @@ import { evidenceStateFor } from "../selectors/queueSelectors.js";
 import { isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { permissionDiagnosticCopy } from "../surfaceGuard.js";
 import { buildBusinessAnchor, businessAnchorFieldsHtml, businessAnchorHtml } from "../businessAnchorKernel.js";
+import { isBedSetupCardId } from "../capabilityProjection.js";
 import { stepContextContract } from "../systemContextContract.js";
 import {
   DeviceTrustVM,
@@ -247,7 +248,7 @@ function taskRowForField(field, card, task, values, ctx, options = {}) {
 }
 
 function taskFieldState(field, fieldId, card, task, values, ctx, options = {}) {
-  if (card?.id === "bedSetup" && fieldId === "bedLabels") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedLabels") {
     const bedCount = taskValueByFieldId(values, "bedCount", field, ctx) ||
       inheritedTaskValue(task, "bedCount", ctx) ||
       taskValueByFieldId(values, "capacity", field, ctx);
@@ -255,7 +256,7 @@ function taskFieldState(field, fieldId, card, task, values, ctx, options = {}) {
     const displayValue = bedLayoutPreviewValue(bedCount, pattern, ctx);
     return { value: displayValue, displayValue, source: "derived" };
   }
-  if (card?.id === "bedSetup" && fieldId === "bedType") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedType") {
     const value = taskValueByFieldId(values, fieldId, field, ctx) || defaultValueForField(field) || "bunk_pair";
     return { value, source: value ? "default" : "" };
   }

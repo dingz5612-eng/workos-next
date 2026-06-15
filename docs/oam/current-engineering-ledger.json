@@ -6,11 +6,11 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceLifecyclePolicy": "docs/oam/file-lifecycle-policy.json",
   "defaultPolicy": "unregistered_files_are_not_allowed",
-  "fileCount": 998,
+  "fileCount": 1047,
   "identityCounts": {
-    "validation_file": 340,
+    "validation_file": 388,
     "implementation_file": 330,
-    "derived_view": 65,
+    "derived_view": 66,
     "authority_file": 241,
     "human_manual": 20,
     "generated_evidence": 2
@@ -2421,6 +2421,35 @@
       "replacementPath": "apps/mobile/src/businessAnchorKernel.js",
       "absorbedBy": "apps/mobile/src/businessAnchorKernel.js",
       "removalProofGate": "scripts/check-surface-contract.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "apps/mobile/src/capabilityProjection.js",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "mobile-surface-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.apps/mobile/src/capabilityProjection.js",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "apps/mobile/src/capabilityProjection.js",
+      "absorbedBy": "apps/mobile/src/capabilityProjection.js",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -9303,6 +9332,35 @@
       "deletionConditionZh": "当且仅当内容已被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/contracts/generated/dormitory/test-plan.generated.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "generated-contract-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.docs/contracts/generated/dormitory/test-plan.generated.json",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/contracts/generated/dormitory/test-plan.generated.json",
+      "absorbedBy": "docs/contracts/generated/dormitory/test-plan.generated.json",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/contracts/generated/dormitory/workitems.generated.json",
       "currentIdentity": "derived_view",
       "lifecycleState": "derived_view",
@@ -10756,6 +10814,180 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/oam/capabilities/compatibility-box.current.json",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "capability-control-plane-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.docs/oam/capabilities/compatibility-box.current.json",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/capabilities/compatibility-box.current.json",
+      "absorbedBy": "docs/oam/capabilities/compatibility-box.current.json",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.active-path-boundary.json",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "capability-control-plane-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.docs/oam/capabilities/dormitory-first-golden-chain.active-path-boundary.json",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/capabilities/dormitory-first-golden-chain.active-path-boundary.json",
+      "absorbedBy": "docs/oam/capabilities/dormitory-first-golden-chain.active-path-boundary.json",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "capability-control-plane-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+      "absorbedBy": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "capability-control-plane-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "absorbedBy": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.registry.json",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "capability-control-plane-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.docs/oam/capabilities/dormitory-first-golden-chain.registry.json",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/capabilities/dormitory-first-golden-chain.registry.json",
+      "absorbedBy": "docs/oam/capabilities/dormitory-first-golden-chain.registry.json",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.state-machine.json",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "capability-control-plane-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.docs/oam/capabilities/dormitory-first-golden-chain.state-machine.json",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/capabilities/dormitory-first-golden-chain.state-machine.json",
+      "absorbedBy": "docs/oam/capabilities/dormitory-first-golden-chain.state-machine.json",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/oam/checkout-service-cutover.config.json",
       "currentIdentity": "authority_file",
       "lifecycleState": "active_contract",
@@ -10844,6 +11076,35 @@
       "replacementPath": "docs/oam/compiler-generated-contract-kernel.json",
       "absorbedBy": "docs/oam/compiler-generated-contract-kernel.json",
       "removalProofGate": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/oam/control-plane/gate-lane-taxonomy.current.json",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "capability-control-plane-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.docs/oam/control-plane/gate-lane-taxonomy.current.json",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/control-plane/gate-lane-taxonomy.current.json",
+      "absorbedBy": "docs/oam/control-plane/gate-lane-taxonomy.current.json",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -11237,6 +11498,35 @@
       "deletionConditionZh": "当 dormitory runtime admission authority 被当前权威替代且无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "capability-control-plane-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
+      "absorbedBy": "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
       "currentIdentity": "generated_evidence",
       "lifecycleState": "active_evidence",
@@ -11264,6 +11554,35 @@
       "absorbedBy": "scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs",
       "removalProofGate": "scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs",
       "deletionConditionZh": "当 00 不再需要该候选证据审查包且后续候选包已替代时删除。"
+    },
+    {
+      "path": "docs/oam/evidence-projection-policy.current.json",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "capability-control-plane-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.docs/oam/evidence-projection-policy.current.json",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/evidence-projection-policy.current.json",
+      "absorbedBy": "docs/oam/evidence-projection-policy.current.json",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
       "path": "docs/oam/file-lifecycle-policy.json",
@@ -11914,6 +12233,35 @@
       "replacementPath": "docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
       "absorbedBy": "docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
       "removalProofGate": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/oam/runtime-stability-lane.current.json",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "capability-control-plane-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.docs/oam/runtime-stability-lane.current.json",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/runtime-stability-lane.current.json",
+      "absorbedBy": "docs/oam/runtime-stability-lane.current.json",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -17332,6 +17680,35 @@
       "deletionConditionZh": "当 authority-cleanup mutation 门禁被替代且证据归档时删除。"
     },
     {
+      "path": "scripts/oam/check-authority-ledger-append-only.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-authority-ledger-append-only.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-authority-ledger-append-only.mjs",
+      "absorbedBy": "scripts/oam/check-authority-ledger-append-only.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-authority-source-layer-audit.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -17419,6 +17796,35 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/check-capability-state-machine-transition.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.scripts/oam/check-capability-state-machine-transition.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-capability-state-machine-transition.mjs",
+      "absorbedBy": "scripts/oam/check-capability-state-machine-transition.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-codex-execution-channel-policy.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -17446,6 +17852,64 @@
       "replacementPath": "scripts/oam/check-codex-execution-channel-policy.mjs",
       "absorbedBy": "scripts/oam/check-codex-execution-channel-policy.mjs",
       "removalProofGate": "scripts/oam/check-codex-execution-channel-policy.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-compatibility-box-boundary.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-compatibility-box-boundary.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-compatibility-box-boundary.mjs",
+      "absorbedBy": "scripts/oam/check-compatibility-box-boundary.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-control-plane-lane-boundary.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-control-plane-lane-boundary.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-control-plane-lane-boundary.mjs",
+      "absorbedBy": "scripts/oam/check-control-plane-lane-boundary.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -17595,6 +18059,35 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/check-current-head-authoritative-artifact-reconciliation.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-current-head-authoritative-artifact-reconciliation.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-current-head-authoritative-artifact-reconciliation.mjs",
+      "absorbedBy": "scripts/oam/check-current-head-authoritative-artifact-reconciliation.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-current-oam-release-attestation.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -17652,6 +18145,35 @@
       "replacementPath": "scripts/oam/check-current-oam.mjs",
       "absorbedBy": "scripts/oam/check-current-oam.mjs",
       "removalProofGate": "scripts/oam/check-current-oam.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-current-projection-from-ledger.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-current-projection-from-ledger.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-current-projection-from-ledger.mjs",
+      "absorbedBy": "scripts/oam/check-current-projection-from-ledger.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -17899,6 +18421,35 @@
       "deletionConditionZh": "当 dormitory runtime admission gate 被当前权威替代且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/check-environment-profile-authority.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-environment-profile-authority.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-environment-profile-authority.mjs",
+      "absorbedBy": "scripts/oam/check-environment-profile-authority.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-evidence-contract-refs.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -17928,6 +18479,93 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/check-evidence-digest-chain-single-source.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-evidence-digest-chain-single-source.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-evidence-digest-chain-single-source.mjs",
+      "absorbedBy": "scripts/oam/check-evidence-digest-chain-single-source.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-evidence-is-projection-only.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-evidence-is-projection-only.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-evidence-is-projection-only.mjs",
+      "absorbedBy": "scripts/oam/check-evidence-is-projection-only.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-evidence-writer-boundary.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-evidence-writer-boundary.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-evidence-writer-boundary.mjs",
+      "absorbedBy": "scripts/oam/check-evidence-writer-boundary.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-file-lifecycle-policy.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -17954,6 +18592,93 @@
       "replacementPath": "scripts/oam/check-file-lifecycle-policy.mjs",
       "absorbedBy": "scripts/oam/check-file-lifecycle-policy.mjs",
       "removalProofGate": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-first-golden-chain-active-path-exact.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.scripts/oam/check-first-golden-chain-active-path-exact.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-first-golden-chain-active-path-exact.mjs",
+      "absorbedBy": "scripts/oam/check-first-golden-chain-active-path-exact.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-gate-taxonomy.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-gate-taxonomy.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-gate-taxonomy.mjs",
+      "absorbedBy": "scripts/oam/check-gate-taxonomy.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-generated-bundle-content-addressed.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-generated-bundle-content-addressed.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-generated-bundle-content-addressed.mjs",
+      "absorbedBy": "scripts/oam/check-generated-bundle-content-addressed.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -18255,6 +18980,180 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/check-no-active-legacy-authority.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-no-active-legacy-authority.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-no-active-legacy-authority.mjs",
+      "absorbedBy": "scripts/oam/check-no-active-legacy-authority.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-no-active-legacy-identity.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-no-active-legacy-identity.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-no-active-legacy-identity.mjs",
+      "absorbedBy": "scripts/oam/check-no-active-legacy-identity.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-no-active-path-legacy-identity.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-no-active-path-legacy-identity.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-no-active-path-legacy-identity.mjs",
+      "absorbedBy": "scripts/oam/check-no-active-path-legacy-identity.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-no-current-capability-uses-legacy-seed.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.scripts/oam/check-no-current-capability-uses-legacy-seed.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-no-current-capability-uses-legacy-seed.mjs",
+      "absorbedBy": "scripts/oam/check-no-current-capability-uses-legacy-seed.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-no-stage-number-active-authority.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-no-stage-number-active-authority.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-no-stage-number-active-authority.mjs",
+      "absorbedBy": "scripts/oam/check-no-stage-number-active-authority.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-no-stage-number-authority-leak.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-no-stage-number-authority-leak.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-no-stage-number-authority-leak.mjs",
+      "absorbedBy": "scripts/oam/check-no-stage-number-authority-leak.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-oam-kernel-graph.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -18339,6 +19238,35 @@
       "replacementPath": "scripts/oam/check-operation-identity-boundary.mjs",
       "absorbedBy": "scripts/oam/check-operation-identity-boundary.mjs",
       "removalProofGate": "scripts/oam/check-operation-identity-boundary.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-option-set-single-source.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-option-set-single-source.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-option-set-single-source.mjs",
+      "absorbedBy": "scripts/oam/check-option-set-single-source.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -18429,6 +19357,35 @@
       "deletionConditionZh": "当且仅当内容已被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/check-release-authority-is-only-final-go-source.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-release-authority-is-only-final-go-source.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-release-authority-is-only-final-go-source.mjs",
+      "absorbedBy": "scripts/oam/check-release-authority-is-only-final-go-source.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-retired-reference-blocker.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -18455,6 +19412,64 @@
       "replacementPath": "scripts/oam/check-retired-reference-blocker.mjs",
       "absorbedBy": "scripts/oam/check-retired-reference-blocker.mjs",
       "removalProofGate": "scripts/oam/check-retired-reference-blocker.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-runtime-consumes-accepted-bundle.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-runtime-consumes-accepted-bundle.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-runtime-consumes-accepted-bundle.mjs",
+      "absorbedBy": "scripts/oam/check-runtime-consumes-accepted-bundle.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs",
+      "absorbedBy": "scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -18487,6 +19502,64 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/check-runtime-implementation-drift-policy.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-runtime-implementation-drift-policy.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-runtime-implementation-drift-policy.mjs",
+      "absorbedBy": "scripts/oam/check-runtime-implementation-drift-policy.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-runtime-stability-lane.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-runtime-stability-lane.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-runtime-stability-lane.mjs",
+      "absorbedBy": "scripts/oam/check-runtime-stability-lane.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -18516,6 +19589,93 @@
       "absorbedBy": "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
       "removalProofGate": "scripts/oam/check-s5-semantic-digest-idempotency.mjs",
       "deletionConditionZh": "当 S5 semantic digest idempotency gate 被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-search-consumes-capability-projection.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.scripts/oam/check-search-consumes-capability-projection.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-search-consumes-capability-projection.mjs",
+      "absorbedBy": "scripts/oam/check-search-consumes-capability-projection.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-single-capability-bundle-digest.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.scripts/oam/check-single-capability-bundle-digest.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-single-capability-bundle-digest.mjs",
+      "absorbedBy": "scripts/oam/check-single-capability-bundle-digest.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-surface-consumes-generated-surface-model.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/check-surface-consumes-generated-surface-model.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-surface-consumes-generated-surface-model.mjs",
+      "absorbedBy": "scripts/oam/check-surface-consumes-generated-surface-model.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
       "path": "scripts/oam/check-surface-language-v2.mjs",
@@ -18660,6 +19820,35 @@
       "replacementPath": "scripts/oam/check-system-operating-kernel.mjs",
       "absorbedBy": "scripts/oam/check-system-operating-kernel.mjs",
       "removalProofGate": "scripts/oam/check-system-operating-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-test-plan-generated-from-capability.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.scripts/oam/check-test-plan-generated-from-capability.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-test-plan-generated-from-capability.mjs",
+      "absorbedBy": "scripts/oam/check-test-plan-generated-from-capability.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -18926,6 +20115,35 @@
       "deletionConditionZh": "当 00 审查包不再作为候选证据审查输入且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs",
+      "absorbedBy": "scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/generate-generated-candidate-acceptance.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -19009,6 +20227,64 @@
       "replacementPath": "scripts/oam/generate-system-derived-contracts.mjs",
       "absorbedBy": "scripts/oam/generate-system-derived-contracts.mjs",
       "removalProofGate": "scripts/oam/generate-system-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/lib/capability-delivery-control-plane.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.scripts/oam/lib/capability-delivery-control-plane.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/lib/capability-delivery-control-plane.mjs",
+      "absorbedBy": "scripts/oam/lib/capability-delivery-control-plane.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/lib/capability-projection-digests.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.scripts/oam/lib/capability-projection-digests.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/lib/capability-projection-digests.mjs",
+      "absorbedBy": "scripts/oam/lib/capability-projection-digests.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -19137,6 +20413,35 @@
       "deletionConditionZh": "当 dormitory runtime admission 共享模型被当前权威替代且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/lib/environment-profile-authority.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/lib/environment-profile-authority.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/lib/environment-profile-authority.mjs",
+      "absorbedBy": "scripts/oam/lib/environment-profile-authority.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/lib/formal-generated-compile-authorization.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -19198,6 +20503,35 @@
       "absorbedBy": "scripts/oam/lib/generated-candidate-subject.mjs",
       "removalProofGate": "scripts/oam/check-generated-candidate-acceptance.mjs",
       "deletionConditionZh": "当 generated candidate subject 共享模型被当前权威替代且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/lib/generated-contract-bundle.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "current-oam",
+      "graphBinding": "file.scripts/oam/lib/generated-contract-bundle.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/lib/generated-contract-bundle.mjs",
+      "absorbedBy": "scripts/oam/lib/generated-contract-bundle.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
       "path": "scripts/oam/normalize-authority-classification.mjs",
@@ -19367,6 +20701,35 @@
       "replacementPath": "scripts/surface/check-device-trust-contract.mjs",
       "absorbedBy": "scripts/surface/check-device-trust-contract.mjs",
       "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "surface-runtime-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs",
+      "absorbedBy": "scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -20103,6 +21466,35 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/surface/run-dormitory-first-golden-chain-real-browser-audit.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "surface-runtime-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.scripts/surface/run-dormitory-first-golden-chain-real-browser-audit.mjs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/surface/run-dormitory-first-golden-chain-real-browser-audit.mjs",
+      "absorbedBy": "scripts/surface/run-dormitory-first-golden-chain-real-browser-audit.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/surface/run-dormitory-l1-browser-e2e-audit.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -20502,6 +21894,35 @@
       "replacementPath": "services/core-api/WorkOS.Api/Properties/launchSettings.json",
       "absorbedBy": "services/core-api/WorkOS.Api/Properties/launchSettings.json",
       "removalProofGate": "scripts/check-runtime-write-paths.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/AcceptedCapabilityRuntimeProjection.cs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "runtime-owner",
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "graphBinding": "file.services/core-api/WorkOS.Api/Runtime/AcceptedCapabilityRuntimeProjection.cs",
+      "gates": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "services/core-api/WorkOS.Api/Runtime/AcceptedCapabilityRuntimeProjection.cs",
+      "absorbedBy": "services/core-api/WorkOS.Api/Runtime/AcceptedCapabilityRuntimeProjection.cs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {

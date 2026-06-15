@@ -86,13 +86,19 @@ const requiredSlices = [
   "Accommodation.ServiceTask",
   "Accommodation.PeriodAnalytics"
 ];
+const runtimeTestOnlySlices = new Set(["Dormitory.FirstGoldenChain"]);
 const sliceIds = new Set(sliceManifest.slices?.map((slice) => slice.id));
 for (const slice of requiredSlices) {
   if (!sliceIds.has(slice)) throw new Error(`Slice manifest missing ${slice}`);
 }
 
 for (const slice of sliceManifest.slices || []) {
-  if (slice.status !== "production-slice") {
+  const runtimeTestOnly = runtimeTestOnlySlices.has(slice.id);
+  if (runtimeTestOnly) {
+    if (slice.status !== "runtime-test-admitted") {
+      throw new Error(`Runtime test-only slice ${slice.id} must declare runtime-test-admitted status.`);
+    }
+  } else if (slice.status !== "production-slice") {
     throw new Error(`Slice ${slice.id} must be current production-slice; non-current runtime statuses are forbidden.`);
   }
   for (const field of ["workspaceId", "cards", "events", "ownsAggregates", "status"]) {

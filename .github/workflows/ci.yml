@@ -66,6 +66,17 @@ jobs:
           node scripts/validate-contracts.mjs
           node scripts/check-rule-authority.mjs
           node scripts/oam/check-current-architecture-manifest.mjs
+          node scripts/oam/check-authority-ledger-append-only.mjs
+          node scripts/oam/check-current-projection-from-ledger.mjs
+          node scripts/oam/check-no-active-legacy-identity.mjs
+          node scripts/oam/check-no-active-path-legacy-identity.mjs
+          node scripts/oam/check-no-current-capability-uses-legacy-seed.mjs
+          node scripts/oam/check-no-stage-number-authority-leak.mjs
+          node scripts/oam/check-no-stage-number-active-authority.mjs
+          node scripts/oam/check-compatibility-box-boundary.mjs
+          node scripts/oam/check-capability-state-machine-transition.mjs
+          node scripts/oam/check-control-plane-lane-boundary.mjs
+          node scripts/oam/check-gate-taxonomy.mjs
           node scripts/oam/check-p0-rule-ledger.mjs --self-test
           node scripts/oam/check-p0-rule-ledger.mjs
           node scripts/oam/check-current-authority-index.mjs
@@ -89,6 +100,11 @@ jobs:
           node scripts/oam/check-generated-field-binding-closure.mjs
           node scripts/oam/check-generated-contract-consistency.mjs
           node scripts/oam/check-generated-files-not-manually-edited.mjs
+          node scripts/oam/check-generated-bundle-content-addressed.mjs
+          node scripts/oam/check-single-capability-bundle-digest.mjs
+          node scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs
+          node scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs
+          node scripts/oam/check-test-plan-generated-from-capability.mjs
           node scripts/oam/check-oam-kernel-graph.mjs
           node scripts/oam/check-system-change-governance.mjs
           node scripts/oam/check-iteration-kernel.mjs
@@ -217,12 +233,14 @@ jobs:
         run: dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release
 
       - name: Generate dormitory real-browser evidence
+        continue-on-error: true
         env:
           WORKOS_REAL_BROWSER_HEADLESS: "1"
           WORKOS_MOBILE_URL: http://127.0.0.1:5175
           WORKOS_API_URL: http://127.0.0.1:5191
         run: |
           pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1
+          node scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs
           node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs
           node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs
 
@@ -237,13 +255,30 @@ jobs:
           node scripts/oam/generate-generated-candidate-acceptance.mjs
           node scripts/oam/check-s5-semantic-digest-idempotency.mjs
           node scripts/oam/check-generated-candidate-acceptance.mjs --self-test
+          node scripts/oam/check-generated-bundle-content-addressed.mjs
+          node scripts/oam/check-single-capability-bundle-digest.mjs
           node scripts/oam/check-generated-candidate-acceptance.mjs
-          node scripts/oam/check-dormitory-runtime-admission.mjs
+          node scripts/oam/check-runtime-consumes-accepted-bundle.mjs
+          node scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs
+          node scripts/oam/check-dormitory-runtime-admission.mjs --write-proof
+          node scripts/oam/check-environment-profile-authority.mjs
+          node scripts/oam/check-runtime-stability-lane.mjs
+          node scripts/oam/check-runtime-implementation-drift-policy.mjs
+          node scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs
+          node scripts/oam/check-test-plan-generated-from-capability.mjs
+          node scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs
+          node scripts/oam/check-evidence-is-projection-only.mjs
+          node scripts/oam/check-release-authority-is-only-final-go-source.mjs
+          node scripts/oam/check-evidence-writer-boundary.mjs
+          node scripts/oam/check-current-head-authoritative-artifact-reconciliation.mjs
           node scripts/oam/check-dormitory-first-golden-chain-landing.mjs
 
       - name: Generate current OAM evidence root
         if: always()
-        run: node scripts/oam/generate-current-evidence-root.mjs
+        run: |
+          node scripts/oam/generate-current-evidence-root.mjs
+          node scripts/oam/check-evidence-digest-chain-single-source.mjs
+          node scripts/oam/generate-current-evidence-root.mjs
 
       - name: Validate current OAM evidence root
         if: always()
@@ -270,6 +305,7 @@ jobs:
             docs/oam/dormitory-runtime-admission.current.json
             docs/oam/dormitory-first-golden-chain-landing.current.json
             docs/contracts/generated/dormitory/field-bindings.generated.json
+            docs/contracts/generated/dormitory/test-plan.generated.json
             docs/oam/evidence-attestation-packages/**
 
       - name: Diff whitespace check

@@ -114,6 +114,8 @@ try {
   Wait-HttpOk -Url "$env:WORKOS_API_URL/health" -Name "Core API"
   Wait-HttpOk -Url $env:WORKOS_MOBILE_URL -Name "Mobile frontend"
 
+  Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-first-golden-chain-real-browser-audit.mjs")
+  Invoke-Native -Command "node" -Arguments @("scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs")
   Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-l1-browser-e2e-audit.mjs")
   Invoke-Native -Command "node" -Arguments @("scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs")
   Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-ten-scenario-real-browser-audit.mjs")

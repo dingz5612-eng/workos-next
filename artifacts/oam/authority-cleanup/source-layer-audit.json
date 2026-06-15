@@ -1,6 +1,6 @@
 {
   "version": "authority-cleanup.source-layer-audit.v1",
-  "generatedAtUtc": "2026-06-14T17:40:05.669Z",
+  "generatedAtUtc": "2026-06-15T10:26:36.269Z",
   "fileLifecycleRegistry": {
     "policyPath": "docs/oam/file-lifecycle-policy.json",
     "registryVersion": "oam.file-lifecycle-registry.v1",
@@ -3038,6 +3038,29 @@
       "notesZh": "由 Source 或 generator 派生的合同 / manifest / generated view；禁止手改，不拥有业务事实权威。"
     },
     {
+      "path": "docs/contracts/generated/dormitory/test-plan.generated.json",
+      "currentIdentity": "derived_view",
+      "targetLayer": "generated",
+      "fileLifecycle": "generated",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_generated_contract+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan",
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "由 Source 或 generator 派生的合同 / manifest / generated view；禁止手改，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
       "path": "docs/contracts/generated/dormitory/workitems.generated.json",
       "currentIdentity": "derived_view",
       "targetLayer": "generated",
@@ -3660,6 +3683,94 @@
       "notesZh": "保留为少而硬的 Source Layer 权威源；只能由 Source 白名单授权，不得由 artifact、dashboard、search 或 surface 替代。"
     },
     {
+      "path": "docs/oam/capabilities/compatibility-box.current.json",
+      "currentIdentity": "validation_file",
+      "targetLayer": "referenceOnly",
+      "fileLifecycle": "referenceOnly",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_reference_only+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "参考材料只能用于说明背景，不得成为当前事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.active-path-boundary.json",
+      "currentIdentity": "validation_file",
+      "targetLayer": "referenceOnly",
+      "fileLifecycle": "referenceOnly",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_reference_only+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "参考材料只能用于说明背景，不得成为当前事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "currentIdentity": "validation_file",
+      "targetLayer": "referenceOnly",
+      "fileLifecycle": "referenceOnly",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_reference_only+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "参考材料只能用于说明背景，不得成为当前事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.registry.json",
+      "currentIdentity": "validation_file",
+      "targetLayer": "referenceOnly",
+      "fileLifecycle": "referenceOnly",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_reference_only+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "参考材料只能用于说明背景，不得成为当前事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
       "path": "docs/oam/codex-execution-channel-policy.json",
       "currentIdentity": "current_system_kernel",
       "targetLayer": "source",
@@ -3708,6 +3819,28 @@
       "notesZh": "保留为少而硬的 Source Layer 权威源；只能由 Source 白名单授权，不得由 artifact、dashboard、search 或 surface 替代。"
     },
     {
+      "path": "docs/oam/control-plane/gate-lane-taxonomy.current.json",
+      "currentIdentity": "validation_file",
+      "targetLayer": "referenceOnly",
+      "fileLifecycle": "referenceOnly",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_reference_only+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "参考材料只能用于说明背景，不得成为当前事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
       "path": "docs/oam/current-admission-state.json",
       "currentIdentity": "current_admission_contract",
       "targetLayer": "source",
@@ -3744,13 +3877,14 @@
         "scripts/check-local-path-references.mjs",
         "scripts/oam/check-current-oam.mjs"
       ],
-      "recommendedAction": "keep_source",
+      "recommendedAction": "keep_source+review_old_term_fence_or_remove",
       "deletionRisk": "high",
       "controlledOldTermUse": false,
       "scanReasons": [
+        "controlled-old-term-scan",
         "current-authority-index.currentTruthAllowed=true"
       ],
-      "notesZh": "保留为少而硬的 Source Layer 权威源；只能由 Source 白名单授权，不得由 artifact、dashboard、search 或 surface 替代。"
+      "notesZh": "保留为少而硬的 Source Layer 权威源；只能由 Source 白名单授权，不得由 artifact、dashboard、search 或 surface 替代。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
     },
     {
       "path": "docs/oam/current-architecture.md",
@@ -6262,6 +6396,50 @@
       "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
     },
     {
+      "path": "scripts/oam/check-compatibility-box-boundary.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-control-plane-lane-boundary.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
       "path": "scripts/oam/check-cross-domain-conflict-rules.mjs",
       "currentIdentity": "validation_file",
       "targetLayer": "tooling",
@@ -6283,6 +6461,28 @@
         "generated-or-derived-marker-scan"
       ],
       "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-current-architecture-manifest.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "docs/oam/oam-kernel-graph.json",
+        "scripts/oam/check-current-architecture-manifest.mjs"
+      ],
+      "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
     },
     {
       "path": "scripts/oam/check-current-authority-index.mjs",
@@ -6417,6 +6617,28 @@
       "scanReasons": [
         "controlled-old-term-scan",
         "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-first-golden-chain-active-path-exact.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
       ],
       "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
     },
@@ -6559,6 +6781,94 @@
       "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。"
     },
     {
+      "path": "scripts/oam/check-no-active-legacy-authority.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-no-active-legacy-identity.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-no-active-path-legacy-identity.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-no-current-capability-uses-legacy-seed.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
       "path": "scripts/oam/check-oam-kernel-graph.mjs",
       "currentIdentity": "validation_file",
       "targetLayer": "tooling",
@@ -6602,6 +6912,28 @@
       "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
     },
     {
+      "path": "scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
       "path": "scripts/oam/check-surface-language-v2.mjs",
       "currentIdentity": "current_rule_script",
       "targetLayer": "tooling",
@@ -6623,6 +6955,28 @@
         "generated-or-derived-marker-scan"
       ],
       "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-test-plan-generated-from-capability.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
     },
     {
       "path": "scripts/oam/compile-current-kernel-graph.mjs",
@@ -6738,6 +7092,51 @@
       "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。"
     },
     {
+      "path": "scripts/oam/lib/capability-delivery-control-plane.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/lib/capability-projection-digests.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan",
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
       "path": "scripts/oam/lib/generated-candidate-subject.mjs",
       "currentIdentity": "validation_file",
       "targetLayer": "tooling",
@@ -6794,6 +7193,28 @@
       "derived": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ],
       "recommendedAction": "keep_as_tooling+review_old_term_fence_or_remove",

@@ -1,6 +1,7 @@
 import { resolveOperationPanelTarget } from "./operationRouteResolver.js";
 import { operationStatusTranslationKey } from "./operationStatus.js";
 import { isAccommodationResourceSetupQuery } from "./searchIntentRegistry.js";
+import { FIRST_GOLDEN_CHAIN_STEPS, FIRST_GOLDEN_CHAIN_WORKSPACE_ID } from "./capabilityProjection.js";
 import { admissionCopy, missingAdmissionState, normalizeAdmissionState } from "./admissionSurface.js";
 
 export function buildSearchResultVM(item = {}, ctx = {}) {
@@ -172,11 +173,15 @@ function rankFor(item, query) {
     item.draft
   ].map((value) => safeText(value).toLocaleLowerCase()).join(" ");
   const roomSetupIntent = isAccommodationResourceSetupQuery(query);
+  const comparableText = normalizeRoomSearchToken(text);
+  const comparableQuery = normalizeRoomSearchToken(query);
   const matched = text.includes(query)
+    || comparableText.includes(comparableQuery)
     || query.split(/\s+/).filter(Boolean).some((part) => text.includes(part))
     || (roomSetupIntent && text.includes("房间"));
   if (!matched) return 0;
-  if (roomSetupIntent && (item.templateWorkspaceId === "W-STAY-RESOURCE" || item.workItemId || item.cardId === "roomSetup")) return 100;
+  const currentRoomSetupCardId = FIRST_GOLDEN_CHAIN_STEPS[0]?.cardId || "";
+  if (roomSetupIntent && (item.templateWorkspaceId === FIRST_GOLDEN_CHAIN_WORKSPACE_ID || item.cardId === currentRoomSetupCardId || item.workItemType === currentRoomSetupCardId)) return 100;
   if (roomSetupIntent && text.includes("房间")) return 90;
   if (item.workItemId) return 80;
   if (["room", "bed", "stay"].includes(item.resultType || item.type)) return 70;
@@ -285,4 +290,10 @@ function safeText(value) {
   if (typeof value === "string" || typeof value === "number") return String(value);
   if (Array.isArray(value)) return value.map(safeText).join(" ");
   return Object.values(value).map(safeText).join(" ");
+}
+
+function normalizeRoomSearchToken(value = "") {
+  return String(value || "")
+    .replace(/([0-9０-９]+)\s*号\s*房间/g, "$1房间")
+    .replace(/\s+/g, " ");
 }

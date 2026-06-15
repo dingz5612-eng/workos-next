@@ -1,6 +1,24 @@
 const runtimeTruthPriority = ["latest-runtime-event-or-projection", "operations-start-context", "completed-record-snapshot", "non-conflicting-draft-fallback"];
 
 const stepContracts = [
+  contract("Dormitory.FirstGoldenChain", "Dorm.RoomSetupConfirm", [], {
+    inherited: [],
+    user: ["roomNo", "floor", "capacity"],
+    derived: [{ fieldId: "roomId", from: ["roomNo"], surface: "hidden-submit-only" }],
+    backend: []
+  }),
+  contract("Dormitory.FirstGoldenChain", "Dorm.BedSetupConfirm", ["Dorm.RoomSetupConfirm"], {
+    inherited: ["roomId"],
+    user: ["bedNo", "bedType"],
+    derived: [{ fieldId: "bedId", from: ["roomId", "bedNo"], surface: "hidden-submit-only" }],
+    backend: []
+  }),
+  contract("Dormitory.FirstGoldenChain", "Dorm.ResourceReadinessConfirm", ["Dorm.BedSetupConfirm"], {
+    inherited: ["roomId", "bedId"],
+    user: ["readinessState"],
+    derived: [],
+    backend: []
+  }),
   contract("Accommodation.ResourceSetup", "roomSetup", [], {
     inherited: [],
     user: ["buildingName", "roomNo", "roomType", "bedCount", "genderPolicy", "furnitureStatus", "technicalState", "roomNote"],

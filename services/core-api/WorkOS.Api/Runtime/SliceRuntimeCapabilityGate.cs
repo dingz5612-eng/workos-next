@@ -37,10 +37,15 @@ public sealed class SliceRuntimeCapabilityGate
     public ConfirmResult? ForbidConfirmIfNotCurrentSlice(string workspaceId)
     {
         var capability = CapabilityFor(workspaceId);
-        return capability.Status.Equals("production-slice", StringComparison.OrdinalIgnoreCase)
+        return IsConfirmAllowed(capability)
             ? null
             : new ConfirmResult(ConfirmStatus.Forbidden, $"slice_runtime_forbidden:{capability.SliceId}:{capability.Status}", null);
     }
+
+    private static bool IsConfirmAllowed(SliceRuntimeCapability capability) =>
+        capability.Status.Equals("production-slice", StringComparison.OrdinalIgnoreCase) ||
+        (capability.SliceId.Equals(AcceptedCapabilityRuntimeProjection.CapabilityId, StringComparison.OrdinalIgnoreCase) &&
+            capability.Status.Equals("runtime-test-admitted", StringComparison.OrdinalIgnoreCase));
 
     private static IReadOnlyDictionary<string, SliceRuntimeCapability> LoadCapabilities(string? manifestPath)
     {

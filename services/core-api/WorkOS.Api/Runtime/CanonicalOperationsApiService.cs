@@ -63,7 +63,7 @@ public sealed class CanonicalOperationsApiService
         }
 
         var definition = ResolveStartDefinition(templateWorkspaceId, card.Id);
-        var routeCardId = UiRouteCardIdForDefinition(definition.Definition, card.Id);
+        var routeCardId = RouteCardIdForRuntime(workspace.Id, definition.Definition, card.Id);
         var ownerRole = FirstNonEmpty(card.Confirmation.RequiredRole, actor.Role, "operator");
         var admissionDecision = StartAdmissionDecision(definition, actor, ownerRole);
         var operationCase = CreateCase(new CreateOperationCaseRequest(workspace.Id, actor.TenantId, workspace.Id))
@@ -353,7 +353,7 @@ public sealed class CanonicalOperationsApiService
             return;
         }
 
-        var nextCardId = UiRouteCardIdForDefinition(nextDefinition, nextDefinition.MigrationSourceCardId);
+        var nextCardId = RouteCardIdForRuntime(current.WorkspaceId, nextDefinition, nextDefinition.MigrationSourceCardId);
         catalog.CreateWorkItem(new CreateWorkItemRequest(
             OperationsWorkItemIdFor(current.WorkspaceId, nextDefinition.DefinitionId),
             current.TenantId,
@@ -478,6 +478,15 @@ public sealed class CanonicalOperationsApiService
         definition.Resolved && !string.IsNullOrWhiteSpace(definition.DefinitionId)
             ? definition.DefinitionId
             : routeCardId;
+
+    private static string RouteCardIdForRuntime(string workspaceId, WorkItemDefinition? definition, string fallbackCardId) =>
+        IsAcceptedCapabilityWorkspace(workspaceId) && !string.IsNullOrWhiteSpace(definition?.WorkItemType)
+            ? definition.WorkItemType
+            : UiRouteCardIdForDefinition(definition, fallbackCardId);
+
+    private static bool IsAcceptedCapabilityWorkspace(string workspaceId) =>
+        workspaceId.Equals(AcceptedCapabilityRuntimeProjection.WorkspaceId, StringComparison.OrdinalIgnoreCase) ||
+        workspaceId.StartsWith($"{AcceptedCapabilityRuntimeProjection.WorkspaceId}-", StringComparison.OrdinalIgnoreCase);
 
     private static string UiRouteCardIdForDefinition(WorkItemDefinition? definition, string fallbackCardId) =>
         definition?.DefinitionId switch
@@ -840,8 +849,27 @@ public sealed class CanonicalOperationsApiService
         {
             allowed.Add(key);
         }
+        foreach (var key in AcceptedCapabilityDerivedFieldKeys(request.WorkspaceId, request.CardId))
+        {
+            allowed.Add(key);
+        }
         var unknown = values.Keys.FirstOrDefault(key => !allowed.Contains(key));
         return string.IsNullOrWhiteSpace(unknown) ? null : $"unknown_field_key:{unknown}";
+    }
+
+    private static IReadOnlyList<string> AcceptedCapabilityDerivedFieldKeys(string? workspaceId, string? cardId)
+    {
+        if (!IsAcceptedCapabilityWorkspace(workspaceId ?? string.Empty))
+        {
+            return Array.Empty<string>();
+        }
+
+        return cardId switch
+        {
+            AcceptedCapabilityRuntimeProjection.RoomSetupConfirmCardId => new[] { "roomId" },
+            AcceptedCapabilityRuntimeProjection.BedSetupConfirmCardId => new[] { "bedId" },
+            _ => Array.Empty<string>()
+        };
     }
 
     private static readonly string[] ReservedControlFieldKeys =

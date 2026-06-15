@@ -225,9 +225,9 @@ if (finalReport?.generatedFieldBindingClosureRequired !== true ||
   finalReport?.generatedFieldBindingClosureStatus !== "PASS" ||
   finalReport?.generatedFieldBindingClosureDigest !== generatedFieldBindingClosure.closureDigest ||
   finalReport?.sourceFieldGapsDecisionDigest !== generatedFieldBindingClosure.sourceFieldGapsDecisionDigest ||
-  finalReport?.s4AttestationIsFinalReleaseEvidence !== false ||
-  finalReport?.releaseEvidenceRequiredAfterS4 !== true) {
-  violations.push("final report must mirror generated field binding closure and S4 attestation/release-evidence separation.");
+  finalReport?.candidateAttestationIsReleaseEvidence !== false ||
+  finalReport?.releaseEvidenceRequiredAfterCandidateEvidence !== true) {
+  violations.push("final report must mirror generated field binding closure and candidate-attestation/release-evidence separation.");
 }
 if (finalReport?.generatedCandidateAcceptedBy00 !== generatedCandidateAcceptancePredicate.generatedCandidateAcceptedBy00) {
   violations.push("final report generatedCandidateAcceptedBy00 must mirror generated candidate acceptance authority.");

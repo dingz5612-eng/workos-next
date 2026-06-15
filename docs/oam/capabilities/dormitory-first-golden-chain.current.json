@@ -1,0 +1,75 @@
+{
+  "version": "oam.capability-ledger-current-projection.v1",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "projectionSource": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+  "registryRef": "docs/oam/capabilities/dormitory-first-golden-chain.registry.json",
+  "compatibilityBoxRef": "docs/oam/capabilities/compatibility-box.current.json",
+  "currentFilesMode": "ledger_replay_projection_only",
+  "activeAuthority": {
+    "capabilityId": "Dormitory.FirstGoldenChain",
+    "sourceClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
+    "generatedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+    "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+    "runtimeConsumedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+    "runtimeAdmissionDigest": "sha256:0aa4b6c3448ab9103aa401d8d225b374685be38a022df0db3c1d230f750f2c09",
+    "businessLandingDigest": null,
+    "releaseAuthorityDigest": null
+  },
+  "generatedBundle": {
+    "digest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+    "files": [
+      {
+        "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+        "digest": "sha256:cab56e48544f8bdfeaeaba8de7a2782d9574fef914314048a4a678badef80a69"
+      },
+      {
+        "path": "docs/oam/domain-derived-contracts.json",
+        "digest": "sha256:ab565660d52f2f3fd07d5656c5b675afea2489c9d7e32f54ccfc19170f74bcae"
+      },
+      {
+        "path": "docs/oam/generated-contracts-manifest.json",
+        "digest": "sha256:57543101e05c024f6c32f96dff5ab86cd54489d7519797b1875d3cc088bc1f3d"
+      },
+      {
+        "path": "docs/oam/kernel/oam-kernel-graph.generated.json",
+        "digest": "sha256:7c932e854402c29d22c3bd8ddd82a731ab4f9a4101f08e649f24d8df3a88925a"
+      },
+      {
+        "path": "docs/oam/system-derived-contracts.json",
+        "digest": "sha256:e44fe49a0e4db9d97baf65d65218a18d76a8851260245a5988031297529f12a9"
+      }
+    ]
+  },
+  "lifecycleAchieved": [
+    "SOURCE_CLOSED",
+    "GENERATED_BUNDLE_BUILT",
+    "GENERATED_BUNDLE_ACCEPTED",
+    "RUNTIME_TEST_ADMITTED"
+  ],
+  "lifecycleNotAdmitted": [
+    "BUSINESS_LANDING_ADMITTED",
+    "PRODUCTION_CONFIRMED",
+    "RELEASE_AUTHORIZED"
+  ],
+  "runtimeTestConsumptionAdmitted": true,
+  "runtimeConsumptionReady": false,
+  "runtimeGoNoGo": "NO_GO",
+  "businessFeatureDevelopmentAllowed": false,
+  "businessLandingGoNoGo": "NO_GO",
+  "businessLandingDigestActive": null,
+  "productionConfirmAllowed": false,
+  "productionGoNoGo": "NO_GO",
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "legacyCurrentFilesAreAuthority": false,
+  "forbiddenInterpretations": [
+    "Evidence Root PASS is not capability delivery GO",
+    "CI PASS is not capability delivery GO",
+    "artifact exists is not capability delivery GO",
+    "browser audit PASS is not production confirmation",
+    "runtime test admission is not business landing",
+    "generated bundle acceptance is not release authority",
+    "capability projection is not production confirmation",
+    "current files are projections, not active authority identity"
+  ]
+}

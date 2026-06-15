@@ -11,7 +11,8 @@ const authority = readJsonIfExists(DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_PATH, ro
 const result = validateDormitoryFirstGoldenChainLandingAuthority({
   authority,
   root,
-  currentHead: gitHead()
+  currentHead: gitHead(),
+  writeProof: process.argv.includes("--write-proof") || process.env.OAM_WRITE_PROOF === "1"
 });
 
 writeJson(DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_RESULT_PATH, result, root);

@@ -139,7 +139,7 @@ export function validateDormitoryFirstGoldenChainLandingAuthority({
   authority,
   root = process.cwd(),
   currentHead = null,
-  writeProof = true
+  writeProof = false
 } = {}) {
   const failures = [];
   const warnings = [];

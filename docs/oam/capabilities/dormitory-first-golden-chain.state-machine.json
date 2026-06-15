@@ -1,0 +1,34 @@
+{
+  "version": "oam.capability-state-machine.v1",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "stateOrder": [
+    "SOURCE_CLOSED",
+    "GENERATED_BUNDLE_BUILT",
+    "GENERATED_BUNDLE_ACCEPTED",
+    "RUNTIME_TEST_ADMITTED",
+    "BUSINESS_LANDING_ADMITTED",
+    "PRODUCTION_CONFIRMED",
+    "RELEASE_AUTHORIZED"
+  ],
+  "currentStateSource": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+  "currentState": "RUNTIME_TEST_ADMITTED",
+  "transitionRules": {
+    "previousStateMustPassBeforeNext": true,
+    "nextStateMayOnlyReferencePreviousStateDigest": true,
+    "nextStateMustNotModifyPreviousStateAuthority": true,
+    "generatedBundleDigestChangeInvalidatesFollowingStates": true
+  },
+  "nonEquivalenceRules": {
+    "runtimeTestAdmittedIsBusinessLanding": false,
+    "businessLandingIsProductionConfirmed": false,
+    "productionConfirmedIsReleaseAuthorized": false
+  },
+  "forbiddenInterpretations": [
+    "runtime test admitted is not business landing",
+    "business landing is not production confirmed",
+    "production confirmed is not release authorized",
+    "Evidence Root PASS is projection only",
+    "Final Report PASS is projection only",
+    "Release Evidence Object PASS is projection only"
+  ]
+}

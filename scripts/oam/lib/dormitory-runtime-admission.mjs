@@ -8,11 +8,17 @@ import {
   validateGeneratedCandidateAcceptanceAuthority,
   writeJson
 } from "./generated-candidate-subject.mjs";
+import {
+  ENVIRONMENT_PROFILE_ID,
+  ENVIRONMENT_PROFILE_PATH
+} from "./environment-profile-authority.mjs";
 
 export const DORMITORY_RUNTIME_ADMISSION_PATH = "docs/oam/dormitory-runtime-admission.current.json";
 export const DORMITORY_RUNTIME_ADMISSION_RESULT_PATH = "artifacts/oam/checks/dormitory-runtime-admission-result.json";
 export const DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH =
   "artifacts/oam/evidence/dormitory-runtime-test-only-consumption-proof.json";
+export const RUNTIME_CONSUMES_ACCEPTED_BUNDLE_RESULT_PATH =
+  "artifacts/oam/checks/runtime-consumes-accepted-bundle-result.json";
 
 export const RUNTIME_ADMISSION_PENDING_STATUS = "PENDING_RUNTIME_ADMISSION_REVIEW";
 export const RUNTIME_ADMISSION_APPROVED_STATUS = "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION";
@@ -64,7 +70,14 @@ export function buildDormitoryRuntimeAdmissionAuthority({
     root,
     currentHead
   });
-  const runtimeConsumptionReady = status === RUNTIME_ADMISSION_APPROVED_STATUS;
+  const acceptedGeneratedBundleDigest = acceptance.acceptedGeneratedBundleDigest;
+  const acceptedRuntimeConsumableDigests = acceptance.acceptedRuntimeConsumableDigests ?? [];
+  const environmentProfile = readJsonIfExists(ENVIRONMENT_PROFILE_PATH, root);
+  const runtimeConsumedBundleDigest = acceptedGeneratedBundleDigest;
+  const runtimeConsumedFilesDigestList = acceptedRuntimeConsumableDigests;
+  const bundleDigestMatch = Boolean(acceptedGeneratedBundleDigest) &&
+    runtimeConsumedBundleDigest === acceptedGeneratedBundleDigest;
+  const runtimeConsumptionReady = status === RUNTIME_ADMISSION_APPROVED_STATUS && bundleDigestMatch;
   return {
     version: "oam.dormitory-runtime-admission.v1",
     authorityType: "dormitory_first_golden_chain_runtime_admission",
@@ -73,6 +86,7 @@ export function buildDormitoryRuntimeAdmissionAuthority({
     generatedCandidateAcceptanceRef: GENERATED_CANDIDATE_ACCEPTANCE_PATH,
     generatedCandidateAcceptanceResultRef: GENERATED_CANDIDATE_ACCEPTANCE_RESULT_PATH,
     acceptedSubjectDigest: acceptance.subjectDigest,
+    acceptedGeneratedBundleDigest,
     generatedCandidateSubjectDigest: acceptance.subjectDigest,
     reviewedExecutionHead: acceptance.reviewedExecutionHead,
     evidenceArtifactDigest: acceptance.evidenceArtifactDigest,
@@ -83,6 +97,11 @@ export function buildDormitoryRuntimeAdmissionAuthority({
     runtimeConsumptionMode: status === RUNTIME_ADMISSION_APPROVED_STATUS
       ? "test_only_consumption"
       : "pending_runtime_admission_review",
+    runtimeConsumedBundleDigest,
+    runtimeConsumedFilesDigestList,
+    acceptedRuntimeConsumableDigests,
+    bundleDigestMatch,
+    runtimeConsumptionReadyAuthority: "runtimeConsumedBundleDigest_equals_acceptedGeneratedBundleDigest",
     consumedGeneratedContracts: [...generatedRuntimeContractRefs],
     allowedOperationCases: [...allowedDormitoryRuntimeOperationCases],
     runtimeConsumptionReady,
@@ -108,6 +127,9 @@ export function buildDormitoryRuntimeAdmissionAuthority({
       runtimeOwnsBusinessFacts: false
     },
     testOnlyConsumptionProofRef: DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH,
+    environmentProfileId: ENVIRONMENT_PROFILE_ID,
+    environmentProfileRef: ENVIRONMENT_PROFILE_PATH,
+    environmentProfile: environmentProfileSnapshot(environmentProfile),
     explicitExclusions: [
       "businessFeatureDevelopmentAllowed",
       "dormitoryFirstGoldenChainLandingGoNoGo",
@@ -124,7 +146,7 @@ export function validateDormitoryRuntimeAdmissionAuthority({
   authority,
   root = process.cwd(),
   currentHead = null,
-  writeProof = true
+  writeProof = false
 } = {}) {
   const failures = [];
   const warnings = [];
@@ -134,8 +156,20 @@ export function validateDormitoryRuntimeAdmissionAuthority({
     root,
     currentHead
   });
+  const acceptedGeneratedBundleDigest = acceptance.acceptedGeneratedBundleDigest ?? acceptanceAuthority?.acceptedGeneratedBundleDigest ?? null;
+  const acceptedRuntimeConsumableDigests = acceptance.acceptedRuntimeConsumableDigests ?? acceptanceAuthority?.acceptedRuntimeConsumableDigests ?? [];
+  const environmentProfile = readJsonIfExists(ENVIRONMENT_PROFILE_PATH, root);
+  const runtimeConsumedBundleDigest = authority?.runtimeConsumedBundleDigest ?? null;
+  const runtimeConsumedFilesDigestList = authority?.runtimeConsumedFilesDigestList ?? [];
+  const bundleDigestMatch = Boolean(acceptedGeneratedBundleDigest) &&
+    runtimeConsumedBundleDigest === acceptedGeneratedBundleDigest;
   let proof = readJsonIfExists(DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH, root);
-  if (writeProof && authority?.runtimeAdmissionStatus === RUNTIME_ADMISSION_APPROVED_STATUS && !proof) {
+  if (writeProof && authority?.runtimeAdmissionStatus === RUNTIME_ADMISSION_APPROVED_STATUS &&
+    (!proof || proof.acceptedGeneratedBundleDigest !== acceptedGeneratedBundleDigest ||
+      proof.runtimeConsumedBundleDigest !== runtimeConsumedBundleDigest ||
+      stableStringify(proof.runtimeConsumedFilesDigestList ?? []) !== stableStringify(runtimeConsumedFilesDigestList) ||
+      proof.environmentProfileId !== authority.environmentProfileId ||
+      proof.environmentProfileRef !== authority.environmentProfileRef)) {
     writeJson(DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH, buildTestOnlyConsumptionProof({
       authority,
       acceptance
@@ -167,6 +201,42 @@ export function validateDormitoryRuntimeAdmissionAuthority({
       failures.push("acceptanceRecord must exist before runtime admission.");
     }
     requireEqual(authority.acceptedSubjectDigest, acceptance.subjectDigest, "acceptedSubjectDigest", failures);
+    requireEqual(authority.acceptedGeneratedBundleDigest, acceptedGeneratedBundleDigest, "acceptedGeneratedBundleDigest", failures);
+    requireDigest(authority.acceptedGeneratedBundleDigest, "acceptedGeneratedBundleDigest", failures);
+    requireDigest(authority.runtimeConsumedBundleDigest, "runtimeConsumedBundleDigest", failures);
+    requireEqual(
+      authority.runtimeConsumedBundleDigest,
+      acceptedGeneratedBundleDigest,
+      "runtimeConsumedBundleDigest",
+      failures
+    );
+    requireArrayEqual(
+      authority.runtimeConsumedFilesDigestList,
+      acceptedRuntimeConsumableDigests,
+      "runtimeConsumedFilesDigestList",
+      failures
+    );
+    requireArrayEqual(
+      authority.acceptedRuntimeConsumableDigests,
+      acceptedRuntimeConsumableDigests,
+      "acceptedRuntimeConsumableDigests",
+      failures
+    );
+    requireEqual(authority.bundleDigestMatch, true, "bundleDigestMatch", failures);
+    requireEqual(
+      authority.runtimeConsumptionReadyAuthority,
+      "runtimeConsumedBundleDigest_equals_acceptedGeneratedBundleDigest",
+      "runtimeConsumptionReadyAuthority",
+      failures
+    );
+    requireEqual(authority.environmentProfileId, ENVIRONMENT_PROFILE_ID, "environmentProfileId", failures);
+    requireEqual(authority.environmentProfileRef, ENVIRONMENT_PROFILE_PATH, "environmentProfileRef", failures);
+    requireEqual(
+      authority.environmentProfile?.runtimeStorageMode,
+      environmentProfile?.runtimeStorageMode,
+      "environmentProfile.runtimeStorageMode",
+      failures
+    );
     requireEqual(
       authority.generatedCandidateSubjectDigest,
       acceptance.subjectDigest,
@@ -221,6 +291,9 @@ export function validateDormitoryRuntimeAdmissionAuthority({
     }
 
     if (authority.runtimeAdmissionStatus === RUNTIME_ADMISSION_APPROVED_STATUS) {
+      if (!bundleDigestMatch) {
+        failures.push("runtimeConsumptionReady cannot be true unless runtimeConsumedBundleDigest equals acceptedGeneratedBundleDigest.");
+      }
       requireEqual(authority.runtimeConsumptionReady, true, "runtimeConsumptionReady", failures);
       requireEqual(authority.runtimeConsumptionMode, "test_only_consumption", "runtimeConsumptionMode", failures);
       checkTestOnlyProof(proof, authority, acceptance, failures);
@@ -237,6 +310,12 @@ export function validateDormitoryRuntimeAdmissionAuthority({
     generatedCandidateAcceptedBy00: acceptance.generatedCandidateAcceptedBy00 === true,
     acceptanceRecordExists: Boolean(acceptanceAuthority?.acceptanceRecord),
     acceptedSubjectDigest: acceptance.subjectDigest,
+    acceptedGeneratedBundleDigest,
+    runtimeConsumedBundleDigest,
+    runtimeConsumedFilesDigestList,
+    acceptedRuntimeConsumableDigests,
+    bundleDigestMatch,
+    runtimeConsumptionReadyAuthority: authority?.runtimeConsumptionReadyAuthority ?? null,
     generatedCandidateSubjectDigest: authority?.generatedCandidateSubjectDigest ?? null,
     reviewedExecutionHead: acceptance.reviewedExecutionHead,
     evidenceArtifactDigest: acceptance.evidenceArtifactDigest,
@@ -246,6 +325,7 @@ export function validateDormitoryRuntimeAdmissionAuthority({
     consumedGeneratedContracts: authority?.consumedGeneratedContracts ?? [],
     allowedOperationCases: authority?.allowedOperationCases ?? [],
     runtimeConsumptionReady: authority?.runtimeConsumptionReady === true,
+    runtimeConsumptionReadyDerivedFromBundleMatch: authority?.runtimeConsumptionReady === true && bundleDigestMatch,
     businessFeatureDevelopmentAllowed: false,
     dormitoryFirstGoldenChainLandingGoNoGo: "NO_GO",
     businessProductionGoNoGo: "NO_GO",
@@ -260,6 +340,9 @@ export function validateDormitoryRuntimeAdmissionAuthority({
     testOnlyConsumptionProofRef: DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH,
     testOnlyConsumptionProofDigest: proof ? digestObject(proof) : "missing",
     proofGenerated: Boolean(proof),
+    environmentProfileId: authority?.environmentProfileId ?? null,
+    environmentProfileRef: authority?.environmentProfileRef ?? null,
+    environmentProfile: authority?.environmentProfile ?? null,
     warnings,
     failures
   };
@@ -281,7 +364,16 @@ export function buildTestOnlyConsumptionProof({ authority, acceptance, result = 
     runtimeAdmissionStatus: RUNTIME_ADMISSION_APPROVED_STATUS,
     generatedCandidateAcceptedBy00: true,
     acceptedSubjectDigest: authority.acceptedSubjectDigest,
+    acceptedGeneratedBundleDigest: authority.acceptedGeneratedBundleDigest,
+    runtimeConsumedBundleDigest: authority.runtimeConsumedBundleDigest,
+    runtimeConsumedFilesDigestList: authority.runtimeConsumedFilesDigestList,
+    acceptedRuntimeConsumableDigests: authority.acceptedRuntimeConsumableDigests,
+    bundleDigestMatch: authority.bundleDigestMatch,
+    runtimeConsumptionReadyAuthority: authority.runtimeConsumptionReadyAuthority,
     generatedCandidateSubjectDigest: authority.generatedCandidateSubjectDigest,
+    environmentProfileId: authority.environmentProfileId,
+    environmentProfileRef: authority.environmentProfileRef,
+    environmentProfile: authority.environmentProfile,
     consumedGeneratedContracts: [...generatedRuntimeContractRefs],
     allowedOperationCases: [...allowedDormitoryRuntimeOperationCases],
     proves: {
@@ -375,6 +467,39 @@ function checkTestOnlyProof(proof, authority, acceptance, failures) {
   requireEqual(proof.generatedCandidateAcceptedBy00, true, "proof.generatedCandidateAcceptedBy00", failures);
   requireEqual(proof.acceptedSubjectDigest, authority.acceptedSubjectDigest, "proof.acceptedSubjectDigest", failures);
   requireEqual(
+    proof.acceptedGeneratedBundleDigest,
+    authority.acceptedGeneratedBundleDigest,
+    "proof.acceptedGeneratedBundleDigest",
+    failures
+  );
+  requireEqual(
+    proof.runtimeConsumedBundleDigest,
+    authority.runtimeConsumedBundleDigest,
+    "proof.runtimeConsumedBundleDigest",
+    failures
+  );
+  requireArrayEqual(
+    proof.runtimeConsumedFilesDigestList,
+    authority.runtimeConsumedFilesDigestList,
+    "proof.runtimeConsumedFilesDigestList",
+    failures
+  );
+  requireEqual(proof.bundleDigestMatch, true, "proof.bundleDigestMatch", failures);
+  requireEqual(
+    proof.runtimeConsumptionReadyAuthority,
+    "runtimeConsumedBundleDigest_equals_acceptedGeneratedBundleDigest",
+    "proof.runtimeConsumptionReadyAuthority",
+    failures
+  );
+  requireEqual(proof.environmentProfileId, authority.environmentProfileId, "proof.environmentProfileId", failures);
+  requireEqual(proof.environmentProfileRef, authority.environmentProfileRef, "proof.environmentProfileRef", failures);
+  requireEqual(
+    proof.environmentProfile?.runtimeStorageMode,
+    authority.environmentProfile?.runtimeStorageMode,
+    "proof.environmentProfile.runtimeStorageMode",
+    failures
+  );
+  requireEqual(
     proof.generatedCandidateSubjectDigest,
     acceptance.subjectDigest,
     "proof.generatedCandidateSubjectDigest",
@@ -411,16 +536,53 @@ function requireEqual(actual, expected, label, failures) {
   if (actual !== expected) failures.push(`${label} must be ${format(expected)}, actual ${format(actual)}.`);
 }
 
+function requireDigest(value, label, failures) {
+  if (!digestPattern.test(String(value ?? ""))) failures.push(`${label} must be a sha256 digest.`);
+}
+
 function requireArrayEqual(actual, expected, label, failures) {
   if (!Array.isArray(actual)) {
     failures.push(`${label} must be an array.`);
     return;
   }
-  const normalizedActual = [...actual].map((item) => String(item).replace(/\\/g, "/")).sort();
-  const normalizedExpected = [...expected].sort();
+  const normalizedActual = [...actual].map(normalizeArrayValue).sort(compareStable);
+  const normalizedExpected = [...expected].map(normalizeArrayValue).sort(compareStable);
   if (stableStringify(normalizedActual) !== stableStringify(normalizedExpected)) {
     failures.push(`${label} must equal ${format(normalizedExpected)}, actual ${format(normalizedActual)}.`);
   }
+}
+
+function normalizeArrayValue(item) {
+  if (typeof item === "string") return item.replace(/\\/g, "/");
+  if (item && typeof item === "object") {
+    return {
+      ...item,
+      path: typeof item.path === "string" ? item.path.replace(/\\/g, "/") : item.path
+    };
+  }
+  return item;
+}
+
+function environmentProfileSnapshot(profile) {
+  if (!profile || typeof profile !== "object") return null;
+  return {
+    environmentProfileId: profile.environmentProfileId,
+    environmentKind: profile.environmentKind,
+    runtimeStorageMode: profile.runtimeStorageMode,
+    backgroundWorkerMode: profile.backgroundWorkerMode,
+    browserMode: profile.browserMode,
+    apiBaseUrl: profile.apiBaseUrl,
+    mobileBaseUrl: profile.mobileBaseUrl,
+    ciRunId: profile.ciRunId,
+    localRunId: profile.localRunId,
+    artifactDigest: profile.artifactDigest,
+    workspaceDirtyStatus: profile.workspaceDirtyStatus,
+    evidenceSemantics: profile.evidenceSemantics
+  };
+}
+
+function compareStable(left, right) {
+  return stableStringify(left).localeCompare(stableStringify(right));
 }
 
 function normalizeForDigest(value) {

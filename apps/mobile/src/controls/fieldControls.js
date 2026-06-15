@@ -1,5 +1,5 @@
 import { translateTerm } from "../termDictionary.js";
-import { canonicalLabelForOptionValue, canonicalOptionLabels, normalizeOptionSetValue, preferredOptionSetDefault } from "./optionSetContract.js";
+import { canonicalLabelForOptionValue, canonicalOptionLabels, normalizeOptionSetValue } from "./optionSetContract.js";
 
 const roomTypeCapacity = {
   single: "1",
@@ -33,8 +33,6 @@ export function optionsForField(field, lang = "zh-CN") {
     });
   };
 
-  const preferredDefault = normalizeOptionSetValue(optionSet, field?.ui?.defaultValue || preferredOptionSetDefault(optionSet));
-  if (canonical?.[preferredDefault]) add({ value: preferredDefault });
   for (const entry of field?.ui?.options || []) add(entry);
   if (canonical) {
     for (const value of Object.keys(canonical)) add({ value });

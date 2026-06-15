@@ -1,5 +1,6 @@
 import { generatedBedLabelsForCount, splitBedLabels } from "./controls/bedLabelControls.js";
 import { capacityForRoomType, defaultValueForField, fieldControlKind } from "./controls/fieldControls.js";
+import { defaultBedTypeForCount, isBedSetupCardId } from "./capabilityProjection.js";
 import { isScopedResourceFieldRequired, isScopedResourceFieldVisible } from "./controls/resourceScopeControls.js";
 import { loadCompletedRecordSnapshots, loadDraft } from "./operationDrafts.js";
 import { operationFieldId } from "./operationFieldKernel.js";
@@ -40,11 +41,11 @@ export function operationFieldState(field, item, card, ctx) {
     if (carried) return { value: carried.value, displayValue: carried.displayValue, source: "caseContext" };
     return { value: "", displayValue: "", source: "missingContext" };
   }
-  if (card?.id === "bedSetup" && fieldId === "bedLabels") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedLabels") {
     const bedCount = carriedForwardValue({ id: "bedCount", label: { "zh-CN": "床位数" } }, item, card, values, ctx)?.value || values.bedCount || "";
     return { value: generatedBedLabelsForCount(bedCount), source: "derived" };
   }
-  if (card?.id === "bedSetup" && fieldId === "bedType") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedType") {
     return bedSetupGenerationModeState(field, item, card, values, ctx);
   }
   if (values[fieldId]) return { value: values[fieldId], source: "draft" };
@@ -76,7 +77,7 @@ export function operationFieldState(field, item, card, ctx) {
 
 export function operationFieldRequired(field, card, item, ctx) {
   const fieldId = operationFieldId(field);
-  if (card?.id === "bedSetup" && fieldId === "bedStatus") return false;
+  if (isBedSetupCardId(card?.id) && fieldId === "bedStatus") return false;
   const values = operationDraftValues(item, card);
   const contextRequired = fieldRequiresUserAction(card?.id, fieldId, Boolean(field.required));
   return isScopedResourceFieldRequired(card?.id, fieldId, values, contextRequired);
@@ -85,7 +86,7 @@ export function operationFieldRequired(field, card, item, ctx) {
 export function operationFieldVisible(field, card, item, ctx) {
   const fieldId = operationFieldId(field);
   const values = operationDraftValues(item, card);
-  if (card?.id === "bedSetup" && fieldId === "bedStatus") return false;
+  if (isBedSetupCardId(card?.id) && fieldId === "bedStatus") return false;
   if (!fieldVisibleByContext(card?.id, fieldId)) return false;
   const fallbackVisible = operationFieldRequired(field, card, item, ctx) ||
     !["备注", "补充说明", "异议说明"].includes(ctx.localTerm(field, "zh-CN"));
@@ -181,7 +182,7 @@ export function isCaseContextReadonlyField(fieldId, card) {
 export function isForcedCaseContextReadonlyField(fieldId, card) {
   if (isContextCarriedField(card?.id, fieldId)) return true;
   if (fieldContextRole(card?.id, fieldId).contract) return false;
-  return card?.id === "bedSetup" && ["roomId", "bedCount"].includes(fieldId);
+  return isBedSetupCardId(card?.id) && ["roomId", "bedCount"].includes(fieldId);
 }
 
 export function sameWorkspaceEvents(item, ctx) {
@@ -214,7 +215,7 @@ function bedSetupGenerationModeState(field, item, card, values, ctx) {
   if (values.bedType && draftMatchesCurrentCount && values.bedLayout) {
     return { value: values.bedType, source: "draft" };
   }
-  return { value: defaultValueForField(field) || "bunk_pair", source: "default" };
+  return { value: defaultValueForField(field) || defaultBedTypeForCount(bedCount), source: "default" };
 }
 
 function backendDefaultValue(fieldId, ctx) {

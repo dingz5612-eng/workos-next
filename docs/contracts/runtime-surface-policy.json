@@ -2,6 +2,23 @@
   "version": "0.16.3-runtime-surface-policy",
   "policies": [
     {
+      "sliceId": "Dormitory.FirstGoldenChain",
+      "workspaceId": "Dormitory.FirstGoldenChain",
+      "domainGroup": "Dormitory",
+      "defaultLens": "first-golden-chain-runtime-test",
+      "hiddenReason": "",
+      "home": { "visible": true, "priority": 99, "section": "dormitory-first-golden-chain-test-only" },
+      "workbench": { "visible": true, "queueRule": "accepted_capability_runtime_projection_only" },
+      "search": { "visible": true, "keywords": ["新增房间", "创建房间", "room setup"], "intentTags": ["dormitory_first_golden_chain", "runtime_test_only"] },
+      "learning": { "visible": true, "section": "Dormitory / First Golden Chain Runtime Test" },
+      "lenses": ["first-golden-chain-runtime-test"],
+      "cards": [
+        { "cardId": "Dorm.RoomSetupConfirm", "home": true, "workbench": true, "searchKeywords": ["新增房间", "房间配置"], "intentTags": ["room_setup_confirm"], "learningSection": "Dormitory / First Golden Chain Runtime Test", "defaultLens": "first-golden-chain-runtime-test", "hiddenReason": "" },
+        { "cardId": "Dorm.BedSetupConfirm", "home": true, "workbench": true, "searchKeywords": ["床位配置"], "intentTags": ["bed_setup_confirm"], "learningSection": "Dormitory / First Golden Chain Runtime Test", "defaultLens": "first-golden-chain-runtime-test", "hiddenReason": "" },
+        { "cardId": "Dorm.ResourceReadinessConfirm", "home": true, "workbench": true, "searchKeywords": ["资源就绪"], "intentTags": ["resource_readiness_confirm"], "learningSection": "Dormitory / First Golden Chain Runtime Test", "defaultLens": "first-golden-chain-runtime-test", "hiddenReason": "" }
+      ]
+    },
+    {
       "sliceId": "Accommodation.ResourceSetup",
       "workspaceId": "W-STAY-RESOURCE",
       "domainGroup": "Accommodation",

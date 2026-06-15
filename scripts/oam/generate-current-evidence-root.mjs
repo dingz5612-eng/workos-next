@@ -26,6 +26,13 @@ import {
   DORMITORY_L1_LANDING_APPROVED_STATUS,
   validateDormitoryFirstGoldenChainLandingAuthority
 } from "./lib/dormitory-first-golden-chain-landing.mjs";
+import {
+  FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH,
+  FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_SCREENSHOT_INDEX_PATH,
+  FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH,
+  FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH,
+  buildProjectionDigestChain
+} from "./lib/capability-projection-digests.mjs";
 
 const root = process.cwd();
 const evidenceDir = "artifacts/oam/evidence";
@@ -53,6 +60,27 @@ const generatedCompileExecutionProofPath = "artifacts/oam/evidence/generated-com
 const generatedFieldBindingClosureResultPath = FIELD_BINDING_CLOSURE_RESULT_PATH;
 const generatedFieldBindingsPath = FIELD_BINDINGS_GENERATED_PATH;
 const ciArtifactProvenanceReportPath = "artifacts/oam/checks/ci-artifact-provenance-report.json";
+const capabilityStateMachinePath = "docs/oam/capabilities/dormitory-first-golden-chain.state-machine.json";
+const gateLaneTaxonomyPath = "docs/oam/control-plane/gate-lane-taxonomy.current.json";
+const runtimeStabilityLanePath = "docs/oam/runtime-stability-lane.current.json";
+const evidenceProjectionPolicyPath = "docs/oam/evidence-projection-policy.current.json";
+const environmentProfilePath = "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json";
+const generatedBundleContentAddressedResultPath = "artifacts/oam/checks/generated-bundle-content-addressed-result.json";
+const runtimeConsumesAcceptedBundleResultPath = "artifacts/oam/checks/runtime-consumes-accepted-bundle-result.json";
+const environmentProfileAuthorityResultPath = "artifacts/oam/checks/environment-profile-authority-result.json";
+const capabilityStateMachineTransitionResultPath = "artifacts/oam/checks/capability-state-machine-transition-result.json";
+const controlPlaneLaneBoundaryResultPath = "artifacts/oam/checks/control-plane-lane-boundary-result.json";
+const gateTaxonomyResultPath = "artifacts/oam/checks/gate-taxonomy-result.json";
+const runtimeStabilityLaneResultPath = "artifacts/oam/checks/runtime-stability-lane-result.json";
+const runtimeImplementationDriftPolicyResultPath = "artifacts/oam/checks/runtime-implementation-drift-policy-result.json";
+const evidenceIsProjectionOnlyResultPath = "artifacts/oam/checks/evidence-is-projection-only-result.json";
+const releaseAuthorityFinalGoSourceResultPath = "artifacts/oam/checks/release-authority-is-only-final-go-source-result.json";
+const currentHeadAuthoritativeArtifactReconciliationResultPath =
+  "artifacts/oam/checks/current-head-authoritative-artifact-reconciliation-result.json";
+const testPlanGeneratedFromCapabilityResultPath =
+  "artifacts/oam/checks/test-plan-generated-from-capability-result.json";
+const evidenceDigestChainSingleSourceResultPath =
+  "artifacts/oam/checks/evidence-digest-chain-single-source-result.json";
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 const evidenceRootDigestPlaceholder = "__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__";
 const pendingExternalAttestation = "pending_external_attestation";
@@ -135,6 +163,11 @@ const requiredEvidenceFiles = [
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH,
+  FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH,
+  FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH,
+  testPlanGeneratedFromCapabilityResultPath,
+  evidenceDigestChainSingleSourceResultPath,
   "docs/read-intelligence/read-intelligence-kernel.json",
   "docs/read-intelligence/read-intelligence-kernel.schema.json",
   "docs/oam/db-no-side-effects-proof.json",
@@ -158,6 +191,22 @@ const requiredEvidenceFiles = [
   "artifacts/oam/checks/generated-contract-consistency-result.json",
   "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
   "artifacts/oam/checks/dormitory-candidate-artifact-attestation-package-result.json",
+  capabilityStateMachinePath,
+  gateLaneTaxonomyPath,
+  runtimeStabilityLanePath,
+  evidenceProjectionPolicyPath,
+  environmentProfilePath,
+  generatedBundleContentAddressedResultPath,
+  runtimeConsumesAcceptedBundleResultPath,
+  environmentProfileAuthorityResultPath,
+  capabilityStateMachineTransitionResultPath,
+  controlPlaneLaneBoundaryResultPath,
+  gateTaxonomyResultPath,
+  runtimeStabilityLaneResultPath,
+  runtimeImplementationDriftPolicyResultPath,
+  evidenceIsProjectionOnlyResultPath,
+  releaseAuthorityFinalGoSourceResultPath,
+  currentHeadAuthoritativeArtifactReconciliationResultPath,
   "artifacts/oam/checks/kernel-responsibility-map-result.json",
   "artifacts/oam/checks/professional-ai-review-seats-result.json",
   "artifacts/oam/checks/codex-execution-channel-policy-result.json",
@@ -184,6 +233,7 @@ const generatedContractFiles = [
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
+  FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH,
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
 ];
 
@@ -237,6 +287,39 @@ const dormitoryFirstGoldenChainLanding = validateDormitoryFirstGoldenChainLandin
   root,
   currentHead: currentRepositoryHead
 });
+const capabilityStateMachineTransition = readJsonIfExists(capabilityStateMachineTransitionResultPath) ?? {};
+const gateTaxonomy = readJsonIfExists(gateTaxonomyResultPath) ?? {};
+const controlPlaneLaneBoundary = readJsonIfExists(controlPlaneLaneBoundaryResultPath) ?? {};
+const generatedBundleContentAddressed = readJsonIfExists(generatedBundleContentAddressedResultPath) ?? {};
+const runtimeConsumesAcceptedBundle = readJsonIfExists(runtimeConsumesAcceptedBundleResultPath) ?? {};
+const environmentProfileAuthority = readJsonIfExists(environmentProfileAuthorityResultPath) ?? {};
+const runtimeStabilityLane = readJsonIfExists(runtimeStabilityLaneResultPath) ?? {};
+const runtimeImplementationDriftPolicy = readJsonIfExists(runtimeImplementationDriftPolicyResultPath) ?? {};
+const evidenceIsProjectionOnly = readJsonIfExists(evidenceIsProjectionOnlyResultPath) ?? {};
+const releaseAuthorityFinalGoSource = readJsonIfExists(releaseAuthorityFinalGoSourceResultPath) ?? {};
+const currentHeadAuthoritativeArtifactReconciliation =
+  readJsonIfExists(currentHeadAuthoritativeArtifactReconciliationResultPath) ?? {};
+const capabilityProjectionDigestChain = buildProjectionDigestChain(root);
+const generatedCapabilityTestPlan = readJsonIfExists(FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH) ?? {};
+const firstGoldenChainBrowserAuditReport = readJsonIfExists(FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH) ?? {};
+const firstGoldenChainBrowserAuditResult = readJsonIfExists(FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH) ?? {};
+const capabilityDigestChain = {
+  version: "oam.capability-evidence-digest-chain.v1",
+  capabilityId: capabilityProjectionDigestChain.capabilityId,
+  acceptedGeneratedBundleDigest: capabilityProjectionDigestChain.acceptedGeneratedBundleDigest,
+  runtimeProjectionDigest: capabilityProjectionDigestChain.runtimeProjectionDigest,
+  surfaceProjectionDigest: capabilityProjectionDigestChain.surfaceProjectionDigest,
+  searchProjectionDigest: capabilityProjectionDigestChain.searchProjectionDigest,
+  testPlanDigest: generatedCapabilityTestPlan.testPlanDigest ?? "missing",
+  browserAuditDigest: firstGoldenChainBrowserAuditReport.browserAuditDigest ??
+    firstGoldenChainBrowserAuditResult.browserAuditDigest ??
+    "missing",
+  evidenceRootDigest: evidenceRootDigestPlaceholder,
+  runtimeConsumptionReady: dormitoryRuntimeAdmission.runtimeConsumptionReady === true ? "test_only" : false,
+  productionConfirmAllowed: false,
+  releaseAuthority: false,
+  finalGoNoGo: "NO_GO"
+};
 const businessFeatureDevelopmentAllowed =
   dormitoryFirstGoldenChainLanding.businessFeatureDevelopmentAllowed === true;
 const dormitoryFirstGoldenChainLandingGoNoGo =
@@ -706,6 +789,7 @@ const finalReport = {
   evidenceGraphHash: digestPlaceholder,
   finalReportDigest: digestPlaceholder,
   evidenceBinding: evidenceBindingState(),
+  capabilityDigestChain,
   currentBranch: branch,
   latestCommit: commitSha,
   workspaceStatus: workspace.summary,
@@ -736,10 +820,10 @@ const finalReport = {
   generatedFieldBindingClosureStatus: generatedFieldBindingClosure.status,
   generatedFieldBindingClosureDigest: generatedFieldBindingClosure.generatedFieldBindingClosureDigest,
   sourceFieldGapsDecisionDigest: generatedFieldBindingClosure.sourceFieldGapsDecisionDigest,
-  s4AttestationIsFinalReleaseEvidence: false,
-  releaseEvidenceRequiredAfterS4: true,
-  generatedCandidateAcceptance,
-  dormitoryRuntimeAdmission,
+  candidateAttestationIsReleaseEvidence: false,
+  releaseEvidenceRequiredAfterCandidateEvidence: true,
+  generatedCandidateAcceptance: generatedCandidateAcceptanceReportView(),
+  dormitoryRuntimeAdmission: dormitoryRuntimeAdmissionReportView(),
   runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
   dormitoryFirstGoldenChainLanding,
   dormitoryFirstGoldenChainLandingStatus: dormitoryFirstGoldenChainLanding.landingStatus,
@@ -751,7 +835,6 @@ const finalReport = {
   authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
   authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
   candidateSourceRef: generatedCompileCandidate.candidateSourceRef,
-  executionHead: generatedCompileCandidate.executionHead,
   evidenceGeneratedAtHead: generatedCompileCandidate.evidenceGeneratedAtHead,
   currentRepositoryHead,
   candidateCompileEvidenceStatus: generatedCompileCandidate.candidateCompileEvidenceStatus,
@@ -922,6 +1005,7 @@ const evidenceGraph = {
   evidenceGraphHash: digestPlaceholder,
   finalReportDigest: digestPlaceholder,
   evidenceBinding: evidenceBindingState(),
+  capabilityDigestChain,
   evidenceRoot: evidenceDir,
   requiredFiles: requiredEvidenceFiles,
   fileRefs: requiredEvidenceFiles.map((file) => ({
@@ -983,6 +1067,13 @@ const evidenceGraph = {
   coverageSummary,
   mobileBranchRiskKernel,
   realBrowserEvidence: realBrowserEvidence.summary,
+  firstGoldenChainBrowserAudit: {
+    report: FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH,
+    result: FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH,
+    browserAuditDigest: capabilityDigestChain.browserAuditDigest,
+    legacyTenScenarioAsMainGate: false,
+    legacyAllStepsAsMainGate: false
+  },
   evidenceRootWriter: {
     writer: "scripts/oam/generate-current-evidence-root.mjs",
     browserAuditScriptsWriteFinalGraph: false
@@ -1045,6 +1136,12 @@ const releaseEvidenceObject = {
   generatedAtUtc: generatedAt,
   artifactName,
   artifactDigest: digestPlaceholder,
+  capabilityDigestChain,
+  runtimeProjectionDigest: capabilityDigestChain.runtimeProjectionDigest,
+  surfaceProjectionDigest: capabilityDigestChain.surfaceProjectionDigest,
+  searchProjectionDigest: capabilityDigestChain.searchProjectionDigest,
+  testPlanDigest: capabilityDigestChain.testPlanDigest,
+  browserAuditDigest: capabilityDigestChain.browserAuditDigest,
   githubArtifactDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
   githubArtifactMetadataDigest: githubArtifactMetadataDigest || pendingExternalAttestation,
   githubArtifactDigestStatus,
@@ -1074,7 +1171,6 @@ const releaseEvidenceObject = {
   authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
   authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
   candidateSourceRef: generatedCompileCandidate.candidateSourceRef,
-  executionHead: generatedCompileCandidate.executionHead,
   evidenceGeneratedAtHead: generatedCompileCandidate.evidenceGeneratedAtHead,
   candidateCompileEvidenceStatus: generatedCompileCandidate.candidateCompileEvidenceStatus,
   candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
@@ -1157,7 +1253,6 @@ const releaseAttestation = {
   authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
   authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
   candidateSourceRef: generatedCompileCandidate.candidateSourceRef,
-  executionHead: generatedCompileCandidate.executionHead,
   evidenceGeneratedAtHead: generatedCompileCandidate.evidenceGeneratedAtHead,
   currentRepositoryHead,
   candidateCompileEvidenceStatus: generatedCompileCandidate.candidateCompileEvidenceStatus,
@@ -1603,6 +1698,12 @@ function binding(kind) {
     zipArtifactDigest: zipArtifactDigest || pendingExternalAttestation,
     releaseAuthority: false,
     evidenceRootDigest: evidenceRootDigestPlaceholder,
+    capabilityDigestChain,
+    runtimeProjectionDigest: capabilityDigestChain.runtimeProjectionDigest,
+    surfaceProjectionDigest: capabilityDigestChain.surfaceProjectionDigest,
+    searchProjectionDigest: capabilityDigestChain.searchProjectionDigest,
+    testPlanDigest: capabilityDigestChain.testPlanDigest,
+    browserAuditDigest: capabilityDigestChain.browserAuditDigest,
     generatedContractsHash,
     sourceReadyForCompileDecision: sourcePackageCheck.sourceReadyForCompileDecision ?? true,
     generatedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
@@ -1613,7 +1714,6 @@ function binding(kind) {
     authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
     authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
     candidateSourceRef: generatedCompileCandidate.candidateSourceRef,
-    executionHead: generatedCompileCandidate.executionHead,
     evidenceGeneratedAtHead: generatedCompileCandidate.evidenceGeneratedAtHead,
     candidateCompileEvidenceStatus: generatedCompileCandidate.candidateCompileEvidenceStatus,
     candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
@@ -1623,15 +1723,28 @@ function binding(kind) {
     generatedFieldBindingClosureStatus: generatedFieldBindingClosure.status,
     generatedFieldBindingClosureDigest: generatedFieldBindingClosure.generatedFieldBindingClosureDigest,
     sourceFieldGapsDecisionDigest: generatedFieldBindingClosure.sourceFieldGapsDecisionDigest,
-    s4AttestationIsFinalReleaseEvidence: false,
-    releaseEvidenceRequiredAfterS4: true,
+    candidateAttestationIsReleaseEvidence: false,
+    releaseEvidenceRequiredAfterCandidateEvidence: true,
     generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
     generatedCandidateAcceptanceDecisionStatus: generatedCandidateAcceptance.decisionStatus,
-    generatedCandidateSubjectDigest: generatedCandidateAcceptance.subjectDigest,
+    acceptedGeneratedBundleDigest: generatedCandidateAcceptance.acceptedGeneratedBundleDigest,
     runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
     runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
     runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
+    runtimeConsumedBundleDigest: dormitoryRuntimeAdmission.runtimeConsumedBundleDigest,
+    bundleDigestMatch: dormitoryRuntimeAdmission.bundleDigestMatch === true,
+    runtimeConsumptionReadyAuthority: dormitoryRuntimeAdmission.runtimeConsumptionReadyAuthority,
     testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
+    environmentProfileId: environmentProfileAuthority.environmentProfileId ?? dormitoryRuntimeAdmission.environmentProfileId,
+    environmentProfileRuntimeStorageMode: environmentProfileAuthority.runtimeStorageMode ?? dormitoryRuntimeAdmission.environmentProfile?.runtimeStorageMode,
+    capabilityState: capabilityStateMachineTransition.currentState ?? "RUNTIME_TEST_ADMITTED",
+    gateLaneTaxonomyStatus: gateTaxonomy.status ?? "MISSING",
+    browserHardeningRequiredForGeneratedOrRuntime: gateTaxonomy.browserHardeningRequiredForGeneratedOrRuntime === true,
+    runtimeStabilityLaneStatus: runtimeStabilityLane.laneStatus ?? runtimeStabilityLane.status ?? "MISSING",
+    runtimeImplementationDriftPolicyStatus: runtimeImplementationDriftPolicy.status ?? "MISSING",
+    evidenceProjectionOnlyStatus: evidenceIsProjectionOnly.status ?? "MISSING",
+    authoritativeArtifactReconciliationStatus: currentHeadAuthoritativeArtifactReconciliation.reconciliationStatus ?? "MISSING",
+    authoritativeArtifactBacked: currentHeadAuthoritativeArtifactReconciliation.authoritativeArtifactBacked === true,
     dormitoryFirstGoldenChainLandingStatus: dormitoryFirstGoldenChainLanding.landingStatus,
     businessLandingAuthorityRef: dormitoryFirstGoldenChainLandingPath,
     businessLandingResultRef: dormitoryFirstGoldenChainLandingResultPath,
@@ -1672,6 +1785,12 @@ function evidenceBindingState() {
     externalArtifactAttestation,
     zipArtifactDigest: zipArtifactDigest || pendingExternalAttestation,
     releaseAuthority: false,
+    capabilityDigestChain,
+    runtimeProjectionDigest: capabilityDigestChain.runtimeProjectionDigest,
+    surfaceProjectionDigest: capabilityDigestChain.surfaceProjectionDigest,
+    searchProjectionDigest: capabilityDigestChain.searchProjectionDigest,
+    testPlanDigest: capabilityDigestChain.testPlanDigest,
+    browserAuditDigest: capabilityDigestChain.browserAuditDigest,
     generatedContractsHash,
     sourceReadyForCompileDecision: sourcePackageCheck.sourceReadyForCompileDecision ?? true,
     generatedCompileAuthorized: formalGeneratedCompileAuthorization.generatedCompileAuthorized,
@@ -1682,17 +1801,27 @@ function evidenceBindingState() {
     authorizedSourceRef: generatedCompileCandidate.authorizedSourceRef,
     authorizedCandidateExecutionHead: generatedCompileCandidate.authorizedCandidateExecutionHead,
     candidateSourceRef: generatedCompileCandidate.candidateSourceRef,
-    executionHead: generatedCompileCandidate.executionHead,
     evidenceGeneratedAtHead: generatedCompileCandidate.evidenceGeneratedAtHead,
     candidateCompileEvidenceStatus: generatedCompileCandidate.candidateCompileEvidenceStatus,
     candidateCompileClosureForCurrentHead: generatedCompileCandidate.candidateCompileClosureForCurrentHead,
     candidateCompileNextAction: generatedCompileCandidate.candidateCompileNextAction,
     generatedCompileCandidateStatus: generatedCompileCandidate.status,
     generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
+    acceptedGeneratedBundleDigest: generatedCandidateAcceptance.acceptedGeneratedBundleDigest,
     generatedReleaseAllowed: false,
     runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
     runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
     runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
+    runtimeConsumedBundleDigest: dormitoryRuntimeAdmission.runtimeConsumedBundleDigest,
+    bundleDigestMatch: dormitoryRuntimeAdmission.bundleDigestMatch === true,
+    environmentProfileId: environmentProfileAuthority.environmentProfileId ?? dormitoryRuntimeAdmission.environmentProfileId,
+    environmentProfileRuntimeStorageMode: environmentProfileAuthority.runtimeStorageMode ?? dormitoryRuntimeAdmission.environmentProfile?.runtimeStorageMode,
+    capabilityState: capabilityStateMachineTransition.currentState ?? "RUNTIME_TEST_ADMITTED",
+    gateLaneTaxonomyStatus: gateTaxonomy.status ?? "MISSING",
+    runtimeStabilityLaneStatus: runtimeStabilityLane.laneStatus ?? runtimeStabilityLane.status ?? "MISSING",
+    evidenceProjectionOnlyStatus: evidenceIsProjectionOnly.status ?? "MISSING",
+    authoritativeArtifactReconciliationStatus: currentHeadAuthoritativeArtifactReconciliation.reconciliationStatus ?? "MISSING",
+    authoritativeArtifactBacked: currentHeadAuthoritativeArtifactReconciliation.authoritativeArtifactBacked === true,
     testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
     dormitoryFirstGoldenChainLandingStatus: dormitoryFirstGoldenChainLanding.landingStatus,
     businessLandingAuthorityRef: dormitoryFirstGoldenChainLandingPath,
@@ -2306,7 +2435,7 @@ function buildFormalGeneratedCompileAuthorizationState() {
     status: authorized ? "PASS" : "NO_GO",
     authorized,
     predicateVersion: predicate.version,
-    headBindingStatus: predicate.headBindingStatus,
+    headBindingStatus: semanticStageAuthorityTerm(predicate.headBindingStatus),
     predicateFailures,
     approvalObjectRef: generatedCompileApprovalPath,
     approvalObjectHash,
@@ -2316,7 +2445,7 @@ function buildFormalGeneratedCompileAuthorizationState() {
     currentHEAD: approval.currentHEAD ?? "missing",
     reviewedRef: approval.reviewedRef ?? "missing",
     approvedFormalAuthorizationHead: approval.approvedFormalAuthorizationHead ?? "missing",
-    currentHeadDescendantPolicy: approval.currentHeadDescendantPolicy ?? "missing",
+    formalCompileExecutionDescendantPolicy: semanticDescendantPolicy(approval.currentHeadDescendantPolicy),
     currentRepositoryHead,
     candidateSourceRef: approval.candidateSourceRef ?? "missing",
     authorizedCandidateExecutionHead: approval.authorizedCandidateExecutionHead ?? "missing",
@@ -2338,8 +2467,27 @@ function buildFormalGeneratedCompileAuthorizationState() {
     businessFeatureDevelopmentAllowed: false,
     productionConfirmAllowed: false,
     releaseAuthority: false,
-    finalGoNoGo: "NO_GO"
+    finalGoNoGo: "NO_GO",
+    historicalAppendix: {
+      currentHeadDescendantPolicy: approval.currentHeadDescendantPolicy ?? "missing"
+    }
   };
+}
+
+function semanticDescendantPolicy(value) {
+  const policy = String(value ?? "missing");
+  if (policy === "allow_s4_formal_generated_compile_execution_writeback_descendants_without_runtime_or_go") {
+    return "allow_formal_compile_execution_writeback_descendants_without_runtime_or_go";
+  }
+  return policy.replace(/\bs4\b/gi, "formal_compile_execution");
+}
+
+function semanticStageAuthorityTerm(value) {
+  return String(value ?? "missing")
+    .replace(/S4_EXECUTION/g, "FORMAL_COMPILE_EXECUTION")
+    .replace(/S5/g, "GENERATED_BUNDLE_ACCEPTANCE")
+    .replace(/S6/g, "GENERATED_BUNDLE_ACCEPTANCE")
+    .replace(/S7/g, "RUNTIME_TEST_ADMISSION");
 }
 
 function buildGeneratedCompileExecutionState() {
@@ -2811,15 +2959,7 @@ function buildGeneratedCandidateAcceptanceProofNodes() {
     status: generatedCandidateAcceptance.status,
     decisionStatus: generatedCandidateAcceptance.decisionStatus,
     generatedCandidateAcceptedBy00,
-    subjectDigest: generatedCandidateAcceptance.subjectDigest,
-    reviewedExecutionHead: generatedCandidateAcceptance.reviewedExecutionHead,
-    decisionRecordHead: generatedCandidateAcceptance.decisionRecordHead,
-    generatedOutputDigest: generatedCandidateAcceptance.generatedOutputDigest,
-    generatedFieldBindingClosureDigest: generatedCandidateAcceptance.generatedFieldBindingClosureDigest,
-    sourceFieldGapsDecisionDigest: generatedCandidateAcceptance.sourceFieldGapsDecisionDigest,
-    evidenceArtifactDigest: generatedCandidateAcceptance.evidenceArtifactDigest,
-    executionProofDigest: generatedCandidateAcceptance.executionProofDigest,
-    evidenceRootDigest: generatedCandidateAcceptance.evidenceRootDigest,
+    acceptedGeneratedBundleDigest: generatedCandidateAcceptance.acceptedGeneratedBundleDigest,
     runtimeConsumptionReady: false,
     releaseAuthority: false,
     finalGoNoGo: "NO_GO",
@@ -2843,16 +2983,8 @@ function buildGeneratedCandidateAcceptanceProofNodes() {
     status: generatedCandidateAcceptance.generatedCandidateAcceptedBy00 === true ? "passed" : "blocked",
     decisionStatus: generatedCandidateAcceptance.decisionStatus,
     generatedCandidateAcceptedBy00,
-    subjectDigest: generatedCandidateAcceptance.subjectDigest,
-    reviewedExecutionHead: generatedCandidateAcceptance.reviewedExecutionHead,
-    decisionRecordHead: generatedCandidateAcceptance.decisionRecordHead,
+    acceptedGeneratedBundleDigest: generatedCandidateAcceptance.acceptedGeneratedBundleDigest,
     currentRepositoryHead,
-    generatedOutputDigest: generatedCandidateAcceptance.generatedOutputDigest,
-    generatedFieldBindingClosureDigest: generatedCandidateAcceptance.generatedFieldBindingClosureDigest,
-    sourceFieldGapsDecisionDigest: generatedCandidateAcceptance.sourceFieldGapsDecisionDigest,
-    evidenceArtifactDigest: generatedCandidateAcceptance.evidenceArtifactDigest,
-    executionProofDigest: generatedCandidateAcceptance.executionProofDigest,
-    evidenceRootDigest: generatedCandidateAcceptance.evidenceRootDigest,
     runtimeConsumptionReady: false,
     businessFeatureDevelopmentAllowed: false,
     productionConfirmAllowed: false,
@@ -2864,6 +2996,51 @@ function buildGeneratedCandidateAcceptanceProofNodes() {
     goNoGoImpact: ["generatedCandidateAcceptanceStatus", "finalGoNoGo"],
     notesZh: "Generated candidate acceptance authority node; PENDING/NOT_ACCEPTED 均不接受候选，ACCEPTED 也不自动开放 Runtime、业务开发、release 或 GO。"
   }];
+}
+
+function generatedCandidateAcceptanceReportView() {
+  return {
+    version: "oam.generated-candidate-acceptance-report-view.v1",
+    status: generatedCandidateAcceptance.status,
+    decisionStatus: generatedCandidateAcceptance.decisionStatus,
+    generatedCandidateAcceptedBy00,
+    acceptedGeneratedBundleDigest: generatedCandidateAcceptance.acceptedGeneratedBundleDigest,
+    acceptedGeneratedFiles: generatedCandidateAcceptance.acceptedGeneratedFiles ?? [],
+    acceptedRuntimeConsumableDigests: generatedCandidateAcceptance.acceptedRuntimeConsumableDigests ?? [],
+    runtimeReadyImplied: false,
+    businessLandingImplied: false,
+    productionConfirmImplied: false,
+    releaseAuthorityImplied: false,
+    finalGoImplied: false,
+    runtimeConsumptionReady: false,
+    businessFeatureDevelopmentAllowed: false,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  };
+}
+
+function dormitoryRuntimeAdmissionReportView() {
+  return {
+    version: "oam.dormitory-runtime-admission-report-view.v1",
+    status: dormitoryRuntimeAdmission.status,
+    runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
+    acceptedGeneratedBundleDigest: dormitoryRuntimeAdmission.acceptedGeneratedBundleDigest,
+    runtimeConsumedBundleDigest: dormitoryRuntimeAdmission.runtimeConsumedBundleDigest,
+    runtimeConsumedFilesDigestList: dormitoryRuntimeAdmission.runtimeConsumedFilesDigestList ?? [],
+    acceptedRuntimeConsumableDigests: dormitoryRuntimeAdmission.acceptedRuntimeConsumableDigests ?? [],
+    bundleDigestMatch: dormitoryRuntimeAdmission.bundleDigestMatch === true,
+    runtimeConsumptionReadyAuthority: dormitoryRuntimeAdmission.runtimeConsumptionReadyAuthority,
+    runtimeConsumptionReady,
+    runtimeConsumptionMode: runtimeConsumptionReady ? "test_only_consumption" : "pending_runtime_admission_review",
+    businessFeatureDevelopmentAllowed: false,
+    dormitoryFirstGoldenChainLandingGoNoGo: "NO_GO",
+    productionConfirmAllowed: false,
+    financePostingAllowed: false,
+    dormitoryL2Allowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  };
 }
 
 function generatedCandidateAcceptanceNextDecisionFor00() {
@@ -2884,8 +3061,11 @@ function buildDormitoryRuntimeTestOnlyEvidenceProof() {
     status: "PASS",
     runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
     generatedCandidateAcceptedBy00,
-    acceptedSubjectDigest: dormitoryRuntimeAdmission.acceptedSubjectDigest,
-    generatedCandidateSubjectDigest: dormitoryRuntimeAdmission.generatedCandidateSubjectDigest,
+    acceptedGeneratedBundleDigest: dormitoryRuntimeAdmission.acceptedGeneratedBundleDigest,
+    runtimeConsumedBundleDigest: dormitoryRuntimeAdmission.runtimeConsumedBundleDigest,
+    runtimeConsumedFilesDigestList: dormitoryRuntimeAdmission.runtimeConsumedFilesDigestList ?? [],
+    acceptedRuntimeConsumableDigests: dormitoryRuntimeAdmission.acceptedRuntimeConsumableDigests ?? [],
+    bundleDigestMatch: dormitoryRuntimeAdmission.bundleDigestMatch === true,
     consumedGeneratedContracts: dormitoryRuntimeAdmission.consumedGeneratedContracts,
     allowedOperationCases: dormitoryRuntimeAdmission.allowedOperationCases,
     runtimeConsumptionReady,
@@ -2929,8 +3109,11 @@ function buildDormitoryRuntimeAdmissionProofNodes() {
     runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
     runtimeConsumptionReady,
     generatedCandidateAcceptedBy00,
-    acceptedSubjectDigest: dormitoryRuntimeAdmission.acceptedSubjectDigest,
-    generatedCandidateSubjectDigest: dormitoryRuntimeAdmission.generatedCandidateSubjectDigest,
+    acceptedGeneratedBundleDigest: dormitoryRuntimeAdmission.acceptedGeneratedBundleDigest,
+    runtimeConsumedBundleDigest: dormitoryRuntimeAdmission.runtimeConsumedBundleDigest,
+    runtimeConsumedFilesDigestList: dormitoryRuntimeAdmission.runtimeConsumedFilesDigestList ?? [],
+    acceptedRuntimeConsumableDigests: dormitoryRuntimeAdmission.acceptedRuntimeConsumableDigests ?? [],
+    bundleDigestMatch: dormitoryRuntimeAdmission.bundleDigestMatch === true,
     allowedOperationCases: dormitoryRuntimeAdmission.allowedOperationCases,
     consumedGeneratedContracts: dormitoryRuntimeAdmission.consumedGeneratedContracts,
     businessFeatureDevelopmentAllowed: false,
@@ -2957,8 +3140,11 @@ function buildDormitoryRuntimeAdmissionProofNodes() {
     status: runtimeConsumptionReady ? "passed" : "blocked",
     runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
     generatedCandidateAcceptedBy00,
-    acceptedSubjectDigest: dormitoryRuntimeAdmission.acceptedSubjectDigest,
-    generatedCandidateSubjectDigest: dormitoryRuntimeAdmission.generatedCandidateSubjectDigest,
+    acceptedGeneratedBundleDigest: dormitoryRuntimeAdmission.acceptedGeneratedBundleDigest,
+    runtimeConsumedBundleDigest: dormitoryRuntimeAdmission.runtimeConsumedBundleDigest,
+    runtimeConsumedFilesDigestList: dormitoryRuntimeAdmission.runtimeConsumedFilesDigestList ?? [],
+    acceptedRuntimeConsumableDigests: dormitoryRuntimeAdmission.acceptedRuntimeConsumableDigests ?? [],
+    bundleDigestMatch: dormitoryRuntimeAdmission.bundleDigestMatch === true,
     runtimeConsumptionReady,
     runtimeConsumptionMode: runtimeConsumptionReady ? "test_only_consumption" : "pending_runtime_admission_review",
     allowedOperationCases: dormitoryRuntimeAdmission.allowedOperationCases,
@@ -3134,8 +3320,11 @@ function dormitoryRuntimeAdmissionBinding(proofId) {
     testOnlyConsumptionProofRef: dormitoryRuntimeTestOnlyProofPath,
     runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
     generatedCandidateAcceptedBy00,
-    acceptedSubjectDigest: dormitoryRuntimeAdmission.acceptedSubjectDigest,
-    generatedCandidateSubjectDigest: dormitoryRuntimeAdmission.generatedCandidateSubjectDigest,
+    acceptedGeneratedBundleDigest: dormitoryRuntimeAdmission.acceptedGeneratedBundleDigest,
+    runtimeConsumedBundleDigest: dormitoryRuntimeAdmission.runtimeConsumedBundleDigest,
+    runtimeConsumedFilesDigestList: dormitoryRuntimeAdmission.runtimeConsumedFilesDigestList ?? [],
+    acceptedRuntimeConsumableDigests: dormitoryRuntimeAdmission.acceptedRuntimeConsumableDigests ?? [],
+    bundleDigestMatch: dormitoryRuntimeAdmission.bundleDigestMatch === true,
     allowedOperationCases: dormitoryRuntimeAdmission.allowedOperationCases,
     consumedGeneratedContracts: dormitoryRuntimeAdmission.consumedGeneratedContracts,
     runtimeConsumptionReady,
@@ -3202,16 +3391,8 @@ function generatedCandidateAcceptanceBinding(proofId) {
     acceptanceResultRef: generatedCandidateAcceptanceResultPath,
     decisionStatus: generatedCandidateAcceptance.decisionStatus,
     generatedCandidateAcceptedBy00,
-    subjectDigest: generatedCandidateAcceptance.subjectDigest,
-    reviewedExecutionHead: generatedCandidateAcceptance.reviewedExecutionHead,
-    decisionRecordHead: generatedCandidateAcceptance.decisionRecordHead,
+    acceptedGeneratedBundleDigest: generatedCandidateAcceptance.acceptedGeneratedBundleDigest,
     currentRepositoryHead,
-    generatedOutputDigest: generatedCandidateAcceptance.generatedOutputDigest,
-    generatedFieldBindingClosureDigest: generatedCandidateAcceptance.generatedFieldBindingClosureDigest,
-    sourceFieldGapsDecisionDigest: generatedCandidateAcceptance.sourceFieldGapsDecisionDigest,
-    evidenceArtifactDigest: generatedCandidateAcceptance.evidenceArtifactDigest,
-    executionProofDigest: generatedCandidateAcceptance.executionProofDigest,
-    evidenceRootDigest: generatedCandidateAcceptance.evidenceRootDigest,
     runtimeConsumptionReady: false,
     businessFeatureDevelopmentAllowed: false,
     productionConfirmAllowed: false,
@@ -3630,25 +3811,106 @@ function readControlPlaneGateResult() {
 }
 
 function buildRealBrowserEvidence() {
-  const l1 = readL1BrowserEvidence();
+  const firstGoldenChain = readFirstGoldenChainBrowserEvidence();
+  const legacyL1 = readL1BrowserEvidence();
   const tenScenario = readTenScenarioBrowserEvidence();
-  const nodes = [l1.node, tenScenario.node].filter(Boolean);
+  const nodes = [firstGoldenChain.node].filter(Boolean);
   const edges = [
-    l1.node ? { from: l1.node.id, to: "L1_INTERNAL_PILOT_OBSERVATION", relation: "binds_browser_evidence" } : null,
-    tenScenario.node ? { from: tenScenario.node.id, to: "DORMITORY_TEN_SCENARIO_REAL_BROWSER_AUDIT", relation: "binds_browser_evidence" } : null
+    firstGoldenChain.node ? { from: firstGoldenChain.node.id, to: "DORMITORY_FIRST_GOLDEN_CHAIN_CAPABILITY", relation: "binds_current_capability_browser_evidence" } : null
   ].filter(Boolean);
   const screenshotHashCount = nodes.reduce((total, node) => total + (node.screenshotHashes?.length ?? 0), 0);
-  const status = l1.status === "passed" && tenScenario.status === "passed" ? "passed" : "missing_or_failed";
+  const status = firstGoldenChain.status === "passed" ? "passed" : "missing_or_failed";
   return {
     nodes,
     edges,
     summary: {
       status,
       singleWriter: "scripts/oam/generate-current-evidence-root.mjs",
-      l1,
-      tenScenario,
+      l1: firstGoldenChain,
+      firstGoldenChain,
+      tenScenario: {
+        ...tenScenario,
+        lane: "legacy_regression_only",
+        currentMainGate: false
+      },
+      legacyL1: {
+        ...legacyL1,
+        lane: "legacy_regression_only",
+        currentMainGate: false
+      },
       screenshotHashCount
     }
+  };
+}
+
+function readFirstGoldenChainBrowserEvidence() {
+  const reportRef = FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH;
+  const report = readJsonIfExists(reportRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && report?.git?.headSha === commitSha ? "passed" : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    runId: "dormitory-first-golden-chain-real-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: report?.auditPurpose || "",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      capabilityId: report?.capabilityId || "",
+      currentMainGate: true,
+      legacyTenScenarioAsMainGate: false,
+      legacyAllStepsAsMainGate: false,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: browserAuditProgress(report),
+    scenarioCount: 1,
+    screenshotHashCount: screenshotHashes.length,
+    testPlanDigest: report?.testPlanDigest || "",
+    browserAuditDigest: report?.browserAuditDigest || "",
+    acceptedGeneratedBundleDigest: report?.acceptedGeneratedBundleDigest || "",
+    runtimeProjectionDigest: report?.runtimeProjectionDigest || "",
+    surfaceProjectionDigest: report?.surfaceProjectionDigest || "",
+    searchProjectionDigest: report?.searchProjectionDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-FIRST-GOLDEN-CHAIN-REAL-BROWSER",
+      status,
+      gate: "DORMITORY-FIRST-GOLDEN-CHAIN-REAL-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.FirstGoldenChain"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: report.auditPurpose,
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        capabilityId: report.capabilityId,
+        currentMainGate: true,
+        legacyTenScenarioAsMainGate: false,
+        legacyAllStepsAsMainGate: false,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: browserAuditProgress(report),
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_SCREENSHOT_INDEX_PATH),
+        FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH,
+        FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH,
+        "scripts/surface/run-dormitory-first-golden-chain-real-browser-audit.mjs",
+        "scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs",
+        "scripts/oam/check-test-plan-generated-from-capability.mjs"
+      ]
+    }) : null
   };
 }
 
@@ -4008,7 +4270,7 @@ function buildFinalReportStatusMatrix(candidate, attestation) {
         "scripts/oam/check-generated-compile-execution.mjs"
       ],
       blockingReasons: generatedCompileCompleted ? [] : [
-        "Dormitory generated contracts 已获 formal authorization，但 S4 formal generated compile execution 结果尚未 PASS。",
+        "Dormitory generated contracts 已获 formal authorization，但 formal_compile_execution 结果尚未 PASS。",
         "generatedContractStatus10B 仍不是 GENERATED_COMPILE_EXECUTED_PENDING_00_CANDIDATE_ACCEPTANCE。"
       ],
       nextAction: generatedCompileCompleted
@@ -4308,7 +4570,7 @@ function generatedCandidateAcceptanceBlockingReasons() {
   }
   if (generatedCandidateAcceptance.decisionStatus === "PENDING_00_DECISION") {
     return [
-      "generated candidate acceptance authority 当前为 PENDING_00_DECISION；不能由 CI success、Evidence Root PASS 或 S4 execution PASS 推断 accepted。"
+      "generated candidate acceptance authority 当前为 PENDING_00_DECISION；不能由 CI success、Evidence Root PASS 或 formal_compile_execution PASS 推断 accepted。"
     ];
   }
   return [

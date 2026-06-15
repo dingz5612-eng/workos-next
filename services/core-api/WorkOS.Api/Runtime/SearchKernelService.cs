@@ -370,15 +370,15 @@ public sealed class SearchKernelService
     private static readonly IReadOnlyList<SearchCommandDefinition> SearchCommandCatalog = new[]
     {
         new SearchCommandDefinition(
-            "W-STAY-RESOURCE",
-            "roomSetup",
-            "新增住宿房源",
+            AcceptedCapabilityRuntimeProjection.WorkspaceId,
+            AcceptedCapabilityRuntimeProjection.RoomSetupConfirmCardId,
+            "新增房间",
             "Добавить комнату",
             "Бөлмө кошуу",
-            "先录房号和床位数，价格和可租状态后面再补。",
-            "Сначала внесите номер комнаты и число коек. Тарифы и готовность заполните дальше.",
-            "Алгач бөлмө номерин жана койка санын жазыңыз. Баа жана даярдык кийин толтурулат.",
-            new[] { "新增住宿房源", "创建房间", "房间", "房源", "room", "resource" }),
+            "只进入宿舍第一金链 accepted capability projection：房间配置、床位配置、资源就绪确认。",
+            "Только accepted projection первой цепочки: комната, койка, готовность.",
+            "Биринчи чынжырдын accepted projection гана: бөлмө, койка, даярдык.",
+            new[] { "新增房间", "创建房间", "房间", "宿舍第一金链", "room", "resource" }),
         new SearchCommandDefinition(
             "W-STAY-LEAD-RESERVATION",
             "leadCapture",
