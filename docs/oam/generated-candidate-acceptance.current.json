@@ -1,8 +1,8 @@
 {
   "version": "oam.generated-candidate-acceptance.v1",
   "decisionType": "generated_candidate_acceptance",
-  "decisionStatus": "NOT_ACCEPTED_BY_00",
-  "generatedCandidateAcceptedBy00": false,
+  "decisionStatus": "ACCEPTED_BY_00",
+  "generatedCandidateAcceptedBy00": true,
   "generatedCandidateSubject": {
     "version": "oam.generated-candidate-subject.v1",
     "subjectType": "generated_candidate_subject",
@@ -93,24 +93,16 @@
     ],
     "subjectDigest": "sha256:4356c251418849065af1b67dfa005f5fc2bfa753f76d91e027a3b83e40ed2fe9"
   },
-  "subjectStatusAtWrite": "NOT_READY_FOR_00_ACCEPTANCE_REVIEW",
+  "subjectStatusAtWrite": "READY_FOR_00_ACCEPTANCE_REVIEW",
   "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
   "decisionRecordHead": null,
-  "decisionWritebackBaseHead": "ef5215d9b1a1485ef87af2f65ecd99b92eda7303",
+  "decisionWritebackBaseHead": "6cc6abe215f222e08022f242837aaba01baadba6",
   "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
   "generatedFieldBindingClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
   "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
   "executionProofDigest": "sha256:a38a670184445133842a1a331576538d5f38257f489f64cefa0b248d880fd257",
   "evidenceRootDigest": "sha256:bfa305859e0a92dd9f0ac72a5d6f86102c70af67003f61ca72f73949762e081d",
-  "blockingReasons": [
-    "decision=s5_2c_local_commit_bound_not_authoritative_ci_artifact_yet",
-    "current_s5_2_changes_not_yet_submitted_to_authoritative_ci_artifact",
-    "generated_candidate_acceptance_requires_explicit_future_00_acceptance_after_commit_and_ci_artifact_reconciliation",
-    "evidenceArtifactMode=ci_artifact_authoritative_previous_head_reference_not_s5_2c_commit_artifact",
-    "stable_semantic_digest_authority_pass_does_not_equal_generated_candidate_acceptance",
-    "idempotency_gate_pass_does_not_equal_generated_candidate_acceptance",
-    "Evidence Root PASS is not generated candidate acceptance"
-  ],
+  "blockingReasons": [],
   "explicitNegativeAuthorities": {
     "runtimeConsumptionReady": false,
     "businessFeatureDevelopmentAllowed": false,
@@ -120,7 +112,32 @@
     "releaseAuthority": false,
     "finalGoNoGo": "NO_GO"
   },
-  "acceptanceRecord": null,
+  "acceptanceRecord": {
+    "decision": "ACCEPTED_BY_00",
+    "acceptedBy": "00",
+    "acceptedAtUtc": "2026-06-15T03:13:29.949Z",
+    "acceptedSubjectDigest": "sha256:4356c251418849065af1b67dfa005f5fc2bfa753f76d91e027a3b83e40ed2fe9",
+    "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
+    "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
+    "generatedFieldBindingClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
+    "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
+    "executionProofDigest": "sha256:a38a670184445133842a1a331576538d5f38257f489f64cefa0b248d880fd257",
+    "evidenceRootDigest": "sha256:bfa305859e0a92dd9f0ac72a5d6f86102c70af67003f61ca72f73949762e081d",
+    "scope": "generated_candidate_acceptance_only",
+    "runtimeConsumptionGranted": false,
+    "businessGoGranted": false,
+    "releaseGranted": false,
+    "finalGoNoGoGranted": false,
+    "explicitExclusions": [
+      "runtimeConsumptionReady",
+      "businessFeatureDevelopmentAllowed",
+      "releaseAuthority",
+      "finalGoNoGo",
+      "productionConfirmAllowed",
+      "Dormitory L2 GO",
+      "business production GO"
+    ]
+  },
   "historicalAppendix": {
     "deprecatedAliasReferences": [
       {
@@ -150,7 +167,7 @@
     ],
     "note": "Deprecated aliases are retained only as appendix references and do not participate in current generated candidate acceptance authority."
   },
-  "nextDecisionRequired": "S5_3_FINAL_COMMIT_CI_ARTIFACT_RECONCILIATION_BEFORE_FUTURE_00_ACCEPTANCE_REVIEW",
+  "nextDecisionRequired": "S7_RUNTIME_ADMISSION_REVIEW_REQUIRED_AFTER_GENERATED_CANDIDATE_ACCEPTANCE",
   "forbiddenInterpretations": [
     "CI success is not generated candidate acceptance",
     "artifact exists is not generated candidate acceptance",
@@ -161,7 +178,12 @@
     "NOT_ACCEPTED_BY_00 is not runtime authorization",
     "stable semantic digest authority is not generated candidate acceptance",
     "idempotency gate PASS is not generated candidate acceptance",
-    "local commit-bound closure is not authoritative post-commit CI artifact reconciliation"
+    "local commit-bound closure is not authoritative post-commit CI artifact reconciliation",
+    "ACCEPTED_BY_00 is generated candidate acceptance only",
+    "generated candidate acceptance does not open runtime consumption",
+    "generated candidate acceptance does not grant business feature development",
+    "generated candidate acceptance does not grant releaseAuthority or final GO",
+    "generated candidate acceptance does not grant production confirmation"
   ],
   "runtimeConsumptionReady": false,
   "businessFeatureDevelopmentAllowed": false,
