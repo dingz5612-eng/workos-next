@@ -239,6 +239,7 @@ Invoke-Gate node scripts/oam/check-no-stage-number-authority-leak.mjs
 Invoke-Gate node scripts/oam/check-no-stage-number-active-authority.mjs
 Invoke-Gate node scripts/oam/check-compatibility-box-boundary.mjs
 Invoke-Gate node scripts/oam/check-capability-state-machine-transition.mjs
+Invoke-Gate node scripts/oam/check-capability-authority-state-consistency.mjs
 Invoke-Gate node scripts/oam/check-control-plane-lane-boundary.mjs
 Invoke-Gate node scripts/oam/check-gate-taxonomy.mjs
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs --self-test

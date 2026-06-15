@@ -101,7 +101,7 @@ if (runtimeDigest && runtimeDigest !== acceptedDigest) {
   failures.push("runtimeConsumedBundleDigest must equal acceptedGeneratedBundleDigest.");
 }
 
-for (const forbiddenState of ["BUSINESS_LANDING_ADMITTED", "PRODUCTION_CONFIRMED", "RELEASE_AUTHORIZED"]) {
+for (const forbiddenState of ["PRODUCTION_CONFIRMED", "RELEASE_AUTHORIZED"]) {
   if (achievedStates.includes(forbiddenState)) failures.push(`${forbiddenState} must not be active in this round.`);
 }
 requireEqual(machine?.nonEquivalenceRules?.runtimeTestAdmittedIsBusinessLanding, false, "runtimeTestAdmittedIsBusinessLanding", failures);
@@ -119,7 +119,7 @@ const result = {
   acceptedGeneratedBundleDigest: acceptance?.acceptedGeneratedBundleDigest ?? null,
   runtimeConsumedBundleDigest: runtimeAdmission?.runtimeConsumedBundleDigest ?? null,
   bundleDigestMatch: runtimeAdmission?.runtimeConsumedBundleDigest === acceptance?.acceptedGeneratedBundleDigest,
-  businessLandingAdmitted: false,
+  businessLandingAdmitted: achievedStates.includes("BUSINESS_LANDING_ADMITTED"),
   productionConfirmed: false,
   releaseAuthorized: false,
   finalGoNoGo: "NO_GO",

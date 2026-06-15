@@ -43,7 +43,7 @@
     "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
     "runtimeConsumedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
     "runtimeAdmissionDigest": "sha256:0aa4b6c3448ab9103aa401d8d225b374685be38a022df0db3c1d230f750f2c09",
-    "businessLandingDigest": null,
+    "businessLandingDigest": "sha256:8e045a4930fa93f82a5252c825e17923a9879cf1620254c4c96beb2feee04ec9",
     "releaseAuthorityDigest": null
   },
   "projectionOnlyCurrentRefs": [

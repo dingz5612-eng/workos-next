@@ -18,6 +18,7 @@ artifacts/oam/evidence/
 artifacts/oam/final-report.json
 artifacts/oam/checks/
 artifacts/oam/test-results/
+artifacts/oam/manual-review/
 apps/mobile/artifacts/
 apps/mobile/test-results/
 apps/mobile/playwright-report/

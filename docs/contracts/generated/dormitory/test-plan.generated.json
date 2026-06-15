@@ -4,7 +4,7 @@
   "capabilityId": "Dormitory.FirstGoldenChain",
   "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
   "runtimeProjectionDigest": "sha256:b977350c6021a8f3d317806746eb1a18c7a118f3e884ec3a410db03568a11f20",
-  "surfaceProjectionDigest": "sha256:45672237f1e2d39cc32b78a28c9afff6d6a21607001fd9ac5126cad483a764be",
+  "surfaceProjectionDigest": "sha256:3f73663a91b2110edf386a9ab81555166908cf6fb644c63d1d6adc485d8197b1",
   "searchProjectionDigest": "sha256:a9ff4dc5689c5b3f99e7141ec578fe40bff8de29b9364ac666f5a3bffd192df9",
   "mainGatePolicy": {
     "currentMainGate": "dormitory_first_golden_chain_capability_only",
@@ -105,5 +105,5 @@
     "browser audit PASS is not final GO",
     "legacy browser audits are reference-only regression evidence"
   ],
-  "testPlanDigest": "sha256:982407578f8067591fab6090e7507864d6a48cf208eed9c64d21c517a7d95536"
+  "testPlanDigest": "sha256:d16e12c0110bbf5af6b119589c1b276516df531bb4ba8a4ed6e7a5b92158e0de"
 }

@@ -77,6 +77,8 @@ const generatedBundleContentAddressedResultPath = "artifacts/oam/checks/generate
 const runtimeConsumesAcceptedBundleResultPath = "artifacts/oam/checks/runtime-consumes-accepted-bundle-result.json";
 const environmentProfileAuthorityResultPath = "artifacts/oam/checks/environment-profile-authority-result.json";
 const capabilityStateMachineTransitionResultPath = "artifacts/oam/checks/capability-state-machine-transition-result.json";
+const capabilityAuthorityStateConsistencyResultPath =
+  "artifacts/oam/checks/capability-authority-state-consistency-result.json";
 const controlPlaneLaneBoundaryResultPath = "artifacts/oam/checks/control-plane-lane-boundary-result.json";
 const gateTaxonomyResultPath = "artifacts/oam/checks/gate-taxonomy-result.json";
 const runtimeStabilityLaneResultPath = "artifacts/oam/checks/runtime-stability-lane-result.json";
@@ -181,6 +183,7 @@ const requiredFiles = [
   runtimeConsumesAcceptedBundleResultPath,
   environmentProfileAuthorityResultPath,
   capabilityStateMachineTransitionResultPath,
+  capabilityAuthorityStateConsistencyResultPath,
   controlPlaneLaneBoundaryResultPath,
   gateTaxonomyResultPath,
   runtimeStabilityLaneResultPath,
@@ -603,6 +606,7 @@ function checkReleaseEvidenceObject(
     "searchProjectionDigest",
     "testPlanDigest",
     "browserAuditDigest",
+    "capabilityAuthorityStateConsistencyStatus",
     "generatedContractsHash",
     "kernelGraphHash",
     "evidenceGraphHash",

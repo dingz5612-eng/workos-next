@@ -46,6 +46,7 @@ const controlPlaneText = readText("scripts/oam/run-control-plane-checks.ps1");
 const ciText = readText(".github/workflows/ci.yml");
 for (const gate of [
   "scripts/oam/check-capability-state-machine-transition.mjs",
+  "scripts/oam/check-capability-authority-state-consistency.mjs",
   "scripts/oam/check-control-plane-lane-boundary.mjs",
   "scripts/oam/check-gate-taxonomy.mjs",
   "scripts/oam/check-no-active-path-legacy-identity.mjs",

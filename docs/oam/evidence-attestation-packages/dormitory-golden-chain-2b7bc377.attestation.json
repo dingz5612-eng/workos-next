@@ -2,7 +2,7 @@
   "packageVersion": "oam.dormitory-candidate-artifact-attestation.v1",
   "packageStatus": "READY_FOR_00_GENERATED_CANDIDATE_ACCEPTANCE_REVIEW_NO_GO",
   "reviewPackageStatus": "VALID_CURRENT_CANDIDATE_HEAD_NO_GO",
-  "generatedAtUtc": "2026-06-15T11:12:44.595Z",
+  "generatedAtUtc": "2026-06-15T12:00:05.908Z",
   "acceptedAuthorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
   "candidateSourceRef": "fd60390e678f9d6934137f0480a183701b01de8f",
   "previousAuthorizedCandidateExecutionHead": "9db58da1ebc2a02349436833747307ac78c4c2fd",
@@ -92,16 +92,16 @@
     "resultPath": "artifacts/oam/checks/generated-compile-execution-result.json",
     "proofPath": "artifacts/oam/evidence/generated-compile-execution-proof.json",
     "snapshotPath": "artifacts/oam/checks/generated-compile-execution-input-snapshot.json",
-    "resultDigest": "sha256:5eb7254ea40a800271e53801bdd7cbf65a94c94939b97108b1330e748f1cb2e9",
-    "proofDigest": "sha256:79db284638c0898320caeb44495c681d176a5ee3ce08f0fe0646799e9ab0e5f3",
+    "resultDigest": "sha256:75f721ce2e27cfcb08cf1c33cb504fcea36d78b5650c53fa398bdfff14252598",
+    "proofDigest": "sha256:8add8314b59d88afc177bb48f178eb0b18cef63eb1d76d77463e802c26b5c771",
     "snapshotDigest": "sha256:e4e3331aa81f09c68980ac200905b10626a088449e2516b53b8e37ff782cd5e5",
-    "generatedOutputDigest": "sha256:5f9920d034569a6e185679e9ba90fecdbec6f03ac224b9430f48e944868f05de",
-    "manifestDigest": "sha256:5784acba1769912e9fff05ecf924e2f32613af8486d8cc0dcbcb0a15086450c9",
-    "generatedKernelGraphDigest": "sha256:9a906061d1eb9cfa2d7711bd278e41a5c5dedf2fdee3768ea6b14a0eaf793204",
+    "generatedOutputDigest": "sha256:762b2426b37e89ca69ae3c0d6989eb01c39fb9cdfe1ee2092d96dfa104c0db9c",
+    "manifestDigest": "sha256:d2dbc16eb63bc2137ba326c70d36c3c629050e44a1b185102f6b0ddd482a68a6",
+    "generatedKernelGraphDigest": "sha256:7e91fa6bb3887cdcd22476db17b1fc6e19a4d04703745708752d377f5c832df3",
     "reproducibility": {
       "status": "PASS",
-      "round1GeneratedOutputDigest": "sha256:5f9920d034569a6e185679e9ba90fecdbec6f03ac224b9430f48e944868f05de",
-      "round2GeneratedOutputDigest": "sha256:5f9920d034569a6e185679e9ba90fecdbec6f03ac224b9430f48e944868f05de",
+      "round1GeneratedOutputDigest": "sha256:762b2426b37e89ca69ae3c0d6989eb01c39fb9cdfe1ee2092d96dfa104c0db9c",
+      "round2GeneratedOutputDigest": "sha256:762b2426b37e89ca69ae3c0d6989eb01c39fb9cdfe1ee2092d96dfa104c0db9c",
       "sameGeneratedOutputDigest": true,
       "sameDerivedOutputDigest": true,
       "sameKernelGraphDigest": true
@@ -120,31 +120,9 @@
       "sourceBusinessFactDiffs": [],
       "noRuntimeImplementationChanges": true,
       "runtimeChanged": [
-        "apps/mobile/src/__tests__/SearchIntentHubContract.test.js",
-        "apps/mobile/src/__tests__/SearchLearningSync.test.js",
-        "apps/mobile/src/controls/fieldControls.js",
-        "apps/mobile/src/controls/optionSetContract.js",
-        "apps/mobile/src/fieldSourceRenderer.js",
-        "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
-        "apps/mobile/src/operationFieldKernel.js",
-        "apps/mobile/src/searchIntentHub.js",
-        "apps/mobile/src/searchIntentRegistry.js",
-        "apps/mobile/src/systemContextContract.js",
-        "apps/mobile/src/views/experienceComponents.js",
-        "apps/mobile/src/views/searchView.js",
-        "apps/mobile/src/views/workspaceView.js",
-        "services/core-api/WorkOS.Api/Program.cs",
-        "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
-        "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs",
-        "services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs",
-        "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
-        "services/core-api/WorkOS.Api/Runtime/SliceRuntimeCapabilityGate.cs",
-        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs"
+        "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
       ],
-      "runtimeUntracked": [
-        "apps/mobile/src/capabilityProjection.js",
-        "services/core-api/WorkOS.Api/Runtime/AcceptedCapabilityRuntimeProjection.cs"
-      ],
+      "runtimeUntracked": [],
       "allowedRuntimeGeneratedDiffs": [
         "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
         "apps/mobile/src/__tests__/SearchIntentHubContract.test.js",
@@ -415,7 +393,7 @@
     "predicateAuthorized": true,
     "predicateFailures": [],
     "approvalObjectHash": "sha256:b6fe84036d45472f378340239a747fec52b532ecc78723893aa346892cfac300",
-    "currentRepositoryHead": "63f98a6d7ab57dc88ebc5c024ed0fe988ba50f03"
+    "currentRepositoryHead": "110cdc486dfcd2cc3d270fba088c74933e5d223d"
   },
   "residuals": [
     {

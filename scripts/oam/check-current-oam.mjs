@@ -101,6 +101,7 @@ requireFile("scripts/oam/check-single-capability-bundle-digest.mjs");
 requireFile("scripts/oam/check-runtime-consumes-accepted-bundle.mjs");
 requireFile("scripts/oam/check-environment-profile-authority.mjs");
 requireFile("scripts/oam/check-capability-state-machine-transition.mjs");
+requireFile("scripts/oam/check-capability-authority-state-consistency.mjs");
 requireFile("scripts/oam/check-control-plane-lane-boundary.mjs");
 requireFile("scripts/oam/check-gate-taxonomy.mjs");
 requireFile("scripts/oam/check-runtime-stability-lane.mjs");

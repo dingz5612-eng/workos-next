@@ -69,6 +69,8 @@ const generatedBundleContentAddressedResultPath = "artifacts/oam/checks/generate
 const runtimeConsumesAcceptedBundleResultPath = "artifacts/oam/checks/runtime-consumes-accepted-bundle-result.json";
 const environmentProfileAuthorityResultPath = "artifacts/oam/checks/environment-profile-authority-result.json";
 const capabilityStateMachineTransitionResultPath = "artifacts/oam/checks/capability-state-machine-transition-result.json";
+const capabilityAuthorityStateConsistencyResultPath =
+  "artifacts/oam/checks/capability-authority-state-consistency-result.json";
 const controlPlaneLaneBoundaryResultPath = "artifacts/oam/checks/control-plane-lane-boundary-result.json";
 const gateTaxonomyResultPath = "artifacts/oam/checks/gate-taxonomy-result.json";
 const runtimeStabilityLaneResultPath = "artifacts/oam/checks/runtime-stability-lane-result.json";
@@ -200,6 +202,7 @@ const requiredEvidenceFiles = [
   runtimeConsumesAcceptedBundleResultPath,
   environmentProfileAuthorityResultPath,
   capabilityStateMachineTransitionResultPath,
+  capabilityAuthorityStateConsistencyResultPath,
   controlPlaneLaneBoundaryResultPath,
   gateTaxonomyResultPath,
   runtimeStabilityLaneResultPath,
@@ -288,6 +291,7 @@ const dormitoryFirstGoldenChainLanding = validateDormitoryFirstGoldenChainLandin
   currentHead: currentRepositoryHead
 });
 const capabilityStateMachineTransition = readJsonIfExists(capabilityStateMachineTransitionResultPath) ?? {};
+const capabilityAuthorityStateConsistency = readJsonIfExists(capabilityAuthorityStateConsistencyResultPath) ?? {};
 const gateTaxonomy = readJsonIfExists(gateTaxonomyResultPath) ?? {};
 const controlPlaneLaneBoundary = readJsonIfExists(controlPlaneLaneBoundaryResultPath) ?? {};
 const generatedBundleContentAddressed = readJsonIfExists(generatedBundleContentAddressedResultPath) ?? {};
@@ -1178,6 +1182,7 @@ const releaseEvidenceObject = {
   generatedCompileCandidateStatus: generatedCompileCandidate.status,
   generatedCandidateAcceptedBy00: generatedCandidateAcceptedBy00,
   generatedReleaseAllowed: false,
+  capabilityAuthorityStateConsistencyStatus: capabilityAuthorityStateConsistency.status ?? "MISSING",
   runtimeAdmissionStatus: dormitoryRuntimeAdmission.runtimeAdmissionStatus,
   runtimeAdmissionAuthorityRef: dormitoryRuntimeAdmissionPath,
   runtimeAdmissionResultRef: dormitoryRuntimeAdmissionResultPath,
@@ -1738,6 +1743,7 @@ function binding(kind) {
     environmentProfileId: environmentProfileAuthority.environmentProfileId ?? dormitoryRuntimeAdmission.environmentProfileId,
     environmentProfileRuntimeStorageMode: environmentProfileAuthority.runtimeStorageMode ?? dormitoryRuntimeAdmission.environmentProfile?.runtimeStorageMode,
     capabilityState: capabilityStateMachineTransition.currentState ?? "RUNTIME_TEST_ADMITTED",
+    capabilityAuthorityStateConsistencyStatus: capabilityAuthorityStateConsistency.status ?? "MISSING",
     gateLaneTaxonomyStatus: gateTaxonomy.status ?? "MISSING",
     browserHardeningRequiredForGeneratedOrRuntime: gateTaxonomy.browserHardeningRequiredForGeneratedOrRuntime === true,
     runtimeStabilityLaneStatus: runtimeStabilityLane.laneStatus ?? runtimeStabilityLane.status ?? "MISSING",
@@ -1817,6 +1823,7 @@ function evidenceBindingState() {
     environmentProfileId: environmentProfileAuthority.environmentProfileId ?? dormitoryRuntimeAdmission.environmentProfileId,
     environmentProfileRuntimeStorageMode: environmentProfileAuthority.runtimeStorageMode ?? dormitoryRuntimeAdmission.environmentProfile?.runtimeStorageMode,
     capabilityState: capabilityStateMachineTransition.currentState ?? "RUNTIME_TEST_ADMITTED",
+    capabilityAuthorityStateConsistencyStatus: capabilityAuthorityStateConsistency.status ?? "MISSING",
     gateLaneTaxonomyStatus: gateTaxonomy.status ?? "MISSING",
     runtimeStabilityLaneStatus: runtimeStabilityLane.laneStatus ?? runtimeStabilityLane.status ?? "MISSING",
     evidenceProjectionOnlyStatus: evidenceIsProjectionOnly.status ?? "MISSING",

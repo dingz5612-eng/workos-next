@@ -107,6 +107,32 @@
         "runtime test admission is not final GO",
         "browser audit PASS is not production confirmation"
       ]
+    },
+    {
+      "eventId": "Dormitory.FirstGoldenChain:0005:BUSINESS_LANDING_ADMITTED",
+      "capabilityId": "Dormitory.FirstGoldenChain",
+      "eventType": "BUSINESS_LANDING_ADMITTED",
+      "previousEventDigest": "sha256:c17f66571f280a1d306296ee0fc5b9414926cdf8f470febce7b6df9b5f0ae69e",
+      "subjectDigest": "sha256:8e045a4930fa93f82a5252c825e17923a9879cf1620254c4c96beb2feee04ec9",
+      "bundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+      "inputDigests": {
+        "runtimeAdmissionDigest": "sha256:0aa4b6c3448ab9103aa401d8d225b374685be38a022df0db3c1d230f750f2c09",
+        "runtimeConsumedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+        "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e"
+      },
+      "outputDigests": {
+        "businessLandingDigest": "sha256:8e045a4930fa93f82a5252c825e17923a9879cf1620254c4c96beb2feee04ec9"
+      },
+      "decision": "BUSINESS_LANDING_ADMITTED_FOR_DORMITORY_L1_FIRST_GOLDEN_CHAIN_ONLY",
+      "decidedBy": "00｜OAM 总控",
+      "decidedAtUtc": "2026-06-15T11:15:54.480Z",
+      "forbiddenInterpretations": [
+        "business landing is not production confirmation",
+        "business landing is not Dormitory L2",
+        "business landing is not finance posting",
+        "business landing is not release authority",
+        "business landing is not final GO"
+      ]
     }
   ]
 }

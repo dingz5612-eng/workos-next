@@ -53,7 +53,7 @@
     "totalCoveredFiles": 67,
     "registeredFiles": 16,
     "unregisteredFiles": 51,
-    "newSourceFiles": 1,
+    "newSourceFiles": 0,
     "missingCoverageSourceFiles": 12,
     "p0Files": 6,
     "p1Files": 5,
@@ -3839,8 +3839,8 @@
         "testFiles": []
       },
       "source": {
-        "isNewSourceFile": true,
-        "gitStatus": "??",
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
         "isCoveredByCoverageSummary": false
       },
       "risk": {

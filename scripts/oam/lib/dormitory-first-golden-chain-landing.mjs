@@ -280,7 +280,7 @@ export function validateDormitoryFirstGoldenChainLandingAuthority({
     dormitoryL2Allowed: false,
     forbiddenLandingDomains,
     landingProofRef: DORMITORY_FIRST_GOLDEN_CHAIN_LANDING_PROOF_PATH,
-    landingProofDigest: proof ? digestObject(proof) : "missing",
+    landingProofDigest: proof ? digestBusinessLandingEvidence(proof) : "missing",
     proofGenerated: Boolean(proof),
     warnings,
     failures
@@ -362,6 +362,10 @@ export function buildBusinessLandingProof({ authority, runtimeAdmission, result 
 
 export function digestObject(value) {
   return `sha256:${crypto.createHash("sha256").update(stableStringify(normalizeForDigest(value))).digest("hex")}`;
+}
+
+export function digestBusinessLandingEvidence(value) {
+  return `sha256:${crypto.createHash("sha256").update(stableStringify(normalizeBusinessLandingEvidence(value))).digest("hex")}`;
 }
 
 function checkLandingDecision(authority, approved, failures) {
@@ -579,6 +583,32 @@ function normalizeForDigest(value) {
   }
   if (typeof value === "string" && digestPattern.test(value)) return value;
   return value;
+}
+
+function normalizeBusinessLandingEvidence(value) {
+  const proof = value && typeof value === "object" ? value : {};
+  return {
+    version: proof.version,
+    proofType: proof.proofType,
+    status: proof.status,
+    landingStatus: proof.landingStatus,
+    landingScope: proof.landingScope,
+    generatedCandidateAcceptedBy00: proof.generatedCandidateAcceptedBy00,
+    runtimeAdmissionStatus: proof.runtimeAdmissionStatus,
+    runtimeConsumptionReady: proof.runtimeConsumptionReady,
+    acceptedSubjectDigest: proof.acceptedSubjectDigest,
+    generatedCandidateSubjectDigest: proof.generatedCandidateSubjectDigest,
+    generatedFieldBindingClosureDigest: proof.generatedFieldBindingClosureDigest,
+    sourceFieldGapsDecisionDigest: proof.sourceFieldGapsDecisionDigest,
+    allowedLandingWorkItemTypes: proof.allowedLandingWorkItemTypes ?? [],
+    orderedBusinessChain: proof.orderedBusinessChain ?? [],
+    semanticProof: proof.semanticProof ?? {},
+    businessFeatureDevelopmentAllowed: proof.businessFeatureDevelopmentAllowed,
+    dormitoryFirstGoldenChainLandingGoNoGo: proof.dormitoryFirstGoldenChainLandingGoNoGo,
+    negativeAuthorities: proof.negativeAuthorities ?? {},
+    evidenceRefs: proof.evidenceRefs ?? [],
+    finalGoNoGo: proof.finalGoNoGo
+  };
 }
 
 function normalizeResultForTimestamp(value) {

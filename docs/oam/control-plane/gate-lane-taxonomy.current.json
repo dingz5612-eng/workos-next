@@ -35,7 +35,8 @@
       "node scripts/oam/check-no-stage-number-authority-leak.mjs",
       "node scripts/oam/check-no-stage-number-active-authority.mjs",
       "node scripts/oam/check-compatibility-box-boundary.mjs",
-      "node scripts/oam/check-capability-state-machine-transition.mjs"
+      "node scripts/oam/check-capability-state-machine-transition.mjs",
+      "node scripts/oam/check-capability-authority-state-consistency.mjs"
     ],
     "generated-hard": [
       "node scripts/oam/check-generated-bundle-content-addressed.mjs",
@@ -49,7 +50,8 @@
       "node scripts/oam/check-environment-profile-authority.mjs"
     ],
     "business-landing-hard": [
-      "node scripts/oam/check-dormitory-first-golden-chain-landing.mjs"
+      "node scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+      "node scripts/oam/check-capability-authority-state-consistency.mjs"
     ],
     "runtime-stability-hard": [
       "node scripts/oam/check-runtime-stability-lane.mjs",

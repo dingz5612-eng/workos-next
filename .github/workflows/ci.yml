@@ -75,6 +75,7 @@ jobs:
           node scripts/oam/check-no-stage-number-active-authority.mjs
           node scripts/oam/check-compatibility-box-boundary.mjs
           node scripts/oam/check-capability-state-machine-transition.mjs
+          node scripts/oam/check-capability-authority-state-consistency.mjs
           node scripts/oam/check-control-plane-lane-boundary.mjs
           node scripts/oam/check-gate-taxonomy.mjs
           node scripts/oam/check-p0-rule-ledger.mjs --self-test
@@ -264,6 +265,7 @@ jobs:
           node scripts/oam/check-environment-profile-authority.mjs
           node scripts/oam/check-runtime-stability-lane.mjs
           node scripts/oam/check-runtime-implementation-drift-policy.mjs
+          node scripts/oam/check-capability-authority-state-consistency.mjs
           node scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs
           node scripts/oam/check-test-plan-generated-from-capability.mjs
           node scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs

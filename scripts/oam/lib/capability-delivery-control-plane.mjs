@@ -243,6 +243,7 @@ export function buildProjectionFromLedger(ledger, root = process.cwd()) {
     }
   }
   const uniqueAchieved = [...new Set(achieved)];
+  const businessLandingAdmitted = uniqueAchieved.includes("BUSINESS_LANDING_ADMITTED");
   return {
     version: "oam.capability-ledger-current-projection.v1",
     capabilityId: CAPABILITY_ID,
@@ -260,9 +261,9 @@ export function buildProjectionFromLedger(ledger, root = process.cwd()) {
     runtimeTestConsumptionAdmitted: uniqueAchieved.includes("RUNTIME_TEST_ADMITTED"),
     runtimeConsumptionReady: false,
     runtimeGoNoGo: "NO_GO",
-    businessFeatureDevelopmentAllowed: false,
-    businessLandingGoNoGo: "NO_GO",
-    businessLandingDigestActive: null,
+    businessFeatureDevelopmentAllowed: businessLandingAdmitted,
+    businessLandingGoNoGo: businessLandingAdmitted ? "GO" : "NO_GO",
+    businessLandingDigestActive: businessLandingAdmitted ? activeAuthority.businessLandingDigest : null,
     productionConfirmAllowed: false,
     productionGoNoGo: "NO_GO",
     releaseAuthority: false,
