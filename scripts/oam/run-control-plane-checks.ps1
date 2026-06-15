@@ -261,6 +261,7 @@ if ($env:ALLOW_GENERATED_COMPILE_CANDIDATE -eq "true" -or (Test-FormalGeneratedC
 }
 Invoke-Gate node scripts/oam/compile-current-kernel-graph.mjs
 Invoke-Gate node scripts/oam/check-generated-field-binding-closure.mjs
+Invoke-Gate node scripts/oam/compile-current-capability.mjs
 Invoke-Gate node scripts/oam/check-generated-contract-consistency.mjs
 Invoke-Gate node scripts/oam/check-generated-files-not-manually-edited.mjs
 Invoke-Gate node scripts/oam/check-oam-kernel-graph.mjs

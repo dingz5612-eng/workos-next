@@ -6,7 +6,7 @@ import { completedRecordActionPolicy } from "../operationRecordPolicy.js";
 import { operationFieldId } from "../operationFieldKernel.js";
 import { lensIdsForWorkspace, lensPreview, lensTitle } from "../runtimeLensCatalog.js";
 import { buildOperationActionState } from "../operationActionState.js";
-import { FIRST_GOLDEN_CHAIN_STEPS, defaultBedTypeForCount, isBedSetupCardId, isFirstGoldenChainWorkspaceId, runtimeWorkItemMatchesCapabilityCard } from "../capabilityProjection.js";
+import { FIRST_GOLDEN_CHAIN_STEPS, defaultBedTypeForCount, isBedSetupCardId, isFirstGoldenChainWorkspaceId, isUserSubmittedCapabilityField, runtimeWorkItemMatchesCapabilityCard } from "../capabilityProjection.js";
 import { activeCardForWorkspace, activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { checkoutServiceMobilePanel, checkoutServiceOperationAddon } from "./checkoutServiceView.js";
 import { EvidenceStateVM, OperationStepRail } from "./experienceComponents.js";
@@ -123,8 +123,11 @@ export function completedWorkspaceRecord(item, card, ctx) {
   const firstGoldenChainCompleted = isFirstGoldenChainWorkspaceId(item.id) &&
     FIRST_GOLDEN_CHAIN_STEPS.every((step) =>
       isTerminalCardStatus((item.cards || []).find((candidate) => candidate.id === step.cardId)?.status));
+  const firstGoldenChainBusinessValues = firstGoldenChainCompleted
+    ? firstGoldenChainCompletionValues(item, ctx)
+    : [];
   const firstGoldenChainCompletionBanner = firstGoldenChainCompleted
-    ? `<section class="operation-state" data-capability-completion="Dormitory.FirstGoldenChain"><b>第一金链内测完成</b><p>仅代表 test-only runtime consumption proof 完成；不代表上线、发布或最终放行。</p></section>`
+    ? `<section class="operation-state" data-capability-completion="Dormitory.FirstGoldenChain"><b>第一金链内测完成</b>${firstGoldenChainBusinessValues.length ? `<p>${firstGoldenChainBusinessValues.map((value) => ctx.escapeHtml(value)).join(" / ")}</p>` : ""}<p>仅代表内测办理记录完成；不代表上线、发布或最终放行。</p></section>`
     : "";
   return `<section class="completed-record-control" data-component="completedWorkspaceRecord" data-surface="completed-workspace-record" data-lifecycle-state="${ctx.escapeAttr(selectedStep.status)}" data-admission-decision="visible_readonly_completed" data-runtime-decision="work_item_terminal:${ctx.escapeAttr(selectedStep.status)}">
     ${OperationStepRail(item, selectedStep, ctx, {
@@ -198,12 +201,32 @@ function fieldsForRecord(card, item, ctx) {
   const values = completedRecordPayload(item, card, ctx);
   return (card.fields?.business || []).filter((field) => {
     const fieldId = operationFieldId(field);
+    if (isFirstGoldenChainWorkspaceId(item?.id) && !isUserSubmittedCapabilityField(card?.id, fieldId)) return false;
     const hasSubmittedValue = hasCarryValue(values[fieldId]) || hasCarryValue(values[field.id]);
     const fallbackVisible = hasSubmittedValue ||
       Boolean(field.required) ||
       !["备注", "补充说明", "异议说明"].includes(ctx.localTerm(field, "zh-CN"));
     return isScopedResourceFieldVisible(card?.id, fieldId, values, fallbackVisible);
   });
+}
+
+function firstGoldenChainCompletionValues(item, ctx) {
+  const values = {};
+  for (const step of FIRST_GOLDEN_CHAIN_STEPS) {
+    const card = (item.cards || []).find((candidate) => candidate.id === step.cardId);
+    if (!card) continue;
+    Object.assign(values, completedRecordPayload(item, card, ctx));
+  }
+  return [
+    values.roomNo,
+    values.bedNo ? `${values.roomNo || ""}-${values.bedNo}`.replace(/^-/, "") : "",
+    readinessDisplayValue(values.readinessState, ctx)
+  ].filter(Boolean);
+}
+
+function readinessDisplayValue(value, ctx) {
+  if (!value) return "";
+  return displayFieldValue({ id: "readinessState", label: { "zh-CN": "就绪状态" }, ui: { optionSet: "readinessState" } }, value, ctx);
 }
 
 function evidenceForRecord(item, card) {

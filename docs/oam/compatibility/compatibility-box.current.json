@@ -1,0 +1,101 @@
+{
+  "version": "oam.capability-compatibility-box.v1",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "runtimeIdentityPolicy": "forbidden_from_active_authority",
+  "historicalOnly": [
+    {
+      "term": "executionHead",
+      "replacement": "generatedBundleDigest",
+      "allowedOnlyIn": [
+        "historicalAppendix",
+        "Compatibility Box"
+      ]
+    },
+    {
+      "term": "previousAuthorizedCandidateExecutionHead",
+      "replacement": "acceptedGeneratedBundleDigest",
+      "allowedOnlyIn": [
+        "historicalAppendix",
+        "Compatibility Box"
+      ]
+    },
+    {
+      "term": "executionHeadCompatibilityAliasOf",
+      "replacement": "fieldNormalizationAlias",
+      "allowedOnlyIn": [
+        "historicalAppendix",
+        "Compatibility Box"
+      ]
+    },
+    {
+      "term": "currentHeadDescendantPolicy",
+      "replacement": "ledger append-only previousEventDigest chain",
+      "allowedOnlyIn": [
+        "historicalAppendix",
+        "Compatibility Box"
+      ]
+    },
+    {
+      "term": "deprecated alias",
+      "replacement": "capabilityId plus digest authority",
+      "allowedOnlyIn": [
+        "historicalAppendix",
+        "Compatibility Box"
+      ]
+    }
+  ],
+  "migrationReadOnly": [
+    {
+      "term": "S4",
+      "meaning": "historical migration label only; not authority identity"
+    },
+    {
+      "term": "S5",
+      "meaning": "historical migration label only; not authority identity"
+    },
+    {
+      "term": "S6",
+      "meaning": "historical migration label only; not authority identity"
+    },
+    {
+      "term": "S7",
+      "meaning": "historical migration label only; not authority identity"
+    }
+  ],
+  "languageAlias": [
+    {
+      "term": "legacy resolver",
+      "runtimeIdentityAllowed": false
+    },
+    {
+      "term": "legacyResolver",
+      "runtimeIdentityAllowed": false
+    }
+  ],
+  "fieldNormalizationAlias": [
+    {
+      "term": "cardId",
+      "normalizedAs": "forbidden user/card route identity input"
+    },
+    {
+      "term": "sourceCardId",
+      "normalizedAs": "forbidden user/card route identity input"
+    },
+    {
+      "term": "workspaceCardId",
+      "normalizedAs": "forbidden user/card route identity input"
+    }
+  ],
+  "forbiddenRuntimeIdentity": [
+    "executionHead",
+    "previousAuthorizedCandidateExecutionHead",
+    "executionHeadCompatibilityAliasOf",
+    "currentHeadDescendantPolicy",
+    "S4/S5/S6/S7",
+    "cardId/sourceCardId/workspaceCardId",
+    "legacy resolver",
+    "legacyResolver",
+    "deprecated alias",
+    "deprecatedAlias"
+  ]
+}

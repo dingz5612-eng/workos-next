@@ -7,6 +7,16 @@ export { CAPABILITY_ID };
 
 export const FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH =
   "docs/contracts/generated/dormitory/test-plan.generated.json";
+export const FIRST_GOLDEN_CHAIN_CAPABILITY_PROJECTION_PATH =
+  "apps/mobile/src/generated/oam/capability-projection.generated.json";
+export const FIRST_GOLDEN_CHAIN_RUNTIME_PROJECTION_PATH =
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json";
+export const FIRST_GOLDEN_CHAIN_DB_PROJECTION_POLICY_PATH =
+  "docs/contracts/generated/dormitory/db-projection-policy.generated.json";
+export const FIRST_GOLDEN_CHAIN_DB_PROJECTION_PROOF_RESULT_PATH =
+  "artifacts/oam/checks/dormitory-first-golden-chain-db-projection-proof-result.json";
+export const FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH =
+  "artifacts/oam/evidence/capability-digest-chain.json";
 export const FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_DIR =
   "artifacts/oam/evidence/dormitory-first-golden-chain-real-browser";
 export const FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH =
@@ -16,26 +26,7 @@ export const FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_SCREENSHOT_INDEX_PATH =
 export const FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH =
   "artifacts/oam/checks/dormitory-first-golden-chain-real-browser-result.json";
 
-export const FIRST_GOLDEN_CHAIN_STEPS = [
-  {
-    step: "1/3",
-    workItemType: "Dorm.RoomSetupConfirm",
-    cardId: "Dorm.RoomSetupConfirm",
-    title: "RoomSetupConfirm"
-  },
-  {
-    step: "2/3",
-    workItemType: "Dorm.BedSetupConfirm",
-    cardId: "Dorm.BedSetupConfirm",
-    title: "BedSetupConfirm"
-  },
-  {
-    step: "3/3",
-    workItemType: "Dorm.ResourceReadinessConfirm",
-    cardId: "Dorm.ResourceReadinessConfirm",
-    title: "ResourceReadinessConfirm"
-  }
-];
+export const FIRST_GOLDEN_CHAIN_STEPS = currentCapabilitySteps();
 
 export function buildProjectionDigestChain(root = process.cwd()) {
   const capability = readJsonIfExists("docs/oam/capabilities/dormitory-first-golden-chain.current.json", root);
@@ -48,14 +39,23 @@ export function buildProjectionDigestChain(root = process.cwd()) {
     null;
   return {
     capabilityId: CAPABILITY_ID,
+    authorityLedgerDigest: fileDigest("docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json", root),
     acceptedGeneratedBundleDigest,
     runtimeProjectionDigest: runtimeProjectionDigest(root, acceptedGeneratedBundleDigest),
     surfaceProjectionDigest: surfaceProjectionDigest(root, acceptedGeneratedBundleDigest),
-    searchProjectionDigest: searchProjectionDigest(root, acceptedGeneratedBundleDigest)
+    searchProjectionDigest: searchProjectionDigest(root, acceptedGeneratedBundleDigest),
+    dbProjectionPolicyDigest: dbProjectionPolicyDigest(root),
+    dbProjectionProofDigest: dbProjectionProofDigest(root),
+    capabilityDigestChainDigest: generatedOutputDigest(FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH, root)
   };
 }
 
 export function runtimeProjectionDigest(root = process.cwd(), acceptedGeneratedBundleDigest = null) {
+  const generated = readJsonIfExists(FIRST_GOLDEN_CHAIN_RUNTIME_PROJECTION_PATH, root);
+  if (generated?.acceptedGeneratedBundleDigest === acceptedGeneratedBundleDigest &&
+    isSha256Digest(generated.runtimeProjectionDigest)) {
+    return generated.runtimeProjectionDigest;
+  }
   return digestObject({
     version: "oam.runtime-projection-digest.v1",
     capabilityId: CAPABILITY_ID,
@@ -76,6 +76,11 @@ export function runtimeProjectionDigest(root = process.cwd(), acceptedGeneratedB
 }
 
 export function surfaceProjectionDigest(root = process.cwd(), acceptedGeneratedBundleDigest = null) {
+  const generated = readJsonIfExists(FIRST_GOLDEN_CHAIN_CAPABILITY_PROJECTION_PATH, root);
+  if (generated?.acceptedGeneratedBundleDigest === acceptedGeneratedBundleDigest &&
+    isSha256Digest(generated.surfaceProjectionDigest)) {
+    return generated.surfaceProjectionDigest;
+  }
   return digestObject({
     version: "oam.surface-projection-digest.v1",
     capabilityId: CAPABILITY_ID,
@@ -96,6 +101,11 @@ export function surfaceProjectionDigest(root = process.cwd(), acceptedGeneratedB
 }
 
 export function searchProjectionDigest(root = process.cwd(), acceptedGeneratedBundleDigest = null) {
+  const generated = readJsonIfExists(FIRST_GOLDEN_CHAIN_CAPABILITY_PROJECTION_PATH, root);
+  if (generated?.acceptedGeneratedBundleDigest === acceptedGeneratedBundleDigest &&
+    isSha256Digest(generated.searchProjectionDigest)) {
+    return generated.searchProjectionDigest;
+  }
   return digestObject({
     version: "oam.search-projection-digest.v1",
     capabilityId: CAPABILITY_ID,
@@ -115,16 +125,49 @@ export function searchProjectionDigest(root = process.cwd(), acceptedGeneratedBu
   });
 }
 
+export function dbProjectionPolicyDigest(root = process.cwd()) {
+  return generatedOutputDigest(FIRST_GOLDEN_CHAIN_DB_PROJECTION_POLICY_PATH, root);
+}
+
+export function dbProjectionProofDigest(root = process.cwd()) {
+  const result = readJsonIfExists(FIRST_GOLDEN_CHAIN_DB_PROJECTION_PROOF_RESULT_PATH, root);
+  if (result?.status === "PASS" && result.dbProjectionProofDigest === "null_if_runtime_test_only") {
+    return "null_if_runtime_test_only";
+  }
+  return isSha256Digest(result?.dbProjectionProofDigest) ? result.dbProjectionProofDigest : "missing";
+}
+
 export function buildCapabilityTestPlan(root = process.cwd()) {
   const chain = buildProjectionDigestChain(root);
+  const steps = currentCapabilitySteps(root);
+  const generatedProjection = readJsonIfExists(FIRST_GOLDEN_CHAIN_CAPABILITY_PROJECTION_PATH, root);
+  const environmentProfile = readJsonIfExists("docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json", root);
   const core = {
+    generated: true,
+    doNotEdit: true,
     version: "oam.dormitory-first-golden-chain-test-plan.generated.v1",
-    generatedBy: "scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs",
+    kind: "dormitory-first-golden-chain-test-plan.generated",
+    generatorVersion: "oam.capability-compiler.v1",
+    generatedBy: "scripts/oam/compile-current-capability.mjs",
+    generatedFrom: generatedProjection?.generatedFrom ?? [
+      "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+      FIRST_GOLDEN_CHAIN_CAPABILITY_PROJECTION_PATH,
+      FIRST_GOLDEN_CHAIN_RUNTIME_PROJECTION_PATH
+    ],
+    inputDigest: generatedProjection?.inputDigest ?? null,
+    inputDigests: generatedProjection?.inputDigests ?? [],
+    outputContentDigest: "sha256:pending",
     capabilityId: CAPABILITY_ID,
     acceptedGeneratedBundleDigest: chain.acceptedGeneratedBundleDigest,
+    currentFilesMode: generatedProjection?.currentFilesMode,
+    lifecycleState: generatedProjection?.lifecycleState,
+    runtimeAdmissionStatus: generatedProjection?.runtimeAdmissionStatus,
+    landingStatus: generatedProjection?.landingStatus,
     runtimeProjectionDigest: chain.runtimeProjectionDigest,
     surfaceProjectionDigest: chain.surfaceProjectionDigest,
     searchProjectionDigest: chain.searchProjectionDigest,
+    dbProjectionPolicyDigest: chain.dbProjectionPolicyDigest,
+    capabilityDigestChainDigest: chain.capabilityDigestChainDigest,
     mainGatePolicy: {
       currentMainGate: "dormitory_first_golden_chain_capability_only",
       legacyScenarioMainGate: false,
@@ -132,7 +175,12 @@ export function buildCapabilityTestPlan(root = process.cwd()) {
       legacyBrowserAuditLane: "reference_only_regression"
     },
     scope: {
-      includedWorkItems: FIRST_GOLDEN_CHAIN_STEPS,
+      includedWorkItems: steps.map((step) => ({
+        step: step.step,
+        workItemType: step.workItemType,
+        cardId: step.cardId,
+        title: step.title
+      })),
       excludedLegacyWorkItemCategories: ["pricing_setup", "blocking_flow", "release_flow"],
       businessLandingAllowed: false,
       productionConfirmAllowed: false,
@@ -145,9 +193,9 @@ export function buildCapabilityTestPlan(root = process.cwd()) {
       evidenceRoot: FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_DIR,
       query: "新增房间",
       account: "dormOperator",
-      environment: "local_test_only"
+      environment: environmentProfile?.environmentProfileId ?? "local_test_only"
     },
-    testCases: FIRST_GOLDEN_CHAIN_STEPS.map((step, index) => ({
+    testCases: steps.map((step, index) => ({
       id: `dormitory.first_golden_chain.${index + 1}.${step.title}`,
       step: step.step,
       workItemType: step.workItemType,
@@ -170,14 +218,16 @@ export function buildCapabilityTestPlan(root = process.cwd()) {
       "legacy browser audits are reference-only regression evidence"
     ]
   };
+  const testPlanDigest = digestTestPlan(core);
+  const withDigest = { ...core, testPlanDigest };
   return {
-    ...core,
-    testPlanDigest: digestTestPlan(core)
+    ...withDigest,
+    outputContentDigest: digestGeneratedOutput(withDigest)
   };
 }
 
 export function digestTestPlan(plan) {
-  return digestObject(canonicalWithoutDigest(plan, ["testPlanDigest", "generatedAtUtc", "checkedAtUtc"]));
+  return digestObject(canonicalWithoutDigest(plan, ["testPlanDigest", "outputContentDigest", "capabilityDigestChainDigest", "generatedAtUtc", "checkedAtUtc"]));
 }
 
 export function digestBrowserAuditReport(report) {
@@ -221,4 +271,32 @@ function canonicalWithoutDigest(value, excludedKeys) {
     return normalized;
   }
   return value;
+}
+
+function currentCapabilitySteps(root = process.cwd()) {
+  const projection = readJsonIfExists(FIRST_GOLDEN_CHAIN_CAPABILITY_PROJECTION_PATH, root);
+  if (Array.isArray(projection?.steps) && projection.steps.length > 0) {
+    return projection.steps.map((step) => ({
+      step: step.step,
+      workItemType: step.workItemType,
+      cardId: step.cardId,
+      title: String(step.workItemType ?? "").replace(/^Dorm\./, "")
+    }));
+  }
+  const workitems = readJsonIfExists("docs/contracts/generated/dormitory/workitems.generated.json", root);
+  return (workitems?.workItems ?? []).map((item, index, all) => ({
+    step: `${index + 1}/${all.length}`,
+    workItemType: item.workItemType,
+    cardId: item.workItemType,
+    title: String(item.workItemType ?? "").replace(/^Dorm\./, "")
+  }));
+}
+
+function generatedOutputDigest(file, root) {
+  const generated = readJsonIfExists(file, root);
+  return isSha256Digest(generated?.outputContentDigest) ? generated.outputContentDigest : fileDigest(file, root);
+}
+
+function digestGeneratedOutput(value) {
+  return digestObject({ ...value, outputContentDigest: "sha256:pending" });
 }

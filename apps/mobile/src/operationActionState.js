@@ -19,9 +19,9 @@ export function buildOperationActionState(workItem = {}, card = {}, runtimeResul
   if (card.status === "notStarted") return OperationActionStateVM("notStarted", { disabled: true });
   if (card.status === "blocked" || workItem.lifecycleState === "blocked") return OperationActionStateVM("blocked");
   const admission = admissionStateFromWorkItem(workItem, state);
-  if (!admission.confirmAllowed) return OperationActionStateVM("confirmDenied", { admission });
-  if (!admission.productionAllowed) return OperationActionStateVM("readyObservation", { admission });
-  return OperationActionStateVM("ready", { admission });
+  if (!admission.confirmAllowed) return OperationActionStateVM("confirmDenied", { admission, card });
+  if (!admission.productionAllowed) return OperationActionStateVM("readyObservation", { admission, card });
+  return OperationActionStateVM("ready", { admission, card });
 }
 
 function isEvidenceBlocker(result = {}) {
@@ -65,7 +65,14 @@ export function PrimaryActionVM(status, extra = {}) {
     done: { labelKey: "primaryDone", disabled: true, reasonKey: "completedCardHelp" },
     failed: { labelKey: "primaryViewFailure", disabled: false }
   };
-  return { status, ...(table[status] || table.ready), disabled: Boolean(extra.disabled || table[status]?.disabled) };
+  const entry = { ...(table[status] || table.ready) };
+  const cardId = extra.card?.id || "";
+  if (["ready", "readyObservation"].includes(status) && cardId.startsWith("Dorm.")) {
+    entry.labelKey = status === "readyObservation"
+      ? "capabilitySubmit.runtimeTestOnly"
+      : `capabilitySubmit.${cardId}`;
+  }
+  return { status, ...entry, disabled: Boolean(extra.disabled || table[status]?.disabled) };
 }
 
 export function SubmissionResultVM(result = null) {

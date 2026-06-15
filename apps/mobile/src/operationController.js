@@ -9,6 +9,7 @@ import { setView, syncUrlFromState } from "./navigationController.js";
 import { normalizeOperationLifecycleState } from "./operationStatus.js";
 import { operationFieldId } from "./operationFieldKernel.js";
 import { generatedContextValue, withSystemGeneratedOperationValues } from "./operationSystemValues.js";
+import { draftableCapabilityFieldIds, isFirstGoldenChainCardId } from "./capabilityProjection.js";
 import { activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "./selectors/workspaceSelectors.js";
 import { applyRuntimeProjection, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
 import { validateRequiredFields } from "./operationValidation.js";
@@ -87,7 +88,8 @@ export function toggleEvidenceSelection(event, ctx) {
   }
   const fieldValues = operationSubmissionValues(item, card, collectOperationValues(), ctx);
   const evidenceDrafts = collectEvidenceDrafts();
-  saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
+  const draftValues = draftableOperationValues(card, fieldValues);
+  saveDraft(item.id, card.id, draftValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts, draftValues));
 }
 
 export function saveCurrentDraft(ctx) {
@@ -96,7 +98,8 @@ export function saveCurrentDraft(ctx) {
   if (!item || !card) return;
   const fieldValues = operationSubmissionValues(item, card, collectOperationValues(), ctx);
   const evidenceDrafts = collectEvidenceDrafts();
-  saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
+  const draftValues = draftableOperationValues(card, fieldValues);
+  saveDraft(item.id, card.id, draftValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts, draftValues));
   ctx.state.fieldValidation = null;
   ctx.state.operationMessage = ctx.tr("draftSaved");
   ctx.render();
@@ -189,7 +192,8 @@ export function collectDraftingValuesOnInput(event, ctx) {
   if (!item || !card) return;
   const evidenceDrafts = loadDraft(item.id, card.id).evidenceDrafts || [];
   const fieldValues = operationSubmissionValues(item, card, collectOperationValues(), ctx);
-  saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
+  const draftValues = draftableOperationValues(card, fieldValues);
+  saveDraft(item.id, card.id, draftValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts, draftValues));
   const requiredValidation = validateRequiredFields(card, fieldValues, ctx);
   const hasMissing = requiredValidation.missingFields.length > 0;
   ctx.state.fieldValidation = hasMissing
@@ -242,7 +246,8 @@ export async function submitCurrentCard(ctx) {
   const requiredValidation = validateRequiredFields(card, fieldValues, ctx);
   if (requiredValidation.missingFields.length) {
     const evidenceDrafts = collectEvidenceDrafts();
-    saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
+    const draftValues = draftableOperationValues(card, fieldValues);
+    saveDraft(item.id, card.id, draftValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts, draftValues));
     ctx.state.fieldValidation = {
       workspaceId: item.id,
       cardId: card.id,
@@ -272,8 +277,9 @@ export async function submitCurrentCard(ctx) {
     }
   }
   const evidenceDrafts = systemEvidenceDraftsFor(card, collectEvidenceDrafts());
-  const submissionProtocol = draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts);
-  saveDraft(item.id, card.id, fieldValues, evidenceDrafts, submissionProtocol);
+  const draftValues = draftableOperationValues(card, fieldValues);
+  const submissionProtocol = draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts, draftValues);
+  saveDraft(item.id, card.id, draftValues, evidenceDrafts, submissionProtocol);
   ctx.state.operationMessage = ctx.tr("submitting");
   ctx.state.lastActionResult = { status: "submitting", message: ctx.state.operationMessage };
   ctx.state.operationSubmitting = true;
@@ -292,7 +298,7 @@ export async function submitCurrentCard(ctx) {
         draft.status = "verified";
       }
     }
-    saveDraft(item.id, card.id, fieldValues, evidenceDrafts, submissionProtocol);
+    saveDraft(item.id, card.id, draftValues, evidenceDrafts, submissionProtocol);
     const result = await submitWorkItemOperation({
       workspace: item,
       card,
@@ -327,7 +333,7 @@ export async function submitCurrentCard(ctx) {
         result
       });
       applyCommittedCardLocalState(item.id, card.id, ctx);
-      if (result?.projectionStatus === "projected") clearDraft(item.id, card.id);
+      clearDraft(item.id, card.id);
       const successMessage = confirmSuccessMessage(result, ctx);
       const actionResult = {
         ...actionResultFromConfirm(result, successMessage, item, card, fieldValues),
@@ -369,6 +375,15 @@ function operationSubmissionValues(item = {}, card = {}, values = {}, ctx = {}) 
     ctx.state || {},
     item,
     card
+  );
+}
+
+function draftableOperationValues(card = {}, fieldValues = {}) {
+  if (!isFirstGoldenChainCardId(card?.id)) return fieldValues;
+  const allowed = new Set(draftableCapabilityFieldIds(card.id));
+  if (!allowed.size) return fieldValues;
+  return Object.fromEntries(
+    Object.entries(fieldValues || {}).filter(([fieldId]) => allowed.has(fieldId))
   );
 }
 
@@ -492,14 +507,14 @@ function randomDraftId() {
   return globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts) {
+function draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts, draftValues = fieldValues) {
   const protocol = loadDraft(item.id, card.id).submissionProtocol;
   if (isCompleteSubmissionProtocol(protocol, fieldValues)) {
     return protocol;
   }
 
   const created = createSubmissionProtocol(item, card, fieldValues);
-  saveDraft(item.id, card.id, fieldValues, evidenceDrafts, created);
+  saveDraft(item.id, card.id, draftValues, evidenceDrafts, created);
   return created;
 }
 

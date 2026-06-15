@@ -48,6 +48,7 @@ function fallbackOptionSetForField(field = {}) {
   const id = String(field?.id || "").trim();
   const zh = String(field?.label?.["zh-CN"] || "").trim();
   if (id === "bedType" || zh === "床铺生成方式" || zh === "床位类型") return "bunkType";
+  if (id === "readinessState" || zh === "就绪状态") return "readinessState";
   if (id === "reservationNextAction" || zh === "预订后动作") return "reservationNextAction";
   return "";
 }

@@ -6,11 +6,9 @@ public sealed class WorkItemDefinitionRegistryService
 {
     private static readonly Lazy<WorkItemDefinitionRegistryService> Default = new(LoadDefaultRegistry);
     private static readonly IReadOnlyDictionary<string, string> StartAdapterDefinitionIds =
-        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        AcceptedCapabilityRuntimeProjection.StartAdapterDefinitionIds()
+        .Concat(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            ["Dormitory.FirstGoldenChain:Dorm.RoomSetupConfirm"] = "definition.dormitory.roomSetupConfirm.v1",
-            ["Dormitory.FirstGoldenChain:Dorm.BedSetupConfirm"] = "definition.dormitory.bedSetupConfirm.v1",
-            ["Dormitory.FirstGoldenChain:Dorm.ResourceReadinessConfirm"] = "definition.dormitory.resourceReadinessConfirm.v1",
             ["W-DORM-MAINLINE:cert.roomSetupConfirm"] = "definition.dormitory.roomSetupConfirm.v1",
             ["W-DORM-MAINLINE:cert.leadCapture"] = "definition.dormitory.leadCapture.v1",
             ["W-DORM-MAINLINE:cert.checkinConfirm"] = "definition.dormitory.checkinConfirm.v1",
@@ -21,7 +19,8 @@ public sealed class WorkItemDefinitionRegistryService
             ["W-DORM-SERVICE-CHECKOUT:cert.serviceTaskCreate"] = "definition.dormitory.serviceTaskCreate.v1",
             ["W-DORM-SERVICE-CHECKOUT:cert.expenseRecord"] = "definition.finance.expenseRecord.v1",
             ["W-DORM-GOVERNANCE:cert.periodReview"] = "definition.dormitory.periodReview.v1"
-        };
+        })
+        .ToDictionary(item => item.Key, item => item.Value, StringComparer.OrdinalIgnoreCase);
     private static readonly IReadOnlyDictionary<string, string> StartUiRouteDefinitionKeys =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {

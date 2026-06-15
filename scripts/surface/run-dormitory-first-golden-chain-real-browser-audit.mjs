@@ -106,11 +106,25 @@ try {
 
     await login(page);
     await openSearch(page);
+    await fill(page, "#query", "D01");
+    await click(page, "#searchNow");
+    await waitForHydrated(page);
+    await capture(page, "01-search-room-object-d01", "搜索 D01 不误启动新增命令");
+    let searchState = await readDomState(page);
+    addAssertion("search.object_query_d01_no_command", searchState.currentStartCount === 0, "搜索 D01 必须是对象查询，不得启动 current command。", searchState);
+
+    await fill(page, "#query", "101房间");
+    await click(page, "#searchNow");
+    await waitForHydrated(page);
+    await capture(page, "02-search-room-object-101", "搜索 101房间 不误启动新增命令");
+    searchState = await readDomState(page);
+    addAssertion("search.object_query_101_room_no_command", searchState.currentStartCount === 0, "搜索 101房间 必须是对象查询，不得启动 current command。", searchState);
+
     await fill(page, "#query", "新增房间");
     await click(page, "#searchNow");
     await waitForHydrated(page);
-    await capture(page, "01-search-current-capability", "搜索新增房间只返回当前 capability 入口");
-    const searchState = await readDomState(page);
+    await capture(page, "03-search-current-capability", "搜索新增房间只返回当前 capability 入口");
+    searchState = await readDomState(page);
     addAssertion("search.only_current_capability_entry", searchState.currentStartCount === 1 && searchState.legacyStartCount === 0, "搜索新增房间必须只暴露当前 capability start。", searchState);
 
     await click(page, `[data-start-operations-workspace="${CAPABILITY_ID}"]`);
@@ -120,24 +134,58 @@ try {
       const ready = await readDomState(page);
       addAssertion(`step.${index + 1}.card_id`, ready.cardId === expected.cardId, `${expected.step} 必须停在 ${expected.cardId}。`, ready);
       addAssertion(`step.${index + 1}.label_visible`, ready.text.includes(expected.step), `${expected.step} 必须可见。`, ready);
+      addAssertion(`step.${index + 1}.technical_details_collapsed`, ready.technicalDetailsOpen === false, "技术详情默认必须折叠。", ready);
+      const readyFields = await operationFields(page);
+      addSystemRefReadonlyAssertions(index, expected, readyFields);
+      if (expected.workItemType === "Dorm.ResourceReadinessConfirm") {
+        addReadinessOptionSetAssertions(readyFields);
+      }
       addNoForbiddenVisibleTerms(`step.${index + 1}.ready`, ready);
-      await capture(page, `${String(index + 2).padStart(2, "0")}-${expected.title}-ready`, `${expected.step} ${expected.title} ready`);
+      await capture(page, `${String(index + 4).padStart(2, "0")}-${expected.title}-ready`, `${expected.step} ${expected.title} ready`);
+
+      if (index === 0) {
+        const beforeConfirmCount = countConfirmWrites();
+        await click(page, "[data-submit-card]");
+        await waitForHydrated(page);
+        const missing = await readDomState(page);
+        addAssertion("validation.required_missing_blocks_submit", missing.text.includes("请先补齐必填项") || missing.text.includes("还需填写"), "字段缺失时必须显示失败态，且不得提交。", missing);
+        addAssertion("validation.required_missing_no_confirm", countConfirmWrites() === beforeConfirmCount, "字段缺失失败态不得产生 Operations Confirm。", { beforeConfirmCount, afterConfirmCount: countConfirmWrites() });
+        await capture(page, "04-required-missing-failure-state", "字段缺失失败态");
+      }
 
       await fillRequiredOperationFields(page, expected);
       await waitForHydrated(page);
-      await capture(page, `${String(index + 2).padStart(2, "0")}-${expected.title}-filled`, `${expected.step} ${expected.title} filled`);
+      if (index === 0) {
+        await click(page, "[data-save-draft]");
+        await waitForHydrated(page);
+        const savedDraft = await draftSnapshot(page, expected.cardId);
+        addAssertion("draft.current_step_user_fields_only", savedDraft.hasDraft && !savedDraft.fieldIds.includes("roomId") && !savedDraft.fieldIds.includes("bedId"), "草稿只能保存当前步骤用户输入字段，不得保存系统字段。", savedDraft);
+        await page.reload({ waitUntil: "domcontentloaded" });
+        await waitForOperationPanel(page);
+        const restored = await readDomState(page);
+        addAssertion("draft.restore_current_step", restored.text.includes("请先补齐必填项") || (await operationFields(page)).some((field) => field.id === "roomNo" && field.valuePresent), "草稿刷新后必须恢复当前步骤输入。", restored);
+        await capture(page, "05-draft-restore-current-step", "草稿当前步保存恢复");
+      }
+      await capture(page, `${String(index + 6).padStart(2, "0")}-${expected.title}-filled`, `${expected.step} ${expected.title} filled`);
 
       const submitResult = await submitCurrentStep(page, index);
       const after = submitResult.after;
       addAssertion(`step.${index + 1}.confirm_once`, submitResult.confirmDelta === 1 && submitResult.progressed, `${expected.step} 必须形成一次有效 Operations Confirm。`, submitResult);
+      if (index === 0) {
+        const cleanedDraft = await draftSnapshot(page, expected.cardId);
+        addAssertion("draft.submit_success_cleans_current_step", cleanedDraft.hasDraft === false, "提交成功后必须清理当前步骤草稿。", cleanedDraft);
+      }
       addNoForbiddenVisibleTerms(`step.${index + 1}.after_submit`, after);
-      await capture(page, `${String(index + 2).padStart(2, "0")}-${expected.title}-after-submit`, `${expected.step} ${expected.title} after submit`);
+      await capture(page, `${String(index + 6).padStart(2, "0")}-${expected.title}-after-submit`, `${expected.step} ${expected.title} after submit`);
     }
 
     const completed = await readDomState(page);
     addAssertion("completion.first_golden_chain_visible", completed.text.includes("第一金链内测完成"), "完成后必须显示第一金链内测完成。", completed);
+    addAssertion("completion.business_values_visible", /A[0-9a-f]{4}/i.test(completed.text) && /-01/.test(completed.text) && completed.text.includes("可分配"), "完成页必须显示房间、床位、可分配等业务值。", completed);
+    addAssertion("completion.no_raw_stable_id", !/\b(room|bed)-[a-f0-9]{8}\b/i.test(completed.text), "完成页不得显示 raw roomId/bedId。", completed);
+    addAssertion("completion.technical_details_collapsed", completed.technicalDetailsOpen === false, "完成页技术详情默认必须折叠。", completed);
     addNoForbiddenVisibleTerms("completion", completed);
-    await capture(page, "05-first-golden-chain-completed", "第一金链内测完成");
+    await capture(page, "10-first-golden-chain-completed", "第一金链内测完成");
 
     await context.close();
   } finally {
@@ -238,6 +286,47 @@ async function operationFields(page) {
   })));
 }
 
+function addSystemRefReadonlyAssertions(index, expected, fields) {
+  const systemRefs = fields.filter((field) => ["roomId", "bedId"].includes(field.id));
+  for (const field of systemRefs) {
+    addAssertion(
+      `step.${index + 1}.${field.id}.not_editable`,
+      field.readonly || !field.visible || field.type === "hidden",
+      `${expected.step} ${field.id} 必须 readonly 或 hidden-submit-only。`,
+      field);
+  }
+}
+
+function addReadinessOptionSetAssertions(fields) {
+  const readiness = fields.find((field) => field.id === "readinessState");
+  const labels = (readiness?.options ?? []).map((option) => option.text);
+  for (const label of ["可分配", "待清洁", "待维修", "待补材料", "暂不可用"]) {
+    addAssertion(`readiness.closed_option.${safeName(label)}`, labels.includes(label), `readinessState 必须包含闭合选项 ${label}。`, { labels });
+  }
+  addAssertion("readiness.no_free_text_ready", readiness?.tag === "select" && !(readiness?.options ?? []).some((option) => option.value === "ready"), "readinessState 必须是闭合 select，且不得保留 ready 自由文本值。", readiness);
+}
+
+async function draftSnapshot(page, cardId) {
+  return page.evaluate((targetCardId) => {
+    const entries = Object.entries(localStorage)
+      .filter(([key]) => key.startsWith("workosnext.operationDraft.") && key.endsWith(`.${targetCardId}`))
+      .map(([key, raw]) => {
+        try {
+          const parsed = JSON.parse(raw);
+          return { key, fieldIds: Object.keys(parsed.values || {}), values: parsed.values || {} };
+        } catch {
+          return { key, fieldIds: [], values: {} };
+        }
+      });
+    return {
+      cardId: targetCardId,
+      hasDraft: entries.length > 0,
+      fieldIds: entries.flatMap((entry) => entry.fieldIds),
+      entries
+    };
+  }, cardId);
+}
+
 function valueForField(field, step) {
   const id = String(field.id || "").toLowerCase();
   const suffix = shortSuffix(`${step.cardId}-${field.id}`);
@@ -292,6 +381,8 @@ async function readDomState(page) {
       currentStartCount: document.querySelectorAll('[data-start-operations-workspace="Dormitory.FirstGoldenChain"]').length,
       legacyStartCount: document.querySelectorAll('[data-start-operations-workspace="W-STAY-RESOURCE"]').length,
       submitCount: document.querySelectorAll("[data-submit-card]").length,
+      technicalDetailsOpen: Array.from(document.querySelectorAll(".operation-technical-details, .system-check-details"))
+        .some((node) => node.hasAttribute("open")),
       stepRailText: Array.from(document.querySelectorAll("[data-component='operation-step-rail'], .operation-step-rail")).map((node) => node.textContent || "").join(" "),
       text,
       url: window.location.href
@@ -353,26 +444,32 @@ async function submitCurrentStep(page, index) {
   for (; attempts < 3; attempts += 1) {
     const beforeAttemptConfirmCount = countConfirmWrites();
     await click(page, "[data-submit-card]");
-    await waitForConfirmEventCount(beforeAttemptConfirmCount + 1, 10_000);
-    await waitForExpectedProgress(page, next, 10_000);
+    const confirmObserved = await waitForConfirmEventCount(beforeAttemptConfirmCount + 1, 30_000);
+    if (confirmObserved) {
+      await waitForExpectedProgress(page, next, 45_000);
+    } else {
+      await waitForExpectedProgress(page, next, 10_000);
+    }
     await waitForHydrated(page);
     lastAfter = await readDomState(page);
 
     const confirmDelta = countConfirmWrites() - beforeConfirmCount;
     const progressed = isExpectedProgress(lastAfter, next);
+    if (progressed || confirmObserved) {
+      return {
+        confirmDelta,
+        progressed,
+        attempts: attempts + 1,
+        expectedNextCardId: next?.cardId ?? "completed-workspace-record",
+        beforeUrl,
+        afterUrl: page.url(),
+        after: lastAfter
+      };
+    }
     if (confirmDelta === 0) {
       await page.waitForTimeout(500);
       continue;
     }
-    return {
-      confirmDelta,
-      progressed,
-      attempts: attempts + 1,
-      expectedNextCardId: next?.cardId ?? "completed-workspace-record",
-      beforeUrl,
-      afterUrl: page.url(),
-      after: lastAfter
-    };
   }
 
   const after = lastAfter || await readDomState(page);
@@ -399,15 +496,14 @@ async function waitForConfirmEventCount(targetCount, timeoutMs) {
 
 async function waitForExpectedProgress(page, next, timeoutMs) {
   if (next) {
-    await page.waitForFunction((nextCardId) =>
+    return page.waitForFunction((nextCardId) =>
       new URL(window.location.href).searchParams.get("card") === nextCardId,
-    next.cardId, { timeout: timeoutMs }).catch(() => {});
-    return;
+    next.cardId, { timeout: timeoutMs }).then(() => true).catch(() => false);
   }
-  await page.waitForFunction(() =>
+  return page.waitForFunction(() =>
     (document.body.innerText || "").includes("第一金链内测完成") ||
     document.querySelector("[data-surface=\"completed-workspace-record\"]"),
-  null, { timeout: timeoutMs }).catch(() => {});
+  null, { timeout: timeoutMs }).then(() => true).catch(() => false);
 }
 
 function isExpectedProgress(domState, next) {

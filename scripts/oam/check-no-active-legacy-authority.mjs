@@ -24,6 +24,7 @@ const allowedActiveAuthorityFields = [
   "runtimeConsumedBundleDigest",
   "runtimeAdmissionDigest",
   "businessLandingDigest",
+  "productionConfirmationDigest",
   "releaseAuthorityDigest"
 ];
 const files = [

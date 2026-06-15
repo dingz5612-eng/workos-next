@@ -1,7 +1,7 @@
 {
   "version": "oam.dormitory-first-golden-chain-landing.v1",
   "authorityType": "dormitory_first_golden_chain_business_landing",
-  "landingStatus": "APPROVED_DORMITORY_L1_FIRST_GOLDEN_CHAIN",
+  "landingStatus": "PENDING_BUSINESS_LANDING_REVIEW",
   "landingScope": "dormitory_l1_first_golden_chain_only",
   "generatedCandidateAcceptedBy00": true,
   "runtimeAdmissionRef": "docs/oam/dormitory-runtime-admission.current.json",
@@ -41,8 +41,8 @@
   "workItemsContractRef": "docs/contracts/generated/dormitory/workitems.generated.json",
   "readModelContractRef": "docs/contracts/generated/dormitory/read-model.generated.json",
   "landingProofRef": "artifacts/oam/evidence/dormitory-first-golden-chain-landing-proof.json",
-  "businessFeatureDevelopmentAllowed": true,
-  "dormitoryFirstGoldenChainLandingGoNoGo": "GO",
+  "businessFeatureDevelopmentAllowed": false,
+  "dormitoryFirstGoldenChainLandingGoNoGo": "NO_GO",
   "businessProductionGoNoGo": "NO_GO",
   "dormitoryL2GoNoGo": "NO_GO",
   "productionConfirmAllowed": false,
@@ -70,5 +70,12 @@
     "productionConfirmAllowed",
     "releaseAuthority",
     "finalGoNoGo"
-  ]
+  ],
+  "previousLandingInput": {
+    "status": "HISTORICAL_REJECTED_OR_PENDING_INPUT_ONLY",
+    "sourceEventId": "Dormitory.FirstGoldenChain:0005:BUSINESS_LANDING_ADMITTED",
+    "sourceBusinessLandingDigest": "sha256:8e045a4930fa93f82a5252c825e17923a9879cf1620254c4c96beb2feee04ec9",
+    "quarantineEventId": "Dormitory.FirstGoldenChain:0006:AUTHORITY_REVOKED_BUSINESS_LANDING_ADMITTED",
+    "reason": "instruction_one_requires_capability_ledger_only_authority_and_full_lifecycle_review_before_business_landing_admission"
+  }
 }

@@ -1,0 +1,30 @@
+{
+  "version": "workos.legacy-slice-manifest.v1",
+  "manifestMode": "compatibility_lane_only",
+  "allowedLane": "compatibility",
+  "forbiddenRuntimeAuthority": true,
+  "currentCapabilityAuthorityRef": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+  "productionSliceManifestRef": "docs/contracts/production-slice-manifest.json",
+  "slices": [
+    {
+      "id": "Dormitory.FirstGoldenChain",
+      "workspaceId": "Dormitory.FirstGoldenChain",
+      "cards": [
+        "Dorm.RoomSetupConfirm",
+        "Dorm.BedSetupConfirm",
+        "Dorm.ResourceReadinessConfirm"
+      ],
+      "events": [
+        "Dorm.RoomSetupConfirmed",
+        "Dorm.BedSetupConfirmed",
+        "Dorm.ResourceReadinessConfirmed"
+      ],
+      "ownsAggregates": [
+        "AcceptedCapabilityRuntimeProjection"
+      ],
+      "status": "runtime-test-admitted",
+      "compatibilityStatus": "migration_read_only",
+      "forbiddenAuthorityForCurrentCapability": true
+    }
+  ]
+}

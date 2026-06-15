@@ -34,7 +34,10 @@ const requiredJson = [
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
   "docs/contracts/generated/dormitory/test-plan.generated.json",
+  "docs/contracts/generated/dormitory/db-projection-policy.generated.json",
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "apps/mobile/src/generated/oam/capability-projection.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
   "docs/read-intelligence/read-intelligence-kernel.json",
   "docs/read-intelligence/read-intelligence-kernel.schema.json",
   "docs/oam/db-no-side-effects-proof.json",
@@ -44,7 +47,9 @@ const requiredJson = [
   "docs/oam/capabilities/dormitory-first-golden-chain.registry.json",
   "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
   "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
-  "docs/oam/capabilities/compatibility-box.current.json",
+  "docs/oam/compatibility/compatibility-box.current.json",
+  "docs/oam/compatibility/legacy-slice-manifest.json",
+  "docs/contracts/production-slice-manifest.json",
   "docs/oam/capabilities/dormitory-first-golden-chain.active-path-boundary.json",
   "docs/oam/capabilities/dormitory-first-golden-chain.state-machine.json",
   "docs/oam/control-plane/gate-lane-taxonomy.current.json",
@@ -68,6 +73,7 @@ requireFile("docs/oam/current-architecture.md");
 requireFile("docs/system/current-system-map.md");
 requireFile("scripts/oam/generate-current-evidence-root.mjs");
 requireFile("scripts/oam/check-current-evidence-root.mjs");
+requireFile("scripts/oam/compile-current-capability.mjs");
 requireFile("scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs");
 requireFile("scripts/oam/check-test-plan-generated-from-capability.mjs");
 requireFile("scripts/oam/check-evidence-digest-chain-single-source.mjs");
@@ -121,6 +127,10 @@ requireFile("scripts/oam/generate-dormitory-candidate-artifact-attestation-packa
 requireFile("scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs");
 requireFile("scripts/oam/check-read-intelligence-kernel.mjs");
 requireFile("scripts/oam/check-db-no-side-effects-proof.mjs");
+requireFile("scripts/validate-capability-contracts.mjs");
+requireFile("scripts/validate-production-slice-contracts.mjs");
+requireFile("scripts/validate-compatibility-contracts.mjs");
+requireFile("scripts/validate-release-contracts.mjs");
 
 checkDirectory("services", ["core-api"]);
 checkDirectory("modules", ["accommodation", "finance-gate", "identity", "maintenance"]);
@@ -254,10 +264,19 @@ function normalizeCurrentAllowedTerms(file, text) {
     file === "docs/contracts/definition/definition-compatibility-fence.json" ||
     file === "docs/business/admission/business-line-levels.yml" ||
     file === "docs/decisions/ADR-business-3-7-current-registry-decision.md" ||
+    file === "docs/oam/current-authority-index.json" ||
     file === "scripts/authority/check-master-outline-schema.mjs" ||
     file === "scripts/authority/check-master-design-schema.mjs" ||
     file === "scripts/authority/check-truth-ownership-matrix.mjs" ||
     file === "scripts/validate-contracts.mjs" ||
+    file === "scripts/validate-capability-contracts.mjs" ||
+    file === "scripts/validate-production-slice-contracts.mjs" ||
+    file === "scripts/validate-compatibility-contracts.mjs" ||
+    file === "scripts/validate-release-contracts.mjs" ||
+    file === "docs/contracts/production-slice-manifest.json" ||
+    file === "docs/contracts/slice-manifest.json" ||
+    file === "docs/oam/compatibility/legacy-slice-manifest.json" ||
+    file === "docs/oam/compatibility/compatibility-box.current.json" ||
     file === "scripts/oam/compile-current-kernel-graph.mjs" ||
     file === "scripts/oam/check-kernel-responsibility-map.mjs" ||
     file === "docs/oam/file-lifecycle-policy.json" ||
@@ -274,8 +293,12 @@ function normalizeCurrentAllowedTerms(file, text) {
     file === "docs/oam/capabilities/dormitory-first-golden-chain.active-path-boundary.json" ||
     file === "docs/oam/control-plane/gate-lane-taxonomy.current.json" ||
     file === "docs/contracts/generated/dormitory/test-plan.generated.json" ||
+    file === "docs/contracts/generated/dormitory/db-projection-policy.generated.json" ||
+    file === "apps/mobile/src/generated/oam/capability-projection.generated.json" ||
+    file === "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json" ||
     file === "scripts/oam/lib/capability-delivery-control-plane.mjs" ||
     file === "scripts/oam/lib/capability-projection-digests.mjs" ||
+    file === "scripts/oam/compile-current-capability.mjs" ||
     file === "scripts/oam/check-authority-ledger-append-only.mjs" ||
     file === "scripts/oam/check-current-projection-from-ledger.mjs" ||
     file === "scripts/oam/check-no-active-legacy-identity.mjs" ||
@@ -287,11 +310,13 @@ function normalizeCurrentAllowedTerms(file, text) {
     file === "scripts/oam/check-compatibility-box-boundary.mjs" ||
     file === "scripts/oam/check-single-capability-bundle-digest.mjs" ||
     file === "scripts/oam/check-control-plane-lane-boundary.mjs" ||
+    file === "scripts/oam/generate-current-evidence-root.mjs" ||
     file === "scripts/oam/check-current-evidence-root.mjs" ||
     file === "scripts/oam/check-first-golden-chain-active-path-exact.mjs" ||
     file === "scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs" ||
     file === "scripts/oam/check-test-plan-generated-from-capability.mjs" ||
     file === "scripts/oam/check-evidence-digest-chain-single-source.mjs" ||
+    file === "scripts/surface/run-dormitory-real-browser-audits.ps1" ||
     file === "scripts/surface/run-dormitory-first-golden-chain-real-browser-audit.mjs" ||
     file === "scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs" ||
     file === "scripts/oam/check-current-oam.mjs" ||

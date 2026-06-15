@@ -9,6 +9,8 @@ const root = process.cwd();
 const resultPath = "artifacts/oam/checks/option-set-single-source-result.json";
 const failures = [];
 const optionSet = await import("../../apps/mobile/src/controls/optionSetContract.js");
+const capabilityProjection = await import("../../apps/mobile/src/capabilityProjection.js");
+const generatedCapabilityProjection = JSON.parse(fs.readFileSync(path.join(root, "apps/mobile/src/generated/oam/capability-projection.generated.json"), "utf8"));
 const capabilityProjectionSource = fs.readFileSync(path.join(root, "apps/mobile/src/capabilityProjection.js"), "utf8");
 const checkedOptionSets = ["technicalState", "bunkType"];
 
@@ -35,8 +37,16 @@ if (optionSet.canonicalLabelForOptionValue("technicalState", "repair") === "éœ€ç
 if (optionSet.preferredOptionSetDefault("bunkType") !== "whole") {
   failures.push("bunkType preferred default must be whole; current one-bed rooms must not default to bunk_pair.");
 }
-if (!capabilityProjectionSource.includes('return Number.isFinite(value) && value <= 1 ? "whole" : "bunk_pair";')) {
+if (capabilityProjection.defaultBedTypeForCount(1) !== "whole" || capabilityProjection.defaultBedTypeForCount(2) !== "bunk_pair") {
   failures.push("defaultBedTypeForCount must map one-bed rooms to whole and multi-bed rooms to bunk_pair.");
+}
+if (!capabilityProjectionSource.includes("capabilityProjection.optionSetDefaults?.bunkType")) {
+  failures.push("defaultBedTypeForCount must read defaults from generated capability projection.");
+}
+if (!Array.isArray(generatedCapabilityProjection.optionSets?.bunkType) ||
+  !generatedCapabilityProjection.optionSets.bunkType.some((item) => item.value === "bunk_pair") ||
+  !generatedCapabilityProjection.optionSets.bunkType.some((item) => item.value === "whole")) {
+  failures.push("generated capability projection must define the bunkType option set.");
 }
 
 const result = {

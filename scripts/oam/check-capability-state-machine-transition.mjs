@@ -53,6 +53,14 @@ for (const [index, event] of (ledger?.events ?? []).entries()) {
     requireEqual(event.previousEventDigest, previousDigest, `${event.eventId}.previousEventDigest`, failures);
   }
   previousDigest = eventDigest(event);
+  if (event.eventType === "AUTHORITY_REVOKED") {
+    const revokedState = eventToState[event.revokedEventType];
+    if (revokedState) {
+      removeAchievedState(achievedStates, revokedState);
+      stateEvents.delete(revokedState);
+    }
+    continue;
+  }
   const state = eventToState[event.eventType];
   if (!state) continue;
   achievedStates.push(state);
@@ -142,6 +150,14 @@ function requireEqual(actual, expected, label, foundFailures) {
 function requireJsonEqual(actual, expected, label, foundFailures) {
   if (stableStringify(actual) !== stableStringify(expected)) {
     foundFailures.push(`${label} must equal ${JSON.stringify(expected)}, actual ${JSON.stringify(actual)}.`);
+  }
+}
+
+function removeAchievedState(achieved, state) {
+  let index = achieved.lastIndexOf(state);
+  while (index !== -1) {
+    achieved.splice(index, 1);
+    index = achieved.lastIndexOf(state);
   }
 }
 

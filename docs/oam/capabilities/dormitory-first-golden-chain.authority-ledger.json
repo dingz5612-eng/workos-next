@@ -133,6 +133,38 @@
         "business landing is not release authority",
         "business landing is not final GO"
       ]
+    },
+    {
+      "eventId": "Dormitory.FirstGoldenChain:0006:AUTHORITY_REVOKED_BUSINESS_LANDING_ADMITTED",
+      "capabilityId": "Dormitory.FirstGoldenChain",
+      "eventType": "AUTHORITY_REVOKED",
+      "previousEventDigest": "sha256:01ad39a34ed55aeb280210376e14974b4f862f424f297442871e0323a1fb5998",
+      "subjectDigest": "sha256:8e045a4930fa93f82a5252c825e17923a9879cf1620254c4c96beb2feee04ec9",
+      "bundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+      "revokedEventId": "Dormitory.FirstGoldenChain:0005:BUSINESS_LANDING_ADMITTED",
+      "revokedEventType": "BUSINESS_LANDING_ADMITTED",
+      "revocationScope": "business_landing_active_authority_only",
+      "inputDigests": {
+        "revokedEventDigest": "sha256:01ad39a34ed55aeb280210376e14974b4f862f424f297442871e0323a1fb5998",
+        "revokedBusinessLandingDigest": "sha256:8e045a4930fa93f82a5252c825e17923a9879cf1620254c4c96beb2feee04ec9",
+        "runtimeAdmissionDigest": "sha256:0aa4b6c3448ab9103aa401d8d225b374685be38a022df0db3c1d230f750f2c09",
+        "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e"
+      },
+      "outputDigests": {
+        "businessLandingDigest": null
+      },
+      "decision": "BUSINESS_LANDING_ACTIVE_AUTHORITY_QUARANTINED_PENDING_FULL_CAPABILITY_LIFECYCLE_REVIEW",
+      "decidedBy": "00｜OAM 总控",
+      "decidedAtUtc": "2026-06-15T12:30:00.000Z",
+      "forbiddenInterpretations": [
+        "revoked business landing active authority is not deletion of historical evidence",
+        "runtime test admission is not business landing",
+        "browser audit PASS is not business landing",
+        "control-plane completed is not business landing",
+        "business landing review ready is not production confirmation",
+        "business landing review ready is not release authority",
+        "business landing review ready is not final GO"
+      ]
     }
   ]
 }

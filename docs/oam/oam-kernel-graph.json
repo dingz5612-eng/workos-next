@@ -10,7 +10,7 @@
     "domainKernel": "docs/oam/kernel-schemas/domain-kernel.schema.json",
     "workItem": "docs/oam/kernel-schemas/workitem.schema.json"
   },
-  "nodeCount": 1371,
+  "nodeCount": 1390,
   "edgeCount": 1102,
   "nodes": [
     {
@@ -4560,6 +4560,43 @@
         "scripts/check-surface-contract.mjs",
         "docs/oam/oam-kernel-graph.json"
       ]
+    },
+    {
+      "nodeId": "file.apps/mobile/src/generated/oam/capability-projection.generated.json",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "apps/mobile/src/generated/oam/capability-projection.generated.json",
+      "runtimeBinding": "generated-capability-projection",
+      "testBinding": [
+        "scripts/oam/check-surface-consumes-generated-surface-model.mjs",
+        "npm --prefix apps/mobile run test"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-files-not-manually-edited.mjs",
+        "scripts/oam/check-surface-consumes-generated-surface-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "checker": "scripts/oam/check-surface-consumes-generated-surface-model.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "apps/mobile/src/generated/oam/capability-projection.generated.json",
+      "absorbedBy": "apps/mobile/src/generated/oam/capability-projection.generated.json",
+      "removalProofGate": "scripts/oam/check-generated-files-not-manually-edited.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "apps/mobile/src/capabilityProjection.js",
+        "apps/mobile/src/searchIntentRegistry.js",
+        "apps/mobile/src/controls/optionSetContract.js"
+      ],
+      "derivedFrom": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "generatedBy": "scripts/oam/compile-current-capability.mjs",
+      "sourceKernelVersion": "oam.current-capability-compiler.v1",
+      "graphBinding": "docs/oam/oam-kernel-graph.json"
     },
     {
       "runtimeBinding": "generated-contract",
@@ -11610,6 +11647,42 @@
       ]
     },
     {
+      "nodeId": "file.docs/contracts/generated/dormitory/db-projection-policy.generated.json",
+      "nodeType": "File",
+      "owner": "runtime-db-owner",
+      "sourceFile": "docs/contracts/generated/dormitory/db-projection-policy.generated.json",
+      "runtimeBinding": "generated-db-projection-policy",
+      "testBinding": [
+        "scripts/oam/check-generated-contract-consistency.mjs",
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-files-not-manually-edited.mjs",
+        "scripts/oam/check-generated-contract-consistency.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "checker": "scripts/oam/check-generated-contract-consistency.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/generated/dormitory/db-projection-policy.generated.json",
+      "absorbedBy": "docs/contracts/generated/dormitory/db-projection-policy.generated.json",
+      "removalProofGate": "scripts/oam/check-generated-files-not-manually-edited.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-generated-contract-consistency.mjs",
+        "scripts/oam/check-test-plan-generated-from-capability.mjs"
+      ],
+      "derivedFrom": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "generatedBy": "scripts/oam/compile-current-capability.mjs",
+      "sourceKernelVersion": "oam.current-capability-compiler.v1",
+      "graphBinding": "docs/oam/oam-kernel-graph.json"
+    },
+    {
       "runtimeBinding": "generated-contract",
       "testBinding": [
         "scripts/oam/check-generated-contract-consistency.mjs"
@@ -12587,6 +12660,38 @@
       "consumers": [
         "scripts/check-local-path-references.mjs",
         "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/production-slice-manifest.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/production-slice-manifest.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/validate-production-slice-contracts.mjs",
+        "scripts/validate-release-contracts.mjs"
+      ],
+      "gateBinding": [
+        "scripts/validate-production-slice-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/check-local-path-references.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/production-slice-manifest.json",
+      "absorbedBy": "docs/contracts/production-slice-manifest.json",
+      "removalProofGate": "scripts/check-local-path-references.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-production-slice-contracts.mjs",
+        "scripts/validate-release-contracts.mjs",
+        "scripts/validate-contracts.mjs"
       ]
     },
     {
@@ -13618,6 +13723,69 @@
         "scripts/oam/generate-current-evidence-root.mjs",
         "scripts/oam/run-control-plane-checks.ps1",
         ".github/workflows/ci.yml"
+      ]
+    },
+    {
+      "nodeId": "file.docs/oam/compatibility/compatibility-box.current.json",
+      "nodeType": "File",
+      "owner": "capability-control-plane-owner",
+      "sourceFile": "docs/oam/compatibility/compatibility-box.current.json",
+      "runtimeBinding": "current-oam",
+      "testBinding": [
+        "scripts/oam/check-compatibility-box-boundary.mjs",
+        "scripts/validate-compatibility-contracts.mjs"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-compatibility-box-boundary.mjs",
+        "scripts/validate-compatibility-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "current-oam",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/oam/compatibility/compatibility-box.current.json",
+      "absorbedBy": "docs/oam/compatibility/compatibility-box.current.json",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-compatibility-box-boundary.mjs",
+        "scripts/validate-compatibility-contracts.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.docs/oam/compatibility/legacy-slice-manifest.json",
+      "nodeType": "File",
+      "owner": "capability-control-plane-owner",
+      "sourceFile": "docs/oam/compatibility/legacy-slice-manifest.json",
+      "runtimeBinding": "current-oam",
+      "testBinding": [
+        "scripts/validate-compatibility-contracts.mjs"
+      ],
+      "gateBinding": [
+        "scripts/validate-compatibility-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "current-oam",
+      "checker": "scripts/validate-compatibility-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/oam/compatibility/legacy-slice-manifest.json",
+      "absorbedBy": "docs/oam/compatibility/legacy-slice-manifest.json",
+      "removalProofGate": "scripts/validate-compatibility-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-compatibility-contracts.mjs",
+        "scripts/validate-contracts.mjs"
       ]
     },
     {
@@ -20836,6 +21004,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-business-ui-copy-no-technical-leak.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/check-business-ui-copy-no-technical-leak.mjs",
+      "runtimeBinding": "Dormitory.FirstGoldenChain",
+      "testBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-business-ui-copy-no-technical-leak.mjs",
+      "absorbedBy": "scripts/oam/check-business-ui-copy-no-technical-leak.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-capability-authority-state-consistency.mjs",
       "nodeType": "File",
       "owner": "oam-release-owner",
@@ -20954,6 +21153,37 @@
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "replacementPath": "scripts/oam/check-compatibility-box-boundary.mjs",
       "absorbedBy": "scripts/oam/check-compatibility-box-boundary.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-completion-page-business-values.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/check-completion-page-business-values.mjs",
+      "runtimeBinding": "Dormitory.FirstGoldenChain",
+      "testBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-completion-page-business-values.mjs",
+      "absorbedBy": "scripts/oam/check-completion-page-business-values.mjs",
       "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
@@ -21276,6 +21506,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-current-step-draft-boundary.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/check-current-step-draft-boundary.mjs",
+      "runtimeBinding": "Dormitory.FirstGoldenChain",
+      "testBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-current-step-draft-boundary.mjs",
+      "absorbedBy": "scripts/oam/check-current-step-draft-boundary.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "runtimeBinding": "validation-gate",
       "testBinding": [
         "scripts/oam/check-dashboard-readonly.mjs",
@@ -21430,6 +21691,37 @@
         "scripts/oam/run-control-plane-checks.ps1",
         ".github/workflows/ci.yml",
         "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-dormitory-first-golden-chain-db-projection-proof.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/check-dormitory-first-golden-chain-db-projection-proof.mjs",
+      "runtimeBinding": "Dormitory.FirstGoldenChain",
+      "testBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-dormitory-first-golden-chain-db-projection-proof.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-first-golden-chain-db-projection-proof.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
     {
@@ -22071,6 +22363,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-mobile-bottom-action-safe-area.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/check-mobile-bottom-action-safe-area.mjs",
+      "runtimeBinding": "Dormitory.FirstGoldenChain",
+      "testBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-mobile-bottom-action-safe-area.mjs",
+      "absorbedBy": "scripts/oam/check-mobile-bottom-action-safe-area.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-mobile-coverage-policy.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -22535,6 +22858,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-readiness-option-set-closed.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/check-readiness-option-set-closed.mjs",
+      "runtimeBinding": "Dormitory.FirstGoldenChain",
+      "testBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-readiness-option-set-closed.mjs",
+      "absorbedBy": "scripts/oam/check-readiness-option-set-closed.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-release-authority-is-only-final-go-source.mjs",
       "nodeType": "File",
       "owner": "oam-release-owner",
@@ -22784,6 +23138,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-search-command-object-query-split.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/check-search-command-object-query-split.mjs",
+      "runtimeBinding": "Dormitory.FirstGoldenChain",
+      "testBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-search-command-object-query-split.mjs",
+      "absorbedBy": "scripts/oam/check-search-command-object-query-split.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-search-consumes-capability-projection.mjs",
       "nodeType": "File",
       "owner": "oam-release-owner",
@@ -22939,6 +23324,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-system-derived-fields-readonly.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/check-system-derived-fields-readonly.mjs",
+      "runtimeBinding": "Dormitory.FirstGoldenChain",
+      "testBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "Dormitory.FirstGoldenChain",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-system-derived-fields-readonly.mjs",
+      "absorbedBy": "scripts/oam/check-system-derived-fields-readonly.mjs",
+      "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-system-failure-routing-contract.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -23091,6 +23507,40 @@
       "consumers": [
         "scripts/oam/check-workflow-state-registry.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/compile-current-capability.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/compile-current-capability.mjs",
+      "runtimeBinding": "capability-compiler",
+      "testBinding": [
+        "scripts/oam/check-generated-files-not-manually-edited.mjs",
+        "scripts/oam/check-generated-contract-consistency.mjs"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-files-not-manually-edited.mjs",
+        "scripts/oam/check-generated-contract-consistency.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 capability compiler 被替代且所有生成产物、消费者、门禁迁移完成后删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "checker": "scripts/oam/check-generated-files-not-manually-edited.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/compile-current-capability.mjs",
+      "absorbedBy": "scripts/oam/compile-current-capability.mjs",
+      "removalProofGate": "scripts/oam/check-generated-files-not-manually-edited.mjs",
+      "deletionConditionZh": "当 capability compiler 被替代且所有生成产物、消费者、门禁迁移完成后删除。",
+      "consumers": [
+        "apps/mobile/src/generated/oam/capability-projection.generated.json",
+        "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
+        "docs/contracts/generated/dormitory/db-projection-policy.generated.json",
+        "docs/contracts/generated/dormitory/test-plan.generated.json"
       ]
     },
     {
@@ -24979,6 +25429,70 @@
       ]
     },
     {
+      "nodeId": "file.scripts/validate-capability-contracts.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/validate-capability-contracts.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/validate-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/validate-capability-contracts.mjs",
+      "absorbedBy": "scripts/validate-capability-contracts.mjs",
+      "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-contracts.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/validate-compatibility-contracts.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/validate-compatibility-contracts.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/validate-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/validate-compatibility-contracts.mjs",
+      "absorbedBy": "scripts/validate-compatibility-contracts.mjs",
+      "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-contracts.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
       "nodeId": "file.scripts/validate-contracts.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -25005,6 +25519,70 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
         "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/validate-production-slice-contracts.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/validate-production-slice-contracts.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/validate-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/validate-production-slice-contracts.mjs",
+      "absorbedBy": "scripts/validate-production-slice-contracts.mjs",
+      "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-contracts.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/validate-release-contracts.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/validate-release-contracts.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/validate-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/validate-release-contracts.mjs",
+      "absorbedBy": "scripts/validate-release-contracts.mjs",
+      "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-contracts.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
       ]
     },
     {
@@ -26306,6 +26884,43 @@
         "scripts/check-runtime-write-paths.mjs",
         "docs/oam/oam-kernel-graph.json"
       ]
+    },
+    {
+      "nodeId": "file.services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
+      "nodeType": "File",
+      "owner": "runtime-kernel-owner",
+      "sourceFile": "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
+      "runtimeBinding": "generated-capability-runtime-projection",
+      "testBinding": [
+        "scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs",
+        "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-files-not-manually-edited.mjs",
+        "scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "checker": "scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
+      "absorbedBy": "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
+      "removalProofGate": "scripts/oam/check-generated-files-not-manually-edited.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "services/core-api/WorkOS.Api/Runtime/AcceptedCapabilityRuntimeProjection.cs",
+        "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs"
+      ],
+      "derivedFrom": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "generatedBy": "scripts/oam/compile-current-capability.mjs",
+      "sourceKernelVersion": "oam.current-capability-compiler.v1",
+      "graphBinding": "docs/oam/oam-kernel-graph.json"
     },
     {
       "nodeId": "file.services/core-api/WorkOS.Api/Runtime/InMemoryProjectionStore.cs",

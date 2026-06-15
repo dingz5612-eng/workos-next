@@ -55,6 +55,42 @@ for (const expected of FIRST_GOLDEN_CHAIN_STEPS) {
 if (!JSON.stringify(report).includes("第一金链内测完成")) {
   failures.push("browser report must prove 第一金链内测完成 is visible.");
 }
+for (const requiredAssertion of [
+  "search.object_query_d01_no_command",
+  "search.object_query_101_room_no_command",
+  "validation.required_missing_blocks_submit",
+  "validation.required_missing_no_confirm",
+  "draft.current_step_user_fields_only",
+  "draft.restore_current_step",
+  "draft.submit_success_cleans_current_step",
+  "completion.business_values_visible",
+  "completion.no_raw_stable_id",
+  "completion.technical_details_collapsed",
+  "readiness.no_free_text_ready"
+]) {
+  const assertion = (report.assertions ?? []).find((item) => item.id === requiredAssertion);
+  if (!assertion) {
+    failures.push(`browser report missing assertion ${requiredAssertion}.`);
+  } else if (assertion.status !== "passed") {
+    failures.push(`browser report assertion ${requiredAssertion} must PASS.`);
+  }
+}
+for (const fieldId of ["roomId", "bedId"]) {
+  const matching = (report.assertions ?? []).filter((item) => item.id?.endsWith(`.${fieldId}.not_editable`));
+  if (!matching.length) {
+    failures.push(`browser report missing ${fieldId} readonly/hidden-submit assertion.`);
+  }
+  if (matching.some((item) => item.status !== "passed")) {
+    failures.push(`browser report ${fieldId} readonly/hidden-submit assertions must PASS.`);
+  }
+}
+for (const label of ["可分配", "待清洁", "待维修", "待补材料", "暂不可用"]) {
+  const id = `readiness.closed_option.${safeName(label)}`;
+  const assertion = (report.assertions ?? []).find((item) => item.id === id);
+  if (!assertion || assertion.status !== "passed") {
+    failures.push(`browser report readiness option assertion must PASS: ${label}.`);
+  }
+}
 for (const term of ["价格配置", "房间床位阻断", "房间床位释放", "生产确认", "发布确认", "Final GO"]) {
   const assertionFailed = (report.assertions ?? []).some((item) => item.id?.includes(`forbidden.${safeName(term)}`) && item.status !== "passed");
   if (assertionFailed) failures.push(`browser report found forbidden visible term: ${term}.`);
@@ -64,8 +100,8 @@ if ((report.networkPolicy?.operationsConfirmCount ?? 0) !== 3) failures.push("br
 if (report.networkPolicy?.noForbiddenWorkspaceCardWrites !== true) failures.push("browser report must not call old workspace/card writes.");
 if (report.networkPolicy?.noDirectBusinessFactWrites !== true) failures.push("browser report must not directly write business facts.");
 if (report.networkPolicy?.noProductionReleaseFinalGoCalls !== true) failures.push("browser report must not call production/release/final GO endpoints.");
-if (!Array.isArray(report.screenshots) || report.screenshots.length < 8) {
-  failures.push("browser report must include screenshots for login/search/three-step/final evidence.");
+if (!Array.isArray(report.screenshots) || report.screenshots.length < 12) {
+  failures.push("browser report must include screenshots for login/search/object-query/failure/draft/three-step/final evidence.");
 }
 for (const shot of report.screenshots ?? []) {
   if (!shot.path || !fs.existsSync(path.join(root, shot.path))) failures.push(`screenshot missing: ${shot.path || "(empty)"}.`);

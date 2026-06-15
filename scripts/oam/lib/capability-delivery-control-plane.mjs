@@ -7,7 +7,7 @@ export const CAPABILITY_ID = "Dormitory.FirstGoldenChain";
 export const CAPABILITY_REGISTRY_PATH = "docs/oam/capabilities/dormitory-first-golden-chain.registry.json";
 export const CAPABILITY_LEDGER_PATH = "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json";
 export const CAPABILITY_PROJECTION_PATH = "docs/oam/capabilities/dormitory-first-golden-chain.current.json";
-export const CAPABILITY_COMPATIBILITY_BOX_PATH = "docs/oam/capabilities/compatibility-box.current.json";
+export const CAPABILITY_COMPATIBILITY_BOX_PATH = "docs/oam/compatibility/compatibility-box.current.json";
 
 export const AUTHORITY_LEDGER_RESULT_PATH = "artifacts/oam/checks/authority-ledger-append-only-result.json";
 export const CURRENT_PROJECTION_RESULT_PATH = "artifacts/oam/checks/current-projection-from-ledger-result.json";
@@ -45,6 +45,7 @@ export const activeAuthorityFields = [
   "runtimeConsumedBundleDigest",
   "runtimeAdmissionDigest",
   "businessLandingDigest",
+  "productionConfirmationDigest",
   "releaseAuthorityDigest"
 ];
 
@@ -214,7 +215,21 @@ export function buildProjectionFromLedger(ledger, root = process.cwd()) {
   activeAuthority.capabilityId = CAPABILITY_ID;
   const achieved = [];
   for (const event of ledger?.events ?? []) {
-    if (event.eventType === "AUTHORITY_REVOKED") continue;
+    if (event.eventType === "AUTHORITY_REVOKED") {
+      if (event.revokedEventType === "BUSINESS_LANDING_ADMITTED") {
+        activeAuthority.businessLandingDigest = null;
+        removeAchievedState(achieved, "BUSINESS_LANDING_ADMITTED");
+      }
+      if (event.revokedEventType === "PRODUCTION_CONFIRMED") {
+        activeAuthority.productionConfirmationDigest = null;
+        removeAchievedState(achieved, "PRODUCTION_CONFIRMED");
+      }
+      if (event.revokedEventType === "RELEASE_AUTHORIZED") {
+        activeAuthority.releaseAuthorityDigest = null;
+        removeAchievedState(achieved, "RELEASE_AUTHORIZED");
+      }
+      continue;
+    }
     if (event.eventType === "SOURCE_CLOSED") {
       activeAuthority.sourceClosureDigest = event.outputDigests?.sourceClosureDigest ?? event.subjectDigest;
       achieved.push("SOURCE_CLOSED");
@@ -236,7 +251,10 @@ export function buildProjectionFromLedger(ledger, root = process.cwd()) {
       activeAuthority.businessLandingDigest = event.subjectDigest;
       achieved.push("BUSINESS_LANDING_ADMITTED");
     }
-    if (event.eventType === "PRODUCTION_CONFIRMED") achieved.push("PRODUCTION_CONFIRMED");
+    if (event.eventType === "PRODUCTION_CONFIRMED") {
+      activeAuthority.productionConfirmationDigest = event.subjectDigest;
+      achieved.push("PRODUCTION_CONFIRMED");
+    }
     if (event.eventType === "RELEASE_AUTHORIZED") {
       activeAuthority.releaseAuthorityDigest = event.subjectDigest;
       achieved.push("RELEASE_AUTHORIZED");
@@ -407,6 +425,14 @@ function validateActiveAuthority(value, label, failures) {
   requireEqual(value.capabilityId, CAPABILITY_ID, `${label}.capabilityId`, failures);
   for (const field of activeAuthorityFields.filter((item) => item !== "capabilityId")) {
     if (value[field] !== null) requireDigest(value[field], `${label}.${field}`, failures);
+  }
+}
+
+function removeAchievedState(achieved, state) {
+  let index = achieved.lastIndexOf(state);
+  while (index !== -1) {
+    achieved.splice(index, 1);
+    index = achieved.lastIndexOf(state);
   }
 }
 

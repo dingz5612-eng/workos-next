@@ -177,7 +177,7 @@ public sealed class SearchKernelService
         var indexedAt = DateTimeOffset.UtcNow;
         var matchedTerms = command.Keywords
             .Concat(new[] { command.ZhTitle, command.RuTitle, command.KyTitle })
-            .Where(keyword => queryTerms.Any(term => TermMatches(keyword, term)))
+            .Where(keyword => queryTerms.Any(term => CommandTermMatches(keyword, term)))
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
         var sourceId = $"{command.TemplateWorkspaceId}:{command.FirstCardId}";
@@ -359,7 +359,12 @@ public sealed class SearchKernelService
     private static bool CommandMatches(SearchCommandDefinition command, IReadOnlyList<string> searchTerms) =>
         command.Keywords
             .Concat(new[] { command.ZhTitle, command.RuTitle, command.KyTitle })
-            .Any(keyword => searchTerms.Any(term => TermMatches(keyword, term)));
+            .Any(keyword => searchTerms.Any(term => CommandTermMatches(keyword, term)));
+
+    private static bool CommandTermMatches(string keyword, string term) =>
+        !string.IsNullOrWhiteSpace(keyword) &&
+        !string.IsNullOrWhiteSpace(term) &&
+        term.Contains(keyword, StringComparison.OrdinalIgnoreCase);
 
     private static bool TermMatches(string keyword, string term) =>
         !string.IsNullOrWhiteSpace(keyword) &&
@@ -367,18 +372,10 @@ public sealed class SearchKernelService
         (keyword.Contains(term, StringComparison.OrdinalIgnoreCase) ||
          term.Contains(keyword, StringComparison.OrdinalIgnoreCase));
 
-    private static readonly IReadOnlyList<SearchCommandDefinition> SearchCommandCatalog = new[]
-    {
-        new SearchCommandDefinition(
-            AcceptedCapabilityRuntimeProjection.WorkspaceId,
-            AcceptedCapabilityRuntimeProjection.RoomSetupConfirmCardId,
-            "新增房间",
-            "Добавить комнату",
-            "Бөлмө кошуу",
-            "只进入宿舍第一金链 accepted capability projection：房间配置、床位配置、资源就绪确认。",
-            "Только accepted projection первой цепочки: комната, койка, готовность.",
-            "Биринчи чынжырдын accepted projection гана: бөлмө, койка, даярдык.",
-            new[] { "新增房间", "创建房间", "房间", "宿舍第一金链", "room", "resource" }),
+    private static readonly IReadOnlyList<SearchCommandDefinition> SearchCommandCatalog =
+        AcceptedCapabilityRuntimeProjection.SearchCommands()
+        .Concat(new[]
+        {
         new SearchCommandDefinition(
             "W-STAY-LEAD-RESERVATION",
             "leadCapture",
@@ -469,7 +466,8 @@ public sealed class SearchKernelService
             "Период, метрики, финансы, операционная диагностика и план действий.",
             "Мезгил, көрсөткүч, финансы, операциялык диагноз жана аракет планы.",
             new[] { "复盘", "周期", "经营", "指标", "period", "review" })
-    };
+        })
+        .ToArray();
 
     private static bool IsTerminalStatus(string status) =>
         new[] { "done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped" }

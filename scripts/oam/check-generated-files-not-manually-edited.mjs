@@ -14,7 +14,12 @@ const generatedFiles = [
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
-  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "apps/mobile/src/generated/oam/capability-projection.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
+  "docs/contracts/generated/dormitory/db-projection-policy.generated.json",
+  "docs/contracts/generated/dormitory/test-plan.generated.json",
+  "artifacts/oam/evidence/capability-digest-chain.json"
 ];
 const failures = [];
 
@@ -22,6 +27,11 @@ try {
   execFileSync(process.execPath, ["scripts/oam/compile-current-kernel-graph.mjs"], {
     cwd: root,
     env: { ...process.env, WORKOS_KERNEL_COMPILE_OUTPUT_ROOT: tempRoot },
+    stdio: "pipe"
+  });
+  execFileSync(process.execPath, ["scripts/oam/compile-current-capability.mjs"], {
+    cwd: root,
+    env: { ...process.env, WORKOS_CAPABILITY_COMPILE_OUTPUT_ROOT: tempRoot },
     stdio: "pipe"
   });
 

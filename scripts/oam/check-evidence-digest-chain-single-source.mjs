@@ -1,6 +1,7 @@
 import { readJsonIfExists, writeJson } from "./lib/capability-delivery-control-plane.mjs";
 import {
   CAPABILITY_ID,
+  FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH,
   FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH,
   FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH,
   FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH,
@@ -20,6 +21,7 @@ const projectionChain = buildProjectionDigestChain(root);
 const testPlan = readJsonIfExists(FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH, root);
 const browserReport = readJsonIfExists(FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH, root);
 const browserResult = readJsonIfExists(FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH, root);
+const capabilityDigestChain = readJsonIfExists(FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH, root);
 const evidenceGraph = readJsonIfExists(evidenceGraphPath, root);
 const finalReport = readJsonIfExists(finalReportPath, root);
 const currentFinalReport = readJsonIfExists(currentFinalReportPath, root);
@@ -30,6 +32,7 @@ const failures = [];
 if (!testPlan) failures.push(`${FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH} is missing.`);
 if (!browserReport) failures.push(`${FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH} is missing.`);
 if (!browserResult) failures.push(`${FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH} is missing.`);
+if (!capabilityDigestChain) failures.push(`${FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH} is missing.`);
 if (!evidenceGraph) failures.push(`${evidenceGraphPath} is missing.`);
 if (!finalReport) failures.push(`${finalReportPath} is missing.`);
 if (!currentFinalReport) failures.push(`${currentFinalReportPath} is missing.`);
@@ -39,12 +42,14 @@ const expectedBrowserAuditDigest = browserReport ? digestBrowserAuditReport(brow
 const expectedChain = {
   version: "oam.capability-evidence-digest-chain.v1",
   capabilityId: CAPABILITY_ID,
+  authorityLedgerDigest: projectionChain.authorityLedgerDigest,
   acceptedGeneratedBundleDigest: projectionChain.acceptedGeneratedBundleDigest,
   runtimeProjectionDigest: projectionChain.runtimeProjectionDigest,
   surfaceProjectionDigest: projectionChain.surfaceProjectionDigest,
   searchProjectionDigest: projectionChain.searchProjectionDigest,
   testPlanDigest: testPlan?.testPlanDigest ?? null,
   browserAuditDigest: browserReport?.browserAuditDigest ?? browserResult?.browserAuditDigest ?? null,
+  dbProjectionProofDigest: projectionChain.dbProjectionProofDigest,
   productionConfirmAllowed: false,
   releaseAuthority: false,
   finalGoNoGo: "NO_GO"
@@ -55,6 +60,7 @@ for (const [field, value] of Object.entries(expectedChain)) {
     field === "releaseAuthority" || field === "finalGoNoGo") {
     continue;
   }
+  if (field === "dbProjectionProofDigest" && value === "null_if_runtime_test_only") continue;
   if (!isSha256Digest(value)) failures.push(`${field} must be a sha256 digest.`);
 }
 
@@ -80,6 +86,7 @@ if (browserResult?.browserAuditDigest !== browserReport?.browserAuditDigest) {
 }
 
 for (const [label, document] of [
+  ["capability digest chain file", { capabilityDigestChain }],
   ["evidence graph", evidenceGraph],
   ["final report", finalReport],
   ["current final report", currentFinalReport],
@@ -105,12 +112,14 @@ const result = {
   checkedAtUtc: previousResult?.checkedAtUtc ?? new Date().toISOString(),
   status: failures.length === 0 ? "PASS" : "NO_GO",
   capabilityId: CAPABILITY_ID,
+  authorityLedgerDigest: expectedChain.authorityLedgerDigest,
   acceptedGeneratedBundleDigest: expectedChain.acceptedGeneratedBundleDigest,
   runtimeProjectionDigest: expectedChain.runtimeProjectionDigest,
   surfaceProjectionDigest: expectedChain.surfaceProjectionDigest,
   searchProjectionDigest: expectedChain.searchProjectionDigest,
   testPlanDigest: expectedChain.testPlanDigest,
   browserAuditDigest: expectedChain.browserAuditDigest,
+  dbProjectionProofDigest: expectedChain.dbProjectionProofDigest,
   productionConfirmAllowed: false,
   releaseAuthority: false,
   finalGoNoGo: "NO_GO",

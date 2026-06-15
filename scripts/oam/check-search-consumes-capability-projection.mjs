@@ -11,6 +11,7 @@ const searchKernel = read("services/core-api/WorkOS.Api/Runtime/SearchKernelServ
 const searchView = read("apps/mobile/src/views/searchView.js");
 const searchIntent = read("apps/mobile/src/searchIntentRegistry.js");
 const capabilityProjection = read("apps/mobile/src/capabilityProjection.js");
+const generatedCapabilityProjection = JSON.parse(fs.readFileSync(path.join(root, "apps/mobile/src/generated/oam/capability-projection.generated.json"), "utf8"));
 const failures = [];
 
 if (searchKernel.includes("W-STAY-RESOURCE")) {
@@ -19,9 +20,8 @@ if (searchKernel.includes("W-STAY-RESOURCE")) {
 if (searchIntent.includes("W-STAY-RESOURCE")) {
   failures.push("searchIntentRegistry must not hardcode W-STAY-RESOURCE for accommodationResourceSetup.");
 }
-if (!searchKernel.includes("AcceptedCapabilityRuntimeProjection.WorkspaceId") ||
-  !searchKernel.includes("AcceptedCapabilityRuntimeProjection.RoomSetupConfirmCardId")) {
-  failures.push("SearchKernelService must build the current entry from AcceptedCapabilityRuntimeProjection.");
+if (!searchKernel.includes("AcceptedCapabilityRuntimeProjection.SearchCommands()")) {
+  failures.push("SearchKernelService must build the current entry from compiler generated capability projection.");
 }
 if (!searchView.includes("capabilityCommandCatalog")) {
   failures.push("searchView must consume capabilityCommandCatalog for current first golden chain commands.");
@@ -30,8 +30,8 @@ if (!searchView.includes("isAccommodationResourceSetupQuery(query)") ||
   !searchView.includes('return [section("activeCommands", commands)]')) {
   failures.push("searchView must collapse 新增房间 intent to the current capability entry only.");
 }
-if (!capabilityProjection.includes(`FIRST_GOLDEN_CHAIN_WORKSPACE_ID = FIRST_GOLDEN_CHAIN_CAPABILITY_ID`)) {
-  failures.push("capabilityProjection must expose the capability workspace id as the current search projection identity.");
+if (!capabilityProjection.includes("FIRST_GOLDEN_CHAIN_WORKSPACE_ID = capabilityProjection.workspaceId")) {
+  failures.push("capabilityProjection must expose the compiler generated capability workspace id as the current search projection identity.");
 }
 for (const term of ["rateSetup", "roomBlock", "roomRelease"]) {
   const activeCommandBlock = capabilityProjection.slice(
@@ -42,6 +42,19 @@ for (const term of ["rateSetup", "roomBlock", "roomRelease"]) {
 }
 if (/新增住宿房源|创建住宿资源|住宿资源建档/.test(searchKernel) || /新增住宿房源|创建住宿资源|住宿资源建档/.test(searchIntent)) {
   failures.push("current search entry must not use old accommodation resource wording.");
+}
+if (!searchKernel.includes("CommandTermMatches") || !searchKernel.includes("term.Contains(keyword")) {
+  failures.push("SearchKernelService command matching must not let ordinary 房间/room query trigger the generated start command.");
+}
+const currentCommand = generatedCapabilityProjection.commandCatalog?.[0] ?? {};
+if (currentCommand.templateWorkspaceId !== CAPABILITY_ID ||
+  currentCommand.firstCardId !== "Dorm.RoomSetupConfirm") {
+  failures.push("generated capability search command must target Dormitory.FirstGoldenChain / Dorm.RoomSetupConfirm.");
+}
+if ((currentCommand.keywords ?? []).includes("房间") ||
+  (currentCommand.keywords ?? []).includes("room") ||
+  (currentCommand.keywords ?? []).includes("resource")) {
+  failures.push("generated capability search command must not include broad ordinary-room keywords.");
 }
 
 const result = {

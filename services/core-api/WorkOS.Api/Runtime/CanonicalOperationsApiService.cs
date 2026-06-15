@@ -864,12 +864,7 @@ public sealed class CanonicalOperationsApiService
             return Array.Empty<string>();
         }
 
-        return cardId switch
-        {
-            AcceptedCapabilityRuntimeProjection.RoomSetupConfirmCardId => new[] { "roomId" },
-            AcceptedCapabilityRuntimeProjection.BedSetupConfirmCardId => new[] { "bedId" },
-            _ => Array.Empty<string>()
-        };
+        return AcceptedCapabilityRuntimeProjection.DerivedFieldKeys(cardId);
     }
 
     private static readonly string[] ReservedControlFieldKeys =

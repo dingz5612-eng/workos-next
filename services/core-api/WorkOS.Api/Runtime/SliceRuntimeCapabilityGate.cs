@@ -55,14 +55,18 @@ public sealed class SliceRuntimeCapabilityGate
         }
 
         using var manifest = JsonDocument.Parse(File.ReadAllText(manifestPath));
-        return manifest.RootElement
+        var sliceCapabilities = manifest.RootElement
             .GetProperty("slices")
             .EnumerateArray()
             .Select(slice => new SliceRuntimeCapability(
                 slice.GetProperty("id").GetString() ?? "unknown",
                 slice.GetProperty("workspaceId").GetString() ?? "unknown",
                 slice.GetProperty("status").GetString() ?? "unregistered"))
-            .ToDictionary(item => item.WorkspaceId, StringComparer.OrdinalIgnoreCase);
+            .ToList();
+        sliceCapabilities.Add(AcceptedCapabilityRuntimeProjection.RuntimeCapability());
+        return sliceCapabilities
+            .GroupBy(item => item.WorkspaceId, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
     }
 
     private static string? FindManifestPath()

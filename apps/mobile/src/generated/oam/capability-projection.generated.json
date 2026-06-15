@@ -1,0 +1,1030 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "capability-projection.generated",
+  "generatorVersion": "oam.capability-compiler.v1",
+  "generatedBy": "scripts/oam/compile-current-capability.mjs",
+  "generatedFrom": [
+    "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+    "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+    "docs/oam/generated-candidate-acceptance.current.json",
+    "docs/contracts/generated/dormitory/workitems.generated.json",
+    "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+    "docs/contracts/generated/dormitory/field-bindings.generated.json",
+    "docs/oam/dormitory-runtime-admission.current.json",
+    "docs/oam/dormitory-first-golden-chain-landing.current.json",
+    "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
+    "artifacts/oam/checks/dormitory-first-golden-chain-db-projection-proof-result.json",
+    "artifacts/oam/evidence/dormitory-first-golden-chain-real-browser/first-golden-chain-real-browser-report.json",
+    "artifacts/oam/evidence/evidence-graph.json"
+  ],
+  "inputDigest": "sha256:440011c21bbe103b02874337bea45f09b7c401d35c0df3ee5771f4c2ce493479",
+  "inputDigests": [
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+      "digest": "sha256:2498d8679c973d7d743a69c9e150c7ee7322ca7454905c59d90e32d238c7c743"
+    },
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "digest": "sha256:4fa8b3507e061329f8486bf9eaf40a08daabc93f861e8adb10b0abdb6e0d8118"
+    },
+    {
+      "path": "docs/oam/generated-candidate-acceptance.current.json",
+      "digest": "sha256:5828c58bdf69b8f917a42adea1a42d06fadfa150af5e79c6dd55720152deb7e2"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/workitems.generated.json",
+      "digest": "sha256:4afb5fcdf37724032a2456412e0b6c44218c089db3c95bc39f3caf1117a4f42c"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+      "digest": "sha256:88d087d68361c852a9199fd88e523cc6d26e4653eb73e9b50f54562313f2439a"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "digest": "sha256:6e70639fe5ff82732f9d898e2b88646b4a9d2faa99bb11566a4855fe088c862a"
+    },
+    {
+      "path": "docs/oam/dormitory-runtime-admission.current.json",
+      "digest": "sha256:183880b1cace3347ae16cc72c3ef44043b86e434a37b1dbbcd51742e33aa088f"
+    },
+    {
+      "path": "docs/oam/dormitory-first-golden-chain-landing.current.json",
+      "digest": "sha256:f99dbc4d22d67bd74803d0ce9b9e4d32d8769f2c3212f91d27521335acd59382"
+    },
+    {
+      "path": "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
+      "digest": "sha256:69085b5c102cd8ba16e2c61c9b666fc3e622bc5747fc5ccc48551e5a0e6583e6"
+    },
+    {
+      "path": "artifacts/oam/checks/dormitory-first-golden-chain-db-projection-proof-result.json",
+      "digest": "sha256:02953c25686564c1ae2968b6b40aec8887767ac9a464b0de73cd91e4f13c0823"
+    },
+    {
+      "path": "artifacts/oam/evidence/dormitory-first-golden-chain-real-browser/first-golden-chain-real-browser-report.json",
+      "digest": "sha256:1953adecf9a688c7cab8ebb2539bf3c7b28e0d6d766111670fbd78e79c36f6b5"
+    },
+    {
+      "path": "artifacts/oam/evidence/evidence-graph.json",
+      "digest": "sha256:8be4c8fe5d3080974b1e99a51b3058c139c7a51d83e2b9786abd475f92c038e6"
+    }
+  ],
+  "outputContentDigest": "sha256:5d2d1decebd394390a671b413242eb8e57977de186f6c8b2aa373a03f1a9dfa4",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+  "currentFilesMode": "ledger_replay_projection_only",
+  "lifecycleState": "RUNTIME_TEST_ADMITTED",
+  "runtimeAdmissionStatus": "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION",
+  "landingStatus": "PENDING_BUSINESS_LANDING_REVIEW",
+  "workspaceId": "Dormitory.FirstGoldenChain",
+  "steps": [
+    {
+      "index": 1,
+      "total": 3,
+      "step": "1/3",
+      "cardId": "Dorm.RoomSetupConfirm",
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "commandType": "RoomSetup.Confirm",
+      "ownerSlice": "Accommodation.ResourceSetup",
+      "title": {
+        "zh-CN": "1/3 房间配置确认",
+        "ru-RU": "1/3 Подтверждение комнаты",
+        "ky-KG": "1/3 Бөлмө тастыктоо"
+      },
+      "fields": [
+        {
+          "fieldId": "roomNo",
+          "classification": "clientSubmitted",
+          "fieldCategory": "requiredCoreFields",
+          "controlType": "text",
+          "optionSet": "",
+          "defaultValue": "",
+          "source": "clientSubmitted",
+          "readonly": false,
+          "hiddenSubmitOnly": false,
+          "userSubmitted": true,
+          "required": true,
+          "displayValueSource": "user input display value",
+          "submitValueSource": "user input submit value",
+          "branchOutput": "",
+          "branchRequiredFields": [],
+          "ui": {
+            "control": "text",
+            "optionSet": "",
+            "defaultValue": "",
+            "readonly": false,
+            "hiddenSubmitOnly": false
+          }
+        },
+        {
+          "fieldId": "floor",
+          "classification": "clientSubmitted",
+          "fieldCategory": "requiredCoreFields",
+          "controlType": "text",
+          "optionSet": "",
+          "defaultValue": "",
+          "source": "clientSubmitted",
+          "readonly": false,
+          "hiddenSubmitOnly": false,
+          "userSubmitted": true,
+          "required": true,
+          "displayValueSource": "user input display value",
+          "submitValueSource": "user input submit value",
+          "branchOutput": "",
+          "branchRequiredFields": [],
+          "ui": {
+            "control": "text",
+            "optionSet": "",
+            "defaultValue": "",
+            "readonly": false,
+            "hiddenSubmitOnly": false
+          }
+        },
+        {
+          "fieldId": "capacity",
+          "classification": "clientSubmitted",
+          "fieldCategory": "requiredCoreFields",
+          "controlType": "text",
+          "optionSet": "",
+          "defaultValue": "",
+          "source": "clientSubmitted",
+          "readonly": false,
+          "hiddenSubmitOnly": false,
+          "userSubmitted": true,
+          "required": true,
+          "displayValueSource": "user input display value",
+          "submitValueSource": "user input submit value",
+          "branchOutput": "",
+          "branchRequiredFields": [],
+          "ui": {
+            "control": "text",
+            "optionSet": "",
+            "defaultValue": "",
+            "readonly": false,
+            "hiddenSubmitOnly": false
+          }
+        },
+        {
+          "fieldId": "roomId",
+          "classification": "systemDerived",
+          "fieldCategory": "systemDerivedFields",
+          "controlType": "hidden",
+          "optionSet": "",
+          "defaultValue": "",
+          "source": "system-derived-from-roomNo",
+          "readonly": true,
+          "hiddenSubmitOnly": true,
+          "userSubmitted": false,
+          "required": false,
+          "displayValueSource": "roomNo",
+          "submitValueSource": "derived room stable ref",
+          "branchOutput": "",
+          "branchRequiredFields": [],
+          "ui": {
+            "control": "hidden",
+            "optionSet": "",
+            "defaultValue": "",
+            "readonly": true,
+            "hiddenSubmitOnly": true
+          }
+        }
+      ],
+      "evidenceIds": [
+        "room-photo",
+        "room-basic-info"
+      ],
+      "eventType": "Dorm.RoomSetupConfirm.confirmed",
+      "projectionTargets": [
+        "accepted-capability-runtime-projection"
+      ]
+    },
+    {
+      "index": 2,
+      "total": 3,
+      "step": "2/3",
+      "cardId": "Dorm.BedSetupConfirm",
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "commandType": "BedSetup.Confirm",
+      "ownerSlice": "Accommodation.ResourceSetup",
+      "title": {
+        "zh-CN": "2/3 床位配置确认",
+        "ru-RU": "2/3 Подтверждение койки",
+        "ky-KG": "2/3 Койка тастыктоо"
+      },
+      "fields": [
+        {
+          "fieldId": "bedNo",
+          "classification": "clientSubmitted",
+          "fieldCategory": "requiredCoreFields",
+          "controlType": "text",
+          "optionSet": "",
+          "defaultValue": "",
+          "source": "clientSubmitted",
+          "readonly": false,
+          "hiddenSubmitOnly": false,
+          "userSubmitted": true,
+          "required": true,
+          "displayValueSource": "user input display value",
+          "submitValueSource": "user input submit value",
+          "branchOutput": "",
+          "branchRequiredFields": [],
+          "ui": {
+            "control": "text",
+            "optionSet": "",
+            "defaultValue": "",
+            "readonly": false,
+            "hiddenSubmitOnly": false
+          }
+        },
+        {
+          "fieldId": "bedType",
+          "classification": "clientSubmitted",
+          "fieldCategory": "requiredCoreFields",
+          "controlType": "select",
+          "optionSet": "bunkType",
+          "defaultValue": "bunk_pair",
+          "source": "clientSubmitted",
+          "readonly": false,
+          "hiddenSubmitOnly": false,
+          "userSubmitted": true,
+          "required": true,
+          "displayValueSource": "user input display value",
+          "submitValueSource": "user input submit value",
+          "branchOutput": "",
+          "branchRequiredFields": [],
+          "ui": {
+            "control": "select",
+            "optionSet": "bunkType",
+            "defaultValue": "bunk_pair",
+            "readonly": false,
+            "hiddenSubmitOnly": false
+          }
+        },
+        {
+          "fieldId": "roomId",
+          "classification": "selectedStableRef",
+          "fieldCategory": "systemDerivedFields",
+          "controlType": "readonly",
+          "optionSet": "",
+          "defaultValue": "",
+          "source": "runtime context",
+          "readonly": true,
+          "hiddenSubmitOnly": false,
+          "userSubmitted": false,
+          "required": false,
+          "displayValueSource": "room display value",
+          "submitValueSource": "accepted runtime context roomId",
+          "branchOutput": "",
+          "branchRequiredFields": [],
+          "ui": {
+            "control": "readonly",
+            "optionSet": "",
+            "defaultValue": "",
+            "readonly": true,
+            "hiddenSubmitOnly": false
+          }
+        },
+        {
+          "fieldId": "bedId",
+          "classification": "systemDerived",
+          "fieldCategory": "systemDerivedFields",
+          "controlType": "hidden",
+          "optionSet": "",
+          "defaultValue": "",
+          "source": "system-derived-from-roomId-bedNo",
+          "readonly": true,
+          "hiddenSubmitOnly": true,
+          "userSubmitted": false,
+          "required": false,
+          "displayValueSource": "bedNo",
+          "submitValueSource": "derived bed stable ref",
+          "branchOutput": "",
+          "branchRequiredFields": [],
+          "ui": {
+            "control": "hidden",
+            "optionSet": "",
+            "defaultValue": "",
+            "readonly": true,
+            "hiddenSubmitOnly": true
+          }
+        }
+      ],
+      "evidenceIds": [
+        "bed-photo",
+        "room-link-proof"
+      ],
+      "eventType": "Dorm.BedSetupConfirm.confirmed",
+      "projectionTargets": [
+        "accepted-capability-runtime-projection"
+      ]
+    },
+    {
+      "index": 3,
+      "total": 3,
+      "step": "3/3",
+      "cardId": "Dorm.ResourceReadinessConfirm",
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "commandType": "ResourceReadiness.Confirm",
+      "ownerSlice": "Accommodation.ResourceReadiness",
+      "title": {
+        "zh-CN": "3/3 资源就绪确认",
+        "ru-RU": "3/3 Подтверждение готовности",
+        "ky-KG": "3/3 Даярдык тастыктоо"
+      },
+      "fields": [
+        {
+          "fieldId": "readinessState",
+          "classification": "clientSubmitted",
+          "fieldCategory": "requiredCoreFields",
+          "controlType": "select",
+          "optionSet": "readinessState",
+          "defaultValue": "",
+          "source": "clientSubmitted",
+          "readonly": false,
+          "hiddenSubmitOnly": false,
+          "userSubmitted": true,
+          "required": true,
+          "displayValueSource": "user input display value",
+          "submitValueSource": "user input submit value",
+          "branchOutput": "readinessState.branchBindings",
+          "branchRequiredFields": [
+            "serviceVerificationRef",
+            "notSaleableReason"
+          ],
+          "ui": {
+            "control": "select",
+            "optionSet": "readinessState",
+            "defaultValue": "",
+            "readonly": false,
+            "hiddenSubmitOnly": false
+          }
+        },
+        {
+          "fieldId": "roomId",
+          "classification": "selectedStableRef",
+          "fieldCategory": "systemDerivedFields",
+          "controlType": "readonly",
+          "optionSet": "",
+          "defaultValue": "",
+          "source": "runtime context",
+          "readonly": true,
+          "hiddenSubmitOnly": false,
+          "userSubmitted": false,
+          "required": false,
+          "displayValueSource": "room display value",
+          "submitValueSource": "accepted runtime context roomId",
+          "branchOutput": "",
+          "branchRequiredFields": [],
+          "ui": {
+            "control": "readonly",
+            "optionSet": "",
+            "defaultValue": "",
+            "readonly": true,
+            "hiddenSubmitOnly": false
+          }
+        },
+        {
+          "fieldId": "bedId",
+          "classification": "selectedStableRef",
+          "fieldCategory": "systemDerivedFields",
+          "controlType": "readonly",
+          "optionSet": "",
+          "defaultValue": "",
+          "source": "runtime context",
+          "readonly": true,
+          "hiddenSubmitOnly": false,
+          "userSubmitted": false,
+          "required": false,
+          "displayValueSource": "bed display value",
+          "submitValueSource": "accepted runtime context bedId",
+          "branchOutput": "",
+          "branchRequiredFields": [],
+          "ui": {
+            "control": "readonly",
+            "optionSet": "",
+            "defaultValue": "",
+            "readonly": true,
+            "hiddenSubmitOnly": false
+          }
+        }
+      ],
+      "evidenceIds": [
+        "completion-photo",
+        "verification-check"
+      ],
+      "eventType": "Dorm.ResourceReadinessConfirm.confirmed",
+      "projectionTargets": [
+        "accepted-capability-runtime-projection"
+      ]
+    }
+  ],
+  "commandCatalog": [
+    {
+      "templateWorkspaceId": "Dormitory.FirstGoldenChain",
+      "firstCardId": "Dorm.RoomSetupConfirm",
+      "title": {
+        "zh-CN": "新增房间",
+        "ru-RU": "Добавить комнату",
+        "ky-KG": "Бөлмө кошуу"
+      },
+      "subtitle": {
+        "zh-CN": "按房间配置、床位配置、资源就绪三步办理。",
+        "ru-RU": "Три шага: комната, койка, готовность.",
+        "ky-KG": "Үч кадам: бөлмө, койка, даярдык."
+      },
+      "nextAction": {
+        "zh-CN": "先确认房间号",
+        "ru-RU": "Начать с номера комнаты",
+        "ky-KG": "Бөлмө номеринен баштоо"
+      },
+      "keywords": [
+        "新增房间",
+        "创建房间",
+        "宿舍建档",
+        "房间建档",
+        "新建房间",
+        "配置房间",
+        "宿舍第一金链",
+        "room setup",
+        "create room",
+        "add room",
+        "new room",
+        "добавить комнату",
+        "создать комнату",
+        "бөлмө кошуу"
+      ]
+    }
+  ],
+  "fieldLabels": {
+    "roomNo": {
+      "zh-CN": "房间号",
+      "ru-RU": "Номер комнаты",
+      "ky-KG": "Бөлмө номери"
+    },
+    "floor": {
+      "zh-CN": "楼层",
+      "ru-RU": "Этаж",
+      "ky-KG": "Кабат"
+    },
+    "capacity": {
+      "zh-CN": "床位数",
+      "ru-RU": "Количество коек",
+      "ky-KG": "Койка саны"
+    },
+    "roomId": {
+      "zh-CN": "所属房间",
+      "ru-RU": "Комната",
+      "ky-KG": "Бөлмө"
+    },
+    "bedNo": {
+      "zh-CN": "床位号",
+      "ru-RU": "Номер койки",
+      "ky-KG": "Койка номери"
+    },
+    "bedType": {
+      "zh-CN": "床位类型",
+      "ru-RU": "Тип койки",
+      "ky-KG": "Койка түрү"
+    },
+    "bedId": {
+      "zh-CN": "床位",
+      "ru-RU": "Койка",
+      "ky-KG": "Койка"
+    },
+    "readinessState": {
+      "zh-CN": "就绪状态",
+      "ru-RU": "Статус готовности",
+      "ky-KG": "Даярдык абалы"
+    },
+    "room-photo": {
+      "zh-CN": "房间照片",
+      "ru-RU": "Фото комнаты",
+      "ky-KG": "Бөлмө сүрөтү"
+    },
+    "room-basic-info": {
+      "zh-CN": "房间基础信息",
+      "ru-RU": "Основная информация комнаты",
+      "ky-KG": "Бөлмө негизги маалыматы"
+    },
+    "bed-photo": {
+      "zh-CN": "床位照片",
+      "ru-RU": "Фото койки",
+      "ky-KG": "Койка сүрөтү"
+    },
+    "room-link-proof": {
+      "zh-CN": "房间关联证明",
+      "ru-RU": "Подтверждение связи с комнатой",
+      "ky-KG": "Бөлмө байланышынын далили"
+    },
+    "completion-photo": {
+      "zh-CN": "完成照片",
+      "ru-RU": "Фото завершения",
+      "ky-KG": "Аяктоо сүрөтү"
+    },
+    "verification-check": {
+      "zh-CN": "核验记录",
+      "ru-RU": "Запись проверки",
+      "ky-KG": "Текшерүү жазуусу"
+    }
+  },
+  "fieldCategories": {
+    "requiredCoreFields": [
+      {
+        "cardId": "Dorm.RoomSetupConfirm",
+        "workItemType": "Dorm.RoomSetupConfirm",
+        "fieldId": "roomNo",
+        "source": "clientSubmitted",
+        "surface": "editable",
+        "userSubmitted": true,
+        "readonly": false,
+        "optionSet": "",
+        "displayValueSource": "user input display value",
+        "submitValueSource": "user input submit value"
+      },
+      {
+        "cardId": "Dorm.RoomSetupConfirm",
+        "workItemType": "Dorm.RoomSetupConfirm",
+        "fieldId": "floor",
+        "source": "clientSubmitted",
+        "surface": "editable",
+        "userSubmitted": true,
+        "readonly": false,
+        "optionSet": "",
+        "displayValueSource": "user input display value",
+        "submitValueSource": "user input submit value"
+      },
+      {
+        "cardId": "Dorm.RoomSetupConfirm",
+        "workItemType": "Dorm.RoomSetupConfirm",
+        "fieldId": "capacity",
+        "source": "clientSubmitted",
+        "surface": "editable",
+        "userSubmitted": true,
+        "readonly": false,
+        "optionSet": "",
+        "displayValueSource": "user input display value",
+        "submitValueSource": "user input submit value"
+      },
+      {
+        "cardId": "Dorm.BedSetupConfirm",
+        "workItemType": "Dorm.BedSetupConfirm",
+        "fieldId": "bedNo",
+        "source": "clientSubmitted",
+        "surface": "editable",
+        "userSubmitted": true,
+        "readonly": false,
+        "optionSet": "",
+        "displayValueSource": "user input display value",
+        "submitValueSource": "user input submit value"
+      },
+      {
+        "cardId": "Dorm.BedSetupConfirm",
+        "workItemType": "Dorm.BedSetupConfirm",
+        "fieldId": "bedType",
+        "source": "clientSubmitted",
+        "surface": "editable",
+        "userSubmitted": true,
+        "readonly": false,
+        "optionSet": "bunkType",
+        "displayValueSource": "user input display value",
+        "submitValueSource": "user input submit value"
+      },
+      {
+        "cardId": "Dorm.ResourceReadinessConfirm",
+        "workItemType": "Dorm.ResourceReadinessConfirm",
+        "fieldId": "readinessState",
+        "source": "clientSubmitted",
+        "surface": "editable",
+        "userSubmitted": true,
+        "readonly": false,
+        "optionSet": "readinessState",
+        "displayValueSource": "user input display value",
+        "submitValueSource": "user input submit value"
+      }
+    ],
+    "optionalBusinessFields": [],
+    "systemDerivedFields": [
+      {
+        "cardId": "Dorm.RoomSetupConfirm",
+        "workItemType": "Dorm.RoomSetupConfirm",
+        "fieldId": "roomId",
+        "source": "system-derived-from-roomNo",
+        "surface": "hidden-submit-only",
+        "userSubmitted": false,
+        "readonly": true,
+        "optionSet": "",
+        "displayValueSource": "roomNo",
+        "submitValueSource": "derived room stable ref"
+      },
+      {
+        "cardId": "Dorm.BedSetupConfirm",
+        "workItemType": "Dorm.BedSetupConfirm",
+        "fieldId": "roomId",
+        "source": "runtime context",
+        "surface": "readonly-hidden-submit",
+        "userSubmitted": false,
+        "readonly": true,
+        "optionSet": "",
+        "displayValueSource": "room display value",
+        "submitValueSource": "accepted runtime context roomId"
+      },
+      {
+        "cardId": "Dorm.BedSetupConfirm",
+        "workItemType": "Dorm.BedSetupConfirm",
+        "fieldId": "bedId",
+        "source": "system-derived-from-roomId-bedNo",
+        "surface": "hidden-submit-only",
+        "userSubmitted": false,
+        "readonly": true,
+        "optionSet": "",
+        "displayValueSource": "bedNo",
+        "submitValueSource": "derived bed stable ref"
+      },
+      {
+        "cardId": "Dorm.ResourceReadinessConfirm",
+        "workItemType": "Dorm.ResourceReadinessConfirm",
+        "fieldId": "roomId",
+        "source": "runtime context",
+        "surface": "readonly-hidden-submit",
+        "userSubmitted": false,
+        "readonly": true,
+        "optionSet": "",
+        "displayValueSource": "room display value",
+        "submitValueSource": "accepted runtime context roomId"
+      },
+      {
+        "cardId": "Dorm.ResourceReadinessConfirm",
+        "workItemType": "Dorm.ResourceReadinessConfirm",
+        "fieldId": "bedId",
+        "source": "runtime context",
+        "surface": "readonly-hidden-submit",
+        "userSubmitted": false,
+        "readonly": true,
+        "optionSet": "",
+        "displayValueSource": "bed display value",
+        "submitValueSource": "accepted runtime context bedId"
+      }
+    ],
+    "branchOutputFields": [
+      {
+        "fieldId": "readinessEvidenceRefs",
+        "semanticRole": "readiness_evidence_refs",
+        "branchOutputOnly": false,
+        "userSubmitted": false,
+        "readonly": true,
+        "sourceBindingRef": "fieldBindings.readinessEvidenceRefs",
+        "requiredWhen": null
+      },
+      {
+        "fieldId": "serviceVerificationRef",
+        "semanticRole": "service_verification_ref",
+        "branchOutputOnly": false,
+        "userSubmitted": false,
+        "readonly": true,
+        "sourceBindingRef": "fieldBindings.serviceVerificationRef",
+        "requiredWhen": {
+          "readinessState": "maintenanceRequired"
+        }
+      },
+      {
+        "fieldId": "blockedReason",
+        "semanticRole": "blocked_reason",
+        "branchOutputOnly": true,
+        "userSubmitted": false,
+        "readonly": true,
+        "sourceBindingRef": "fieldBindings.blockedReason",
+        "requiredWhen": null
+      },
+      {
+        "fieldId": "notSaleableReason",
+        "semanticRole": "not_saleable_reason",
+        "branchOutputOnly": true,
+        "userSubmitted": false,
+        "readonly": true,
+        "sourceBindingRef": "fieldBindings.notSaleableReason",
+        "requiredWhen": {
+          "readinessState": "notSaleable"
+        }
+      }
+    ],
+    "evidenceFields": [
+      {
+        "cardId": "Dorm.RoomSetupConfirm",
+        "workItemType": "Dorm.RoomSetupConfirm",
+        "fieldId": "room-photo",
+        "source": "evidence envelope",
+        "userSubmitted": false
+      },
+      {
+        "cardId": "Dorm.RoomSetupConfirm",
+        "workItemType": "Dorm.RoomSetupConfirm",
+        "fieldId": "room-basic-info",
+        "source": "evidence envelope",
+        "userSubmitted": false
+      },
+      {
+        "cardId": "Dorm.BedSetupConfirm",
+        "workItemType": "Dorm.BedSetupConfirm",
+        "fieldId": "bed-photo",
+        "source": "evidence envelope",
+        "userSubmitted": false
+      },
+      {
+        "cardId": "Dorm.BedSetupConfirm",
+        "workItemType": "Dorm.BedSetupConfirm",
+        "fieldId": "room-link-proof",
+        "source": "evidence envelope",
+        "userSubmitted": false
+      },
+      {
+        "cardId": "Dorm.ResourceReadinessConfirm",
+        "workItemType": "Dorm.ResourceReadinessConfirm",
+        "fieldId": "completion-photo",
+        "source": "evidence envelope",
+        "userSubmitted": false
+      },
+      {
+        "cardId": "Dorm.ResourceReadinessConfirm",
+        "workItemType": "Dorm.ResourceReadinessConfirm",
+        "fieldId": "verification-check",
+        "source": "evidence envelope",
+        "userSubmitted": false
+      }
+    ],
+    "plannedFields": [
+      {
+        "fieldId": "serviceVerificationRef",
+        "status": "branch-required-evidence-ref",
+        "requiredWhen": {
+          "readinessState": "maintenanceRequired"
+        }
+      },
+      {
+        "fieldId": "notSaleableReason",
+        "status": "branch-required-reason",
+        "requiredWhen": {
+          "readinessState": "notSaleable"
+        }
+      }
+    ]
+  },
+  "optionSets": {
+    "bunkType": [
+      {
+        "value": "bunk_pair",
+        "label": {
+          "zh-CN": "上下铺：两上两下",
+          "ru-RU": "Двухъярусные: две верхние и две нижние",
+          "ky-KG": "Эки кабат: эки үстүңкү жана эки астыңкы"
+        }
+      },
+      {
+        "value": "upper",
+        "label": {
+          "zh-CN": "全部上铺",
+          "ru-RU": "Все верхние",
+          "ky-KG": "Баары үстүңкү"
+        }
+      },
+      {
+        "value": "lower",
+        "label": {
+          "zh-CN": "全部下铺",
+          "ru-RU": "Все нижние",
+          "ky-KG": "Баары астыңкы"
+        }
+      },
+      {
+        "value": "whole",
+        "label": {
+          "zh-CN": "全部平铺",
+          "ru-RU": "Обычные койки",
+          "ky-KG": "Жалпак койкалар"
+        }
+      }
+    ],
+    "readinessState": [
+      {
+        "value": "available",
+        "label": {
+          "zh-CN": "可分配",
+          "ru-RU": "Можно распределить",
+          "ky-KG": "Бөлүштүрүүгө болот"
+        },
+        "branchOutput": "complete",
+        "requiredFields": []
+      },
+      {
+        "value": "cleaningRequired",
+        "label": {
+          "zh-CN": "待清洁",
+          "ru-RU": "Нужна уборка",
+          "ky-KG": "Тазалоо керек"
+        },
+        "branchOutput": "cleaningRequired",
+        "requiredFields": []
+      },
+      {
+        "value": "maintenanceRequired",
+        "label": {
+          "zh-CN": "待维修",
+          "ru-RU": "Нужен ремонт",
+          "ky-KG": "Оңдоо керек"
+        },
+        "branchOutput": "serviceVerificationRef",
+        "requiredFields": [
+          "serviceVerificationRef"
+        ]
+      },
+      {
+        "value": "materialsRequired",
+        "label": {
+          "zh-CN": "待补材料",
+          "ru-RU": "Нужны материалы",
+          "ky-KG": "Материал керек"
+        },
+        "branchOutput": "materialsRequired",
+        "requiredFields": []
+      },
+      {
+        "value": "notSaleable",
+        "label": {
+          "zh-CN": "暂不可用",
+          "ru-RU": "Временно недоступно",
+          "ky-KG": "Азырынча жеткиликсиз"
+        },
+        "branchOutput": "notSaleableReason",
+        "requiredFields": [
+          "notSaleableReason"
+        ]
+      }
+    ]
+  },
+  "optionSetDefaults": {
+    "bunkType": {
+      "oneBed": "whole",
+      "multiBed": "bunk_pair"
+    },
+    "readinessState": {
+      "default": "available"
+    }
+  },
+  "readinessBranchBindings": {
+    "available": {
+      "label": {
+        "zh-CN": "可分配",
+        "ru-RU": "Можно распределить",
+        "ky-KG": "Бөлүштүрүүгө болот"
+      },
+      "branchOutput": "complete",
+      "requiredFields": []
+    },
+    "cleaningRequired": {
+      "label": {
+        "zh-CN": "待清洁",
+        "ru-RU": "Нужна уборка",
+        "ky-KG": "Тазалоо керек"
+      },
+      "branchOutput": "cleaningRequired",
+      "requiredFields": []
+    },
+    "maintenanceRequired": {
+      "label": {
+        "zh-CN": "待维修",
+        "ru-RU": "Нужен ремонт",
+        "ky-KG": "Оңдоо керек"
+      },
+      "branchOutput": "serviceVerificationRef",
+      "requiredFields": [
+        "serviceVerificationRef"
+      ]
+    },
+    "materialsRequired": {
+      "label": {
+        "zh-CN": "待补材料",
+        "ru-RU": "Нужны материалы",
+        "ky-KG": "Материал керек"
+      },
+      "branchOutput": "materialsRequired",
+      "requiredFields": []
+    },
+    "notSaleable": {
+      "label": {
+        "zh-CN": "暂不可用",
+        "ru-RU": "Временно недоступно",
+        "ky-KG": "Азырынча жеткиликсиз"
+      },
+      "branchOutput": "notSaleableReason",
+      "requiredFields": [
+        "notSaleableReason"
+      ]
+    }
+  },
+  "draftPolicy": {
+    "scope": "current_step_user_input_only",
+    "excludesSystemDerivedFields": true,
+    "excludesEvidenceDraftsFromFieldDraft": true,
+    "clearOnSubmitSuccess": true,
+    "noCrossWorkItem": true,
+    "noCrossStep": true,
+    "notEvidence": true
+  },
+  "businessUi": {
+    "technicalDetailsDefaultExpanded": false,
+    "runtimeTestOnlySubmitLabel": {
+      "zh-CN": "提交内测记录",
+      "ru-RU": "Отправить тестовую запись",
+      "ky-KG": "Ички тест жазуусун тапшыруу"
+    },
+    "businessLandingSubmitLabels": {
+      "Dorm.RoomSetupConfirm": {
+        "zh-CN": "确认房间配置",
+        "ru-RU": "Подтвердить комнату",
+        "ky-KG": "Бөлмөнү ырастоо"
+      },
+      "Dorm.BedSetupConfirm": {
+        "zh-CN": "确认床位配置",
+        "ru-RU": "Подтвердить койку",
+        "ky-KG": "Койканы ырастоо"
+      },
+      "Dorm.ResourceReadinessConfirm": {
+        "zh-CN": "确认资源就绪",
+        "ru-RU": "Подтвердить готовность",
+        "ky-KG": "Даярдыгын ырастоо"
+      }
+    },
+    "completionBusinessValueFields": [
+      "roomNo",
+      "bedNo",
+      "readinessState"
+    ],
+    "forbiddenMainFormTerms": [
+      "accepted capability bundle projection",
+      "generated capability projection",
+      "acceptedGeneratedBundleDigest"
+    ]
+  },
+  "legacyRegressionAliases": {
+    "runtimeIdentityAllowed": false,
+    "roomSetupCardIds": [
+      "roomSetup"
+    ],
+    "bedSetupCardIds": [
+      "bedSetup"
+    ],
+    "resourceReadinessCardIds": [
+      "roomReadiness"
+    ]
+  },
+  "generatedSurfaceModelRef": "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "surfaceOnlyConsumesGeneratedSurfaceModel": true,
+  "searchProjection": {
+    "commandSource": "generated capability projection",
+    "ordinaryRoomQueryStartsCommand": false,
+    "currentCommandQueries": [
+      "新增房间",
+      "创建房间",
+      "宿舍建档",
+      "房间建档",
+      "新建房间",
+      "配置房间",
+      "宿舍第一金链",
+      "room setup",
+      "create room",
+      "add room",
+      "new room",
+      "добавить комнату",
+      "создать комнату",
+      "бөлмө кошуу"
+    ],
+    "commandQueryExamples": [
+      "新增房间",
+      "创建房间"
+    ],
+    "objectQueryExamples": [
+      "D01",
+      "101房间",
+      "床位"
+    ],
+    "objectQueriesStartCommand": false,
+    "resultGrouping": [
+      "case",
+      "workItem"
+    ],
+    "forbiddenCommandSources": [
+      "legacy resource workspace",
+      "pricing setup",
+      "blocking flow",
+      "release flow"
+    ]
+  },
+  "runtimeProjectionDigest": "sha256:b65d4f82d66a1428037f1c9ac9bc18a9cc918f4b86c1b3d19ffe16f4031f9cf1",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "surfaceProjectionDigest": "sha256:ded900c2c9853723f7b8a4f546849af26e6472181bfd114fb0967e123023189d",
+  "searchProjectionDigest": "sha256:8f52c1079832f88b18e8a4674e9f9d1613f7ec231893d5aa6dbad5faa59023fd"
+}

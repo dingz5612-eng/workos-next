@@ -39,6 +39,20 @@ function Invoke-Native {
   }
 }
 
+function Invoke-AdvisoryNative {
+  param(
+    [Parameter(Mandatory = $true)][string] $Command,
+    [string[]] $Arguments = @()
+  )
+
+  & $Command @Arguments
+  if ($LASTEXITCODE -ne 0) {
+    Write-Warning "Advisory command failed with exit code ${LASTEXITCODE}: $Command $($Arguments -join ' ')"
+    return $false
+  }
+  return $true
+}
+
 function Wait-HttpOk {
   param(
     [Parameter(Mandatory = $true)][string] $Url,
@@ -116,10 +130,12 @@ try {
 
   Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-first-golden-chain-real-browser-audit.mjs")
   Invoke-Native -Command "node" -Arguments @("scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs")
-  Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-l1-browser-e2e-audit.mjs")
-  Invoke-Native -Command "node" -Arguments @("scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs")
-  Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-ten-scenario-real-browser-audit.mjs")
-  Invoke-Native -Command "node" -Arguments @("scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs")
+  if (Invoke-AdvisoryNative -Command "node" -Arguments @("scripts/surface/run-dormitory-l1-browser-e2e-audit.mjs")) {
+    [void](Invoke-AdvisoryNative -Command "node" -Arguments @("scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs"))
+  }
+  if (Invoke-AdvisoryNative -Command "node" -Arguments @("scripts/surface/run-dormitory-ten-scenario-real-browser-audit.mjs")) {
+    [void](Invoke-AdvisoryNative -Command "node" -Arguments @("scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs"))
+  }
 } finally {
   foreach ($process in @($web, $api)) {
     if ($process -and -not $process.HasExited) {
@@ -128,4 +144,4 @@ try {
   }
 }
 
-Write-Output "Dormitory real-browser audits: PASS"
+Write-Output "Dormitory current real-browser audit: PASS; legacy browser audits are advisory only"

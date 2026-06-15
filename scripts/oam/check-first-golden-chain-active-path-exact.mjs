@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import {
+  readJsonIfExists,
   CAPABILITY_ID,
   writeJson
 } from "./lib/capability-delivery-control-plane.mjs";
@@ -8,6 +9,8 @@ import {
 const root = process.cwd();
 const resultPath = "artifacts/oam/checks/first-golden-chain-active-path-exact-result.json";
 const projectionSource = read("services/core-api/WorkOS.Api/Runtime/AcceptedCapabilityRuntimeProjection.cs");
+const generatedRuntimeProjection = readJsonIfExists("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json", root);
+const generatedCapabilityProjection = readJsonIfExists("apps/mobile/src/generated/oam/capability-projection.generated.json", root);
 const projectionSeed = read("services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs");
 const searchKernel = read("services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs");
 const capabilityProjection = read("apps/mobile/src/capabilityProjection.js");
@@ -21,16 +24,20 @@ const expectedCards = [
 ];
 const forbidden = ["rateSetup", "roomBlock", "roomRelease", "W-STAY-RESOURCE"];
 
-requireInOrder(projectionSource, expectedCards, "AcceptedCapabilityRuntimeProjection card order", failures);
-requireInOrder(capabilityProjection, expectedCards, "mobile FIRST_GOLDEN_CHAIN_STEPS order", failures);
+requireInOrder(JSON.stringify(generatedRuntimeProjection?.steps ?? []), expectedCards, "generated runtime projection card order", failures);
+requireInOrder(JSON.stringify(generatedCapabilityProjection?.steps ?? []), expectedCards, "generated mobile capability projection order", failures);
 
-if (!projectionSource.includes("1/3 房间配置确认") ||
-  !projectionSource.includes("2/3 床位配置确认") ||
-  !projectionSource.includes("3/3 资源就绪确认")) {
-  failures.push("runtime active step rail must use exact 1/3, 2/3, 3/3 labels.");
+const stepLabels = (generatedRuntimeProjection?.steps ?? []).map((step) => step.step);
+if (JSON.stringify(stepLabels) !== JSON.stringify(["1/3", "2/3", "3/3"])) {
+  failures.push("runtime active step rail must use exact 1/3, 2/3, 3/3 labels from generated projection.");
 }
 for (const term of forbidden.slice(0, 3)) {
-  if (projectionSource.includes(term)) failures.push(`runtime active projection must not contain ${term}.`);
+  if (JSON.stringify(generatedRuntimeProjection ?? {}).includes(term)) failures.push(`runtime active projection must not contain ${term}.`);
+}
+for (const cardId of expectedCards) {
+  if (projectionSource.includes(`"${cardId}"`) || capabilityProjection.includes(`"${cardId}"`)) {
+    failures.push(`runtime/mobile adapters must not handwrite current active card ${cardId}.`);
+  }
 }
 if (!projectionSeed.includes("!seed.Id.Equals(AcceptedCapabilityRuntimeProjection.LegacyResourceWorkspaceId")) {
   failures.push("ProjectionSeed must explicitly exclude the legacy W-STAY-RESOURCE seed from current first golden chain.");
@@ -44,8 +51,8 @@ if (searchIntent.includes("W-STAY-RESOURCE")) {
 if (/sourceCardId\s*===|workspaceCardId\s*===/.test(workspaceView)) {
   failures.push("workspaceView must not use sourceCardId/workspaceCardId active matching.");
 }
-if (!capabilityProjection.includes(`FIRST_GOLDEN_CHAIN_CAPABILITY_ID = "${CAPABILITY_ID}"`)) {
-  failures.push("mobile capability projection must bind Dormitory.FirstGoldenChain.");
+if (generatedCapabilityProjection?.capabilityId !== CAPABILITY_ID) {
+  failures.push("generated mobile capability projection must bind Dormitory.FirstGoldenChain.");
 }
 
 const result = {

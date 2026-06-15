@@ -99,6 +99,7 @@ jobs:
           node scripts/oam/check-dormitory-golden-chain-source-package.mjs --write-proof
           node scripts/oam/compile-current-kernel-graph.mjs
           node scripts/oam/check-generated-field-binding-closure.mjs
+          node scripts/oam/compile-current-capability.mjs
           node scripts/oam/check-generated-contract-consistency.mjs
           node scripts/oam/check-generated-files-not-manually-edited.mjs
           node scripts/oam/check-generated-bundle-content-addressed.mjs

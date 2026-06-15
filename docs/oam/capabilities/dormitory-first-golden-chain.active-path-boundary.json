@@ -21,13 +21,16 @@
   ],
   "allowedReferenceZones": {
     "compatibilityBox": [
-      "docs/oam/capabilities/compatibility-box.current.json"
+      "docs/oam/capabilities/compatibility-box.current.json",
+      "docs/oam/compatibility/compatibility-box.current.json"
     ],
     "migrationRefs": [
       "docs/contracts/definition/",
       "docs/contracts/business/oam-workflow-state-registry.json",
       "docs/contracts/generated/dormitory/field-bindings.generated.json",
       "docs/contracts/slice-manifest.json",
+      "docs/contracts/production-slice-manifest.json",
+      "docs/oam/compatibility/legacy-slice-manifest.json",
       "docs/contracts/runtime-surface-policy.json",
       "docs/contracts/frontend-experience/",
       "docs/oam/reviews/"

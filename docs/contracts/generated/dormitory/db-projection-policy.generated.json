@@ -1,0 +1,103 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "db-projection-policy.generated",
+  "generatorVersion": "oam.capability-compiler.v1",
+  "generatedBy": "scripts/oam/compile-current-capability.mjs",
+  "generatedFrom": [
+    "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+    "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+    "docs/oam/generated-candidate-acceptance.current.json",
+    "docs/contracts/generated/dormitory/workitems.generated.json",
+    "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+    "docs/contracts/generated/dormitory/field-bindings.generated.json",
+    "docs/oam/dormitory-runtime-admission.current.json",
+    "docs/oam/dormitory-first-golden-chain-landing.current.json",
+    "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
+    "artifacts/oam/checks/dormitory-first-golden-chain-db-projection-proof-result.json",
+    "artifacts/oam/evidence/dormitory-first-golden-chain-real-browser/first-golden-chain-real-browser-report.json",
+    "artifacts/oam/evidence/evidence-graph.json"
+  ],
+  "inputDigest": "sha256:440011c21bbe103b02874337bea45f09b7c401d35c0df3ee5771f4c2ce493479",
+  "inputDigests": [
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+      "digest": "sha256:2498d8679c973d7d743a69c9e150c7ee7322ca7454905c59d90e32d238c7c743"
+    },
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "digest": "sha256:4fa8b3507e061329f8486bf9eaf40a08daabc93f861e8adb10b0abdb6e0d8118"
+    },
+    {
+      "path": "docs/oam/generated-candidate-acceptance.current.json",
+      "digest": "sha256:5828c58bdf69b8f917a42adea1a42d06fadfa150af5e79c6dd55720152deb7e2"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/workitems.generated.json",
+      "digest": "sha256:4afb5fcdf37724032a2456412e0b6c44218c089db3c95bc39f3caf1117a4f42c"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+      "digest": "sha256:88d087d68361c852a9199fd88e523cc6d26e4653eb73e9b50f54562313f2439a"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "digest": "sha256:6e70639fe5ff82732f9d898e2b88646b4a9d2faa99bb11566a4855fe088c862a"
+    },
+    {
+      "path": "docs/oam/dormitory-runtime-admission.current.json",
+      "digest": "sha256:183880b1cace3347ae16cc72c3ef44043b86e434a37b1dbbcd51742e33aa088f"
+    },
+    {
+      "path": "docs/oam/dormitory-first-golden-chain-landing.current.json",
+      "digest": "sha256:f99dbc4d22d67bd74803d0ce9b9e4d32d8769f2c3212f91d27521335acd59382"
+    },
+    {
+      "path": "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
+      "digest": "sha256:69085b5c102cd8ba16e2c61c9b666fc3e622bc5747fc5ccc48551e5a0e6583e6"
+    },
+    {
+      "path": "artifacts/oam/checks/dormitory-first-golden-chain-db-projection-proof-result.json",
+      "digest": "sha256:02953c25686564c1ae2968b6b40aec8887767ac9a464b0de73cd91e4f13c0823"
+    },
+    {
+      "path": "artifacts/oam/evidence/dormitory-first-golden-chain-real-browser/first-golden-chain-real-browser-report.json",
+      "digest": "sha256:1953adecf9a688c7cab8ebb2539bf3c7b28e0d6d766111670fbd78e79c36f6b5"
+    },
+    {
+      "path": "artifacts/oam/evidence/evidence-graph.json",
+      "digest": "sha256:8be4c8fe5d3080974b1e99a51b3058c139c7a51d83e2b9786abd475f92c038e6"
+    }
+  ],
+  "outputContentDigest": "sha256:d931b1b150f52e0a7c65c3ff71b86cff6a5599ce1abe272a6fb141263cf0b5d7",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+  "currentFilesMode": "ledger_replay_projection_only",
+  "lifecycleState": "RUNTIME_TEST_ADMITTED",
+  "runtimeAdmissionStatus": "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION",
+  "landingStatus": "PENDING_BUSINESS_LANDING_REVIEW",
+  "policyMode": "null_if_runtime_test_only",
+  "runtimeStorageMode": "in_memory",
+  "activeDbProjectionMappings": [],
+  "inactiveBusinessLandingMappings": [
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "domainEvent": "Accommodation.RoomConfigured",
+      "target": "accommodation_rooms"
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "domainEvent": "Accommodation.BedConfigured",
+      "target": "accommodation_beds"
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "domainEvent": "Accommodation.RoomReadinessChanged",
+      "target": "readiness/read model"
+    }
+  ],
+  "businessFeatureDevelopmentAllowed": false,
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO"
+}

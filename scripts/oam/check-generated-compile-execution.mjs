@@ -13,6 +13,7 @@ const candidateApprovalPath = "docs/oam/generated-compile-candidate-approval.cur
 const attestationPackagePath = "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json";
 const sourcePackagePath = "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml";
 const allowedRuntimeGeneratedDiffs = new Set([
+  "apps/mobile/src/generated/oam/capability-projection.generated.json",
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
   "apps/mobile/src/__tests__/SearchIntentHubContract.test.js",
   "apps/mobile/src/__tests__/SearchLearningSync.test.js",
@@ -20,6 +21,9 @@ const allowedRuntimeGeneratedDiffs = new Set([
   "apps/mobile/src/controls/fieldControls.js",
   "apps/mobile/src/controls/optionSetContract.js",
   "apps/mobile/src/fieldSourceRenderer.js",
+  "apps/mobile/src/i18n/operationCopy.js",
+  "apps/mobile/src/operationActionState.js",
+  "apps/mobile/src/operationController.js",
   "apps/mobile/src/operationFieldKernel.js",
   "apps/mobile/src/searchIntentHub.js",
   "apps/mobile/src/searchIntentRegistry.js",
@@ -30,8 +34,10 @@ const allowedRuntimeGeneratedDiffs = new Set([
   "services/core-api/WorkOS.Api/Program.cs",
   "services/core-api/WorkOS.Api/Runtime/AcceptedCapabilityRuntimeProjection.cs",
   "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
   "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs",
   "services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs",
+  "services/core-api/WorkOS.Api/Runtime/RuntimeQueryService.cs",
   "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
   "services/core-api/WorkOS.Api/Runtime/SliceRuntimeCapabilityGate.cs",
   "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs"
@@ -48,7 +54,12 @@ const generatedOutputFiles = [
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
-  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+  "docs/contracts/generated/dormitory/test-plan.generated.json",
+  "docs/contracts/generated/dormitory/db-projection-policy.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "apps/mobile/src/generated/oam/capability-projection.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
+  "artifacts/oam/evidence/capability-digest-chain.json"
 ];
 const sourceAuthorityFiles = [
   sourcePackagePath,
@@ -59,6 +70,7 @@ const sourceAuthorityFiles = [
 const generatorAndCheckerFiles = [
   "scripts/business/generate-dormitory-derived-contracts.mjs",
   "scripts/oam/compile-current-kernel-graph.mjs",
+  "scripts/oam/compile-current-capability.mjs",
   "scripts/oam/generate-system-derived-contracts.mjs",
   "scripts/oam/check-generated-files-not-manually-edited.mjs",
   "scripts/oam/check-generated-field-binding-closure.mjs",
@@ -73,6 +85,7 @@ const generatorAndCheckerFiles = [
 const compileCommands = [
   ["node", ["scripts/business/generate-dormitory-derived-contracts.mjs"]],
   ["node", ["scripts/oam/compile-current-kernel-graph.mjs"]],
+  ["node", ["scripts/oam/compile-current-capability.mjs"]],
   ["node", ["scripts/oam/generate-system-derived-contracts.mjs"]]
 ];
 const requiredPreGateResults = [

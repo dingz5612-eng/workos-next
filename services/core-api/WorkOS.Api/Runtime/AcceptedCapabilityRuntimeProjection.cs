@@ -1,147 +1,220 @@
+using System.Text.Json;
+
 namespace WorkOS.Api.Runtime;
 
 internal static class AcceptedCapabilityRuntimeProjection
 {
-    public const string CapabilityId = "Dormitory.FirstGoldenChain";
-    public const string WorkspaceId = CapabilityId;
-    public const string LegacyResourceWorkspaceId = "W-STAY-RESOURCE";
-    public const string AcceptedGeneratedBundleDigest = "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e";
-    public const string RoomSetupConfirmCardId = "Dorm.RoomSetupConfirm";
-    public const string BedSetupConfirmCardId = "Dorm.BedSetupConfirm";
-    public const string ResourceReadinessConfirmCardId = "Dorm.ResourceReadinessConfirm";
+    private const string ProjectionPath = "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json";
+    private static readonly Lazy<JsonDocument> ProjectionDocument = new(() => JsonDocument.Parse(File.ReadAllText(LocateProjection())));
+
+    public static string CapabilityId => Text("capabilityId");
+    public static string WorkspaceId => Text("workspaceId");
+    public static string LegacyResourceWorkspaceId => Text("legacyResourceWorkspaceId");
+    public static string AcceptedGeneratedBundleDigest => Text("acceptedGeneratedBundleDigest");
+    public static string SliceRuntimeStatus => Text("sliceRuntimeStatus");
+    public static string RoomSetupConfirmCardId => Step(0).GetProperty("cardId").GetString() ?? string.Empty;
+    public static string BedSetupConfirmCardId => Step(1).GetProperty("cardId").GetString() ?? string.Empty;
+    public static string ResourceReadinessConfirmCardId => Step(2).GetProperty("cardId").GetString() ?? string.Empty;
 
     public static WorkspaceProjection Workspace() =>
         new(
             "AcceptedCapabilityRuntimeProjection",
             WorkspaceId,
             "stay",
-            "Dormitory.FirstGoldenChain",
-            ContractText.Text("宿舍第一金链", "Первая золотая цепочка общежития"),
-            ContractText.Text(
-                "当前运行时只消费已接受的 capability bundle projection：房间配置、床位配置、资源就绪确认。",
-                "Runtime читает только принятый projection: комната, койка, готовность ресурса."),
-            Cards(),
-            ContractText.Text(
-                "按 1/3 房间配置、2/3 床位配置、3/3 资源就绪确认顺序办理。",
-                "Выполняйте 1/3 комната, 2/3 койка, 3/3 готовность."),
+            CapabilityId,
+            Text("宿舍第一金链", "Первая золотая цепочка общежития"),
+            Text(
+                "按房间配置、床位配置、资源就绪三步办理。",
+                "Три шага: комната, койка, готовность."),
+            Steps().Select(Card).ToArray(),
+            Text(
+                "按页面顺序完成当前办理。",
+                "Выполняйте действия по порядку."),
             Array.Empty<BlockerRule>());
 
-    private static IReadOnlyList<CardProjection> Cards() =>
-        new[]
-        {
-            Card(
-                RoomSetupConfirmCardId,
-                "ready",
-                "1/3 房间配置确认",
-                "1/3 Подтверждение комнаты",
-                new[] { "roomNo", "floor", "capacity" },
-                new[] { "room-photo", "room-basic-info" }),
-            Card(
-                BedSetupConfirmCardId,
-                "notStarted",
-                "2/3 床位配置确认",
-                "2/3 Подтверждение койки",
-                new[] { "roomId", "bedNo", "bedType" },
-                new[] { "bed-photo", "room-link-proof" }),
-            Card(
-                ResourceReadinessConfirmCardId,
-                "notStarted",
-                "3/3 资源就绪确认",
-                "3/3 Подтверждение готовности",
-                new[] { "roomId", "bedId", "readinessState" },
-                new[] { "completion-photo", "verification-check" })
-        };
+    public static IReadOnlyDictionary<string, string> StartAdapterDefinitionIds() =>
+        Steps().ToDictionary(
+            step => $"{WorkspaceId}:{Required(step, "cardId")}",
+            step => Required(step, "definitionId"),
+            StringComparer.OrdinalIgnoreCase);
 
-    private static CardProjection Card(
-        string cardId,
-        string status,
-        string zhTitle,
-        string ruTitle,
-        IReadOnlyList<string> businessFieldIds,
-        IReadOnlyList<string> evidenceIds) =>
+    public static IReadOnlyList<string> DerivedFieldKeys(string? cardId)
+    {
+        if (!Root.TryGetProperty("derivedFieldKeys", out var items))
+        {
+            return Array.Empty<string>();
+        }
+
+        foreach (var item in items.EnumerateArray())
+        {
+            if (!Required(item, "cardId").Equals(cardId ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            return item.TryGetProperty("derivedFieldKeys", out var keys)
+                ? keys.EnumerateArray().Select(value => value.GetString() ?? string.Empty).Where(value => value.Length > 0).ToArray()
+                : Array.Empty<string>();
+        }
+
+        return Array.Empty<string>();
+    }
+
+    public static IReadOnlyList<SearchCommandDefinition> SearchCommands() =>
+        Root.TryGetProperty("commandCatalog", out var commands)
+            ? commands.EnumerateArray().Select(Command).ToArray()
+            : Array.Empty<SearchCommandDefinition>();
+
+    public static SliceRuntimeCapability RuntimeCapability() =>
+        new(CapabilityId, WorkspaceId, SliceRuntimeStatus);
+
+    private static CardProjection Card(JsonElement step) =>
         new(
             "AcceptedCapabilityCardProjection",
-            cardId,
-            status,
-            ContractText.Text(zhTitle, ruTitle),
+            Required(step, "cardId"),
+            StepStatus(step),
+            Localized(step.GetProperty("title")),
             new FieldSet(
                 Array.Empty<FieldProjection>(),
-                businessFieldIds.Select(BusinessField).ToArray(),
+                Fields(step).Select(BusinessField).ToArray(),
                 Array.Empty<FieldProjection>()),
-            evidenceIds.Select(Evidence).ToArray(),
+            Evidence(step).Select(EvidenceRequirement).ToArray(),
             Array.Empty<SystemCheck>(),
             Array.Empty<BlockerRule>(),
-            new[] { new EventDefinition($"{cardId}.confirmed", true, new[] { "accepted-capability-runtime-projection" }) },
-            new TransitionDefinition($"{cardId}.prepared", $"{cardId}.confirmed", $"{cardId}.blocked"),
-            new ConfirmationPolicy(false, true, "operator", ContractText.Text("仅测试消费确认", "Только тестовое подтверждение")));
+            new[] { new EventDefinition(Required(step, "eventType"), true, ProjectionTargets(step)) },
+            new TransitionDefinition($"{Required(step, "cardId")}.prepared", $"{Required(step, "cardId")}.confirmed", $"{Required(step, "cardId")}.blocked"),
+            new ConfirmationPolicy(false, true, "operator", Text("仅测试消费确认", "Только тестовое подтверждение")));
 
-    private static FieldProjection BusinessField(string fieldId) =>
-        new(
+    private static FieldProjection BusinessField(JsonElement field)
+    {
+        var fieldId = Required(field, "fieldId");
+        var optionSet = Optional(field, "optionSet");
+        var controlType = string.IsNullOrWhiteSpace(optionSet) ? Optional(field, "controlType") : "select";
+        if (string.IsNullOrWhiteSpace(controlType))
+        {
+            controlType = fieldId.Equals("capacity", StringComparison.OrdinalIgnoreCase) ? "number" : "text";
+        }
+
+        var userSubmitted = !field.TryGetProperty("userSubmitted", out var userSubmittedElement) || userSubmittedElement.GetBoolean();
+        var readOnly = field.TryGetProperty("readonly", out var readOnlyElement) && readOnlyElement.GetBoolean();
+        return new FieldProjection(
             fieldId,
             FieldLabel(fieldId),
             "business",
-            FieldType(fieldId),
-            true,
-            FieldSource(fieldId),
+            controlType == "number" || fieldId.Equals("capacity", StringComparison.OrdinalIgnoreCase) ? "number" : "text",
+            userSubmitted,
+            Optional(field, "submitValueSource") is { Length: > 0 } submitValueSource ? submitValueSource : Required(field, "source"),
             true,
             string.Empty,
-            FieldUi(fieldId),
-            ContractText.Text("来自 accepted capability bundle projection。", "Из принятого projection capability bundle."));
+            new FieldUi(
+                controlType,
+                optionSet,
+                Options(optionSet),
+                Optional(field, "defaultValue"),
+                string.Empty,
+                readOnly),
+            Text("按当前业务规则带入。", "Заполнено по текущим правилам."));
+    }
 
-    private static EvidenceRequirement Evidence(string evidenceId) =>
+    private static EvidenceRequirement EvidenceRequirement(string evidenceId) =>
         new(
             evidenceId,
             FieldLabel(evidenceId),
             true,
             "accepted-capability-runtime-projection",
             evidenceId,
-            ContractText.Text("测试消费证据，不开放生产确认。", "Тестовое доказательство без production confirm."));
+            Text("测试消费证据，不开放生产确认。", "Тестовое доказательство без production confirm."));
 
-    private static FieldUi FieldUi(string fieldId) =>
-        fieldId switch
+    private static IReadOnlyList<FieldOption> Options(string optionSet)
+    {
+        if (string.IsNullOrWhiteSpace(optionSet) ||
+            !Root.TryGetProperty("optionSets", out var optionSets) ||
+            !optionSets.TryGetProperty(optionSet, out var values))
         {
-            "bedType" => new FieldUi(
-                "select",
-                "bunkType",
-                new[]
-                {
-                    Option("upper", "全部上铺", "Все верхние"),
-                    Option("lower", "全部下铺", "Все нижние"),
-                    Option("whole", "全部平铺", "Обычные койки")
-                },
-                "whole",
-                string.Empty,
-                false),
-            "roomId" or "bedId" => new FieldUi("stableRef", string.Empty, Array.Empty<FieldOption>(), string.Empty, string.Empty, true),
-            _ => new FieldUi("text", string.Empty, Array.Empty<FieldOption>(), string.Empty, string.Empty, false)
-        };
+            return Array.Empty<FieldOption>();
+        }
 
-    private static FieldOption Option(string value, string zhLabel, string ruLabel) =>
-        new(value, ContractText.Text(zhLabel, ruLabel));
+        return values.EnumerateArray()
+            .Select(item => new FieldOption(Required(item, "value"), Localized(item.GetProperty("label"))))
+            .ToArray();
+    }
 
-    private static string FieldType(string fieldId) =>
-        fieldId is "capacity" ? "number" : "text";
+    private static SearchCommandDefinition Command(JsonElement command) =>
+        new(
+            Required(command, "templateWorkspaceId"),
+            Required(command, "firstCardId"),
+            Required(command.GetProperty("title"), "zh-CN"),
+            Required(command.GetProperty("title"), "ru-RU"),
+            Required(command.GetProperty("title"), "ky-KG"),
+            Required(command.GetProperty("subtitle"), "zh-CN"),
+            Required(command.GetProperty("subtitle"), "ru-RU"),
+            Required(command.GetProperty("subtitle"), "ky-KG"),
+            command.GetProperty("keywords").EnumerateArray().Select(item => item.GetString() ?? string.Empty).Where(item => item.Length > 0).ToArray());
 
-    private static string FieldSource(string fieldId) =>
-        fieldId is "roomId" or "bedId" ? "selectedStableRef" : "userInput";
+    private static IReadOnlyList<JsonElement> Steps() =>
+        Root.GetProperty("steps").EnumerateArray().ToArray();
 
-    private static IReadOnlyDictionary<string, string> FieldLabel(string fieldId) =>
-        fieldId switch
+    private static JsonElement Step(int index) => Steps()[index];
+
+    private static IEnumerable<JsonElement> Fields(JsonElement step) =>
+        step.GetProperty("fields").EnumerateArray();
+
+    private static IReadOnlyList<string> Evidence(JsonElement step) =>
+        step.GetProperty("evidenceIds").EnumerateArray().Select(item => item.GetString() ?? string.Empty).Where(item => item.Length > 0).ToArray();
+
+    private static IReadOnlyList<string> ProjectionTargets(JsonElement step) =>
+        step.GetProperty("projectionTargets").EnumerateArray().Select(item => item.GetString() ?? string.Empty).Where(item => item.Length > 0).ToArray();
+
+    private static string StepStatus(JsonElement step) =>
+        step.GetProperty("index").GetInt32() == 1 ? "ready" : "notStarted";
+
+    private static IReadOnlyDictionary<string, string> FieldLabel(string id) =>
+        Root.TryGetProperty("fieldLabels", out var labels) && labels.TryGetProperty(id, out var label)
+            ? Localized(label)
+            : Text(id, id);
+
+    private static IReadOnlyDictionary<string, string> Localized(JsonElement value) =>
+        value.EnumerateObject().ToDictionary(item => item.Name, item => item.Value.GetString() ?? string.Empty, StringComparer.OrdinalIgnoreCase);
+
+    private static IReadOnlyDictionary<string, string> Text(string zhCn, string ruRu) =>
+        new Dictionary<string, string> { ["zh-CN"] = zhCn, ["ru-RU"] = ruRu };
+
+    private static string Text(string propertyName) => Required(Root, propertyName);
+
+    private static string Required(JsonElement element, string propertyName) =>
+        element.TryGetProperty(propertyName, out var value) ? value.GetString() ?? string.Empty : string.Empty;
+
+    private static string Optional(JsonElement element, string propertyName) =>
+        element.TryGetProperty(propertyName, out var value) ? value.GetString() ?? string.Empty : string.Empty;
+
+    private static JsonElement Root => ProjectionDocument.Value.RootElement;
+
+    private static string LocateProjection()
+    {
+        var current = new DirectoryInfo(AppContext.BaseDirectory);
+        while (current is not null)
         {
-            "roomNo" => ContractText.Text("房间号", "Номер комнаты"),
-            "floor" => ContractText.Text("楼层", "Этаж"),
-            "capacity" => ContractText.Text("床位数", "Количество коек"),
-            "roomId" => ContractText.Text("所属房间", "Комната"),
-            "bedNo" => ContractText.Text("床位号", "Номер койки"),
-            "bedType" => ContractText.Text("床位类型", "Тип койки"),
-            "bedId" => ContractText.Text("床位", "Койка"),
-            "readinessState" => ContractText.Text("就绪状态", "Статус готовности"),
-            "room-photo" => ContractText.Text("房间照片", "Фото комнаты"),
-            "room-basic-info" => ContractText.Text("房间基础信息", "Основная информация комнаты"),
-            "bed-photo" => ContractText.Text("床位照片", "Фото койки"),
-            "room-link-proof" => ContractText.Text("房间关联证明", "Подтверждение связи с комнатой"),
-            "completion-photo" => ContractText.Text("完成照片", "Фото завершения"),
-            "verification-check" => ContractText.Text("核验记录", "Запись проверки"),
-            _ => ContractText.Text(fieldId, fieldId)
-        };
+            var candidate = Path.Combine(current.FullName, ProjectionPath);
+            if (File.Exists(candidate))
+            {
+                return candidate;
+            }
+
+            current = current.Parent;
+        }
+
+        current = new DirectoryInfo(Directory.GetCurrentDirectory());
+        while (current is not null)
+        {
+            var candidate = Path.Combine(current.FullName, ProjectionPath);
+            if (File.Exists(candidate))
+            {
+                return candidate;
+            }
+
+            current = current.Parent;
+        }
+
+        throw new FileNotFoundException($"Could not locate {ProjectionPath}.");
+    }
 }

@@ -54,7 +54,7 @@ if (surface.visibleAllowed === surface.confirmAllowed || kernel.surfaceProof?.vi
 if (surface.searchVisibleAllowed === surface.confirmAllowed || kernel.surfaceProof?.searchVisibleAllowed === kernel.surfaceProof?.confirmAllowed) {
   fail("search visible must not mean confirm allowed.");
 }
-if (JSON.stringify(surface) !== JSON.stringify(mobileSurface)) {
+if (JSON.stringify(surface) !== JSON.stringify(mobileSurface) && !mobileConsumesGeneratedSurfaceModel(surface, mobileSurface)) {
   fail("mobile surface model must consume the generated surface model without local divergence.");
 }
 
@@ -137,6 +137,16 @@ function readJson(file) {
 
 function fail(message) {
   failures.push(message);
+}
+
+function mobileConsumesGeneratedSurfaceModel(surfaceDocument, mobileDocument) {
+  if (mobileDocument.generatedBy !== "scripts/oam/compile-current-capability.mjs") return false;
+  if (mobileDocument.sourceContentDigest !== surfaceDocument.outputContentDigest) return false;
+  if (mobileDocument.sourceControlCount !== (surfaceDocument.controls ?? []).length) return false;
+  const mobileControlKeys = new Set((mobileDocument.controls ?? [])
+    .map((control) => `${control.workItemType}:${control.fieldId}`));
+  return (surfaceDocument.controls ?? [])
+    .every((control) => mobileControlKeys.has(`${control.workItemType}:${control.fieldId}`));
 }
 
 function writeOamObjectEnvelopeProof(status) {

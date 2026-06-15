@@ -27,6 +27,12 @@ import {
   allowedDormitoryBusinessLandingWorkItemTypes,
   validateDormitoryFirstGoldenChainLandingAuthority
 } from "./lib/dormitory-first-golden-chain-landing.mjs";
+import {
+  CAPABILITY_COMPATIBILITY_BOX_PATH,
+  CAPABILITY_LEDGER_PATH,
+  CAPABILITY_PROJECTION_PATH,
+  CAPABILITY_REGISTRY_PATH
+} from "./lib/capability-delivery-control-plane.mjs";
 
 const root = process.cwd();
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
@@ -58,6 +64,7 @@ const generatedCompileExecutionProofPath = "artifacts/oam/evidence/generated-com
 const generatedFieldBindingClosureResultPath = FIELD_BINDING_CLOSURE_RESULT_PATH;
 const generatedFieldBindingsPath = FIELD_BINDINGS_GENERATED_PATH;
 const firstGoldenChainTestPlanPath = "docs/contracts/generated/dormitory/test-plan.generated.json";
+const firstGoldenChainCapabilityDigestChainPath = "artifacts/oam/evidence/capability-digest-chain.json";
 const firstGoldenChainBrowserAuditReportPath =
   "artifacts/oam/evidence/dormitory-first-golden-chain-real-browser/first-golden-chain-real-browser-report.json";
 const firstGoldenChainBrowserAuditScreenshotIndexPath =
@@ -66,9 +73,18 @@ const firstGoldenChainBrowserAuditResultPath =
   "artifacts/oam/checks/dormitory-first-golden-chain-real-browser-result.json";
 const testPlanGeneratedFromCapabilityResultPath =
   "artifacts/oam/checks/test-plan-generated-from-capability-result.json";
+const firstGoldenChainDbProjectionProofResultPath =
+  "artifacts/oam/checks/dormitory-first-golden-chain-db-projection-proof-result.json";
 const evidenceDigestChainSingleSourceResultPath =
   "artifacts/oam/checks/evidence-digest-chain-single-source-result.json";
+const capabilityRegistryPath = CAPABILITY_REGISTRY_PATH;
+const capabilityLedgerPath = CAPABILITY_LEDGER_PATH;
+const capabilityProjectionPath = CAPABILITY_PROJECTION_PATH;
+const capabilityCompatibilityBoxPath = CAPABILITY_COMPATIBILITY_BOX_PATH;
 const capabilityStateMachinePath = "docs/oam/capabilities/dormitory-first-golden-chain.state-machine.json";
+const sliceManifestPath = "docs/contracts/slice-manifest.json";
+const productionSliceManifestPath = "docs/contracts/production-slice-manifest.json";
+const legacySliceManifestPath = "docs/oam/compatibility/legacy-slice-manifest.json";
 const gateLaneTaxonomyPath = "docs/oam/control-plane/gate-lane-taxonomy.current.json";
 const runtimeStabilityLanePath = "docs/oam/runtime-stability-lane.current.json";
 const evidenceProjectionPolicyPath = "docs/oam/evidence-projection-policy.current.json";
@@ -147,8 +163,10 @@ const requiredFiles = [
   "docs/contracts/generated/dormitory/read-model.generated.json",
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
   firstGoldenChainTestPlanPath,
+  firstGoldenChainCapabilityDigestChainPath,
   firstGoldenChainBrowserAuditReportPath,
   firstGoldenChainBrowserAuditResultPath,
+  firstGoldenChainDbProjectionProofResultPath,
   testPlanGeneratedFromCapabilityResultPath,
   evidenceDigestChainSingleSourceResultPath,
   "docs/read-intelligence/read-intelligence-kernel.json",
@@ -174,7 +192,14 @@ const requiredFiles = [
   "artifacts/oam/checks/generated-contract-consistency-result.json",
   "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
   "artifacts/oam/checks/dormitory-candidate-artifact-attestation-package-result.json",
+  capabilityRegistryPath,
+  capabilityLedgerPath,
+  capabilityProjectionPath,
+  capabilityCompatibilityBoxPath,
   capabilityStateMachinePath,
+  sliceManifestPath,
+  productionSliceManifestPath,
+  legacySliceManifestPath,
   gateLaneTaxonomyPath,
   runtimeStabilityLanePath,
   evidenceProjectionPolicyPath,
@@ -1808,6 +1833,12 @@ function checkDormitoryFirstGoldenChainLanding(finalReport, graph, documents, st
   const authority = documents.get(dormitoryFirstGoldenChainLandingPath);
   const result = documents.get(dormitoryFirstGoldenChainLandingResultPath);
   const proof = documents.get(dormitoryFirstGoldenChainLandingProofPath);
+  const landingApproved = state.landingStatus === DORMITORY_L1_LANDING_APPROVED_STATUS &&
+    state.businessFeatureDevelopmentAllowed === true &&
+    state.dormitoryFirstGoldenChainLandingGoNoGo === "GO";
+  const expectedLandingEntryStatus = landingApproved ? "PASS" : "NO_GO";
+  const expectedBusinessFeatureDevelopmentAllowed = landingApproved;
+  const expectedLandingGoNoGo = landingApproved ? "GO" : "NO_GO";
   if (!authority || !result || !proof) {
     failures.push("dormitory first golden chain landing authority/result/proof is missing.");
     return;
@@ -1824,15 +1855,14 @@ function checkDormitoryFirstGoldenChainLanding(finalReport, graph, documents, st
     finalReport.runtimeConsumptionReady !== true) {
     failures.push("business landing admission requires runtime_test_admission runtimeConsumptionReady=true.");
   }
-  if (state.landingStatus !== DORMITORY_L1_LANDING_APPROVED_STATUS ||
-    finalReport.dormitoryFirstGoldenChainLandingStatus !== state.landingStatus ||
+  if (finalReport.dormitoryFirstGoldenChainLandingStatus !== state.landingStatus ||
     finalReport.dormitoryFirstGoldenChainLanding?.landingStatus !== state.landingStatus ||
-    finalReport.dormitoryFirstGoldenChainLandingStatusEntry?.status !== "PASS") {
-    failures.push("Final Report dormitory first golden chain landing status must mirror approved S8 authority.");
+    finalReport.dormitoryFirstGoldenChainLandingStatusEntry?.status !== expectedLandingEntryStatus) {
+    failures.push("Final Report dormitory first golden chain landing status must mirror business landing authority state.");
   }
-  if (finalReport.businessFeatureDevelopmentAllowed !== true ||
-    finalReport.dormitoryFirstGoldenChainLandingGoNoGo !== "GO") {
-    failures.push("S8 approved authority must be the only source of L1 business landing GO.");
+  if (finalReport.businessFeatureDevelopmentAllowed !== expectedBusinessFeatureDevelopmentAllowed ||
+    finalReport.dormitoryFirstGoldenChainLandingGoNoGo !== expectedLandingGoNoGo) {
+    failures.push("Business landing GO must only come from approved business landing authority.");
   }
   if (finalReport.businessProductionGoNoGo !== "NO_GO" ||
     finalReport.dormitoryL2GoNoGo !== "NO_GO" ||
@@ -1842,8 +1872,8 @@ function checkDormitoryFirstGoldenChainLanding(finalReport, graph, documents, st
     finalReport.finalGoNoGo !== "NO_GO") {
     failures.push("S8 business landing must keep production, Dormitory L2, release, and final GO blocked.");
   }
-  if (finalReport.statusMatrix?.dormitoryFirstGoldenChainLandingStatus?.status !== "PASS") {
-    failures.push("dormitoryFirstGoldenChainLandingStatus must PASS after S8 approval.");
+  if (finalReport.statusMatrix?.dormitoryFirstGoldenChainLandingStatus?.status !== expectedLandingEntryStatus) {
+    failures.push(`dormitoryFirstGoldenChainLandingStatus must be ${expectedLandingEntryStatus} for the current business landing authority state.`);
   }
   if (JSON.stringify(state.allowedLandingWorkItemTypes) !== JSON.stringify(allowedDormitoryBusinessLandingWorkItemTypes) ||
     JSON.stringify(proof.allowedLandingWorkItemTypes) !== JSON.stringify(allowedDormitoryBusinessLandingWorkItemTypes)) {
@@ -1866,8 +1896,8 @@ function checkDormitoryFirstGoldenChainLanding(finalReport, graph, documents, st
     node.runtimeAdmissionStatus !== state.runtimeAdmissionStatus ||
     node.generatedCandidateAcceptedBy00 !== true ||
     node.runtimeConsumptionReady !== true ||
-    node.businessFeatureDevelopmentAllowed !== true ||
-    node.dormitoryFirstGoldenChainLandingGoNoGo !== "GO" ||
+    node.businessFeatureDevelopmentAllowed !== expectedBusinessFeatureDevelopmentAllowed ||
+    node.dormitoryFirstGoldenChainLandingGoNoGo !== expectedLandingGoNoGo ||
     node.businessProductionGoNoGo !== "NO_GO" ||
     node.productionConfirmAllowed !== false ||
     node.financePostingAllowed !== false ||
@@ -1899,14 +1929,14 @@ function checkDormitoryFirstGoldenChainLanding(finalReport, graph, documents, st
     runtimeConsumptionReady: true,
     acceptedSubjectDigest: state.acceptedSubjectDigest,
     generatedCandidateSubjectDigest: state.generatedCandidateSubjectDigest,
-    businessFeatureDevelopmentAllowed: true,
-    dormitoryFirstGoldenChainLandingGoNoGo: "GO",
+    businessFeatureDevelopmentAllowed: expectedBusinessFeatureDevelopmentAllowed,
+    dormitoryFirstGoldenChainLandingGoNoGo: expectedLandingGoNoGo,
     businessProductionGoNoGo: "NO_GO",
     productionConfirmAllowed: false,
     financePostingAllowed: false,
     dormitoryL2Allowed: false,
     releaseAuthority: false,
-    businessGoAuthority: true,
+    businessGoAuthority: landingApproved,
     finalGoNoGo: "NO_GO"
   })) {
     if (binding[field] !== expected) {
@@ -2385,7 +2415,9 @@ function checkBinding(file, document, expectedDigest) {
 }
 
 function requiresEvidenceBinding(file) {
-  if (file === firstGoldenChainBrowserAuditReportPath || file === firstGoldenChainBrowserAuditScreenshotIndexPath) {
+  if (file === firstGoldenChainCapabilityDigestChainPath ||
+    file === firstGoldenChainBrowserAuditReportPath ||
+    file === firstGoldenChainBrowserAuditScreenshotIndexPath) {
     return false;
   }
   return (file.startsWith("artifacts/oam/evidence/") && file !== generatedCompileExecutionProofPath) ||
@@ -2677,12 +2709,17 @@ function checkFirstGoldenChainBrowserReport(report, summary, node) {
 function checkCapabilityDigestChain(graph, finalReport, releaseObject, docs) {
   const testPlanResult = docs.get(testPlanGeneratedFromCapabilityResultPath);
   const browserResult = docs.get(firstGoldenChainBrowserAuditResultPath);
+  const dbProjectionProofResult = docs.get(firstGoldenChainDbProjectionProofResultPath);
   const digestChainResult = docs.get(evidenceDigestChainSingleSourceResultPath);
+  const digestChainDocument = docs.get(firstGoldenChainCapabilityDigestChainPath);
   if (testPlanResult?.status !== "PASS") {
     failures.push("test plan generated-from-capability result must be PASS.");
   }
   if (browserResult?.status !== "PASS") {
     failures.push("first golden chain browser audit result must be PASS.");
+  }
+  if (dbProjectionProofResult?.status !== "PASS") {
+    failures.push("first golden chain DB projection proof result must be PASS.");
   }
   if (digestChainResult?.status !== "PASS") {
     failures.push("evidence digest chain single-source result must be PASS.");
@@ -2693,6 +2730,7 @@ function checkCapabilityDigestChain(graph, finalReport, releaseObject, docs) {
     return;
   }
   for (const [label, chain] of [
+    ["capability digest chain file", digestChainDocument],
     ["final report", finalReport.capabilityDigestChain],
     ["release evidence object", releaseObject?.capabilityDigestChain]
   ]) {
@@ -2702,12 +2740,14 @@ function checkCapabilityDigestChain(graph, finalReport, releaseObject, docs) {
     }
     for (const field of [
       "capabilityId",
+      "authorityLedgerDigest",
       "acceptedGeneratedBundleDigest",
       "runtimeProjectionDigest",
       "surfaceProjectionDigest",
       "searchProjectionDigest",
       "testPlanDigest",
       "browserAuditDigest",
+      "dbProjectionProofDigest",
       "evidenceRootDigest",
       "productionConfirmAllowed",
       "releaseAuthority",
@@ -2722,6 +2762,7 @@ function checkCapabilityDigestChain(graph, finalReport, releaseObject, docs) {
     failures.push("capability digest chain must bind Dormitory.FirstGoldenChain.");
   }
   for (const field of [
+    "authorityLedgerDigest",
     "acceptedGeneratedBundleDigest",
     "runtimeProjectionDigest",
     "surfaceProjectionDigest",
@@ -2733,6 +2774,10 @@ function checkCapabilityDigestChain(graph, finalReport, releaseObject, docs) {
     if (!sha256DigestPattern.test(String(graphChain[field] ?? ""))) {
       failures.push(`capability digest chain ${field} must be a sha256 digest.`);
     }
+  }
+  if (graphChain.dbProjectionProofDigest !== "null_if_runtime_test_only" &&
+    !sha256DigestPattern.test(String(graphChain.dbProjectionProofDigest ?? ""))) {
+    failures.push("capability digest chain dbProjectionProofDigest must be a sha256 digest or null_if_runtime_test_only.");
   }
   if (graphChain.runtimeConsumptionReady !== false && graphChain.runtimeConsumptionReady !== "test_only") {
     failures.push("capability digest chain runtimeConsumptionReady must be false or test_only.");
@@ -3104,8 +3149,9 @@ function checkFinalReportMultiStatus(finalReport, candidateObject, commitAttesta
   if (matrix.runtimeAdmissionStatus?.status !== "PASS") {
     failures.push("runtimeAdmissionStatus must be PASS after runtime_test_admission approval.");
   }
-  if (matrix.dormitoryFirstGoldenChainLandingStatus?.status !== "PASS") {
-    failures.push("dormitoryFirstGoldenChainLandingStatus must be PASS after business_landing_admission approval.");
+  const expectedBusinessLandingStatus = finalReport.dormitoryFirstGoldenChainLandingGoNoGo === "GO" ? "PASS" : "NO_GO";
+  if (matrix.dormitoryFirstGoldenChainLandingStatus?.status !== expectedBusinessLandingStatus) {
+    failures.push(`dormitoryFirstGoldenChainLandingStatus must be ${expectedBusinessLandingStatus} for the current business landing authority state.`);
   }
   if (matrix.runtimeConsumptionStatus?.status !== "PASS") {
     failures.push("runtimeConsumptionStatus must be PASS after runtime_test_admission approval.");

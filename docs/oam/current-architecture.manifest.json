@@ -361,7 +361,6 @@
       "docs/oam/capabilities/dormitory-first-golden-chain.registry.json",
       "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
       "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
-      "docs/oam/capabilities/compatibility-box.current.json",
       "docs/oam/capabilities/dormitory-first-golden-chain.state-machine.json",
       "docs/oam/control-plane/gate-lane-taxonomy.current.json",
       "docs/oam/runtime-stability-lane.current.json",
@@ -391,7 +390,11 @@
       "artifacts/oam/checks/current-head-authoritative-artifact-reconciliation-result.json",
       "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
       "artifacts/oam/checks/dormitory-candidate-artifact-attestation-package-result.json",
-      "docs/oam/generated-compile-candidate-approval.current.json"
+      "docs/oam/generated-compile-candidate-approval.current.json",
+      "docs/oam/compatibility/compatibility-box.current.json",
+      "docs/contracts/slice-manifest.json",
+      "docs/contracts/production-slice-manifest.json",
+      "docs/oam/compatibility/legacy-slice-manifest.json"
     ],
     "binding": [
       "commitSha",
@@ -490,7 +493,8 @@
       "generatedCompileCompleted",
       "runtimeConsumptionReady",
       "finalGoNoGo",
-      "nextStageAllowed"
+      "nextStageAllowed",
+      "productionConfirmationDigest"
     ]
   }
 }

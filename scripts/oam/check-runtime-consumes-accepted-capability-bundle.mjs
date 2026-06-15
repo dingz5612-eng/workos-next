@@ -10,6 +10,8 @@ import { GENERATED_CANDIDATE_ACCEPTANCE_PATH } from "./lib/generated-candidate-s
 const root = process.cwd();
 const resultPath = "artifacts/oam/checks/runtime-consumes-accepted-capability-bundle-result.json";
 const acceptance = readJsonIfExists(GENERATED_CANDIDATE_ACCEPTANCE_PATH, root);
+const generatedRuntimeProjectionPath = "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json";
+const generatedRuntimeProjection = readJsonIfExists(generatedRuntimeProjectionPath, root);
 const projectionSource = read("services/core-api/WorkOS.Api/Runtime/AcceptedCapabilityRuntimeProjection.cs");
 const projectionSeed = read("services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs");
 const projectionRuntime = read("services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs");
@@ -30,17 +32,33 @@ if (acceptance?.decisionStatus !== "ACCEPTED_BY_00") {
   failures.push("generated candidate must be ACCEPTED_BY_00 before runtime consumes accepted capability bundle.");
 }
 if (!isDigest(acceptedDigest)) failures.push("acceptedGeneratedBundleDigest must be a sha256 digest.");
-if (!projectionSource.includes(`CapabilityId = "${CAPABILITY_ID}"`)) {
-  failures.push("AcceptedCapabilityRuntimeProjection must bind Dormitory.FirstGoldenChain.");
+if (generatedRuntimeProjection?.generated !== true ||
+  generatedRuntimeProjection?.doNotEdit !== true ||
+  generatedRuntimeProjection?.generatedBy !== "scripts/oam/compile-current-capability.mjs") {
+  failures.push("generated runtime projection must be emitted by capability compiler.");
 }
-if (!projectionSource.includes(`AcceptedGeneratedBundleDigest = "${acceptedDigest}"`)) {
-  failures.push("AcceptedCapabilityRuntimeProjection.AcceptedGeneratedBundleDigest must equal acceptedGeneratedBundleDigest.");
+if (generatedRuntimeProjection?.capabilityId !== CAPABILITY_ID) {
+  failures.push("generated runtime projection must bind Dormitory.FirstGoldenChain.");
+}
+if (generatedRuntimeProjection?.acceptedGeneratedBundleDigest !== acceptedDigest) {
+  failures.push("generated runtime projection acceptedGeneratedBundleDigest must equal acceptedGeneratedBundleDigest.");
 }
 for (const cardId of requiredCards) {
-  if (!projectionSource.includes(cardId)) failures.push(`AcceptedCapabilityRuntimeProjection missing required card ${cardId}.`);
+  if (!(generatedRuntimeProjection?.steps ?? []).some((step) => step.cardId === cardId && step.workItemType === cardId)) {
+    failures.push(`generated runtime projection missing required card ${cardId}.`);
+  }
+  if (projectionSource.includes(`"${cardId}"`)) {
+    failures.push(`AcceptedCapabilityRuntimeProjection must not handwrite required card ${cardId}; use generated runtime projection.`);
+  }
 }
 for (const term of forbiddenActiveRuntimeTerms) {
   if (projectionSource.includes(term)) failures.push(`accepted runtime projection must not contain ${term}.`);
+  if (JSON.stringify(generatedRuntimeProjection ?? {}).includes(term)) {
+    failures.push(`generated runtime projection must not contain ${term}.`);
+  }
+}
+if (projectionSource.includes(acceptedDigest)) {
+  failures.push("AcceptedCapabilityRuntimeProjection must not handwrite acceptedGeneratedBundleDigest.");
 }
 if (!projectionSeed.includes("AcceptedCapabilityRuntimeProjection.Workspace()")) {
   failures.push("ProjectionSeed must seed AcceptedCapabilityRuntimeProjection.Workspace().");
@@ -59,7 +77,8 @@ const result = {
   status: failures.length === 0 ? "PASS" : "NO_GO",
   capabilityId: CAPABILITY_ID,
   acceptedGeneratedBundleDigest: acceptedDigest ?? null,
-  runtimeProjectionDigestSource: "AcceptedCapabilityRuntimeProjection.AcceptedGeneratedBundleDigest",
+  generatedRuntimeProjectionPath,
+  runtimeProjectionDigestSource: "GeneratedCapabilityRuntimeProjection.generated.json",
   runtimeProjectionDigestMatchesAcceptedGeneratedBundleDigest: failures.length === 0,
   activeRuntimeCardIds: requiredCards,
   workspaceSeedCatalogDrivesCurrentFirstGoldenChain: false,

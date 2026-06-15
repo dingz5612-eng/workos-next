@@ -9,7 +9,9 @@ import {
 const root = process.cwd();
 const resultPath = "artifacts/oam/checks/surface-consumes-generated-surface-model-result.json";
 const generatedModelPath = "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json";
+const generatedCapabilityProjectionPath = "apps/mobile/src/generated/oam/capability-projection.generated.json";
 const generatedModel = readJsonIfExists(generatedModelPath, root);
+const generatedCapabilityProjection = readJsonIfExists(generatedCapabilityProjectionPath, root);
 const capabilityProjection = read("apps/mobile/src/capabilityProjection.js");
 const operationFieldKernel = read("apps/mobile/src/operationFieldKernel.js");
 const workspaceView = read("apps/mobile/src/views/workspaceView.js");
@@ -29,6 +31,9 @@ if (generatedModel?.surfaceOnlyConsumesGeneratedSurfaceModel !== true) {
 if (!capabilityProjection.includes(`import generatedSurfaceModel from "./generated/oam/dormitory-surface-input-model.generated.json"`)) {
   failures.push("capabilityProjection must import the generated surface input model.");
 }
+if (!capabilityProjection.includes(`import capabilityProjection from "./generated/oam/capability-projection.generated.json"`)) {
+  failures.push("capabilityProjection must import the compiler generated capability projection.");
+}
 if (!operationFieldKernel.includes("generatedFieldOrderForCard")) {
   failures.push("operationFieldKernel must use generatedFieldOrderForCard for current capability field order.");
 }
@@ -45,6 +50,12 @@ if (!experienceComponents.includes("isBedSetupCardId")) {
   failures.push("experienceComponents must recognize generated bed setup card id.");
 }
 for (const workItem of expectedWorkItems) {
+  if (!(generatedCapabilityProjection?.steps ?? []).some((step) => step.workItemType === workItem && step.cardId === workItem)) {
+    failures.push(`generated capability projection missing current work item ${workItem}.`);
+  }
+  if (capabilityProjection.includes(`"${workItem}"`)) {
+    failures.push(`capabilityProjection adapter must not handwrite current work item ${workItem}.`);
+  }
   const controls = (generatedModel?.controls ?? []).filter((item) => item.workItemType === workItem);
   if (!controls.length) failures.push(`generated surface model missing controls for ${workItem}.`);
   if (!systemContextContract.includes(`"${workItem}"`)) {
@@ -70,6 +81,7 @@ const result = {
   status: failures.length === 0 ? "PASS" : "NO_GO",
   capabilityId: CAPABILITY_ID,
   generatedSurfaceModelPath: generatedModelPath,
+  generatedCapabilityProjectionPath,
   generatedSurfaceModelDigest: generatedModel?.outputContentDigest ?? null,
   currentWorkItems: expectedWorkItems,
   surfaceUsesGeneratedModelForCurrentCapability: failures.length === 0,

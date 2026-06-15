@@ -27,12 +27,20 @@ import {
   validateDormitoryFirstGoldenChainLandingAuthority
 } from "./lib/dormitory-first-golden-chain-landing.mjs";
 import {
+  FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH,
   FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH,
   FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_SCREENSHOT_INDEX_PATH,
   FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH,
+  FIRST_GOLDEN_CHAIN_DB_PROJECTION_PROOF_RESULT_PATH,
   FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH,
   buildProjectionDigestChain
 } from "./lib/capability-projection-digests.mjs";
+import {
+  CAPABILITY_COMPATIBILITY_BOX_PATH,
+  CAPABILITY_LEDGER_PATH,
+  CAPABILITY_PROJECTION_PATH,
+  CAPABILITY_REGISTRY_PATH
+} from "./lib/capability-delivery-control-plane.mjs";
 
 const root = process.cwd();
 const evidenceDir = "artifacts/oam/evidence";
@@ -60,7 +68,14 @@ const generatedCompileExecutionProofPath = "artifacts/oam/evidence/generated-com
 const generatedFieldBindingClosureResultPath = FIELD_BINDING_CLOSURE_RESULT_PATH;
 const generatedFieldBindingsPath = FIELD_BINDINGS_GENERATED_PATH;
 const ciArtifactProvenanceReportPath = "artifacts/oam/checks/ci-artifact-provenance-report.json";
+const capabilityRegistryPath = CAPABILITY_REGISTRY_PATH;
+const capabilityLedgerPath = CAPABILITY_LEDGER_PATH;
+const capabilityProjectionPath = CAPABILITY_PROJECTION_PATH;
+const capabilityCompatibilityBoxPath = CAPABILITY_COMPATIBILITY_BOX_PATH;
 const capabilityStateMachinePath = "docs/oam/capabilities/dormitory-first-golden-chain.state-machine.json";
+const sliceManifestPath = "docs/contracts/slice-manifest.json";
+const productionSliceManifestPath = "docs/contracts/production-slice-manifest.json";
+const legacySliceManifestPath = "docs/oam/compatibility/legacy-slice-manifest.json";
 const gateLaneTaxonomyPath = "docs/oam/control-plane/gate-lane-taxonomy.current.json";
 const runtimeStabilityLanePath = "docs/oam/runtime-stability-lane.current.json";
 const evidenceProjectionPolicyPath = "docs/oam/evidence-projection-policy.current.json";
@@ -166,8 +181,10 @@ const requiredEvidenceFiles = [
   "docs/contracts/generated/dormitory/read-model.generated.json",
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
   FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH,
+  FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH,
   FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH,
   FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH,
+  FIRST_GOLDEN_CHAIN_DB_PROJECTION_PROOF_RESULT_PATH,
   testPlanGeneratedFromCapabilityResultPath,
   evidenceDigestChainSingleSourceResultPath,
   "docs/read-intelligence/read-intelligence-kernel.json",
@@ -193,7 +210,14 @@ const requiredEvidenceFiles = [
   "artifacts/oam/checks/generated-contract-consistency-result.json",
   "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
   "artifacts/oam/checks/dormitory-candidate-artifact-attestation-package-result.json",
+  capabilityRegistryPath,
+  capabilityLedgerPath,
+  capabilityProjectionPath,
+  capabilityCompatibilityBoxPath,
   capabilityStateMachinePath,
+  sliceManifestPath,
+  productionSliceManifestPath,
+  legacySliceManifestPath,
   gateLaneTaxonomyPath,
   runtimeStabilityLanePath,
   evidenceProjectionPolicyPath,
@@ -310,6 +334,7 @@ const firstGoldenChainBrowserAuditResult = readJsonIfExists(FIRST_GOLDEN_CHAIN_B
 const capabilityDigestChain = {
   version: "oam.capability-evidence-digest-chain.v1",
   capabilityId: capabilityProjectionDigestChain.capabilityId,
+  authorityLedgerDigest: capabilityProjectionDigestChain.authorityLedgerDigest,
   acceptedGeneratedBundleDigest: capabilityProjectionDigestChain.acceptedGeneratedBundleDigest,
   runtimeProjectionDigest: capabilityProjectionDigestChain.runtimeProjectionDigest,
   surfaceProjectionDigest: capabilityProjectionDigestChain.surfaceProjectionDigest,
@@ -318,6 +343,7 @@ const capabilityDigestChain = {
   browserAuditDigest: firstGoldenChainBrowserAuditReport.browserAuditDigest ??
     firstGoldenChainBrowserAuditResult.browserAuditDigest ??
     "missing",
+  dbProjectionProofDigest: capabilityProjectionDigestChain.dbProjectionProofDigest,
   evidenceRootDigest: evidenceRootDigestPlaceholder,
   runtimeConsumptionReady: dormitoryRuntimeAdmission.runtimeConsumptionReady === true ? "test_only" : false,
   productionConfirmAllowed: false,
@@ -1283,6 +1309,7 @@ const releaseAttestation = {
   nextStageAllowed: false
 };
 addEvidence(releaseAttestationPath, releaseAttestation);
+addEvidence(FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH, capabilityDigestChain);
 addEvidence(dormitoryRuntimeTestOnlyProofPath, buildDormitoryRuntimeTestOnlyEvidenceProof());
 addEvidence(dormitoryFirstGoldenChainLandingProofPath, buildDormitoryFirstGoldenChainBusinessLandingEvidenceProof());
 addTextEvidence("artifacts/oam/evidence/execution-log.jsonl", executionLogText(digestPlaceholder));
@@ -3196,7 +3223,7 @@ function buildDormitoryFirstGoldenChainBusinessLandingEvidenceProof() {
     financePostingAllowed: false,
     dormitoryL2Allowed: false,
     releaseAuthority: false,
-    businessGoAuthority: true,
+    businessGoAuthority: dormitoryFirstGoldenChainLandingGoNoGo === "GO",
     finalGoNoGo: "NO_GO",
     binding: binding("dormitory-first-golden-chain-business-landing-proof"),
     gateSummary,
@@ -3278,7 +3305,7 @@ function buildDormitoryFirstGoldenChainLandingProofNodes() {
     releaseAuthority: false,
     goNoGo: dormitoryFirstGoldenChainLandingGoNoGo,
     finalGoNoGo: "NO_GO",
-    businessGoAuthority: true,
+    businessGoAuthority: dormitoryFirstGoldenChainLandingGoNoGo === "GO",
     goNoGoImpact: ["dormitoryFirstGoldenChainLandingStatus", "businessFeatureDevelopmentAllowed", "finalGoNoGo"],
     notesZh: "Dormitory first golden chain L1 business landing authority node; 只开放 RoomSetupConfirm -> BedSetupConfirm -> ResourceReadinessConfirm 三核业务落地，不开放 Finance、Dormitory L2、production_confirm、release 或 final GO。"
   }];
@@ -3379,7 +3406,7 @@ function dormitoryFirstGoldenChainLandingBinding(proofId) {
     financePostingAllowed: false,
     dormitoryL2Allowed: false,
     releaseAuthority: false,
-    businessGoAuthority: true,
+    businessGoAuthority: dormitoryFirstGoldenChainLandingGoNoGo === "GO",
     finalGoNoGo: "NO_GO"
   };
 }

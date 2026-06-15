@@ -1,3 +1,9 @@
+import capabilityProjection from "../generated/oam/capability-projection.generated.json" with { type: "json" };
+
+const generatedOptionLabels = (optionSet) => Object.fromEntries(
+  (capabilityProjection.optionSets?.[optionSet] || []).map((item) => [item.value, item.label?.["zh-CN"] || item.value])
+);
+
 const optionValueLabels = {
   roomType: {
     single: "单人间",
@@ -22,12 +28,8 @@ const optionValueLabels = {
     not_ready: "未准备",
     repair_required: "需维修"
   },
-  bunkType: {
-    bunk_pair: "上下铺：两上两下",
-    upper: "全部上铺",
-    lower: "全部下铺",
-    whole: "全部平铺"
-  },
+  bunkType: generatedOptionLabels("bunkType"),
+  readinessState: generatedOptionLabels("readinessState"),
   messenger: {
     whatsapp: "WhatsApp",
     phone: "电话",
@@ -64,7 +66,8 @@ const optionValueLabels = {
 };
 
 const preferredDefaults = {
-  bunkType: "whole"
+  bunkType: capabilityProjection.optionSetDefaults?.bunkType?.oneBed || "whole",
+  readinessState: capabilityProjection.optionSetDefaults?.readinessState?.default || ""
 };
 
 export function canonicalOptionLabels(optionSet) {

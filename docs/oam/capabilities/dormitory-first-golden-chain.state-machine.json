@@ -11,7 +11,7 @@
     "RELEASE_AUTHORIZED"
   ],
   "currentStateSource": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
-  "currentState": "BUSINESS_LANDING_ADMITTED",
+  "currentState": "RUNTIME_TEST_ADMITTED",
   "transitionRules": {
     "previousStateMustPassBeforeNext": true,
     "nextStateMayOnlyReferencePreviousStateDigest": true,
@@ -31,5 +31,5 @@
     "Final Report PASS is projection only",
     "Release Evidence Object PASS is projection only"
   ],
-  "currentStateDigest": "sha256:e81d7d9291c9509e46113db9d45c12ebecddbd9cb6ddb9c43ae22b2dabfb31e8"
+  "currentStateDigest": "sha256:152f6ba064d5db911ed87af49b6d6f3a0270ea8e20751d9fa80e9738ed3b3233"
 }
