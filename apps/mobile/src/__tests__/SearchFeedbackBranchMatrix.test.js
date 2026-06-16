@@ -69,9 +69,9 @@ describe("Search and feedback branch matrix", () => {
   it("renders feedback messages as collaboration records, not business facts", () => {
     const ctx = createSurfaceCtx({
       view: "feedback",
-      selectedWorkspace: "W-STAY-RESOURCE",
-      selectedCardId: "roomSetup",
-      selectedWorkItemId: "W-STAY-RESOURCE:roomSetup",
+      selectedWorkspace: "W-DORM-MAINLINE",
+      selectedCardId: "cert.roomSetupConfirm",
+      selectedWorkItemId: "wi-dorm-room-setup",
       feedbackMessage: { status: "localPending", message: "本地排队" }
     });
     localStorage.setItem(feedbackStorageKey(ctx.state.currentActor), JSON.stringify([
@@ -102,8 +102,8 @@ describe("Search and feedback branch matrix", () => {
     expect(html).toContain("localPending");
     expect(html).toContain("&lt;owner&gt;");
     expect(html).toContain("不能写业务事实 &lt;script&gt;");
-    expect(text).toContain("住宿资源");
-    expect(text).toContain("房间床位配置");
+    expect(text).toContain("房源建档与基础就绪");
+    expect(text).toContain("房间建档确认");
   });
 
   it("keeps feedback context safe when no workspace, card, role, or messages exist", () => {

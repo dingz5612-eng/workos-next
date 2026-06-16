@@ -10,7 +10,7 @@ describe("OAM Surface experience module productization", () => {
     const technicalDetails = html.match(/<details class="operation-technical-details"[\s\S]*?<\/details>/)?.[0] || "";
     const ordinaryHtml = html.replace(technicalDetails, "");
 
-    expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
+    expect(html).toContain('data-work-item-id="wi-dorm-room-setup"');
     expect(technicalDetails).toContain("data-case-id");
     expect(technicalDetails).toContain("data-submission-id");
     expect(technicalDetails).toContain("data-payload-fingerprint");

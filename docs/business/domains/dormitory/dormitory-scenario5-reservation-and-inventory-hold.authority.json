@@ -576,7 +576,7 @@
     }
   ],
   "fields": {
-    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“张三，6 月 20 日至 6 月 23 日，301 房间，已锁定至 20:00”“预订号 R202606200001”。",
+    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“客户姓名已脱敏，6 月 20 日至 6 月 23 日，301 房间，已锁定至 20:00”“预订号 R202606200001”。",
     "upstreamReadonly": [
       "customerName",
       "contactPhone",

@@ -9,29 +9,29 @@
     "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:dfe996d93c0b4f21c229da2f0f8e9d72546125702021e577ca413a664b5628a8",
+  "inputDigest": "sha256:2c9920211ea7752058078fe40c5d139a667b84f0e302a6c553fe4e12e2cd7cd0",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
-      "digest": "sha256:61776719e14686b53f99673241cdc89a17eb6ea4979e51fff1f70d74c4b34767"
+      "digest": "sha256:a7605c91feec7e7c257c305da409023ef73d9cb5024a95d09bfbbb142e423c52"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:61776719e14686b53f99673241cdc89a17eb6ea4979e51fff1f70d74c4b34767",
+  "sourceContentDigest": "sha256:a7605c91feec7e7c257c305da409023ef73d9cb5024a95d09bfbbb142e423c52",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario7.CheckInProcessing",
   "scenarioPackageNo": 7,
   "scenarioId": "lodging.check-in-processing",
-  "outputContentDigest": "sha256:bf4d91d95f7fab0e9ea5d976b532c5bcdfe3ab612428749f93408d02a7a875f3",
+  "outputContentDigest": "sha256:c6e9f55dc013af938ea7bcf20c54a720475e02bff7e4e78a08f0a4f0b7ddc1fd",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "入住办理",
   "businessGoalZh": "承接已确认预订、财务确认摘要和房源运营状态摘要，核验客户到店、身份信息、入住协议、预订信息、房间/床位当前可入住状态后，生成入住记录、占用记录和入住凭证。",
-  "sourceScenarioDigest": "sha256:61776719e14686b53f99673241cdc89a17eb6ea4979e51fff1f70d74c4b34767",
+  "sourceScenarioDigest": "sha256:a7605c91feec7e7c257c305da409023ef73d9cb5024a95d09bfbbb142e423c52",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "objects": [
     {

@@ -72,20 +72,31 @@ describe("Operation field kernel contract", () => {
       label: { "zh-CN": "床型模板" },
       ui: { control: "select", optionSet: "bunkType" }
     };
-    const card = { id: "bedSetup" };
+    const card = { id: "cert.bedSetupConfirm" };
 
     expect(taskDisplayLabel(bedTypeField, "bedType", card, zhCtx)).toBe("床铺生成方式");
     expect(taskDisplayValue(bedTypeField, "bedType", "bunk_pair", zhCtx)).toBe("上下铺：两上两下");
     expect(bedLayoutPreviewValue("4", "bunk_pair", zhCtx)).toContain("01 · 上铺");
     expect(bedLayoutPreviewValue("4", "bunk_pair", zhCtx)).toContain("04 · 下铺");
-    expect(preferredTaskFieldIds("bedSetup")).toEqual(["bedLabels", "bedType", "bedCount"]);
+    expect(preferredTaskFieldIds("cert.bedSetupConfirm")).toEqual([
+      "bedType",
+      "bedRemark",
+      "specialNotes",
+      "bedEnabledStatus",
+      "bedTypeBatchSetting",
+      "bedSetRef",
+      "bedRef[01..N]",
+      "bedNo[01..N]",
+      "bedSetVersion",
+      "bedCountMatchedFlag"
+    ]);
   });
 
   it("keeps controllers and views from copying private field rules", () => {
-    const controller = fs.readFileSync("src/operationController.js", "utf8");
-    const workspace = fs.readFileSync("src/views/workspaceView.js", "utf8");
-    const fieldSourceRenderer = fs.readFileSync("src/fieldSourceRenderer.js", "utf8");
-    const components = fs.readFileSync("src/views/experienceComponents.js", "utf8");
+    const controller = fs.readFileSync(new URL("../operationController.js", import.meta.url), "utf8");
+    const workspace = fs.readFileSync(new URL("../views/workspaceView.js", import.meta.url), "utf8");
+    const fieldSourceRenderer = fs.readFileSync(new URL("../fieldSourceRenderer.js", import.meta.url), "utf8");
+    const components = fs.readFileSync(new URL("../views/experienceComponents.js", import.meta.url), "utf8");
 
     expect(controller).toContain('from "./operationFieldKernel.js"');
     expect(controller).not.toContain('from "./views/workspaceView.js"');

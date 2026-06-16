@@ -578,7 +578,7 @@
     }
   ],
   "fields": {
-    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“张三，预订号 R202606200001，房费待确认 540 元，押金待确认 300 元”。",
+    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“客户姓名已脱敏，预订号 R202606200001，房费待确认 540 元，押金待确认 300 元”。",
     "upstreamReadonly": [
       "reservationNoDisplay",
       "customerName",

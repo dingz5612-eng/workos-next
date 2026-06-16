@@ -194,12 +194,17 @@
       ],
       "verificationScripts": [
         "node scripts/oam/check-lodging-consumer-graph.mjs",
-        "node scripts/oam/check-current-evidence-root.mjs"
+        "node scripts/oam/check-current-evidence-root.mjs",
+        "node scripts/oam/check-dormitory-ci-hard-gates.mjs",
+        "node scripts/oam/check-evidence-root-hard-gate-matrix.mjs"
       ],
       "blocksEvidenceRoot": true,
       "blocksCI": true,
-      "status": "open",
-      "closingEvidence": []
+      "status": "closed",
+      "closingEvidence": [
+        "artifacts/oam/checks/dormitory-ci-hard-gates-result.json",
+        "artifacts/oam/checks/evidence-root-hard-gate-matrix-result.json"
+      ]
     },
     {
       "defectId": "DORM-P0-006",
@@ -224,12 +229,18 @@
       ],
       "verificationScripts": [
         "node scripts/oam/check-current-evidence-root.mjs",
-        "node scripts/oam/check-dormitory-mainline-manifest.mjs"
+        "node scripts/oam/check-dormitory-mainline-manifest.mjs",
+        "node scripts/oam/check-evidence-root-hard-gate-matrix.mjs",
+        "node scripts/oam/check-dormitory-mainline-activation-transaction.mjs"
       ],
       "blocksEvidenceRoot": true,
       "blocksCI": true,
-      "status": "open",
-      "closingEvidence": []
+      "status": "closed",
+      "closingEvidence": [
+        "artifacts/oam/evidence/evidence-graph.json",
+        "artifacts/oam/checks/evidence-root-hard-gate-matrix-result.json",
+        "artifacts/oam/checks/dormitory-mainline-activation-transaction-result.json"
+      ]
     },
     {
       "defectId": "DORM-P1-007",
@@ -341,16 +352,22 @@
       ],
       "rootCauseZh": "同类问题复发后的自动重新打开和复验链路仍需接入完整 CI/Evidence Root。",
       "fixActionsZh": [
-        "后续把 ledger checker 接入 CI。",
-        "同类失败出现时自动从 closed 回到 open。"
+        "把 ledger checker 接入 CI。",
+        "把 CI/Evidence Root/Activation Transaction 作为同类复发的硬复验链路。"
       ],
       "verificationScripts": [
-        "node scripts/oam/check-dormitory-defect-closure-ledger.mjs"
+        "node scripts/oam/check-dormitory-defect-closure-ledger.mjs",
+        "node scripts/oam/check-dormitory-ci-hard-gates.mjs",
+        "node scripts/oam/check-evidence-root-hard-gate-matrix.mjs"
       ],
       "blocksEvidenceRoot": false,
       "blocksCI": false,
-      "status": "open",
-      "closingEvidence": []
+      "status": "closed",
+      "closingEvidence": [
+        "artifacts/oam/checks/dormitory-defect-closure-ledger-result.json",
+        "artifacts/oam/checks/dormitory-ci-hard-gates-result.json",
+        "artifacts/oam/checks/evidence-root-hard-gate-matrix-result.json"
+      ]
     }
   ],
   "verificationScript": "scripts/oam/check-dormitory-defect-closure-ledger.mjs"

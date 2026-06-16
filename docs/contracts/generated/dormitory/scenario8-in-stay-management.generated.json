@@ -9,29 +9,29 @@
     "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:816bca1a04345f64527e4042745256a6d87ead3f79ea9febf785954edb6af751",
+  "inputDigest": "sha256:d0ccfb8ced0d68616d4b1984da54a61ca5aae4e4be638e796c4735f78611d627",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
-      "digest": "sha256:3b010d55e0e797f9c1502d9fc13e28e286a18c7d012dbf83e7fb80cc31c485ce"
+      "digest": "sha256:45f76e796674c317bf196485ded7f511dd66bcc87bc2eec826aee36642647fab"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:3b010d55e0e797f9c1502d9fc13e28e286a18c7d012dbf83e7fb80cc31c485ce",
+  "sourceContentDigest": "sha256:45f76e796674c317bf196485ded7f511dd66bcc87bc2eec826aee36642647fab",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario8.InStayManagement",
   "scenarioPackageNo": 8,
   "scenarioId": "lodging.in-stay-management",
-  "outputContentDigest": "sha256:51a1cef2a6990a827b1d3783acf3b6635c72814a0939e7d8ec184306b30fbdcf",
+  "outputContentDigest": "sha256:e8fcaf114e5755f26187b865fa3b784cf0fcc66d7be66fbdc9905b350f649a35",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "在住管理",
   "businessGoalZh": "承接场景包 7 已确认入住后的只读入住摘要，在在住期间维护在住状态、入住凭证、续住申请、换房/换床申请、在住服务请求、在住异常记录，并为场景包 9 输出退房准备摘要。",
-  "sourceScenarioDigest": "sha256:3b010d55e0e797f9c1502d9fc13e28e286a18c7d012dbf83e7fb80cc31c485ce",
+  "sourceScenarioDigest": "sha256:45f76e796674c317bf196485ded7f511dd66bcc87bc2eec826aee36642647fab",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "packageIndexRow": {
     "packageNo": 8,

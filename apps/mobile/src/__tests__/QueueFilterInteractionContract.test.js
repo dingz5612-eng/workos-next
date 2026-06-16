@@ -12,7 +12,7 @@ describe("OAM Surface queue filter interaction contract", () => {
     setWorkFilter("accommodation", ctx);
 
     expect(ctx.state.queueFilters.domain).toBe("stay");
-    expect(queueTasks(ctx.state).map((item) => item.workspaceId)).toEqual(["W-STAY-RESOURCE"]);
+    expect(queueTasks(ctx.state).map((item) => item.workspaceId)).toEqual(["W-DORM-MAINLINE"]);
 
     ctx.state.runtimeStore.workQueue[0].evidenceState = "missing";
     setWorkFilter("need-evidence", ctx);
@@ -49,10 +49,10 @@ describe("OAM Surface queue filter interaction contract", () => {
     const ctx = queueCtx();
     ctx.state.runtimeStore.workQueue.push({
       queueItemId: "q-ledger-correction",
-      workItemId: "W-STAY-RESOURCE:ledgerCorrectionApply",
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "roomSetup",
-      workItemType: "ledgerCorrectionApply",
+      workItemId: "wi-finance-correction",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "financeCorrectionRequest",
+      workItemType: "Finance.LedgerCorrectionApply",
       lifecycleState: "ready",
       ownerRole: "operator",
       badges: ["mine"],
@@ -61,9 +61,9 @@ describe("OAM Surface queue filter interaction contract", () => {
 
     const ids = queueTasks(ctx.state).map((item) => item.workItemId);
 
-    expect(ids).toContain("W-STAY-RESOURCE:roomSetup");
+    expect(ids).toContain("wi-dorm-room-setup");
     expect(ids).not.toContain("W-REPAIR-TICKET:repairCheck");
-    expect(ids).not.toContain("W-STAY-RESOURCE:ledgerCorrectionApply");
+    expect(ids).not.toContain("wi-finance-correction");
   });
 
   it("renders one visible filter surface and keeps advanced filters out of the default workbench", () => {
@@ -123,27 +123,27 @@ describe("OAM Surface queue filter interaction contract", () => {
     const ctx = queueCtx();
     ctx.state.runtimeStore.workQueue.push({
       queueItemId: "q-completed-room",
-      workItemId: "W-STAY-RESOURCE:completedRoomSetup",
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "roomSetup",
-      workItemType: "Dorm.RoomSetup",
+      workItemId: "wi-dorm-completed-room-setup",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm",
+      workItemType: "Dorm.RoomSetupConfirm",
       lifecycleState: "confirmed",
       badges: ["mine"],
       reason: "已完成"
     });
 
-    expect(queueTasks(ctx.state).map((item) => item.workItemId)).not.toContain("W-STAY-RESOURCE:completedRoomSetup");
-    expect(selectCompletedWorkbenchQueue(ctx.state).map((item) => item.workItemId)).toContain("W-STAY-RESOURCE:completedRoomSetup");
+    expect(queueTasks(ctx.state).map((item) => item.workItemId)).not.toContain("wi-dorm-completed-room-setup");
+    expect(selectCompletedWorkbenchQueue(ctx.state).map((item) => item.workItemId)).toContain("wi-dorm-completed-room-setup");
   });
 
   it("renders completed WorkItems as read-only records", () => {
     const ctx = queueCtx();
     ctx.state.runtimeStore.workQueue.push({
       queueItemId: "q-completed-room",
-      workItemId: "W-STAY-RESOURCE:completedRoomSetup",
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "roomSetup",
-      workItemType: "Dorm.RoomSetup",
+      workItemId: "wi-dorm-completed-room-setup",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm",
+      workItemType: "Dorm.RoomSetupConfirm",
       lifecycleState: "confirmed",
       badges: ["mine"],
       reason: "已完成"
@@ -152,7 +152,7 @@ describe("OAM Surface queue filter interaction contract", () => {
 
     expect(html).toContain("已完成记录");
     expect(html).toContain(">查看记录</button>");
-    expect(html).not.toContain('data-work-item-id="W-STAY-RESOURCE:completedRoomSetup"');
+    expect(html).not.toContain('data-work-item-id="wi-dorm-completed-room-setup"');
   });
 
   it("keeps the workbench quiet when there are no active tasks", () => {

@@ -9,29 +9,29 @@
     "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:7d3fd459b1704279da0740a7ae08e69a68206471fe6c555575fc5f0576e58cee",
+  "inputDigest": "sha256:c10ea76dbac0da4b9de5a06a079fe196aa82c3048fa14c4dc5d1fdb2223325ba",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
-      "digest": "sha256:a49db1a824986e97c55b25f234fd4accdc2f78f05bc2114877d2464e28ffc396"
+      "digest": "sha256:d47c4d7991c4df02f763db9f31ab6f6b3a0ce8d426aaaed252100ab82554efc9"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:a49db1a824986e97c55b25f234fd4accdc2f78f05bc2114877d2464e28ffc396",
+  "sourceContentDigest": "sha256:d47c4d7991c4df02f763db9f31ab6f6b3a0ce8d426aaaed252100ab82554efc9",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario4.InquiryAndQuote",
   "scenarioPackageNo": 4,
   "scenarioId": "lodging.inquiry-and-quote",
-  "outputContentDigest": "sha256:e8de6a6f42ea9c57b29650882eda50dd9a7cf386c4956140578fc525092d23df",
+  "outputContentDigest": "sha256:ae9830d93eb9772e00c4013c5cb185e0c30aca345132df0c68b02b8dafe296bb",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "询价与报价",
   "businessGoalZh": "承接场景包 1 的房源摘要、场景包 2 的运营状态摘要、场景包 3 的商品与价格摘要，为客户生成询价记录、报价方案、报价单、报价版本和报价有效期。",
-  "sourceScenarioDigest": "sha256:a49db1a824986e97c55b25f234fd4accdc2f78f05bc2114877d2464e28ffc396",
+  "sourceScenarioDigest": "sha256:d47c4d7991c4df02f763db9f31ab6f6b3a0ce8d426aaaed252100ab82554efc9",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "commands": [
     {

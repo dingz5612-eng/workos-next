@@ -269,7 +269,7 @@ function checkStepsAndFields() {
     if (!(scenario.fields?.systemGenerated ?? []).includes(expected)) fail(`system generated field missing ${expected}.`);
   }
   assertArray(scenario.fields?.forbiddenUserInputFields, forbiddenUserInput, "forbidden user input fields");
-  if (!String(scenario.fields?.userReadableNamesOnlyZh ?? "").includes("张三") ||
+  if (!String(scenario.fields?.userReadableNamesOnlyZh ?? "").includes("住客姓名已脱敏") ||
     !String(scenario.fields?.userReadableNamesOnlyZh ?? "").includes("正常在住")) {
     fail("user readable field rule must use business visible names.");
   }

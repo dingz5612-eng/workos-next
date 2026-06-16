@@ -9,29 +9,29 @@
     "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:cffa84c910c72c5fad442bc4d7b4d8d65115cc58d806b1762082bfcffdec4430",
+  "inputDigest": "sha256:c1356b635e7f6dd806bd460d0df82513fd25a6f5c508a7bc69cb0db3741b6fe8",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
-      "digest": "sha256:99ce884d2bf6fc1f168eaa20970dc4fe62535dafe0a6ce2a69a115c3a931de41"
+      "digest": "sha256:38d1164e645ee67f5709be4753f5bfedb95037196f416ec62e81895667ce68cf"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:99ce884d2bf6fc1f168eaa20970dc4fe62535dafe0a6ce2a69a115c3a931de41",
+  "sourceContentDigest": "sha256:38d1164e645ee67f5709be4753f5bfedb95037196f416ec62e81895667ce68cf",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
   "scenarioPackageNo": 6,
   "scenarioId": "lodging.payment-deposit-and-guarantee",
-  "outputContentDigest": "sha256:6ba1321c20765e98d5c66b95d3ddb4fb31509bf53d5ebb6517fcf12092825449",
+  "outputContentDigest": "sha256:7a84a38ca9a837eab1d6bc3d33eef9de78cfe7211f5c2f686761689da30f3265",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "收款、押金与担保",
   "businessGoalZh": "承接场景包 5 已确认预订，生成应收、押金和担保要求，采集收款凭证、押金凭证和担保信息，并通过 finance-gate 完成财务确认。",
-  "sourceScenarioDigest": "sha256:99ce884d2bf6fc1f168eaa20970dc4fe62535dafe0a6ce2a69a115c3a931de41",
+  "sourceScenarioDigest": "sha256:38d1164e645ee67f5709be4753f5bfedb95037196f416ec62e81895667ce68cf",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "steps": [
     {
@@ -318,7 +318,7 @@
     }
   ],
   "fields": {
-    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“张三，预订号 R202606200001，房费待确认 540 元，押金待确认 300 元”。",
+    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“客户姓名已脱敏，预订号 R202606200001，房费待确认 540 元，押金待确认 300 元”。",
     "upstreamReadonly": [
       "reservationNoDisplay",
       "customerName",

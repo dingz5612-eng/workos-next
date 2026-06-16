@@ -9,29 +9,29 @@
     "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:16104801cbbc1e755d5884c174421d102a5b98f71119e888b8e4341cf9b002c3",
+  "inputDigest": "sha256:678f6843c82982f49837296e763ed9dcea4523ae3fabb000376857e8fab67321",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
-      "digest": "sha256:aeea01a93fc218da847f1c763bd350121d955aaad4799428ca610b702b87db08"
+      "digest": "sha256:3b7ffa5e6624bfe0bc75ceff7e7103057d3827d835a3594c23a598a185c30676"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:aeea01a93fc218da847f1c763bd350121d955aaad4799428ca610b702b87db08",
+  "sourceContentDigest": "sha256:3b7ffa5e6624bfe0bc75ceff7e7103057d3827d835a3594c23a598a185c30676",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario10.CancelNoShowRefund",
   "scenarioPackageNo": 10,
   "scenarioId": "lodging.cancel-noshow-refund-intake",
-  "outputContentDigest": "sha256:1fb2e64b1881fabf7b4f4c89ebfa046c74cb454b2ff30b2c3408cd9c51b29416",
+  "outputContentDigest": "sha256:3c95a68b363547d21e372f5a0040202a9847473c36148c1ca0322589e976aca7",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "取消、未到店与退款处理",
   "businessGoalZh": "承接场景包 5 的预订确认摘要、场景包 6 的收款/押金/担保摘要、场景包 7 的入住状态摘要和场景包 9 的退房结算意向，处理预订取消、客户未到店、取消费/未到店费计算、退款或扣费申请、库存释放请求、客户确认和证据留存。",
-  "sourceScenarioDigest": "sha256:aeea01a93fc218da847f1c763bd350121d955aaad4799428ca610b702b87db08",
+  "sourceScenarioDigest": "sha256:3b7ffa5e6624bfe0bc75ceff7e7103057d3827d835a3594c23a598a185c30676",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "consumer": "finance-gate",
   "allowedInputs": [

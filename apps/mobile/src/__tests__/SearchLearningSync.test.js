@@ -20,7 +20,9 @@ describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
     expect(html).not.toContain("Release Control");
     expect(html).not.toContain("Finance admin");
 
-    expect(searchView(ctx({ view: "search", query: "新增房间" }))).toContain("主动办理");
+    const mainlineEntry = searchView(ctx({ view: "search", query: "新增房间" }));
+    expect(mainlineEntry).toContain("房源建档与基础就绪");
+    expect(mainlineEntry).not.toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
   });
 
   it("keeps learning and evidence libraries in Me instead of Search results", () => {
@@ -62,17 +64,17 @@ function ctx(overrides = {}) {
       workspaces: [workspace()],
       workQueue: [{
         queueItemId: "q-room",
-        workItemId: "W-STAY-RESOURCE:roomSetup",
-        workspaceId: "W-STAY-RESOURCE",
-        cardId: "roomSetup",
-        caseId: "case:W-STAY-RESOURCE",
-        workItemType: "Dorm.RoomSetup",
+        workItemId: "wi-dorm-room-setup",
+        workspaceId: "W-DORM-MAINLINE",
+        cardId: "cert.roomSetupConfirm",
+        caseId: "case:W-DORM-MAINLINE",
+        workItemType: "Dorm.RoomSetupConfirm",
         lifecycleState: "ready",
         ownerRole: "operator",
         badges: ["mine", "ready"],
         traceRefs: ["trace-room"],
         commandSubmissionId: "cmd-room",
-        reason: "先配置房间和床位"
+        reason: "发起房源建档与基础就绪"
       }],
       operationWorkItems: [],
       homeSurface: [],
@@ -96,18 +98,18 @@ function ctx(overrides = {}) {
 
 function workspace() {
   return {
-    id: "W-STAY-RESOURCE",
+    id: "W-DORM-MAINLINE",
     domain: "stay",
-    caseId: "case:W-STAY-RESOURCE",
-    title: { "zh-CN": "住宿资源" },
-    summary: { "zh-CN": "房间床位入住资源" },
-    next: { "zh-CN": "先配置房间和床位" },
+    caseId: "case:W-DORM-MAINLINE",
+    title: { "zh-CN": "房源建档与基础就绪" },
+    summary: { "zh-CN": "房间建档、床位组确认和基础就绪确认" },
+    next: { "zh-CN": "发起房源建档与基础就绪" },
     cards: [{
-      id: "roomSetup",
+      id: "cert.roomSetupConfirm",
       status: "ready",
-      title: { "zh-CN": "房间床位配置" },
+      title: { "zh-CN": "房间建档确认" },
       fields: { business: [], system: [], analytics: [] },
-      evidence: [{ id: "room-duplicate-check", label: { "zh-CN": "房间重复校验" } }],
+      evidence: [{ id: "room-basic-info-evidence", label: { "zh-CN": "房间基础资料证据" } }],
       blockerRules: [],
       confirmation: { required: true, requiredRole: "operator" }
     }]

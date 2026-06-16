@@ -9,29 +9,29 @@
     "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:816bca1a04345f64527e4042745256a6d87ead3f79ea9febf785954edb6af751",
+  "inputDigest": "sha256:d0ccfb8ced0d68616d4b1984da54a61ca5aae4e4be638e796c4735f78611d627",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
-      "digest": "sha256:3b010d55e0e797f9c1502d9fc13e28e286a18c7d012dbf83e7fb80cc31c485ce"
+      "digest": "sha256:45f76e796674c317bf196485ded7f511dd66bcc87bc2eec826aee36642647fab"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:3b010d55e0e797f9c1502d9fc13e28e286a18c7d012dbf83e7fb80cc31c485ce",
+  "sourceContentDigest": "sha256:45f76e796674c317bf196485ded7f511dd66bcc87bc2eec826aee36642647fab",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario8.InStayManagement",
   "scenarioPackageNo": 8,
   "scenarioId": "lodging.in-stay-management",
-  "outputContentDigest": "sha256:db6cd7adfb7889ede536517b97528768f2458685d49be4a1b8ce61400d27ae5d",
+  "outputContentDigest": "sha256:77162be0e771631876322ac1654762b438d9e9af071f4d19ff4e177d151168af",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "在住管理",
   "businessGoalZh": "承接场景包 7 已确认入住后的只读入住摘要，在在住期间维护在住状态、入住凭证、续住申请、换房/换床申请、在住服务请求、在住异常记录，并为场景包 9 输出退房准备摘要。",
-  "sourceScenarioDigest": "sha256:3b010d55e0e797f9c1502d9fc13e28e286a18c7d012dbf83e7fb80cc31c485ce",
+  "sourceScenarioDigest": "sha256:45f76e796674c317bf196485ded7f511dd66bcc87bc2eec826aee36642647fab",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "surfaceNavigation": {
     "pagesZh": [
@@ -110,7 +110,7 @@
       "AccessCredentialRevoke"
     ]
   },
-  "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“张三，301-02 床位，正常在住，计划 6 月 30 日离店”“服务请求：门禁卡补发处理中”。",
+  "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“住客姓名已脱敏，301-02 床位，正常在住，计划 6 月 30 日离店”“服务请求：门禁卡补发处理中”。",
   "forbiddenUserInputFields": [
     "stayId",
     "occupancyId",

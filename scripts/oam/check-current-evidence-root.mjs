@@ -142,18 +142,31 @@ const dormitoryScenario1ToolingFiles = [
   "scripts/business/generate-dormitory-scenario1-resource-basic-readiness-contracts.mjs",
   "scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs",
   "scripts/business/check-dormitory-scenario1-generated-contracts.mjs",
-  "scripts/business/check-dormitory-scenario1-consumption-boundary.mjs"
+  "scripts/business/check-dormitory-scenario1-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario1-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario1-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario1-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario1-negative-browser-audit.mjs"
+];
+const dormitoryScenario1BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario1-resource-basic-readiness-positive-browser/scenario1-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario1-resource-basic-readiness-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario1-resource-basic-readiness-negative-browser/scenario1-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario1-resource-basic-readiness-negative-browser/screenshot-index.json"
 ];
 const dormitoryScenario1ResultFiles = [
   "artifacts/oam/checks/dormitory-scenario1-resource-basic-readiness-authority-result.json",
   "artifacts/oam/checks/dormitory-scenario1-generated-contracts-result.json",
-  "artifacts/oam/checks/dormitory-scenario1-consumption-boundary-result.json"
+  "artifacts/oam/checks/dormitory-scenario1-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario1-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario1-negative-browser-result.json"
 ];
 const dormitoryScenario1EvidenceFiles = [
   lodgingScenarioPackageIndexPath,
   dormitoryScenario1SourcePath,
   ...dormitoryScenario1GeneratedFiles,
   ...dormitoryScenario1ToolingFiles,
+  ...dormitoryScenario1BrowserEvidenceFiles,
   ...dormitoryScenario1ResultFiles
 ];
 const dormitoryBenchmarkInheritanceSourcePath =
@@ -3213,6 +3226,12 @@ function checkDormitoryScenario1Evidence(graph, finalReport, documents) {
   const authorityResult = documents.get(dormitoryScenario1ResultFiles[0]);
   const generatedResult = documents.get(dormitoryScenario1ResultFiles[1]);
   const consumptionResult = documents.get(dormitoryScenario1ResultFiles[2]);
+  const positiveBrowserResult = documents.get(dormitoryScenario1ResultFiles[3]);
+  const negativeBrowserResult = documents.get(dormitoryScenario1ResultFiles[4]);
+  const positiveBrowserReport = documents.get(dormitoryScenario1BrowserEvidenceFiles[0]);
+  const positiveScreenshotIndex = documents.get(dormitoryScenario1BrowserEvidenceFiles[1]);
+  const negativeBrowserReport = documents.get(dormitoryScenario1BrowserEvidenceFiles[2]);
+  const negativeScreenshotIndex = documents.get(dormitoryScenario1BrowserEvidenceFiles[3]);
   const sourceDigest = authorityResult?.scenarioDigest ?? generatedResult?.scenarioDigest ?? consumptionResult?.scenarioDigest;
   const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
 
@@ -3263,7 +3282,9 @@ function checkDormitoryScenario1Evidence(graph, finalReport, documents) {
   for (const [label, result] of [
     ["authority", authorityResult],
     ["generated contracts", generatedResult],
-    ["consumption boundary", consumptionResult]
+    ["consumption boundary", consumptionResult],
+    ["positive browser", positiveBrowserResult],
+    ["negative browser", negativeBrowserResult]
   ]) {
     if (result?.status !== "PASS") {
       failures.push(`dormitory scenario 1 ${label} result must be PASS.`);
@@ -3272,6 +3293,37 @@ function checkDormitoryScenario1Evidence(graph, finalReport, documents) {
       result?.releaseAuthority !== false ||
       result?.finalGoNoGo !== "NO_GO") {
       failures.push(`dormitory scenario 1 ${label} result must keep production/release/final GO disabled.`);
+    }
+  }
+
+  if (positiveBrowserReport?.authorityId !== "Dormitory.Scenario1.ResourceBasicReadiness" ||
+    positiveBrowserReport?.status !== "passed" ||
+    positiveBrowserReport?.currentMainAudit !== true ||
+    positiveBrowserReport?.sourceEvidencePolicy?.firstGoldenChainCurrentMainAudit !== false) {
+    failures.push("dormitory scenario 1 positive browser report must be current scenario1 evidence and keep FirstGoldenChain out of current main audit.");
+  }
+  if (negativeBrowserReport?.authorityId !== "Dormitory.Scenario1.ResourceBasicReadiness" ||
+    negativeBrowserReport?.status !== "passed" ||
+    negativeBrowserReport?.currentMainAudit !== true ||
+    negativeBrowserReport?.sourceEvidencePolicy?.firstGoldenChainCurrentMainAudit !== false) {
+    failures.push("dormitory scenario 1 negative browser report must be current scenario1 evidence and keep FirstGoldenChain out of current main audit.");
+  }
+  if (positiveBrowserReport?.git?.headSha !== finalReport.latestCommit ||
+    negativeBrowserReport?.git?.headSha !== finalReport.latestCommit) {
+    failures.push("dormitory scenario 1 browser reports must be fresh for the current evidence root commit.");
+  }
+  if (!positiveScreenshotIndex?.screenshots?.length || !negativeScreenshotIndex?.screenshots?.length) {
+    failures.push("dormitory scenario 1 browser screenshot indexes must be present and nonempty.");
+  }
+  for (const [label, report] of [
+    ["positive", positiveBrowserReport],
+    ["negative", negativeBrowserReport]
+  ]) {
+    if (report?.productionConfirmAllowed !== false ||
+      report?.businessGoLiveAllowed !== false ||
+      report?.releaseAuthority !== false ||
+      report?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 1 ${label} browser report must keep production/release/final GO disabled.`);
     }
   }
 
@@ -7481,10 +7533,9 @@ function checkRealBrowserEvidence(graph, finalReport) {
     failures.push("evidence graph missing real browser evidence summary.");
     return;
   }
-  const requirePassed = true;
   const reasons = finalReport.finalDecision?.noGoReasons ?? finalReport.noGoReasons ?? [];
-  if (summary.status !== "passed" && requirePassed) {
-    failures.push(`first golden chain real browser evidence summary must be passed, actual: ${summary.status}`);
+  if (summary.status !== "passed") {
+    failures.push(`13 scenario real browser evidence summary must be passed, actual: ${summary.status}`);
   }
   if (summary.status !== "passed" && !reasons.some((reason) => /真实浏览器|real browser/i.test(reason))) {
     failures.push("real browser evidence is not passed but Final Report does not record a NO_GO reason.");
@@ -7492,47 +7543,58 @@ function checkRealBrowserEvidence(graph, finalReport) {
   if (summary.singleWriter !== "scripts/oam/generate-current-evidence-root.mjs") {
     failures.push("real browser evidence must be written by the current evidence root generator.");
   }
-  const current = summary.firstGoldenChain ?? summary.l1;
-  if (!current) {
-    failures.push("real browser evidence missing firstGoldenChain current main audit.");
-  } else {
-    const gate = "DORMITORY-FIRST-GOLDEN-CHAIN-REAL-BROWSER";
-    if (current.status !== "passed") failures.push("first golden chain browser evidence must be passed.");
-    if (!current.report || !exists(current.report)) {
-      failures.push(`first golden chain browser evidence report is missing: ${current.report || "(empty)"}`);
-    }
-    if ((current.scenarioCount ?? 0) !== 1) failures.push("first golden chain browser evidence must contain exactly one current capability scenario.");
-    if ((current.screenshotHashCount ?? 0) <= 0) failures.push("first golden chain browser evidence has no screenshot hashes.");
-    if (current.scenarioScope?.currentMainGate !== true) failures.push("first golden chain browser evidence must be the current main gate.");
-    if (current.scenarioScope?.legacyTenScenarioAsMainGate !== false ||
-      current.scenarioScope?.legacyAllStepsAsMainGate !== false) {
-      failures.push("legacy ten-scenario/all-steps browser audits must not be current main gates.");
-    }
-    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
-    if (!node) {
-      failures.push(`evidence graph missing node for ${gate}.`);
-    } else {
-      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
-      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
-      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
-      if (!node.refs?.includes(current.report)) failures.push(`${gate} node missing report ref.`);
-    }
-    const browserReport = current.report && exists(current.report) ? readJson(current.report) : null;
-    checkFirstGoldenChainBrowserReport(browserReport, current, node);
+
+  if (summary.currentMainAudit !== "dormitory_13_scenario_browser_evidence_collection") {
+    failures.push("real browser current main audit must be the 13 scenario evidence collection.");
   }
 
+  for (let scenarioNo = 1; scenarioNo <= 13; scenarioNo += 1) {
+    const scenario = summary[`scenario${scenarioNo}`];
+    if (!scenario) {
+      failures.push(`real browser evidence missing scenario ${scenarioNo}.`);
+      continue;
+    }
+    if (scenario.currentMainGate !== true) failures.push(`scenario ${scenarioNo} browser evidence must be a current main gate.`);
+    for (const kind of ["positive", "negative"]) {
+      const item = scenario[kind];
+      if (!item) {
+        failures.push(`scenario ${scenarioNo} ${kind} browser evidence missing.`);
+        continue;
+      }
+      const digestField = kind === "positive" ? "positiveBrowserAuditDigest" : "negativeBrowserAuditDigest";
+      const gate = `DORMITORY-SCENARIO${scenarioNo}-${kind.toUpperCase()}-BROWSER`;
+      if (item.status !== "passed") failures.push(`scenario ${scenarioNo} ${kind} browser evidence must be passed.`);
+      if (!item.report || !exists(item.report)) failures.push(`scenario ${scenarioNo} ${kind} browser report missing: ${item.report || "(empty)"}.`);
+      if (!item.result || !exists(item.result)) failures.push(`scenario ${scenarioNo} ${kind} browser result missing: ${item.result || "(empty)"}.`);
+      if ((item.screenshotHashCount ?? 0) <= 0) failures.push(`scenario ${scenarioNo} ${kind} browser evidence has no screenshot hashes.`);
+      if (!sha256DigestPattern.test(item[digestField] ?? "")) failures.push(`scenario ${scenarioNo} ${kind} browser digest missing.`);
+      if (item.scenarioScope?.currentMainGate !== true) failures.push(`scenario ${scenarioNo} ${kind} browser scenarioScope must be current main gate.`);
+      const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+      if (!node) {
+        failures.push(`evidence graph missing node for ${gate}.`);
+      } else {
+        if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+        if (node.reportFresh !== true || node.reportHeadSha !== finalReport.latestCommit) failures.push(`${gate} browser evidence must be fresh for final report commit.`);
+        if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+        if (!node.refs?.includes(item.report)) failures.push(`${gate} node missing report ref.`);
+      }
+    }
+  }
+
+  const quarantine = summary.legacyQuarantine ?? {};
   for (const [key, gate] of [
+    ["firstGoldenChain", "DORMITORY-FIRST-GOLDEN-CHAIN-REAL-BROWSER"],
     ["tenScenario", "DORMITORY-TEN-SCENARIO-REAL-BROWSER"],
     ["legacyL1", "DORM-L1-BROWSER-E2E"]
   ]) {
-    const item = summary[key];
+    const item = quarantine[key] ?? summary[key];
     if (!item) {
       continue;
     }
     if (item.currentMainGate === true || item.scenarioScope?.currentMainGate === true) {
       failures.push(`${key} browser evidence must not be a current main gate.`);
     }
-    if (item.lane !== "legacy_regression_only") failures.push(`${key} browser evidence must be legacy_regression_only.`);
+    if (!["legacy_regression_only", "legacy_quarantine"].includes(item.lane)) failures.push(`${key} browser evidence must be legacy-only/quarantined.`);
     const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
     if (node?.scenarioScope?.currentMainGate === true) failures.push(`${gate} graph node must not be current main gate.`);
   }

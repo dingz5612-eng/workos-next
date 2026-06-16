@@ -292,7 +292,7 @@ function checkStepsAndFields() {
   }
   assertArray(scenario.fields?.forbiddenUserInputFields, forbiddenUserInput, "forbidden user input fields");
   const fieldText = JSON.stringify(scenario.fields ?? {});
-  for (const required of ["upstreamReadonly", "systemCalculated", "finance-gate", "张三，301-02 床位", "应退 200 元，待财务处理"]) {
+  for (const required of ["upstreamReadonly", "systemCalculated", "finance-gate", "住客姓名已脱敏，301-02 床位", "应退 200 元，待财务处理"]) {
     if (!fieldText.includes(required)) fail(`fields missing ${required}.`);
   }
 }

@@ -1,0 +1,42 @@
+{
+  "version": "oam.dormitory-operation-execution-contract.v1",
+  "status": "authoritative",
+  "purposeZh": "住宿经营当前主链的新建与提交体验执行合同；用于约束真实入口到运行层的最小返回、即时反馈、局部更新和后台同步。",
+  "mainlineId": "Dormitory.13ScenarioMainline",
+  "sourceAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+  "entryContractRefs": [
+    "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json",
+    "apps/mobile/src/generated/oam/dormitory-13-scenario-control.generated.json"
+  ],
+  "rules": {
+    "startImmediateFeedbackRequired": true,
+    "startReturnsSingleWorkspaceProjection": true,
+    "startReturnsOperationWorkItems": true,
+    "startMustNotReturnRuntimeGetAll": true,
+    "submitImmediateFeedbackRequired": true,
+    "submitCurrentStepOnly": true,
+    "confirmReturnsMinimalCommitResult": true,
+    "readSideSyncAfterCommitIsBackground": true,
+    "lensRefreshAfterCommitIsBackground": true,
+    "searchAndDashboardNeverWriteFacts": true
+  },
+  "performanceBudget": {
+    "startPayloadScope": "single started workspace plus started work item",
+    "confirmPayloadScope": "commit result, trace refs, client instruction, no full runtime projection",
+    "foregroundWaitsAllowed": [
+      "evidence draft materialization",
+      "prepare current work item",
+      "confirm current work item"
+    ],
+    "backgroundSyncOnly": [
+      "projection event wait",
+      "accommodation lens refresh",
+      "operation work item refresh",
+      "search/dashboard/report refresh"
+    ]
+  },
+  "verificationScript": "scripts/oam/check-dormitory-operation-execution-contract.mjs",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO"
+}

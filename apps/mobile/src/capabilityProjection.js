@@ -178,6 +178,32 @@ export function capabilityCommandCatalog() {
   }];
 }
 
+export function mainlineScenarioCatalog() {
+  return (mainlineControl.scenarios || []).map((scenario) => ({
+    scenarioNo: scenario.scenarioNo,
+    scenarioId: scenario.scenarioId,
+    nameZh: scenario.nameZh,
+    pageEntries: scenario.pageEntries || [],
+    title: { "zh-CN": scenario.nameZh },
+    subtitle: { "zh-CN": scenario.summaryOutputs?.join("、") || "来自住宿经营 13 场景总控" },
+    status: { "zh-CN": "只读入口" },
+    nextAction: { "zh-CN": scenario.scenarioNo === 1 ? "发起房源建档与基础就绪" : "查看相关工作项" },
+    keywords: scenarioKeywords(scenario)
+  }));
+}
+
+function scenarioKeywords(scenario = {}) {
+  const words = [
+    scenario.nameZh,
+    scenario.scenarioId,
+    `场景${scenario.scenarioNo}`,
+    `场景 ${scenario.scenarioNo}`,
+    ...(scenario.summaryOutputs || []),
+    ...(scenario.upstreamSummaryInputs || [])
+  ].filter(Boolean);
+  return Array.from(new Set(words));
+}
+
 export function runtimeWorkItemMatchesCapabilityCard(item = {}, cardId = "") {
   const candidateCardId = item.cardId || item.card_id || item.payload?.cardId || item.Payload?.cardId || item.workItemType || item.work_item_type || "";
   return candidateCardId === cardId;

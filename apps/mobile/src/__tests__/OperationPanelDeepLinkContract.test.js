@@ -7,7 +7,7 @@ describe("Stage B Operation Panel deep link contract", () => {
     const text = visibleText(html);
 
     expect(html).toContain('data-surface="operation-panel-route"');
-    expect(html).toContain("W-STAY-RESOURCE:roomSetup");
+    expect(html).toContain("wi-dorm-room-setup");
     expect(html).not.toContain("T-ROOM-CREATE");
     expect(text).not.toMatch(/\b(OperationPanelView|TrustedConfirmSheet|ActionResult|workItemId|caseId|payloadHash|commandSubmissionId|operationsPrepare|operationsConfirm)\b/);
     expect(html).toContain('data-surface="system-validation-summary"');

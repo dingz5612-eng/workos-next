@@ -9,29 +9,29 @@
     "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:5469772b478f954bfbfd2e7c1f29c53672a7b062ae1e90dbfe7295a5b7bb23bb",
+  "inputDigest": "sha256:3a6c20260ae9ca58106f0c3aa07a6c73de89c8e9c0d1e8b16a9c21f89f9deedd",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
-      "digest": "sha256:89ee0867faccfdebb4869ee1da6370f50de6b9f8ef7f7d6e83d1793d86e6662b"
+      "digest": "sha256:d597782c120b0de2730e948dd7e8ee6dadd7deb1f2bd706a4371d6efdad89fd9"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:89ee0867faccfdebb4869ee1da6370f50de6b9f8ef7f7d6e83d1793d86e6662b",
+  "sourceContentDigest": "sha256:d597782c120b0de2730e948dd7e8ee6dadd7deb1f2bd706a4371d6efdad89fd9",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario5.ReservationAndInventoryHold",
   "scenarioPackageNo": 5,
   "scenarioId": "lodging.reservation-and-inventory-hold",
-  "outputContentDigest": "sha256:da67ced7f27de524a6d746cf0a7541647151932367eadea6c7bef8106cf3cb63",
+  "outputContentDigest": "sha256:c1bc46edca5029ff68cea892ff425cac4c230a39038602a1c1b84e8521ea1d19",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "预订与库存锁定",
   "businessGoalZh": "承接场景包 4 已确认的报价/客户意向，重新校验资源、价格、报价有效期、日期和当前占用后，完成库存锁定、确认预订并生成预订号。",
-  "sourceScenarioDigest": "sha256:89ee0867faccfdebb4869ee1da6370f50de6b9f8ef7f7d6e83d1793d86e6662b",
+  "sourceScenarioDigest": "sha256:d597782c120b0de2730e948dd7e8ee6dadd7deb1f2bd706a4371d6efdad89fd9",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "positiveBrowserTestPlan": [
     "从场景包 4 报价进入转预订准备。",

@@ -16,6 +16,7 @@ export function buildSearchResultVM(item = {}, ctx = {}) {
   const commandId = item.commandId || item.command_id || "";
   const templateWorkspaceId = item.templateWorkspaceId || item.template_workspace_id || "";
   const firstCardId = item.firstCardId || item.first_card_id || "";
+  const query = item.query || item.searchQuery || item.search_query || safeLocalized(item.localizedTitle ?? item.title, ctx);
   const action = searchActionFor({ ...item, resultType, workspaceId, cardId, workItemId, evidenceId, traceId, learningId, caseId, commandId }, ctx);
   const admission = admissionForSearchItem(item, action);
   const gateResult = gateResultForSearchItem(item, admission);
@@ -40,6 +41,7 @@ export function buildSearchResultVM(item = {}, ctx = {}) {
     learningId,
     templateWorkspaceId,
     firstCardId,
+    query,
     admission,
     gateResult,
     visibleAllowed: admission.visibleAllowed,
@@ -84,6 +86,9 @@ function searchActionFor(item, ctx) {
   }
   if (item.resultType === "command" && item.templateWorkspaceId) {
     return { type: "startOperationsWorkspace", label: ctx.tr?.("startHandling") || "开始办理", view: "operationPanel", reason: "" };
+  }
+  if (item.resultType === "mainlineScenario") {
+    return { type: "queryOnly", label: ctx.tr?.("searchActionViewWorkItems") || "查看工作项", view: "search", reason: "" };
   }
   if (item.resultType === "workItem" && item.workItemId && resolveOperationPanelTarget(item, ctx.state || {}).canOpen) {
     return { type: "openWorkItem", label: safeLocalized(item.actionLabel, ctx) || ctx.tr?.("searchActionProcess") || "处理", view: "operationPanel", reason: "" };

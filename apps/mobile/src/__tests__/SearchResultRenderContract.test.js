@@ -7,19 +7,20 @@ describe("Stage B search result render contract", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "住宿" });
     ctx.state.runtimeStore.searchResultsByQuery = {
       "住宿": [{
-        workspaceId: "W-STAY-RESOURCE",
-        cardId: "roomSetup",
-        localizedTitle: { "zh-CN": "房间配置办理" },
-        localizedSubtitle: { "zh-CN": "宿舍资源" },
-        localizedStatus: { "zh-CN": "可办理" },
-        localizedNextAction: { "zh-CN": "进入办理面" }
+        workspaceId: "W-DORM-MAINLINE",
+        cardId: "cert.roomSetupConfirm",
+        localizedTitle: { "zh-CN": "房间建档确认" },
+        localizedSubtitle: { "zh-CN": "房源建档与基础就绪" },
+        localizedStatus: { "zh-CN": "待处理" },
+        localizedNextAction: { "zh-CN": "继续填写" }
       }]
     };
 
     const html = searchView(ctx);
 
     expect(visibleText(html)).not.toContain("[object Object]");
-    expect(html).toContain("房间配置办理");
+    expect(html).toContain("房间建档确认");
+    expect(html).toContain("房源建档与基础就绪");
     expect(html).toContain('data-surface="business-summary-header"');
     expect(html).toContain('data-surface="business-task-body"');
     expect(html).toContain('class="search-result-main"');

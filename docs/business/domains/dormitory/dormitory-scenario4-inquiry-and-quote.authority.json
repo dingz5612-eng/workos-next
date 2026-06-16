@@ -632,7 +632,7 @@
     }
   ],
   "fields": {
-    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“张三 6 月 20 日至 6 月 23 日，2 人，301 整房，报价 540 元，有效至今晚 20:00”。",
+    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“客户姓名已脱敏，6 月 20 日至 6 月 23 日，2 人，301 整房，报价 540 元，有效至今晚 20:00”。",
     "upstreamReadonly": [
       "buildingArea",
       "roomNo",

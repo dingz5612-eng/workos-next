@@ -52,6 +52,9 @@ for (const defect of defects) {
   if (defect.status === "closed" && (!Array.isArray(defect.closingEvidence) || defect.closingEvidence.length === 0)) {
     fail(`${label} cannot be closed without closingEvidence.`);
   }
+  if (["P0", "P1"].includes(defect.severity) && ["open", "fixing"].includes(defect.status)) {
+    fail(`${label} ${defect.severity} cannot remain ${defect.status}.`);
+  }
 }
 
 const result = {

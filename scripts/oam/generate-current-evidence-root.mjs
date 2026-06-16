@@ -163,18 +163,31 @@ const dormitoryScenario1ToolingFiles = [
   "scripts/business/generate-dormitory-scenario1-resource-basic-readiness-contracts.mjs",
   "scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs",
   "scripts/business/check-dormitory-scenario1-generated-contracts.mjs",
-  "scripts/business/check-dormitory-scenario1-consumption-boundary.mjs"
+  "scripts/business/check-dormitory-scenario1-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario1-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario1-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario1-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario1-negative-browser-audit.mjs"
+];
+const dormitoryScenario1BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario1-resource-basic-readiness-positive-browser/scenario1-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario1-resource-basic-readiness-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario1-resource-basic-readiness-negative-browser/scenario1-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario1-resource-basic-readiness-negative-browser/screenshot-index.json"
 ];
 const dormitoryScenario1ResultFiles = [
   "artifacts/oam/checks/dormitory-scenario1-resource-basic-readiness-authority-result.json",
   "artifacts/oam/checks/dormitory-scenario1-generated-contracts-result.json",
-  "artifacts/oam/checks/dormitory-scenario1-consumption-boundary-result.json"
+  "artifacts/oam/checks/dormitory-scenario1-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario1-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario1-negative-browser-result.json"
 ];
 const dormitoryScenario1EvidenceFiles = [
   lodgingScenarioPackageIndexPath,
   dormitoryScenario1SourcePath,
   ...dormitoryScenario1GeneratedFiles,
   ...dormitoryScenario1ToolingFiles,
+  ...dormitoryScenario1BrowserEvidenceFiles,
   ...dormitoryScenario1ResultFiles
 ];
 const dormitoryBenchmarkInheritanceSourcePath =
@@ -1876,12 +1889,16 @@ const evidenceGraph = {
     releaseAuthority: false,
     finalGoNoGo: "NO_GO"
   },
-  firstGoldenChainBrowserAudit: {
-    report: FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH,
-    result: FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH,
-    browserAuditDigest: capabilityDigestChain.browserAuditDigest,
-    legacyTenScenarioAsMainGate: false,
-    legacyAllStepsAsMainGate: false
+  legacyQuarantine: {
+    firstGoldenChainBrowserEvidence: {
+      report: FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH,
+      result: FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH,
+      browserAuditDigest: capabilityDigestChain.browserAuditDigest,
+      currentMainAudit: false,
+      lane: "legacy_quarantine",
+      legacyTenScenarioAsMainGate: false,
+      legacyAllStepsAsMainGate: false
+    }
   },
   evidenceRootWriter: {
     writer: "scripts/oam/generate-current-evidence-root.mjs",
@@ -4686,6 +4703,8 @@ function readControlPlaneGateResult() {
 
 function buildRealBrowserEvidence() {
   const firstGoldenChain = readFirstGoldenChainBrowserEvidence();
+  const scenario1Positive = readScenario1PositiveBrowserEvidence();
+  const scenario1Negative = readScenario1NegativeBrowserEvidence();
   const scenario2Positive = readScenario2PositiveBrowserEvidence();
   const scenario2Negative = readScenario2NegativeBrowserEvidence();
   const scenario3Positive = readScenario3PositiveBrowserEvidence();
@@ -4713,7 +4732,8 @@ function buildRealBrowserEvidence() {
   const legacyL1 = readL1BrowserEvidence();
   const tenScenario = readTenScenarioBrowserEvidence();
   const nodes = [
-    firstGoldenChain.node,
+    scenario1Positive.node,
+    scenario1Negative.node,
     scenario2Positive.node,
     scenario2Negative.node,
     scenario3Positive.node,
@@ -4740,7 +4760,8 @@ function buildRealBrowserEvidence() {
     scenario13Negative.node
   ].filter(Boolean);
   const edges = [
-    firstGoldenChain.node ? { from: firstGoldenChain.node.id, to: "DORMITORY_FIRST_GOLDEN_CHAIN_CAPABILITY", relation: "binds_current_capability_browser_evidence" } : null,
+    scenario1Positive.node ? { from: scenario1Positive.node.id, to: "DORMITORY_SCENARIO1_RESOURCE_BASIC_READINESS", relation: "binds_scenario1_positive_browser_evidence" } : null,
+    scenario1Negative.node ? { from: scenario1Negative.node.id, to: "DORMITORY_SCENARIO1_RESOURCE_BASIC_READINESS", relation: "binds_scenario1_negative_browser_evidence" } : null,
     scenario2Positive.node ? { from: scenario2Positive.node.id, to: "DORMITORY_SCENARIO2_RESOURCE_OPERATION_STATUS", relation: "binds_scenario2_positive_browser_evidence" } : null,
     scenario2Negative.node ? { from: scenario2Negative.node.id, to: "DORMITORY_SCENARIO2_RESOURCE_OPERATION_STATUS", relation: "binds_scenario2_negative_browser_evidence" } : null,
     scenario3Positive.node ? { from: scenario3Positive.node.id, to: "DORMITORY_SCENARIO3_PRODUCT_AND_PRICING", relation: "binds_scenario3_positive_browser_evidence" } : null,
@@ -4767,7 +4788,8 @@ function buildRealBrowserEvidence() {
     scenario13Negative.node ? { from: scenario13Negative.node.id, to: "DORMITORY_SCENARIO13_REPORTING_AUDIT_REVIEW", relation: "binds_scenario13_negative_browser_evidence" } : null
   ].filter(Boolean);
   const screenshotHashCount = nodes.reduce((total, node) => total + (node.screenshotHashes?.length ?? 0), 0);
-  const status = firstGoldenChain.status === "passed" &&
+  const status = scenario1Positive.status === "passed" &&
+    scenario1Negative.status === "passed" &&
     scenario2Positive.status === "passed" &&
     scenario2Negative.status === "passed" &&
     scenario3Positive.status === "passed" &&
@@ -4800,8 +4822,15 @@ function buildRealBrowserEvidence() {
     summary: {
       status,
       singleWriter: "scripts/oam/generate-current-evidence-root.mjs",
-      l1: firstGoldenChain,
-      firstGoldenChain,
+      currentMainAudit: "dormitory_13_scenario_browser_evidence_collection",
+      scenario1: {
+        positive: scenario1Positive,
+        negative: scenario1Negative,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
       scenario2: {
         positive: scenario2Positive,
         negative: scenario2Negative,
@@ -4898,6 +4927,13 @@ function buildRealBrowserEvidence() {
         productionConfirmAllowed: false,
         finalGoNoGo: "NO_GO"
       },
+      legacyQuarantine: {
+        firstGoldenChain,
+        legacyL1,
+        tenScenario,
+        currentMainGate: false,
+        lane: "legacy_quarantine"
+      },
       tenScenario: {
         ...tenScenario,
         lane: "legacy_regression_only",
@@ -4910,6 +4946,161 @@ function buildRealBrowserEvidence() {
       },
       screenshotHashCount
     }
+  };
+}
+
+function readScenario1PositiveBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario1-resource-basic-readiness-positive-browser/scenario1-positive-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario1-positive-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario1-resource-basic-readiness-positive-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "房源建档与基础就绪 positive browser evidence；证明场景 1 主流程和入口职责来自 generated 场景 1 合同。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 1,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.steps?.length ?? 0,
+      expectedSteps: 12
+    },
+    scenarioCount: report?.steps?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    positiveBrowserAuditDigest: report?.positiveBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO1-POSITIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO1-POSITIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario1.ResourceBasicReadiness.Positive"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "房源建档与基础就绪 positive browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.steps?.length ?? 0,
+        expectedSteps: 12
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario1-resource-basic-readiness-positive-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario1-test-plan.generated.json",
+        "scripts/surface/run-dormitory-scenario1-positive-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario1-positive-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario1NegativeBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario1-resource-basic-readiness-negative-browser/scenario1-negative-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario1-negative-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario1-resource-basic-readiness-negative-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "房源建档与基础就绪 negative browser evidence；证明失败路径业务可理解且无副作用。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 1,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.scenarios?.length ?? 0,
+      expectedSteps: 12
+    },
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    negativeBrowserAuditDigest: report?.negativeBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO1-NEGATIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO1-NEGATIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario1.ResourceBasicReadiness.Negative"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "房源建档与基础就绪 negative browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.scenarios?.length ?? 0,
+        expectedSteps: 12
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario1-resource-basic-readiness-negative-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario1-test-plan.generated.json",
+        "docs/contracts/generated/dormitory/scenario1-runtime-rules.generated.json",
+        "scripts/surface/run-dormitory-scenario1-negative-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario1-negative-browser-audit.mjs"
+      ]
+    }) : null
   };
 }
 
@@ -6794,11 +6985,13 @@ function readFirstGoldenChainBrowserEvidence() {
     forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
     scenarioScope: {
       capabilityId: report?.capabilityId || "",
-      currentMainGate: true,
+      currentMainGate: false,
       legacyTenScenarioAsMainGate: false,
       legacyAllStepsAsMainGate: false,
       businessAcceptance: false
     },
+    lane: "legacy_quarantine",
+    currentMainGate: false,
     businessGoAllowed: false,
     progress: browserAuditProgress(report),
     scenarioCount: 1,
@@ -6828,7 +7021,7 @@ function readFirstGoldenChainBrowserEvidence() {
       forbiddenInterpretation: report.forbiddenInterpretations,
       scenarioScope: {
         capabilityId: report.capabilityId,
-        currentMainGate: true,
+        currentMainGate: false,
         legacyTenScenarioAsMainGate: false,
         legacyAllStepsAsMainGate: false,
         businessAcceptance: false

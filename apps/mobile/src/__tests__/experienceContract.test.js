@@ -136,24 +136,24 @@ describe("OAM Experience Contract", () => {
   it("renders completed core fields and current-step fields in the shared task overview", () => {
     vi.stubGlobal("localStorage", memoryStorage());
     const workspace = {
-      id: "W-STAY-RESOURCE-OVERVIEW",
+      id: "W-DORM-MAINLINE-OVERVIEW",
       domain: "stay",
-      title: { "zh-CN": "我要创建住宿资源" },
-      summary: { "zh-CN": "房间和床位配置" },
-      next: { "zh-CN": "配置床位" },
+      title: { "zh-CN": "房源建档与基础就绪" },
+      summary: { "zh-CN": "房间建档、床位组确认和基础就绪确认" },
+      next: { "zh-CN": "确认床位组" },
       cards: [{
-        id: "roomSetup",
+        id: "cert.roomSetupConfirm",
         status: "confirmed",
-        title: { "zh-CN": "房间配置卡" },
+        title: { "zh-CN": "房间建档确认" },
         fields: { business: [businessField("buildingName", "楼栋"), businessField("roomNo", "房间号"), businessField("roomType", "房型", { control: "select", optionSet: "roomType" }), businessField("bedCount", "床位数")], system: [], analytics: [] },
         evidence: [],
         checks: [],
         blockerRules: [],
         confirmation: { requiredRole: "operator" }
       }, {
-        id: "bedSetup",
+        id: "cert.bedSetupConfirm",
         status: "ready",
-        title: { "zh-CN": "床位配置卡" },
+        title: { "zh-CN": "床位组确认" },
         fields: { business: [businessField("roomId", "所属房间"), businessField("bedCount", "床位数"), businessField("bedLabels", "床位标签"), businessField("bedType", "床位类型", { control: "select", optionSet: "bunkType", defaultValue: "bunk_pair" })], system: [], analytics: [] },
         evidence: [],
         checks: [],
@@ -163,14 +163,14 @@ describe("OAM Experience Contract", () => {
     };
     saveCompletedRecordSnapshot({
       workspaceId: workspace.id,
-      cardId: "roomSetup",
+      cardId: "cert.roomSetupConfirm",
       values: { buildingName: "D02", roomNo: "22", roomType: "four_bed", bedCount: "4" }
     });
 
     const html = WorkItemCard({
       workItemId: "wi-bed-overview",
       workspaceId: workspace.id,
-      cardId: "bedSetup",
+      cardId: "cert.bedSetupConfirm",
       lifecycleState: "ready",
       workspace,
       card: workspace.cards[1]
