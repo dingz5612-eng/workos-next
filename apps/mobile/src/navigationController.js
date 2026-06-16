@@ -123,6 +123,9 @@ export async function runSearch(ctx, explicitQuery = null) {
     rememberSearch(ctx, ctx.state.query);
     void recordSearchIntentEvent(ctx, ctx.state.query);
   }
+  ctx.state.view = "search";
+  syncUrlFromState(ctx);
+  ctx.render(true);
   if (ctx.state.apiStatus === "online") {
     try {
       const query = ctx.state.query;

@@ -89,6 +89,7 @@ jobs:
           node scripts/oam/check-dormitory-active-path-gate.mjs
           node scripts/oam/check-dormitory-operation-execution-contract.mjs
           node scripts/oam/check-dormitory-local-test-environment-manager.mjs
+          node scripts/oam/check-project-maintainability-governance.mjs
           node scripts/oam/check-dormitory-ci-hard-gates.mjs
           node scripts/authority/check-master-design-schema.mjs
           node scripts/authority/check-truth-ownership-matrix.mjs
@@ -297,6 +298,7 @@ jobs:
           WORKOS_API_URL: http://127.0.0.1:5191
         run: |
           pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1
+          node scripts/oam/check-project-purity-authority-seal.mjs
 
       - name: OAM total gate
         run: pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/oam/run-control-plane-checks.ps1

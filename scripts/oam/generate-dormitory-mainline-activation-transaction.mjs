@@ -17,6 +17,8 @@ const defectClosureResultPath = "artifacts/oam/checks/dormitory-defect-closure-l
 const activePathGateResultPath = "artifacts/oam/checks/dormitory-active-path-gate-result.json";
 const operationExecutionResultPath = "artifacts/oam/checks/dormitory-operation-execution-contract-result.json";
 const localEnvironmentResultPath = "artifacts/oam/checks/dormitory-local-test-environment-manager-result.json";
+const maintainabilityGovernanceResultPath = "artifacts/oam/checks/project-maintainability-governance-result.json";
+const purityAuthoritySealResultPath = "artifacts/oam/checks/project-purity-authority-seal-result.json";
 const entryBrowserResultPath = "artifacts/oam/checks/dormitory-13-scenario-entry-browser-result.json";
 const performanceRecoverabilityResultPath = "artifacts/oam/checks/dormitory-performance-recoverability-result.json";
 const ciHardGateResultPath = "artifacts/oam/checks/dormitory-ci-hard-gates-result.json";
@@ -34,6 +36,8 @@ const defectClosure = readJsonIfExists(defectClosureResultPath);
 const activePathGate = readJsonIfExists(activePathGateResultPath);
 const operationExecution = readJsonIfExists(operationExecutionResultPath);
 const localEnvironment = readJsonIfExists(localEnvironmentResultPath);
+const maintainabilityGovernance = readJsonIfExists(maintainabilityGovernanceResultPath);
+const purityAuthoritySeal = readJsonIfExists(purityAuthoritySealResultPath);
 const entryBrowser = readJsonIfExists(entryBrowserResultPath);
 const performanceRecoverability = readJsonIfExists(performanceRecoverabilityResultPath);
 const ciHardGate = readJsonIfExists(ciHardGateResultPath);
@@ -72,6 +76,8 @@ const subchecks = [
   ["activePathGate", activePathGate],
   ["operationExecution", operationExecution],
   ["localEnvironment", localEnvironment],
+  ["maintainabilityGovernance", maintainabilityGovernance],
+  ["purityAuthoritySeal", purityAuthoritySeal],
   ["entryBrowser", entryBrowser],
   ["performanceRecoverability", performanceRecoverability],
   ["ciHardGate", ciHardGate],
@@ -106,6 +112,8 @@ const transaction = {
   activePathGateDigest: fileDigest(activePathGateResultPath, root),
   operationExecutionDigest: operationExecution?.contractDigest ?? fileDigest("docs/oam/dormitory-operation-execution-contract.json", root),
   localEnvironmentDigest: localEnvironment?.scriptDigest ?? fileDigest("scripts/dev/manage-local-test-environment.ps1", root),
+  maintainabilityGovernanceDigest: maintainabilityGovernance?.governanceDigest ?? fileDigest("docs/oam/project-maintainability-governance.json", root),
+  purityAuthoritySealDigest: purityAuthoritySeal?.reportDigest ?? fileDigest("docs/oam/project-purity-authority-seal-report.md", root),
   entryBrowserDigest: fileDigest(entryBrowserResultPath, root),
   performanceRecoverabilityDigest: fileDigest(performanceRecoverabilityResultPath, root),
   browserEvidenceDigest,

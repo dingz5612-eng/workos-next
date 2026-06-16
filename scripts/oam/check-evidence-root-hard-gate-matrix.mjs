@@ -27,6 +27,7 @@ const requiredResultFiles = [
   ["ActivePathGate", "artifacts/oam/checks/dormitory-active-path-gate-result.json"],
   ["OperationExecutionContract", "artifacts/oam/checks/dormitory-operation-execution-contract-result.json"],
   ["LocalEnvironmentManager", "artifacts/oam/checks/dormitory-local-test-environment-manager-result.json"],
+  ["ProjectMaintainabilityGovernance", "artifacts/oam/checks/project-maintainability-governance-result.json"],
   ["OldChainActivePath", oldActiveResultPath],
   ["BusinessUiDomCopy", "artifacts/oam/checks/business-ui-copy-no-technical-leak-result.json"],
   ["Dormitory13EntryBrowser", "artifacts/oam/checks/dormitory-13-scenario-entry-browser-result.json"],
@@ -176,6 +177,11 @@ if (!graph) {
     candidate.gate === "DORMITORY-PRELAUNCH-OPS-TRIAL");
   if (!prelaunchOpsTrialNode || prelaunchOpsTrialNode.status !== "passed" || prelaunchOpsTrialNode.reportFresh !== true) {
     fail("Evidence graph prelaunch operations trial node must be fresh and passed.");
+  }
+  const maintainabilityGovernanceNode = (graph.nodes ?? []).find((candidate) =>
+    candidate.gate === "PROJECT-MAINTAINABILITY-GOVERNANCE");
+  if (!maintainabilityGovernanceNode || maintainabilityGovernanceNode.status !== "passed") {
+    fail("Evidence graph project maintainability governance node must be passed.");
   }
   const quarantine = browser[`${oldWord}Quarantine`];
   const firstGolden = quarantine?.firstGoldenChain ?? browser.firstGoldenChain;

@@ -34,6 +34,8 @@ const expectedDigests = {
   activePathGateDigest: fileDigest("artifacts/oam/checks/dormitory-active-path-gate-result.json", root),
   operationExecutionDigest: readJsonIfExists("artifacts/oam/checks/dormitory-operation-execution-contract-result.json")?.contractDigest,
   localEnvironmentDigest: readJsonIfExists("artifacts/oam/checks/dormitory-local-test-environment-manager-result.json")?.scriptDigest,
+  maintainabilityGovernanceDigest: readJsonIfExists("artifacts/oam/checks/project-maintainability-governance-result.json")?.governanceDigest,
+  purityAuthoritySealDigest: readJsonIfExists("artifacts/oam/checks/project-purity-authority-seal-result.json")?.reportDigest,
   entryBrowserDigest: fileDigest("artifacts/oam/checks/dormitory-13-scenario-entry-browser-result.json", root),
   performanceRecoverabilityDigest: fileDigest("artifacts/oam/checks/dormitory-performance-recoverability-result.json", root),
   defectClosureDigest: readJsonIfExists("artifacts/oam/checks/dormitory-defect-closure-ledger-result.json")?.ledgerDigest,
@@ -49,6 +51,8 @@ for (const [label, file] of [
   ["Evidence graph", transaction.evidenceGraphRef],
   ["Final report", transaction.finalReportRef],
   ["CI hard gate", "artifacts/oam/checks/dormitory-ci-hard-gates-result.json"],
+  ["Project maintainability governance", "artifacts/oam/checks/project-maintainability-governance-result.json"],
+  ["Project purity authority seal", "artifacts/oam/checks/project-purity-authority-seal-result.json"],
   ["Evidence hard gate", "artifacts/oam/checks/evidence-root-hard-gate-matrix-result.json"]
 ]) {
   if (!file || !fs.existsSync(path.join(root, file))) fail(`${label} file missing: ${file ?? "(empty)"}.`);

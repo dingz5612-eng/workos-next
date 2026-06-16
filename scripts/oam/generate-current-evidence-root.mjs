@@ -68,6 +68,11 @@ const generatedCompileExecutionProofPath = "artifacts/oam/evidence/generated-com
 const generatedFieldBindingClosureResultPath = FIELD_BINDING_CLOSURE_RESULT_PATH;
 const generatedFieldBindingsPath = FIELD_BINDINGS_GENERATED_PATH;
 const ciArtifactProvenanceReportPath = "artifacts/oam/checks/ci-artifact-provenance-report.json";
+const projectMaintainabilityGovernancePath = "docs/oam/project-maintainability-governance.json";
+const projectMaintainabilityReportPath = "docs/oam/project-maintainability-closure-report.md";
+const projectMaintainabilityGovernanceResultPath = "artifacts/oam/checks/project-maintainability-governance-result.json";
+const projectPurityAuthoritySealReportPath = "docs/oam/project-purity-authority-seal-report.md";
+const projectPurityAuthoritySealResultPath = "artifacts/oam/checks/project-purity-authority-seal-result.json";
 const capabilityRegistryPath = CAPABILITY_REGISTRY_PATH;
 const capabilityLedgerPath = CAPABILITY_LEDGER_PATH;
 const capabilityProjectionPath = CAPABILITY_PROJECTION_PATH;
@@ -1055,6 +1060,8 @@ const testSummary = buildTestSummary();
 const coverageSummary = buildCoverageSummary();
 const mobileBranchRiskKernel = buildMobileBranchRiskKernel();
 const realBrowserEvidence = buildRealBrowserEvidence();
+const projectMaintainabilityGovernance = buildProjectMaintainabilityGovernanceEvidence();
+const projectPurityAuthoritySeal = buildProjectPurityAuthoritySealEvidence();
 const dormitory13ScenarioIntegrationChain =
   readJsonIfExists(dormitory13ScenarioIntegrationChainResultFiles[0]) ?? {};
 const mutationTests = readMutationTestsResult();
@@ -1886,6 +1893,8 @@ const evidenceGraph = {
   testSummary,
   coverageSummary,
   mobileBranchRiskKernel,
+  projectMaintainabilityGovernance,
+  projectPurityAuthoritySeal,
   realBrowserEvidence: realBrowserEvidence.summary,
   performanceRecoverabilityEvidence: realBrowserEvidence.summary.performanceRecoverability,
   dormitory13ScenarioIntegrationChain: {
@@ -1943,9 +1952,19 @@ const evidenceGraph = {
     ...dormitoryRuntimeAdmissionProofNodes,
     ...dormitoryFirstGoldenChainLandingProofNodes,
     dormitory13ScenarioIntegrationChainProofNode,
+    projectMaintainabilityGovernance.node,
+    projectPurityAuthoritySeal.node,
     ...realBrowserEvidence.nodes
-  ],
-  edges: realBrowserEvidence.edges
+  ].filter(Boolean),
+  edges: [
+    projectMaintainabilityGovernance.node
+      ? { from: projectMaintainabilityGovernance.node.id, to: "DORMITORY_13_SCENARIO_PRODUCTION_MAINLINE_ACTIVATION", relation: "binds_project_maintainability_governance" }
+      : null,
+    projectPurityAuthoritySeal.node
+      ? { from: projectPurityAuthoritySeal.node.id, to: "DORMITORY_13_SCENARIO_PRODUCTION_MAINLINE_ACTIVATION", relation: "binds_project_purity_authority_seal" }
+      : null,
+    ...realBrowserEvidence.edges
+  ].filter(Boolean)
 };
 addEvidence("artifacts/oam/evidence/evidence-graph.json", evidenceGraph);
 const releaseEvidenceObject = {
@@ -5066,6 +5085,136 @@ function readPrelaunchOpsTrialEvidence() {
         blockers: blockerCount
       }
     }) : null
+  };
+}
+
+function buildProjectMaintainabilityGovernanceEvidence() {
+  const governance = readJsonIfExists(projectMaintainabilityGovernancePath);
+  const result = readJsonIfExists(projectMaintainabilityGovernanceResultPath);
+  const reportExists = fileExists(projectMaintainabilityReportPath);
+  const status = governance?.status === "authoritative" &&
+    result?.status === "PASS" &&
+    governance?.mainlineId === "Dormitory.13ScenarioMainline" &&
+    governance?.productionConfirmAllowed === false &&
+    governance?.businessGoLiveAllowed === false &&
+    governance?.releaseAuthority === false &&
+    governance?.finalGoNoGo === "NO_GO" &&
+    reportExists
+    ? "passed"
+    : "missing_or_failed";
+  const refs = [
+    projectMaintainabilityGovernancePath,
+    projectMaintainabilityReportPath,
+    projectMaintainabilityGovernanceResultPath,
+    "scripts/oam/check-project-maintainability-governance.mjs"
+  ];
+  const nodePayload = {
+    id: "PROJECT-MAINTAINABILITY-GOVERNANCE",
+    type: "project_maintainability_governance",
+    gate: "PROJECT-MAINTAINABILITY-GOVERNANCE",
+    status,
+    source: refs,
+    hash: digestForFiles(refs),
+    dependsOn: [
+      "docs/oam/dormitory-13-scenario-production-usable-closure-report.md",
+      "artifacts/oam/evidence/dormitory-mainline-activation-transaction.json",
+      "artifacts/oam/evidence/dormitory-prelaunch-ops-trial/prelaunch-ops-trial-report.md"
+    ],
+    producedBy: "scripts/oam/check-project-maintainability-governance.mjs",
+    verifiedBy: "scripts/oam/check-project-maintainability-governance.mjs",
+    outputHashes: refs.map((file) => ({ path: file, hash: hashFileIfPresent(file) })),
+    goNoGo: "NO_GO",
+    finalGoNoGo: "NO_GO",
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    allowedInterpretation: ["本地/测试环境项目瘦身与长期维护治理证据"],
+    forbiddenInterpretation: ["生产发布", "业务上线", "release authority", "final GO"],
+    scenarioScope: {
+      currentMainGate: true,
+      complexityItemCount: governance?.complexityInventory?.length ?? 0,
+      safeSlimmingActionCount: governance?.safeSlimmingActions?.length ?? 0,
+      maintenanceRuleCount: governance?.maintenanceRules?.length ?? 0,
+      productionConfirmAllowed: false,
+      businessGoLiveAllowed: false,
+      releaseAuthority: false,
+      finalGoNoGo: "NO_GO"
+    }
+  };
+  return {
+    status,
+    governance: projectMaintainabilityGovernancePath,
+    report: projectMaintainabilityReportPath,
+    result: projectMaintainabilityGovernanceResultPath,
+    governanceDigest: result?.governanceDigest ?? hashFileIfPresent(projectMaintainabilityGovernancePath),
+    reportDigest: result?.reportDigest ?? hashFileIfPresent(projectMaintainabilityReportPath),
+    complexityItemCount: governance?.complexityInventory?.length ?? 0,
+    safeSlimmingActionCount: governance?.safeSlimmingActions?.length ?? 0,
+    maintenanceRuleCount: governance?.maintenanceRules?.length ?? 0,
+    node: governance ? nodePayload : null
+  };
+}
+
+function buildProjectPurityAuthoritySealEvidence() {
+  const reportExists = fileExists(projectPurityAuthoritySealReportPath);
+  const result = readJsonIfExists(projectPurityAuthoritySealResultPath);
+  const status = reportExists &&
+    result?.status === "PASS" &&
+    result?.currentHead === commitSha &&
+    result?.productionConfirmAllowed === false &&
+    result?.businessGoLiveAllowed === false &&
+    result?.releaseAuthority === false &&
+    result?.finalGoNoGo === "NO_GO"
+    ? "passed"
+    : "missing_or_failed";
+  const refs = [
+    projectPurityAuthoritySealReportPath,
+    projectPurityAuthoritySealResultPath,
+    "scripts/oam/check-project-purity-authority-seal.mjs"
+  ];
+  const spotcheck = result?.browserSpotcheck ?? {};
+  const nodePayload = {
+    id: "PROJECT-PURITY-AUTHORITY-SEAL",
+    type: "project_purity_authority_seal",
+    gate: "PROJECT-PURITY-AUTHORITY-SEAL",
+    status,
+    source: refs,
+    hash: digestForFiles(refs),
+    dependsOn: [
+      "docs/oam/dormitory-13-scenario-production-usable-closure-report.md",
+      "docs/oam/project-maintainability-closure-report.md",
+      "artifacts/oam/evidence/dormitory-prelaunch-ops-trial/prelaunch-ops-trial-report.json",
+      "artifacts/oam/evidence/evidence-graph.json",
+      "artifacts/oam/final-report.json"
+    ],
+    producedBy: "scripts/oam/check-project-purity-authority-seal.mjs",
+    verifiedBy: "scripts/oam/check-project-purity-authority-seal.mjs",
+    outputHashes: refs.map((file) => ({ path: file, hash: hashFileIfPresent(file) })),
+    goNoGo: "NO_GO",
+    finalGoNoGo: "NO_GO",
+    releaseAuthority: false,
+    businessGoAuthority: false,
+    allowedInterpretation: ["本地/测试环境纯净操作与权威一致性封版证据"],
+    forbiddenInterpretation: ["生产发布", "业务上线", "release authority", "final GO"],
+    scenarioScope: {
+      currentMainGate: true,
+      entrySurfaces: spotcheck.entrySurfaces ?? [],
+      lowRiskScenarios: spotcheck.lowRiskScenarios ?? [],
+      highRiskScenarios: spotcheck.highRiskScenarios ?? [],
+      spotcheckScenarioCount: (spotcheck.spotcheckEvidence ?? []).length,
+      productionConfirmAllowed: false,
+      businessGoLiveAllowed: false,
+      releaseAuthority: false,
+      finalGoNoGo: "NO_GO"
+    }
+  };
+  return {
+    status,
+    report: projectPurityAuthoritySealReportPath,
+    result: projectPurityAuthoritySealResultPath,
+    reportDigest: result?.reportDigest ?? hashFileIfPresent(projectPurityAuthoritySealReportPath),
+    sourceAuthorityDigest: result?.sourceAuthorityDigest ?? "missing",
+    browserSpotcheck: spotcheck,
+    node: reportExists ? nodePayload : null
   };
 }
 

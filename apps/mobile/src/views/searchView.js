@@ -24,6 +24,7 @@ export function searchView(ctx) {
 }
 
 function searchRecommendations(ctx) {
+  if (String(ctx.state.query || "").trim()) return "";
   const frequent = searchIntentSuggestions(ctx.state.lang).slice(0, 4);
   const recent = (ctx.state.recentSearches || [])
     .filter(Boolean)

@@ -174,11 +174,18 @@ describe("OAM Surface search intent hub contract", () => {
   });
 
   it("keeps ordinary object search readonly and does not show start handling", () => {
-    const html = searchView(createSurfaceCtx({ view: "search", query: "D01" }));
+    const html = searchView(createSurfaceCtx({
+      view: "search",
+      query: "D01",
+      recentSearches: ["房源建档"]
+    }));
     const text = visibleText(html);
 
     expect(html).not.toContain('data-search-section="activeCommands"');
     expect(html).not.toContain(`data-start-operations-workspace="${DORMITORY_MAINLINE_WORKSPACE_ID}"`);
+    expect(html).not.toContain('data-search-query="房源建档"');
+    expect(text).not.toContain("常用搜索");
+    expect(text).not.toContain("最近搜索");
     expect(text).not.toContain("开始办理");
     expect(text).toContain("这条结果暂时没有可跳转目标");
   });

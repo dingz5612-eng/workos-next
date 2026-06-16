@@ -245,6 +245,7 @@ Invoke-Gate node scripts/oam/check-gate-taxonomy.mjs
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs --self-test
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs
 Invoke-Gate node scripts/oam/check-current-authority-index.mjs
+Invoke-Gate node scripts/oam/check-project-maintainability-governance.mjs
 Invoke-Gate node scripts/business/check-dormitory-13-scenario-control-authority.mjs
 Invoke-Gate node scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs
 Invoke-Gate node scripts/business/check-dormitory-scenario1-benchmark-inheritance-authority.mjs
@@ -400,6 +401,7 @@ Invoke-Gate node scripts/oam/check-runtime-implementation-drift-policy.mjs
 Invoke-Gate node scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs
 Invoke-Gate node scripts/oam/check-test-plan-generated-from-capability.mjs
 Invoke-AdvisoryGate pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1
+Invoke-Gate node scripts/oam/check-project-purity-authority-seal.mjs
 Invoke-Gate node scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs
 Invoke-Gate node scripts/surface/run-dormitory-first-golden-chain-negative-browser-audit.mjs
 Invoke-Gate node scripts/surface/check-dormitory-first-golden-chain-negative-browser-audit.mjs

@@ -60,26 +60,6 @@ function Wait-HttpOk {
   throw "$Name did not become ready at $Url. Last error: $last"
 }
 
-function Test-TcpReady {
-  param(
-    [Parameter(Mandatory = $true)][string] $HostName,
-    [Parameter(Mandatory = $true)][int] $Port
-  )
-
-  try {
-    $client = [System.Net.Sockets.TcpClient]::new()
-    $connect = $client.ConnectAsync($HostName, $Port)
-    if (-not $connect.Wait(1000)) {
-      $client.Dispose()
-      return $false
-    }
-    $client.Dispose()
-    return $connect.IsCompletedSuccessfully
-  } catch {
-    return $false
-  }
-}
-
 function Get-PortFromUrl {
   param(
     [Parameter(Mandatory = $true)][string] $Url,

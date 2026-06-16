@@ -54,6 +54,8 @@ for (const required of [
   "node scripts/oam/check-dormitory-active-path-gate.mjs",
   "node scripts/oam/check-dormitory-operation-execution-contract.mjs",
   "node scripts/oam/check-dormitory-local-test-environment-manager.mjs",
+  "node scripts/oam/check-project-maintainability-governance.mjs",
+  "node scripts/oam/check-project-purity-authority-seal.mjs",
   "node scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
   "node scripts/oam/check-generated-files-not-manually-edited.mjs",
   "node scripts/business/check-dormitory-13-scenario-control-authority.mjs",

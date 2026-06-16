@@ -1,6 +1,7 @@
 import mainlineControl from "./generated/oam/dormitory-13-scenario-control.generated.json" with { type: "json" };
 import scenarioOneMirror from "./generated/oam/dormitory-scenario1-resource-basic-readiness.generated.json" with { type: "json" };
 import generatedSurfaceModel from "./generated/oam/dormitory-surface-input-model.generated.json" with { type: "json" };
+import generatedCapabilityProjection from "./generated/oam/capability-projection.generated.json" with { type: "json" };
 
 export const DORMITORY_MAINLINE_AUTHORITY_ID = mainlineControl.authorityId;
 export const DORMITORY_MAINLINE_WORKSPACE_ID = "W-DORM-MAINLINE";
@@ -163,7 +164,7 @@ export function capabilityCommandCatalog() {
       "ru-RU": "Начать заполнение",
       "ky-KG": "Толтурууну баштоо"
     },
-    keywords: [
+    keywords: currentCommandKeywords([
       "房源建档",
       "房源建档与基础就绪",
       "房间建档",
@@ -174,8 +175,13 @@ export function capabilityCommandCatalog() {
       "готовность комнаты",
       "бөлмө кошуу",
       "базалык даярдык"
-    ]
+    ])
   }];
+}
+
+function currentCommandKeywords(fallback = []) {
+  const generated = generatedCapabilityProjection.commandCatalog?.[0]?.keywords || [];
+  return Array.from(new Set([...fallback, ...generated].filter(Boolean)));
 }
 
 export function mainlineScenarioCatalog() {
