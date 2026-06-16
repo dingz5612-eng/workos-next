@@ -31,6 +31,7 @@ const requiredResultFiles = [
   ["BusinessUiDomCopy", "artifacts/oam/checks/business-ui-copy-no-technical-leak-result.json"],
   ["Dormitory13EntryBrowser", "artifacts/oam/checks/dormitory-13-scenario-entry-browser-result.json"],
   ["PerformanceRecoverabilityBrowser", "artifacts/oam/checks/dormitory-performance-recoverability-result.json"],
+  ["PrelaunchOpsTrial", "artifacts/oam/checks/dormitory-prelaunch-ops-trial-result.json"],
   ["CiHardGateConfig", "artifacts/oam/checks/dormitory-ci-hard-gates-result.json"]
 ];
 
@@ -100,6 +101,31 @@ if (!performanceRecoverability) {
   if ((performanceRecoverability.findings ?? []).length !== 0) fail("performance and recoverability browser report findings must be empty.");
 }
 
+const prelaunchOpsTrial = readJsonIfExists("artifacts/oam/evidence/dormitory-prelaunch-ops-trial/prelaunch-ops-trial-report.json");
+if (!prelaunchOpsTrial) {
+  fail("prelaunch operations trial report missing.");
+} else {
+  const passedRoleCount = (prelaunchOpsTrial.roleTrials ?? []).filter((item) => item.status === "passed").length;
+  const passedScenarioCount = (prelaunchOpsTrial.scenarioTrials ?? []).filter((item) => item.status === "passed").length;
+  if (prelaunchOpsTrial.status !== "passed") fail("prelaunch operations trial report must be passed.");
+  if (prelaunchOpsTrial.git?.headSha !== currentHead) {
+    fail(`prelaunch operations trial report is stale: expected ${currentHead}, actual ${prelaunchOpsTrial.git?.headSha ?? "missing"}.`);
+  }
+  if (passedRoleCount !== 4) fail(`prelaunch operations trial must pass 4 roles, actual ${passedRoleCount}.`);
+  if (passedScenarioCount !== 13) fail(`prelaunch operations trial must pass 13 scenarios, actual ${passedScenarioCount}.`);
+  if ((prelaunchOpsTrial.p0p1Findings ?? []).length !== 0) fail("prelaunch operations trial P0/P1 findings must be empty.");
+  if ((prelaunchOpsTrial.blockers ?? []).length !== 0) fail("prelaunch operations trial blockers must be empty.");
+  if (!prelaunchOpsTrial.screenshotIndex || !readJsonIfExists(prelaunchOpsTrial.screenshotIndex)) {
+    fail("prelaunch operations trial screenshot index missing.");
+  }
+  if (prelaunchOpsTrial.productionConfirmAllowed !== false ||
+    prelaunchOpsTrial.businessGoLiveAllowed !== false ||
+    prelaunchOpsTrial.releaseAuthority !== false ||
+    prelaunchOpsTrial.finalGoNoGo !== "NO_GO") {
+    fail("prelaunch operations trial must keep production/business/release/final GO closed.");
+  }
+}
+
 const defectLedger = readJsonIfExists("docs/oam/dormitory-defect-closure-ledger.json");
 const openP0P1 = (defectLedger?.defects ?? []).filter((item) =>
   ["P0", "P1"].includes(item.severity) && ["open", "fixing"].includes(item.status));
@@ -134,6 +160,22 @@ if (!graph) {
     candidate.gate === "DORMITORY-PERFORMANCE-RECOVERABILITY-BROWSER");
   if (!performanceRecoverabilityNode || performanceRecoverabilityNode.status !== "passed" || performanceRecoverabilityNode.reportFresh !== true) {
     fail("Evidence graph performance and recoverability browser node must be fresh and passed.");
+  }
+  const prelaunchOpsTrialSummary = browser.prelaunchOpsTrial;
+  if (prelaunchOpsTrialSummary?.status !== "passed" ||
+    prelaunchOpsTrialSummary?.currentMainGate !== true ||
+    prelaunchOpsTrialSummary?.passedRoleCount !== 4 ||
+    prelaunchOpsTrialSummary?.passedScenarioCount !== 13 ||
+    prelaunchOpsTrialSummary?.p0p1Count !== 0 ||
+    prelaunchOpsTrialSummary?.blockerCount !== 0 ||
+    !prelaunchOpsTrialSummary?.report ||
+    !prelaunchOpsTrialSummary?.result) {
+    fail("Evidence graph prelaunch operations trial summary must be passed and current main gate.");
+  }
+  const prelaunchOpsTrialNode = (graph.nodes ?? []).find((candidate) =>
+    candidate.gate === "DORMITORY-PRELAUNCH-OPS-TRIAL");
+  if (!prelaunchOpsTrialNode || prelaunchOpsTrialNode.status !== "passed" || prelaunchOpsTrialNode.reportFresh !== true) {
+    fail("Evidence graph prelaunch operations trial node must be fresh and passed.");
   }
   const quarantine = browser[`${oldWord}Quarantine`];
   const firstGolden = quarantine?.firstGoldenChain ?? browser.firstGoldenChain;

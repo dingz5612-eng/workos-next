@@ -40,6 +40,10 @@ if (!browserRunner.includes("scripts/surface/run-dormitory-performance-recoverab
   !browserRunner.includes("scripts/surface/check-dormitory-performance-recoverability-audit.mjs")) {
   fail("browser runner must hard-run performance and recoverability browser audit before scenario positive/negative audits.");
 }
+if (!browserRunner.includes("scripts/surface/run-dormitory-prelaunch-ops-trial.mjs") ||
+  !browserRunner.includes("scripts/surface/check-dormitory-prelaunch-ops-trial.mjs")) {
+  fail("browser runner must hard-run prelaunch operations trial after scenario positive/negative audits.");
+}
 
 for (const required of [
   "node scripts/oam/check-dormitory-mainline-manifest.mjs",
@@ -91,6 +95,12 @@ if (!fs.existsSync(path.join(root, "scripts/surface/run-dormitory-performance-re
 }
 if (!fs.existsSync(path.join(root, "scripts/surface/check-dormitory-performance-recoverability-audit.mjs"))) {
   fail("performance and recoverability browser audit check script missing on disk.");
+}
+if (!fs.existsSync(path.join(root, "scripts/surface/run-dormitory-prelaunch-ops-trial.mjs"))) {
+  fail("prelaunch operations trial run script missing on disk.");
+}
+if (!fs.existsSync(path.join(root, "scripts/surface/check-dormitory-prelaunch-ops-trial.mjs"))) {
+  fail("prelaunch operations trial check script missing on disk.");
 }
 
 for (let scenario = 1; scenario <= 13; scenario += 1) {

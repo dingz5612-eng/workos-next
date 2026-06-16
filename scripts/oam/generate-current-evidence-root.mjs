@@ -4739,6 +4739,7 @@ function buildRealBrowserEvidence() {
   const scenario13Positive = readScenario13PositiveBrowserEvidence();
   const scenario13Negative = readScenario13NegativeBrowserEvidence();
   const performanceRecoverability = readPerformanceRecoverabilityBrowserEvidence();
+  const prelaunchOpsTrial = readPrelaunchOpsTrialEvidence();
   const legacyL1 = readL1BrowserEvidence();
   const tenScenario = readTenScenarioBrowserEvidence();
   const nodes = [
@@ -4768,7 +4769,8 @@ function buildRealBrowserEvidence() {
     scenario12Negative.node,
     scenario13Positive.node,
     scenario13Negative.node,
-    performanceRecoverability.node
+    performanceRecoverability.node,
+    prelaunchOpsTrial.node
   ].filter(Boolean);
   const edges = [
     scenario1Positive.node ? { from: scenario1Positive.node.id, to: "DORMITORY_SCENARIO1_RESOURCE_BASIC_READINESS", relation: "binds_scenario1_positive_browser_evidence" } : null,
@@ -4797,7 +4799,8 @@ function buildRealBrowserEvidence() {
     scenario12Negative.node ? { from: scenario12Negative.node.id, to: "DORMITORY_SCENARIO12_CHANNEL_CORPORATE_CUSTOMER", relation: "binds_scenario12_negative_browser_evidence" } : null,
     scenario13Positive.node ? { from: scenario13Positive.node.id, to: "DORMITORY_SCENARIO13_REPORTING_AUDIT_REVIEW", relation: "binds_scenario13_positive_browser_evidence" } : null,
     scenario13Negative.node ? { from: scenario13Negative.node.id, to: "DORMITORY_SCENARIO13_REPORTING_AUDIT_REVIEW", relation: "binds_scenario13_negative_browser_evidence" } : null,
-    performanceRecoverability.node ? { from: performanceRecoverability.node.id, to: "DORMITORY_13_SCENARIO_PRODUCTION_MAINLINE_ACTIVATION", relation: "binds_performance_recoverability_browser_evidence" } : null
+    performanceRecoverability.node ? { from: performanceRecoverability.node.id, to: "DORMITORY_13_SCENARIO_PRODUCTION_MAINLINE_ACTIVATION", relation: "binds_performance_recoverability_browser_evidence" } : null,
+    prelaunchOpsTrial.node ? { from: prelaunchOpsTrial.node.id, to: "DORMITORY_13_SCENARIO_PRODUCTION_MAINLINE_ACTIVATION", relation: "binds_prelaunch_ops_trial_evidence" } : null
   ].filter(Boolean);
   const screenshotHashCount = nodes.reduce((total, node) => total + (node.screenshotHashes?.length ?? 0), 0);
   const status = scenario1Positive.status === "passed" &&
@@ -4826,7 +4829,8 @@ function buildRealBrowserEvidence() {
     scenario12Negative.status === "passed" &&
     scenario13Positive.status === "passed" &&
     scenario13Negative.status === "passed" &&
-    performanceRecoverability.status === "passed"
+    performanceRecoverability.status === "passed" &&
+    prelaunchOpsTrial.status === "passed"
     ? "passed"
     : "missing_or_failed";
   return {
@@ -4947,6 +4951,14 @@ function buildRealBrowserEvidence() {
         productionConfirmAllowed: false,
         finalGoNoGo: "NO_GO"
       },
+      prelaunchOpsTrial: {
+        ...prelaunchOpsTrial,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        businessGoLiveAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
       legacyQuarantine: {
         firstGoldenChain,
         legacyL1,
@@ -4966,6 +4978,94 @@ function buildRealBrowserEvidence() {
       },
       screenshotHashCount
     }
+  };
+}
+
+function readPrelaunchOpsTrialEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-prelaunch-ops-trial/prelaunch-ops-trial-report.json";
+  const markdownRef = "artifacts/oam/evidence/dormitory-prelaunch-ops-trial/prelaunch-ops-trial-report.md";
+  const resultRef = "artifacts/oam/checks/dormitory-prelaunch-ops-trial-result.json";
+  const screenshotIndexRef = "artifacts/oam/evidence/dormitory-prelaunch-ops-trial/screenshot-index.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.digest ?? item.sha256)
+    .filter(Boolean);
+  const passedRoleCount = (report?.roleTrials ?? []).filter((item) => item.status === "passed").length;
+  const passedScenarioCount = (report?.scenarioTrials ?? []).filter((item) => item.status === "passed").length;
+  const p0p1Count = report?.p0p1Findings?.length ?? 0;
+  const blockerCount = report?.blockers?.length ?? 0;
+  const status = report?.status === "passed" &&
+    result?.status === "PASS" &&
+    report?.git?.headSha === commitSha &&
+    passedRoleCount === 4 &&
+    passedScenarioCount === 13 &&
+    p0p1Count === 0 &&
+    blockerCount === 0 &&
+    report?.productionConfirmAllowed === false &&
+    report?.businessGoLiveAllowed === false &&
+    report?.releaseAuthority === false &&
+    report?.finalGoNoGo === "NO_GO"
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: reportRef,
+    markdown: markdownRef,
+    result: resultRef,
+    screenshotIndex: screenshotIndexRef,
+    sourceUserTestPackage: report?.sourceUserTestPackage || "",
+    prelaunchOpsTrialDigest: report?.auditDigest || "",
+    roleTrialCount: report?.roleTrials?.length ?? 0,
+    passedRoleCount,
+    scenarioTrialCount: report?.scenarioTrials?.length ?? 0,
+    passedScenarioCount,
+    p0p1Count,
+    blockerCount,
+    screenshotHashCount: screenshotHashes.length,
+    node: report ? buildBrowserProofNode({
+      id: "DORMITORY-PRELAUNCH-OPS-TRIAL",
+      status,
+      gate: "DORMITORY-PRELAUNCH-OPS-TRIAL",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      refs: [
+        "scripts/surface/run-dormitory-prelaunch-ops-trial.mjs",
+        "scripts/surface/check-dormitory-prelaunch-ops-trial.mjs",
+        "scripts/surface/run-dormitory-prelaunch-ops-trial.ps1",
+        reportRef,
+        markdownRef,
+        resultRef,
+        screenshotIndexRef,
+        report.sourceUserTestPackage || "docs/oam/dormitory-13-scenario-production-usable-closure-report.md"
+      ],
+      screenshotHashes,
+      scenarioIds: ["Dormitory.13ScenarioMainline.PrelaunchOpsTrial"],
+      auditLevel: "prelaunch_real_browser_role_and_operations_trial",
+      auditPurpose: "验证运营人员、主管/店长、财务人员、管理员按 2.5 用户亲测包完成上线前试运行；覆盖 13 场景、SOP、异常和 NO_GO 边界。",
+      allowedInterpretation: ["本地/测试环境上线前试运行与运营验收证据"],
+      forbiddenInterpretation: ["生产发布", "业务上线", "release authority", "final GO"],
+      scenarioScope: {
+        currentMainGate: true,
+        roleTrialCount: report.roleTrials?.length ?? 0,
+        passedRoleCount,
+        scenarioTrialCount: report.scenarioTrials?.length ?? 0,
+        passedScenarioCount,
+        p0p1Count,
+        blockerCount,
+        productionConfirmAllowed: false,
+        businessGoLiveAllowed: false,
+        releaseAuthority: false,
+        finalGoNoGo: "NO_GO"
+      },
+      businessGoAllowed: false,
+      progress: {
+        roleTrials: passedRoleCount,
+        scenarioTrials: passedScenarioCount,
+        p0p1Count,
+        blockers: blockerCount
+      }
+    }) : null
   };
 }
 

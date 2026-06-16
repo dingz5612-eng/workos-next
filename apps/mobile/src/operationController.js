@@ -102,7 +102,25 @@ export function saveCurrentDraft(ctx) {
   saveDraft(item.id, card.id, draftValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts, draftValues));
   ctx.state.fieldValidation = null;
   ctx.state.operationMessage = ctx.tr("draftSaved");
-  ctx.render();
+  if (!showDraftSavedFeedback(ctx)) ctx.render();
+}
+
+function showDraftSavedFeedback(ctx) {
+  if (typeof document === "undefined") return false;
+  const message = ctx.tr("draftSaved");
+  const existing = document.querySelector('[data-surface="draft-saved-feedback"]');
+  if (existing) {
+    existing.textContent = message;
+    return true;
+  }
+  const actions = document.querySelector(".operation-actions");
+  if (!actions?.insertAdjacentElement) return false;
+  const node = document.createElement("p");
+  node.className = "operation-message";
+  node.dataset.surface = "draft-saved-feedback";
+  node.textContent = message;
+  actions.insertAdjacentElement("afterend", node);
+  return true;
 }
 
 export function updateDerivedFields(ctx) {

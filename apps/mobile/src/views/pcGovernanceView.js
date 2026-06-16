@@ -372,25 +372,25 @@ function adminPanel(governance, ctx) {
   const deviceRevokeAllowed = canRevokeDevice(ctx.state);
   return panel("Admin", "admin", `
     <section data-role-capability-admin>
-      <h3>RoleCapability 查看 / 编辑</h3>
+      <h3>角色能力查看 / 编辑</h3>
       <p data-capability-required="admin.role_capability.edit">编辑需要 admin.role_capability.edit 权限。</p>
-      ${tableOrEmpty(asArray(governance.roleCapabilities), ["role", "capability", "effect", "source"], ctx, "No RoleCapability rules loaded.")}
-      <button type="button" data-role-capability-edit ${roleEditAllowed ? "" : "disabled"}>编辑 RoleCapability</button>
+      ${tableOrEmpty(asArray(governance.roleCapabilities), ["role", "capability", "effect", "source"], ctx, "No role capability rules loaded.")}
+      <button type="button" data-role-capability-edit ${roleEditAllowed ? "" : "disabled"}>编辑角色能力</button>
     </section>
     <section>
-      <h3>FeatureFlag 查看</h3>
-      ${tableOrEmpty(asArray(governance.featureFlags || featureFlagsFromRelease(ctx)), ["flagKey", "status", "scope"], ctx, "No FeatureFlags loaded.")}
+      <h3>功能开关查看</h3>
+      ${tableOrEmpty(asArray(governance.featureFlags || featureFlagsFromRelease(ctx)), ["flagKey", "status", "scope"], ctx, "No feature flags loaded.")}
     </section>
     <section>
-      <h3>SliceCutoverState 查看</h3>
-      ${tableOrEmpty(asArray(governance.sliceCutoverStates || sliceCutoversFromRelease(ctx)), ["sliceId", "runtimeMode", "tenantId", "dependencyStatus"], ctx, "No SliceCutoverState loaded.")}
+      <h3>切换状态查看</h3>
+      ${tableOrEmpty(asArray(governance.sliceCutoverStates || sliceCutoversFromRelease(ctx)), ["sliceId", "runtimeMode", "tenantId", "dependencyStatus"], ctx, "No slice cutover states loaded.")}
     </section>
     <section>
-      <h3>DefinitionVersion 查看</h3>
-      ${tableOrEmpty(asArray(governance.definitionVersions), ["definitionVersion", "contractHash", "status", "activatedAtUtc"], ctx, "No DefinitionVersion records loaded.")}
+      <h3>定义版本查看</h3>
+      ${tableOrEmpty(asArray(governance.definitionVersions), ["definitionVersion", "contractHash", "status", "activatedAtUtc"], ctx, "No definition version records loaded.")}
     </section>
     <section>
-      <h3>DeviceSession 查看 / 撤销</h3>
+      <h3>设备会话查看 / 撤销</h3>
       ${deviceSessionTable(governance, deviceRevokeAllowed, ctx)}
     </section>
     <section>
@@ -501,7 +501,7 @@ function exportControl(definition, device, ctx) {
 
 function deviceSessionTable(governance, revokeAllowed, ctx) {
   const sessions = asArray(governance.deviceSessions);
-  if (!sessions.length) return `<p>${escapeHtml(ctx, governanceText("No DeviceSession records loaded."))}</p>`;
+  if (!sessions.length) return `<p>${escapeHtml(ctx, governanceText("No device session records loaded."))}</p>`;
   return `
     <table>
       <thead><tr><th>设备</th><th>账号</th><th>可信状态</th><th>端</th><th>高风险动作</th><th>操作</th></tr></thead>
@@ -729,11 +729,11 @@ function governanceText(value) {
     "No source-backed risk items loaded.": "没有来源支撑的风险项。",
     "No account users loaded.": "没有用户记录。",
     "No account audit records loaded.": "没有账号审计记录。",
-    "No RoleCapability rules loaded.": "没有 RoleCapability 规则。",
-    "No FeatureFlags loaded.": "没有 FeatureFlag。",
-    "No SliceCutoverState loaded.": "没有 SliceCutoverState。",
-    "No DefinitionVersion records loaded.": "没有 DefinitionVersion 记录。",
-    "No DeviceSession records loaded.": "没有 DeviceSession 记录。",
+    "No role capability rules loaded.": "没有角色能力规则。",
+    "No feature flags loaded.": "没有功能开关。",
+    "No slice cutover states loaded.": "没有切换状态。",
+    "No definition version records loaded.": "没有定义版本记录。",
+    "No device session records loaded.": "没有设备会话记录。",
     "No DomainEvents loaded.": "没有 DomainEvent。",
     "No CommandSubmissions loaded.": "没有 CommandSubmission。",
     "No release control audit loaded.": "没有发布控制审计。",

@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 $root = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
-$logDir = Join-Path $root "artifacts/oam/test-results/real-browser-services"
+$logDir = Join-Path $root "artifacts/oam/test-results/prelaunch-ops-trial-services"
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 
 function Start-HiddenProcess {
@@ -60,26 +60,6 @@ function Wait-HttpOk {
   throw "$Name did not become ready at $Url. Last error: $last"
 }
 
-function Test-TcpReady {
-  param(
-    [Parameter(Mandatory = $true)][string] $HostName,
-    [Parameter(Mandatory = $true)][int] $Port
-  )
-
-  try {
-    $client = [System.Net.Sockets.TcpClient]::new()
-    $connect = $client.ConnectAsync($HostName, $Port)
-    if (-not $connect.Wait(1000)) {
-      $client.Dispose()
-      return $false
-    }
-    $client.Dispose()
-    return $connect.IsCompletedSuccessfully
-  } catch {
-    return $false
-  }
-}
-
 function Get-PortFromUrl {
   param(
     [Parameter(Mandatory = $true)][string] $Url,
@@ -112,15 +92,10 @@ function Stop-TestPortProcesses {
 if (-not $env:ASPNETCORE_ENVIRONMENT) { $env:ASPNETCORE_ENVIRONMENT = "Development" }
 if (-not $env:ASPNETCORE_URLS) { $env:ASPNETCORE_URLS = "http://127.0.0.1:5191" }
 if (-not $env:ConnectionStrings__WorkOSRuntime) { $env:ConnectionStrings__WorkOSRuntime = "Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev" }
-if (-not $env:WORKOS_REAL_BROWSER_USE_INMEMORY) {
-  $env:WORKOS_REAL_BROWSER_USE_INMEMORY = "1"
-}
+if (-not $env:WORKOS_REAL_BROWSER_USE_INMEMORY) { $env:WORKOS_REAL_BROWSER_USE_INMEMORY = "1" }
 if (-not $env:WORKOS_MOBILE_URL) { $env:WORKOS_MOBILE_URL = "http://127.0.0.1:5175" }
 if (-not $env:WORKOS_API_URL) { $env:WORKOS_API_URL = "http://127.0.0.1:5191" }
 if (-not $env:WORKOS_REAL_BROWSER_HEADLESS) { $env:WORKOS_REAL_BROWSER_HEADLESS = "1" }
-if (-not $env:WORKOS_DORM_L1_AUDIT_RUN_ID) {
-  $env:WORKOS_DORM_L1_AUDIT_RUN_ID = "dormitory-l1-browser-e2e-" + (Get-Date -Format "yyyyMMddHHmmss")
-}
 
 Stop-TestPortProcesses -Ports @(
   (Get-PortFromUrl -Url $env:WORKOS_API_URL -DefaultPort 5191),
@@ -148,18 +123,6 @@ try {
   Wait-HttpOk -Url "$env:WORKOS_API_URL/health" -Name "Core API"
   Wait-HttpOk -Url $env:WORKOS_MOBILE_URL -Name "Mobile frontend"
 
-  Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs")
-  Invoke-Native -Command "node" -Arguments @("scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs")
-  Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-performance-recoverability-audit.mjs")
-  Invoke-Native -Command "node" -Arguments @("scripts/surface/check-dormitory-performance-recoverability-audit.mjs")
-
-  for ($scenario = 1; $scenario -le 13; $scenario++) {
-    foreach ($kind in @("positive", "negative")) {
-      Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-scenario$scenario-$kind-browser-audit.mjs")
-      Invoke-Native -Command "node" -Arguments @("scripts/surface/check-dormitory-scenario$scenario-$kind-browser-audit.mjs")
-    }
-  }
-
   Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-prelaunch-ops-trial.mjs")
   Invoke-Native -Command "node" -Arguments @("scripts/surface/check-dormitory-prelaunch-ops-trial.mjs")
 } finally {
@@ -170,4 +133,4 @@ try {
   }
 }
 
-Write-Output "Dormitory 13-scenario current real-browser hard gate: PASS"
+Write-Output "Dormitory prelaunch ops trial: PASS"
