@@ -42,49 +42,51 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
   it("normalizes non-persisted task ids to persisted Operations WorkItem ids", () => {
     vi.stubGlobal("localStorage", { getItem: () => null });
     const testCtx = ctx({
-      selectedWorkspace: "W-STAY-RESOURCE",
-      selectedCardId: "roomSetup",
+      selectedWorkspace: "W-DORM-MAINLINE",
+      selectedCardId: "cert.roomSetupConfirm",
       runtimeStore: {
         workQueue: [],
         operationWorkItems: [{
-          workItemId: "W-STAY-RESOURCE:roomSetup",
-          caseId: "W-STAY-RESOURCE",
-          workItemType: "roomSetup",
+          workItemId: "wi-dorm-room-setup",
+          caseId: "case:W-DORM-MAINLINE",
+          workItemType: "Dorm.RoomSetupConfirm",
           lifecycleState: "ready",
           ownerRole: "operator",
-          workspaceId: "W-STAY-RESOURCE"
+          workspaceId: "W-DORM-MAINLINE",
+          cardId: "cert.roomSetupConfirm"
         }],
         workspaces: [resourceWorkspaceFixture()]
       }
     });
 
-    openWorkItem("T-ROOM-CREATE", testCtx, { workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup" });
+    openWorkItem("draft-room-create", testCtx, { workspaceId: "W-DORM-MAINLINE", cardId: "cert.roomSetupConfirm" });
     const html = routeView(testCtx);
 
-    expect(testCtx.state.selectedWorkItemId).toBe("W-STAY-RESOURCE:roomSetup");
-    expect(html).toContain("W-STAY-RESOURCE:roomSetup");
+    expect(testCtx.state.selectedWorkItemId).toBe("wi-dorm-room-setup");
+    expect(html).toContain("wi-dorm-room-setup");
     expect(html).toContain('data-surface="system-validation-summary"');
     expect(html).toContain('data-surface="trusted-confirm"');
     expect(html).toContain('data-surface="evidence-sheet"');
-    expect(html).not.toContain("T-ROOM-CREATE");
+    expect(html).not.toContain("draft-room-create");
     vi.unstubAllGlobals();
   });
 
   it("renders persisted WorkItem ids when Operation Panel reopens with a non-persisted task id", () => {
     vi.stubGlobal("localStorage", { getItem: () => null });
     const testCtx = ctx({
-      selectedWorkItemId: "T-ROOM-CREATE",
-      selectedWorkspace: "W-STAY-RESOURCE",
-      selectedCardId: "roomSetup",
+      selectedWorkItemId: "draft-room-create",
+      selectedWorkspace: "W-DORM-MAINLINE",
+      selectedCardId: "cert.roomSetupConfirm",
       runtimeStore: {
         workQueue: [],
         operationWorkItems: [{
-          workItemId: "W-STAY-RESOURCE:roomSetup",
-          caseId: "W-STAY-RESOURCE",
-          workItemType: "roomSetup",
+          workItemId: "wi-dorm-room-setup",
+          caseId: "case:W-DORM-MAINLINE",
+          workItemType: "Dorm.RoomSetupConfirm",
           lifecycleState: "ready",
           ownerRole: "operator",
-          workspaceId: "W-STAY-RESOURCE"
+          workspaceId: "W-DORM-MAINLINE",
+          cardId: "cert.roomSetupConfirm"
         }],
         workspaces: [resourceWorkspaceFixture()]
       },
@@ -93,11 +95,11 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
 
     const html = routeView(testCtx);
 
-    expect(html).toContain("W-STAY-RESOURCE:roomSetup");
+    expect(html).toContain("wi-dorm-room-setup");
     expect(html).toContain('data-surface="system-validation-summary"');
     expect(html).toContain('data-surface="trusted-confirm"');
     expect(html).toContain('data-surface="evidence-sheet"');
-    expect(html).not.toContain("T-ROOM-CREATE");
+    expect(html).not.toContain("draft-room-create");
     vi.unstubAllGlobals();
   });
 
@@ -118,24 +120,24 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     await submitWorkItemOperation({
       workspace: resourceWorkspaceFixture(),
       card: resourceWorkspaceFixture().cards[0],
-      workItemId: "W-STAY-RESOURCE:roomSetup",
+      workItemId: "wi-dorm-room-setup",
       actor: { token: "operator-token" },
       deviceId: "mobile-current",
       language: "zh-CN",
-      fieldValues: { roomId: "R-101" },
-      evidenceIds: ["evd-room-check"],
+      fieldValues: { roomNo: "301", bedCount: "6" },
+      evidenceIds: ["evd-room-basic-info"],
       submissionProtocol: {
         idempotencyKey: "idem-room-setup",
         submissionId: "sub-room-setup",
         cardInstanceId: "ci-room-setup",
-        aggregateRef: "roomId:R-101"
+        aggregateRef: "roomNo:301"
       }
     });
 
     expect(calls).toHaveLength(2);
-    expect(calls[0].url).toContain("/api/operations/work-items/W-STAY-RESOURCE:roomSetup/prepare");
-    expect(calls[1].url).toContain("/api/operations/work-items/W-STAY-RESOURCE:roomSetup/confirm");
-    expect(calls.map((call) => call.url).join(" ")).not.toContain("T-ROOM-CREATE");
+    expect(calls[0].url).toContain("/api/operations/work-items/wi-dorm-room-setup/prepare");
+    expect(calls[1].url).toContain("/api/operations/work-items/wi-dorm-room-setup/confirm");
+    expect(calls.map((call) => call.url).join(" ")).not.toContain("draft-room-create");
     expect(calls[0].options.body).toContain("ci-room-setup");
     expect(calls[1].options.body).toContain("sub-room-setup");
     expect(calls[1].options.body).toContain("ci-room-setup");
@@ -172,16 +174,16 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     const result = await submitWorkItemOperation({
       workspace: resourceWorkspaceFixture(),
       card: resourceWorkspaceFixture().cards[0],
-      workItemId: "W-STAY-RESOURCE:roomSetup",
+      workItemId: "wi-dorm-room-setup",
       actor: { token: "operator-token" },
       language: "zh-CN",
-      fieldValues: { roomId: "R-101" },
-      evidenceIds: ["evd-room-check"],
+      fieldValues: { roomNo: "301", bedCount: "6" },
+      evidenceIds: ["evd-room-basic-info"],
       submissionProtocol: {
         idempotencyKey: "idem-room-setup",
         submissionId: "sub-room-setup",
         cardInstanceId: "ci-room-setup",
-        aggregateRef: "roomId:R-101"
+        aggregateRef: "roomNo:301"
       },
       onReadSideSynced: readSideSynced
     });
@@ -389,19 +391,28 @@ function workspaceFixture() {
 
 function resourceWorkspaceFixture() {
   return {
-    id: "W-STAY-RESOURCE",
+    id: "W-DORM-MAINLINE",
     domain: "stay",
-    taskId: "T-ROOM-CREATE",
-    title: { "zh-CN": "我要创建住宿资源" },
-    summary: { "zh-CN": "房间床位配置" },
-    next: { "zh-CN": "先配置房间和床位，再配置价格、准备度、阻断和释放。" },
+    taskId: "draft-room-create",
+    title: { "zh-CN": "房源建档与基础就绪" },
+    summary: { "zh-CN": "房间建档、床位组确认和基础就绪确认" },
+    next: { "zh-CN": "房间建档确认" },
     cards: [{
-      id: "roomSetup",
+      id: "cert.roomSetupConfirm",
       status: "ready",
-      workItemId: "T-ROOM-CREATE",
-      title: { "zh-CN": "房间配置卡" },
-      fields: { business: [], system: [], analytics: [] },
-      evidence: [{ id: "room-duplicate-check", label: { "zh-CN": "房间重复校验" } }],
+      workItemId: "wi-dorm-room-setup",
+      title: { "zh-CN": "房间建档确认" },
+      fields: {
+        business: [
+          { id: "buildingArea", label: { "zh-CN": "楼栋/区域" } },
+          { id: "floor", label: { "zh-CN": "楼层" } },
+          { id: "roomNo", label: { "zh-CN": "房间号" } },
+          { id: "bedCount", label: { "zh-CN": "床位数量" } }
+        ],
+        system: [],
+        analytics: []
+      },
+      evidence: [{ id: "room-basic-info-evidence", label: { "zh-CN": "房间基础资料证据" } }],
       blockerRules: [],
       confirmation: { required: true, requiredRole: "operator", policyRef: "operations-runtime-policy" }
     }],

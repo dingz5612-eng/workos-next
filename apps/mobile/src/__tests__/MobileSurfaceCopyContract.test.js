@@ -125,9 +125,9 @@ describe("HOTFIX-SURFACE-UX-01 mobile visible copy contract", () => {
   it("renders feedback as a role-addressed collaboration message channel", () => {
     stubBrowser();
     const html = render("feedback", {
-      selectedWorkspace: "W-STAY-RESOURCE",
-      selectedCardId: "roomSetup",
-      selectedWorkItemId: "W-STAY-RESOURCE:roomSetup"
+      selectedWorkspace: "W-DORM-MAINLINE",
+      selectedCardId: "cert.roomSetupConfirm",
+      selectedWorkItemId: "wi-dorm-room-setup"
     });
     const text = visibleText(html);
 
@@ -140,8 +140,8 @@ describe("HOTFIX-SURFACE-UX-01 mobile visible copy contract", () => {
     expect(text).toContain("产品/设计负责人");
     expect(text).toContain("指定账号");
     expect(text).toContain("反馈上下文");
-    expect(text).toContain("住宿资源");
-    expect(text).toContain("房间配置");
+    expect(text).toContain("房源建档与基础就绪");
+    expect(text).toContain("房间建档确认");
     expect(text).not.toMatch(/\b(workItemId|cardId|workspaceId|payloadHash|commandSubmissionId)\b/);
     vi.unstubAllGlobals();
   });
@@ -175,7 +175,7 @@ function createCtx(overrides = {}) {
     query: "",
     queueDomain: "all",
     queueBadge: "mine",
-    currentActor: { role: "operator", displayName: "内测经办人" },
+    currentActor: { role: "operator", displayName: "住宿经办人" },
     currentDevice: { deviceId: "mobile-current", deviceTrustStatus: "trusted", surface: "mobile" },
     pcGovernance: { currentDevice: { deviceId: "pc-current", deviceTrustStatus: "unknown", surface: "pc" } },
     runtimeStore: runtimeStore(),
@@ -198,33 +198,33 @@ function createCtx(overrides = {}) {
 function runtimeStore() {
   return {
     workspaces: [{
-      id: "W-STAY-RESOURCE",
+      id: "W-DORM-MAINLINE",
       domain: "stay",
-      title: { "zh-CN": "住宿资源" },
-      summary: { "zh-CN": "房间床位配置" },
-      next: { "zh-CN": "先配置房间和床位" },
+      title: { "zh-CN": "房源建档与基础就绪" },
+      summary: { "zh-CN": "房间建档、床位组确认和基础就绪确认" },
+      next: { "zh-CN": "房间建档确认" },
       cards: [{
-        id: "roomSetup",
+        id: "cert.roomSetupConfirm",
         status: "ready",
-        title: { "zh-CN": "房间配置" },
+        title: { "zh-CN": "房间建档确认" },
         fields: { business: [], system: [], analytics: [] },
-        evidence: [{ id: "room-duplicate-check", label: { "zh-CN": "房间重复校验" } }],
+        evidence: [{ id: "room-basic-info-evidence", label: { "zh-CN": "房间基础资料证据" } }],
         blockerRules: [],
         confirmation: { required: true, requiredRole: "operator" }
       }]
     }],
     workQueue: [{
       queueItemId: "q-room",
-      workItemId: "W-STAY-RESOURCE:roomSetup",
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "roomSetup",
-      caseId: "case:W-STAY-RESOURCE",
-      workItemType: "Dorm.RoomSetup",
+      workItemId: "wi-dorm-room-setup",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm",
+      caseId: "case:W-DORM-MAINLINE",
+      workItemType: "Dorm.RoomSetupConfirm",
       lifecycleState: "ready",
       ownerRole: "operator",
       badges: ["mine", "ready"],
       traceRefs: ["trace-room"],
-      reason: "先配置房间和床位"
+      reason: "房间建档确认"
     }],
     operationWorkItems: [],
     homeSurface: [],

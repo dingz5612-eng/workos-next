@@ -90,7 +90,7 @@ describe("OAM mobile API client coverage", () => {
 
     await expect(checkHealth()).resolves.toEqual({ healthy: true });
     await expect(fetchWorkspaceProjection()).resolves.toMatchObject({ index: 0 });
-    await expect(startOperationsWorkspace("W-STAY-RESOURCE", "actor-token", "start_failed", { anchorQuery: "A101", anchorPayload: { stayId: "stay-1" } })).resolves.toMatchObject({ index: 1 });
+    await expect(startOperationsWorkspace("W-DORM-MAINLINE", "actor-token", "start_failed", { anchorQuery: "A101", anchorPayload: { roomNo: "301" } })).resolves.toMatchObject({ index: 1 });
     await expect(fetchWorkQueue()).resolves.toMatchObject({ index: 2 });
     await expect(fetchOperationWorkItems({ tenantId: "tenant-oam", empty: "" })).resolves.toMatchObject({ index: 3 });
     await expect(fetchOperationWorkItem("wi-1")).resolves.toMatchObject({ index: 4 });
@@ -138,7 +138,7 @@ describe("OAM mobile API client coverage", () => {
     storage.set("workosnext.actorSession", JSON.stringify({ token: "still-present" }));
     queuedResponses.push(jsonFailure(422));
 
-    await expect(startOperationsWorkspace("W-STAY-RESOURCE", "", "workspace_start_blocked")).rejects.toMatchObject({
+    await expect(startOperationsWorkspace("W-DORM-MAINLINE", "", "workspace_start_blocked")).rejects.toMatchObject({
       code: "workspace_start_blocked",
       reason: "",
       status: 422

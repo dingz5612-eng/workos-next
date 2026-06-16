@@ -32,13 +32,13 @@ describe("Stage B search result render contract", () => {
   it("localizes object result prefixes outside Chinese", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "room", lang: "ru-RU" });
     ctx.state.runtimeStore.workspaces.push({
-      id: "W-STAY-RU-ROOM",
+      id: "W-DORM-RU-MAINLINE",
       domain: "stay",
-      title: { "zh-CN": "我要创建住宿资源", "ru-RU": "Создать ресурс проживания" },
+      title: { "zh-CN": "房源建档与基础就绪", "ru-RU": "Создать комнаты и койки" },
       summary: { "ru-RU": "Комнаты и койки" },
       next: { "ru-RU": "Открыть объект" },
       cards: [{
-        id: "roomSetup",
+        id: "cert.roomSetupConfirm",
         status: "ready",
         title: { "ru-RU": "Комната" },
         fields: { business: [], system: [], analytics: [] },
@@ -50,7 +50,7 @@ describe("Stage B search result render contract", () => {
 
     const text = visibleText(searchView(ctx));
 
-    expect(text).toContain("Комнаты · Создать ресурс проживания");
-    expect(text).not.toContain("房间 · Создать ресурс проживания");
+    expect(text).toContain("Комнаты · Создать комнаты и койки");
+    expect(text).not.toContain("房间 · Создать комнаты и койки");
   });
 });

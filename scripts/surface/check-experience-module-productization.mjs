@@ -7,7 +7,12 @@ const root = process.cwd();
 const artifactPath = "artifacts/oam/checks/experience-module-productization-result.json";
 const violations = [];
 
-const ctx = createSurfaceCtx({ view: "operationPanel", selectedWorkItemId: "T-ROOM-CREATE" });
+const ctx = createSurfaceCtx({
+  view: "operationPanel",
+  selectedWorkItemId: "wi-dorm-room-setup",
+  selectedWorkspace: "W-DORM-MAINLINE",
+  selectedCardId: "cert.roomSetupConfirm"
+});
 const operationPanel = routeView(ctx);
 const me = routeView(createSurfaceCtx({ view: "me" }));
 const permission = routeView(createSurfaceCtx({ view: "releaseFlightDeck" }));
@@ -27,11 +32,12 @@ if (!technicalContainers.some((container) => ["data-case-id", "data-submission-i
   violations.push(v("experience_module.technical_audit_attrs_missing", "技术详情容器必须保留 case、submission 和 payload 审计属性。"));
 }
 
-if (!operationPanel.includes('data-work-item-id="W-STAY-RESOURCE:roomSetup"')) {
+if (!operationPanel.includes('data-work-item-id="wi-dorm-room-setup"') ||
+  !operationPanel.includes('data-card-id="cert.roomSetupConfirm"')) {
   violations.push(v("experience_module.work_item_open_binding_missing", "必须保留 persisted WorkItem 打开绑定。"));
 }
 
-if (operationPanel.includes("T-ROOM-CREATE")) {
+if (operationPanel.includes("T-ROOM-CREATE") || operationPanel.includes("W-STAY-RESOURCE:roomSetup")) {
   violations.push(v("experience_module.non_persisted_task_id_visible", "普通 Operation Panel 不得出现 non-persisted task id。"));
 }
 

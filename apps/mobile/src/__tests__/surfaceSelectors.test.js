@@ -31,12 +31,12 @@ describe("runtime surface selectors", () => {
   });
 
   it("does not put Finance or Repair scenario focus on an accommodation operator home", () => {
-    const stay = workspace("W-STAY-RESOURCE", "stay", "roomSetup", "ready", "住宿资源");
+    const stay = workspace("W-DORM-MAINLINE", "stay", "cert.roomSetupConfirm", "ready", "房源建档与基础就绪");
     const finance = workspace("W-FINANCE-DEPOSIT", "finance", "depositReview", "ready", "押金异常");
     const repair = workspace("W-REPAIR-TICKET", "repair", "arrival", "ready", "报修处理");
     const state = runtimeState([stay, finance, repair], {
       homeSurface: [
-        { workspaceId: stay.id, cardId: "roomSetup", domainGroup: "Accommodation", priority: 90 },
+        { workspaceId: stay.id, cardId: "cert.roomSetupConfirm", domainGroup: "Accommodation", priority: 90 },
         { workspaceId: finance.id, cardId: "depositReview", domainGroup: "Finance", priority: 80 },
         { workspaceId: repair.id, cardId: "arrival", domainGroup: "Repair", priority: 70 }
       ]
@@ -44,35 +44,35 @@ describe("runtime surface selectors", () => {
 
     const home = selectHomeSurface({ ...state, currentActor: { role: "operator" } });
 
-    expect(home.map((item) => item.workspaceId)).toEqual(["W-STAY-RESOURCE"]);
+    expect(home.map((item) => item.workspaceId)).toEqual(["W-DORM-MAINLINE"]);
     expect(home.map((item) => item.domainGroup)).not.toContain("Finance");
     expect(home.map((item) => item.domainGroup)).not.toContain("Repair");
   });
 
   it("keeps stay-domain finance scenarios off the accommodation operator home", () => {
-    const resource = workspace("W-STAY-RESOURCE", "stay", "roomSetup", "ready", "住宿资源");
+    const resource = workspace("W-DORM-MAINLINE", "stay", "cert.roomSetupConfirm", "ready", "房源建档与基础就绪");
     const ledger = workspace("W-STAY-DEPOSIT-LEDGER", "stay", "depositClose", "ready", "我要管理押金账本");
     const state = runtimeState([resource, ledger], {
       homeSurface: [
         { workspaceId: ledger.id, cardId: "depositClose", domainGroup: "Accommodation", priority: 90 },
-        { workspaceId: resource.id, cardId: "roomSetup", domainGroup: "Accommodation", priority: 80 }
+        { workspaceId: resource.id, cardId: "cert.roomSetupConfirm", domainGroup: "Accommodation", priority: 80 }
       ]
     });
 
     const operatorHome = selectHomeSurface({ ...state, currentActor: { role: "operator" } });
     const financeHome = selectHomeSurface({ ...state, currentActor: { role: "finance" } });
 
-    expect(operatorHome.map((item) => item.workspaceId)).toEqual(["W-STAY-RESOURCE"]);
+    expect(operatorHome.map((item) => item.workspaceId)).toEqual(["W-DORM-MAINLINE"]);
     expect(financeHome.map((item) => item.workspaceId)).toContain("W-STAY-DEPOSIT-LEDGER");
   });
 
   it("filters finance-like titles carried by homeSurface payloads for operators", () => {
-    const resource = workspace("W-STAY-RESOURCE", "stay", "roomSetup", "ready", "住宿资源");
+    const resource = workspace("W-DORM-MAINLINE", "stay", "cert.roomSetupConfirm", "ready", "房源建档与基础就绪");
     const state = runtimeState([resource], {
       homeSurface: [
         {
           workspaceId: resource.id,
-          cardId: "roomSetup",
+          cardId: "cert.roomSetupConfirm",
           domainGroup: "Accommodation",
           priority: 90,
           title: { "zh-CN": "我要管理押金账本" },
@@ -82,22 +82,22 @@ describe("runtime surface selectors", () => {
     });
 
     expect(selectHomeSurface({ ...state, currentActor: { role: "operator" } })).toEqual([]);
-    expect(selectHomeSurface({ ...state, currentActor: { role: "finance" } }).map((item) => item.workspaceId)).toEqual(["W-STAY-RESOURCE"]);
+    expect(selectHomeSurface({ ...state, currentActor: { role: "finance" } }).map((item) => item.workspaceId)).toEqual(["W-DORM-MAINLINE"]);
   });
 
   it("does not use completed workspaces as today scenario focus", () => {
-    const done = workspace("W-STAY-DONE-RESOURCE", "stay", "roomSetup", "done", "已完成住宿资源");
-    const ready = workspace("W-STAY-READY-RESOURCE", "stay", "bedSetup", "ready", "可办理住宿资源");
+    const done = workspace("W-DORM-DONE-MAINLINE", "stay", "cert.roomSetupConfirm", "done", "已完成房源建档");
+    const ready = workspace("W-DORM-READY-MAINLINE", "stay", "cert.bedSetupConfirm", "ready", "待确认床位组");
     const state = runtimeState([done, ready], {
       homeSurface: [
-        { workspaceId: done.id, cardId: "roomSetup", domainGroup: "Accommodation", priority: 90 },
-        { workspaceId: ready.id, cardId: "bedSetup", domainGroup: "Accommodation", priority: 80 }
+        { workspaceId: done.id, cardId: "cert.roomSetupConfirm", domainGroup: "Accommodation", priority: 90 },
+        { workspaceId: ready.id, cardId: "cert.bedSetupConfirm", domainGroup: "Accommodation", priority: 80 }
       ]
     });
 
     const home = selectHomeSurface({ ...state, currentActor: { role: "operator" } });
 
-    expect(home.map((item) => item.workspaceId)).toEqual(["W-STAY-READY-RESOURCE"]);
+    expect(home.map((item) => item.workspaceId)).toEqual(["W-DORM-READY-MAINLINE"]);
   });
 
   it("uses backend learningCatalog before projection fallback", () => {
@@ -177,7 +177,7 @@ describe("runtime surface selectors", () => {
         workItemId: "wi-runtime-room",
         workspaceId: firstWorkspace.id,
         cardId: firstWorkspace.cards[0].id,
-        workItemType: "Dorm.RoomSetup",
+        workItemType: "Dorm.RoomSetupConfirm",
         status: "ready",
         lifecycleState: "ready",
         ownerRole: "operator",

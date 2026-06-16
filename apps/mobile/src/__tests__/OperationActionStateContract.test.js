@@ -55,8 +55,8 @@ describe("OAM Surface primary action state machine", () => {
   });
 
   it("maps submitting and submitted states to recovery actions", () => {
-    const card = { id: "roomSetup", status: "ready", evidence: [] };
-    const workItem = { workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup" };
+    const card = { id: "cert.roomSetupConfirm", status: "ready", evidence: [] };
+    const workItem = { workspaceId: "W-DORM-MAINLINE", cardId: "cert.roomSetupConfirm" };
 
     expect(buildOperationActionState(workItem, card, { status: "submitting" }).primaryAction.labelKey).toBe("primarySubmitting");
     expect(buildOperationActionState(workItem, card, { status: "committed_projected" }).primaryAction.labelKey).toBe("primaryViewTrace");
@@ -81,10 +81,10 @@ describe("OAM Surface primary action state machine", () => {
   });
 
   it("does not bind submit when Admission denies confirm", () => {
-    const card = { id: "roomSetup", status: "ready", evidence: [] };
+    const card = { id: "cert.roomSetupConfirm", status: "ready", evidence: [] };
     const workItem = {
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "roomSetup",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm",
       admission: {
         visibleAllowed: true,
         prepareAllowed: true,
@@ -103,10 +103,10 @@ describe("OAM Surface primary action state machine", () => {
   });
 
   it("does not bind submit when a Surface card has no Admission contract", () => {
-    const card = { id: "roomSetup", status: "ready", evidence: [] };
+    const card = { id: "cert.roomSetupConfirm", status: "ready", evidence: [] };
     const workItem = {
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "roomSetup"
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm"
     };
     const ctx = createSurfaceCtx();
     const actionState = buildOperationActionState(workItem, card, null, ctx.state);
@@ -142,15 +142,15 @@ describe("OAM Surface primary action state machine", () => {
     ["idempotency_conflict_409", "primaryViewTrace"],
     ["business_blocked_422", "primaryCompleteEvidence", "evidence_missing"]
   ])("maps %s to a specific recovery action", (status, labelKey, reason = "") => {
-    const card = { id: "roomSetup", status: "ready", evidence: [] };
-    const workItem = { workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup" };
+    const card = { id: "cert.roomSetupConfirm", status: "ready", evidence: [] };
+    const workItem = { workspaceId: "W-DORM-MAINLINE", cardId: "cert.roomSetupConfirm" };
 
     expect(buildOperationActionState(workItem, card, { status, reason }).primaryAction.labelKey).toBe(labelKey);
   });
 
   it("maps non-evidence business blockers to blocker guidance", () => {
-    const card = { id: "roomSetup", status: "ready", evidence: [] };
-    const workItem = { workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup" };
+    const card = { id: "cert.roomSetupConfirm", status: "ready", evidence: [] };
+    const workItem = { workspaceId: "W-DORM-MAINLINE", cardId: "cert.roomSetupConfirm" };
 
     expect(buildOperationActionState(workItem, card, {
       status: "business_blocked_422",
@@ -159,8 +159,8 @@ describe("OAM Surface primary action state machine", () => {
   });
 
   it("maps local required-field validation to a field completion action", () => {
-    const card = { id: "roomSetup", status: "ready", evidence: [] };
-    const workItem = { workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup" };
+    const card = { id: "cert.roomSetupConfirm", status: "ready", evidence: [] };
+    const workItem = { workspaceId: "W-DORM-MAINLINE", cardId: "cert.roomSetupConfirm" };
 
     expect(buildOperationActionState(workItem, card, {
       status: "business_blocked_422",

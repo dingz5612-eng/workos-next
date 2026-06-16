@@ -17,8 +17,8 @@ describe("operationRuntime submit protocol", () => {
 
   it("derives card instance and aggregate scope without actor identity", () => {
     vi.stubGlobal("crypto", { randomUUID: () => "55555555-5555-4555-8555-555555555555" });
-    expect(cardInstanceIdFor({ id: "W-STAY-RESOURCE" }, { id: "roomSetup", status: "ready" }))
-      .toBe("ci-W-STAY-RESOURCE-roomSetup-no-aggregate-55555555-5555-4555-8555-555555555555");
+    expect(cardInstanceIdFor({ id: "W-DORM-MAINLINE" }, { id: "cert.roomSetupConfirm", status: "ready" }))
+      .toBe("ci-W-DORM-MAINLINE-cert.roomSetupConfirm-no-aggregate-55555555-5555-4555-8555-555555555555");
     expect(aggregateRefFor({ roomId: "R-1", actorId: "not-trusted" })).toBe("roomId:R-1");
     vi.unstubAllGlobals();
   });
