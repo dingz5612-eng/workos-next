@@ -282,17 +282,22 @@ async function captureSurface(page, id, nameZh, expectedTexts) {
   const screenshot = await capture(page, id);
   const missing = expectedTexts.filter((item) => !text.includes(item));
   const hasForbidden = containsAny(text, forbiddenVisibleTerms);
+  const expectedButtons = buttonTermsForSurface(id);
+  const hasExpectedButton = expectedButtons.length === 0 || expectedButtons.some((item) => text.includes(item));
+  const missingButtons = hasExpectedButton ? [] : expectedButtons;
   const item = {
     id,
     nameZh,
-    status: missing.length === 0 && !hasForbidden ? "passed" : "failed",
+    status: missing.length === 0 && !hasForbidden && hasExpectedButton ? "passed" : "failed",
     expectedTexts,
+    expectedButtons,
     missing,
+    missingButtons,
     visibleTextDigest: digestText(text),
     screenshot,
     analysis: {
       "用户是否看得懂": missing.length === 0 ? "关键入口文案可见" : `缺少 ${missing.join("、")}`,
-      "按钮是否顺": text.includes("开始办理") || text.includes("继续办理") || text.includes("查看详情") || id === "mine" ? "入口按钮可理解" : "入口按钮不清楚",
+      "按钮是否顺": hasExpectedButton ? "入口按钮可理解" : `缺少 ${expectedButtons.join("、")} 中至少一个动作`,
       "是否暴露旧身份或内部 ID": hasForbidden ? "存在风险" : "未发现",
       "职责是否清楚": `${nameZh} 职责已显示`
     }
@@ -303,10 +308,17 @@ async function captureSurface(page, id, nameZh, expectedTexts) {
       severity: "P1",
       message: `${nameZh} 未满足真实入口要求。`,
       missing,
+      missingButtons,
       hasForbidden
     });
   }
   report.entrySurfaces.push(item);
+}
+
+function buttonTermsForSurface(id) {
+  if (id === "work-items") return ["开始办理", "继续办理", "查看详情"];
+  if (id === "operation-panel") return ["保存草稿", "提交处理", "提交办理记录", "查看不能提交原因"];
+  return [];
 }
 
 async function capture(page, id) {

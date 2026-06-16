@@ -37,4 +37,25 @@ describe("Stage B ActionDecisionCard contract", () => {
     expect(text).toContain("当前问题");
     expect(text).toContain("等待主管解除阻断");
   });
+
+  it("uses business action labels for work item entry buttons", () => {
+    const ctx = createSurfaceCtx();
+    const readyText = visibleText(WorkItemCard(ctx.state.runtimeStore.workQueue[0], ctx));
+    expect(readyText).toContain("开始办理");
+    expect(readyText).not.toContain("进入办理面");
+
+    const continuingText = visibleText(WorkItemCard({
+      ...ctx.state.runtimeStore.workQueue[0],
+      lifecycleState: "draft"
+    }, ctx));
+    expect(continuingText).toContain("继续办理");
+
+    const detailText = visibleText(WorkItemCard({
+      ...ctx.state.runtimeStore.workQueue[0],
+      lifecycleState: "blocked",
+      badges: ["mine", "blocked"],
+      reason: "等待主管解除阻断"
+    }, ctx));
+    expect(detailText).toContain("查看详情");
+  });
 });

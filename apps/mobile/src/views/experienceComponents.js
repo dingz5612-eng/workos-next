@@ -61,8 +61,9 @@ export function WorkItemCard(item, ctx) {
     workspaceId: model.workspaceId,
     cardId: model.cardId
   }, ctx.state);
+  const actionLabel = workItemActionLabel(model, ctx);
   const workspaceButton = route.canOpen
-    ? `<button data-work-item-id="${attr(route.workItem.workItemId, ctx)}" data-workspace-id="${attr(route.workItem.workspaceId, ctx)}" data-card-id="${attr(route.workItem.cardId, ctx)}">${text(ctx.tr("openWorkspace"), ctx)}</button>`
+    ? `<button data-work-item-id="${attr(route.workItem.workItemId, ctx)}" data-workspace-id="${attr(route.workItem.workspaceId, ctx)}" data-card-id="${attr(route.workItem.cardId, ctx)}">${text(actionLabel, ctx)}</button>`
     : `<div class="workitem-route-blocked"><b>${text(ctx.tr("operationUnavailableCta"), ctx)}</b><small>${text(ctx.tr("operationUnavailableBody"), ctx)}</small><button data-view="workbench">${text(ctx.tr("returnWorkbench"), ctx)}</button></div>`;
   const debug = ctx.state?.debugSurface ? `<details class="debug-only"><summary>${text(ctx.tr("debugTrace"), ctx)}</summary><dl>
       ${field("workItemId", model.workItemId, ctx)}
@@ -84,6 +85,17 @@ export function WorkItemCard(item, ctx) {
     <div class="business-summary-actions">${workspaceButton}</div>
     ${debug}
   </article>`;
+}
+
+function workItemActionLabel(model = {}, ctx) {
+  const state = normalizeOperationLifecycleState(model.lifecycleState || model.status || model.card?.status || "", "");
+  if (["prepared", "draft", "in_progress", "syncing", "committed_projection_pending"].includes(state)) {
+    return ctx.tr("continueHandling");
+  }
+  if (state && !["ready", "not_started", "pending"].includes(state)) {
+    return ctx.tr("searchActionViewWorkItems");
+  }
+  return ctx.tr("startHandling");
 }
 
 export function WorkItemSummaryCard(item, ctx) {
