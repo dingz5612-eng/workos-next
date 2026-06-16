@@ -1,0 +1,100 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario1-benchmark-inheritance-differenceChecklist.generated",
+  "version": "oam.dormitory-scenario1-benchmark-inheritance-differenceChecklist.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario1-benchmark-inheritance-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:c4e98f2dc18ce3ee8ba62ad09ab5f408a27c5101bcf82e5d4dc7eedf743e416d",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+      "digest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+      "digest": "sha256:455d8a4d79792756a9b6da93aa548dfa981c082737a5d5bfd397a030f64e62c4"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
+  "authorityId": "Dormitory.Scenario1BenchmarkInheritanceContract",
+  "outputContentDigest": "sha256:76cd012829f68ece3d79b0b5c425ba3fd3f9261bfa35b9581a2ddb8627120002",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "场景 1 标杆继承合同",
+  "highestBusinessAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+  "highestBusinessAuthorityId": "Dormitory.Operating13ScenarioControl",
+  "benchmarkImplementationRef": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+  "controlAuthorityDigest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0",
+  "benchmarkContractDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
+  "scenario1SourceDigest": "sha256:455d8a4d79792756a9b6da93aa548dfa981c082737a5d5bfd397a030f64e62c4",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "template": {
+    "requiredSections": [
+      "对象差异",
+      "状态差异",
+      "字段差异",
+      "证据差异",
+      "财务差异",
+      "页面差异",
+      "测试差异"
+    ],
+    "objectDifferenceRequiredZh": "本场景写哪些对象，不写哪些对象。",
+    "stateDifferenceRequiredZh": "本场景产生哪些状态，不得越级产生哪些状态。",
+    "fieldDifferenceRequiredClasses": [
+      "用户填写",
+      "用户选择",
+      "上游只读带入",
+      "系统生成",
+      "系统计算",
+      "证据绑定",
+      "财务确认",
+      "内部审计"
+    ],
+    "evidenceDifferenceRequiredClasses": [
+      "必需证据",
+      "可后补证据",
+      "系统自动证据",
+      "内部审计证据"
+    ],
+    "financeDifferenceRequiredZh": "若涉及金额，必须声明只能产生 Intent、Draft、Request、Snapshot，或交给 finance-gate。",
+    "pageDifferenceRequiredZh": "本场景有哪些页面、按钮、入口和不可提交原因。",
+    "testDifferenceRequiredZh": "本场景正向、反向、无副作用测试如何覆盖。",
+    "blockingRulesZh": [
+      "差异清单为空必须阻断。",
+      "差异清单只复制场景 1 必须阻断。"
+    ]
+  },
+  "forbiddenScenario1BusinessObjects": [
+    "Room",
+    "BedSet",
+    "Bed",
+    "BasicReadiness"
+  ],
+  "forbiddenScenario1BusinessFieldsOrConceptsZh": [
+    "房间号",
+    "床位数",
+    "床位 01..N",
+    "基础就绪字段",
+    "room.bedCount",
+    "bedNo[01..N]",
+    "房间建档字段",
+    "床位组确认字段",
+    "基础就绪确认字段"
+  ]
+}

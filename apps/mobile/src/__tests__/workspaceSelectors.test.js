@@ -69,6 +69,15 @@ describe("workspace selectors", () => {
     expect(isCardActionDisabled({ status: "ready" })).toBe(false);
     expect(metric(3, "search", { tr: (key) => key })).toContain("<strong>3</strong>");
   });
+
+  it("treats available runtime cards as actionable ready cards", () => {
+    const item = runtimeWorkspace("W-STAY", "firstCard", "notStarted");
+    item.cards.push({ ...item.cards[0], id: "availableCard", status: "available" });
+
+    expect(activeWorkspaceCard(item, -1).id).toBe("availableCard");
+    expect(activeCardForWorkspace(item).id).toBe("availableCard");
+    expect(isCardActionDisabled({ status: "available" })).toBe(false);
+  });
 });
 
 function runtimeWorkspace(id, cardId, status) {

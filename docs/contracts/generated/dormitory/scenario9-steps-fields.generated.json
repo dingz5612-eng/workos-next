@@ -1,0 +1,516 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario9-stepsFields.generated",
+  "version": "oam.dormitory-scenario9-stepsFields.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario9-checkout-settlement-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario9-checkout-settlement-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:e8998094072fad350cab863c53b0ead0b98533c26d440c76a3c632dfb43aa6d1",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "digest": "sha256:9faf23637569daa6b849def8f73228f9c54238ea019b8d7ee4810491a5c19c9b"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9faf23637569daa6b849def8f73228f9c54238ea019b8d7ee4810491a5c19c9b",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario9.CheckoutSettlement",
+  "scenarioPackageNo": 9,
+  "scenarioId": "lodging.checkout-and-settlement",
+  "outputContentDigest": "sha256:fbd08006e77e7995283a6ffa5b1765000423e8db6ad96bc07eca8cd7a56d41f6",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "退房结算",
+  "businessGoalZh": "承接场景包 7 的入住事实和场景包 8 的在住管理/退房准备摘要，办理实际退房、交接、验房、费用核算、押金抵扣、应退/应补结算意向、退房确认、凭证回收、财务处理请求和资源待恢复请求。",
+  "sourceScenarioDigest": "sha256:9faf23637569daa6b849def8f73228f9c54238ea019b8d7ee4810491a5c19c9b",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "enter-checkout-processing",
+      "nameZh": "进入退房办理",
+      "commandId": "Dorm.CheckoutCaseDraftStart",
+      "commandBusinessNameZh": "发起退房办理",
+      "userSees": [
+        "住客姓名",
+        "手机号",
+        "房间/床位",
+        "入住日期",
+        "计划离店日期",
+        "当前在住状态",
+        "押金/收款摘要",
+        "未关闭服务/异常",
+        "凭证状态"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "办理退房",
+        "暂缓退房",
+        "返回在住管理"
+      ],
+      "userUploadedOrBoundEvidence": [],
+      "systemGeneratedFields": [
+        "checkoutCaseRef",
+        "stayRef",
+        "occupancyRef",
+        "financeSnapshotRef",
+        "staySnapshotRef",
+        "sourceScenarioRef"
+      ],
+      "validations": [
+        "无有效在住不得退房",
+        "已退房不得重复办理",
+        "存在禁止退房的高风险异常时不得普通退房",
+        "用户不得填写 stayId、checkoutCaseId、roomId、bedId、ledgerEntryId"
+      ],
+      "outputs": [
+        "退房草稿",
+        "当前退房状态：待退房"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "confirm-actual-checkout-handover",
+      "nameZh": "确认实际离店与交接",
+      "commandId": "Dorm.CheckoutHandoverConfirm",
+      "commandBusinessNameZh": "确认离店交接",
+      "userSees": [
+        "住客与房间/床位摘要",
+        "当前退房状态",
+        "缺失项"
+      ],
+      "userFilledFields": [
+        "实际离店时间",
+        "交接备注",
+        "客户确认方式"
+      ],
+      "userSelectedFields": [
+        "本人办理",
+        "代办",
+        "异常离店"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "客户签字",
+        "交接照片",
+        "沟通记录"
+      ],
+      "systemGeneratedFields": [
+        "handoverRef",
+        "actualCheckoutAt",
+        "handoverEvidenceRef",
+        "handoverVersion"
+      ],
+      "validations": [
+        "实际离店时间不能为空",
+        "代办或异常离店必须有说明和证据"
+      ],
+      "outputs": [
+        "交接确认摘要",
+        "当前退房状态：待验房"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "room-bed-inspection",
+      "nameZh": "房间/床位检查",
+      "commandId": "Dorm.CheckoutInspectionConfirm",
+      "commandBusinessNameZh": "确认退房验房",
+      "userSees": [
+        "房间/床位摘要",
+        "交接摘要",
+        "凭证状态"
+      ],
+      "userFilledFields": [
+        "房间状态",
+        "床位状态",
+        "物品状态",
+        "卫生状态",
+        "损坏说明"
+      ],
+      "userSelectedFields": [
+        "正常",
+        "需保洁",
+        "需维修",
+        "有损坏",
+        "有遗失",
+        "有争议"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "验房照片",
+        "损坏照片",
+        "物品清单",
+        "维修评估"
+      ],
+      "systemGeneratedFields": [
+        "inspectionRef",
+        "inspectionTime",
+        "inspectorRef",
+        "damageRecordRef",
+        "evidenceEnvelopeRef"
+      ],
+      "validations": [
+        "有损坏/遗失必须填写说明和证据",
+        "缺验房证据不得进入结算确认"
+      ],
+      "outputs": [
+        "验房摘要",
+        "损坏/遗失评估",
+        "当前退房状态：待结算"
+      ]
+    },
+    {
+      "stepNo": 4,
+      "stepId": "fee-settlement-calculation",
+      "nameZh": "费用核算",
+      "commandId": "Dorm.CheckoutFeeCalculationGenerate",
+      "commandBusinessNameZh": "生成费用核算",
+      "userSees": [
+        "住宿费用摘要",
+        "已确认收款",
+        "押金金额",
+        "未结服务/赔偿项",
+        "应收/已收/待处理"
+      ],
+      "userFilledFields": [
+        "赔偿说明",
+        "服务费说明",
+        "其他调整说明"
+      ],
+      "userSelectedFields": [
+        "费用项",
+        "是否有争议",
+        "是否提交负责人复核"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "授权调整证据",
+        "赔偿证据"
+      ],
+      "systemCalculatedFields": [
+        "房费",
+        "服务费",
+        "赔偿费",
+        "已收金额",
+        "押金金额",
+        "应退金额",
+        "应补金额"
+      ],
+      "systemGeneratedFields": [
+        "feeSettlementDraftRef",
+        "calculationVersion",
+        "priceSnapshotRef",
+        "depositSnapshotRef"
+      ],
+      "validations": [
+        "金额来源必须来自价格快照、财务确认摘要、服务/损坏证据或授权调整",
+        "不得手填最终账务真值"
+      ],
+      "outputs": [
+        "费用核算摘要",
+        "押金抵扣摘要",
+        "当前退房状态：待客户确认"
+      ]
+    },
+    {
+      "stepNo": 5,
+      "stepId": "customer-settlement-confirmation",
+      "nameZh": "客户确认结算",
+      "commandId": "Dorm.CustomerSettlementConfirm",
+      "commandBusinessNameZh": "客户确认结算",
+      "userSees": [
+        "费用明细",
+        "押金抵扣",
+        "应退/应补",
+        "争议项",
+        "证据摘要"
+      ],
+      "userFilledFields": [
+        "争议说明"
+      ],
+      "userSelectedFields": [
+        "客户确认",
+        "客户拒绝",
+        "转负责人复核",
+        "返回修改"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "客户确认凭证",
+        "争议记录"
+      ],
+      "systemGeneratedFields": [
+        "customerSettlementConfirmationRef",
+        "confirmationStatus",
+        "confirmationEvidenceRef"
+      ],
+      "validations": [
+        "客户拒绝或存在争议时不得直接完成普通退房结算",
+        "争议必须进入争议/复核路径"
+      ],
+      "outputs": [
+        "客户确认摘要",
+        "当前退房状态：待财务处理或结算有争议"
+      ]
+    },
+    {
+      "stepNo": 6,
+      "stepId": "checkout-confirmation",
+      "nameZh": "确认退房",
+      "commandId": "Dorm.CheckoutConfirm",
+      "secondaryCommandIds": [
+        "Dorm.CheckoutCorrectionRequest"
+      ],
+      "commandBusinessNameZh": "确认退房",
+      "userSees": [
+        "退房办理摘要",
+        "交接摘要",
+        "验房摘要",
+        "费用核算摘要",
+        "客户确认摘要",
+        "不可提交原因"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "确认退房",
+        "保存草稿",
+        "返回修改",
+        "转人工复核"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "退房确认补充证据"
+      ],
+      "systemGeneratedFields": [
+        "checkoutConfirmationRef",
+        "checkoutNo",
+        "checkedOutAt",
+        "checkedOutBy"
+      ],
+      "systemWrites": [
+        "CheckoutConfirmed",
+        "OccupancyEnded",
+        "StayCheckedOut",
+        "CredentialReturnRecorded",
+        "ResourceRecoveryRequested",
+        "EvidenceBinding",
+        "Projection update"
+      ],
+      "forbiddenWrites": [
+        "直接退款",
+        "直接收款",
+        "直接账务分录",
+        "房源可运营状态"
+      ],
+      "validations": [
+        "必须已完成实际离店、交接、凭证回收、验房、费用核算和客户确认",
+        "客户拒绝或争议未复核不得普通确认退房"
+      ],
+      "outputs": [
+        "退房确认摘要",
+        "退房单号",
+        "资源待恢复状态",
+        "结算意向"
+      ]
+    },
+    {
+      "stepNo": 7,
+      "stepId": "finance-resource-handoff",
+      "nameZh": "财务处理请求与资源恢复交接",
+      "commandId": "Dorm.CheckoutFinanceRequestCreate",
+      "secondaryCommandIds": [
+        "Dorm.ResourceRecoveryRequestCreate"
+      ],
+      "commandBusinessNameZh": "发起财务处理请求与资源恢复请求",
+      "userSees": [
+        "应退/应补方向",
+        "财务处理状态",
+        "资源恢复状态",
+        "证据摘要"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "查看财务处理状态",
+        "查看资源恢复状态",
+        "补充证据"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "财务退回补证",
+        "资源恢复交接证据"
+      ],
+      "systemGeneratedFields": [
+        "refundRequestIntentRef",
+        "topUpRequestIntentRef",
+        "resourceRecoveryRequestRef"
+      ],
+      "validations": [
+        "实际退款、补收确认、账务入账由 finance-gate 或后续财务场景处理",
+        "房源恢复为可运营必须回到场景包 2 复查确认"
+      ],
+      "outputs": [
+        "财务处理请求",
+        "资源待恢复请求",
+        "只读对象引用"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“张三，301-02 床位，今日退房”“应退 200 元，待财务处理”“房源待保洁”。普通用户不得输入或记住内部编号。",
+    "upstreamReadonly": [
+      "住客姓名",
+      "手机号",
+      "房间/床位",
+      "入住日期",
+      "计划离店日期",
+      "当前在住状态",
+      "押金/收款摘要",
+      "财务确认摘要",
+      "未关闭服务/异常",
+      "凭证状态",
+      "退房准备摘要"
+    ],
+    "userFilled": [
+      "实际离店时间",
+      "交接备注",
+      "客户确认方式",
+      "房间状态",
+      "床位状态",
+      "物品状态",
+      "卫生状态",
+      "损坏说明",
+      "赔偿说明",
+      "服务费说明",
+      "其他调整说明",
+      "争议说明",
+      "纠错原因"
+    ],
+    "userSelected": [
+      "办理退房",
+      "暂缓退房",
+      "本人办理",
+      "代办",
+      "异常离店",
+      "正常",
+      "需保洁",
+      "需维修",
+      "有损坏",
+      "有遗失",
+      "有争议",
+      "费用项",
+      "是否提交负责人复核",
+      "客户确认",
+      "客户拒绝",
+      "转负责人复核"
+    ],
+    "systemGenerated": [
+      "checkoutCaseRef",
+      "stayRef",
+      "occupancyRef",
+      "financeSnapshotRef",
+      "staySnapshotRef",
+      "sourceScenarioRef",
+      "handoverRef",
+      "actualCheckoutAt",
+      "handoverEvidenceRef",
+      "handoverVersion",
+      "inspectionRef",
+      "inspectionTime",
+      "inspectorRef",
+      "damageRecordRef",
+      "evidenceEnvelopeRef",
+      "feeSettlementDraftRef",
+      "calculationVersion",
+      "priceSnapshotRef",
+      "depositSnapshotRef",
+      "customerSettlementConfirmationRef",
+      "confirmationStatus",
+      "confirmationEvidenceRef",
+      "checkoutConfirmationRef",
+      "checkoutNo",
+      "checkedOutAt",
+      "checkedOutBy",
+      "refundRequestIntentRef",
+      "topUpRequestIntentRef",
+      "resourceRecoveryRequestRef",
+      "statusHistoryRef",
+      "projectionVersion",
+      "domainEventId"
+    ],
+    "systemCalculated": [
+      "房费",
+      "服务费",
+      "赔偿费",
+      "已收金额",
+      "押金金额",
+      "应退金额",
+      "应补金额",
+      "结算方向",
+      "资源恢复建议状态"
+    ],
+    "evidenceBound": [
+      "客户签字",
+      "交接照片",
+      "沟通记录",
+      "验房照片",
+      "损坏照片",
+      "物品清单",
+      "维修评估",
+      "授权调整证据",
+      "客户确认凭证",
+      "争议记录",
+      "财务退回补证",
+      "资源恢复交接证据"
+    ],
+    "financeGate": [
+      "结算意向",
+      "应退处理请求",
+      "应补处理请求",
+      "finance-gate 处理状态"
+    ],
+    "internalAudit": [
+      "stayRef",
+      "checkoutCaseRef",
+      "settlementDraftRef",
+      "refundRequestIntentRef",
+      "topUpRequestIntentRef",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "forbiddenUserInputFields": [
+      "stayId",
+      "checkoutCaseId",
+      "settlementId",
+      "refundId",
+      "ledgerEntryId",
+      "roomId",
+      "bedId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId",
+      "paymentId",
+      "ledgerTransactionId"
+    ]
+  },
+  "checkoutStatusOptions": [
+    "待退房",
+    "待验房",
+    "待结算",
+    "待客户确认",
+    "待财务处理",
+    "已退房",
+    "结算有争议",
+    "需补证",
+    "资源待保洁",
+    "资源待检查",
+    "资源待维修",
+    "异常待处理"
+  ]
+}

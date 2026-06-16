@@ -146,10 +146,11 @@ function statusIndex(workItems = []) {
 }
 
 function statusRank(status = "", item = {}) {
-  if (isCorrectionWorkItem(item) && !["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"].includes(String(status))) return 4;
-  if (["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"].includes(String(status))) return 3;
-  if (["ready", "blocked", "inProgress"].includes(String(status))) return 2;
-  if (status) return 1;
+  const normalized = normalizeOperationLifecycleState(status, "");
+  if (isCorrectionWorkItem(item) && !["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"].includes(normalized)) return 4;
+  if (["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"].includes(normalized)) return 3;
+  if (["ready", "blocked", "inProgress"].includes(normalized)) return 2;
+  if (normalized) return 1;
   return 0;
 }
 

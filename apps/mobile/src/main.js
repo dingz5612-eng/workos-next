@@ -52,7 +52,7 @@ async function hydrateProjectionFromApi() {
   try {
     const projection = await optionalProtectedSurface(fetchWorkspaceProjection);
     if (!state.currentActor) return;
-    const operationWorkItems = await optionalProtectedSurface(fetchOperationWorkItems);
+    const operationWorkItems = await optionalProtectedSurface(() => fetchOperationWorkItems({ activeOnly: "true" }));
     if (!state.currentActor) return;
     if (projection) applyRuntimeProjection(state, projection);
     applyRuntimeSurfacePayloads(state, { operationWorkItems });

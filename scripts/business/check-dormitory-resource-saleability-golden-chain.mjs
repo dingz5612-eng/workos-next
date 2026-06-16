@@ -3,6 +3,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const scenarioPath = "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml";
+const controlAuthorityPath = "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json";
 const kernelPath = "docs/business/domains/dormitory/dormitory-operating-kernel.json";
 const authorityIndexPath = "docs/oam/current-authority-index.json";
 const reportPath = "artifacts/oam/checks/dormitory-resource-saleability-golden-chain-result.json";
@@ -95,6 +96,7 @@ const violations = [];
 const text = readText(scenarioPath);
 const kernel = readJson(kernelPath);
 const authorityIndex = readJson(authorityIndexPath);
+const controlAuthority = readJson(controlAuthorityPath);
 
 requireValue(hasLine("version: oam.dormitory.resource-saleability-golden-chain.v1"), "scenario.version", "第一金链场景定稿包 version 不正确。");
 requireValue(hasLine("status: authoritative"), "scenario.status", "第一金链场景定稿包必须是 authoritative。");
@@ -323,15 +325,46 @@ for (const ref of forbiddenSourceRefs) {
 const authorityEntry = (authorityIndex.entries ?? []).find((entry) => entry.path === scenarioPath);
 requireValue(Boolean(authorityEntry), "scenario.authority_index_missing", "第一金链场景定稿包必须登记到 current-authority-index。");
 if (authorityEntry) {
-  requireValue(authorityEntry.layer === "source", "scenario.authority_layer", "authority index 必须登记为 source。");
-  requireValue(authorityEntry.authorityRole === "sourceKernel", "scenario.authority_role", "authorityRole 必须是 sourceKernel。");
-  requireValue(authorityEntry.manualEditAllowed === true, "scenario.authority_manual_edit", "Source 场景必须 manualEditAllowed=true。");
-  requireValue(authorityEntry.generated === false && authorityEntry.doNotEdit === false, "scenario.authority_generated_flags", "Source 场景不得 generated/doNotEdit。");
-  requireValue(authorityEntry.currentTruthAllowed === true && authorityEntry.businessFactAuthorityAllowed === true, "scenario.authority_truth", "Source 场景必须允许业务事实权威。");
+  requireValue(authorityEntry.layer === "manual", "scenario.authority_layer", "旧 resource-saleability 包必须登记为 manual 迁移参考，不得再作为 current Source。");
+  requireValue(authorityEntry.authorityRole === "humanManual", "scenario.authority_role", "旧 resource-saleability 包 authorityRole 必须是 humanManual。");
+  requireValue(authorityEntry.manualEditAllowed === true, "scenario.authority_manual_edit", "旧 resource-saleability 包作为迁移参考必须 manualEditAllowed=true。");
+  requireValue(authorityEntry.generated === false && authorityEntry.doNotEdit === false, "scenario.authority_generated_flags", "旧 resource-saleability 包不得 generated/doNotEdit。");
+  requireValue(
+    authorityEntry.currentTruthAllowed === false &&
+      authorityEntry.businessFactAuthorityAllowed === false &&
+      authorityEntry.contractAuthorityAllowed === false &&
+      authorityEntry.runtimeWriteAllowed === false &&
+      authorityEntry.financeLedgerTruthAllowed === false,
+    "scenario.authority_truth",
+    "旧 resource-saleability 包不得保留当前业务事实、合同、runtime 或财务真值权威。"
+  );
+  requireValue((authorityEntry.sourceRefs ?? []).includes(controlAuthorityPath), "scenario.control_authority_ref_missing", "旧 resource-saleability 包必须引用 13 场景总控 Source Authority。");
 }
 const whitelist = new Set(authorityIndex.classificationModel?.sourceLayerWhitelist ?? []);
 const topWhitelist = new Set((authorityIndex.sourceLayerWhitelist ?? []).map((item) => item.path));
-requireValue(whitelist.has(scenarioPath) && topWhitelist.has(scenarioPath), "scenario.source_whitelist_missing", "第一金链场景定稿包必须进入 Source Layer 白名单。");
+requireValue(!whitelist.has(scenarioPath) && !topWhitelist.has(scenarioPath), "scenario.source_whitelist_forbidden", "旧 resource-saleability 包不得进入 Source Layer 白名单。");
+requireValue(whitelist.has(controlAuthorityPath) && topWhitelist.has(controlAuthorityPath), "scenario.control_authority_whitelist_missing", "13 场景总控 Source Authority 必须进入 Source Layer 白名单。");
+const resourceSaleabilityMapping = (controlAuthority.oldPackageMigrationMap ?? [])
+  .find((item) => item.oldPackage === "resource-saleability");
+requireValue(Boolean(resourceSaleabilityMapping), "scenario.control_migration_mapping_missing", "13 场景总控必须登记 resource-saleability 迁移映射。");
+if (resourceSaleabilityMapping) {
+  requireValue(
+    JSON.stringify(resourceSaleabilityMapping.mapsToScenarios ?? []) === JSON.stringify([1, 2]),
+    "scenario.control_migration_mapping_scope",
+    "resource-saleability 只能映射到场景 1/2 的历史参考。"
+  );
+  requireValue(
+    String(resourceSaleabilityMapping.forbiddenUse ?? "").includes("当前总控源"),
+    "scenario.control_migration_forbidden_use",
+    "resource-saleability 迁移映射必须禁止继续作为当前总控源。"
+  );
+}
+requireValue(
+  (controlAuthority.oldPackageIsolationPolicy?.forbiddenIn ?? []).includes("当前 Source Authority 名称") &&
+    controlAuthority.oldPackageIsolationPolicy?.mustBeLabeledAs === "migration_reference_only",
+  "scenario.control_migration_isolation",
+  "13 场景总控必须声明旧包仅为 migration_reference_only。"
+);
 
 if (writeProof) {
   writeReport();

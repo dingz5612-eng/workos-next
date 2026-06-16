@@ -1,3 +1,5 @@
+import { normalizeOperationLifecycleState } from "../operationStatus.js";
+
 const checkoutWorkspaceIds = new Set(["W-STAY-CHECKOUT-SETTLEMENT"]);
 const serviceWorkspaceId = "W-STAY-SERVICE-TASK";
 
@@ -104,7 +106,7 @@ export function checkoutServiceOperationAddon(card, item, ctx) {
 
 export function pcManagerLiteView(ctx) {
   const checkout = checkoutWorkspace(ctx);
-  const activeCard = checkout?.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(card.status)) || checkout?.cards?.[0];
+  const activeCard = checkout?.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(normalizeOperationLifecycleState(card.status, ""))) || checkout?.cards?.[0];
   const blockers = blockerItems(checkout, activeCard, ctx);
   const serviceItems = serviceTaskItems(ctx);
   const overdue = overdueWorkItems(ctx);
@@ -153,7 +155,7 @@ function phaseStatus(phase, cards, activeCard, events) {
   if (matchedCards.some((card) => card.status === "done")) return "done";
   if (matchedCards.some((card) => card.status === "blocked")) return "blocked";
   if (activeCard && phase.cards.includes(activeCard.id)) return "current";
-  if (matchedCards.some((card) => ["ready", "inProgress"].includes(card.status))) return "current";
+  if (matchedCards.some((card) => ["ready", "inProgress"].includes(normalizeOperationLifecycleState(card.status, "")))) return "current";
   return "pending";
 }
 

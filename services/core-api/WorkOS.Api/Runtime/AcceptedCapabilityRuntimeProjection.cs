@@ -22,9 +22,9 @@ internal static class AcceptedCapabilityRuntimeProjection
             WorkspaceId,
             "stay",
             CapabilityId,
-            Text("宿舍第一金链", "Первая золотая цепочка общежития"),
+            Text("房源建档与基础就绪", "Базовая готовность ресурса проживания"),
             Text(
-                "按房间配置、床位配置、资源就绪三步办理。",
+                "按房间建档、床位组确认、基础就绪确认三步办理。",
                 "Три шага: комната, койка, готовность."),
             Steps().Select(Card).ToArray(),
             Text(

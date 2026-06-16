@@ -1,0 +1,49 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario11-financeGate.generated",
+  "version": "oam.dormitory-scenario11-financeGate.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario11-housekeeping-maintenance-outofservice-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario11-housekeeping-maintenance-outofservice-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:a8efad76c99b86f3c3f1391fee130cced7a17f5f111dda186b8e563588c5e782",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "digest": "sha256:4b0f8f146168cb6e055dbdd4ed1c70aa7fef18256281b7760a5fdabfc09359a3"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:4b0f8f146168cb6e055dbdd4ed1c70aa7fef18256281b7760a5fdabfc09359a3",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+  "scenarioPackageNo": 11,
+  "scenarioId": "lodging.housekeeping-maintenance-outofservice",
+  "outputContentDigest": "sha256:f7d0e1bfeb362cf22a0ef0be3caed3b1413970832512298daa41bcca31a7c244",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "房务、维修与停售协同",
+  "businessGoalZh": "承接场景包 2 的运营阻断、场景包 8 的在住服务请求、场景包 9 的退房资源待恢复、场景包 10 的释放后待处理资源，完成保洁、维修、检查、停售申请、恢复建议、作业证据和任务闭环。",
+  "sourceScenarioDigest": "sha256:4b0f8f146168cb6e055dbdd4ed1c70aa7fef18256281b7760a5fdabfc09359a3",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "consumer": "finance-gate",
+  "allowedInputs": [
+    "费用意向",
+    "费用依据",
+    "供应商凭证",
+    "作业证据摘要",
+    "只读对象引用"
+  ],
+  "financeTruthRuleZh": "finance-gate 或支出治理只能读取费用意向、费用依据、供应商凭证、作业证据摘要和只读对象引用后处理财务事实；业务 runtime 不得直接写 Payment、Refund、LedgerEntry 或 LedgerTransaction。",
+  "expenseIntentOnly": true,
+  "businessRuntimeMayWriteLedger": false,
+  "businessRuntimeMayWritePaymentRefund": false,
+  "failurePathBusinessSideEffectsAllowed": false
+}

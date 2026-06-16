@@ -1,0 +1,155 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario6-surfaceNavigation.generated",
+  "version": "oam.dormitory-scenario6-surfaceNavigation.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario6-payment-deposit-and-guarantee-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario6-payment-deposit-and-guarantee-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:cffa84c910c72c5fad442bc4d7b4d8d65115cc58d806b1762082bfcffdec4430",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "digest": "sha256:99ce884d2bf6fc1f168eaa20970dc4fe62535dafe0a6ce2a69a115c3a931de41"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:99ce884d2bf6fc1f168eaa20970dc4fe62535dafe0a6ce2a69a115c3a931de41",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+  "scenarioPackageNo": 6,
+  "scenarioId": "lodging.payment-deposit-and-guarantee",
+  "outputContentDigest": "sha256:8328613c61d8d2f0fcf61ef0024dc353d60fe0bc11c855030cdc6c6f82326ae4",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "收款、押金与担保",
+  "businessGoalZh": "承接场景包 5 已确认预订，生成应收、押金和担保要求，采集收款凭证、押金凭证和担保信息，并通过 finance-gate 完成财务确认。",
+  "sourceScenarioDigest": "sha256:99ce884d2bf6fc1f168eaa20970dc4fe62535dafe0a6ce2a69a115c3a931de41",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "surfaceNavigation": {
+    "pagesZh": [
+      "收款押金办理页",
+      "应收摘要页",
+      "收款凭证提交页",
+      "押金/担保提交页",
+      "财务确认页",
+      "财务退回补证页",
+      "确认摘要页",
+      "状态历史页"
+    ],
+    "todayZh": "今日只展示今日待收款、押金待确认、担保即将过期、财务退回待补证等今天需要处理的被动任务。",
+    "workItemsZh": "工作项展示全部收款、押金与担保被动任务池。",
+    "searchZh": "搜索可以查客户、手机号、预订号、收款状态、押金状态、担保状态；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "mustShowZh": [
+      "当前财务状态",
+      "剩余待处理",
+      "不可提交原因",
+      "下一步动作",
+      "finance-gate 状态"
+    ],
+    "buttonByState": [
+      {
+        "state": "待提交凭证",
+        "buttonsZh": [
+          "上传收款凭证",
+          "上传押金凭证",
+          "提交担保信息"
+        ]
+      },
+      {
+        "state": "待财务确认",
+        "buttonsZh": [
+          "查看提交",
+          "补充证据"
+        ]
+      },
+      {
+        "state": "财务退回",
+        "buttonsZh": [
+          "按退回原因补充"
+        ]
+      },
+      {
+        "state": "财务已确认",
+        "buttonsZh": [
+          "查看确认摘要",
+          "进入入住办理准备"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "已入住",
+      "已退房",
+      "已退款",
+      "final GO",
+      "生产发布",
+      "ordinary-payment",
+      "deposit-liability",
+      "PaymentConfirm",
+      "DepositConfirm"
+    ]
+  },
+  "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“张三，预订号 R202606200001，房费待确认 540 元，押金待确认 300 元”。",
+  "forbiddenUserInputFields": [
+    "paymentId",
+    "depositId",
+    "guaranteeId",
+    "ledgerEntryId",
+    "ledgerTransactionId",
+    "reservationId",
+    "paymentCaseId",
+    "financeReviewRequestId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId"
+  ],
+  "buttonByState": [
+    {
+      "state": "待提交凭证",
+      "buttonsZh": [
+        "上传收款凭证",
+        "上传押金凭证",
+        "提交担保信息"
+      ]
+    },
+    {
+      "state": "待财务确认",
+      "buttonsZh": [
+        "查看提交",
+        "补充证据"
+      ]
+    },
+    {
+      "state": "财务退回",
+      "buttonsZh": [
+        "按退回原因补充"
+      ]
+    },
+    {
+      "state": "财务已确认",
+      "buttonsZh": [
+        "查看确认摘要",
+        "进入入住办理准备"
+      ]
+    }
+  ],
+  "paymentDepositStatusOptions": [
+    "待提交凭证",
+    "待财务确认",
+    "财务已确认",
+    "财务退回",
+    "部分确认",
+    "押金已确认",
+    "担保已确认",
+    "需补充证据"
+  ]
+}

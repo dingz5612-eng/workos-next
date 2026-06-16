@@ -1,3 +1,4 @@
+import { normalizeOperationLifecycleState } from "../operationStatus.js";
 import { normalizeQuery } from "../runtime/runtimeStore.js";
 import { businessAnchorText } from "../businessAnchorKernel.js";
 
@@ -239,7 +240,7 @@ export function isUnsafeLedgerCarryForward(workspace, fieldId) {
 }
 
 export function activeCard(workspace) {
-  return workspace?.cards?.find((card) => activeStatuses.has(card.status)) || workspace?.cards?.[0];
+  return workspace?.cards?.find((card) => activeStatuses.has(normalizeOperationLifecycleState(card.status, ""))) || workspace?.cards?.[0];
 }
 
 function projectionHomeItem(workspace) {
@@ -354,17 +355,19 @@ function normalizeDomain(value = "") {
 
 function badgesFor(card) {
   if (!card) return [];
-  const badges = [card.status];
-  if (activeStatuses.has(card.status)) badges.push("mine");
+  const status = normalizeOperationLifecycleState(card.status, card.status);
+  const badges = [status];
+  if (activeStatuses.has(status)) badges.push("mine");
   if (card.status === "blocked") badges.push("blocked");
   if (card.confirmation?.required || card.Confirmation?.required) badges.push("confirm");
   return Array.from(new Set(badges));
 }
 
 function priorityFor(status) {
-  if (status === "blocked") return 100;
-  if (status === "ready") return 90;
-  if (status === "inProgress") return 80;
+  const normalized = normalizeOperationLifecycleState(status, "");
+  if (normalized === "blocked") return 100;
+  if (normalized === "ready") return 90;
+  if (normalized === "inProgress") return 80;
   return 40;
 }
 

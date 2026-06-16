@@ -1,0 +1,222 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario12-objectStateModel.generated",
+  "version": "oam.dormitory-scenario12-objectStateModel.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario12-channel-corporate-customer-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario12-channel-corporate-customer-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:d504bad001d84d42799afcfcddb383376b494f5dbc5ee6787b025d90409d4b15",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "digest": "sha256:ab296f3dcf35e86acff50f22118336d4a36607c232d31e2fd712cf94cc36bfde"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:ab296f3dcf35e86acff50f22118336d4a36607c232d31e2fd712cf94cc36bfde",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario12.ChannelCorporateCustomer",
+  "scenarioPackageNo": 12,
+  "scenarioId": "lodging.channel-corporate-customer",
+  "outputContentDigest": "sha256:93d08be39366f1f13184d9865cb19c2202ba719e99fc3699f0bbc7f4cfb01bde",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "渠道与企业客户",
+  "businessGoalZh": "维护外部渠道、企业客户、协议客户、渠道发布规则、企业协议资格、渠道对接状态、佣金/结算规则意向和证据，并向场景包 3、4、5、finance-gate 和看板提供只读条件。",
+  "sourceScenarioDigest": "sha256:ab296f3dcf35e86acff50f22118336d4a36607c232d31e2fd712cf94cc36bfde",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "objects": [
+    {
+      "objectName": "ChannelPartner",
+      "businessNameZh": "渠道伙伴",
+      "descriptionZh": "外部渠道、OTA、分销或合作平台的业务档案。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyPartner"
+    },
+    {
+      "objectName": "ChannelAccount",
+      "businessNameZh": "渠道账号",
+      "descriptionZh": "渠道对接账号、对接方式、启停状态和同步偏好。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyChannelAccount"
+    },
+    {
+      "objectName": "CorporateAccount",
+      "businessNameZh": "企业客户账户",
+      "descriptionZh": "企业客户主体、负责人、有效合作状态和证据。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyCorporateAccount"
+    },
+    {
+      "objectName": "CorporateCustomer",
+      "businessNameZh": "企业客户",
+      "descriptionZh": "企业客户业务展示对象，指向 CorporateAccount，不拥有报价或预订真值。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyCustomerAlias"
+    },
+    {
+      "objectName": "CorporateAgreement",
+      "businessNameZh": "合作协议",
+      "descriptionZh": "协议名称、业务展示编号、有效期、取消/入住/结算说明、审核状态和版本。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "versionedAgreement"
+    },
+    {
+      "objectName": "AgreementEligibility",
+      "businessNameZh": "协议适用资格",
+      "descriptionZh": "协议适用客户类型、渠道、商品范围和价格版本引用。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyEligibility"
+    },
+    {
+      "objectName": "ChannelEligibility",
+      "businessNameZh": "渠道适用资格",
+      "descriptionZh": "渠道可见的商品、售卖单位、客户类型和适用日期。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyEligibility"
+    },
+    {
+      "objectName": "CorporateEligibility",
+      "businessNameZh": "企业适用资格",
+      "descriptionZh": "企业协议客户可使用的商品/价格版本和适用条件。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyEligibility"
+    },
+    {
+      "objectName": "ChannelProductMapping",
+      "businessNameZh": "渠道商品映射",
+      "descriptionZh": "渠道展示名称、渠道房型/床型映射和商品/售卖单位引用。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "versionedMapping"
+    },
+    {
+      "objectName": "ChannelPublicationRule",
+      "businessNameZh": "渠道发布规则",
+      "descriptionZh": "控制渠道展示、上下架状态、库存展示同步和人工确认规则。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "versionedPublicationRule"
+    },
+    {
+      "objectName": "ChannelPublicationStatus",
+      "businessNameZh": "渠道发布状态",
+      "descriptionZh": "发布待检查、发布已启用或发布已暂停；不代表库存锁定或报价完成。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyPublicationStatus"
+    },
+    {
+      "objectName": "CommissionRuleIntent",
+      "businessNameZh": "佣金规则意向",
+      "descriptionZh": "佣金说明、佣金类型、依据和是否需要财务确认，只能交给 finance-gate。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "intentOnly"
+    },
+    {
+      "objectName": "SettlementRuleIntent",
+      "businessNameZh": "结算规则意向",
+      "descriptionZh": "账期、结算周期、对账方式、发票要求和结算备注，只能作为财务规则意向。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "intentOnly"
+    },
+    {
+      "objectName": "ChannelContact",
+      "businessNameZh": "渠道联系人",
+      "descriptionZh": "渠道联系人、电话、邮箱和授权关系。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyContact"
+    },
+    {
+      "objectName": "CorporateContact",
+      "businessNameZh": "企业联系人",
+      "descriptionZh": "企业客户联系人、电话、邮箱和职责。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyContact"
+    },
+    {
+      "objectName": "ContactPerson",
+      "businessNameZh": "联系人",
+      "descriptionZh": "渠道或企业联系人通用业务对象。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyContact"
+    },
+    {
+      "objectName": "ContractEvidence",
+      "businessNameZh": "合同与资质证据",
+      "descriptionZh": "营业执照、合作协议、授权证明、合同扫描件、审批记录和补充协议。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyEvidence"
+    },
+    {
+      "objectName": "StatusHistory",
+      "businessNameZh": "状态历史",
+      "descriptionZh": "记录渠道、企业客户、协议、发布规则和意向的状态变更。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyHistory"
+    },
+    {
+      "objectName": "ChannelStatusHistory",
+      "businessNameZh": "渠道状态历史",
+      "descriptionZh": "渠道启用、暂停、停用、发布检查和发布暂停历史。",
+      "ownedByScenarioPackageNo": 12,
+      "writeDisposition": "appendOnlyHistory"
+    }
+  ],
+  "channelCorporateStatusOptions": [
+    "渠道草稿",
+    "待审核",
+    "已启用",
+    "已暂停",
+    "已停用",
+    "企业客户草稿",
+    "协议待审核",
+    "协议已生效",
+    "协议已过期",
+    "协议已停用",
+    "发布待检查",
+    "发布已启用",
+    "发布已暂停",
+    "财务规则待确认"
+  ],
+  "stateLayering": {
+    "productAndPriceAuthorityZh": "商品和价格金额真值来自场景包 3，场景包 12 只能读取商品/价格摘要和版本引用。",
+    "quoteAuthorityZh": "报价来自场景包 4，渠道资格或企业协议不等于已报价。",
+    "reservationAuthorityZh": "预订和库存锁定来自场景包 5，渠道发布不等于库存已锁定。",
+    "financeAuthorityZh": "财务真值来自 finance-gate，佣金/结算意向不等于已入账。",
+    "operationBlockRuleZh": "渠道发布必须受场景包 2 的运营状态阻断，维修/停售资源不得发布为可用。"
+  },
+  "invariants": [
+    "企业客户必须有主体名称、联系人、联系方式、协议有效期和证据。",
+    "渠道必须有渠道名称、渠道类型、联系人、对接方式、启停状态和证据。",
+    "协议价资格只能引用场景包 3 的商品/价格版本或价格策略，不得在本包直接手填最终价格真值。",
+    "渠道发布只能引用已生效商品和价格，并且必须受场景包 2 的运营状态阻断。",
+    "佣金、账期、结算方式只能形成规则意向或 finance-gate 输入，不得直接写账务。",
+    "渠道启用不等于商品可报价；协议生效不等于价格已生效；渠道发布不等于库存已锁定。",
+    "已生效协议不得原地覆盖；只能新版本、续签、停用、作废或纠错。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。",
+    "失败路径不得启用渠道、不得发布商品、不得生成报价或预订，不得写非法 RatePlan、Quote、Reservation、InventoryHold、Payment、Refund、Ledger，不得刷新错误 Projection/Search/Dashboard。"
+  ],
+  "channelCorporateInvariantRule": {
+    "businessProfileRequired": true,
+    "keyEvidenceRequiredBeforeEnable": true,
+    "agreementDateRangeValid": true,
+    "agreementApprovalRequiredBeforeEffective": true,
+    "expiredAgreementCannotBeEligible": true,
+    "productPriceReferenceFromScenario3Only": true,
+    "effectivePriceRequiredForPublication": true,
+    "operationBlockPreventsPublication": true,
+    "channelPublicationDoesNotLockInventory": true,
+    "quoteOwnedByScenario4": true,
+    "reservationInventoryOwnedByScenario5": true,
+    "financeGateHandlesCommissionSettlementTruth": true,
+    "appendOnlyVersionHistory": true,
+    "failureNoSideEffects": true,
+    "querySearchListBoardReportReadonly": true
+  }
+}

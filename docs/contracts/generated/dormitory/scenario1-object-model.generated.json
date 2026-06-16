@@ -1,0 +1,254 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario1-objectModel.generated",
+  "version": "oam.dormitory-scenario1-objectModel.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario1-resource-basic-readiness-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario1-resource-basic-readiness-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:12ac720d897bd51026accb6a722096e2057a925770ad9b4e4a68803848679aca",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+      "digest": "sha256:455d8a4d79792756a9b6da93aa548dfa981c082737a5d5bfd397a030f64e62c4"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:455d8a4d79792756a9b6da93aa548dfa981c082737a5d5bfd397a030f64e62c4",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario1.ResourceBasicReadiness",
+  "scenarioPackageNo": 1,
+  "scenarioId": "lodging.resource-basic-readiness",
+  "outputContentDigest": "sha256:45ad5ccc27e5a36853da475fb19043367ab4f8d737349bad69b2facc4faf02e0",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "房源建档与基础就绪",
+  "businessGoalZh": "把房间和床位组建档，完成基础资料与基础检查确认，只输出基础就绪摘要，不输出可运营、可报价或可预订。",
+  "sourceScenarioDigest": "sha256:455d8a4d79792756a9b6da93aa548dfa981c082737a5d5bfd397a030f64e62c4",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "objects": [
+    {
+      "objectName": "BuildingContext",
+      "nameZh": "楼栋/区域上下文",
+      "descriptionZh": "用户选择的基础组织、楼栋或区域上下文，只作为房间建档上游只读上下文。",
+      "ownedByThisPackage": false,
+      "source": "基础组织/楼栋上下文",
+      "identityFields": [
+        "buildingContextRef"
+      ],
+      "userVisibleDisplayFields": [
+        "楼栋/区域"
+      ],
+      "systemFields": [
+        "buildingContextRef",
+        "contextVersion"
+      ],
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "Room",
+      "nameZh": "房间",
+      "descriptionZh": "一个楼栋/区域上下文下的房间基础事实。",
+      "ownedByThisPackage": true,
+      "identityFields": [
+        "roomRef",
+        "roomStableRef"
+      ],
+      "businessKey": [
+        "buildingContextRef",
+        "roomNo"
+      ],
+      "userVisibleDisplayFields": [
+        "楼栋/区域",
+        "楼层",
+        "房间号",
+        "房间位置说明",
+        "床位数量",
+        "备注"
+      ],
+      "systemFields": [
+        "roomRef",
+        "roomStableRef",
+        "roomVersion",
+        "createdAt",
+        "createdBy",
+        "domainEventId",
+        "projectionVersion"
+      ],
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "BedSet",
+      "nameZh": "床位组",
+      "descriptionZh": "一个房间下完整床位的集合；完整性由 room.bedCount 与生成床位数量一致决定。",
+      "ownedByThisPackage": true,
+      "identityFields": [
+        "bedSetRef"
+      ],
+      "businessKey": [
+        "roomRef"
+      ],
+      "userVisibleDisplayFields": [
+        "所属房间",
+        "床位数量",
+        "床位组完整度"
+      ],
+      "systemFields": [
+        "bedSetRef",
+        "bedSetVersion",
+        "bedCountMatchedFlag"
+      ],
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "Bed",
+      "nameZh": "床位",
+      "descriptionZh": "系统根据 room.bedCount 自动生成的 01..N 床位。",
+      "ownedByThisPackage": true,
+      "identityFields": [
+        "bedRef"
+      ],
+      "businessKey": [
+        "roomRef",
+        "bedNo"
+      ],
+      "userVisibleDisplayFields": [
+        "床位 01..N",
+        "床型",
+        "床位备注",
+        "特殊说明",
+        "启用状态"
+      ],
+      "systemFields": [
+        "bedRef",
+        "bedNo",
+        "bedVersion"
+      ],
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "BasicReadiness",
+      "nameZh": "基础就绪",
+      "descriptionZh": "基础资料和基础检查完成结果，不等于可运营、可报价、可预订或可售。",
+      "ownedByThisPackage": true,
+      "identityFields": [
+        "basicReadinessRef"
+      ],
+      "businessKey": [
+        "roomRef",
+        "bedSetRef"
+      ],
+      "userVisibleDisplayFields": [
+        "基础检查结果",
+        "保洁基础检查结果",
+        "设施基础检查结果",
+        "安全基础检查结果",
+        "基础就绪结论",
+        "备注"
+      ],
+      "systemFields": [
+        "basicReadinessRef",
+        "readinessVersion",
+        "confirmedAt",
+        "confirmedBy",
+        "evidenceEnvelopeRef",
+        "summarySnapshotRef"
+      ],
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "EvidenceBinding",
+      "nameZh": "证据绑定",
+      "descriptionZh": "房间照片、基础资料、床位照片、归属证明、完成照片、检查记录和补充证据的绑定关系。",
+      "ownedByThisPackage": true,
+      "identityFields": [
+        "evidenceEnvelopeRef"
+      ],
+      "businessKey": [
+        "businessObjectRef",
+        "evidenceType"
+      ],
+      "systemFields": [
+        "evidenceEnvelopeRef",
+        "evidenceDigest",
+        "boundAt",
+        "boundBy"
+      ],
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "StatusHistory",
+      "nameZh": "状态历史",
+      "descriptionZh": "记录对象当前状态、历史状态、证据历史和合法下一步动作。",
+      "ownedByThisPackage": true,
+      "identityFields": [
+        "statusHistoryRef"
+      ],
+      "businessKey": [
+        "businessObjectRef"
+      ],
+      "systemFields": [
+        "statusHistoryRef",
+        "changedAt",
+        "changedBy",
+        "changeReason",
+        "domainEventId"
+      ],
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    }
+  ],
+  "bedGenerationRule": {
+    "ruleId": "room-bed-count-generates-complete-bedset",
+    "sourceField": "room.bedCount",
+    "onlySourceOfBedQuantity": "room.bedCount",
+    "generationPattern": "room.bedCount = N 时系统必须生成 Bed 01..N",
+    "bedNoFormat": "two_digit_01_to_N",
+    "bedNoUniquenessScope": "same_room",
+    "sameBedNoAllowedAcrossRooms": true,
+    "bedSetCompletionGateZh": "床位组未完整时不得进入基础就绪确认。",
+    "forbiddenUserShortcutZh": "用户不得只填一个 bedNo 代替床位组。"
+  },
+  "objectModelInvariantZh": "BasicReadiness 只表示基础资料和基础检查完成，不得解释为可运营、可报价、可预订或可售。"
+}

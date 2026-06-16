@@ -1,0 +1,64 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-control.generated",
+  "version": "oam.dormitory-13-scenario-control.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:4c3a13f3a7b929d8420f863c66bb6891b209aee38ab4cb168f785dc2865489a7",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0"
+    }
+  ],
+  "sourceContentDigest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:c803e180bd8c20d3c5f47bb7d21224c7232ded656a926ab901449ec0fc041439",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "scopeZh": "住宿经营 13 场景总控唯一业务供应链权威。后续场景包 1-13 必须从本文件和各场景 Source Authority 派生；旧场景包只能作为迁移映射和证据参考。",
+  "layerModel": {
+    "mainOperatingChain": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "horizontalSupportChain": [
+      11,
+      12
+    ],
+    "readonlyGovernanceChain": [
+      13
+    ],
+    "rules": [
+      "场景 11 和场景 12 是横向能力，不需要等到场景 10 完成才使用。",
+      "场景 13 只能读取快照、指标、审计证据和行动计划，不得写业务事实。",
+      "下游只能读取上游完成摘要，不得要求用户重新填写已确认字段。"
+    ]
+  },
+  "runtimeConsumptionBoundary": {
+    "runtime": "只消费总控 generated 合同和各场景 generated 合同来执行命令与校验。",
+    "surface": "只展示、解释、跳转和提交合法动作。",
+    "readModelSearchDashboardReport": "只读消费，不写业务事实。",
+    "financeGate": "独占账务真值。",
+    "forbidden": "runtime、surface、测试脚本不得绕过总控硬编码业务规则。"
+  },
+  "finalSafety": {
+    "businessFeatureDevelopmentAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

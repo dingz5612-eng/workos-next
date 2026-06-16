@@ -77,6 +77,724 @@ const firstGoldenChainDbProjectionProofResultPath =
   "artifacts/oam/checks/dormitory-first-golden-chain-db-projection-proof-result.json";
 const evidenceDigestChainSingleSourceResultPath =
   "artifacts/oam/checks/evidence-digest-chain-single-source-result.json";
+const dormitory13ScenarioSourcePath =
+  "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json";
+const dormitory13ScenarioGeneratedFiles = [
+  "docs/contracts/generated/dormitory/13-scenario-control.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-13-scenario-control.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioControl.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-index.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-state-ladder.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-object-ownership.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-field-source-matrix.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-evidence-policy.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-finance-boundary.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-handoff-summaries.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-old-package-migration.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-test-plan.generated.json"
+];
+const dormitory13ScenarioToolingFiles = [
+  "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "scripts/business/check-dormitory-13-scenario-control-authority.mjs",
+  "scripts/business/check-dormitory-13-scenario-generated-contracts.mjs",
+  "scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs"
+];
+const dormitory13ScenarioResultFiles = [
+  "artifacts/oam/checks/dormitory-13-scenario-control-authority-result.json",
+  "artifacts/oam/checks/dormitory-13-scenario-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-13-scenario-consumption-boundary-result.json"
+];
+const dormitory13ScenarioIntegrationChainToolingFiles = [
+  "scripts/business/check-dormitory-13-scenario-integration-chain.mjs"
+];
+const dormitory13ScenarioIntegrationChainResultFiles = [
+  "artifacts/oam/checks/dormitory-13-scenario-integration-chain-result.json"
+];
+const dormitory13ScenarioEvidenceFiles = [
+  dormitory13ScenarioSourcePath,
+  ...dormitory13ScenarioGeneratedFiles,
+  ...dormitory13ScenarioToolingFiles,
+  ...dormitory13ScenarioResultFiles
+];
+const dormitory13ScenarioIntegrationChainEvidenceFiles = [
+  ...dormitory13ScenarioIntegrationChainToolingFiles,
+  ...dormitory13ScenarioIntegrationChainResultFiles
+];
+const dormitoryScenario1SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json";
+const lodgingScenarioPackageIndexPath =
+  "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json";
+const dormitoryScenario1GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario1-resource-basic-readiness.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-object-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario1-resource-basic-readiness.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario1ResourceBasicReadiness.generated.json"
+];
+const dormitoryScenario1ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario1-resource-basic-readiness-contracts.mjs",
+  "scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs",
+  "scripts/business/check-dormitory-scenario1-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario1-consumption-boundary.mjs"
+];
+const dormitoryScenario1ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario1-resource-basic-readiness-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario1-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario1-consumption-boundary-result.json"
+];
+const dormitoryScenario1EvidenceFiles = [
+  lodgingScenarioPackageIndexPath,
+  dormitoryScenario1SourcePath,
+  ...dormitoryScenario1GeneratedFiles,
+  ...dormitoryScenario1ToolingFiles,
+  ...dormitoryScenario1ResultFiles
+];
+const dormitoryBenchmarkInheritanceSourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json";
+const dormitoryBenchmarkInheritanceGeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario1-benchmark-inheritance-contract.generated.json",
+  "docs/contracts/generated/dormitory/subsequent-scenario-start-gate.generated.json",
+  "docs/contracts/generated/dormitory/subsequent-scenario-difference-checklist-template.generated.json",
+  "docs/contracts/generated/dormitory/subsequent-scenario-field-review-template.generated.json",
+  "docs/contracts/generated/dormitory/subsequent-scenario-button-state-template.generated.json",
+  "docs/contracts/generated/dormitory/subsequent-scenario-screenshot-report-template.generated.json",
+  "docs/contracts/generated/dormitory/subsequent-scenario-failure-attribution-routing.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-start-gate-trial.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario1-benchmark-inheritance.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario1BenchmarkInheritance.generated.json"
+];
+const dormitoryBenchmarkInheritanceToolingFiles = [
+  "scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs",
+  "scripts/business/check-dormitory-scenario1-benchmark-inheritance-authority.mjs",
+  "scripts/business/check-dormitory-scenario1-benchmark-inheritance-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario2-start-gate-trial.mjs"
+];
+const dormitoryBenchmarkInheritanceResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario1-benchmark-inheritance-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario1-benchmark-inheritance-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario2-start-gate-trial-result.json"
+];
+const dormitoryBenchmarkInheritanceEvidenceFiles = [
+  dormitoryBenchmarkInheritanceSourcePath,
+  ...dormitoryBenchmarkInheritanceGeneratedFiles,
+  ...dormitoryBenchmarkInheritanceToolingFiles,
+  ...dormitoryBenchmarkInheritanceResultFiles
+];
+const dormitoryScenario2SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json";
+const dormitoryScenario2GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario2-resource-operation-status.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario2-resource-operation-status.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2ResourceOperationStatus.generated.json"
+];
+const dormitoryScenario2ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario2-resource-operation-status-contracts.mjs",
+  "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+  "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario2-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario2-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario2-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario2-negative-browser-audit.mjs"
+];
+const dormitoryScenario2RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario2BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario2-resource-operation-status-positive-browser/scenario2-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario2-resource-operation-status-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario2-resource-operation-status-negative-browser/scenario2-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario2-resource-operation-status-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario2ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario2-resource-operation-status-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario2-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario2-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario2-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario2-negative-browser-result.json"
+];
+const dormitoryScenario2EvidenceFiles = [
+  dormitoryScenario2SourcePath,
+  ...dormitoryScenario2GeneratedFiles,
+  ...dormitoryScenario2ToolingFiles,
+  ...dormitoryScenario2RuntimeEvidenceFiles,
+  ...dormitoryScenario2BrowserEvidenceFiles,
+  ...dormitoryScenario2ResultFiles
+];
+const dormitoryScenario3SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json";
+const dormitoryScenario3GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario3-product-and-pricing.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario3-product-and-pricing.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario3ProductAndPricing.generated.json"
+];
+const dormitoryScenario3ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario3-product-and-pricing-contracts.mjs",
+  "scripts/business/check-dormitory-scenario3-product-and-pricing-authority.mjs",
+  "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario3-product-and-pricing-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario3-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario3-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario3-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario3-negative-browser-audit.mjs"
+];
+const dormitoryScenario3RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario3BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario3-product-and-pricing-positive-browser/scenario3-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario3-product-and-pricing-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario3-product-and-pricing-negative-browser/scenario3-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario3-product-and-pricing-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario3ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario3-product-and-pricing-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario3-product-and-pricing-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario3-product-and-pricing-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario3-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario3-negative-browser-result.json"
+];
+const dormitoryScenario3EvidenceFiles = [
+  dormitoryScenario3SourcePath,
+  ...dormitoryScenario3GeneratedFiles,
+  ...dormitoryScenario3ToolingFiles,
+  ...dormitoryScenario3RuntimeEvidenceFiles,
+  ...dormitoryScenario3BrowserEvidenceFiles,
+  ...dormitoryScenario3ResultFiles
+];
+const dormitoryScenario4SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json";
+const dormitoryScenario4GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario4-inquiry-and-quote.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario4-inquiry-and-quote.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario4InquiryAndQuote.generated.json"
+];
+const dormitoryScenario4ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario4-inquiry-and-quote-contracts.mjs",
+  "scripts/business/check-dormitory-scenario4-inquiry-and-quote-authority.mjs",
+  "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario4-inquiry-and-quote-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario4-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario4-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario4-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario4-negative-browser-audit.mjs"
+];
+const dormitoryScenario4RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario4BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario4-inquiry-and-quote-positive-browser/scenario4-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario4-inquiry-and-quote-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario4-inquiry-and-quote-negative-browser/scenario4-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario4-inquiry-and-quote-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario4ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario4-inquiry-and-quote-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario4-inquiry-and-quote-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario4-inquiry-and-quote-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario4-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario4-negative-browser-result.json"
+];
+const dormitoryScenario4EvidenceFiles = [
+  dormitoryScenario4SourcePath,
+  ...dormitoryScenario4GeneratedFiles,
+  ...dormitoryScenario4ToolingFiles,
+  ...dormitoryScenario4RuntimeEvidenceFiles,
+  ...dormitoryScenario4BrowserEvidenceFiles,
+  ...dormitoryScenario4ResultFiles
+];
+const dormitoryScenario5SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json";
+const dormitoryScenario5GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario5-reservation-and-inventory-hold.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario5-reservation-and-inventory-hold.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario5ReservationAndInventoryHold.generated.json"
+];
+const dormitoryScenario5ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario5-reservation-and-inventory-hold-contracts.mjs",
+  "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-authority.mjs",
+  "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario5-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario5-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario5-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario5-negative-browser-audit.mjs"
+];
+const dormitoryScenario5RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario5BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario5-reservation-and-inventory-hold-positive-browser/scenario5-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario5-reservation-and-inventory-hold-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario5-reservation-and-inventory-hold-negative-browser/scenario5-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario5-reservation-and-inventory-hold-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario5ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario5-reservation-and-inventory-hold-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario5-reservation-and-inventory-hold-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario5-reservation-and-inventory-hold-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario5-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario5-negative-browser-result.json"
+];
+const dormitoryScenario5EvidenceFiles = [
+  dormitoryScenario5SourcePath,
+  ...dormitoryScenario5GeneratedFiles,
+  ...dormitoryScenario5ToolingFiles,
+  ...dormitoryScenario5RuntimeEvidenceFiles,
+  ...dormitoryScenario5BrowserEvidenceFiles,
+  ...dormitoryScenario5ResultFiles
+];
+const dormitoryScenario6SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json";
+const dormitoryScenario6GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario6-payment-deposit-and-guarantee.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-test-plan.generated.json",
+  "docs/contracts/generated/finance/scenario6-finance-gate.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario6-payment-deposit-and-guarantee.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario6PaymentDepositAndGuarantee.generated.json"
+];
+const dormitoryScenario6ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario6-payment-deposit-and-guarantee-contracts.mjs",
+  "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-authority.mjs",
+  "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario6-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario6-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario6-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario6-negative-browser-audit.mjs"
+];
+const dormitoryScenario6RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario6BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario6-payment-deposit-and-guarantee-positive-browser/scenario6-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario6-payment-deposit-and-guarantee-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario6-payment-deposit-and-guarantee-negative-browser/scenario6-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario6-payment-deposit-and-guarantee-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario6ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario6-payment-deposit-and-guarantee-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario6-payment-deposit-and-guarantee-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario6-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario6-negative-browser-result.json"
+];
+const dormitoryScenario6EvidenceFiles = [
+  dormitoryScenario6SourcePath,
+  ...dormitoryScenario6GeneratedFiles,
+  ...dormitoryScenario6ToolingFiles,
+  ...dormitoryScenario6RuntimeEvidenceFiles,
+  ...dormitoryScenario6BrowserEvidenceFiles,
+  ...dormitoryScenario6ResultFiles
+];
+const dormitoryScenario7SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json";
+const dormitoryScenario7GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario7-check-in-processing.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario7-check-in-processing.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario7CheckInProcessing.generated.json"
+];
+const dormitoryScenario7ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario7-check-in-processing-contracts.mjs",
+  "scripts/business/check-dormitory-scenario7-check-in-processing-authority.mjs",
+  "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario7-check-in-processing-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario7-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario7-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario7-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario7-negative-browser-audit.mjs"
+];
+const dormitoryScenario7RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario7BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario7-check-in-processing-positive-browser/scenario7-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario7-check-in-processing-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario7-check-in-processing-negative-browser/scenario7-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario7-check-in-processing-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario7ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario7-check-in-processing-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario7-check-in-processing-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario7-check-in-processing-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario7-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario7-negative-browser-result.json"
+];
+const dormitoryScenario7EvidenceFiles = [
+  dormitoryScenario7SourcePath,
+  ...dormitoryScenario7GeneratedFiles,
+  ...dormitoryScenario7ToolingFiles,
+  ...dormitoryScenario7RuntimeEvidenceFiles,
+  ...dormitoryScenario7BrowserEvidenceFiles,
+  ...dormitoryScenario7ResultFiles
+];
+const dormitoryScenario8SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json";
+const dormitoryScenario8GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario8-in-stay-management.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario8-in-stay-management.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario8InStayManagement.generated.json"
+];
+const dormitoryScenario8ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario8-in-stay-management-contracts.mjs",
+  "scripts/business/check-dormitory-scenario8-in-stay-management-authority.mjs",
+  "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario8-in-stay-management-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario8-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario8-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario8-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario8-negative-browser-audit.mjs"
+];
+const dormitoryScenario8RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario8BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario8-in-stay-management-positive-browser/scenario8-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario8-in-stay-management-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario8-in-stay-management-negative-browser/scenario8-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario8-in-stay-management-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario8ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario8-in-stay-management-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario8-in-stay-management-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario8-in-stay-management-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario8-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario8-negative-browser-result.json"
+];
+const dormitoryScenario8EvidenceFiles = [
+  dormitoryScenario8SourcePath,
+  ...dormitoryScenario8GeneratedFiles,
+  ...dormitoryScenario8ToolingFiles,
+  ...dormitoryScenario8RuntimeEvidenceFiles,
+  ...dormitoryScenario8BrowserEvidenceFiles,
+  ...dormitoryScenario8ResultFiles
+];
+const dormitoryScenario9SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json";
+const dormitoryScenario9GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario9-checkout-settlement.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-test-plan.generated.json",
+  "docs/contracts/generated/finance/scenario9-finance-gate.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario9-checkout-settlement.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario9CheckoutSettlement.generated.json"
+];
+const dormitoryScenario9ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario9-checkout-settlement-contracts.mjs",
+  "scripts/business/check-dormitory-scenario9-checkout-settlement-authority.mjs",
+  "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario9-checkout-settlement-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario9-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario9-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario9-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario9-negative-browser-audit.mjs"
+];
+const dormitoryScenario9RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario9BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario9-checkout-settlement-positive-browser/scenario9-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario9-checkout-settlement-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario9-checkout-settlement-negative-browser/scenario9-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario9-checkout-settlement-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario9ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario9-checkout-settlement-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario9-checkout-settlement-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario9-checkout-settlement-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario9-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario9-negative-browser-result.json"
+];
+const dormitoryScenario9EvidenceFiles = [
+  dormitoryScenario9SourcePath,
+  ...dormitoryScenario9GeneratedFiles,
+  ...dormitoryScenario9ToolingFiles,
+  ...dormitoryScenario9RuntimeEvidenceFiles,
+  ...dormitoryScenario9BrowserEvidenceFiles,
+  ...dormitoryScenario9ResultFiles
+];
+const dormitoryScenario10SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json";
+const dormitoryScenario10GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario10-cancel-noshow-refund.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-test-plan.generated.json",
+  "docs/contracts/generated/finance/scenario10-finance-gate.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario10-cancel-noshow-refund.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario10CancelNoShowRefund.generated.json"
+];
+const dormitoryScenario10ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario10-cancel-noshow-refund-contracts.mjs",
+  "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-authority.mjs",
+  "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario10-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario10-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario10-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario10-negative-browser-audit.mjs"
+];
+const dormitoryScenario10RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario10BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario10-cancel-noshow-refund-positive-browser/scenario10-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario10-cancel-noshow-refund-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario10-cancel-noshow-refund-negative-browser/scenario10-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario10-cancel-noshow-refund-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario10ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario10-cancel-noshow-refund-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario10-cancel-noshow-refund-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario10-cancel-noshow-refund-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario10-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario10-negative-browser-result.json"
+];
+const dormitoryScenario10EvidenceFiles = [
+  dormitoryScenario10SourcePath,
+  ...dormitoryScenario10GeneratedFiles,
+  ...dormitoryScenario10ToolingFiles,
+  ...dormitoryScenario10RuntimeEvidenceFiles,
+  ...dormitoryScenario10BrowserEvidenceFiles,
+  ...dormitoryScenario10ResultFiles
+];
+const dormitoryScenario11SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json";
+const dormitoryScenario11GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario11-housekeeping-maintenance-outofservice.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-test-plan.generated.json",
+  "docs/contracts/generated/finance/scenario11-finance-gate.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario11-housekeeping-maintenance-outofservice.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario11HousekeepingMaintenanceOutOfService.generated.json"
+];
+const dormitoryScenario11ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario11-housekeeping-maintenance-outofservice-contracts.mjs",
+  "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-authority.mjs",
+  "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario11-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario11-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario11-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario11-negative-browser-audit.mjs"
+];
+const dormitoryScenario11RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario11BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario11-housekeeping-maintenance-outofservice-positive-browser/scenario11-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario11-housekeeping-maintenance-outofservice-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario11-housekeeping-maintenance-outofservice-negative-browser/scenario11-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario11-housekeeping-maintenance-outofservice-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario11ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario11-housekeeping-maintenance-outofservice-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario11-housekeeping-maintenance-outofservice-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario11-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario11-negative-browser-result.json"
+];
+const dormitoryScenario11EvidenceFiles = [
+  dormitoryScenario11SourcePath,
+  ...dormitoryScenario11GeneratedFiles,
+  ...dormitoryScenario11ToolingFiles,
+  ...dormitoryScenario11RuntimeEvidenceFiles,
+  ...dormitoryScenario11BrowserEvidenceFiles,
+  ...dormitoryScenario11ResultFiles
+];
+const dormitoryScenario12SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json";
+const dormitoryScenario12GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario12-channel-corporate-customer.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-test-plan.generated.json",
+  "docs/contracts/generated/finance/scenario12-finance-gate.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario12-channel-corporate-customer.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario12ChannelCorporateCustomer.generated.json"
+];
+const dormitoryScenario12ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario12-channel-corporate-customer-contracts.mjs",
+  "scripts/business/check-dormitory-scenario12-channel-corporate-customer-authority.mjs",
+  "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario12-channel-corporate-customer-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario12-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario12-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario12-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario12-negative-browser-audit.mjs"
+];
+const dormitoryScenario12RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario12BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario12-channel-corporate-customer-positive-browser/scenario12-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario12-channel-corporate-customer-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario12-channel-corporate-customer-negative-browser/scenario12-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario12-channel-corporate-customer-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario12ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario12-channel-corporate-customer-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario12-channel-corporate-customer-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario12-channel-corporate-customer-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario12-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario12-negative-browser-result.json"
+];
+const dormitoryScenario12EvidenceFiles = [
+  dormitoryScenario12SourcePath,
+  ...dormitoryScenario12GeneratedFiles,
+  ...dormitoryScenario12ToolingFiles,
+  ...dormitoryScenario12RuntimeEvidenceFiles,
+  ...dormitoryScenario12BrowserEvidenceFiles,
+  ...dormitoryScenario12ResultFiles
+];
+const dormitoryScenario13SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json";
+const dormitoryScenario13GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario13-reporting-audit-review.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-metric-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-test-plan.generated.json",
+  "docs/contracts/generated/read-model/scenario13-reporting-read-model.generated.json",
+  "docs/contracts/generated/finance/scenario13-finance-gate-readonly.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario13-reporting-audit-review.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario13ReportingAuditReview.generated.json"
+];
+const dormitoryScenario13ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario13-reporting-audit-review-contracts.mjs",
+  "scripts/business/check-dormitory-scenario13-reporting-audit-review-authority.mjs",
+  "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario13-reporting-audit-review-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario13-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario13-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario13-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario13-negative-browser-audit.mjs"
+];
+const dormitoryScenario13RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario13BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-positive-browser/scenario13-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-negative-browser/scenario13-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario13ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario13-reporting-audit-review-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario13-reporting-audit-review-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario13-reporting-audit-review-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario13-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario13-negative-browser-result.json"
+];
+const dormitoryScenario13EvidenceFiles = [
+  dormitoryScenario13SourcePath,
+  ...dormitoryScenario13GeneratedFiles,
+  ...dormitoryScenario13ToolingFiles,
+  ...dormitoryScenario13RuntimeEvidenceFiles,
+  ...dormitoryScenario13BrowserEvidenceFiles,
+  ...dormitoryScenario13ResultFiles
+];
 const capabilityRegistryPath = CAPABILITY_REGISTRY_PATH;
 const capabilityLedgerPath = CAPABILITY_LEDGER_PATH;
 const capabilityProjectionPath = CAPABILITY_PROJECTION_PATH;
@@ -162,6 +880,22 @@ const requiredFiles = [
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  ...dormitory13ScenarioEvidenceFiles,
+  ...dormitory13ScenarioIntegrationChainEvidenceFiles,
+  ...dormitoryScenario1EvidenceFiles,
+  ...dormitoryBenchmarkInheritanceEvidenceFiles,
+  ...dormitoryScenario2EvidenceFiles,
+  ...dormitoryScenario3EvidenceFiles,
+  ...dormitoryScenario4EvidenceFiles,
+  ...dormitoryScenario5EvidenceFiles,
+  ...dormitoryScenario6EvidenceFiles,
+  ...dormitoryScenario7EvidenceFiles,
+  ...dormitoryScenario8EvidenceFiles,
+  ...dormitoryScenario9EvidenceFiles,
+  ...dormitoryScenario10EvidenceFiles,
+  ...dormitoryScenario11EvidenceFiles,
+  ...dormitoryScenario12EvidenceFiles,
+  ...dormitoryScenario13EvidenceFiles,
   firstGoldenChainTestPlanPath,
   firstGoldenChainCapabilityDigestChainPath,
   firstGoldenChainBrowserAuditReportPath,
@@ -239,7 +973,7 @@ for (const file of requiredFiles) {
     failures.push(`missing evidence file: ${file}`);
     continue;
   }
-  documents.set(file, file.endsWith(".jsonl") ? readJsonl(file) : readJson(file));
+  documents.set(file, readEvidenceFile(file));
 }
 
 if (documents.size === requiredFiles.length) {
@@ -379,6 +1113,22 @@ if (documents.size === requiredFiles.length) {
   checkGeneratedCandidateAcceptance(finalReport, graph, documents, generatedCandidateAcceptance);
   checkDormitoryRuntimeAdmission(finalReport, graph, documents, dormitoryRuntimeAdmission);
   checkDormitoryFirstGoldenChainLanding(finalReport, graph, documents, dormitoryFirstGoldenChainLanding);
+  checkDormitory13ScenarioControlEvidence(graph, finalReport, documents);
+  checkDormitory13ScenarioIntegrationChainEvidence(graph, finalReport, documents);
+  checkDormitoryScenario1Evidence(graph, finalReport, documents);
+  checkDormitoryBenchmarkInheritanceEvidence(graph, finalReport, documents);
+  checkDormitoryScenario2Evidence(graph, finalReport, documents);
+  checkDormitoryScenario3Evidence(graph, finalReport, documents);
+  checkDormitoryScenario4Evidence(graph, finalReport, documents);
+  checkDormitoryScenario5Evidence(graph, finalReport, documents);
+  checkDormitoryScenario6Evidence(graph, finalReport, documents);
+  checkDormitoryScenario7Evidence(graph, finalReport, documents);
+  checkDormitoryScenario8Evidence(graph, finalReport, documents);
+  checkDormitoryScenario9Evidence(graph, finalReport, documents);
+  checkDormitoryScenario10Evidence(graph, finalReport, documents);
+  checkDormitoryScenario11Evidence(graph, finalReport, documents);
+  checkDormitoryScenario12Evidence(graph, finalReport, documents);
+  checkDormitoryScenario13Evidence(graph, finalReport, documents);
 
   checkArtifactName("final report", finalReport.artifactName);
   checkCandidateEvidenceObject(candidateObject, graph, finalReport);
@@ -2256,8 +3006,4117 @@ function generatedContractFiles() {
     "docs/contracts/generated/dormitory/surface-input-model.generated.json",
     "docs/contracts/generated/dormitory/read-model.generated.json",
     firstGoldenChainTestPlanPath,
-    "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+    "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+    ...dormitory13ScenarioGeneratedFiles,
+    ...dormitoryScenario1GeneratedFiles,
+    ...dormitoryBenchmarkInheritanceGeneratedFiles,
+    ...dormitoryScenario2GeneratedFiles,
+    ...dormitoryScenario3GeneratedFiles,
+    ...dormitoryScenario4GeneratedFiles,
+    ...dormitoryScenario5GeneratedFiles,
+    ...dormitoryScenario6GeneratedFiles,
+    ...dormitoryScenario7GeneratedFiles,
+    ...dormitoryScenario8GeneratedFiles,
+    ...dormitoryScenario9GeneratedFiles,
+    ...dormitoryScenario10GeneratedFiles,
+    ...dormitoryScenario11GeneratedFiles,
+    ...dormitoryScenario12GeneratedFiles,
+    ...dormitoryScenario13GeneratedFiles
   ];
+}
+
+function checkDormitory13ScenarioControlEvidence(graph, finalReport, documents) {
+  const source = documents.get(dormitory13ScenarioSourcePath);
+  const authorityResult = documents.get(dormitory13ScenarioResultFiles[0]);
+  const generatedResult = documents.get(dormitory13ScenarioResultFiles[1]);
+  const consumptionResult = documents.get(dormitory13ScenarioResultFiles[2]);
+  const sourceDigest = authorityResult?.authorityDigest ?? generatedResult?.sourceDigest ?? consumptionResult?.sourceDigest;
+
+  for (const file of dormitory13ScenarioEvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory 13 scenario evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory 13 scenario evidence file: ${file}`);
+    }
+  }
+
+  if (source?.authorityId !== "Dormitory.Operating13ScenarioControl" ||
+    source?.sourceAuthorityRole !== "lodging_operating_scenario_supply_chain_control" ||
+    source?.status !== "authoritative") {
+    failures.push("dormitory 13 scenario Source Authority identity must remain authoritative and unique.");
+  }
+  if ((source?.scenarios ?? []).length !== 13) {
+    failures.push("dormitory 13 scenario Source Authority must define exactly 13 scenarios.");
+  }
+  if ((source?.stateLadder ?? []).length !== 14) {
+    failures.push("dormitory 13 scenario Source Authority must define exactly 14 state ladder entries.");
+  }
+  if (source?.finalSafety?.businessFeatureDevelopmentAllowed !== false ||
+    source?.finalSafety?.productionConfirmAllowed !== false ||
+    source?.finalSafety?.releaseAuthority !== false ||
+    source?.finalSafety?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory 13 scenario Source Authority finalSafety must keep business/release/final GO disabled.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory 13 scenario ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory 13 scenario ${label} result must keep production/release/final GO disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory 13 scenario evidence must expose a sha256 Source digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitory13ScenarioGeneratedFiles.length) {
+    failures.push("dormitory 13 scenario generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitory13ScenarioGeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory 13 scenario generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory 13 scenario generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory 13 scenario generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory 13 scenario generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of [
+    "canonical",
+    "scenarioIndex",
+    "fieldMatrix",
+    "pageEntryPolicy",
+    "handoffSummaries",
+    "financeBoundary",
+    "mobileMirror",
+    "runtimeMirror"
+  ]) {
+    if (!dormitory13ScenarioGeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory 13 scenario consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory 13 scenario evidence closes.");
+  }
+}
+
+function checkDormitory13ScenarioIntegrationChainEvidence(graph, finalReport, documents) {
+  const result = documents.get(dormitory13ScenarioIntegrationChainResultFiles[0]);
+
+  for (const file of dormitory13ScenarioIntegrationChainEvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory 13 scenario integration chain evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory 13 scenario integration chain evidence file: ${file}`);
+    }
+  }
+
+  if (result?.status !== "PASS") {
+    failures.push("dormitory 13 scenario integration chain result must be PASS.");
+  }
+  if (result?.chainCount !== 5 || result?.completedChainCount !== 5) {
+    failures.push("dormitory 13 scenario integration chain must cover and pass exactly five A-E chains.");
+  }
+  const chainIds = (result?.chains ?? []).map((item) => item.chainId).sort().join("");
+  if (chainIds !== "ABCDE") {
+    failures.push(`dormitory 13 scenario integration chain must include chains A-E, actual: ${chainIds || "missing"}.`);
+  }
+  for (const chain of result?.chains ?? []) {
+    if (chain.status !== "PASS" ||
+      chain.upstreamSummaryReadonly !== true ||
+      chain.downstreamNoReentry !== true ||
+      chain.unauthorizedWriteBlocked !== true ||
+      chain.productionConfirmAllowed !== false ||
+      chain.releaseAuthority !== false ||
+      chain.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory integration chain ${chain.chainId ?? "unknown"} must prove readonly handoff, no refill, blocked unauthorized writes, and NO_GO.`);
+    }
+  }
+  const guarantees = result?.guarantees ?? {};
+  for (const [key, expected] of Object.entries({
+    upstreamSummaryReadonly: true,
+    downstreamNoRefill: true,
+    unauthorizedWriteBlocked: true,
+    financeGateOwnsFinanceTruth: true,
+    searchDashboardReportReadonly: true,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  })) {
+    if (guarantees[key] !== expected) {
+      failures.push(`dormitory 13 scenario integration chain guarantee ${key} must be ${expected}.`);
+    }
+  }
+  if (!sha256DigestPattern.test(result?.resultDigest ?? "")) {
+    failures.push("dormitory 13 scenario integration chain resultDigest must be sha256.");
+  }
+  if (result?.productionConfirmAllowed !== false ||
+    result?.releaseAuthority !== false ||
+    result?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory 13 scenario integration chain result must keep production/release/final GO disabled.");
+  }
+  const summary = graph.dormitory13ScenarioIntegrationChain ?? {};
+  if (summary.status !== "PASS" ||
+    summary.chainCount !== 5 ||
+    summary.completedChainCount !== 5 ||
+    summary.productionConfirmAllowed !== false ||
+    summary.releaseAuthority !== false ||
+    summary.finalGoNoGo !== "NO_GO") {
+    failures.push("evidence graph must summarize passed dormitory 13 scenario integration chain with NO_GO closed.");
+  }
+  if (finalReport.dormitory13ScenarioIntegrationChain?.status !== "PASS" ||
+    finalReport.dormitory13ScenarioIntegrationChain?.chainCount !== 5 ||
+    finalReport.dormitory13ScenarioIntegrationChain?.completedChainCount !== 5 ||
+    finalReport.dormitory13ScenarioIntegrationChain?.productionConfirmAllowed !== false ||
+    finalReport.dormitory13ScenarioIntegrationChain?.releaseAuthority !== false ||
+    finalReport.dormitory13ScenarioIntegrationChain?.finalGoNoGo !== "NO_GO") {
+    failures.push("final report must summarize passed dormitory 13 scenario integration chain with NO_GO closed.");
+  }
+  const node = (graph.nodes ?? []).find((item) => item.id === "DORMITORY-13-SCENARIO-INTEGRATION-CHAIN");
+  if (!node) {
+    failures.push("evidence graph missing DORMITORY-13-SCENARIO-INTEGRATION-CHAIN proof node.");
+  } else if (node.status !== "passed" ||
+    node.proofType !== "dormitory-13-scenario-integration-chain" ||
+    node.goNoGo !== "NO_GO" ||
+    node.releaseAuthority !== false ||
+    node.productionConfirmAllowed !== false) {
+    failures.push("DORMITORY-13-SCENARIO-INTEGRATION-CHAIN proof node must be passed and keep production/release/final GO closed.");
+  }
+}
+
+function checkDormitoryScenario1Evidence(graph, finalReport, documents) {
+  const packageIndex = documents.get(lodgingScenarioPackageIndexPath);
+  const source = documents.get(dormitoryScenario1SourcePath);
+  const authorityResult = documents.get(dormitoryScenario1ResultFiles[0]);
+  const generatedResult = documents.get(dormitoryScenario1ResultFiles[1]);
+  const consumptionResult = documents.get(dormitoryScenario1ResultFiles[2]);
+  const sourceDigest = authorityResult?.scenarioDigest ?? generatedResult?.scenarioDigest ?? consumptionResult?.scenarioDigest;
+  const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
+
+  for (const file of dormitoryScenario1EvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory scenario 1 evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory scenario 1 evidence file: ${file}`);
+    }
+  }
+
+  if (packageIndex?.authorityId !== "Dormitory.LodgingScenarioPackageIndex" ||
+    packageIndex?.status !== "authoritative" ||
+    packageIndex?.manualEditAllowed !== true) {
+    failures.push("lodging scenario package index must remain authoritative manual Source.");
+  }
+  const firstFive = (packageIndex?.scenarioPackageOrder ?? []).slice(0, 5).map((item) => item.nameZh);
+  if (JSON.stringify(firstFive) !== JSON.stringify(["房源建档与基础就绪", "房源运营就绪与状态维护", "住宿商品与价格", "询价与报价", "预订与库存锁定"])) {
+    failures.push("lodging scenario package index must keep the new first five business package order.");
+  }
+  if (source?.authorityId !== "Dormitory.Scenario1.ResourceBasicReadiness" ||
+    source?.scenarioPackageNo !== 1 ||
+    source?.nameZh !== "房源建档与基础就绪" ||
+    source?.status !== "authoritative") {
+    failures.push("dormitory scenario 1 Source Authority identity must remain 房源建档与基础就绪.");
+  }
+  if (JSON.stringify((source?.objects ?? []).map((item) => item.objectName)) !== JSON.stringify(["BuildingContext", "Room", "BedSet", "Bed", "BasicReadiness", "EvidenceBinding", "StatusHistory"])) {
+    failures.push("dormitory scenario 1 Source must define BuildingContext/Room/BedSet/Bed/BasicReadiness/EvidenceBinding/StatusHistory.");
+  }
+  if ((source?.steps ?? []).length !== 3 ||
+    source?.steps?.[0]?.nameZh !== "房间建档" ||
+    source?.steps?.[1]?.nameZh !== "床位组确认" ||
+    source?.steps?.[2]?.nameZh !== "基础就绪确认") {
+    failures.push("dormitory scenario 1 Source must keep the three-step business process.");
+  }
+  if (source?.bedGenerationRule?.onlySourceOfBedQuantity !== "room.bedCount" ||
+    source?.bedGenerationRule?.bedNoFormat !== "two_digit_01_to_N") {
+    failures.push("dormitory scenario 1 Source must keep room.bedCount -> Bed 01..N generation rule.");
+  }
+  if (source?.NO_GO?.businessFeatureDevelopmentAllowed !== false ||
+    source?.NO_GO?.productionConfirmAllowed !== false ||
+    source?.NO_GO?.releaseAuthority !== false ||
+    source?.NO_GO?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory scenario 1 Source NO_GO must keep business/release/final GO disabled.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory scenario 1 ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 1 ${label} result must keep production/release/final GO disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory scenario 1 evidence must expose a sha256 Source digest.");
+  }
+  if (!sha256DigestPattern.test(packageIndexDigest ?? "")) {
+    failures.push("dormitory scenario 1 evidence must expose a sha256 package index digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryScenario1GeneratedFiles.length) {
+    failures.push("dormitory scenario 1 generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryScenario1GeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory scenario 1 generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory scenario 1 generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.packageIndexContentDigest !== packageIndexDigest) {
+      failures.push(`dormitory scenario 1 generated file package index digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 1 generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory scenario 1 generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of ["canonical", "runtimeRules", "surfaceNavigation", "handoff", "mobileMirror", "runtimeMirror"]) {
+    if (!dormitoryScenario1GeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory scenario 1 consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory scenario 1 evidence closes.");
+  }
+}
+
+function checkDormitoryBenchmarkInheritanceEvidence(graph, finalReport, documents) {
+  const source = documents.get(dormitoryBenchmarkInheritanceSourcePath);
+  const authorityResult = documents.get(dormitoryBenchmarkInheritanceResultFiles[0]);
+  const generatedResult = documents.get(dormitoryBenchmarkInheritanceResultFiles[1]);
+  const scenario2TrialResult = documents.get(dormitoryBenchmarkInheritanceResultFiles[2]);
+  const sourceDigest = authorityResult?.contractDigest ?? generatedResult?.generatedFiles?.[0]?.sourceContentDigest;
+
+  for (const file of dormitoryBenchmarkInheritanceEvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory benchmark inheritance evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory benchmark inheritance evidence file: ${file}`);
+    }
+  }
+
+  if (source?.authorityId !== "Dormitory.Scenario1BenchmarkInheritanceContract" ||
+    source?.nameZh !== "场景 1 标杆继承合同" ||
+    source?.status !== "authoritative" ||
+    source?.manualEditAllowed !== true) {
+    failures.push("dormitory benchmark inheritance Source Authority identity must remain 场景 1 标杆继承合同.");
+  }
+  if (source?.authorityHierarchy?.highestBusinessAuthorityId !== "Dormitory.Operating13ScenarioControl" ||
+    source?.authorityHierarchy?.highestBusinessAuthorityRef !== dormitory13ScenarioSourcePath) {
+    failures.push("dormitory benchmark inheritance must keep 13 scenario control as highest business authority.");
+  }
+  if (!JSON.stringify(source?.authorityHierarchy ?? {}).includes("场景 1 是实现方法标杆，不是后续场景的业务规则总源。")) {
+    failures.push("dormitory benchmark inheritance must declare scenario 1 as implementation benchmark only.");
+  }
+  for (const object of ["Room", "BedSet", "Bed", "BasicReadiness"]) {
+    if (!(source?.forbiddenInheritanceItems?.businessObjects ?? []).includes(object)) {
+      failures.push(`dormitory benchmark inheritance must forbid copying scenario 1 object ${object}.`);
+    }
+    if ((source?.scenario2StartGateTrial?.differenceChecklist?.objectDifference?.writes ?? []).includes(object)) {
+      failures.push(`scenario 2 start gate trial must not write scenario 1 object ${object}.`);
+    }
+  }
+  if (JSON.stringify(source?.subsequentScenarioStartGate?.appliesToScenarioNos ?? []) !== JSON.stringify([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13])) {
+    failures.push("dormitory benchmark inheritance start gate must cover exactly scenarios 2-13.");
+  }
+  if (!String(source?.subsequentScenarioStartGate?.blockingRuleZh ?? "").includes("不得开始本场景开发")) {
+    failures.push("dormitory benchmark inheritance start gate must block missing checklist.");
+  }
+  for (const section of ["对象差异", "状态差异", "字段差异", "证据差异", "财务差异", "页面差异", "测试差异"]) {
+    if (!(source?.differenceChecklistTemplate?.requiredSections ?? []).includes(section)) {
+      failures.push(`dormitory benchmark inheritance difference checklist missing ${section}.`);
+    }
+  }
+  for (const internalId of ["roomId", "bedId", "ratePlanId", "quoteId", "reservationId", "stayId", "paymentId", "depositId", "refundId", "ledgerEntryId", "stableRef", "digest", "projectionVersion", "domainEventId"]) {
+    if (!(source?.fieldReviewGate?.forbiddenUserInputFields ?? []).includes(internalId)) {
+      failures.push(`dormitory benchmark inheritance field review must forbid ${internalId}.`);
+    }
+  }
+  if (!String(source?.uxAndButtonGate?.entryRules?.search ?? "").includes("只读")) {
+    failures.push("dormitory benchmark inheritance search entry must remain readonly.");
+  }
+  if (source?.globalReadonlyAndFinanceBoundaries?.businessScenarioDirectLedgerWriteAllowed !== false) {
+    failures.push("dormitory benchmark inheritance must forbid business scenario direct ledger writes.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["scenario 2 start gate trial", scenario2TrialResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory benchmark inheritance ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory benchmark inheritance ${label} result must keep production/release/final GO disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory benchmark inheritance evidence must expose a sha256 Source digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryBenchmarkInheritanceGeneratedFiles.length) {
+    failures.push("dormitory benchmark inheritance generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryBenchmarkInheritanceGeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory benchmark inheritance generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory benchmark inheritance generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory benchmark inheritance generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory benchmark inheritance generated result missing generated file: ${file}`);
+    }
+  }
+
+  const scenario2Trial = documents.get("docs/contracts/generated/dormitory/scenario2-start-gate-trial.generated.json");
+  if (scenario2Trial?.trialResult?.status !== "PASS" ||
+    scenario2Trial?.trial?.highRiskBoundaries?.operationStatus !== true ||
+    scenario2Trial?.trial?.highRiskBoundaries?.mustNotEnterPriceOrReservation !== true) {
+    failures.push("dormitory benchmark inheritance scenario 2 generated trial must pass operation-status startup gate and forbid price/reservation.");
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory benchmark inheritance evidence closes.");
+  }
+}
+
+function checkDormitoryScenario2Evidence(graph, finalReport, documents) {
+  const packageIndex = documents.get(lodgingScenarioPackageIndexPath);
+  const source = documents.get(dormitoryScenario2SourcePath);
+  const authorityResult = documents.get(dormitoryScenario2ResultFiles[0]);
+  const generatedResult = documents.get(dormitoryScenario2ResultFiles[1]);
+  const consumptionResult = documents.get(dormitoryScenario2ResultFiles[2]);
+  const positiveBrowserResult = documents.get(dormitoryScenario2ResultFiles[3]);
+  const negativeBrowserResult = documents.get(dormitoryScenario2ResultFiles[4]);
+  const positiveBrowserReport = documents.get(dormitoryScenario2BrowserEvidenceFiles[0]);
+  const positiveScreenshotIndex = documents.get(dormitoryScenario2BrowserEvidenceFiles[1]);
+  const negativeBrowserReport = documents.get(dormitoryScenario2BrowserEvidenceFiles[2]);
+  const negativeScreenshotIndex = documents.get(dormitoryScenario2BrowserEvidenceFiles[3]);
+  const sourceDigest = authorityResult?.scenarioDigest ?? generatedResult?.scenarioDigest ?? consumptionResult?.scenarioDigest;
+  const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
+
+  for (const file of dormitoryScenario2EvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory scenario 2 evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory scenario 2 evidence file: ${file}`);
+    }
+  }
+
+  const package2 = (packageIndex?.scenarioPackageOrder ?? []).find((item) => item.packageNo === 2);
+  if (package2?.nameZh !== "房源运营就绪与状态维护" ||
+    package2?.scenarioId !== "lodging.resource-operation-status") {
+    failures.push("lodging scenario package index must keep scenario 2 as 房源运营就绪与状态维护.");
+  }
+  if (!arraysContainAll(package2?.handoffInputs, ["房间摘要", "床位组摘要", "基础就绪摘要", "证据摘要", "状态历史", "只读对象引用"])) {
+    failures.push("scenario 2 package index must consume only scenario 1 readonly summaries.");
+  }
+  if (!arraysContainAll(package2?.handoffOutputs, ["房间/床位运营状态摘要", "阻断原因", "预计恢复时间", "可否进入价格维护", "证据摘要", "状态历史", "只读对象引用"])) {
+    failures.push("scenario 2 package index must output only operation status readonly summaries.");
+  }
+  if (!arraysContainAll(package2?.mustNotOutputZh, ["价格", "报价", "预订", "入住", "收款", "押金", "退款", "账务", "可报价", "可预订"])) {
+    failures.push("scenario 2 package index must forbid price/quote/reservation/stay/payment/deposit/refund/ledger outputs.");
+  }
+
+  if (source?.authorityId !== "Dormitory.Scenario2.ResourceOperationStatus" ||
+    source?.scenarioPackageNo !== 2 ||
+    source?.nameZh !== "房源运营就绪与状态维护" ||
+    source?.status !== "authoritative") {
+    failures.push("dormitory scenario 2 Source Authority identity must remain 房源运营就绪与状态维护.");
+  }
+  if (source?.highestAuthorityRef !== dormitory13ScenarioSourcePath ||
+    source?.methodBenchmarkRef !== dormitoryBenchmarkInheritanceSourcePath) {
+    failures.push("dormitory scenario 2 Source must reference 13 scenario control as highest authority and scenario 1 benchmark as method contract.");
+  }
+  if (source?.upstream?.allowedSourcePackageNo !== 1 ||
+    source?.upstream?.upstreamWriteBackAllowed !== false ||
+    !arraysContainAll(source?.upstream?.requiredReadonlyInputs, ["房间摘要", "床位组摘要", "基础就绪摘要", "证据摘要", "状态历史", "只读对象引用"])) {
+    failures.push("dormitory scenario 2 upstream must be scenario 1 readonly handoff only.");
+  }
+  if (source?.downstream?.allowedConsumerPackageNo !== 3 ||
+    !arraysContainAll(source?.downstream?.forbiddenOutputsZh, ["价格", "报价", "预订", "入住", "收款", "押金", "退款", "账务", "可报价", "可预订"])) {
+    failures.push("dormitory scenario 2 downstream must only hand off readonly operation summaries and forbid downstream business facts.");
+  }
+  const expectedObjects = [
+    "OperationResource",
+    "RoomOperationStatus",
+    "BedOperationStatus",
+    "OperationInspection",
+    "OperationBlocker",
+    "OperationStatusChange",
+    "OperationRestore",
+    "OperationEvidence",
+    "StatusHistory"
+  ];
+  const sourceObjects = (source?.objects ?? []).map((item) => item.objectName);
+  if (!arraysContainAll(sourceObjects, expectedObjects)) {
+    failures.push("dormitory scenario 2 Source must define all operation status objects.");
+  }
+  for (const object of source?.objects ?? []) {
+    if (object.ownedByScenarioPackageNo !== 2 ||
+      !arraysContainAll(object.requiredLifecycle, ["currentState", "statusHistory", "evidenceHistory", "legalNextActions"])) {
+      failures.push(`scenario 2 object must be owned by package 2 and expose lifecycle/history/legal actions: ${object.objectName ?? "unknown"}`);
+    }
+  }
+  const expectedStatuses = ["可运营", "暂不可运营", "部分不可运营", "暂停开放", "维修中", "保洁中", "停售", "异常待处理", "待复查", "已恢复"];
+  if (!arraysContainAll(source?.operationStatusOptions, expectedStatuses)) {
+    failures.push("dormitory scenario 2 Source must keep the required operation status options.");
+  }
+  const stepNames = (source?.steps ?? []).map((step) => step.nameZh);
+  if (JSON.stringify(stepNames) !== JSON.stringify(["选择已基础就绪房源", "运营检查", "设置运营状态", "影响确认", "日常状态维护", "恢复运营"])) {
+    failures.push("dormitory scenario 2 Source must keep the six business action steps in order.");
+  }
+  if (!arraysContainAll(source?.fields?.forbiddenUserInputFields, ["operationStatusId", "inspectionId", "roomId", "bedId", "workItemId", "stableRef", "projectionVersion", "digest", "domainEventId"])) {
+    failures.push("dormitory scenario 2 field boundary must forbid ordinary users from entering internal IDs.");
+  }
+  const expectedFailureCodes = [
+    "upstream_basic_readiness_missing",
+    "inspection_required",
+    "operation_evidence_missing",
+    "unclosed_blocker_for_operable",
+    "invalid_status_transition",
+    "concurrent_status_conflict",
+    "forged_internal_reference",
+    "duplicate_submission",
+    "readonly_result_write_attempt",
+    "post_confirm_inline_edit_forbidden",
+    "cross_scenario_price_reservation_forbidden",
+    "restore_without_recheck_pass"
+  ];
+  const failureCodes = (source?.failureSemantics ?? []).map((item) => item.failureCode);
+  if (!arraysContainAll(failureCodes, expectedFailureCodes) ||
+    !(source?.failureSemantics ?? []).every((item) => item.sideEffectsAllowed === false)) {
+    failures.push("dormitory scenario 2 failure semantics must cover all required failures and forbid side effects.");
+  }
+  if (!JSON.stringify(source?.invariants ?? []).includes("查询、搜索、列表、看板、报表永远只读") ||
+    !JSON.stringify(source?.invariants ?? []).includes("确认失败不得写 CommandSubmission")) {
+    failures.push("dormitory scenario 2 invariants must keep readonly surfaces and no-side-effects failure rule.");
+  }
+  if (source?.NO_GO?.productionConfirmAllowed !== false ||
+    source?.NO_GO?.releaseAuthority !== false ||
+    source?.NO_GO?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory scenario 2 Source NO_GO must keep production/release/final GO disabled.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult],
+    ["positive browser", positiveBrowserResult],
+    ["negative browser", negativeBrowserResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory scenario 2 ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 2 ${label} result must keep production/release/final GO disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory scenario 2 evidence must expose a sha256 Source digest.");
+  }
+  if (!sha256DigestPattern.test(packageIndexDigest ?? "")) {
+    failures.push("dormitory scenario 2 evidence must expose a sha256 package index digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryScenario2GeneratedFiles.length) {
+    failures.push("dormitory scenario 2 generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryScenario2GeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory scenario 2 generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory scenario 2 generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.packageIndexContentDigest !== packageIndexDigest) {
+      failures.push(`dormitory scenario 2 generated file package index digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 2 generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory scenario 2 generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of ["canonical", "runtimeRules", "surfaceNavigation", "handoff", "mobileMirror", "runtimeMirror"]) {
+    if (!dormitoryScenario2GeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory scenario 2 consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+  const runtimeRulesText = documents.get("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs") || "";
+  const operationsRuntimeText = documents.get("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs") || "";
+  const runtimeTestsText = documents.get("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs") || "";
+  if (!runtimeRulesText.includes("DormitoryScenario2ResourceOperationStatus.generated.json") ||
+    !runtimeRulesText.includes("Scenario2ResourceOperationRuntimeAdapter")) {
+    failures.push("scenario 2 runtime must consume the generated runtime mirror through Scenario2ResourceOperationRuntimeAdapter.");
+  }
+  if (!operationsRuntimeText.includes("[\"refreshProjection\"] = false")) {
+    failures.push("scenario 2 generated rule rejection must not refresh Projection on failure.");
+  }
+  for (const command of ["Dorm.OperationInspectionConfirm", "Dorm.OperationStatusChangeConfirm", "Dorm.OperationBlockerUpdate", "Dorm.OperationRestoreConfirm"]) {
+    if (!runtimeTestsText.includes(command)) {
+      failures.push(`scenario 2 runtime tests must cover command ${command}.`);
+    }
+  }
+
+  if (positiveBrowserReport?.status !== "passed" ||
+    positiveBrowserResult?.positiveBrowserAuditDigest !== positiveBrowserReport?.positiveBrowserAuditDigest ||
+    !sha256DigestPattern.test(positiveBrowserReport?.positiveBrowserAuditDigest ?? "") ||
+    (positiveBrowserReport?.screenshots?.length ?? 0) < 11 ||
+    (positiveScreenshotIndex?.screenshots?.length ?? 0) < 11) {
+    failures.push("scenario 2 positive browser report, result and screenshot index must be PASS and contain at least 11 screenshots.");
+  }
+  if (negativeBrowserReport?.status !== "passed" ||
+    negativeBrowserResult?.negativeBrowserAuditDigest !== negativeBrowserReport?.negativeBrowserAuditDigest ||
+    !sha256DigestPattern.test(negativeBrowserReport?.negativeBrowserAuditDigest ?? "") ||
+    (negativeBrowserReport?.screenshots?.length ?? 0) < 12 ||
+    (negativeScreenshotIndex?.screenshots?.length ?? 0) < 12) {
+    failures.push("scenario 2 negative browser report, result and screenshot index must be PASS and contain at least 12 screenshots.");
+  }
+  if (!JSON.stringify(positiveBrowserReport ?? {}).includes("房源运营就绪与状态维护") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("今日") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("工作项") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("搜索") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("我的")) {
+    failures.push("scenario 2 positive browser report must prove business name and navigation entries are visible.");
+  }
+  if (!JSON.stringify(negativeBrowserReport ?? {}).includes("未写入任何业务事实") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("搜索结果只读") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("已确认事实不能原地编辑")) {
+    failures.push("scenario 2 negative browser report must prove no side effects, readonly search and no inline edit.");
+  }
+  for (const report of [positiveBrowserReport, negativeBrowserReport]) {
+    const visibleText = (report?.screenshots ?? []).map((shot) => shot.visibleText ?? "").join("\n");
+    for (const forbidden of ["roomId", "bedId", "stableRef", "projectionVersion", "domainEventId", "digest", "可报价", "可预订", "生产发布", "final GO", "resource-saleability", "lead-reservation", "golden-chain"]) {
+      if (visibleText.includes(forbidden)) {
+        failures.push(`scenario 2 browser screenshots must not expose forbidden visible term: ${forbidden}`);
+      }
+    }
+  }
+  const browserSummary = graph.realBrowserEvidence?.scenario2;
+  if (browserSummary?.positive?.status !== "passed" ||
+    browserSummary?.negative?.status !== "passed" ||
+    browserSummary?.productionConfirmAllowed !== false ||
+    browserSummary?.finalGoNoGo !== "NO_GO") {
+    failures.push("evidence graph must include passed scenario 2 positive/negative browser evidence with NO_GO closed.");
+  }
+  for (const gate of ["DORMITORY-SCENARIO2-POSITIVE-BROWSER", "DORMITORY-SCENARIO2-NEGATIVE-BROWSER"]) {
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (!node) {
+      failures.push(`evidence graph missing node for ${gate}.`);
+    } else {
+      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+      if (node.businessGoAllowed !== false) failures.push(`${gate} must keep businessGoAllowed=false.`);
+    }
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory scenario 2 evidence closes.");
+  }
+}
+
+function checkDormitoryScenario3Evidence(graph, finalReport, documents) {
+  const packageIndex = documents.get(lodgingScenarioPackageIndexPath);
+  const source = documents.get(dormitoryScenario3SourcePath);
+  const authorityResult = documents.get(dormitoryScenario3ResultFiles[0]);
+  const generatedResult = documents.get(dormitoryScenario3ResultFiles[1]);
+  const consumptionResult = documents.get(dormitoryScenario3ResultFiles[2]);
+  const positiveBrowserResult = documents.get(dormitoryScenario3ResultFiles[3]);
+  const negativeBrowserResult = documents.get(dormitoryScenario3ResultFiles[4]);
+  const positiveBrowserReport = documents.get(dormitoryScenario3BrowserEvidenceFiles[0]);
+  const positiveScreenshotIndex = documents.get(dormitoryScenario3BrowserEvidenceFiles[1]);
+  const negativeBrowserReport = documents.get(dormitoryScenario3BrowserEvidenceFiles[2]);
+  const negativeScreenshotIndex = documents.get(dormitoryScenario3BrowserEvidenceFiles[3]);
+  const sourceDigest = authorityResult?.scenarioDigest ?? generatedResult?.scenarioDigest ?? consumptionResult?.scenarioDigest;
+  const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
+
+  for (const file of dormitoryScenario3EvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory scenario 3 evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory scenario 3 evidence file: ${file}`);
+    }
+  }
+
+  const package3 = (packageIndex?.scenarioPackageOrder ?? []).find((item) => item.packageNo === 3);
+  if (package3?.nameZh !== "住宿商品与价格" ||
+    package3?.scenarioId !== "lodging.product-and-rate") {
+    failures.push("lodging scenario package index must keep scenario 3 as 住宿商品与价格.");
+  }
+  if (!arraysContainAll(package3?.handoffInputs, ["房间摘要", "床位组摘要", "房间/床位运营状态摘要", "阻断原因", "可否进入价格维护", "证据摘要", "状态历史", "只读对象引用"])) {
+    failures.push("scenario 3 package index must consume scenario 1/2 readonly summaries.");
+  }
+  if (!arraysContainAll(package3?.handoffOutputs, ["商品摘要", "价格方案摘要", "价格日历摘要", "价格版本历史", "可否进入询价报价", "证据摘要", "只读对象引用"])) {
+    failures.push("scenario 3 package index must output only product/pricing readonly summaries.");
+  }
+  if (!arraysContainAll(package3?.mustNotOutputZh, ["报价", "库存锁定", "预订", "入住", "收款", "押金", "退款", "账务", "已预订", "已锁定"])) {
+    failures.push("scenario 3 package index must forbid quote/inventory/reservation/stay/payment/deposit/refund/ledger outputs.");
+  }
+
+  if (source?.authorityId !== "Dormitory.Scenario3.ProductAndPricing" ||
+    source?.scenarioPackageNo !== 3 ||
+    source?.nameZh !== "住宿商品与价格" ||
+    source?.status !== "authoritative") {
+    failures.push("dormitory scenario 3 Source Authority identity must remain 住宿商品与价格.");
+  }
+  if (source?.highestAuthorityRef !== dormitory13ScenarioSourcePath ||
+    source?.methodBenchmarkRef !== dormitoryBenchmarkInheritanceSourcePath) {
+    failures.push("dormitory scenario 3 Source must reference 13 scenario control as highest authority and scenario 1 benchmark as method contract.");
+  }
+  if (!arraysEqual(source?.upstream?.allowedSourcePackageNos, [1, 2]) ||
+    source?.upstream?.upstreamWriteBackAllowed !== false ||
+    !arraysContainAll(source?.upstream?.requiredReadonlyInputs, ["房间摘要", "床位组摘要", "房间/床位运营状态摘要", "阻断原因", "可否进入价格维护", "证据摘要", "状态历史", "只读对象引用"])) {
+    failures.push("dormitory scenario 3 upstream must be scenario 1/2 readonly handoff only.");
+  }
+  if (source?.downstream?.allowedConsumerPackageNo !== 4 ||
+    !arraysContainAll(source?.downstream?.forbiddenOutputsZh, ["报价", "库存锁定", "预订", "入住", "收款", "押金", "退款", "账务", "已预订", "已锁定"])) {
+    failures.push("dormitory scenario 3 downstream must only hand off readonly product/pricing summaries and forbid downstream business facts.");
+  }
+  const expectedObjects = [
+    "AccommodationProduct",
+    "SellableUnit",
+    "ProductResourceBinding",
+    "RatePlan",
+    "RateRule",
+    "PriceCalendar",
+    "PriceVersion",
+    "PriceEvidence",
+    "PriceStatusHistory"
+  ];
+  const sourceObjects = (source?.objects ?? []).map((item) => item.objectName);
+  if (!arraysContainAll(sourceObjects, expectedObjects)) {
+    failures.push("dormitory scenario 3 Source must define all product and pricing objects.");
+  }
+  for (const object of source?.objects ?? []) {
+    if (object.ownedByScenarioPackageNo !== 3 ||
+      !arraysContainAll(object.requiredLifecycle, ["currentState", "versionHistory", "evidenceHistory", "legalNextActions"])) {
+      failures.push(`scenario 3 object must be owned by package 3 and expose lifecycle/history/legal actions: ${object.objectName ?? "unknown"}`);
+    }
+  }
+  const expectedStatuses = ["价格草稿", "待审核", "已生效", "已停用", "已过期", "已作废", "需补充证据"];
+  if (!arraysContainAll(source?.priceStatusOptions, expectedStatuses)) {
+    failures.push("dormitory scenario 3 Source must keep the required price status options.");
+  }
+  const stepNames = (source?.steps ?? []).map((step) => step.nameZh);
+  if (JSON.stringify(stepNames) !== JSON.stringify(["选择可运营房源", "定义住宿商品", "配置价格方案", "配置适用日期和规则", "审核与生效确认", "价格维护"])) {
+    failures.push("dormitory scenario 3 Source must keep the six business action steps in order.");
+  }
+  if (!arraysContainAll(source?.fields?.forbiddenUserInputFields, ["productId", "ratePlanId", "priceVersionId", "roomId", "bedId", "stableRef", "projectionVersion", "digest", "domainEventId"])) {
+    failures.push("dormitory scenario 3 field boundary must forbid ordinary users from entering internal IDs.");
+  }
+  const expectedFailureCodes = [
+    "upstream_operable_required",
+    "operation_blocked_for_pricing",
+    "product_resource_binding_required",
+    "product_name_not_binding",
+    "price_value_invalid",
+    "currency_required",
+    "pricing_period_required",
+    "date_range_invalid",
+    "price_date_conflict",
+    "deposit_payment_forbidden",
+    "price_evidence_missing",
+    "forged_internal_reference",
+    "duplicate_submission",
+    "concurrent_price_version_conflict",
+    "readonly_result_write_attempt",
+    "post_effective_inline_edit_forbidden",
+    "cross_scenario_quote_reservation_forbidden"
+  ];
+  const failureCodes = (source?.failureSemantics ?? []).map((item) => item.failureCode);
+  if (!arraysContainAll(failureCodes, expectedFailureCodes) ||
+    !(source?.failureSemantics ?? []).every((item) => item.sideEffectsAllowed === false)) {
+    failures.push("dormitory scenario 3 failure semantics must cover all required failures and forbid side effects.");
+  }
+  const invariantText = JSON.stringify(source?.invariants ?? []);
+  if (!invariantText.includes("查询、搜索、列表、看板、报表永远只读") ||
+    !invariantText.includes("确认失败不得写 CommandSubmission") ||
+    !invariantText.includes("价格方案不得写押金、收款或账务事实")) {
+    failures.push("dormitory scenario 3 invariants must keep readonly surfaces, no-side-effects failure rule and finance boundary.");
+  }
+  if (source?.NO_GO?.productionConfirmAllowed !== false ||
+    source?.NO_GO?.releaseAuthority !== false ||
+    source?.NO_GO?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory scenario 3 Source NO_GO must keep production/release/final GO disabled.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult],
+    ["positive browser", positiveBrowserResult],
+    ["negative browser", negativeBrowserResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory scenario 3 ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 3 ${label} result must keep production/release/final GO disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory scenario 3 evidence must expose a sha256 Source digest.");
+  }
+  if (!sha256DigestPattern.test(packageIndexDigest ?? "")) {
+    failures.push("dormitory scenario 3 evidence must expose a sha256 package index digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryScenario3GeneratedFiles.length) {
+    failures.push("dormitory scenario 3 generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryScenario3GeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory scenario 3 generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory scenario 3 generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.packageIndexContentDigest !== packageIndexDigest) {
+      failures.push(`dormitory scenario 3 generated file package index digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 3 generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory scenario 3 generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of ["canonical", "runtimeRules", "surfaceNavigation", "handoff", "mobileMirror", "runtimeMirror"]) {
+    if (!dormitoryScenario3GeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory scenario 3 consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+  const runtimeRulesText = documents.get("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs") || "";
+  const operationsRuntimeText = documents.get("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs") || "";
+  const runtimeTestsText = documents.get("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs") || "";
+  if (!runtimeRulesText.includes("DormitoryScenario3ProductAndPricing.generated.json") ||
+    !runtimeRulesText.includes("Scenario3ProductPricingRuntimeAdapter")) {
+    failures.push("scenario 3 runtime must consume the generated runtime mirror through Scenario3ProductPricingRuntimeAdapter.");
+  }
+  if (!operationsRuntimeText.includes("[\"refreshProjection\"] = false")) {
+    failures.push("scenario 3 generated rule rejection must not refresh Projection on failure.");
+  }
+  for (const command of ["Dorm.AccommodationProductConfirm", "Dorm.RatePlanDefinitionConfirm", "Dorm.PriceVersionActivate", "Dorm.PriceDisable", "Dorm.PriceDraftVoid"]) {
+    if (!runtimeTestsText.includes(command)) {
+      failures.push(`scenario 3 runtime tests must cover command ${command}.`);
+    }
+  }
+
+  if (positiveBrowserReport?.status !== "passed" ||
+    positiveBrowserResult?.positiveBrowserAuditDigest !== positiveBrowserReport?.positiveBrowserAuditDigest ||
+    !sha256DigestPattern.test(positiveBrowserReport?.positiveBrowserAuditDigest ?? "") ||
+    (positiveBrowserReport?.screenshots?.length ?? 0) < 10 ||
+    (positiveScreenshotIndex?.screenshots?.length ?? 0) < 10) {
+    failures.push("scenario 3 positive browser report, result and screenshot index must be PASS and contain at least 10 screenshots.");
+  }
+  if (negativeBrowserReport?.status !== "passed" ||
+    negativeBrowserResult?.negativeBrowserAuditDigest !== negativeBrowserReport?.negativeBrowserAuditDigest ||
+    !sha256DigestPattern.test(negativeBrowserReport?.negativeBrowserAuditDigest ?? "") ||
+    (negativeBrowserReport?.screenshots?.length ?? 0) < 13 ||
+    (negativeScreenshotIndex?.screenshots?.length ?? 0) < 13) {
+    failures.push("scenario 3 negative browser report, result and screenshot index must be PASS and contain at least 13 screenshots.");
+  }
+  if (!JSON.stringify(positiveBrowserReport ?? {}).includes("住宿商品与价格") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("今日") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("工作项") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("搜索") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("我的")) {
+    failures.push("scenario 3 positive browser report must prove business name and navigation entries are visible.");
+  }
+  if (!JSON.stringify(negativeBrowserReport ?? {}).includes("未写入任何业务事实") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("搜索结果只读") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("已生效价格不能原地编辑")) {
+    failures.push("scenario 3 negative browser report must prove no side effects, readonly search and no inline edit.");
+  }
+  for (const report of [positiveBrowserReport, negativeBrowserReport]) {
+    const visibleText = (report?.screenshots ?? []).map((shot) => shot.visibleText ?? "").join("\n");
+    for (const forbidden of ["productId", "ratePlanId", "priceVersionId", "roomId", "bedId", "stableRef", "projectionVersion", "domainEventId", "digest", "可报价", "可预订", "已预订", "已锁定", "已入住", "已收款", "生产发布", "final GO", "RatePlanConfirm", "resource-saleability", "lead-reservation", "golden-chain"]) {
+      if (visibleText.includes(forbidden)) {
+        failures.push(`scenario 3 browser screenshots must not expose forbidden visible term: ${forbidden}`);
+      }
+    }
+  }
+  const browserSummary = graph.realBrowserEvidence?.scenario3;
+  if (browserSummary?.positive?.status !== "passed" ||
+    browserSummary?.negative?.status !== "passed" ||
+    browserSummary?.productionConfirmAllowed !== false ||
+    browserSummary?.finalGoNoGo !== "NO_GO") {
+    failures.push("evidence graph must include passed scenario 3 positive/negative browser evidence with NO_GO closed.");
+  }
+  for (const gate of ["DORMITORY-SCENARIO3-POSITIVE-BROWSER", "DORMITORY-SCENARIO3-NEGATIVE-BROWSER"]) {
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (!node) {
+      failures.push(`evidence graph missing node for ${gate}.`);
+    } else {
+      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+      if (node.businessGoAllowed !== false) failures.push(`${gate} must keep businessGoAllowed=false.`);
+    }
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory scenario 3 evidence closes.");
+  }
+}
+
+function checkDormitoryScenario4Evidence(graph, finalReport, documents) {
+  const packageIndex = documents.get(lodgingScenarioPackageIndexPath);
+  const source = documents.get(dormitoryScenario4SourcePath);
+  const authorityResult = documents.get(dormitoryScenario4ResultFiles[0]);
+  const generatedResult = documents.get(dormitoryScenario4ResultFiles[1]);
+  const consumptionResult = documents.get(dormitoryScenario4ResultFiles[2]);
+  const positiveBrowserResult = documents.get(dormitoryScenario4ResultFiles[3]);
+  const negativeBrowserResult = documents.get(dormitoryScenario4ResultFiles[4]);
+  const positiveBrowserReport = documents.get(dormitoryScenario4BrowserEvidenceFiles[0]);
+  const positiveScreenshotIndex = documents.get(dormitoryScenario4BrowserEvidenceFiles[1]);
+  const negativeBrowserReport = documents.get(dormitoryScenario4BrowserEvidenceFiles[2]);
+  const negativeScreenshotIndex = documents.get(dormitoryScenario4BrowserEvidenceFiles[3]);
+  const sourceDigest = authorityResult?.scenarioDigest ?? generatedResult?.scenarioDigest ?? consumptionResult?.scenarioDigest;
+  const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
+
+  for (const file of dormitoryScenario4EvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory scenario 4 evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory scenario 4 evidence file: ${file}`);
+    }
+  }
+
+  const package4 = (packageIndex?.scenarioPackageOrder ?? []).find((item) => item.packageNo === 4);
+  if (package4?.nameZh !== "询价与报价" ||
+    package4?.scenarioId !== "lodging.inquiry-and-quote") {
+    failures.push("lodging scenario package index must keep scenario 4 as 询价与报价.");
+  }
+  if (!arraysEqual(package4?.upstreamPackages, [1, 2, 3]) ||
+    !arraysEqual(package4?.downstreamPackages, [5])) {
+    failures.push("scenario 4 package index must consume packages 1/2/3 and hand off only to package 5.");
+  }
+  if (!arraysContainAll(package4?.handoffInputs, ["房间摘要", "床位组摘要", "房间/床位运营状态摘要", "阻断原因", "商品摘要", "价格方案摘要", "价格日历摘要", "价格版本历史", "可否进入询价报价", "证据摘要", "状态历史", "只读对象引用"])) {
+    failures.push("scenario 4 package index must consume scenario 1/2/3 readonly summaries.");
+  }
+  if (!arraysContainAll(package4?.handoffOutputs, ["询价摘要", "客户需求摘要", "报价单摘要", "报价版本", "价格快照", "报价有效期", "客户反馈", "转预订准备摘要", "证据摘要", "只读对象引用"])) {
+    failures.push("scenario 4 package index must output only inquiry/quote readonly summaries.");
+  }
+  if (!arraysContainAll(package4?.mustNotOutputZh, ["库存锁定", "预订", "入住", "收款", "押金", "退款", "账务", "已锁定", "已预订", "已入住", "已收款"])) {
+    failures.push("scenario 4 package index must forbid inventory/reservation/stay/payment/deposit/refund/ledger outputs.");
+  }
+
+  if (source?.authorityId !== "Dormitory.Scenario4.InquiryAndQuote" ||
+    source?.scenarioPackageNo !== 4 ||
+    source?.nameZh !== "询价与报价" ||
+    source?.status !== "authoritative") {
+    failures.push("dormitory scenario 4 Source Authority identity must remain 询价与报价.");
+  }
+  if (source?.highestAuthorityRef !== dormitory13ScenarioSourcePath ||
+    source?.methodBenchmarkRef !== dormitoryBenchmarkInheritanceSourcePath) {
+    failures.push("dormitory scenario 4 Source must reference 13 scenario control as highest authority and scenario 1 benchmark as method contract.");
+  }
+  if (!arraysEqual(source?.upstream?.allowedSourcePackageNos, [1, 2, 3]) ||
+    source?.upstream?.upstreamWriteBackAllowed !== false ||
+    !arraysContainAll(source?.upstream?.requiredReadonlyInputs, ["房间摘要", "床位组摘要", "房间/床位运营状态摘要", "阻断原因", "商品摘要", "价格方案摘要", "价格日历摘要", "价格版本历史", "可否进入询价报价", "证据摘要", "状态历史", "只读对象引用"])) {
+    failures.push("dormitory scenario 4 upstream must be scenario 1/2/3 readonly handoff only.");
+  }
+  if (source?.downstream?.allowedConsumerPackageNo !== 5 ||
+    !String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("必须重新校验库存和报价有效期") ||
+    !arraysContainAll(source?.downstream?.forbiddenOutputsZh, ["库存锁定", "预订", "入住", "收款", "押金", "退款", "账务", "已锁定", "已预订", "已入住", "已收款"])) {
+    failures.push("dormitory scenario 4 downstream must only hand off readonly quote summaries and force package 5 recheck.");
+  }
+
+  const expectedObjects = [
+    "Inquiry",
+    "CustomerContact",
+    "StayDemand",
+    "QuoteOption",
+    "Quote",
+    "QuoteVersion",
+    "QuotePriceSnapshot",
+    "QuoteValidity",
+    "QuoteDeliveryRecord",
+    "QuoteEvidence",
+    "FollowUpTask",
+    "QuoteStatusHistory"
+  ];
+  const sourceObjects = (source?.objects ?? []).map((item) => item.objectName);
+  if (!arraysContainAll(sourceObjects, expectedObjects)) {
+    failures.push("dormitory scenario 4 Source must define all inquiry and quote objects.");
+  }
+  for (const object of source?.objects ?? []) {
+    if (object.ownedByScenarioPackageNo !== 4 ||
+      !arraysContainAll(object.requiredLifecycle, ["currentState", "versionHistory", "evidenceHistory", "legalNextActions"])) {
+      failures.push(`scenario 4 object must be owned by package 4 and expose lifecycle/history/legal actions: ${object.objectName ?? "unknown"}`);
+    }
+  }
+  const expectedStatuses = ["询价草稿", "待补充需求", "可报价", "报价草稿", "已报价", "报价已发送", "客户待确认", "报价过期", "报价关闭", "转预订准备"];
+  if (!arraysEqual(source?.quoteStatusOptions, expectedStatuses)) {
+    failures.push("dormitory scenario 4 Source must keep the required quote status options.");
+  }
+  const stepNames = (source?.steps ?? []).map((step) => step.nameZh);
+  if (JSON.stringify(stepNames) !== JSON.stringify(["客户询价登记", "填写入住需求", "查看可报价商品", "生成报价草稿", "确认并发送报价", "报价跟进与转预订准备"])) {
+    failures.push("dormitory scenario 4 Source must keep the six business action steps in order.");
+  }
+  if (!arraysContainAll(source?.fields?.forbiddenUserInputFields, ["inquiryId", "customerId", "quoteId", "quoteVersionId", "productId", "ratePlanId", "roomId", "bedId", "stableRef", "projectionVersion", "digest", "domainEventId"])) {
+    failures.push("dormitory scenario 4 field boundary must forbid ordinary users from entering internal IDs.");
+  }
+  const expectedCommands = [
+    "Dorm.InquiryRegister",
+    "Dorm.StayDemandConfirm",
+    "Dorm.QuoteDraftGenerate",
+    "Dorm.QuoteVersionConfirm",
+    "Dorm.QuoteSend",
+    "Dorm.QuoteClose",
+    "Dorm.RequoteCreate",
+    "Dorm.ReservationPreparationStart"
+  ];
+  const commandIds = (source?.commands ?? []).map((item) => item.commandId);
+  if (!arraysEqual(commandIds, expectedCommands)) {
+    failures.push("dormitory scenario 4 Source must define exactly the eight write commands.");
+  }
+  const expectedFailureCodes = [
+    "contact_required",
+    "date_range_invalid",
+    "guest_count_invalid",
+    "valid_product_required",
+    "effective_price_required",
+    "operation_blocked_for_quote",
+    "quote_validity_required",
+    "discount_approval_required",
+    "price_snapshot_mismatch",
+    "quote_expired_for_reservation_preparation",
+    "post_issue_inline_edit_forbidden",
+    "forged_internal_reference",
+    "duplicate_submission",
+    "concurrent_quote_version_conflict",
+    "readonly_result_write_attempt",
+    "cross_scenario_inventory_reservation_forbidden",
+    "finance_fact_forbidden",
+    "quote_evidence_missing"
+  ];
+  const failureCodes = (source?.failureSemantics ?? []).map((item) => item.failureCode);
+  if (!arraysContainAll(failureCodes, expectedFailureCodes) ||
+    !(source?.failureSemantics ?? []).every((item) => item.sideEffectsAllowed === false)) {
+    failures.push("dormitory scenario 4 failure semantics must cover all required failures and forbid side effects.");
+  }
+  const invariantText = JSON.stringify(source?.invariants ?? []);
+  if (!invariantText.includes("报价必须来自场景包 3 的已生效商品与价格版本") ||
+    !invariantText.includes("报价生成时可以读取当时可报价资源，但不得锁定资源") ||
+    !invariantText.includes("场景包 5 必须重新校验并锁定库存") ||
+    !invariantText.includes("确认失败不得写 CommandSubmission") ||
+    !invariantText.includes("查询、搜索、列表、看板、报表永远只读")) {
+    failures.push("dormitory scenario 4 invariants must keep price snapshot, no inventory lock, downstream recheck, no-side-effects and readonly surfaces.");
+  }
+  if (source?.priceSnapshotRule?.mustUseScenario3EffectivePriceVersion !== true ||
+    source?.priceSnapshotRule?.userMayOverrideFinalPriceTruth !== false ||
+    source?.priceSnapshotRule?.failureCode !== "price_snapshot_mismatch") {
+    failures.push("dormitory scenario 4 price snapshot rule must consume scenario 3 effective price and forbid user override.");
+  }
+  if (source?.NO_GO?.productionConfirmAllowed !== false ||
+    source?.NO_GO?.businessGoLiveAllowed !== false ||
+    source?.NO_GO?.releaseAuthority !== false ||
+    source?.NO_GO?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory scenario 4 Source NO_GO must keep production/business/release/final approval disabled.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult],
+    ["positive browser", positiveBrowserResult],
+    ["negative browser", negativeBrowserResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory scenario 4 ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 4 ${label} result must keep production/release/final approval disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory scenario 4 evidence must expose a sha256 Source digest.");
+  }
+  if (!sha256DigestPattern.test(packageIndexDigest ?? "")) {
+    failures.push("dormitory scenario 4 evidence must expose a sha256 package index digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryScenario4GeneratedFiles.length) {
+    failures.push("dormitory scenario 4 generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryScenario4GeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory scenario 4 generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory scenario 4 generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.packageIndexContentDigest !== packageIndexDigest) {
+      failures.push(`dormitory scenario 4 generated file package index digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 4 generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory scenario 4 generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of ["canonical", "runtimeRules", "surfaceNavigation", "handoff", "mobileMirror", "runtimeMirror"]) {
+    if (!dormitoryScenario4GeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory scenario 4 consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+  const runtimeRulesText = documents.get("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs") || "";
+  const operationsRuntimeText = documents.get("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs") || "";
+  const runtimeTestsText = documents.get("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs") || "";
+  if (!runtimeRulesText.includes("DormitoryScenario4InquiryAndQuote.generated.json") ||
+    !runtimeRulesText.includes("Scenario4InquiryQuoteRuntimeAdapter")) {
+    failures.push("scenario 4 runtime must consume the generated runtime mirror through Scenario4InquiryQuoteRuntimeAdapter.");
+  }
+  if (!operationsRuntimeText.includes("[\"refreshProjection\"] = false")) {
+    failures.push("scenario 4 generated rule rejection must not refresh Projection on failure.");
+  }
+  for (const command of expectedCommands) {
+    if (!runtimeTestsText.includes(command)) {
+      failures.push(`scenario 4 runtime tests must cover command ${command}.`);
+    }
+  }
+
+  if (positiveBrowserReport?.status !== "passed" ||
+    positiveBrowserResult?.positiveBrowserAuditDigest !== positiveBrowserReport?.positiveBrowserAuditDigest ||
+    !sha256DigestPattern.test(positiveBrowserReport?.positiveBrowserAuditDigest ?? "") ||
+    (positiveBrowserReport?.screenshots?.length ?? 0) !== 11 ||
+    (positiveScreenshotIndex?.screenshots?.length ?? 0) !== 11) {
+    failures.push("scenario 4 positive browser report, result and screenshot index must be PASS and contain 11 screenshots.");
+  }
+  if (negativeBrowserReport?.status !== "passed" ||
+    negativeBrowserResult?.negativeBrowserAuditDigest !== negativeBrowserReport?.negativeBrowserAuditDigest ||
+    !sha256DigestPattern.test(negativeBrowserReport?.negativeBrowserAuditDigest ?? "") ||
+    (negativeBrowserReport?.screenshots?.length ?? 0) !== 14 ||
+    (negativeScreenshotIndex?.screenshots?.length ?? 0) !== 14) {
+    failures.push("scenario 4 negative browser report, result and screenshot index must be PASS and contain 14 screenshots.");
+  }
+  if (!JSON.stringify(positiveBrowserReport ?? {}).includes("询价与报价") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("报价有效期") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("场景包 5 必须重新校验库存和报价有效期") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("今日") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("工作项") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("搜索") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("我的")) {
+    failures.push("scenario 4 positive browser report must prove business name, validity, package 5 recheck and navigation entries are visible.");
+  }
+  if (!JSON.stringify(negativeBrowserReport ?? {}).includes("未写入任何业务事实") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("搜索结果只读") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("已发送报价不能原地编辑") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("发起转预订准备，由下一场景复核")) {
+    failures.push("scenario 4 negative browser report must prove no side effects, readonly search, no inline edit and downstream handoff only.");
+  }
+  for (const report of [positiveBrowserReport, negativeBrowserReport]) {
+    const visibleText = (report?.screenshots ?? []).map((shot) => shot.visibleText ?? "").join("\n");
+    for (const forbidden of ["inquiryId", "customerId", "quoteId", "quoteVersionId", "productId", "ratePlanId", "roomId", "bedId", "stableRef", "projectionVersion", "domainEventId", "digest", "已锁定", "已预订", "已入住", "已收款", "生产发布", "final GO", "RatePlanConfirm", "reservationCreate", "resource-saleability", "lead-reservation", "golden-chain"]) {
+      if (visibleText.includes(forbidden)) {
+        failures.push(`scenario 4 browser screenshots must not expose forbidden visible term: ${forbidden}`);
+      }
+    }
+  }
+  const browserSummary = graph.realBrowserEvidence?.scenario4;
+  if (browserSummary?.positive?.status !== "passed" ||
+    browserSummary?.negative?.status !== "passed" ||
+    browserSummary?.productionConfirmAllowed !== false ||
+    browserSummary?.finalGoNoGo !== "NO_GO") {
+    failures.push("evidence graph must include passed scenario 4 positive/negative browser evidence with NO_GO closed.");
+  }
+  for (const gate of ["DORMITORY-SCENARIO4-POSITIVE-BROWSER", "DORMITORY-SCENARIO4-NEGATIVE-BROWSER"]) {
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (!node) {
+      failures.push(`evidence graph missing node for ${gate}.`);
+    } else {
+      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+      if (node.businessGoAllowed !== false) failures.push(`${gate} must keep businessGoAllowed=false.`);
+    }
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory scenario 4 evidence closes.");
+  }
+}
+
+function checkDormitoryScenario5Evidence(graph, finalReport, documents) {
+  const packageIndex = documents.get(lodgingScenarioPackageIndexPath);
+  const source = documents.get(dormitoryScenario5SourcePath);
+  const authorityResult = documents.get(dormitoryScenario5ResultFiles[0]);
+  const generatedResult = documents.get(dormitoryScenario5ResultFiles[1]);
+  const consumptionResult = documents.get(dormitoryScenario5ResultFiles[2]);
+  const positiveBrowserResult = documents.get(dormitoryScenario5ResultFiles[3]);
+  const negativeBrowserResult = documents.get(dormitoryScenario5ResultFiles[4]);
+  const positiveBrowserReport = documents.get(dormitoryScenario5BrowserEvidenceFiles[0]);
+  const positiveScreenshotIndex = documents.get(dormitoryScenario5BrowserEvidenceFiles[1]);
+  const negativeBrowserReport = documents.get(dormitoryScenario5BrowserEvidenceFiles[2]);
+  const negativeScreenshotIndex = documents.get(dormitoryScenario5BrowserEvidenceFiles[3]);
+  const sourceDigest = authorityResult?.scenarioDigest ?? generatedResult?.scenarioDigest ?? consumptionResult?.scenarioDigest;
+  const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
+
+  for (const file of dormitoryScenario5EvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory scenario 5 evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory scenario 5 evidence file: ${file}`);
+    }
+  }
+
+  const package5 = (packageIndex?.scenarioPackageOrder ?? []).find((item) => item.packageNo === 5);
+  if (package5?.nameZh !== "预订与库存锁定" ||
+    package5?.scenarioId !== "lodging.reservation-and-inventory-hold") {
+    failures.push("lodging scenario package index must keep scenario 5 as 预订与库存锁定.");
+  }
+  if (!arraysEqual(package5?.upstreamPackages, [1, 2, 3, 4]) ||
+    !arraysEqual(package5?.downstreamPackages, [6])) {
+    failures.push("scenario 5 package index must consume packages 1/2/3/4 and hand off only to package 6.");
+  }
+  if (!arraysContainAll(package5?.handoffInputs, ["房间摘要", "床位组摘要", "房间/床位运营状态摘要", "商品摘要", "价格方案摘要", "价格版本历史", "询价摘要", "客户需求摘要", "报价单摘要", "报价版本", "价格快照", "报价有效期", "客户选择意向", "证据摘要", "状态历史", "只读对象引用"])) {
+    failures.push("scenario 5 package index must consume scenario 1/2/3/4 readonly summaries.");
+  }
+  if (!arraysContainAll(package5?.handoffOutputs, ["预订确认摘要", "预订号", "客户信息", "日期范围", "人数", "房间/床位", "价格快照", "库存锁定历史", "预订状态", "证据摘要", "只读对象引用"])) {
+    failures.push("scenario 5 package index must output only reservation readonly summaries.");
+  }
+  if (!arraysContainAll(package5?.mustNotOutputZh, ["入住", "已入住", "可入住", "收款", "已收款", "押金", "押金已收", "退款", "账务", "LedgerEntry", "LedgerTransaction"])) {
+    failures.push("scenario 5 package index must forbid stay/payment/deposit/refund/ledger outputs.");
+  }
+
+  if (source?.authorityId !== "Dormitory.Scenario5.ReservationAndInventoryHold" ||
+    source?.scenarioPackageNo !== 5 ||
+    source?.nameZh !== "预订与库存锁定" ||
+    source?.status !== "authoritative") {
+    failures.push("dormitory scenario 5 Source Authority identity must remain 预订与库存锁定.");
+  }
+  if (source?.highestAuthorityRef !== dormitory13ScenarioSourcePath ||
+    source?.methodBenchmarkRef !== dormitoryBenchmarkInheritanceSourcePath) {
+    failures.push("dormitory scenario 5 Source must reference 13 scenario control as highest authority and scenario 1 benchmark as method contract.");
+  }
+  if (!arraysEqual(source?.upstream?.allowedSourcePackageNos, [1, 2, 3, 4]) ||
+    source?.upstream?.upstreamWriteBackAllowed !== false ||
+    !arraysContainAll(source?.upstream?.requiredReadonlyInputs, ["房间摘要", "床位组摘要", "房间/床位运营状态摘要", "商品摘要", "价格方案摘要", "价格版本历史", "询价摘要", "客户需求摘要", "报价单摘要", "报价版本", "价格快照", "报价有效期", "客户选择意向", "证据摘要", "状态历史", "只读对象引用"])) {
+    failures.push("dormitory scenario 5 upstream must be scenario 1/2/3/4 readonly handoff only.");
+  }
+  if (source?.downstream?.allowedConsumerPackageNo !== 6 ||
+    !String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("必须重新核验") ||
+    !arraysContainAll(source?.downstream?.forbiddenOutputsZh, ["Stay", "CheckIn", "Payment", "Deposit", "Refund", "LedgerEntry", "LedgerTransaction", "入住", "已入住", "可入住", "收款", "已收款", "押金", "押金已收", "退款", "账务"])) {
+    failures.push("dormitory scenario 5 downstream must only hand off readonly reservation summaries and force package 6 recheck.");
+  }
+
+  const expectedObjects = [
+    "BookingRequest",
+    "AvailabilityCheck",
+    "AvailabilitySnapshot",
+    "InventoryHold",
+    "Reservation",
+    "ReservationGuest",
+    "ReservationResourceBinding",
+    "ReservationPriceSnapshot",
+    "ReservationPolicySnapshot",
+    "ReservationConfirmation",
+    "ReservationEvidence",
+    "ReservationStatusHistory"
+  ];
+  const sourceObjects = (source?.objects ?? []).map((item) => item.objectName);
+  if (!arraysContainAll(sourceObjects, expectedObjects)) {
+    failures.push("dormitory scenario 5 Source must define all booking, hold and reservation objects.");
+  }
+  for (const object of source?.objects ?? []) {
+    if (object.ownedByScenarioPackageNo !== 5 ||
+      !arraysContainAll(object.requiredLifecycle, ["currentState", "versionHistory", "evidenceHistory", "legalNextActions"])) {
+      failures.push(`scenario 5 object must be owned by package 5 and expose lifecycle/history/legal actions: ${object.objectName ?? "unknown"}`);
+    }
+  }
+  const expectedStatuses = ["待锁定", "锁定中", "已锁定", "锁定过期", "待确认预订", "已预订", "预订确认失败", "转入住准备"];
+  if (!arraysEqual(source?.reservationStatusOptions, expectedStatuses)) {
+    failures.push("dormitory scenario 5 Source must keep the required reservation status options.");
+  }
+  const stepNames = (source?.steps ?? []).map((step) => step.nameZh);
+  if (JSON.stringify(stepNames) !== JSON.stringify(["进入预订确认", "复核可订资源", "锁定库存", "确认预订信息", "生成预订", "预订结果与下游准备"])) {
+    failures.push("dormitory scenario 5 Source must keep the six business action steps in order.");
+  }
+  if (!arraysContainAll(source?.fields?.forbiddenUserInputFields, ["bookingRequestId", "inventoryHoldId", "holdId", "reservationId", "reservationNo", "quoteId", "productId", "ratePlanId", "roomId", "bedId", "stableRef", "projectionVersion", "digest", "domainEventId"])) {
+    failures.push("dormitory scenario 5 field boundary must forbid ordinary users from entering internal IDs.");
+  }
+  const expectedCommands = [
+    "Dorm.BookingPreparationStart",
+    "Dorm.AvailabilityRecheck",
+    "Dorm.InventoryHoldCreate",
+    "Dorm.InventoryHoldRelease",
+    "Dorm.InventoryHoldExpire",
+    "Dorm.ReservationDraftConfirm",
+    "Dorm.ReservationConfirm",
+    "Dorm.ReservationSummaryOutput"
+  ];
+  const commandIds = (source?.commands ?? []).map((item) => item.commandId);
+  if (!arraysEqual(commandIds, expectedCommands)) {
+    failures.push("dormitory scenario 5 Source must define exactly the eight write commands.");
+  }
+  const expectedFailureCodes = [
+    "quote_expired_for_booking",
+    "quote_price_snapshot_required",
+    "contact_required",
+    "date_range_invalid",
+    "guest_count_invalid",
+    "operation_blocked_for_booking",
+    "effective_price_required",
+    "resource_unavailable_or_occupied",
+    "resource_already_locked",
+    "resource_already_reserved",
+    "resource_already_stayed",
+    "hold_until_required",
+    "concurrent_inventory_hold_conflict",
+    "inventory_hold_required",
+    "hold_expired_for_reservation",
+    "price_snapshot_mismatch",
+    "reservation_no_user_input_forbidden",
+    "forged_internal_reference",
+    "duplicate_submission",
+    "concurrent_reservation_version_conflict",
+    "readonly_result_write_attempt",
+    "cross_scenario_checkin_payment_forbidden",
+    "finance_fact_forbidden",
+    "reservation_evidence_missing"
+  ];
+  const failureCodes = (source?.failureSemantics ?? []).map((item) => item.failureCode);
+  if (!arraysContainAll(failureCodes, expectedFailureCodes) ||
+    !(source?.failureSemantics ?? []).every((item) => item.sideEffectsAllowed === false)) {
+    failures.push("dormitory scenario 5 failure semantics must cover all required failures and forbid side effects.");
+  }
+  const invariantText = JSON.stringify(source?.invariants ?? []);
+  if (!invariantText.includes("库存锁定必须按资源和日期范围原子校验") ||
+    !invariantText.includes("同一房间/床位在同一日期范围内") ||
+    !invariantText.includes("预订号由系统生成") ||
+    !invariantText.includes("确认失败不得写 CommandSubmission") ||
+    !invariantText.includes("查询、搜索、列表、看板、报表永远只读")) {
+    failures.push("dormitory scenario 5 invariants must keep atomic hold, conflict blocking, system reservation number, no-side-effects and readonly surfaces.");
+  }
+  if (source?.inventoryInvariantRule?.atomicResourceDateCheckRequired !== true ||
+    source?.inventoryInvariantRule?.holdUntilRequired !== true ||
+    source?.inventoryInvariantRule?.expiredHoldCannotConfirmReservation !== true ||
+    source?.inventoryInvariantRule?.reservationNoSystemGenerated !== true ||
+    source?.inventoryInvariantRule?.failureCodeForConcurrency !== "concurrent_inventory_hold_conflict") {
+    failures.push("dormitory scenario 5 inventory invariant rule must enforce atomic lock, holdUntil, expiry blocking and system reservation number.");
+  }
+  if (source?.NO_GO?.productionConfirmAllowed !== false ||
+    source?.NO_GO?.businessGoLiveAllowed !== false ||
+    source?.NO_GO?.releaseAuthority !== false ||
+    source?.NO_GO?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory scenario 5 Source NO_GO must keep production/business/release/final approval disabled.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult],
+    ["positive browser", positiveBrowserResult],
+    ["negative browser", negativeBrowserResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory scenario 5 ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 5 ${label} result must keep production/release/final approval disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory scenario 5 evidence must expose a sha256 Source digest.");
+  }
+  if (!sha256DigestPattern.test(packageIndexDigest ?? "")) {
+    failures.push("dormitory scenario 5 evidence must expose a sha256 package index digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryScenario5GeneratedFiles.length) {
+    failures.push("dormitory scenario 5 generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryScenario5GeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory scenario 5 generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory scenario 5 generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.packageIndexContentDigest !== packageIndexDigest) {
+      failures.push(`dormitory scenario 5 generated file package index digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 5 generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory scenario 5 generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of ["canonical", "runtimeRules", "surfaceNavigation", "handoff", "mobileMirror", "runtimeMirror"]) {
+    if (!dormitoryScenario5GeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory scenario 5 consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+  const runtimeRulesText = documents.get("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs") || "";
+  const operationsRuntimeText = documents.get("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs") || "";
+  const runtimeTestsText = documents.get("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs") || "";
+  if (!runtimeRulesText.includes("DormitoryScenario5ReservationAndInventoryHold.generated.json") ||
+    !runtimeRulesText.includes("Scenario5ReservationInventoryRuntimeAdapter")) {
+    failures.push("scenario 5 runtime must consume the generated runtime mirror through Scenario5ReservationInventoryRuntimeAdapter.");
+  }
+  if (!operationsRuntimeText.includes("[\"refreshProjection\"] = false")) {
+    failures.push("scenario 5 generated rule rejection must not refresh Projection on failure.");
+  }
+  for (const command of expectedCommands) {
+    if (!runtimeTestsText.includes(command)) {
+      failures.push(`scenario 5 runtime tests must cover command ${command}.`);
+    }
+  }
+
+  if (positiveBrowserReport?.status !== "passed" ||
+    positiveBrowserResult?.positiveBrowserAuditDigest !== positiveBrowserReport?.positiveBrowserAuditDigest ||
+    !sha256DigestPattern.test(positiveBrowserReport?.positiveBrowserAuditDigest ?? "") ||
+    (positiveBrowserReport?.screenshots?.length ?? 0) !== 11 ||
+    (positiveScreenshotIndex?.screenshots?.length ?? 0) !== 11) {
+    failures.push("scenario 5 positive browser report, result and screenshot index must be PASS and contain 11 screenshots.");
+  }
+  if (negativeBrowserReport?.status !== "passed" ||
+    negativeBrowserResult?.negativeBrowserAuditDigest !== negativeBrowserReport?.negativeBrowserAuditDigest ||
+    !sha256DigestPattern.test(negativeBrowserReport?.negativeBrowserAuditDigest ?? "") ||
+    (negativeBrowserReport?.screenshots?.length ?? 0) !== 15 ||
+    (negativeScreenshotIndex?.screenshots?.length ?? 0) !== 15) {
+    failures.push("scenario 5 negative browser report, result and screenshot index must be PASS and contain 15 screenshots.");
+  }
+  if (!JSON.stringify(positiveBrowserReport ?? {}).includes("预订与库存锁定") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("锁定截止时间") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("系统生成预订号") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("今日") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("工作项") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("搜索") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("我的")) {
+    failures.push("scenario 5 positive browser report must prove business name, hold deadline, system reservation number and navigation entries are visible.");
+  }
+  if (!JSON.stringify(negativeBrowserReport ?? {}).includes("未写入任何业务事实") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("搜索结果只读") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("库存锁定已过期") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("预订号由系统生成，不能手工填写")) {
+    failures.push("scenario 5 negative browser report must prove no side effects, readonly search, expired hold and system-generated reservation number.");
+  }
+  for (const report of [positiveBrowserReport, negativeBrowserReport]) {
+    const visibleText = (report?.screenshots ?? []).map((shot) => shot.visibleText ?? "").join("\n");
+    for (const forbidden of ["bookingRequestId", "inventoryHoldId", "holdId", "reservationId", "reservationNo", "quoteId", "productId", "ratePlanId", "roomId", "bedId", "stableRef", "projectionVersion", "domainEventId", "digest", "已入住", "已收款", "押金已收", "退款", "生产发布", "final GO", "lead-reservation", "reservationCreate", "reservationConvert", "check-in", "golden-chain"]) {
+      if (visibleText.includes(forbidden)) {
+        failures.push(`scenario 5 browser screenshots must not expose forbidden visible term: ${forbidden}`);
+      }
+    }
+  }
+  const browserSummary = graph.realBrowserEvidence?.scenario5;
+  if (browserSummary?.positive?.status !== "passed" ||
+    browserSummary?.negative?.status !== "passed" ||
+    browserSummary?.productionConfirmAllowed !== false ||
+    browserSummary?.finalGoNoGo !== "NO_GO") {
+    failures.push("evidence graph must include passed scenario 5 positive/negative browser evidence with NO_GO closed.");
+  }
+  for (const gate of ["DORMITORY-SCENARIO5-POSITIVE-BROWSER", "DORMITORY-SCENARIO5-NEGATIVE-BROWSER"]) {
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (!node) {
+      failures.push(`evidence graph missing node for ${gate}.`);
+    } else {
+      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+      if (node.businessGoAllowed !== false) failures.push(`${gate} must keep businessGoAllowed=false.`);
+    }
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory scenario 5 evidence closes.");
+  }
+}
+
+function checkDormitoryScenario6Evidence(graph, finalReport, documents) {
+  const packageIndex = documents.get(lodgingScenarioPackageIndexPath);
+  const source = documents.get(dormitoryScenario6SourcePath);
+  const authorityResult = documents.get(dormitoryScenario6ResultFiles[0]);
+  const generatedResult = documents.get(dormitoryScenario6ResultFiles[1]);
+  const consumptionResult = documents.get(dormitoryScenario6ResultFiles[2]);
+  const positiveBrowserResult = documents.get(dormitoryScenario6ResultFiles[3]);
+  const negativeBrowserResult = documents.get(dormitoryScenario6ResultFiles[4]);
+  const positiveBrowserReport = documents.get(dormitoryScenario6BrowserEvidenceFiles[0]);
+  const positiveScreenshotIndex = documents.get(dormitoryScenario6BrowserEvidenceFiles[1]);
+  const negativeBrowserReport = documents.get(dormitoryScenario6BrowserEvidenceFiles[2]);
+  const negativeScreenshotIndex = documents.get(dormitoryScenario6BrowserEvidenceFiles[3]);
+  const sourceDigest = authorityResult?.scenarioDigest ?? generatedResult?.scenarioDigest ?? consumptionResult?.scenarioDigest;
+  const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
+
+  for (const file of dormitoryScenario6EvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory scenario 6 evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory scenario 6 evidence file: ${file}`);
+    }
+  }
+
+  const package6 = (packageIndex?.scenarioPackageOrder ?? []).find((item) => item.packageNo === 6);
+  if (package6?.nameZh !== "收款、押金与担保" ||
+    package6?.scenarioId !== "lodging.payment-deposit-and-guarantee") {
+    failures.push("lodging scenario package index must keep scenario 6 as 收款、押金与担保.");
+  }
+  if (!arraysEqual(package6?.upstreamPackages, [5, 3, 4]) ||
+    !arraysEqual(package6?.downstreamPackages, [7])) {
+    failures.push("scenario 6 package index must consume packages 5/3/4 and hand off only to package 7.");
+  }
+  if (!arraysContainAll(package6?.handoffInputs, ["预订确认摘要", "预订号", "客户信息", "日期范围", "人数", "房间/床位", "价格快照", "预订状态", "证据摘要", "只读对象引用", "价格方案摘要", "报价单摘要", "报价版本"])) {
+    failures.push("scenario 6 package index must consume reservation, price and quote readonly summaries.");
+  }
+  if (!arraysContainAll(package6?.handoffOutputs, ["收款确认摘要", "押金确认摘要", "担保确认摘要", "剩余待收", "财务确认状态", "证据摘要", "只读对象引用"])) {
+    failures.push("scenario 6 package index must output only finance-ready readonly summaries.");
+  }
+  if (!arraysContainAll(package6?.mustNotOutputZh, ["入住", "已入住", "可入住", "退房", "已退房", "退款", "已退款", "库存变更", "房源状态变更", "LedgerEntry", "LedgerTransaction"])) {
+    failures.push("scenario 6 package index must forbid stay/refund/inventory/resource/ledger outputs.");
+  }
+
+  if (source?.authorityId !== "Dormitory.Scenario6.PaymentDepositAndGuarantee" ||
+    source?.scenarioPackageNo !== 6 ||
+    source?.nameZh !== "收款、押金与担保" ||
+    source?.status !== "authoritative") {
+    failures.push("dormitory scenario 6 Source Authority identity must remain 收款、押金与担保.");
+  }
+  if (source?.highestAuthorityRef !== dormitory13ScenarioSourcePath ||
+    source?.methodBenchmarkRef !== dormitoryBenchmarkInheritanceSourcePath) {
+    failures.push("dormitory scenario 6 Source must reference 13 scenario control as highest authority and scenario 1 benchmark as method contract.");
+  }
+  if (!arraysEqual(source?.upstream?.allowedSourcePackageNos, [5, 3, 4]) ||
+    source?.upstream?.upstreamWriteBackAllowed !== false ||
+    !arraysContainAll(source?.upstream?.requiredReadonlyInputs, ["预订确认摘要", "预订号", "客户信息", "日期范围", "人数", "房间/床位", "价格快照", "预订状态", "证据摘要", "只读对象引用", "价格方案摘要", "报价单摘要", "报价版本"])) {
+    failures.push("dormitory scenario 6 upstream must be scenario 5/3/4 readonly handoff only.");
+  }
+  if (source?.downstream?.allowedConsumerPackageNo !== 7 ||
+    !String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("必须重新核验") ||
+    !arraysContainAll(source?.downstream?.forbiddenOutputsZh, ["Stay", "CheckIn", "Checkout", "Refund", "InventoryRelease", "ResourceStatusChange", "LedgerEntry", "LedgerTransaction", "入住", "已入住", "可入住", "退房", "已退房", "退款", "已退款", "库存释放", "房源状态变更"])) {
+    failures.push("dormitory scenario 6 downstream must only hand off readonly finance summaries and force package 7 recheck.");
+  }
+
+  const expectedObjects = [
+    "PaymentRequirement",
+    "PaymentIntent",
+    "PaymentReceiptEvidence",
+    "DepositRequirement",
+    "DepositIntent",
+    "DepositGuarantee",
+    "FinanceReviewRequest",
+    "FinanceConfirmationSnapshot",
+    "PaymentStatusHistory",
+    "DepositStatusHistory"
+  ];
+  const sourceObjects = (source?.objects ?? []).map((item) => item.objectName);
+  if (!arraysContainAll(sourceObjects, expectedObjects)) {
+    failures.push("dormitory scenario 6 Source must define all payment, deposit, guarantee, finance review and status history objects.");
+  }
+  for (const object of source?.objects ?? []) {
+    if (object.ownedByScenarioPackageNo !== 6 ||
+      !arraysContainAll(object.requiredLifecycle, ["currentState", "versionHistory", "evidenceHistory", "financeConfirmationHistory", "legalNextActions"])) {
+      failures.push(`scenario 6 object must be owned by package 6 and expose lifecycle/history/legal actions: ${object.objectName ?? "unknown"}`);
+    }
+  }
+  const expectedStatuses = ["待提交凭证", "待财务确认", "财务已确认", "财务退回", "部分确认", "押金已确认", "担保已确认", "需补充证据"];
+  if (!arraysEqual(source?.paymentDepositStatusOptions, expectedStatuses)) {
+    failures.push("dormitory scenario 6 Source must keep the required payment/deposit status options.");
+  }
+  const stepNames = (source?.steps ?? []).map((step) => step.nameZh);
+  if (JSON.stringify(stepNames) !== JSON.stringify(["进入收款押金办理", "确认应收与押金要求", "提交收款凭证", "提交押金或担保信息", "财务确认", "输出入住前财务摘要"])) {
+    failures.push("dormitory scenario 6 Source must keep the six business action steps in order.");
+  }
+  if (!arraysContainAll(source?.fields?.forbiddenUserInputFields, ["paymentId", "depositId", "guaranteeId", "ledgerEntryId", "ledgerTransactionId", "reservationId", "paymentCaseId", "financeReviewRequestId", "stableRef", "projectionVersion", "digest", "domainEventId"])) {
+    failures.push("dormitory scenario 6 field boundary must forbid ordinary users from entering internal IDs.");
+  }
+  const expectedCommands = [
+    "Dorm.PaymentDepositCaseStart",
+    "Dorm.PaymentDepositRequirementConfirm",
+    "Dorm.PaymentReceiptSubmit",
+    "Dorm.DepositGuaranteeSubmit",
+    "Dorm.FinanceReviewRequest",
+    "Dorm.FinanceGateConfirm",
+    "Dorm.FinanceGateReturn",
+    "Dorm.FinanceEvidenceSupplement",
+    "Dorm.FinanceReadySummaryOutput"
+  ];
+  const commandIds = (source?.commands ?? []).map((item) => item.commandId);
+  if (!arraysEqual(commandIds, expectedCommands)) {
+    failures.push("dormitory scenario 6 Source must define exactly the nine write commands.");
+  }
+  const expectedFailureCodes = [
+    "reservation_not_confirmed",
+    "reservation_cancelled",
+    "price_snapshot_required",
+    "payment_requirement_source_invalid",
+    "amount_must_be_positive",
+    "currency_mismatch",
+    "receipt_evidence_required",
+    "deposit_marked_as_income_forbidden",
+    "guarantee_marked_as_payment_forbidden",
+    "finance_gate_required",
+    "unauthorized_finance_confirmation",
+    "forged_internal_reference",
+    "ledger_write_forbidden",
+    "readonly_result_write_attempt",
+    "post_submission_inline_edit_forbidden",
+    "confirmed_finance_inline_edit_forbidden",
+    "duplicate_submission",
+    "concurrent_finance_version_conflict",
+    "cross_scenario_checkin_forbidden",
+    "finance_evidence_missing",
+    "guarantee_validity_required"
+  ];
+  const failureCodes = (source?.failureSemantics ?? []).map((item) => item.failureCode);
+  if (!arraysContainAll(failureCodes, expectedFailureCodes) ||
+    !(source?.failureSemantics ?? []).every((item) => item.sideEffectsAllowed === false)) {
+    failures.push("dormitory scenario 6 failure semantics must cover all required failures and forbid side effects.");
+  }
+  const invariantText = JSON.stringify(source?.invariants ?? []);
+  if (!invariantText.includes("未确认预订不得进入") ||
+    !invariantText.includes("押金不是收入") ||
+    !invariantText.includes("担保不是收款") ||
+    !invariantText.includes("finance-gate") ||
+    !invariantText.includes("业务 runtime 不得直接写 LedgerEntry") ||
+    !invariantText.includes("确认失败不得写 CommandSubmission") ||
+    !invariantText.includes("查询、搜索、列表、看板、报表永远只读")) {
+    failures.push("dormitory scenario 6 invariants must keep confirmed-reservation entry, finance-gate, deposit/guarantee semantics, no-ledger, no-side-effects and readonly surfaces.");
+  }
+  if (source?.financeBoundaryRule?.financeGateRequired !== true ||
+    source?.financeBoundaryRule?.businessRuntimeMayWriteLedger !== false ||
+    source?.financeBoundaryRule?.ledgerEntryWrittenOnlyByFinanceKernel !== true ||
+    source?.financeBoundaryRule?.paymentIntentIsNotFinanceTruth !== true ||
+    source?.financeBoundaryRule?.depositIsNotIncome !== true ||
+    source?.financeBoundaryRule?.guaranteeIsNotPayment !== true ||
+    source?.financeBoundaryRule?.financeConfirmationRequiresAuthorizedRole !== true) {
+    failures.push("dormitory scenario 6 finance boundary rule must enforce finance-gate, ledger ownership and deposit/guarantee semantics.");
+  }
+  if (source?.NO_GO?.productionConfirmAllowed !== false ||
+    source?.NO_GO?.businessGoLiveAllowed !== false ||
+    source?.NO_GO?.releaseAuthority !== false ||
+    source?.NO_GO?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory scenario 6 Source NO_GO must keep production/business/release/final approval disabled.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult],
+    ["positive browser", positiveBrowserResult],
+    ["negative browser", negativeBrowserResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory scenario 6 ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 6 ${label} result must keep production/release/final approval disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory scenario 6 evidence must expose a sha256 Source digest.");
+  }
+  if (!sha256DigestPattern.test(packageIndexDigest ?? "")) {
+    failures.push("dormitory scenario 6 evidence must expose a sha256 package index digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryScenario6GeneratedFiles.length) {
+    failures.push("dormitory scenario 6 generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryScenario6GeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory scenario 6 generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory scenario 6 generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.packageIndexContentDigest !== packageIndexDigest) {
+      failures.push(`dormitory scenario 6 generated file package index digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 6 generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory scenario 6 generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of ["canonical", "runtimeRules", "surfaceNavigation", "handoff", "financeGate", "mobileMirror", "runtimeMirror"]) {
+    if (!dormitoryScenario6GeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory scenario 6 consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+  const runtimeRulesText = documents.get("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs") || "";
+  const operationsRuntimeText = documents.get("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs") || "";
+  const runtimeTestsText = documents.get("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs") || "";
+  if (!runtimeRulesText.includes("DormitoryScenario6PaymentDepositAndGuarantee.generated.json") ||
+    !runtimeRulesText.includes("Scenario6PaymentDepositGuaranteeRuntimeAdapter")) {
+    failures.push("scenario 6 runtime must consume the generated runtime mirror through Scenario6PaymentDepositGuaranteeRuntimeAdapter.");
+  }
+  if (!operationsRuntimeText.includes("[\"refreshProjection\"] = false")) {
+    failures.push("scenario 6 generated rule rejection must not refresh Projection on failure.");
+  }
+  for (const command of expectedCommands) {
+    if (!runtimeTestsText.includes(command)) {
+      failures.push(`scenario 6 runtime tests must cover command ${command}.`);
+    }
+  }
+
+  if (positiveBrowserReport?.status !== "passed" ||
+    positiveBrowserResult?.positiveBrowserAuditDigest !== positiveBrowserReport?.positiveBrowserAuditDigest ||
+    !sha256DigestPattern.test(positiveBrowserReport?.positiveBrowserAuditDigest ?? "") ||
+    (positiveBrowserReport?.screenshots?.length ?? 0) !== 11 ||
+    (positiveScreenshotIndex?.screenshots?.length ?? 0) !== 11) {
+    failures.push("scenario 6 positive browser report, result and screenshot index must be PASS and contain 11 screenshots.");
+  }
+  if (negativeBrowserReport?.status !== "passed" ||
+    negativeBrowserResult?.negativeBrowserAuditDigest !== negativeBrowserReport?.negativeBrowserAuditDigest ||
+    !sha256DigestPattern.test(negativeBrowserReport?.negativeBrowserAuditDigest ?? "") ||
+    (negativeBrowserReport?.screenshots?.length ?? 0) !== 14 ||
+    (negativeScreenshotIndex?.screenshots?.length ?? 0) !== 14) {
+    failures.push("scenario 6 negative browser report, result and screenshot index must be PASS and contain 14 screenshots.");
+  }
+  if (!JSON.stringify(positiveBrowserReport ?? {}).includes("收款、押金与担保") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("押金不是收入") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("担保不是收款") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("finance-gate") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("剩余待收") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("今日") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("工作项") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("搜索") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("我的")) {
+    failures.push("scenario 6 positive browser report must prove business name, deposit/guarantee boundary, finance-gate, remaining receivable and navigation entries are visible.");
+  }
+  if (!JSON.stringify(negativeBrowserReport ?? {}).includes("未写入任何业务事实") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("押金不是收入") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("担保不是收款") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("搜索结果只读") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("finance-gate") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("后续办理需要重新核验")) {
+    failures.push("scenario 6 negative browser report must prove no side effects, deposit/guarantee boundary, readonly search, finance-gate and downstream recheck.");
+  }
+  for (const report of [positiveBrowserReport, negativeBrowserReport]) {
+    const visibleText = (report?.screenshots ?? []).map((shot) => shot.visibleText ?? "").join("\n");
+    for (const forbidden of ["paymentId", "depositId", "guaranteeId", "ledgerEntryId", "ledgerTransactionId", "reservationId", "paymentCaseId", "financeReviewRequestId", "stableRef", "projectionVersion", "domainEventId", "digest", "已入住", "已退房", "已退款", "生产发布", "final GO", "ordinary-payment", "deposit-liability", "PaymentConfirm", "DepositConfirm"]) {
+      if (visibleText.includes(forbidden)) {
+        failures.push(`scenario 6 browser screenshots must not expose forbidden visible term: ${forbidden}`);
+      }
+    }
+  }
+  const browserSummary = graph.realBrowserEvidence?.scenario6;
+  if (browserSummary?.positive?.status !== "passed" ||
+    browserSummary?.negative?.status !== "passed" ||
+    browserSummary?.productionConfirmAllowed !== false ||
+    browserSummary?.finalGoNoGo !== "NO_GO") {
+    failures.push("evidence graph must include passed scenario 6 positive/negative browser evidence with NO_GO closed.");
+  }
+  for (const gate of ["DORMITORY-SCENARIO6-POSITIVE-BROWSER", "DORMITORY-SCENARIO6-NEGATIVE-BROWSER"]) {
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (!node) {
+      failures.push(`evidence graph missing node for ${gate}.`);
+    } else {
+      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+      if (node.businessGoAllowed !== false) failures.push(`${gate} must keep businessGoAllowed=false.`);
+    }
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory scenario 6 evidence closes.");
+  }
+}
+
+function checkDormitoryScenario7Evidence(graph, finalReport, documents) {
+  const packageIndex = documents.get(lodgingScenarioPackageIndexPath);
+  const source = documents.get(dormitoryScenario7SourcePath);
+  const authorityResult = documents.get(dormitoryScenario7ResultFiles[0]);
+  const generatedResult = documents.get(dormitoryScenario7ResultFiles[1]);
+  const consumptionResult = documents.get(dormitoryScenario7ResultFiles[2]);
+  const positiveBrowserResult = documents.get(dormitoryScenario7ResultFiles[3]);
+  const negativeBrowserResult = documents.get(dormitoryScenario7ResultFiles[4]);
+  const positiveBrowserReport = documents.get(dormitoryScenario7BrowserEvidenceFiles[0]);
+  const positiveScreenshotIndex = documents.get(dormitoryScenario7BrowserEvidenceFiles[1]);
+  const negativeBrowserReport = documents.get(dormitoryScenario7BrowserEvidenceFiles[2]);
+  const negativeScreenshotIndex = documents.get(dormitoryScenario7BrowserEvidenceFiles[3]);
+  const sourceDigest = authorityResult?.scenarioDigest ?? generatedResult?.scenarioDigest ?? consumptionResult?.scenarioDigest;
+  const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
+
+  for (const file of dormitoryScenario7EvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory scenario 7 evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory scenario 7 evidence file: ${file}`);
+    }
+  }
+
+  const package7 = (packageIndex?.scenarioPackageOrder ?? []).find((item) => item.packageNo === 7);
+  if (package7?.nameZh !== "入住办理" ||
+    package7?.scenarioId !== "lodging.check-in-processing") {
+    failures.push("lodging scenario package index must keep scenario 7 as 入住办理.");
+  }
+  if (!arraysEqual(package7?.upstreamPackages, [5, 6, 2, 3]) ||
+    !arraysEqual(package7?.downstreamPackages, [8])) {
+    failures.push("scenario 7 package index must consume packages 5/6/2/3 and hand off only to package 8.");
+  }
+  if (!arraysContainAll(package7?.handoffInputs, ["预订确认摘要", "预订号", "客户信息", "日期范围", "人数", "房间/床位", "价格快照", "预订状态", "收款确认摘要", "押金确认摘要", "担保确认摘要", "剩余待收", "财务确认状态", "财务确认摘要", "房源运营状态摘要", "阻断原因", "证据摘要", "只读对象引用"])) {
+    failures.push("scenario 7 package index must consume reservation, finance, price and resource readonly summaries.");
+  }
+  if (!arraysContainAll(package7?.handoffOutputs, ["入住记录摘要", "住客摘要", "房间/床位占用摘要", "入住凭证摘要", "协议摘要", "身份核验摘要", "证据摘要", "只读对象引用"])) {
+    failures.push("scenario 7 package index must output only check-in readonly summaries.");
+  }
+  if (!arraysContainAll(package7?.mustNotOutputZh, ["价格变更", "报价", "预订变更", "收款", "押金变更", "退房结算", "退款", "已退款", "押金已退", "账务入账", "LedgerEntry", "LedgerTransaction"])) {
+    failures.push("scenario 7 package index must forbid price/quote/reservation/finance/refund/checkout/ledger outputs.");
+  }
+
+  if (source?.authorityId !== "Dormitory.Scenario7.CheckInProcessing" ||
+    source?.scenarioPackageNo !== 7 ||
+    source?.nameZh !== "入住办理" ||
+    source?.status !== "authoritative") {
+    failures.push("dormitory scenario 7 Source Authority identity must remain 入住办理.");
+  }
+  if (source?.highestAuthorityRef !== dormitory13ScenarioSourcePath ||
+    source?.methodBenchmarkRef !== dormitoryBenchmarkInheritanceSourcePath) {
+    failures.push("dormitory scenario 7 Source must reference 13 scenario control as highest authority and scenario 1 benchmark as method contract.");
+  }
+  if (!arraysEqual(source?.upstream?.allowedSourcePackageNos, [5, 6, 2, 3]) ||
+    source?.upstream?.upstreamWriteBackAllowed !== false ||
+    !arraysContainAll(source?.upstream?.requiredReadonlyInputs, package7?.handoffInputs ?? [])) {
+    failures.push("dormitory scenario 7 upstream must be scenario 5/6/2/3 readonly handoff only.");
+  }
+  if (source?.downstream?.allowedConsumerPackageNo !== 8 ||
+    !String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("不得要求用户重新填写已确认入住字段") ||
+    !arraysContainAll(source?.downstream?.forbiddenOutputsZh, ["Payment", "Deposit", "Refund", "CheckoutCase", "LedgerEntry", "LedgerTransaction", "价格变更", "报价", "预订变更", "收款", "押金变更", "退款", "退房", "已退房", "已退款", "押金已退", "账务入账"])) {
+    failures.push("dormitory scenario 7 downstream must only hand off readonly stay summaries and forbid finance/refund/checkout/ledger outputs.");
+  }
+
+  const expectedObjects = [
+    "CheckInCase",
+    "ArrivingGuest",
+    "ResidentProfile",
+    "IdentityVerification",
+    "Stay",
+    "RoomBedOccupancy",
+    "CheckInAgreement",
+    "AccessCredential",
+    "CheckInSnapshot",
+    "CheckInEvidence",
+    "CheckInStatusHistory"
+  ];
+  const sourceObjects = (source?.objects ?? []).map((item) => item.objectName);
+  if (!arraysContainAll(sourceObjects, expectedObjects)) {
+    failures.push("dormitory scenario 7 Source must define all check-in, guest, stay, occupancy, credential, evidence and status history objects.");
+  }
+  for (const object of source?.objects ?? []) {
+    if (object.ownedByScenarioPackageNo !== 7 ||
+      !arraysContainAll(object.requiredLifecycle, ["currentState", "versionHistory", "evidenceHistory", "credentialHistory", "legalNextActions"])) {
+      failures.push(`scenario 7 object must be owned by package 7 and expose lifecycle/history/legal actions: ${object.objectName ?? "unknown"}`);
+    }
+  }
+  const expectedStatuses = ["待到店", "待身份核验", "待协议确认", "待财务补齐", "待房源复核", "可办理入住", "已入住", "入住失败", "需人工复核", "凭证待发放", "凭证已发放"];
+  if (!arraysEqual(source?.checkInStatusOptions, expectedStatuses)) {
+    failures.push("dormitory scenario 7 Source must keep the required check-in status options.");
+  }
+  const stepNames = (source?.steps ?? []).map((step) => step.nameZh);
+  if (JSON.stringify(stepNames) !== JSON.stringify(["进入入住办理", "到店与身份核验", "财务与协议复核", "房间/床位交付复核", "确认入住", "发放入住凭证"])) {
+    failures.push("dormitory scenario 7 Source must keep the six business action steps in order.");
+  }
+  if (!arraysContainAll(source?.fields?.forbiddenUserInputFields, ["stayId", "residentId", "reservationId", "credentialId", "roomId", "bedId", "occupancyId", "checkInCaseId", "identityVerificationId", "stableRef", "projectionVersion", "digest", "domainEventId"])) {
+    failures.push("dormitory scenario 7 field boundary must forbid ordinary users from entering internal IDs.");
+  }
+  const expectedCommands = [
+    "Dorm.CheckInDraftStart",
+    "Dorm.GuestIdentityVerify",
+    "Dorm.CheckInAgreementFinanceReview",
+    "Dorm.RoomBedHandoverRecheck",
+    "Dorm.StayConfirm",
+    "Dorm.StayCredentialIssue",
+    "Dorm.CheckInManualReviewRequest",
+    "Dorm.CheckInCorrectionRequest"
+  ];
+  const commandIds = (source?.commands ?? []).map((item) => item.commandId);
+  if (!arraysEqual(commandIds, expectedCommands)) {
+    failures.push("dormitory scenario 7 Source must define exactly the eight write commands.");
+  }
+  const expectedFailureCodes = [
+    "reservation_not_valid",
+    "reservation_cancelled",
+    "reservation_expired",
+    "reservation_already_converted",
+    "finance_rule_unmet_without_exception",
+    "manager_exception_approval_required",
+    "identity_evidence_required",
+    "identity_verification_failed",
+    "guest_mismatch_without_approval",
+    "agreement_not_confirmed",
+    "resource_not_available_for_checkin",
+    "resource_already_occupied",
+    "resource_blocked_for_checkin",
+    "stay_no_user_input_forbidden",
+    "credential_before_checkin_forbidden",
+    "forged_internal_reference",
+    "readonly_result_write_attempt",
+    "duplicate_checkin",
+    "concurrent_occupancy_conflict",
+    "confirmed_checkin_inline_edit_forbidden",
+    "cross_scenario_checkout_refund_forbidden"
+  ];
+  const failureCodes = (source?.failureSemantics ?? []).map((item) => item.failureCode);
+  if (!arraysContainAll(failureCodes, expectedFailureCodes) ||
+    !(source?.failureSemantics ?? []).every((item) => item.sideEffectsAllowed === false)) {
+    failures.push("dormitory scenario 7 failure semantics must cover all required failures and forbid side effects.");
+  }
+  const invariantRule = source?.checkInInvariantRule ?? {};
+  for (const key of ["validReservationRequired", "reservationCancelledBlocked", "reservationExpiredBlocked", "reservationAlreadyConvertedBlocked", "resourceAvailableForCheckInRequired", "resourceOccupiedBlocked", "identityVerificationRequired", "agreementConfirmationRequired", "financeReadinessOrManagerExceptionRequired", "stayNoSystemGenerated", "confirmedStayStartsOccupancy", "reservationConvertedToStayOnSuccess", "credentialRequiresSuccessfulStay", "failureNoSideEffects"]) {
+    if (invariantRule[key] !== true) {
+      failures.push(`scenario 7 invariant rule must keep ${key}=true.`);
+    }
+  }
+  const invariantText = JSON.stringify(source?.invariants ?? []);
+  if (!invariantText.includes("不得生成 Stay") ||
+    !invariantText.includes("不得占用床位") ||
+    !invariantText.includes("不得发放入住凭证") ||
+    !invariantText.includes("不得写账") ||
+    !invariantText.includes("CommandSubmission") ||
+    !invariantText.includes("DomainEvent") ||
+    !invariantText.includes("Outbox") ||
+    !invariantText.includes("Projection") ||
+    !invariantText.includes("查询、搜索、列表、看板、报表永远只读")) {
+    failures.push("dormitory scenario 7 invariants must keep no Stay/Occupancy/Credential/ledger side effects and readonly surfaces.");
+  }
+  if (source?.runtimeConsumptionBoundary?.runtimeMayReadGeneratedOnly !== true ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteLedger !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWritePaymentDepositRefund !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteCheckout !== false ||
+    source?.runtimeConsumptionBoundary?.successMayWriteStayOccupancyCredentialOnly !== true) {
+    failures.push("dormitory scenario 7 runtime boundary must enforce generated-only consumption and stay/occupancy/credential-only success writes.");
+  }
+  if (source?.NO_GO?.productionConfirmAllowed !== false ||
+    source?.NO_GO?.businessGoLiveAllowed !== false ||
+    source?.NO_GO?.releaseAuthority !== false ||
+    source?.NO_GO?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory scenario 7 Source NO_GO must keep production/business/release/final approval disabled.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult],
+    ["positive browser", positiveBrowserResult],
+    ["negative browser", negativeBrowserResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory scenario 7 ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 7 ${label} result must keep production/release/final approval disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory scenario 7 evidence must expose a sha256 Source digest.");
+  }
+  if (!sha256DigestPattern.test(packageIndexDigest ?? "")) {
+    failures.push("dormitory scenario 7 evidence must expose a sha256 package index digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryScenario7GeneratedFiles.length) {
+    failures.push("dormitory scenario 7 generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryScenario7GeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory scenario 7 generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory scenario 7 generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.packageIndexContentDigest !== packageIndexDigest) {
+      failures.push(`dormitory scenario 7 generated file package index digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 7 generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory scenario 7 generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of ["canonical", "runtimeRules", "surfaceNavigation", "handoff", "mobileMirror", "runtimeMirror"]) {
+    if (!dormitoryScenario7GeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory scenario 7 consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+  const runtimeRulesText = documents.get("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs") || "";
+  const operationsRuntimeText = documents.get("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs") || "";
+  const runtimeTestsText = documents.get("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs") || "";
+  if (!runtimeRulesText.includes("DormitoryScenario7CheckInProcessing.generated.json") ||
+    !runtimeRulesText.includes("Scenario7CheckInProcessingRuntimeAdapter")) {
+    failures.push("scenario 7 runtime must consume the generated runtime mirror through Scenario7CheckInProcessingRuntimeAdapter.");
+  }
+  if (!operationsRuntimeText.includes("[\"refreshProjection\"] = false")) {
+    failures.push("scenario 7 generated rule rejection must not refresh Projection on failure.");
+  }
+  for (const command of expectedCommands) {
+    if (!runtimeTestsText.includes(command)) {
+      failures.push(`scenario 7 runtime tests must cover command ${command}.`);
+    }
+  }
+
+  if (positiveBrowserReport?.status !== "passed" ||
+    positiveBrowserResult?.positiveBrowserAuditDigest !== positiveBrowserReport?.positiveBrowserAuditDigest ||
+    !sha256DigestPattern.test(positiveBrowserReport?.positiveBrowserAuditDigest ?? "") ||
+    (positiveBrowserReport?.screenshots?.length ?? 0) !== 10 ||
+    (positiveScreenshotIndex?.screenshots?.length ?? 0) !== 10) {
+    failures.push("scenario 7 positive browser report, result and screenshot index must be PASS and contain 10 screenshots.");
+  }
+  if (negativeBrowserReport?.status !== "passed" ||
+    negativeBrowserResult?.negativeBrowserAuditDigest !== negativeBrowserReport?.negativeBrowserAuditDigest ||
+    !sha256DigestPattern.test(negativeBrowserReport?.negativeBrowserAuditDigest ?? "") ||
+    (negativeBrowserReport?.screenshots?.length ?? 0) !== 14 ||
+    (negativeScreenshotIndex?.screenshots?.length ?? 0) !== 14) {
+    failures.push("scenario 7 negative browser report, result and screenshot index must be PASS and contain 14 screenshots.");
+  }
+  if (!JSON.stringify(positiveBrowserReport ?? {}).includes("入住办理") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("入住记录号") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("系统生成") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("房间/床位占用摘要") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("今日") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("工作项") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("搜索") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("我的")) {
+    failures.push("scenario 7 positive browser report must prove business name, generated stay number, occupancy summary and navigation entries are visible.");
+  }
+  if (!JSON.stringify(negativeBrowserReport ?? {}).includes("未写入任何业务事实") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("搜索结果只读") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("未成功入住，不能发放有效入住凭证") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("后续业务按在住管理和结算流程处理")) {
+    failures.push("scenario 7 negative browser report must prove no side effects, readonly search, credential-before-check-in block and downstream process separation.");
+  }
+  for (const report of [positiveBrowserReport, negativeBrowserReport]) {
+    const visibleText = (report?.screenshots ?? []).map((shot) => shot.visibleText ?? "").join("\n");
+    for (const forbidden of ["stayId", "residentId", "reservationId", "credentialId", "roomId", "bedId", "occupancyId", "checkInCaseId", "identityVerificationId", "stableRef", "projectionVersion", "domainEventId", "digest", "已退房", "已退款", "押金已退", "生产发布", "final GO", "CheckinConfirm", "reservationConvert", "AccessCredentialIssue"]) {
+      if (visibleText.includes(forbidden)) {
+        failures.push(`scenario 7 browser screenshots must not expose forbidden visible term: ${forbidden}`);
+      }
+    }
+  }
+  const browserSummary = graph.realBrowserEvidence?.scenario7;
+  if (browserSummary?.positive?.status !== "passed" ||
+    browserSummary?.negative?.status !== "passed" ||
+    browserSummary?.productionConfirmAllowed !== false ||
+    browserSummary?.finalGoNoGo !== "NO_GO") {
+    failures.push("evidence graph must include passed scenario 7 positive/negative browser evidence with NO_GO closed.");
+  }
+  for (const gate of ["DORMITORY-SCENARIO7-POSITIVE-BROWSER", "DORMITORY-SCENARIO7-NEGATIVE-BROWSER"]) {
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (!node) {
+      failures.push(`evidence graph missing node for ${gate}.`);
+    } else {
+      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+      if (node.businessGoAllowed !== false) failures.push(`${gate} must keep businessGoAllowed=false.`);
+    }
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory scenario 7 evidence closes.");
+  }
+}
+
+function checkDormitoryScenario8Evidence(graph, finalReport, documents) {
+  const packageIndex = documents.get(lodgingScenarioPackageIndexPath);
+  const source = documents.get(dormitoryScenario8SourcePath);
+  const authorityResult = documents.get(dormitoryScenario8ResultFiles[0]);
+  const generatedResult = documents.get(dormitoryScenario8ResultFiles[1]);
+  const consumptionResult = documents.get(dormitoryScenario8ResultFiles[2]);
+  const positiveBrowserResult = documents.get(dormitoryScenario8ResultFiles[3]);
+  const negativeBrowserResult = documents.get(dormitoryScenario8ResultFiles[4]);
+  const positiveBrowserReport = documents.get(dormitoryScenario8BrowserEvidenceFiles[0]);
+  const positiveScreenshotIndex = documents.get(dormitoryScenario8BrowserEvidenceFiles[1]);
+  const negativeBrowserReport = documents.get(dormitoryScenario8BrowserEvidenceFiles[2]);
+  const negativeScreenshotIndex = documents.get(dormitoryScenario8BrowserEvidenceFiles[3]);
+  const sourceDigest = authorityResult?.scenarioDigest ?? generatedResult?.scenarioDigest ?? consumptionResult?.scenarioDigest;
+  const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
+
+  for (const file of dormitoryScenario8EvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory scenario 8 evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory scenario 8 evidence file: ${file}`);
+    }
+  }
+
+  const package8 = (packageIndex?.scenarioPackageOrder ?? []).find((item) => item.packageNo === 8);
+  const package9 = (packageIndex?.scenarioPackageOrder ?? []).find((item) => item.packageNo === 9);
+  if (package8?.nameZh !== "在住管理" ||
+    package8?.scenarioId !== "lodging.in-stay-management") {
+    failures.push("lodging scenario package index must keep scenario 8 as 在住管理.");
+  }
+  if (!arraysEqual(package8?.upstreamPackages, [7, 6, 2, 3]) ||
+    !arraysEqual(package8?.downstreamPackages, [9])) {
+    failures.push("scenario 8 package index must consume packages 7/6/2/3 and hand off only to package 9.");
+  }
+  const expectedInputs = ["入住记录摘要", "住客摘要", "房间/床位占用摘要", "入住凭证摘要", "协议摘要", "身份核验摘要", "财务确认摘要", "当前房源状态摘要", "当前价格摘要", "证据摘要", "只读对象引用"];
+  const expectedOutputs = ["在住状态摘要", "当前占用摘要", "服务请求摘要", "异常摘要", "续住/换房换床结果", "凭证状态", "退房准备摘要", "证据摘要", "只读对象引用"];
+  if (!arraysContainAll(package8?.handoffInputs, expectedInputs)) {
+    failures.push("scenario 8 package index must consume check-in, finance, resource, price and evidence readonly summaries.");
+  }
+  if (!arraysContainAll(package8?.handoffOutputs, expectedOutputs) ||
+    !arraysContainAll(package9?.handoffInputs, expectedOutputs)) {
+    failures.push("scenario 8 package index must output only in-stay summaries for scenario 9.");
+  }
+  if (!arraysContainAll(package8?.mustNotOutputZh, ["退房结算", "退款", "已释放房源", "Payment", "Deposit", "Refund", "CheckoutSettlement", "CheckoutCase", "RoomRelease", "LedgerEntry", "LedgerTransaction"])) {
+    failures.push("scenario 8 package index must forbid finance/refund/checkout/release/ledger outputs.");
+  }
+
+  if (source?.authorityId !== "Dormitory.Scenario8.InStayManagement" ||
+    source?.scenarioPackageNo !== 8 ||
+    source?.nameZh !== "在住管理" ||
+    source?.status !== "authoritative") {
+    failures.push("dormitory scenario 8 Source Authority identity must remain 在住管理.");
+  }
+  if (source?.highestAuthorityRef !== dormitory13ScenarioSourcePath ||
+    source?.methodBenchmarkRef !== dormitoryBenchmarkInheritanceSourcePath) {
+    failures.push("dormitory scenario 8 Source must reference 13 scenario control as highest authority and scenario 1 benchmark as method contract.");
+  }
+  if (!arraysEqual(source?.upstream?.allowedSourcePackageNos, [7, 6, 2, 3]) ||
+    source?.upstream?.upstreamWriteBackAllowed !== false ||
+    !arraysContainAll(source?.upstream?.requiredReadonlyInputs, expectedInputs)) {
+    failures.push("dormitory scenario 8 upstream must be readonly handoff only.");
+  }
+  if (source?.downstream?.allowedConsumerPackageNo !== 9 ||
+    !String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("不得要求用户重新填写已确认入住字段") ||
+    !arraysContainAll(source?.downstream?.forbiddenOutputsZh, ["Payment", "Deposit", "Refund", "CheckoutSettlement", "CheckoutCase", "RoomRelease", "LedgerEntry", "LedgerTransaction", "已退房", "已退款", "已释放房源"])) {
+    failures.push("dormitory scenario 8 downstream must only hand off readonly in-stay summaries and forbid finance/refund/checkout/release/ledger outputs.");
+  }
+
+  const expectedObjects = [
+    "StayManagementCase",
+    "StayStatus",
+    "ResidentCurrentProfile",
+    "OccupancyStatus",
+    "AccessCredentialStatus",
+    "StayExtensionRequest",
+    "BedTransferRequest",
+    "ResidentServiceRequest",
+    "ResidentIncident",
+    "StayEvidence",
+    "StayStatusHistory"
+  ];
+  const sourceObjects = (source?.objects ?? []).map((item) => item.objectName);
+  if (!arraysContainAll(sourceObjects, expectedObjects)) {
+    failures.push("dormitory scenario 8 Source must define all in-stay, occupancy, credential, service, incident, extension, transfer, evidence and history objects.");
+  }
+  const expectedStatuses = ["正常在住", "待跟进", "服务处理中", "异常待处理", "续住待确认", "换房/换床待确认", "凭证待处理", "退房待准备"];
+  if (!arraysEqual(source?.stayStatusOptions, expectedStatuses)) {
+    failures.push("dormitory scenario 8 Source must keep the required in-stay status options.");
+  }
+  const stepNames = (source?.steps ?? []).map((step) => step.nameZh);
+  if (JSON.stringify(stepNames) !== JSON.stringify(["进入在住管理", "维护在住状态", "服务请求与跟进", "在住异常记录", "续住申请", "换房/换床申请", "门禁/入住凭证管理", "退房准备"])) {
+    failures.push("dormitory scenario 8 Source must keep the eight business action steps in order.");
+  }
+  if (!arraysContainAll(source?.fields?.forbiddenUserInputFields, ["stayId", "occupancyId", "credentialId", "serviceRequestId", "incidentId", "roomId", "bedId", "stableRef", "projectionVersion", "digest", "domainEventId"])) {
+    failures.push("dormitory scenario 8 field boundary must forbid ordinary users from entering internal IDs.");
+  }
+  const expectedCommands = [
+    "Dorm.StayManagementContextView",
+    "Dorm.StayStatusChange",
+    "Dorm.ResidentServiceRequestRegister",
+    "Dorm.ResidentServiceProgressUpdate",
+    "Dorm.ResidentIncidentRegister",
+    "Dorm.ResidentIncidentClose",
+    "Dorm.StayExtensionRequestSubmit",
+    "Dorm.BedTransferRequestSubmit",
+    "Dorm.AccessCredentialStatusChange",
+    "Dorm.CheckoutPreparationSnapshotCreate",
+    "Dorm.StayManagementCorrectionRequest"
+  ];
+  const commandIds = (source?.commands ?? []).map((item) => item.commandId);
+  if (!arraysEqual(commandIds, expectedCommands)) {
+    failures.push("dormitory scenario 8 Source must define exactly the in-stay management commands.");
+  }
+  const expectedFailureCodes = [
+    "no_effective_stay",
+    "stay_already_checked_out",
+    "current_occupancy_required",
+    "target_bed_occupied",
+    "target_resource_unavailable",
+    "target_resource_blocked_for_transfer",
+    "extension_date_invalid",
+    "extension_finance_requires_finance_gate",
+    "service_finance_write_forbidden",
+    "incident_refund_forbidden",
+    "high_risk_incident_review_required",
+    "credential_without_effective_stay_forbidden",
+    "credential_after_checkout_forbidden",
+    "checkout_preparation_release_forbidden",
+    "forged_internal_reference",
+    "readonly_result_write_attempt",
+    "duplicate_in_stay_submission",
+    "concurrent_occupancy_conflict",
+    "confirmed_fact_inline_edit_forbidden",
+    "unauthorized_in_stay_action",
+    "cross_scenario_checkout_refund_ledger_forbidden"
+  ];
+  const failureCodes = (source?.failureSemantics ?? []).map((item) => item.failureCode);
+  if (!arraysContainAll(failureCodes, expectedFailureCodes) ||
+    !(source?.failureSemantics ?? []).every((item) => item.sideEffectsAllowed === false)) {
+    failures.push("dormitory scenario 8 failure semantics must cover all required failures and forbid side effects.");
+  }
+  const invariantRule = source?.inStayInvariantRule ?? {};
+  for (const key of ["effectiveStayRequired", "currentOccupancyRequired", "singleActiveOccupancyPerBedAtSameTime", "transferAppendOnlyOccupancyChanged", "transferReleasesOldAndBindsNewOnSuccess", "extensionDateMustBeLaterThanCurrentCheckout", "extensionFinanceHandledByFinanceGateOnly", "credentialRequiresEffectiveStayAndOccupancy", "checkoutPreparationNotCheckoutSettlement", "failureNoSideEffects"]) {
+    if (invariantRule[key] !== true) {
+      failures.push(`scenario 8 invariant rule must keep ${key}=true.`);
+    }
+  }
+  const invariantText = JSON.stringify(source?.invariants ?? []);
+  if (!invariantText.includes("失败路径不得改变占用") ||
+    !invariantText.includes("不得生成退房") ||
+    !invariantText.includes("不得直接收款或写账") ||
+    !invariantText.includes("不得刷新错误 Projection") ||
+    !invariantText.includes("查询、搜索、列表、看板、报表永远只读")) {
+    failures.push("dormitory scenario 8 invariants must keep no occupancy/checkout/finance/ledger/projection side effects and readonly surfaces.");
+  }
+  if (source?.runtimeConsumptionBoundary?.runtimeMayReadGeneratedOnly !== true ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteLedger !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWritePaymentDepositRefund !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteCheckoutSettlement !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayReleaseRoom !== false ||
+    source?.runtimeConsumptionBoundary?.successMayWriteInStayFactsOnly !== true) {
+    failures.push("dormitory scenario 8 runtime boundary must enforce generated-only consumption and in-stay-only success writes.");
+  }
+  if (source?.NO_GO?.productionConfirmAllowed !== false ||
+    source?.NO_GO?.businessGoLiveAllowed !== false ||
+    source?.NO_GO?.releaseAuthority !== false ||
+    source?.NO_GO?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory scenario 8 Source NO_GO must keep production/business/release/final approval disabled.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult],
+    ["positive browser", positiveBrowserResult],
+    ["negative browser", negativeBrowserResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory scenario 8 ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 8 ${label} result must keep production/release/final approval disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory scenario 8 evidence must expose a sha256 Source digest.");
+  }
+  if (!sha256DigestPattern.test(packageIndexDigest ?? "")) {
+    failures.push("dormitory scenario 8 evidence must expose a sha256 package index digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryScenario8GeneratedFiles.length) {
+    failures.push("dormitory scenario 8 generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryScenario8GeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory scenario 8 generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory scenario 8 generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.packageIndexContentDigest !== packageIndexDigest) {
+      failures.push(`dormitory scenario 8 generated file package index digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 8 generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory scenario 8 generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of ["canonical", "runtimeRules", "surfaceNavigation", "handoff", "mobileMirror", "runtimeMirror"]) {
+    if (!dormitoryScenario8GeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory scenario 8 consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+  const runtimeRulesText = documents.get("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs") || "";
+  const operationsRuntimeText = documents.get("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs") || "";
+  const runtimeTestsText = documents.get("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs") || "";
+  if (!runtimeRulesText.includes("DormitoryScenario8InStayManagement.generated.json") ||
+    !runtimeRulesText.includes("Scenario8InStayManagementRuntimeAdapter")) {
+    failures.push("scenario 8 runtime must consume the generated runtime mirror through Scenario8InStayManagementRuntimeAdapter.");
+  }
+  if (!operationsRuntimeText.includes("[\"refreshProjection\"] = false")) {
+    failures.push("scenario 8 generated rule rejection must not refresh Projection on failure.");
+  }
+  for (const command of expectedCommands) {
+    if (!runtimeTestsText.includes(command)) {
+      failures.push(`scenario 8 runtime tests must cover command ${command}.`);
+    }
+  }
+
+  if (positiveBrowserReport?.status !== "passed" ||
+    positiveBrowserResult?.positiveBrowserAuditDigest !== positiveBrowserReport?.positiveBrowserAuditDigest ||
+    !sha256DigestPattern.test(positiveBrowserReport?.positiveBrowserAuditDigest ?? "") ||
+    (positiveBrowserReport?.screenshots?.length ?? 0) !== 10 ||
+    (positiveScreenshotIndex?.screenshots?.length ?? 0) !== 10) {
+    failures.push("scenario 8 positive browser report, result and screenshot index must be PASS and contain 10 screenshots.");
+  }
+  if (negativeBrowserReport?.status !== "passed" ||
+    negativeBrowserResult?.negativeBrowserAuditDigest !== negativeBrowserReport?.negativeBrowserAuditDigest ||
+    !sha256DigestPattern.test(negativeBrowserReport?.negativeBrowserAuditDigest ?? "") ||
+    (negativeBrowserReport?.screenshots?.length ?? 0) !== 13 ||
+    (negativeScreenshotIndex?.screenshots?.length ?? 0) !== 13) {
+    failures.push("scenario 8 negative browser report, result and screenshot index must be PASS and contain 13 screenshots.");
+  }
+  if (!JSON.stringify(positiveBrowserReport ?? {}).includes("在住管理") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("服务请求") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("换房/换床不覆盖原入住事实") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("退房准备摘要") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("今日") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("工作项") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("搜索") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("我的")) {
+    failures.push("scenario 8 positive browser report must prove business name, service/transfer semantics, checkout preparation summary and navigation entries are visible.");
+  }
+  if (!JSON.stringify(negativeBrowserReport ?? {}).includes("未写入任何业务事实") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("搜索结果只读") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("不能发放或恢复凭证") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("进入退房结算场景处理后续事项")) {
+    failures.push("scenario 8 negative browser report must prove no side effects, readonly search, credential block and downstream checkout separation.");
+  }
+  for (const report of [positiveBrowserReport, negativeBrowserReport]) {
+    const visibleText = (report?.screenshots ?? []).map((shot) => shot.visibleText ?? "").join("\n");
+    for (const forbidden of ["stayId", "occupancyId", "credentialId", "serviceRequestId", "incidentId", "roomId", "bedId", "stableRef", "projectionVersion", "domainEventId", "digest", "已退房", "已退款", "已释放房源", "生产发布", "final GO", "StayLifecycle", "bed-transfer-extend", "service-task", "AccessCredentialIssue", "AccessCredentialRevoke"]) {
+      if (visibleText.includes(forbidden)) {
+        failures.push(`scenario 8 browser screenshots must not expose forbidden visible term: ${forbidden}`);
+      }
+    }
+  }
+  const browserSummary = graph.realBrowserEvidence?.scenario8;
+  if (browserSummary?.positive?.status !== "passed" ||
+    browserSummary?.negative?.status !== "passed" ||
+    browserSummary?.productionConfirmAllowed !== false ||
+    browserSummary?.finalGoNoGo !== "NO_GO") {
+    failures.push("evidence graph must include passed scenario 8 positive/negative browser evidence with NO_GO closed.");
+  }
+  for (const gate of ["DORMITORY-SCENARIO8-POSITIVE-BROWSER", "DORMITORY-SCENARIO8-NEGATIVE-BROWSER"]) {
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (!node) {
+      failures.push(`evidence graph missing node for ${gate}.`);
+    } else {
+      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+      if (node.businessGoAllowed !== false) failures.push(`${gate} must keep businessGoAllowed=false.`);
+    }
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory scenario 8 evidence closes.");
+  }
+}
+
+function checkDormitoryScenario9Evidence(graph, finalReport, documents) {
+  const packageIndex = documents.get(lodgingScenarioPackageIndexPath);
+  const source = documents.get(dormitoryScenario9SourcePath);
+  const authorityResult = documents.get(dormitoryScenario9ResultFiles[0]);
+  const generatedResult = documents.get(dormitoryScenario9ResultFiles[1]);
+  const consumptionResult = documents.get(dormitoryScenario9ResultFiles[2]);
+  const positiveBrowserResult = documents.get(dormitoryScenario9ResultFiles[3]);
+  const negativeBrowserResult = documents.get(dormitoryScenario9ResultFiles[4]);
+  const positiveBrowserReport = documents.get(dormitoryScenario9BrowserEvidenceFiles[0]);
+  const positiveScreenshotIndex = documents.get(dormitoryScenario9BrowserEvidenceFiles[1]);
+  const negativeBrowserReport = documents.get(dormitoryScenario9BrowserEvidenceFiles[2]);
+  const negativeScreenshotIndex = documents.get(dormitoryScenario9BrowserEvidenceFiles[3]);
+  const sourceDigest = authorityResult?.scenarioDigest ?? generatedResult?.scenarioDigest ?? consumptionResult?.scenarioDigest;
+  const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
+
+  for (const file of dormitoryScenario9EvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory scenario 9 evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory scenario 9 evidence file: ${file}`);
+    }
+  }
+
+  const package9 = (packageIndex?.scenarioPackageOrder ?? []).find((item) => item.packageNo === 9);
+  if (package9?.nameZh !== "退房结算" ||
+    package9?.scenarioId !== "lodging.checkout-and-settlement") {
+    failures.push("lodging scenario package index must keep scenario 9 as 退房结算.");
+  }
+  if (!arraysEqual(package9?.upstreamPackages, [7, 8, 6]) ||
+    !arraysEqual(package9?.downstreamPackages, [10, 2])) {
+    failures.push("scenario 9 package index must consume packages 7/8/6 and hand off to package 10 plus scenario 2 resource recovery.");
+  }
+  const expectedInputs = ["入住记录摘要", "住客摘要", "房间/床位占用摘要", "收款确认摘要", "押金确认摘要", "财务确认摘要", "在住状态摘要", "当前占用摘要", "服务请求摘要", "异常摘要", "续住/换房换床结果", "凭证状态", "退房准备摘要", "证据摘要", "只读对象引用"];
+  const expectedOutputs = ["退房确认摘要", "费用核算摘要", "押金抵扣摘要", "应退/应补意向", "客户确认摘要", "财务处理请求", "资源待恢复请求", "证据摘要", "只读对象引用"];
+  if (!arraysContainAll(package9?.handoffInputs, expectedInputs) ||
+    !arraysContainAll(package9?.handoffOutputs, expectedOutputs)) {
+    failures.push("scenario 9 package index must consume stay/in-stay/finance summaries and output checkout/settlement/resource request summaries only.");
+  }
+  if (!arraysContainAll(package9?.mustNotOutputZh, ["Payment", "Refund", "LedgerEntry", "LedgerTransaction", "RoomOperationStatus=可运营", "已退款", "已入账", "房源已可运营"])) {
+    failures.push("scenario 9 package index must forbid finance truth, ledger and direct operational restore outputs.");
+  }
+
+  if (source?.authorityId !== "Dormitory.Scenario9.CheckoutSettlement" ||
+    source?.scenarioPackageNo !== 9 ||
+    source?.nameZh !== "退房结算" ||
+    source?.status !== "authoritative") {
+    failures.push("dormitory scenario 9 Source Authority identity must remain 退房结算.");
+  }
+  if (source?.highestAuthorityRef !== dormitory13ScenarioSourcePath ||
+    source?.methodBenchmarkRef !== dormitoryBenchmarkInheritanceSourcePath) {
+    failures.push("dormitory scenario 9 Source must reference 13 scenario control as highest authority and scenario 1 benchmark as method contract.");
+  }
+  if (!arraysEqual(source?.upstream?.allowedSourcePackageNos, [7, 8, 6]) ||
+    source?.upstream?.upstreamWriteBackAllowed !== false ||
+    !arraysContainAll(source?.upstream?.requiredReadonlyInputs, ["入住记录摘要", "在住状态摘要", "押金确认摘要", "退房准备摘要", "只读对象引用"])) {
+    failures.push("dormitory scenario 9 upstream must be readonly stay/in-stay/finance summary handoff only.");
+  }
+  if (!String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("finance-gate") ||
+    !String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("场景包 2") ||
+    !arraysContainAll(source?.downstream?.forbiddenOutputsZh, ["Payment", "Refund", "LedgerEntry", "LedgerTransaction", "RoomOperationStatus=可运营", "已退款", "已入账", "房源已可运营"])) {
+    failures.push("dormitory scenario 9 downstream must route actual money to finance-gate and resource recovery to scenario 2.");
+  }
+
+  const expectedObjects = [
+    "CheckoutCase",
+    "CurrentStaySnapshot",
+    "CheckoutInspection",
+    "RoomBedHandover",
+    "DamageAssessment",
+    "FeeSettlementDraft",
+    "DepositSettlementDraft",
+    "RefundRequestIntent",
+    "TopUpRequestIntent",
+    "CredentialReturnRecord",
+    "CheckoutConfirmation",
+    "ResourceRecoveryRequest",
+    "CheckoutEvidence",
+    "CheckoutStatusHistory"
+  ];
+  const sourceObjects = (source?.objects ?? []).map((item) => item.objectName);
+  if (!arraysContainAll(sourceObjects, expectedObjects)) {
+    failures.push("dormitory scenario 9 Source must define all checkout, handover, inspection, fee, deposit, finance request, resource recovery, evidence and history objects.");
+  }
+  const expectedStatuses = ["待退房", "待验房", "待结算", "待客户确认", "待财务处理", "已退房", "结算有争议", "需补证", "资源待保洁", "资源待检查", "资源待维修", "异常待处理"];
+  if (!arraysEqual(source?.checkoutStatusOptions, expectedStatuses)) {
+    failures.push("dormitory scenario 9 Source must keep the required checkout status options.");
+  }
+  const stepNames = (source?.steps ?? []).map((step) => step.nameZh);
+  if (JSON.stringify(stepNames) !== JSON.stringify(["进入退房办理", "确认实际离店与交接", "房间/床位检查", "费用核算", "客户确认结算", "确认退房", "财务处理请求与资源恢复交接"])) {
+    failures.push("dormitory scenario 9 Source must keep the seven business action steps in order.");
+  }
+  if (!arraysContainAll(source?.fields?.forbiddenUserInputFields, ["stayId", "checkoutCaseId", "settlementId", "refundId", "ledgerEntryId", "roomId", "bedId", "stableRef", "projectionVersion", "digest", "domainEventId", "paymentId", "ledgerTransactionId"])) {
+    failures.push("dormitory scenario 9 field boundary must forbid ordinary users from entering internal IDs.");
+  }
+  const expectedCommands = [
+    "Dorm.CheckoutCaseDraftStart",
+    "Dorm.CheckoutHandoverConfirm",
+    "Dorm.CheckoutInspectionConfirm",
+    "Dorm.CheckoutFeeCalculationGenerate",
+    "Dorm.CustomerSettlementConfirm",
+    "Dorm.CheckoutConfirm",
+    "Dorm.CheckoutFinanceRequestCreate",
+    "Dorm.ResourceRecoveryRequestCreate",
+    "Dorm.CheckoutCorrectionRequest"
+  ];
+  const commandIds = (source?.commands ?? []).map((item) => item.commandId);
+  if (!arraysEqual(commandIds, expectedCommands)) {
+    failures.push("dormitory scenario 9 Source must define exactly the checkout settlement commands.");
+  }
+  const expectedFailureCodes = [
+    "no_effective_stay",
+    "stay_already_checked_out",
+    "actual_checkout_time_required",
+    "inspection_evidence_required",
+    "damage_description_evidence_required",
+    "customer_confirmation_required",
+    "disputed_settlement_requires_review",
+    "forged_internal_reference",
+    "readonly_result_write_attempt",
+    "direct_payment_refund_ledger_forbidden",
+    "resource_operational_direct_restore_forbidden",
+    "duplicate_checkout_submission",
+    "concurrent_checkout_conflict"
+  ];
+  const failureCodes = (source?.failureSemantics ?? []).map((item) => item.failureCode);
+  if (!arraysContainAll(failureCodes, expectedFailureCodes) ||
+    !(source?.failureSemantics ?? []).every((item) => item.sideEffectsAllowed === false)) {
+    failures.push("dormitory scenario 9 failure semantics must cover required failures and forbid side effects.");
+  }
+  const invariantRule = source?.checkoutInvariantRule ?? {};
+  for (const key of ["validStayRequired", "currentOccupancyRequired", "actualCheckoutAtRequired", "inspectionEvidenceRequired", "customerConfirmationRequired", "checkoutDoesNotMeanRefunded", "checkoutDoesNotMakeResourceOperational", "financeGateHandlesRefundTopUpLedger", "resourceRecoveryViaScenario2Only", "failureNoSideEffects"]) {
+    if (invariantRule[key] !== true) {
+      failures.push(`scenario 9 invariant rule must keep ${key}=true.`);
+    }
+  }
+  const invariantText = JSON.stringify(source?.invariants ?? []);
+  if (!invariantText.includes("失败路径不得结束入住") ||
+    !invariantText.includes("不能直接退款、收款或写账") ||
+    !invariantText.includes("不得直接恢复可运营") ||
+    !invariantText.includes("不得刷新错误 Projection") ||
+    !invariantText.includes("查询、搜索、列表、看板、报表永远只读")) {
+    failures.push("dormitory scenario 9 invariants must keep no checkout/finance/ledger/operational/projection side effects and readonly surfaces.");
+  }
+  if (source?.runtimeConsumptionBoundary?.runtimeMayReadGeneratedOnly !== true ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteLedger !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWritePaymentRefund !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayRestoreOperationalStatus !== false ||
+    source?.runtimeConsumptionBoundary?.financeGateMayConsumeSettlementIntentOnly !== true ||
+    source?.runtimeConsumptionBoundary?.successMayWriteCheckoutFactsAndRequestsOnly !== true) {
+    failures.push("dormitory scenario 9 runtime boundary must enforce generated-only consumption and checkout/request-only success writes.");
+  }
+  if (source?.NO_GO?.productionConfirmAllowed !== false ||
+    source?.NO_GO?.businessGoLiveAllowed !== false ||
+    source?.NO_GO?.releaseAuthority !== false ||
+    source?.NO_GO?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory scenario 9 Source NO_GO must keep production/business/release/final approval disabled.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult],
+    ["positive browser", positiveBrowserResult],
+    ["negative browser", negativeBrowserResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory scenario 9 ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 9 ${label} result must keep production/release/final approval disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory scenario 9 evidence must expose a sha256 Source digest.");
+  }
+  if (!sha256DigestPattern.test(packageIndexDigest ?? "")) {
+    failures.push("dormitory scenario 9 evidence must expose a sha256 package index digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryScenario9GeneratedFiles.length) {
+    failures.push("dormitory scenario 9 generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryScenario9GeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory scenario 9 generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory scenario 9 generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.packageIndexContentDigest !== packageIndexDigest) {
+      failures.push(`dormitory scenario 9 generated file package index digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 9 generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory scenario 9 generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of ["canonical", "runtimeRules", "surfaceNavigation", "handoff", "financeGate", "mobileMirror", "runtimeMirror"]) {
+    if (!dormitoryScenario9GeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory scenario 9 consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+  const runtimeRulesText = documents.get("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs") || "";
+  const operationsRuntimeText = documents.get("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs") || "";
+  const runtimeTestsText = documents.get("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs") || "";
+  if (!runtimeRulesText.includes("DormitoryScenario9CheckoutSettlement.generated.json") ||
+    !runtimeRulesText.includes("Scenario9CheckoutSettlementRuntimeAdapter")) {
+    failures.push("scenario 9 runtime must consume the generated runtime mirror through Scenario9CheckoutSettlementRuntimeAdapter.");
+  }
+  if (!operationsRuntimeText.includes("[\"refreshProjection\"] = false")) {
+    failures.push("scenario 9 generated rule rejection must not refresh Projection on failure.");
+  }
+  for (const command of expectedCommands) {
+    if (!runtimeTestsText.includes(command)) {
+      failures.push(`scenario 9 runtime tests must cover command ${command}.`);
+    }
+  }
+
+  if (positiveBrowserReport?.status !== "passed" ||
+    positiveBrowserResult?.positiveBrowserAuditDigest !== positiveBrowserReport?.positiveBrowserAuditDigest ||
+    !sha256DigestPattern.test(positiveBrowserReport?.positiveBrowserAuditDigest ?? "") ||
+    (positiveBrowserReport?.screenshots?.length ?? 0) !== 12 ||
+    (positiveScreenshotIndex?.screenshots?.length ?? 0) !== 12) {
+    failures.push("scenario 9 positive browser report, result and screenshot index must be PASS and contain 12 screenshots.");
+  }
+  if (negativeBrowserReport?.status !== "passed" ||
+    negativeBrowserResult?.negativeBrowserAuditDigest !== negativeBrowserReport?.negativeBrowserAuditDigest ||
+    !sha256DigestPattern.test(negativeBrowserReport?.negativeBrowserAuditDigest ?? "") ||
+    (negativeBrowserReport?.screenshots?.length ?? 0) !== 13 ||
+    (negativeScreenshotIndex?.screenshots?.length ?? 0) !== 13) {
+    failures.push("scenario 9 negative browser report, result and screenshot index must be PASS and contain 13 screenshots.");
+  }
+  if (!JSON.stringify(positiveBrowserReport ?? {}).includes("退房结算") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("退房单号：CO202606160001") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("finance-gate") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("资源待恢复不是可运营") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("今日待退房") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("工作项") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("搜索") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("我的")) {
+    failures.push("scenario 9 positive browser report must prove checkout settlement naming, checkout number, finance-gate handoff, resource recovery separation and navigation entries.");
+  }
+  if (!JSON.stringify(negativeBrowserReport ?? {}).includes("未写入任何业务结果") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("搜索结果只读") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("finance-gate") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("房源运营状态维护复查")) {
+    failures.push("scenario 9 negative browser report must prove no side effects, readonly search, finance-gate handoff and scenario 2 resource recovery separation.");
+  }
+  for (const report of [positiveBrowserReport, negativeBrowserReport]) {
+    const visibleText = (report?.screenshots ?? []).map((shot) => shot.visibleText ?? "").join("\n");
+    for (const forbidden of ["stayId", "checkoutCaseId", "settlementId", "refundId", "ledgerEntryId", "roomId", "bedId", "stableRef", "projectionVersion", "domainEventId", "digest", "paymentId", "ledgerTransactionId", "已退款", "已入账", "房源已可运营", "生产发布", "final GO", "CheckoutSettlementApprove", "RefundApprove", "RoomInspectionConfirm"]) {
+      if (visibleText.includes(forbidden)) {
+        failures.push(`scenario 9 browser screenshots must not expose forbidden visible term: ${forbidden}`);
+      }
+    }
+  }
+  const browserSummary = graph.realBrowserEvidence?.scenario9;
+  if (browserSummary?.positive?.status !== "passed" ||
+    browserSummary?.negative?.status !== "passed" ||
+    browserSummary?.productionConfirmAllowed !== false ||
+    browserSummary?.finalGoNoGo !== "NO_GO") {
+    failures.push("evidence graph must include passed scenario 9 positive/negative browser evidence with NO_GO closed.");
+  }
+  for (const gate of ["DORMITORY-SCENARIO9-POSITIVE-BROWSER", "DORMITORY-SCENARIO9-NEGATIVE-BROWSER"]) {
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (!node) {
+      failures.push(`evidence graph missing node for ${gate}.`);
+    } else {
+      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+      if (node.businessGoAllowed !== false) failures.push(`${gate} must keep businessGoAllowed=false.`);
+    }
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory scenario 9 evidence closes.");
+  }
+}
+
+function checkDormitoryScenario10Evidence(graph, finalReport, documents) {
+  const packageIndex = documents.get(lodgingScenarioPackageIndexPath);
+  const source = documents.get(dormitoryScenario10SourcePath);
+  const authorityResult = documents.get(dormitoryScenario10ResultFiles[0]);
+  const generatedResult = documents.get(dormitoryScenario10ResultFiles[1]);
+  const consumptionResult = documents.get(dormitoryScenario10ResultFiles[2]);
+  const positiveBrowserResult = documents.get(dormitoryScenario10ResultFiles[3]);
+  const negativeBrowserResult = documents.get(dormitoryScenario10ResultFiles[4]);
+  const positiveBrowserReport = documents.get(dormitoryScenario10BrowserEvidenceFiles[0]);
+  const positiveScreenshotIndex = documents.get(dormitoryScenario10BrowserEvidenceFiles[1]);
+  const negativeBrowserReport = documents.get(dormitoryScenario10BrowserEvidenceFiles[2]);
+  const negativeScreenshotIndex = documents.get(dormitoryScenario10BrowserEvidenceFiles[3]);
+  const sourceDigest = authorityResult?.scenarioDigest ?? generatedResult?.scenarioDigest ?? consumptionResult?.scenarioDigest;
+  const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
+  const expectedInputs = [
+    "预订确认摘要",
+    "预订号",
+    "客户信息",
+    "日期范围",
+    "房间/床位",
+    "价格快照",
+    "库存锁定历史",
+    "预订状态",
+    "收款确认摘要",
+    "押金确认摘要",
+    "担保确认摘要",
+    "财务确认状态",
+    "入住状态摘要",
+    "退房确认摘要",
+    "应退/应补意向",
+    "财务处理请求",
+    "证据摘要",
+    "只读对象引用"
+  ];
+  const expectedOutputs = [
+    "取消/未到店关闭摘要",
+    "政策计算摘要",
+    "退款/扣费申请",
+    "库存释放请求",
+    "客户确认摘要",
+    "财务处理请求",
+    "证据摘要",
+    "只读对象引用"
+  ];
+  const expectedObjects = [
+    "CancellationCase",
+    "NoShowCase",
+    "ReservationClosureSnapshot",
+    "CancellationPolicySnapshot",
+    "PaymentDepositSnapshot",
+    "RefundCalculationDraft",
+    "RefundRequestIntent",
+    "CancellationFeeIntent",
+    "ForfeitOrFeeIntent",
+    "InventoryReleaseRequest",
+    "CustomerConfirmationRecord",
+    "CustomerNotificationRecord",
+    "FinanceProcessingRequest",
+    "CancellationEvidence",
+    "CancellationStatusHistory"
+  ];
+  const expectedStatuses = [
+    "取消草稿",
+    "未到店草稿",
+    "待客户确认",
+    "待政策计算",
+    "待负责人复核",
+    "待财务处理",
+    "已取消",
+    "未到店已关闭",
+    "退款申请已提交",
+    "扣费申请已提交",
+    "库存释放已请求",
+    "争议处理中",
+    "财务退回待补证"
+  ];
+  const expectedSteps = [
+    "进入取消/未到店处理",
+    "填写处理原因与客户确认",
+    "政策与金额计算",
+    "库存释放确认",
+    "生成退款/扣费处理请求",
+    "确认取消或未到店关闭",
+    "处理结果与后续跟进"
+  ];
+  const expectedCommands = [
+    "Dorm.CancelNoShowCaseDraftStart",
+    "Dorm.CancellationCaseDraftStart",
+    "Dorm.NoShowCaseDraftStart",
+    "Dorm.CancelNoShowReasonCustomerConfirm",
+    "Dorm.CancelNoShowPolicyCalculationGenerate",
+    "Dorm.CancelNoShowInventoryReleaseRequestConfirm",
+    "Dorm.CancelNoShowFinanceProcessingRequestCreate",
+    "Dorm.CancelNoShowConfirmClosure",
+    "Dorm.CancellationConfirm",
+    "Dorm.NoShowConfirm",
+    "Dorm.CancelNoShowDisputeReview",
+    "Dorm.CancelNoShowFollowUpRecord",
+    "Dorm.CancelNoShowFinanceEvidenceSupplement",
+    "Dorm.CancelNoShowCorrectionRequest"
+  ];
+  const expectedFailureCodes = [
+    "no_effective_reservation",
+    "payment_deposit_snapshot_required",
+    "settlement_intent_required_for_checkout_refund",
+    "reservation_already_checked_in",
+    "reservation_already_checked_out",
+    "reservation_already_cancelled",
+    "noshow_hold_time_not_elapsed",
+    "noshow_effective_checkin_exists",
+    "customer_confirmation_required",
+    "dispute_requires_review",
+    "policy_amount_source_missing",
+    "final_refund_manual_input_forbidden",
+    "inventory_release_scope_invalid",
+    "forged_internal_reference",
+    "readonly_result_write_attempt",
+    "direct_refund_payment_ledger_forbidden",
+    "finance_gate_required",
+    "duplicate_cancellation_submission",
+    "concurrent_cancellation_conflict",
+    "confirmed_closure_inline_edit_forbidden",
+    "unauthorized_cancellation_action"
+  ];
+  const forbiddenUserInput = [
+    "cancellationCaseId",
+    "refundId",
+    "paymentId",
+    "depositId",
+    "ledgerEntryId",
+    "reservationId",
+    "roomId",
+    "bedId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId",
+    "ledgerTransactionId",
+    "checkoutCaseId",
+    "stayId"
+  ];
+
+  for (const file of dormitoryScenario10EvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory scenario 10 evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory scenario 10 evidence file: ${file}`);
+    }
+  }
+
+  const package10 = (packageIndex?.scenarioPackageOrder ?? []).find((item) => item.packageNo === 10);
+  if (package10?.nameZh !== "取消、未到店与退款处理" ||
+    package10?.scenarioId !== "lodging.cancel-noshow-refund-intake") {
+    failures.push("lodging scenario package index must keep scenario 10 as 取消、未到店与退款处理.");
+  }
+  if (!arraysEqual(package10?.upstreamPackages, [5, 6, 7, 9])) {
+    failures.push("scenario 10 package index must consume packages 5/6/7/9.");
+  }
+  if (!arraysContainAll(package10?.handoffInputs, expectedInputs) ||
+    !arraysContainAll(package10?.handoffOutputs, expectedOutputs)) {
+    failures.push("scenario 10 package index must consume reservation/payment/check-in/checkout summaries and output cancellation/no-show/request summaries only.");
+  }
+  if (!arraysContainAll(package10?.mustNotOutputZh, ["Payment", "Refund", "LedgerEntry", "LedgerTransaction", "Stay", "CheckoutCase", "RoomOperationStatus=可运营", "已退款到账", "已入账", "已入住", "已退房"])) {
+    failures.push("scenario 10 package index must forbid finance truth, ledger, stay/checkout facts and direct operational restore outputs.");
+  }
+
+  if (source?.authorityId !== "Dormitory.Scenario10.CancelNoShowRefund" ||
+    source?.scenarioPackageNo !== 10 ||
+    source?.nameZh !== "取消、未到店与退款处理" ||
+    source?.status !== "authoritative") {
+    failures.push("dormitory scenario 10 Source Authority identity must remain 取消、未到店与退款处理.");
+  }
+  if (source?.highestAuthorityRef !== dormitory13ScenarioSourcePath ||
+    source?.methodBenchmarkRef !== dormitoryBenchmarkInheritanceSourcePath) {
+    failures.push("dormitory scenario 10 Source must reference 13 scenario control as highest authority and scenario 1 benchmark as method contract.");
+  }
+  if (!arraysEqual(source?.upstream?.allowedSourcePackageNos, [5, 6, 7, 9]) ||
+    source?.upstream?.upstreamWriteBackAllowed !== false ||
+    !arraysContainAll(source?.upstream?.requiredReadonlyInputs, expectedInputs)) {
+    failures.push("dormitory scenario 10 upstream must be readonly reservation/payment/check-in/checkout summary handoff only.");
+  }
+  if (!String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("finance-gate") ||
+    !String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("inventory-reservation-read-model") ||
+    !arraysContainAll(source?.downstream?.forbiddenOutputsZh, ["Payment", "Refund", "LedgerEntry", "LedgerTransaction", "Stay", "CheckoutCase", "RoomOperationStatus=可运营", "已退款到账", "已入账", "已入住", "已退房"])) {
+    failures.push("dormitory scenario 10 downstream must route actual money to finance-gate, inventory to inventory/reservation read model, and forbid forbidden outputs.");
+  }
+
+  if (!arraysEqual((source?.objects ?? []).map((item) => item.objectName), expectedObjects)) {
+    failures.push("dormitory scenario 10 Source must define cancellation, no-show, snapshot, policy, refund/fee intent, inventory request, customer, finance, evidence and history objects.");
+  }
+  if (!arraysEqual(source?.cancellationStatusOptions, expectedStatuses)) {
+    failures.push("dormitory scenario 10 Source must keep the required cancellation/no-show status options.");
+  }
+  if (!arraysEqual((source?.steps ?? []).map((step) => step.nameZh), expectedSteps)) {
+    failures.push("dormitory scenario 10 Source must keep seven business action steps in order.");
+  }
+  if (!arraysContainAll(source?.fields?.forbiddenUserInputFields, forbiddenUserInput)) {
+    failures.push("dormitory scenario 10 field boundary must forbid ordinary users from entering internal IDs.");
+  }
+  if (!arraysEqual((source?.commands ?? []).map((item) => item.commandId), expectedCommands)) {
+    failures.push("dormitory scenario 10 Source must define exactly the cancel/no-show/refund handling commands.");
+  }
+  const failureCodes = (source?.failureSemantics ?? []).map((item) => item.failureCode);
+  if (!arraysEqual(failureCodes, expectedFailureCodes) ||
+    !(source?.failureSemantics ?? []).every((item) => item.sideEffectsAllowed === false)) {
+    failures.push("dormitory scenario 10 failure semantics must cover required failures and forbid side effects.");
+  }
+  const invariantRule = source?.cancelNoShowInvariantRule ?? {};
+  for (const key of ["validReservationRequired", "paymentDepositSnapshotRequiredForRefund", "settlementIntentRequiredForCheckoutRefund", "alreadyCheckedInBlocksOrdinaryCancellation", "alreadyCheckedOutBlocksOrdinaryCancellation", "alreadyCancelledBlocksDuplicateCancellation", "noShowRequiresHoldTimeElapsed", "noShowRequiresNoEffectiveCheckin", "customerConfirmationRequired", "disputeRequiresReview", "amountSourcesAuthoritative", "finalFinanceTruthManualInputForbidden", "inventoryReleaseScopeBoundToReservation", "financeGateHandlesRefundFeeLedger", "failureNoSideEffects", "querySearchListBoardReportReadonly"]) {
+    if (invariantRule[key] !== true) {
+      failures.push(`scenario 10 invariant rule must keep ${key}=true.`);
+    }
+  }
+  const invariantText = JSON.stringify(source?.invariants ?? []);
+  if (!invariantText.includes("有效预订") ||
+    !invariantText.includes("最晚保留时间") ||
+    !invariantText.includes("库存释放只能释放当前预订") ||
+    !invariantText.includes("不得由用户手填最终账务真值") ||
+    !invariantText.includes("finance-gate") ||
+    !invariantText.includes("不得刷新错误 Projection") ||
+    !invariantText.includes("查询、搜索、列表、看板、报表永远只读")) {
+    failures.push("dormitory scenario 10 invariants must keep valid reservation/no-show/inventory/finance/no-side-effect/readonly guards.");
+  }
+  if (source?.runtimeConsumptionBoundary?.runtimeMayReadGeneratedOnly !== true ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteLedger !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWritePaymentRefund !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteStayCheckout !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayRestoreOperationalStatus !== false ||
+    source?.runtimeConsumptionBoundary?.financeGateMayConsumeRefundFeeIntentOnly !== true ||
+    source?.runtimeConsumptionBoundary?.inventoryReadModelMayConsumeReleaseRequestOnly !== true ||
+    source?.runtimeConsumptionBoundary?.successMayWriteCancellationNoShowFactsAndRequestsOnly !== true) {
+    failures.push("dormitory scenario 10 runtime boundary must enforce generated-only consumption and cancellation/no-show/request-only success writes.");
+  }
+  if (source?.NO_GO?.productionConfirmAllowed !== false ||
+    source?.NO_GO?.businessGoLiveAllowed !== false ||
+    source?.NO_GO?.releaseAuthority !== false ||
+    source?.NO_GO?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory scenario 10 Source NO_GO must keep production/business/release/final approval disabled.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult],
+    ["positive browser", positiveBrowserResult],
+    ["negative browser", negativeBrowserResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory scenario 10 ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 10 ${label} result must keep production/release/final approval disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory scenario 10 evidence must expose a sha256 Source digest.");
+  }
+  if (!sha256DigestPattern.test(packageIndexDigest ?? "")) {
+    failures.push("dormitory scenario 10 evidence must expose a sha256 package index digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryScenario10GeneratedFiles.length) {
+    failures.push("dormitory scenario 10 generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryScenario10GeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory scenario 10 generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory scenario 10 generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.packageIndexContentDigest !== packageIndexDigest) {
+      failures.push(`dormitory scenario 10 generated file package index digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 10 generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory scenario 10 generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of ["canonical", "runtimeRules", "surfaceNavigation", "handoff", "financeGate", "mobileMirror", "runtimeMirror"]) {
+    if (!dormitoryScenario10GeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory scenario 10 consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+  const runtimeRulesText = documents.get("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs") || "";
+  const operationsRuntimeText = documents.get("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs") || "";
+  const runtimeTestsText = documents.get("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs") || "";
+  if (!runtimeRulesText.includes("DormitoryScenario10CancelNoShowRefund.generated.json") ||
+    !runtimeRulesText.includes("Scenario10CancelNoShowRefundRuntimeAdapter")) {
+    failures.push("scenario 10 runtime must consume the generated runtime mirror through Scenario10CancelNoShowRefundRuntimeAdapter.");
+  }
+  if (!operationsRuntimeText.includes("[\"refreshProjection\"] = false")) {
+    failures.push("scenario 10 generated rule rejection must not refresh Projection on failure.");
+  }
+  for (const command of expectedCommands) {
+    if (!runtimeTestsText.includes(command)) {
+      failures.push(`scenario 10 runtime tests must cover command ${command}.`);
+    }
+  }
+
+  if (positiveBrowserReport?.status !== "passed" ||
+    positiveBrowserResult?.positiveBrowserAuditDigest !== positiveBrowserReport?.positiveBrowserAuditDigest ||
+    !sha256DigestPattern.test(positiveBrowserReport?.positiveBrowserAuditDigest ?? "") ||
+    (positiveBrowserReport?.screenshots?.length ?? 0) !== 12 ||
+    (positiveScreenshotIndex?.screenshots?.length ?? 0) !== 12) {
+    failures.push("scenario 10 positive browser report, result and screenshot index must be PASS and contain 12 screenshots.");
+  }
+  if (negativeBrowserReport?.status !== "passed" ||
+    negativeBrowserResult?.negativeBrowserAuditDigest !== negativeBrowserReport?.negativeBrowserAuditDigest ||
+    !sha256DigestPattern.test(negativeBrowserReport?.negativeBrowserAuditDigest ?? "") ||
+    (negativeBrowserReport?.screenshots?.length ?? 0) !== 15 ||
+    (negativeScreenshotIndex?.screenshots?.length ?? 0) !== 15) {
+    failures.push("scenario 10 negative browser report, result and screenshot index must be PASS and contain 15 screenshots.");
+  }
+  if (!JSON.stringify(positiveBrowserReport ?? {}).includes("取消、未到店与退款处理") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("取消单号 C202606200001") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("finance-gate") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("库存释放请求") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("今日未到店待处理") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("工作项") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("搜索") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("我的")) {
+    failures.push("scenario 10 positive browser report must prove naming, cancellation number, finance-gate handoff, inventory release request and navigation entries.");
+  }
+  if (!JSON.stringify(negativeBrowserReport ?? {}).includes("未写入任何业务结果") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("搜索结果只读") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("finance-gate") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("转负责人复核") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("本预订绑定资源和日期范围")) {
+    failures.push("scenario 10 negative browser report must prove no side effects, readonly search, finance-gate handoff, dispute review and bounded inventory release.");
+  }
+  for (const report of [positiveBrowserReport, negativeBrowserReport]) {
+    const visibleText = (report?.screenshots ?? []).map((shot) => shot.visibleText ?? "").join("\n");
+    for (const forbidden of [...forbiddenUserInput, "已退款到账", "已入账", "已入住", "已退房", "生产发布", "业务上线", "final GO", "reservationCancel", "reservationNoShow", "RefundApprove", "CheckoutSettlementApprove"]) {
+      if (visibleText.includes(forbidden)) {
+        failures.push(`scenario 10 browser screenshots must not expose forbidden visible term: ${forbidden}`);
+      }
+    }
+  }
+  const browserSummary = graph.realBrowserEvidence?.scenario10;
+  if (browserSummary?.positive?.status !== "passed" ||
+    browserSummary?.negative?.status !== "passed" ||
+    browserSummary?.productionConfirmAllowed !== false ||
+    browserSummary?.finalGoNoGo !== "NO_GO") {
+    failures.push("evidence graph must include passed scenario 10 positive/negative browser evidence with NO_GO closed.");
+  }
+  for (const gate of ["DORMITORY-SCENARIO10-POSITIVE-BROWSER", "DORMITORY-SCENARIO10-NEGATIVE-BROWSER"]) {
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (!node) {
+      failures.push(`evidence graph missing node for ${gate}.`);
+    } else {
+      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+      if (node.businessGoAllowed !== false) failures.push(`${gate} must keep businessGoAllowed=false.`);
+    }
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory scenario 10 evidence closes.");
+  }
+}
+
+function checkDormitoryScenario11Evidence(graph, finalReport, documents) {
+  const packageIndex = documents.get(lodgingScenarioPackageIndexPath);
+  const source = documents.get(dormitoryScenario11SourcePath);
+  const authorityResult = documents.get(dormitoryScenario11ResultFiles[0]);
+  const generatedResult = documents.get(dormitoryScenario11ResultFiles[1]);
+  const consumptionResult = documents.get(dormitoryScenario11ResultFiles[2]);
+  const positiveBrowserResult = documents.get(dormitoryScenario11ResultFiles[3]);
+  const negativeBrowserResult = documents.get(dormitoryScenario11ResultFiles[4]);
+  const positiveBrowserReport = documents.get(dormitoryScenario11BrowserEvidenceFiles[0]);
+  const positiveScreenshotIndex = documents.get(dormitoryScenario11BrowserEvidenceFiles[1]);
+  const negativeBrowserReport = documents.get(dormitoryScenario11BrowserEvidenceFiles[2]);
+  const negativeScreenshotIndex = documents.get(dormitoryScenario11BrowserEvidenceFiles[3]);
+  const sourceDigest = authorityResult?.scenarioDigest ?? generatedResult?.scenarioDigest ?? consumptionResult?.scenarioDigest;
+  const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
+  const expectedInputs = [
+    "运营阻断摘要",
+    "阻断原因",
+    "预计恢复时间",
+    "在住服务请求",
+    "服务请求摘要",
+    "异常摘要",
+    "退房待恢复请求",
+    "资源待恢复请求",
+    "取消释放资源摘要",
+    "库存释放请求",
+    "房间/床位",
+    "影响范围",
+    "证据摘要",
+    "只读对象引用"
+  ];
+  const expectedOutputs = [
+    "房务/维修完成摘要",
+    "验收摘要",
+    "停售建议",
+    "恢复运营建议",
+    "费用意向",
+    "作业证据摘要",
+    "状态历史",
+    "只读对象引用"
+  ];
+  const expectedObjects = [
+    "ServiceWorkCase",
+    "HousekeepingTask",
+    "MaintenanceTask",
+    "InspectionTask",
+    "OutOfServiceRequest",
+    "WorkAssignment",
+    "WorkAssignee",
+    "WorkSchedule",
+    "WorkCompletion",
+    "WorkCompletionEvidence",
+    "WorkVerification",
+    "WorkVerificationResult",
+    "RecoveryRecommendation",
+    "ExpenseIntent",
+    "TaskEvidence",
+    "StatusHistory",
+    "WorkStatusHistory"
+  ];
+  const expectedStatuses = [
+    "待派工",
+    "已派工",
+    "处理中",
+    "待验收",
+    "验收通过",
+    "验收不通过",
+    "返工中",
+    "建议停售",
+    "建议恢复",
+    "已关闭",
+    "需财务处理"
+  ];
+  const expectedSteps = [
+    "进入房务/维修处理",
+    "派工作业",
+    "执行与进度更新",
+    "完成作业",
+    "验收确认",
+    "停售或恢复建议输出",
+    "费用意向与财务交接"
+  ];
+  const expectedCommands = [
+    "Dorm.ServiceWorkCaseDraftStart",
+    "Dorm.HousekeepingTaskCreate",
+    "Dorm.MaintenanceTaskCreate",
+    "Dorm.InspectionTaskCreate",
+    "Dorm.OutOfServiceRequestDraftStart",
+    "Dorm.WorkAssignmentDispatch",
+    "Dorm.WorkProgressUpdate",
+    "Dorm.WorkCompletionSubmit",
+    "Dorm.WorkVerificationConfirm",
+    "Dorm.WorkReworkRequest",
+    "Dorm.OutOfServiceOrRecoveryRecommendationCreate",
+    "Dorm.ExpenseIntentSubmit",
+    "Dorm.TaskEvidenceSupplement",
+    "Dorm.ServiceWorkCorrectionRequest"
+  ];
+  const expectedFailureCodes = [
+    "no_legal_work_source",
+    "missing_work_assignee",
+    "missing_work_scope",
+    "missing_source_summary",
+    "completion_evidence_required",
+    "completion_required_before_verification",
+    "verification_failure_requires_rework",
+    "unresolved_maintenance_recovery_forbidden",
+    "direct_operational_restore_forbidden",
+    "direct_expense_ledger_forbidden",
+    "forged_internal_reference",
+    "readonly_result_write_attempt",
+    "duplicate_work_submission",
+    "concurrent_work_conflict",
+    "unauthorized_work_action",
+    "confirmed_work_inline_edit_forbidden",
+    "invalid_resource_scope",
+    "out_of_service_reason_required",
+    "recovery_recommendation_requires_resolution",
+    "expense_evidence_required"
+  ];
+  const forbiddenUserInput = [
+    "taskId",
+    "workItemId",
+    "roomId",
+    "bedId",
+    "stayId",
+    "serviceRequestId",
+    "serviceWorkCaseId",
+    "workAssignmentId",
+    "expenseIntentId",
+    "ledgerEntryId",
+    "reservationId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId"
+  ];
+
+  for (const file of dormitoryScenario11EvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory scenario 11 evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory scenario 11 evidence file: ${file}`);
+    }
+  }
+
+  const package11 = (packageIndex?.scenarioPackageOrder ?? []).find((item) => item.packageNo === 11);
+  if (package11?.nameZh !== "房务、维修与停售协同" ||
+    package11?.scenarioId !== "lodging.housekeeping-maintenance-outofservice") {
+    failures.push("lodging scenario package index must keep scenario 11 as 房务、维修与停售协同.");
+  }
+  if (!arraysEqual(package11?.upstreamPackages, [2, 8, 9, 10])) {
+    failures.push("scenario 11 package index must consume packages 2/8/9/10.");
+  }
+  if (!arraysContainAll(package11?.handoffInputs, expectedInputs) ||
+    !arraysContainAll(package11?.handoffOutputs, expectedOutputs)) {
+    failures.push("scenario 11 package index must consume upstream summaries and output work/recommendation/expense-intent summaries only.");
+  }
+  if (!arraysContainAll(package11?.mustNotOutputZh, ["RoomOperationStatus=可运营", "Reservation", "Stay", "Payment", "Refund", "LedgerEntry", "LedgerTransaction", "已可运营", "已可预订", "已入账", "已退款"])) {
+    failures.push("scenario 11 package index must forbid operation truth, reservation/stay facts, finance truth and ledger outputs.");
+  }
+
+  if (source?.authorityId !== "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService" ||
+    source?.scenarioPackageNo !== 11 ||
+    source?.nameZh !== "房务、维修与停售协同" ||
+    source?.status !== "authoritative") {
+    failures.push("dormitory scenario 11 Source Authority identity must remain 房务、维修与停售协同.");
+  }
+  if (source?.highestAuthorityRef !== dormitory13ScenarioSourcePath ||
+    source?.methodBenchmarkRef !== dormitoryBenchmarkInheritanceSourcePath) {
+    failures.push("dormitory scenario 11 Source must reference 13 scenario control as highest authority and scenario 1 benchmark as method contract.");
+  }
+  if (!arraysEqual(source?.upstream?.allowedSourcePackageNos, [2, 8, 9, 10]) ||
+    source?.upstream?.upstreamWriteBackAllowed !== false ||
+    !arraysContainAll(source?.upstream?.requiredReadonlyInputs, expectedInputs)) {
+    failures.push("dormitory scenario 11 upstream must be readonly scenario 2/8/9/10 summary handoff only.");
+  }
+  if (!String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("场景包 2") ||
+    !String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("finance-gate") ||
+    !arraysContainAll(source?.downstream?.forbiddenOutputsZh, ["RoomOperationStatus=可运营", "Reservation", "Stay", "Payment", "Refund", "LedgerEntry", "LedgerTransaction", "已可运营", "已可预订", "已入账", "已退款"])) {
+    failures.push("dormitory scenario 11 downstream must route operational truth to scenario 2, expense truth to finance-gate, and forbid forbidden outputs.");
+  }
+
+  if (!arraysEqual((source?.objects ?? []).map((item) => item.objectName), expectedObjects)) {
+    failures.push("dormitory scenario 11 Source must define the required work, assignment, completion, verification, recommendation, expense intent, evidence and history objects.");
+  }
+  if (!arraysEqual(source?.workStatusOptions, expectedStatuses)) {
+    failures.push("dormitory scenario 11 Source must keep the required work status options.");
+  }
+  if (!arraysEqual((source?.steps ?? []).map((step) => step.nameZh), expectedSteps)) {
+    failures.push("dormitory scenario 11 Source must keep seven business action steps in order.");
+  }
+  if (!arraysContainAll(source?.fields?.forbiddenUserInputFields, forbiddenUserInput)) {
+    failures.push("dormitory scenario 11 field boundary must forbid ordinary users from entering internal IDs.");
+  }
+  if (!arraysEqual((source?.commands ?? []).map((item) => item.commandId), expectedCommands)) {
+    failures.push("dormitory scenario 11 Source must define exactly the housekeeping/maintenance/out-of-service commands.");
+  }
+  const failureCodes = (source?.failureSemantics ?? []).map((item) => item.failureCode);
+  if (!arraysEqual(failureCodes, expectedFailureCodes) ||
+    !(source?.failureSemantics ?? []).every((item) => item.sideEffectsAllowed === false)) {
+    failures.push("dormitory scenario 11 failure semantics must cover required failures and forbid side effects.");
+  }
+  const invariantRule = source?.housekeepingMaintenanceInvariantRule ?? {};
+  for (const key of ["legalSourceRequired", "sourceSummaryRequired", "resourceScopeRequired", "operationStatusOwnedByScenario2", "completionEvidenceRequired", "verificationAuthorizedRequired", "completionRequiredBeforeVerification", "failedVerificationCreatesReworkOrException", "unresolvedMaintenanceBlocksRecoveryRecommendation", "expenseIntentOnly", "financeGateHandlesExpenseTruth", "failureNoSideEffects", "querySearchListBoardReportReadonly"]) {
+    if (invariantRule[key] !== true) {
+      failures.push(`scenario 11 invariant rule must keep ${key}=true.`);
+    }
+  }
+  const invariantText = JSON.stringify(source?.invariants ?? []);
+  if (!invariantText.includes("合法来源") ||
+    !invariantText.includes("不得建议恢复") ||
+    !invariantText.includes("不得直接改为可运营") ||
+    !invariantText.includes("finance-gate") ||
+    !invariantText.includes("不得刷新错误 Projection") ||
+    !invariantText.includes("查询、搜索、列表、看板、报表永远只读")) {
+    failures.push("dormitory scenario 11 invariants must keep legal-source/recovery/operation/finance/no-side-effect/readonly guards.");
+  }
+  if (source?.runtimeConsumptionBoundary?.runtimeMayReadGeneratedOnly !== true ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteOperationStatus !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteReservation !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteStay !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWritePaymentRefund !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteLedger !== false ||
+    source?.runtimeConsumptionBoundary?.financeGateMayConsumeExpenseIntentOnly !== true ||
+    source?.runtimeConsumptionBoundary?.scenario2MayConsumeRecommendationOnly !== true ||
+    source?.runtimeConsumptionBoundary?.successMayWriteWorkFactsAndRequestsOnly !== true) {
+    failures.push("dormitory scenario 11 runtime boundary must enforce generated-only consumption and work/request-only success writes.");
+  }
+  if (source?.NO_GO?.productionConfirmAllowed !== false ||
+    source?.NO_GO?.businessGoLiveAllowed !== false ||
+    source?.NO_GO?.releaseAuthority !== false ||
+    source?.NO_GO?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory scenario 11 Source NO_GO must keep production/business/release/final approval disabled.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult],
+    ["positive browser", positiveBrowserResult],
+    ["negative browser", negativeBrowserResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory scenario 11 ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 11 ${label} result must keep production/release/final approval disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory scenario 11 evidence must expose a sha256 Source digest.");
+  }
+  if (!sha256DigestPattern.test(packageIndexDigest ?? "")) {
+    failures.push("dormitory scenario 11 evidence must expose a sha256 package index digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryScenario11GeneratedFiles.length) {
+    failures.push("dormitory scenario 11 generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryScenario11GeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory scenario 11 generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory scenario 11 generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.packageIndexContentDigest !== packageIndexDigest) {
+      failures.push(`dormitory scenario 11 generated file package index digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 11 generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory scenario 11 generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of ["canonical", "runtimeRules", "surfaceNavigation", "handoff", "financeGate", "mobileMirror", "runtimeMirror"]) {
+    if (!dormitoryScenario11GeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory scenario 11 consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+  const runtimeRulesText = documents.get("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs") || "";
+  const operationsRuntimeText = documents.get("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs") || "";
+  const runtimeTestsText = documents.get("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs") || "";
+  if (!runtimeRulesText.includes("DormitoryScenario11HousekeepingMaintenanceOutOfService.generated.json") ||
+    !runtimeRulesText.includes("Scenario11HousekeepingMaintenanceOutOfServiceRuntimeAdapter")) {
+    failures.push("scenario 11 runtime must consume the generated runtime mirror through Scenario11HousekeepingMaintenanceOutOfServiceRuntimeAdapter.");
+  }
+  if (!operationsRuntimeText.includes("[\"refreshProjection\"] = false")) {
+    failures.push("scenario 11 generated rule rejection must not refresh Projection on failure.");
+  }
+  for (const command of expectedCommands) {
+    if (!runtimeTestsText.includes(command)) {
+      failures.push(`scenario 11 runtime tests must cover command ${command}.`);
+    }
+  }
+
+  if (positiveBrowserReport?.status !== "passed" ||
+    positiveBrowserResult?.positiveBrowserAuditDigest !== positiveBrowserReport?.positiveBrowserAuditDigest ||
+    !sha256DigestPattern.test(positiveBrowserReport?.positiveBrowserAuditDigest ?? "") ||
+    (positiveBrowserReport?.screenshots?.length ?? 0) !== 13 ||
+    (positiveScreenshotIndex?.screenshots?.length ?? 0) !== 13) {
+    failures.push("scenario 11 positive browser report, result and screenshot index must be PASS and contain 13 screenshots.");
+  }
+  if (negativeBrowserReport?.status !== "passed" ||
+    negativeBrowserResult?.negativeBrowserAuditDigest !== negativeBrowserReport?.negativeBrowserAuditDigest ||
+    !sha256DigestPattern.test(negativeBrowserReport?.negativeBrowserAuditDigest ?? "") ||
+    (negativeBrowserReport?.screenshots?.length ?? 0) !== 12 ||
+    (negativeScreenshotIndex?.screenshots?.length ?? 0) !== 12) {
+    failures.push("scenario 11 negative browser report, result and screenshot index must be PASS and contain 12 screenshots.");
+  }
+  if (!JSON.stringify(positiveBrowserReport ?? {}).includes("房务、维修与停售协同") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("301 房间退房后保洁待验收") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("301-02 床位维修中，预计 18:00 完成") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("finance-gate") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("场景包 2 重新确认运营状态") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("搜索结果只读跳转") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("我的只放草稿")) {
+    failures.push("scenario 11 positive browser report must prove naming, readable resources, finance-gate handoff, scenario 2 recheck, readonly search and Mine duties.");
+  }
+  if (!JSON.stringify(negativeBrowserReport ?? {}).includes("未写入任何业务结果") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("搜索结果只读") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("finance-gate") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("场景包 2") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("返工")) {
+    failures.push("scenario 11 negative browser report must prove no side effects, readonly search, finance-gate handoff, scenario 2 operation boundary and rework route.");
+  }
+  for (const report of [positiveBrowserReport, negativeBrowserReport]) {
+    const visibleText = (report?.screenshots ?? []).map((shot) => shot.visibleText ?? "").join("\n");
+    for (const forbidden of [...forbiddenUserInput, "已可预订", "已可运营", "已入账", "已退款", "生产发布", "业务上线", "final GO", "service-task", "maintenance", "resource-saleability", "RoomInspectionConfirm"]) {
+      if (visibleText.includes(forbidden)) {
+        failures.push(`scenario 11 browser screenshots must not expose forbidden visible term: ${forbidden}`);
+      }
+    }
+  }
+  const browserSummary = graph.realBrowserEvidence?.scenario11;
+  if (browserSummary?.positive?.status !== "passed" ||
+    browserSummary?.negative?.status !== "passed" ||
+    browserSummary?.productionConfirmAllowed !== false ||
+    browserSummary?.finalGoNoGo !== "NO_GO") {
+    failures.push("evidence graph must include passed scenario 11 positive/negative browser evidence with NO_GO closed.");
+  }
+  for (const gate of ["DORMITORY-SCENARIO11-POSITIVE-BROWSER", "DORMITORY-SCENARIO11-NEGATIVE-BROWSER"]) {
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (!node) {
+      failures.push(`evidence graph missing node for ${gate}.`);
+    } else {
+      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+      if (node.businessGoAllowed !== false) failures.push(`${gate} must keep businessGoAllowed=false.`);
+    }
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory scenario 11 evidence closes.");
+  }
+}
+
+function checkDormitoryScenario12Evidence(graph, finalReport, documents) {
+  const packageIndex = documents.get(lodgingScenarioPackageIndexPath);
+  const source = documents.get(dormitoryScenario12SourcePath);
+  const authorityResult = documents.get(dormitoryScenario12ResultFiles[0]);
+  const generatedResult = documents.get(dormitoryScenario12ResultFiles[1]);
+  const consumptionResult = documents.get(dormitoryScenario12ResultFiles[2]);
+  const positiveBrowserResult = documents.get(dormitoryScenario12ResultFiles[3]);
+  const negativeBrowserResult = documents.get(dormitoryScenario12ResultFiles[4]);
+  const positiveBrowserReport = documents.get(dormitoryScenario12BrowserEvidenceFiles[0]);
+  const positiveScreenshotIndex = documents.get(dormitoryScenario12BrowserEvidenceFiles[1]);
+  const negativeBrowserReport = documents.get(dormitoryScenario12BrowserEvidenceFiles[2]);
+  const negativeScreenshotIndex = documents.get(dormitoryScenario12BrowserEvidenceFiles[3]);
+  const sourceDigest = authorityResult?.scenarioDigest ?? generatedResult?.scenarioDigest ?? consumptionResult?.scenarioDigest;
+  const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
+  const expectedInputs = [
+    "房间/床位运营状态摘要",
+    "运营阻断摘要",
+    "商品摘要",
+    "价格方案摘要",
+    "价格版本摘要",
+    "适用日期",
+    "证据摘要",
+    "只读对象引用"
+  ];
+  const expectedOutputs = [
+    "渠道摘要",
+    "企业客户摘要",
+    "协议摘要",
+    "适用商品/价格资格摘要",
+    "渠道发布规则摘要",
+    "佣金/结算规则意向",
+    "证据摘要",
+    "只读对象引用"
+  ];
+  const expectedObjects = [
+    "ChannelPartner",
+    "ChannelAccount",
+    "CorporateAccount",
+    "CorporateCustomer",
+    "CorporateAgreement",
+    "AgreementEligibility",
+    "ChannelEligibility",
+    "CorporateEligibility",
+    "ChannelProductMapping",
+    "ChannelPublicationRule",
+    "ChannelPublicationStatus",
+    "CommissionRuleIntent",
+    "SettlementRuleIntent",
+    "ChannelContact",
+    "CorporateContact",
+    "ContactPerson",
+    "ContractEvidence",
+    "StatusHistory",
+    "ChannelStatusHistory"
+  ];
+  const expectedStatuses = [
+    "渠道草稿",
+    "待审核",
+    "已启用",
+    "已暂停",
+    "已停用",
+    "企业客户草稿",
+    "协议待审核",
+    "协议已生效",
+    "协议已过期",
+    "协议已停用",
+    "发布待检查",
+    "发布已启用",
+    "发布已暂停",
+    "财务规则待确认"
+  ];
+  const expectedSteps = [
+    "建立渠道或企业客户档案",
+    "维护合作协议",
+    "绑定商品与适用资格",
+    "配置渠道发布规则",
+    "配置佣金与结算规则意向",
+    "审核启用",
+    "日常维护"
+  ];
+  const expectedCommands = [
+    "Dorm.ChannelCorporateProfileDraftStart",
+    "Dorm.ChannelPartnerProfileCreate",
+    "Dorm.CorporateCustomerProfileCreate",
+    "Dorm.CorporateAgreementDraftSubmit",
+    "Dorm.CorporateAgreementApproveActivate",
+    "Dorm.ChannelProductEligibilityBind",
+    "Dorm.ChannelPublicationRuleConfigure",
+    "Dorm.ChannelPublicationEnable",
+    "Dorm.CommissionSettlementIntentSubmit",
+    "Dorm.ChannelCorporateAuditDecision",
+    "Dorm.ChannelPause",
+    "Dorm.ChannelDisable",
+    "Dorm.CorporateAgreementRenew",
+    "Dorm.ChannelCorporateDailyMaintenance",
+    "Dorm.ChannelCorporateEvidenceSupplement",
+    "Dorm.ChannelCorporateCorrectionRequest"
+  ];
+  const expectedFailureCodes = [
+    "missing_required_business_profile",
+    "missing_key_evidence",
+    "invalid_agreement_date_range",
+    "agreement_approval_required",
+    "expired_agreement_forbidden",
+    "inactive_product_price_forbidden",
+    "missing_effective_price",
+    "operation_blocked_publication_forbidden",
+    "direct_rateplan_truth_write_forbidden",
+    "direct_quote_reservation_forbidden",
+    "direct_inventory_hold_forbidden",
+    "direct_finance_ledger_forbidden",
+    "forged_internal_reference",
+    "readonly_result_write_attempt",
+    "duplicate_channel_submission",
+    "concurrent_channel_conflict",
+    "unauthorized_channel_action",
+    "confirmed_agreement_inline_edit_forbidden",
+    "commission_settlement_evidence_required",
+    "channel_publish_requires_valid_eligibility"
+  ];
+  const forbiddenUserInput = [
+    "channelId",
+    "corporateAccountId",
+    "agreementId",
+    "productId",
+    "priceVersionId",
+    "ratePlanId",
+    "quoteId",
+    "reservationId",
+    "inventoryHoldId",
+    "paymentId",
+    "refundId",
+    "ledgerEntryId",
+    "ledgerTransactionId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId"
+  ];
+
+  for (const file of dormitoryScenario12EvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory scenario 12 evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory scenario 12 evidence file: ${file}`);
+    }
+  }
+
+  const package12 = (packageIndex?.scenarioPackageOrder ?? []).find((item) => item.packageNo === 12);
+  if (package12?.nameZh !== "渠道与企业客户" ||
+    package12?.scenarioId !== "lodging.channel-corporate-customer") {
+    failures.push("lodging scenario package index must keep scenario 12 as 渠道与企业客户.");
+  }
+  if (!arraysEqual(package12?.upstreamPackages, [2, 3])) {
+    failures.push("scenario 12 package index must consume packages 2/3.");
+  }
+  if (!arraysContainAll(package12?.handoffInputs, expectedInputs) ||
+    !arraysContainAll(package12?.handoffOutputs, expectedOutputs)) {
+    failures.push("scenario 12 package index must consume upstream summaries and output channel/corporate/agreement/eligibility/intent summaries only.");
+  }
+  if (!arraysContainAll(package12?.mustNotOutputZh, ["RatePlan 金额真值", "Quote", "Reservation", "InventoryHold", "Payment", "Refund", "LedgerEntry", "LedgerTransaction", "已报价", "已预订", "已收款", "已入账"])) {
+    failures.push("scenario 12 package index must forbid price truth, quote, reservation, inventory hold, finance truth and ledger outputs.");
+  }
+
+  if (source?.authorityId !== "Dormitory.Scenario12.ChannelCorporateCustomer" ||
+    source?.scenarioPackageNo !== 12 ||
+    source?.nameZh !== "渠道与企业客户" ||
+    source?.status !== "authoritative") {
+    failures.push("dormitory scenario 12 Source Authority identity must remain 渠道与企业客户.");
+  }
+  if (source?.highestAuthorityRef !== dormitory13ScenarioSourcePath ||
+    source?.methodBenchmarkRef !== dormitoryBenchmarkInheritanceSourcePath) {
+    failures.push("dormitory scenario 12 Source must reference 13 scenario control as highest authority and scenario 1 benchmark as method contract.");
+  }
+  if (!arraysEqual(source?.upstream?.allowedSourcePackageNos, [2, 3]) ||
+    source?.upstream?.upstreamWriteBackAllowed !== false ||
+    !arraysContainAll(source?.upstream?.requiredReadonlyInputs, expectedInputs)) {
+    failures.push("dormitory scenario 12 upstream must be readonly scenario 2/3 summary handoff only.");
+  }
+  if (!String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("场景包 4") ||
+    !String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("场景包 5") ||
+    !String(source?.downstream?.downstreamRecheckRuleZh ?? "").includes("finance-gate") ||
+    !arraysContainAll(source?.downstream?.forbiddenOutputsZh, ["RatePlan 金额真值", "Quote", "Reservation", "InventoryHold", "Payment", "Refund", "LedgerEntry", "LedgerTransaction", "已报价", "已预订", "已收款", "已入账"])) {
+    failures.push("dormitory scenario 12 downstream must route quote truth to scenario 4, reservation/inventory truth to scenario 5, commission/settlement truth to finance-gate, and forbid forbidden outputs.");
+  }
+
+  if (!arraysEqual((source?.objects ?? []).map((item) => item.objectName), expectedObjects)) {
+    failures.push("dormitory scenario 12 Source must define the required channel, corporate, agreement, eligibility, publication, intent, evidence and history objects.");
+  }
+  if (!arraysEqual(source?.channelCorporateStatusOptions, expectedStatuses)) {
+    failures.push("dormitory scenario 12 Source must keep the required channel/corporate status options.");
+  }
+  if (!arraysEqual((source?.steps ?? []).map((step) => step.nameZh), expectedSteps)) {
+    failures.push("dormitory scenario 12 Source must keep seven business action steps in order.");
+  }
+  if (!arraysContainAll(source?.fields?.forbiddenUserInputFields, forbiddenUserInput)) {
+    failures.push("dormitory scenario 12 field boundary must forbid ordinary users from entering internal IDs.");
+  }
+  if (!arraysEqual((source?.commands ?? []).map((item) => item.commandId), expectedCommands)) {
+    failures.push("dormitory scenario 12 Source must define exactly the channel/corporate commands.");
+  }
+  const failureCodes = (source?.failureSemantics ?? []).map((item) => item.failureCode);
+  if (!arraysEqual(failureCodes, expectedFailureCodes) ||
+    !(source?.failureSemantics ?? []).every((item) => item.sideEffectsAllowed === false)) {
+    failures.push("dormitory scenario 12 failure semantics must cover required failures and forbid side effects.");
+  }
+  const invariantRule = source?.channelCorporateInvariantRule ?? {};
+  for (const key of ["businessProfileRequired", "keyEvidenceRequiredBeforeEnable", "agreementDateRangeValid", "agreementApprovalRequiredBeforeEffective", "expiredAgreementCannotBeEligible", "productPriceReferenceFromScenario3Only", "effectivePriceRequiredForPublication", "operationBlockPreventsPublication", "channelPublicationDoesNotLockInventory", "quoteOwnedByScenario4", "reservationInventoryOwnedByScenario5", "financeGateHandlesCommissionSettlementTruth", "appendOnlyVersionHistory", "failureNoSideEffects", "querySearchListBoardReportReadonly"]) {
+    if (invariantRule[key] !== true) {
+      failures.push(`scenario 12 invariant rule must keep ${key}=true.`);
+    }
+  }
+  const invariantText = JSON.stringify(source?.invariants ?? []);
+  if (!invariantText.includes("场景包 3") ||
+    !invariantText.includes("场景包 4") ||
+    !invariantText.includes("场景包 5") ||
+    !invariantText.includes("finance-gate") ||
+    !invariantText.includes("不得刷新错误 Projection") ||
+    !invariantText.includes("查询、搜索、列表、看板、报表永远只读")) {
+    failures.push("dormitory scenario 12 invariants must keep scenario 3/4/5/finance-gate/no-side-effect/readonly guards.");
+  }
+  if (source?.runtimeConsumptionBoundary?.runtimeMayReadGeneratedOnly !== true ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteRatePlanTruth !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteQuote !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteReservation !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteInventoryHold !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWritePaymentRefund !== false ||
+    source?.runtimeConsumptionBoundary?.businessRuntimeMayWriteLedger !== false ||
+    source?.runtimeConsumptionBoundary?.financeGateMayConsumeCommissionSettlementIntentOnly !== true ||
+    source?.runtimeConsumptionBoundary?.scenario4MayConsumeEligibilityOnly !== true ||
+    source?.runtimeConsumptionBoundary?.scenario5MayConsumeEligibilityOnly !== true ||
+    source?.runtimeConsumptionBoundary?.successMayWriteChannelCorporateFactsAndIntentsOnly !== true) {
+    failures.push("dormitory scenario 12 runtime boundary must enforce generated-only consumption and channel/corporate fact/intent-only success writes.");
+  }
+  if (source?.NO_GO?.productionConfirmAllowed !== false ||
+    source?.NO_GO?.businessGoLiveAllowed !== false ||
+    source?.NO_GO?.releaseAuthority !== false ||
+    source?.NO_GO?.finalGoNoGo !== "NO_GO") {
+    failures.push("dormitory scenario 12 Source NO_GO must keep production/business/release/final approval disabled.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult],
+    ["positive browser", positiveBrowserResult],
+    ["negative browser", negativeBrowserResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory scenario 12 ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 12 ${label} result must keep production/release/final approval disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory scenario 12 evidence must expose a sha256 Source digest.");
+  }
+  if (!sha256DigestPattern.test(packageIndexDigest ?? "")) {
+    failures.push("dormitory scenario 12 evidence must expose a sha256 package index digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryScenario12GeneratedFiles.length) {
+    failures.push("dormitory scenario 12 generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryScenario12GeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory scenario 12 generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory scenario 12 generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.packageIndexContentDigest !== packageIndexDigest) {
+      failures.push(`dormitory scenario 12 generated file package index digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 12 generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory scenario 12 generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of ["canonical", "runtimeRules", "surfaceNavigation", "handoff", "financeGate", "mobileMirror", "runtimeMirror"]) {
+    if (!dormitoryScenario12GeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory scenario 12 consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+  const runtimeRulesText = documents.get("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs") || "";
+  const operationsRuntimeText = documents.get("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs") || "";
+  const runtimeTestsText = documents.get("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs") || "";
+  if (!runtimeRulesText.includes("DormitoryScenario12ChannelCorporateCustomer.generated.json") ||
+    !runtimeRulesText.includes("Scenario12ChannelCorporateCustomerRuntimeAdapter")) {
+    failures.push("scenario 12 runtime must consume the generated runtime mirror through Scenario12ChannelCorporateCustomerRuntimeAdapter.");
+  }
+  if (!operationsRuntimeText.includes("[\"refreshProjection\"] = false")) {
+    failures.push("scenario 12 generated rule rejection must not refresh Projection on failure.");
+  }
+  for (const command of expectedCommands) {
+    if (!runtimeTestsText.includes(command)) {
+      failures.push(`scenario 12 runtime tests must cover command ${command}.`);
+    }
+  }
+
+  if (positiveBrowserReport?.status !== "passed" ||
+    positiveBrowserResult?.positiveBrowserAuditDigest !== positiveBrowserReport?.positiveBrowserAuditDigest ||
+    !sha256DigestPattern.test(positiveBrowserReport?.positiveBrowserAuditDigest ?? "") ||
+    (positiveBrowserReport?.screenshots?.length ?? 0) !== 12 ||
+    (positiveScreenshotIndex?.screenshots?.length ?? 0) !== 12) {
+    failures.push("scenario 12 positive browser report, result and screenshot index must be PASS and contain 12 screenshots.");
+  }
+  if (negativeBrowserReport?.status !== "passed" ||
+    negativeBrowserResult?.negativeBrowserAuditDigest !== negativeBrowserReport?.negativeBrowserAuditDigest ||
+    !sha256DigestPattern.test(negativeBrowserReport?.negativeBrowserAuditDigest ?? "") ||
+    (negativeBrowserReport?.screenshots?.length ?? 0) !== 13 ||
+    (negativeScreenshotIndex?.screenshots?.length ?? 0) !== 13) {
+    failures.push("scenario 12 negative browser report, result and screenshot index must be PASS and contain 13 screenshots.");
+  }
+  if (!JSON.stringify(positiveBrowserReport ?? {}).includes("渠道与企业客户") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("某某公司协议客户，有效至 2026-12-31") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("携程渠道，已启用，适用 301 整房按晚价") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("finance-gate") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("场景包 4 重新生成报价资格") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("场景包 5 重新做预订渠道/企业资格校验") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("搜索结果只读跳转") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("我的只放草稿")) {
+    failures.push("scenario 12 positive browser report must prove naming, readable channel/corporate summaries, finance-gate handoff, scenario 4/5 recheck, readonly search and Mine duties.");
+  }
+  if (!JSON.stringify(negativeBrowserReport ?? {}).includes("未写入任何业务结果") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("搜索结果只读") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("finance-gate") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("场景包 4") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("场景包 5")) {
+    failures.push("scenario 12 negative browser report must prove no side effects, readonly search, finance-gate handoff, scenario 4 quote boundary and scenario 5 reservation/inventory boundary.");
+  }
+  for (const report of [positiveBrowserReport, negativeBrowserReport]) {
+    const visibleText = (report?.screenshots ?? []).map((shot) => shot.visibleText ?? "").join("\n");
+    for (const forbidden of [...forbiddenUserInput, "已报价", "已预订", "已收款", "已入账", "生产发布", "业务上线", "final GO", "lead-reservation", "RatePlan", "PaymentConfirm", "channel/OTA 临时字段"]) {
+      if (visibleText.includes(forbidden)) {
+        failures.push(`scenario 12 browser screenshots must not expose forbidden visible term: ${forbidden}`);
+      }
+    }
+  }
+  const browserSummary = graph.realBrowserEvidence?.scenario12;
+  if (browserSummary?.positive?.status !== "passed" ||
+    browserSummary?.negative?.status !== "passed" ||
+    browserSummary?.productionConfirmAllowed !== false ||
+    browserSummary?.finalGoNoGo !== "NO_GO") {
+    failures.push("evidence graph must include passed scenario 12 positive/negative browser evidence with NO_GO closed.");
+  }
+  for (const gate of ["DORMITORY-SCENARIO12-POSITIVE-BROWSER", "DORMITORY-SCENARIO12-NEGATIVE-BROWSER"]) {
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (!node) {
+      failures.push(`evidence graph missing node for ${gate}.`);
+    } else {
+      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+      if (node.businessGoAllowed !== false) failures.push(`${gate} must keep businessGoAllowed=false.`);
+    }
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory scenario 12 evidence closes.");
+  }
+}
+
+function checkDormitoryScenario13Evidence(graph, finalReport, documents) {
+  const packageIndex = documents.get(lodgingScenarioPackageIndexPath);
+  const source = documents.get(dormitoryScenario13SourcePath);
+  const authorityResult = documents.get(dormitoryScenario13ResultFiles[0]);
+  const generatedResult = documents.get(dormitoryScenario13ResultFiles[1]);
+  const consumptionResult = documents.get(dormitoryScenario13ResultFiles[2]);
+  const positiveBrowserResult = documents.get(dormitoryScenario13ResultFiles[3]);
+  const negativeBrowserResult = documents.get(dormitoryScenario13ResultFiles[4]);
+  const positiveBrowserReport = documents.get(dormitoryScenario13BrowserEvidenceFiles[0]);
+  const positiveScreenshotIndex = documents.get(dormitoryScenario13BrowserEvidenceFiles[1]);
+  const negativeBrowserReport = documents.get(dormitoryScenario13BrowserEvidenceFiles[2]);
+  const negativeScreenshotIndex = documents.get(dormitoryScenario13BrowserEvidenceFiles[3]);
+  const canonical = documents.get("docs/contracts/generated/dormitory/scenario13-reporting-audit-review.generated.json");
+  const metricModel = documents.get("docs/contracts/generated/dormitory/scenario13-metric-model.generated.json");
+  const stepsFields = documents.get("docs/contracts/generated/dormitory/scenario13-steps-fields.generated.json");
+  const runtimeRules = documents.get("docs/contracts/generated/dormitory/scenario13-runtime-rules.generated.json");
+  const handoff = documents.get("docs/contracts/generated/dormitory/scenario13-handoff.generated.json");
+  const readModel = documents.get("docs/contracts/generated/read-model/scenario13-reporting-read-model.generated.json");
+  const financeGate = documents.get("docs/contracts/generated/finance/scenario13-finance-gate-readonly.generated.json");
+  const sourceDigest = authorityResult?.scenarioDigest ?? authorityResult?.authorityDigest ?? generatedResult?.sourceDigest ?? consumptionResult?.scenarioDigest;
+  const packageIndexDigest = authorityResult?.packageIndexDigest ?? generatedResult?.packageIndexDigest ?? consumptionResult?.packageIndexDigest;
+  const expectedCommands = [
+    "Dorm.ReportScopeSelect",
+    "Dorm.ReportDataQualityCheck",
+    "Dorm.BusinessReportSnapshotGenerate",
+    "Dorm.FinanceReviewSnapshotGenerate",
+    "Dorm.AuditFindingCreate",
+    "Dorm.ReviewConclusionActionPlanCreate",
+    "Dorm.ActionPlanCreate",
+    "Dorm.IssueTrackingItemCreate",
+    "Dorm.ReportPublish",
+    "Dorm.ReportExportRecordCreate",
+    "Dorm.ReportArchive"
+  ];
+  const forbiddenUserInput = stepsFields?.fields?.forbiddenUserInputFields ?? [];
+
+  for (const file of dormitoryScenario13EvidenceFiles) {
+    if (!requiredFiles.includes(file)) {
+      failures.push(`dormitory scenario 13 evidence file missing from checker requiredFiles: ${file}`);
+    }
+    if (!graph.requiredFiles?.includes(file)) {
+      failures.push(`evidence graph missing dormitory scenario 13 evidence file: ${file}`);
+    }
+  }
+
+  const packageRow = (packageIndex?.scenarioPackageOrder ?? []).find((row) => row.packageNo === 13);
+  if (packageRow?.nameZh !== "经营报表、审计与复盘" ||
+    packageRow?.scenarioId !== "lodging.reporting-audit-review") {
+    failures.push("lodging scenario package index must keep scenario 13 as 经营报表、审计与复盘.");
+  }
+  if (JSON.stringify(packageRow?.upstreamPackages ?? []) !== JSON.stringify([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) ||
+    !JSON.stringify(packageRow?.handoffInputs ?? []).includes("finance-gate 已确认账务事实")) {
+    failures.push("scenario 13 package index must read packages 1-12 and finance-gate confirmed facts as readonly inputs.");
+  }
+  for (const output of ["报表快照", "指标快照", "财务核对视图", "审计发现", "复盘结论", "行动计划", "问题追踪", "导出记录", "证据摘要", "只读对象引用"]) {
+    if (!(packageRow?.handoffOutputs ?? []).includes(output)) failures.push(`scenario 13 package index missing handoff output: ${output}`);
+  }
+  for (const forbidden of ["Room", "Bed", "OperationStatus", "RatePlan", "Quote", "Reservation", "Stay", "Payment", "Deposit", "Refund", "LedgerEntry", "LedgerTransaction", "已修复原事实", "已入账", "已上线", "final GO"]) {
+    if (!(packageRow?.mustNotOutputZh ?? []).includes(forbidden)) failures.push(`scenario 13 package index must forbid output: ${forbidden}`);
+  }
+
+  if (source?.authorityId !== "Dormitory.Scenario13.ReportingAuditReview" ||
+    source?.nameZh !== "经营报表、审计与复盘" ||
+    source?.scenarioPackageNo !== 13) {
+    failures.push("dormitory scenario 13 Source Authority identity must remain 经营报表、审计与复盘.");
+  }
+  if (!JSON.stringify(source?.upstream ?? {}).includes("场景包 1-12 已确认事实摘要") ||
+    !JSON.stringify(source?.upstream ?? {}).includes("finance-gate 已确认账务事实") ||
+    source?.upstream?.upstreamWriteBackAllowed !== false) {
+    failures.push("dormitory scenario 13 upstream must be readonly packages 1-12 and finance-gate facts.");
+  }
+  if (!JSON.stringify(source?.downstream ?? {}).includes("对应场景包") ||
+    !JSON.stringify(source?.downstream ?? {}).includes("finance-gate")) {
+    failures.push("dormitory scenario 13 downstream must route action plans back to responsible scenario packages or finance-gate.");
+  }
+  const sourceObjectNames = (source?.objects ?? []).map((object) => object.objectName ?? object);
+  for (const objectName of ["ReportPeriod", "ReportScope", "MetricDefinition", "MetricSnapshot", "ReportSnapshot", "AuditFinding", "EvidenceReviewRecord", "ReviewMeetingRecord", "ReviewConclusion", "ActionPlan", "IssueTrackingItem", "ReportExportRecord", "ReportStatusTimeline", "StatusTimeline"]) {
+    if (!sourceObjectNames.includes(objectName)) failures.push(`dormitory scenario 13 Source must define object ${objectName}.`);
+  }
+  if ((source?.steps ?? []).length !== 7) failures.push("dormitory scenario 13 Source must keep seven business action steps in order.");
+  for (const command of expectedCommands) {
+    if (!JSON.stringify(source?.commands ?? []).includes(command)) failures.push(`dormitory scenario 13 Source must expose command ${command}.`);
+  }
+  for (const key of ["reportDashboardSearchExportReadonly", "permissionRequiredForFormalReport", "lineageRequiredForFormalMetric", "freshnessRequiredForPublish", "metricCalculationFromConfirmedFactsOnly", "uiStateMetricCalculationForbidden", "financialMetricsReadFinanceGateOnly", "auditFindingCannotModifySourceFact", "actionPlanRoutesBackOnly", "publishedReportAppendOnlyVersion", "failureNoSideEffects", "querySearchListBoardReportReadonly"]) {
+    if (runtimeRules?.reportingInvariantRule?.[key] !== true) failures.push(`scenario 13 runtime invariant ${key} must be true.`);
+  }
+  if ((metricModel?.metricCatalog ?? []).length < 15 ||
+    metricModel?.metricDefinitionRule?.mustHavePermissionEnvelope !== true ||
+    metricModel?.metricDefinitionRule?.mustHaveLineageEnvelope !== true ||
+    metricModel?.metricDefinitionRule?.mustHaveFreshnessEnvelope !== true ||
+    metricModel?.metricDefinitionRule?.financialMetricsReadFinanceGateOnly !== true) {
+    failures.push("scenario 13 metric model must keep catalog, permission, lineage, freshness and finance-gate-only financial metrics.");
+  }
+  for (const metricKey of ["recognized_revenue", "deposit_balance", "refund_request_count"]) {
+    const metric = (metricModel?.metricCatalog ?? []).find((item) => item.metricKey === metricKey);
+    if (!metric || metric.financeGateOnly !== true) failures.push(`scenario 13 financial metric ${metricKey} must be finance-gate only.`);
+  }
+  if (readModel?.readModelMayReadConfirmedFactsOnly !== true ||
+    readModel?.readModelMayWriteSourceFacts !== false ||
+    !JSON.stringify(readModel?.requiredEnvelopes ?? []).includes("permission envelope") ||
+    !JSON.stringify(readModel?.requiredEnvelopes ?? []).includes("lineage envelope") ||
+    !JSON.stringify(readModel?.requiredEnvelopes ?? []).includes("freshness envelope")) {
+    failures.push("scenario 13 read-model must read confirmed facts only and require permission/lineage/freshness envelopes.");
+  }
+  if (financeGate?.consumer !== "finance-gate" ||
+    financeGate?.financeGateTruthReadonlyOnly !== true ||
+    financeGate?.businessRuntimeMayWriteLedger !== false ||
+    financeGate?.businessRuntimeMayWritePaymentDepositRefund !== false ||
+    financeGate?.financialMetricsReadFinanceGateOnly !== true) {
+    failures.push("scenario 13 finance-gate contract must be readonly and forbid business runtime finance truth writes.");
+  }
+
+  for (const [label, result] of [
+    ["authority", authorityResult],
+    ["generated contracts", generatedResult],
+    ["consumption boundary", consumptionResult],
+    ["positive browser", positiveBrowserResult],
+    ["negative browser", negativeBrowserResult]
+  ]) {
+    if (result?.status !== "PASS") {
+      failures.push(`dormitory scenario 13 ${label} result must be PASS.`);
+    }
+    if (result?.productionConfirmAllowed !== false ||
+      result?.releaseAuthority !== false ||
+      result?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 13 ${label} result must keep production/release/final approval disabled.`);
+    }
+  }
+
+  if (!sha256DigestPattern.test(sourceDigest ?? "")) {
+    failures.push("dormitory scenario 13 evidence must expose a sha256 Source digest.");
+  }
+  if (!sha256DigestPattern.test(packageIndexDigest ?? "")) {
+    failures.push("dormitory scenario 13 evidence must expose a sha256 package index digest.");
+  }
+  if (generatedResult?.generatedFileCount !== dormitoryScenario13GeneratedFiles.length) {
+    failures.push("dormitory scenario 13 generated contracts result must cover all generated files.");
+  }
+  const generatedResultPaths = new Set((generatedResult?.generatedFiles ?? []).map((entry) => entry.path));
+  for (const file of dormitoryScenario13GeneratedFiles) {
+    const generated = documents.get(file);
+    if (generated?.generated !== true || generated?.doNotEdit !== true) {
+      failures.push(`dormitory scenario 13 generated file must be marked generated/doNotEdit: ${file}`);
+    }
+    if (generated?.sourceContentDigest !== sourceDigest) {
+      failures.push(`dormitory scenario 13 generated file source digest mismatch: ${file}`);
+    }
+    if (generated?.packageIndexContentDigest !== packageIndexDigest) {
+      failures.push(`dormitory scenario 13 generated file package index digest mismatch: ${file}`);
+    }
+    if (generated?.productionConfirmAllowed !== false ||
+      generated?.releaseAuthority !== false ||
+      generated?.finalGoNoGo !== "NO_GO") {
+      failures.push(`dormitory scenario 13 generated file must keep NO_GO safety flags: ${file}`);
+    }
+    if (!generatedResultPaths.has(file)) {
+      failures.push(`dormitory scenario 13 generated result missing generated file: ${file}`);
+    }
+  }
+
+  const generatedPaths = consumptionResult?.generatedPaths ?? {};
+  for (const requiredPath of ["canonical", "runtimeRules", "surfaceNavigation", "handoff", "readModel", "financeGate", "mobileMirror", "runtimeMirror"]) {
+    if (!dormitoryScenario13GeneratedFiles.includes(generatedPaths[requiredPath])) {
+      failures.push(`dormitory scenario 13 consumption boundary missing generated path: ${requiredPath}`);
+    }
+  }
+  const runtimeRulesText = documents.get("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs") || "";
+  const operationsRuntimeText = documents.get("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs") || "";
+  const runtimeTestsText = documents.get("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs") || "";
+  if (!runtimeRulesText.includes("DormitoryScenario13ReportingAuditReview.generated.json") ||
+    !runtimeRulesText.includes("Scenario13ReportingAuditReviewRuntimeAdapter")) {
+    failures.push("scenario 13 runtime must consume the generated runtime mirror through Scenario13ReportingAuditReviewRuntimeAdapter.");
+  }
+  if (!operationsRuntimeText.includes("[\"refreshProjection\"] = false")) {
+    failures.push("scenario 13 generated rule rejection must not refresh Projection on failure.");
+  }
+  for (const command of expectedCommands) {
+    if (!runtimeTestsText.includes(command)) {
+      failures.push(`scenario 13 runtime tests must cover command ${command}.`);
+    }
+  }
+
+  if (positiveBrowserReport?.status !== "passed" ||
+    positiveBrowserResult?.positiveBrowserAuditDigest !== positiveBrowserReport?.positiveBrowserAuditDigest ||
+    !sha256DigestPattern.test(positiveBrowserReport?.positiveBrowserAuditDigest ?? "") ||
+    (positiveBrowserReport?.screenshots?.length ?? 0) !== 11 ||
+    (positiveScreenshotIndex?.screenshots?.length ?? 0) !== 11) {
+    failures.push("scenario 13 positive browser report, result and screenshot index must be PASS and contain 11 screenshots.");
+  }
+  if (negativeBrowserReport?.status !== "passed" ||
+    negativeBrowserResult?.negativeBrowserAuditDigest !== negativeBrowserReport?.negativeBrowserAuditDigest ||
+    !sha256DigestPattern.test(negativeBrowserReport?.negativeBrowserAuditDigest ?? "") ||
+    (negativeBrowserReport?.screenshots?.length ?? 0) !== 11 ||
+    (negativeScreenshotIndex?.screenshots?.length ?? 0) !== 11) {
+    failures.push("scenario 13 negative browser report, result and screenshot index must be PASS and contain 11 screenshots.");
+  }
+  if (!JSON.stringify(positiveBrowserReport ?? {}).includes("经营报表、审计与复盘") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("6 月经营复盘") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("房源、预订、入住、退房、取消、维修、渠道指标") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("finance-gate 确认摘要") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("行动计划回到责任场景包或 finance-gate 处理") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("搜索结果只读跳转") ||
+    !JSON.stringify(positiveBrowserReport ?? {}).includes("我的只放草稿")) {
+    failures.push("scenario 13 positive browser report must prove reporting flow, finance-gate readonly handoff, action-plan routing, readonly search and Mine duties.");
+  }
+  if (!JSON.stringify(negativeBrowserReport ?? {}).includes("未写入任何业务结果") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("搜索结果只读") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("finance-gate") ||
+    !JSON.stringify(negativeBrowserReport ?? {}).includes("责任场景包")) {
+    failures.push("scenario 13 negative browser report must prove no side effects, readonly search, finance-gate handoff, and source-fix routing.");
+  }
+  for (const report of [positiveBrowserReport, negativeBrowserReport]) {
+    const visibleText = (report?.screenshots ?? []).map((shot) => shot.visibleText ?? "").join("\n");
+    for (const forbidden of [...forbiddenUserInput, "已修复原事实", "已入账", "已上线", "生产发布", "业务上线", "final GO", "period-review", "dashboard", "analytics"]) {
+      if (visibleText.includes(forbidden)) {
+        failures.push(`scenario 13 browser screenshots must not expose forbidden visible term: ${forbidden}`);
+      }
+    }
+  }
+  const browserSummary = graph.realBrowserEvidence?.scenario13;
+  if (browserSummary?.positive?.status !== "passed" ||
+    browserSummary?.negative?.status !== "passed" ||
+    browserSummary?.productionConfirmAllowed !== false ||
+    browserSummary?.finalGoNoGo !== "NO_GO") {
+    failures.push("evidence graph must include passed scenario 13 positive/negative browser evidence with NO_GO closed.");
+  }
+  for (const gate of ["DORMITORY-SCENARIO13-POSITIVE-BROWSER", "DORMITORY-SCENARIO13-NEGATIVE-BROWSER"]) {
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (!node) {
+      failures.push(`evidence graph missing node for ${gate}.`);
+    } else {
+      if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+      if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+      if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+      if (node.businessGoAllowed !== false) failures.push(`${gate} must keep businessGoAllowed=false.`);
+    }
+  }
+
+  if (canonical?.nameZh !== "经营报表、审计与复盘" ||
+    !JSON.stringify(handoff?.downstreamRecheckRuleZh ?? "").includes("对应场景包")) {
+    failures.push("scenario 13 generated canonical/handoff must keep reporting audit review identity and route remediation back.");
+  }
+  if (finalReport.finalGoNoGo !== "NO_GO" ||
+    finalReport.releaseAuthority !== false ||
+    finalReport.productionConfirmAllowed !== false) {
+    failures.push("Final Report must remain NO_GO after dormitory scenario 13 evidence closes.");
+  }
+}
+
+function arraysContainAll(actual = [], expected = []) {
+  const values = new Set((actual ?? []).map((item) => String(item)));
+  return (expected ?? []).every((item) => values.has(String(item)));
+}
+
+function arraysEqual(actual = [], expected = []) {
+  const left = actual ?? [];
+  const right = expected ?? [];
+  return left.length === right.length &&
+    left.every((item, index) => String(item) === String(right[index]));
 }
 
 function checkBinding(file, document, expectedDigest) {
@@ -2417,7 +7276,12 @@ function checkBinding(file, document, expectedDigest) {
 function requiresEvidenceBinding(file) {
   if (file === firstGoldenChainCapabilityDigestChainPath ||
     file === firstGoldenChainBrowserAuditReportPath ||
-    file === firstGoldenChainBrowserAuditScreenshotIndexPath) {
+    file === firstGoldenChainBrowserAuditScreenshotIndexPath ||
+    dormitoryScenario2BrowserEvidenceFiles.includes(file) ||
+    dormitoryScenario3BrowserEvidenceFiles.includes(file) ||
+    dormitoryScenario4BrowserEvidenceFiles.includes(file) ||
+    dormitoryScenario5BrowserEvidenceFiles.includes(file) ||
+    dormitoryScenario6BrowserEvidenceFiles.includes(file)) {
     return false;
   }
   return (file.startsWith("artifacts/oam/evidence/") && file !== generatedCompileExecutionProofPath) ||
@@ -2698,8 +7562,19 @@ function checkFirstGoldenChainBrowserReport(report, summary, node) {
   if (JSON.stringify(steps) !== JSON.stringify(expectedSteps)) {
     failures.push(`first golden chain browser report steps must be exactly ${expectedSteps.join(" -> ")}.`);
   }
-  if (!JSON.stringify(report).includes("第一金链内测完成")) {
-    failures.push("first golden chain browser report must prove 第一金链内测完成 is visible.");
+  const reportText = JSON.stringify(report);
+  if (!reportText.includes("房源建档与基础就绪完成")) {
+    failures.push("scenario 1 browser report must prove 房源建档与基础就绪完成 is visible.");
+  }
+  for (const requiredLabel of ["房间建档", "床位组确认", "基础就绪确认", "基础就绪结论", "通过"]) {
+    if (!reportText.includes(requiredLabel)) {
+      failures.push(`scenario 1 browser report must prove ${requiredLabel} is visible.`);
+    }
+  }
+  for (const requiredBoundary of ["不代表可运营", "可报价", "可预订"]) {
+    if (!reportText.includes(requiredBoundary)) {
+      failures.push(`scenario 1 browser report must prove ${requiredBoundary} boundary is visible.`);
+    }
   }
   if (summary.businessGoAllowed !== false || node?.businessGoAllowed !== false) {
     failures.push("first golden chain browser evidence must keep businessGoAllowed=false.");
@@ -2729,10 +7604,10 @@ function checkCapabilityDigestChain(graph, finalReport, releaseObject, docs) {
     failures.push("evidence graph missing capabilityDigestChain.");
     return;
   }
-  for (const [label, chain] of [
-    ["capability digest chain file", digestChainDocument],
-    ["final report", finalReport.capabilityDigestChain],
-    ["release evidence object", releaseObject?.capabilityDigestChain]
+  for (const [label, chain, requiresEvidenceRootDigest] of [
+    ["capability digest chain file", digestChainDocument, false],
+    ["final report", finalReport.capabilityDigestChain, true],
+    ["release evidence object", releaseObject?.capabilityDigestChain, true]
   ]) {
     if (!chain) {
       failures.push(`${label} missing capabilityDigestChain.`);
@@ -2745,10 +7620,14 @@ function checkCapabilityDigestChain(graph, finalReport, releaseObject, docs) {
       "runtimeProjectionDigest",
       "surfaceProjectionDigest",
       "searchProjectionDigest",
+      "environmentProfileDigest",
+      "positiveBrowserAuditDigest",
+      "negativeBrowserAuditDigest",
+      "noSideEffectsProofDigest",
+      "subjectChainDigest",
       "testPlanDigest",
       "browserAuditDigest",
       "dbProjectionProofDigest",
-      "evidenceRootDigest",
       "productionConfirmAllowed",
       "releaseAuthority",
       "finalGoNoGo"
@@ -2756,6 +7635,9 @@ function checkCapabilityDigestChain(graph, finalReport, releaseObject, docs) {
       if (chain[field] !== graphChain[field]) {
         failures.push(`${label} capabilityDigestChain.${field} must match evidence graph.`);
       }
+    }
+    if (requiresEvidenceRootDigest && chain.evidenceRootDigest !== graphChain.evidenceRootDigest) {
+      failures.push(`${label} capabilityDigestChain.evidenceRootDigest must match evidence graph.`);
     }
   }
   if (graphChain.capabilityId !== "Dormitory.FirstGoldenChain") {
@@ -2767,6 +7649,11 @@ function checkCapabilityDigestChain(graph, finalReport, releaseObject, docs) {
     "runtimeProjectionDigest",
     "surfaceProjectionDigest",
     "searchProjectionDigest",
+    "environmentProfileDigest",
+    "positiveBrowserAuditDigest",
+    "negativeBrowserAuditDigest",
+    "noSideEffectsProofDigest",
+    "subjectChainDigest",
     "testPlanDigest",
     "browserAuditDigest",
     "evidenceRootDigest"
@@ -3301,6 +8188,12 @@ function readJsonl(file) {
     failures.push(`${file} cannot be read: ${error.message}`);
     return [];
   }
+}
+
+function readEvidenceFile(file) {
+  if (file.endsWith(".jsonl")) return readJsonl(file);
+  if (file.endsWith(".json")) return readJson(file);
+  return readText(file);
 }
 
 function readText(file) {

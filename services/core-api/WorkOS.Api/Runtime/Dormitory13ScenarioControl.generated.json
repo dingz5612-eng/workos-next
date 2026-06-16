@@ -1,0 +1,658 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-runtimeControl.generated",
+  "version": "oam.dormitory-13-scenario-runtimeControl.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:4c3a13f3a7b929d8420f863c66bb6891b209aee38ab4cb168f785dc2865489a7",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0"
+    }
+  ],
+  "sourceContentDigest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:21feae5fe38cdc4b61a5d3ca8195ff017ef490e0af53bdf54944fa3a49fba074",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "consumer": "runtime",
+  "scenarios": [
+    {
+      "scenarioNo": 1,
+      "scenarioId": "lodging.resource-basic-readiness",
+      "writesObjects": [
+        "Room",
+        "BedSet",
+        "Bed",
+        "BasicReadiness"
+      ],
+      "producesStates": [
+        "基础就绪"
+      ],
+      "upstreamSummaryInputs": []
+    },
+    {
+      "scenarioNo": 2,
+      "scenarioId": "lodging.resource-operation-status",
+      "writesObjects": [
+        "OperationStatus",
+        "OperationBlocker"
+      ],
+      "producesStates": [
+        "可运营"
+      ],
+      "upstreamSummaryInputs": [
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要"
+      ]
+    },
+    {
+      "scenarioNo": 3,
+      "scenarioId": "lodging.product-and-rate",
+      "writesObjects": [
+        "Product",
+        "SellableUnit",
+        "RatePlan",
+        "PriceVersion"
+      ],
+      "producesStates": [
+        "可定价"
+      ],
+      "upstreamSummaryInputs": [
+        "运营状态摘要"
+      ]
+    },
+    {
+      "scenarioNo": 4,
+      "scenarioId": "lodging.inquiry-and-quote",
+      "writesObjects": [
+        "Inquiry",
+        "Quote",
+        "QuoteVersion",
+        "QuoteSnapshot"
+      ],
+      "producesStates": [
+        "可报价"
+      ],
+      "upstreamSummaryInputs": [
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本和价格日历摘要"
+      ]
+    },
+    {
+      "scenarioNo": 5,
+      "scenarioId": "lodging.reservation-and-inventory-hold",
+      "writesObjects": [
+        "InventoryHold",
+        "Reservation",
+        "ReservationNo"
+      ],
+      "producesStates": [
+        "可锁定",
+        "已预订"
+      ],
+      "upstreamSummaryInputs": [
+        "报价单",
+        "报价版本",
+        "价格快照",
+        "有效期"
+      ]
+    },
+    {
+      "scenarioNo": 6,
+      "scenarioId": "lodging.payment-deposit-guarantee-intake",
+      "writesObjects": [
+        "PaymentIntent",
+        "DepositIntent",
+        "GuaranteeRecord",
+        "FinanceConfirmationSnapshot"
+      ],
+      "producesStates": [
+        "财务满足/担保满足"
+      ],
+      "upstreamSummaryInputs": [
+        "预订确认摘要",
+        "预订号",
+        "库存锁定历史"
+      ]
+    },
+    {
+      "scenarioNo": 7,
+      "scenarioId": "lodging.checkin",
+      "writesObjects": [
+        "Stay",
+        "Resident",
+        "Occupancy",
+        "AccessCredential"
+      ],
+      "producesStates": [
+        "可入住",
+        "在住"
+      ],
+      "upstreamSummaryInputs": [
+        "预订确认摘要",
+        "财务状态",
+        "房间摘要",
+        "床位组摘要"
+      ]
+    },
+    {
+      "scenarioNo": 8,
+      "scenarioId": "lodging.in-stay-management",
+      "writesObjects": [
+        "Stay",
+        "Resident",
+        "Occupancy",
+        "AccessCredential"
+      ],
+      "producesStates": [
+        "在住"
+      ],
+      "upstreamSummaryInputs": [
+        "入住记录摘要",
+        "住客摘要",
+        "占用摘要",
+        "凭证摘要"
+      ]
+    },
+    {
+      "scenarioNo": 9,
+      "scenarioId": "lodging.checkout-settlement",
+      "writesObjects": [
+        "CheckoutCase",
+        "FeeSettlementDraft",
+        "ResourceRecoveryRequest"
+      ],
+      "producesStates": [
+        "退房结算"
+      ],
+      "upstreamSummaryInputs": [
+        "在住状态",
+        "财务状态",
+        "服务/异常/续住/换房换床摘要"
+      ]
+    },
+    {
+      "scenarioNo": 10,
+      "scenarioId": "lodging.cancel-noshow-refund-intake",
+      "writesObjects": [
+        "CancellationCase",
+        "NoShowCase",
+        "RefundRequestIntent",
+        "InventoryReleaseRequest"
+      ],
+      "producesStates": [
+        "取消/未到店关闭"
+      ],
+      "upstreamSummaryInputs": [
+        "预订确认摘要",
+        "财务状态",
+        "库存锁定历史"
+      ]
+    },
+    {
+      "scenarioNo": 11,
+      "scenarioId": "lodging.housekeeping-maintenance-support",
+      "writesObjects": [
+        "HousekeepingTask",
+        "MaintenanceTask",
+        "WorkVerification",
+        "RecoveryRecommendation"
+      ],
+      "producesStates": [
+        "房务维修作业完成"
+      ],
+      "upstreamSummaryInputs": [
+        "房间摘要",
+        "运营状态摘要",
+        "在住状态",
+        "退房确认摘要"
+      ]
+    },
+    {
+      "scenarioNo": 12,
+      "scenarioId": "lodging.channel-corporate-support",
+      "writesObjects": [
+        "ChannelPartner",
+        "CorporateAccount",
+        "AgreementEligibility",
+        "PublicationRule"
+      ],
+      "producesStates": [
+        "渠道/企业资格"
+      ],
+      "upstreamSummaryInputs": [
+        "商品摘要",
+        "价格方案摘要",
+        "运营状态摘要"
+      ]
+    },
+    {
+      "scenarioNo": 13,
+      "scenarioId": "lodging.reporting-audit-review",
+      "writesObjects": [
+        "ReportSnapshot",
+        "MetricSnapshot",
+        "AuditFinding",
+        "ActionPlan"
+      ],
+      "producesStates": [
+        "报表审计复盘"
+      ],
+      "upstreamSummaryInputs": [
+        "房间摘要",
+        "运营状态摘要",
+        "商品摘要",
+        "报价单",
+        "预订确认摘要",
+        "财务状态",
+        "入住记录摘要",
+        "退房确认摘要",
+        "取消/未到店摘要",
+        "作业完成摘要",
+        "渠道摘要"
+      ]
+    }
+  ],
+  "stateLadder": [
+    {
+      "state": "基础就绪",
+      "producerScenarios": [
+        1
+      ],
+      "notEquivalentTo": [
+        "可运营",
+        "可报价",
+        "可入住"
+      ]
+    },
+    {
+      "state": "可运营",
+      "producerScenarios": [
+        2
+      ],
+      "notEquivalentTo": [
+        "基础就绪",
+        "可报价",
+        "房务维修作业完成"
+      ]
+    },
+    {
+      "state": "可定价",
+      "producerScenarios": [
+        3
+      ],
+      "notEquivalentTo": [
+        "可运营",
+        "可报价"
+      ]
+    },
+    {
+      "state": "可报价",
+      "producerScenarios": [
+        4
+      ],
+      "notEquivalentTo": [
+        "可定价",
+        "已预订"
+      ]
+    },
+    {
+      "state": "可锁定",
+      "producerScenarios": [
+        5
+      ],
+      "notEquivalentTo": [
+        "可报价",
+        "已预订"
+      ]
+    },
+    {
+      "state": "已预订",
+      "producerScenarios": [
+        5
+      ],
+      "notEquivalentTo": [
+        "可入住",
+        "在住"
+      ]
+    },
+    {
+      "state": "财务满足/担保满足",
+      "producerScenarios": [
+        6
+      ],
+      "alsoConfirmedBy": [
+        "finance-gate"
+      ],
+      "notEquivalentTo": [
+        "已预订",
+        "可入住"
+      ]
+    },
+    {
+      "state": "可入住",
+      "producerScenarios": [
+        7
+      ],
+      "notEquivalentTo": [
+        "已预订",
+        "在住"
+      ]
+    },
+    {
+      "state": "在住",
+      "producerScenarios": [
+        7
+      ],
+      "maintainerScenarios": [
+        8
+      ],
+      "notEquivalentTo": [
+        "可入住",
+        "退房结算"
+      ]
+    },
+    {
+      "state": "退房结算",
+      "producerScenarios": [
+        9
+      ],
+      "notEquivalentTo": [
+        "退款到账",
+        "资源恢复"
+      ]
+    },
+    {
+      "state": "取消/未到店关闭",
+      "producerScenarios": [
+        10
+      ],
+      "notEquivalentTo": [
+        "退款到账",
+        "库存释放完成"
+      ]
+    },
+    {
+      "state": "房务维修作业完成",
+      "producerScenarios": [
+        11
+      ],
+      "notEquivalentTo": [
+        "可运营"
+      ]
+    },
+    {
+      "state": "渠道/企业资格",
+      "producerScenarios": [
+        12
+      ],
+      "notEquivalentTo": [
+        "可定价",
+        "已预订"
+      ]
+    },
+    {
+      "state": "报表审计复盘",
+      "producerScenarios": [
+        13
+      ],
+      "readonly": true,
+      "notEquivalentTo": [
+        "业务事实确认"
+      ]
+    }
+  ],
+  "objectOwnership": [
+    {
+      "objects": [
+        "Room",
+        "BedSet",
+        "Bed",
+        "BasicReadiness"
+      ],
+      "writeOwnerScenario": 1
+    },
+    {
+      "objects": [
+        "OperationStatus",
+        "OperationBlocker"
+      ],
+      "writeOwnerScenario": 2
+    },
+    {
+      "objects": [
+        "Product",
+        "SellableUnit",
+        "RatePlan",
+        "PriceVersion"
+      ],
+      "writeOwnerScenario": 3
+    },
+    {
+      "objects": [
+        "Inquiry",
+        "Quote",
+        "QuoteVersion",
+        "QuoteSnapshot"
+      ],
+      "writeOwnerScenario": 4
+    },
+    {
+      "objects": [
+        "InventoryHold",
+        "Reservation",
+        "ReservationNo"
+      ],
+      "writeOwnerScenario": 5
+    },
+    {
+      "objects": [
+        "PaymentIntent",
+        "DepositIntent",
+        "GuaranteeRecord",
+        "FinanceConfirmationSnapshot"
+      ],
+      "writeOwnerScenario": 6,
+      "financeTruthOwner": "finance-gate"
+    },
+    {
+      "objects": [
+        "Stay",
+        "Resident",
+        "Occupancy",
+        "AccessCredential"
+      ],
+      "writeOwnerScenarios": [
+        7,
+        8
+      ]
+    },
+    {
+      "objects": [
+        "CheckoutCase",
+        "FeeSettlementDraft",
+        "ResourceRecoveryRequest"
+      ],
+      "writeOwnerScenario": 9
+    },
+    {
+      "objects": [
+        "CancellationCase",
+        "NoShowCase",
+        "RefundRequestIntent",
+        "InventoryReleaseRequest"
+      ],
+      "writeOwnerScenario": 10
+    },
+    {
+      "objects": [
+        "HousekeepingTask",
+        "MaintenanceTask",
+        "WorkVerification",
+        "RecoveryRecommendation"
+      ],
+      "writeOwnerScenario": 11
+    },
+    {
+      "objects": [
+        "ChannelPartner",
+        "CorporateAccount",
+        "AgreementEligibility",
+        "PublicationRule"
+      ],
+      "writeOwnerScenario": 12
+    },
+    {
+      "objects": [
+        "ReportSnapshot",
+        "MetricSnapshot",
+        "AuditFinding",
+        "ActionPlan"
+      ],
+      "writeOwnerScenario": 13,
+      "readonlyGovernanceOutput": true
+    }
+  ],
+  "fieldSourceMatrix": {
+    "userFilled": [
+      "姓名",
+      "电话",
+      "备注",
+      "原因",
+      "检查结果",
+      "说明",
+      "日期",
+      "人数"
+    ],
+    "userSelected": [
+      "房间/床位",
+      "状态",
+      "渠道",
+      "商品",
+      "价格方案",
+      "原因类型",
+      "操作类型"
+    ],
+    "upstreamReadonly": [
+      "房源摘要",
+      "运营状态",
+      "商品价格摘要",
+      "报价摘要",
+      "预订摘要",
+      "入住摘要",
+      "财务摘要"
+    ],
+    "systemGenerated": [
+      "业务单号",
+      "内部引用",
+      "版本",
+      "事件",
+      "时间戳",
+      "状态历史",
+      "证据摘要"
+    ],
+    "systemCalculated": [
+      "晚数",
+      "总价",
+      "可用状态",
+      "应退应补",
+      "过期状态",
+      "冲突状态"
+    ],
+    "evidenceBound": [
+      "照片",
+      "合同",
+      "凭证",
+      "确认记录",
+      "审计附件"
+    ],
+    "financeConfirmed": [
+      "收款",
+      "押金",
+      "退款",
+      "扣费",
+      "账务摘要"
+    ],
+    "internalAudit": [
+      "stableRef",
+      "domainEventId",
+      "projectionVersion",
+      "digest",
+      "ledgerEntryId"
+    ]
+  },
+  "forbiddenUserInputFields": [
+    "roomId",
+    "bedId",
+    "ratePlanId",
+    "quoteId",
+    "reservationId",
+    "stayId",
+    "paymentId",
+    "depositId",
+    "refundId",
+    "ledgerEntryId",
+    "stableRef",
+    "digest",
+    "projectionVersion",
+    "domainEventId"
+  ],
+  "crudPolicy": {
+    "create": "必须通过发起场景、创建草稿、提交确认。",
+    "draftEdit": "草稿可编辑。",
+    "confirmedFactEdit": "确认后不可原地覆盖，只能追加变更、新版本、补充证据、关闭、停用、作废、取消、恢复或纠错。",
+    "delete": "不得物理删除已确认事实，只能撤销草稿、停用、作废、关闭、取消或追加纠错。",
+    "read": "查询、搜索、列表、看板、报表永远只读，不得写业务事实。",
+    "requiredLifecycle": [
+      "currentState",
+      "stateHistory",
+      "evidenceHistory",
+      "legalNextActions"
+    ]
+  },
+  "financeBoundary": {
+    "exclusiveTruthWriters": [
+      "finance-gate",
+      "finance-kernel"
+    ],
+    "financeTruthObjects": [
+      "Payment",
+      "Deposit",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction",
+      "FinanceReceipt"
+    ],
+    "businessScenarioAllowedOutputs": [
+      "Intent",
+      "Draft",
+      "Request",
+      "Snapshot",
+      "费用意向",
+      "退款意向",
+      "佣金意向"
+    ],
+    "forbiddenEquivalences": [
+      "押金不是收入",
+      "担保不是收款",
+      "退款申请不是退款到账",
+      "应退应补不是账务真值",
+      "维修费用意向不是成本入账"
+    ]
+  },
+  "finalSafety": {
+    "businessFeatureDevelopmentAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

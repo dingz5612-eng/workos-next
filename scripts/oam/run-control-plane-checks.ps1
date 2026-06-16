@@ -245,6 +245,9 @@ Invoke-Gate node scripts/oam/check-gate-taxonomy.mjs
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs --self-test
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs
 Invoke-Gate node scripts/oam/check-current-authority-index.mjs
+Invoke-Gate node scripts/business/check-dormitory-13-scenario-control-authority.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario1-benchmark-inheritance-authority.mjs
 Invoke-Gate node scripts/authority/check-master-design-schema.mjs
 Invoke-Gate node scripts/authority/check-truth-ownership-matrix.mjs
 Invoke-Gate node scripts/oam/generate-authority-source-layer-audit.mjs
@@ -262,8 +265,17 @@ if ($env:ALLOW_GENERATED_COMPILE_CANDIDATE -eq "true" -or (Test-FormalGeneratedC
 Invoke-Gate node scripts/oam/compile-current-kernel-graph.mjs
 Invoke-Gate node scripts/oam/check-generated-field-binding-closure.mjs
 Invoke-Gate node scripts/oam/compile-current-capability.mjs
+Invoke-Gate node scripts/business/generate-dormitory-13-scenario-control-contracts.mjs
+Invoke-Gate node scripts/business/generate-dormitory-scenario1-resource-basic-readiness-contracts.mjs
+Invoke-Gate node scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs
 Invoke-Gate node scripts/oam/check-generated-contract-consistency.mjs
 Invoke-Gate node scripts/oam/check-generated-files-not-manually-edited.mjs
+Invoke-Gate node scripts/business/check-dormitory-13-scenario-generated-contracts.mjs
+Invoke-Gate node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario1-generated-contracts.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario1-consumption-boundary.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario1-benchmark-inheritance-generated-contracts.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario2-start-gate-trial.mjs
 Invoke-Gate node scripts/oam/check-oam-kernel-graph.mjs
 Invoke-Gate node scripts/oam/check-system-change-governance.mjs
 Invoke-Gate node scripts/oam/check-iteration-kernel.mjs
@@ -347,6 +359,7 @@ Invoke-Gate node scripts/business/check-dormitory-scenario-package-matrix.mjs
 Invoke-Gate node scripts/business/check-dormitory-ui-readside-experience.mjs
 Invoke-Gate node scripts/business/check-dormitory-period-correction-closure.mjs
 Invoke-Gate node scripts/business/check-dormitory-scenario-closure-tests.mjs
+Invoke-Gate node scripts/business/check-dormitory-13-scenario-integration-chain.mjs
 Invoke-Gate node scripts/business/check-dormitory-golden-chain-tests.mjs
 Invoke-Gate node scripts/business/check-dormitory-derived-contracts.mjs
 Invoke-Gate node scripts/business/check-dormitory-release-train.mjs
@@ -388,14 +401,27 @@ Invoke-Gate node scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs
 Invoke-Gate node scripts/oam/check-test-plan-generated-from-capability.mjs
 Invoke-AdvisoryGate pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1
 Invoke-Gate node scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs
+Invoke-Gate node scripts/surface/run-dormitory-first-golden-chain-negative-browser-audit.mjs
+Invoke-Gate node scripts/surface/check-dormitory-first-golden-chain-negative-browser-audit.mjs
 Invoke-AdvisoryGate node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs
 Invoke-AdvisoryGate node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs
+Invoke-Gate node scripts/oam/check-dormitory-first-golden-chain-no-side-effects-proof.mjs
+Invoke-Gate node scripts/oam/check-dormitory-first-golden-chain-db-projection-proof.mjs
+Invoke-Gate node scripts/oam/check-dormitory-evidence-environment-profile.mjs
+Invoke-Gate node scripts/oam/compile-current-capability.mjs
+Invoke-Gate node scripts/business/generate-dormitory-scenario1-resource-basic-readiness-contracts.mjs
+Invoke-Gate node scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs
+Invoke-Gate node scripts/oam/check-generated-contract-consistency.mjs
+Invoke-Gate node scripts/oam/check-generated-files-not-manually-edited.mjs
+Invoke-Gate node scripts/oam/check-capability-evidence-subject-chain-complete.mjs --write-attestation
+Invoke-Gate node scripts/oam/check-no-evidence-digest-cycle.mjs
 Invoke-Gate node scripts/oam/check-evidence-is-projection-only.mjs
 Invoke-Gate node scripts/oam/check-release-authority-is-only-final-go-source.mjs
 Invoke-Gate node scripts/oam/check-evidence-writer-boundary.mjs
 Invoke-AdvisoryGate node scripts/oam/check-current-head-authoritative-artifact-reconciliation.mjs
 Invoke-AdvisoryGate node scripts/oam/check-dormitory-first-golden-chain-landing.mjs
 Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs -RecordResult $false
+Invoke-Gate node scripts/oam/check-evidence-projects-capability-subject-chain-only.mjs
 Invoke-Gate node scripts/oam/check-evidence-digest-chain-single-source.mjs
 Write-GateReport -RunStatus "completed" -Status "passed" -CurrentStage "completed" -CurrentGate ""
 Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs -RecordResult $false

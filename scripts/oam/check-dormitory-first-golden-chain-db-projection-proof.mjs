@@ -71,6 +71,12 @@ const result = {
   lifecycleState: capability?.lifecycleAchieved?.at?.(-1) ?? "UNKNOWN",
   businessLandingAdmitted,
   policyMode: policy?.policyMode ?? null,
+  businessLandingBlockedBecause: businessLandingAdmitted
+    ? null
+    : "db_projection_not_active",
+  reviewPackageStatus: businessLandingAdmitted
+    ? "READY_FOR_00_BUSINESS_LANDING_REVIEW"
+    : "BUSINESS_LANDING_NOT_READY_REVIEW_PACKAGE",
   dbProjectionProofDigest: businessLandingAdmitted
     ? policy?.dbProjectionProofDigest ?? null
     : "null_if_runtime_test_only",

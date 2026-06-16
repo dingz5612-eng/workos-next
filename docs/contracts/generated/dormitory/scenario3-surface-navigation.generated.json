@@ -1,0 +1,156 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario3-surfaceNavigation.generated",
+  "version": "oam.dormitory-scenario3-surfaceNavigation.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario3-product-and-pricing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario3-product-and-pricing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:85b38109c8d72046b87f14b3a642e018a3b5ff7ec851ae9ae29b7e6fdc8bf751",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "digest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario3.ProductAndPricing",
+  "scenarioPackageNo": 3,
+  "scenarioId": "lodging.product-and-rate",
+  "outputContentDigest": "sha256:262ab0ff7644123acff7bce64ee2bf7d3541c7b84552c8ae1ecee249d76c76b6",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "住宿商品与价格",
+  "businessGoalZh": "承接场景包 1 的房源摘要和场景包 2 已确认可运营且未阻断的运营状态摘要，配置住宿商品、售卖单位、商品资源绑定、价格方案、适用日期、价格版本及价格生效/停用记录。",
+  "sourceScenarioDigest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "surfaceNavigation": {
+    "pages": [
+      "商品列表",
+      "商品详情",
+      "商品新建页",
+      "价格方案页",
+      "价格日历页",
+      "价格版本历史页",
+      "审核生效页",
+      "停用/作废入口"
+    ],
+    "todayZh": "今日只展示今天需要处理的被动任务，例如待审核价格、今日生效价格、即将失效价格、价格冲突待处理。",
+    "workItemsZh": "工作项展示全部被动任务池。",
+    "searchZh": "搜索可以查房间、床位、商品、价格方案、日期、状态，但搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "pageMustShowZh": [
+      "当前价格状态",
+      "适用范围",
+      "版本",
+      "日期",
+      "缺失项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": [
+      {
+        "state": "draft",
+        "buttonsZh": [
+          "继续填写",
+          "提交审核"
+        ]
+      },
+      {
+        "state": "pending_review",
+        "buttonsZh": [
+          "审核通过",
+          "退回修改"
+        ]
+      },
+      {
+        "state": "effective",
+        "buttonsZh": [
+          "新建调价版本",
+          "停用"
+        ]
+      },
+      {
+        "state": "disabled",
+        "buttonsZh": [
+          "查看历史",
+          "重新建版本"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "可报价",
+      "可预订",
+      "已预订",
+      "已锁定",
+      "已入住",
+      "已收款",
+      "final GO",
+      "生产发布",
+      "RatePlanConfirm",
+      "resource-saleability",
+      "lead-reservation",
+      "golden-chain"
+    ]
+  },
+  "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“301 房间整房按晚价 180 元”“301-02 床位月租 1200 元”。",
+  "forbiddenUserInputFields": [
+    "productId",
+    "ratePlanId",
+    "priceVersionId",
+    "roomId",
+    "bedId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId"
+  ],
+  "buttonByState": [
+    {
+      "state": "draft",
+      "buttonsZh": [
+        "继续填写",
+        "提交审核"
+      ]
+    },
+    {
+      "state": "pending_review",
+      "buttonsZh": [
+        "审核通过",
+        "退回修改"
+      ]
+    },
+    {
+      "state": "effective",
+      "buttonsZh": [
+        "新建调价版本",
+        "停用"
+      ]
+    },
+    {
+      "state": "disabled",
+      "buttonsZh": [
+        "查看历史",
+        "重新建版本"
+      ]
+    }
+  ],
+  "priceStatusOptions": [
+    "价格草稿",
+    "待审核",
+    "已生效",
+    "已停用",
+    "已过期",
+    "已作废",
+    "需补充证据"
+  ]
+}

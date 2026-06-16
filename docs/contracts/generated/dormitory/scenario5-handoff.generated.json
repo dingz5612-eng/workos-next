@@ -1,0 +1,115 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario5-handoff.generated",
+  "version": "oam.dormitory-scenario5-handoff.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario5-reservation-and-inventory-hold-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario5-reservation-and-inventory-hold-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:5469772b478f954bfbfd2e7c1f29c53672a7b062ae1e90dbfe7295a5b7bb23bb",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "digest": "sha256:89ee0867faccfdebb4869ee1da6370f50de6b9f8ef7f7d6e83d1793d86e6662b"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:89ee0867faccfdebb4869ee1da6370f50de6b9f8ef7f7d6e83d1793d86e6662b",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario5.ReservationAndInventoryHold",
+  "scenarioPackageNo": 5,
+  "scenarioId": "lodging.reservation-and-inventory-hold",
+  "outputContentDigest": "sha256:13b483c8f2501355111e6b32375205b4ac513984f3979978c3dac46f154a9a7f",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "预订与库存锁定",
+  "businessGoalZh": "承接场景包 4 已确认的报价/客户意向，重新校验资源、价格、报价有效期、日期和当前占用后，完成库存锁定、确认预订并生成预订号。",
+  "sourceScenarioDigest": "sha256:89ee0867faccfdebb4869ee1da6370f50de6b9f8ef7f7d6e83d1793d86e6662b",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "upstream": {
+    "allowedSourcePackageNos": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "requiredReadonlyInputs": [
+      "房间摘要",
+      "床位组摘要",
+      "房间/床位运营状态摘要",
+      "商品摘要",
+      "价格方案摘要",
+      "价格版本历史",
+      "询价摘要",
+      "客户需求摘要",
+      "报价单摘要",
+      "报价版本",
+      "价格快照",
+      "报价有效期",
+      "客户选择意向",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用"
+    ],
+    "quoteAndPriceRequiredZh": "只有场景包 4 输出未过期报价、客户选择意向和价格快照，且场景包 3 的价格版本仍有效，才能进入预订确认。",
+    "upstreamWriteBackAllowed": false,
+    "mustNotRequireRefillZh": "场景包 5 只能读取场景包 1、2、3、4 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品、价格或报价字段。"
+  },
+  "downstream": {
+    "allowedConsumerPackageNo": 6,
+    "allowedConsumerPackageNameZh": "入住办理",
+    "handoffOutputs": [
+      "预订确认摘要",
+      "预订号",
+      "客户信息",
+      "日期范围",
+      "人数",
+      "房间/床位",
+      "价格快照",
+      "库存锁定历史",
+      "预订状态",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "forbiddenOutputsZh": [
+      "Stay",
+      "CheckIn",
+      "Payment",
+      "Deposit",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction",
+      "入住",
+      "已入住",
+      "可入住",
+      "收款",
+      "已收款",
+      "押金",
+      "押金已收",
+      "退款",
+      "账务"
+    ],
+    "downstreamRecheckRuleZh": "后续入住办理只能读取预订确认摘要、预订号、客户信息、日期范围、人数、房间/床位、价格快照、库存锁定历史、预订状态、证据摘要和只读对象引用，并必须重新核验入住所需证件、协议、押金/收款规则；不得把预订当成已入住或已收款。"
+  },
+  "readSideOutputs": [
+    "预订确认摘要",
+    "预订号",
+    "客户信息",
+    "日期范围",
+    "人数",
+    "房间/床位",
+    "价格快照",
+    "库存锁定历史",
+    "预订状态",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "downstreamRecheckRuleZh": "后续入住办理只能读取预订确认摘要、预订号、客户信息、日期范围、人数、房间/床位、价格快照、库存锁定历史、预订状态、证据摘要和只读对象引用，并必须重新核验入住所需证件、协议、押金/收款规则；不得把预订当成已入住或已收款。"
+}

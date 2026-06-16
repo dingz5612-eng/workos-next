@@ -179,6 +179,181 @@
       ]
     },
     {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-13-scenario-control-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-13-scenario-control-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "住宿经营 13 场景总控 Source Authority，唯一声明 13 个场景的名称、分层、状态、对象、字段、CRUD、证据、财务、入口、交接、旧包迁移和测试标准。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-13-scenario-control-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-13-scenario-control-authority-result.json",
+      "responsibilityZh": "住宿经营 13 场景总控 Source Authority，只能人工维护；旧场景包只能作为迁移参考。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/oam/check-dormitory-bed-cardinality-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-bed-cardinality-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍第一金链床位基数 Source，固定 room.bedCount 与 Bed[01..N] 生成规则。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-dormitory-bed-cardinality-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-bed-cardinality-authority-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-command-contracts.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/oam/check-dormitory-command-contract-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-command-contract-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍第一金链命令合同 Source，固定三个命令的输入、事件、冲突和渲染/投影策略。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-dormitory-command-contract-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-command-contract-authority-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-failure-semantics.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/oam/check-dormitory-failure-semantics-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-failure-semantics-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍第一金链失败语义 Source，固定 409/422、错误码和失败无副作用。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-dormitory-failure-semantics-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-failure-semantics-authority-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/oam/check-dormitory-capability-decision-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-capability-decision-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍第一金链能力裁决 Source，固定能力边界、链路顺序、BedSet 模型和 GO 锁。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-dormitory-capability-decision-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-capability-decision-authority-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-invariants.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/oam/check-dormitory-invariant-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-invariant-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍第一金链业务不变量 Source，固定唯一性、只读引用、readiness 选项和失败无副作用。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-dormitory-invariant-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-invariant-authority-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-object-graph.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/oam/check-dormitory-object-graph-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-object-graph-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍第一金链对象图谱 Source，固定对象、关系和唯一键。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-dormitory-object-graph-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-object-graph-authority-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
       "path": "docs/business/domains/dormitory/dormitory-observability-contract.json",
       "identity": "current_business_contract",
       "owner": "domain-owner",
@@ -329,6 +504,356 @@
       ]
     },
     {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario1-benchmark-inheritance-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario1-benchmark-inheritance-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "场景 1 标杆继承合同 Source Authority；只定义后续场景执行方法、启动门禁、差异模板、证据模板和禁止复制场景 1 业务字段对象。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario1-benchmark-inheritance-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario1-benchmark-inheritance-authority-result.json",
+      "responsibilityZh": "场景 1 标杆继承合同 Source Authority，只能人工维护；定义后续场景方法继承、启动门禁、差异模板和证据分层。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario1-resource-basic-readiness-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "房源建档与基础就绪 Source Authority，固定房间建档、床位组确认、基础就绪确认规则。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario1-resource-basic-readiness-authority-result.json",
+      "responsibilityZh": "房源建档与基础就绪 Source Authority，只能人工维护；定义场景包 1 的对象、步骤、字段、CRUD、证据和边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario10-cancel-noshow-refund-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "取消、未到店与退款处理 Source Authority，只能人工维护；定义场景包 10 的取消、未到店、政策金额、库存释放、退款/扣费请求和 finance-gate 边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario10-cancel-noshow-refund-authority-result.json",
+      "responsibilityZh": "取消、未到店与退款处理 Source Authority，只能人工维护；定义场景包 10 的取消、未到店、政策金额、库存释放、退款/扣费请求和 finance-gate 边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario11-housekeeping-maintenance-outofservice-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "房务、维修与停售协同 Source Authority，只能人工维护；定义场景包 11 的保洁、维修、检查、停售建议、恢复建议、费用意向和证据边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario11-housekeeping-maintenance-outofservice-authority-result.json",
+      "responsibilityZh": "房务、维修与停售协同 Source Authority，只能人工维护；定义场景包 11 的保洁、维修、检查、停售建议、恢复建议、费用意向和证据边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario12-channel-corporate-customer-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "渠道与企业客户 Source Authority，只能人工维护；定义场景包 12 的渠道、企业客户、协议、商品资格、发布规则、佣金/结算意向和证据边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario12-channel-corporate-customer-authority-result.json",
+      "responsibilityZh": "渠道与企业客户 Source Authority，只能人工维护；定义场景包 12 的渠道、企业客户、协议、商品资格、发布规则、佣金/结算意向和证据边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario13-reporting-audit-review-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario13-reporting-audit-review-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "经营报表、审计与复盘 Source Authority，只能人工维护；定义场景包 13 的报表、指标、审计、复盘、行动计划、只读治理和 finance-gate 读取边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario13-reporting-audit-review-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario13-reporting-audit-review-authority-result.json",
+      "responsibilityZh": "经营报表、审计与复盘 Source Authority，只能人工维护；定义场景包 13 的报表、指标、审计、复盘、行动计划、只读治理和 finance-gate 读取边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario2-resource-operation-status-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "房源运营就绪与状态维护 Source Authority，只能人工维护；定义场景包 2 的运营检查、状态维护、阻断和恢复边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario2-resource-operation-status-authority-result.json",
+      "responsibilityZh": "房源运营就绪与状态维护 Source Authority，只能人工维护；定义场景包 2 的运营检查、状态维护、阻断和恢复边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario3-product-and-pricing-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario3-product-and-pricing-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "住宿商品与价格 Source Authority，只能人工维护；定义场景包 3 的商品、价格方案、价格日历、版本和证据边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario3-product-and-pricing-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario3-product-and-pricing-authority-result.json",
+      "responsibilityZh": "住宿商品与价格 Source Authority，只能人工维护；定义场景包 3 的商品、价格方案、价格日历、版本和证据边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario4-inquiry-and-quote-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "询价与报价 Source Authority，只能人工维护；定义场景包 4 的客户询价、入住需求、报价版本、价格快照和转预订准备边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario4-inquiry-and-quote-authority-result.json",
+      "responsibilityZh": "询价与报价 Source Authority，只能人工维护；定义场景包 4 的客户询价、入住需求、报价版本、价格快照和转预订准备边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario5-reservation-and-inventory-hold-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "预订与库存锁定 Source Authority，只能人工维护；定义场景包 5 的可订复核、库存锁定、预订确认、预订号和下游入住办理边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario5-reservation-and-inventory-hold-authority-result.json",
+      "responsibilityZh": "预订与库存锁定 Source Authority，只能人工维护；定义场景包 5 的可订复核、库存锁定、预订确认、预订号和下游入住办理边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario6-payment-deposit-and-guarantee-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "收款、押金与担保 Source Authority，只能人工维护；定义场景包 6 的应收、押金、担保、凭证、finance-gate 和下游入住办理边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario6-payment-deposit-and-guarantee-authority-result.json",
+      "responsibilityZh": "收款、押金与担保 Source Authority，只能人工维护；定义场景包 6 的应收、押金、担保、凭证、finance-gate 和下游入住办理边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario7-check-in-processing-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario7-check-in-processing-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "入住办理 Source Authority，只能人工维护；定义场景包 7 的预订承接、身份核验、协议确认、房间/床位交付、确认入住和入住凭证边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario7-check-in-processing-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario7-check-in-processing-authority-result.json",
+      "responsibilityZh": "入住办理 Source Authority，只能人工维护；定义场景包 7 的预订承接、身份核验、协议确认、房间/床位交付、确认入住和入住凭证边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario8-in-stay-management-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario8-in-stay-management-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "在住管理 Source Authority，只能人工维护；定义场景包 8 的在住状态、服务、异常、续住、换房换床、凭证和退房准备边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario8-in-stay-management-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario8-in-stay-management-authority-result.json",
+      "responsibilityZh": "在住管理 Source Authority，只能人工维护；定义场景包 8 的在住状态、服务、异常、续住、换房换床、凭证和退房准备边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario9-checkout-settlement-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario9-checkout-settlement-authority-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "退房结算 Source Authority，只能人工维护；定义场景包 9 的退房办理、交接、验房、费用核算、押金抵扣、财务请求和资源恢复边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario9-checkout-settlement-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario9-checkout-settlement-authority-result.json",
+      "responsibilityZh": "退房结算 Source Authority，只能人工维护；定义场景包 9 的退房办理、交接、验房、费用核算、押金抵扣、财务请求和资源恢复边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
       "path": "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
       "identity": "current_business_contract",
       "owner": "domain-owner",
@@ -379,17 +904,42 @@
       ]
     },
     {
-      "path": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "identity": "current_domain_kernel",
       "owner": "domain-owner",
-      "checker": "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
-      "evidence": "artifacts/oam/checks/dormitory-resource-saleability-golden-chain-result.json",
+      "checker": "scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario1-resource-basic-readiness-authority-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "宿舍资源可售第一金链 Source 级场景定稿包。",
+      "notesZh": "住宿经营场景包总索引 Source Authority，固定新业务顺序并隔离旧项目表达。",
       "layer": "source",
       "authorityRole": "sourceKernel",
       "businessFactAuthorityAllowed": true,
       "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario1-resource-basic-readiness-authority-result.json",
+      "responsibilityZh": "住宿经营场景包总索引 Source Authority，只能人工维护；旧项目表达只能作为迁移参考。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "identity": "current_manual",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-resource-saleability-golden-chain-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "旧宿舍场景包迁移参考；不得作为住宿经营 13 场景当前业务总控 Source。",
+      "layer": "manual",
+      "authorityRole": "humanManual",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
       "runtimeWriteAllowed": false,
       "financeLedgerTruthAllowed": false,
       "readModelTruthAllowed": false,
@@ -398,10 +948,9 @@
       "doNotEdit": false,
       "checkerRef": "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
       "evidenceRef": "artifacts/oam/checks/dormitory-resource-saleability-golden-chain-result.json",
-      "responsibilityZh": "人工维护的 Source 级业务场景定稿包，定义第一金链范围、身份、准入、证据和 NO_GO 条件。",
+      "responsibilityZh": "旧宿舍场景包仅作为人工迁移参考，不得作为住宿经营 13 场景当前业务事实、合同、运行层或财务真值来源。",
       "sourceRefs": [
-        "docs/oam/current-authority-index.json",
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+        "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
       ]
     },
     {
@@ -410,25 +959,23 @@
       "owner": "domain-owner",
       "checker": "scripts/business/check-dormitory-scenario-package-matrix.mjs",
       "evidence": "artifacts/oam/checks/dormitory-scenario-package-matrix-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "宿舍场景包矩阵与衔接合同 Source，定义场景职责、字段边界、handoff、读侧和 GO/NO_GO。",
-      "layer": "source",
-      "authorityRole": "sourceKernel",
-      "businessFactAuthorityAllowed": true,
+      "currentTruthAllowed": false,
+      "notesZh": "旧宿舍场景包迁移参考；不得作为住宿经营 13 场景当前业务总控 Source。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
       "contractAuthorityAllowed": true,
       "runtimeWriteAllowed": false,
       "financeLedgerTruthAllowed": false,
       "readModelTruthAllowed": false,
-      "manualEditAllowed": true,
-      "generated": false,
-      "doNotEdit": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
       "checkerRef": "scripts/business/check-dormitory-scenario-package-matrix.mjs",
       "evidenceRef": "artifacts/oam/checks/dormitory-scenario-package-matrix-result.json",
-      "responsibilityZh": "人工维护的宿舍场景包矩阵 Source，定义业务落地前的场景职责、衔接和边界。",
-      "sourceRefs": [
-        "docs/oam/current-authority-index.json",
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
-        "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml"
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
       ]
     },
     {
@@ -819,10 +1366,10 @@
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": false,
       "notesZh": "生产 slice manifest；明确排除 Dormitory.FirstGoldenChain 当前 capability。",
-      "layer": "manual",
-      "authorityRole": "policySource",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
       "businessFactAuthorityAllowed": false,
-      "contractAuthorityAllowed": true,
+      "contractAuthorityAllowed": false,
       "runtimeWriteAllowed": false,
       "financeLedgerTruthAllowed": false,
       "readModelTruthAllowed": false,
@@ -831,7 +1378,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/validate-production-slice-contracts.mjs",
       "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
-      "responsibilityZh": "合同/manifest 权威只定义可校验边界，不写业务事实、不产生 GO。",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -870,10 +1417,10 @@
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": false,
       "notesZh": "兼容 shim：生产 slice 与 legacy capability lane 分离，不得作为当前第一金链 active authority。",
-      "layer": "manual",
-      "authorityRole": "policySource",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
       "businessFactAuthorityAllowed": false,
-      "contractAuthorityAllowed": true,
+      "contractAuthorityAllowed": false,
       "runtimeWriteAllowed": false,
       "financeLedgerTruthAllowed": false,
       "readModelTruthAllowed": false,
@@ -882,7 +1429,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/validate-contracts.mjs",
       "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
-      "responsibilityZh": "合同/manifest 权威只定义可校验边界，不写业务事实、不产生 GO。",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -945,10 +1492,10 @@
       "evidence": "artifacts/oam/checks/no-active-path-legacy-identity-result.json",
       "currentTruthAllowed": false,
       "notesZh": "第一金链 active path 边界；隔离旧 seed、旧 card、阶段编号和 legacy browser 主门禁。",
-      "layer": "manual",
-      "authorityRole": "policySource",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
       "businessFactAuthorityAllowed": false,
-      "contractAuthorityAllowed": true,
+      "contractAuthorityAllowed": false,
       "runtimeWriteAllowed": false,
       "financeLedgerTruthAllowed": false,
       "readModelTruthAllowed": false,
@@ -957,7 +1504,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-no-active-path-legacy-identity.mjs",
       "evidenceRef": "artifacts/oam/checks/no-active-path-legacy-identity-result.json",
-      "responsibilityZh": "Capability 生命周期、兼容隔离或投影清单权威；不得作为业务事实或 GO 权威。",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -970,10 +1517,10 @@
       "evidence": "artifacts/oam/checks/authority-ledger-append-only-result.json",
       "currentTruthAllowed": false,
       "notesZh": "Capability append-only authority ledger；current 文件只能由 replay 投影。",
-      "layer": "manual",
-      "authorityRole": "policySource",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
       "businessFactAuthorityAllowed": false,
-      "contractAuthorityAllowed": true,
+      "contractAuthorityAllowed": false,
       "runtimeWriteAllowed": false,
       "financeLedgerTruthAllowed": false,
       "readModelTruthAllowed": false,
@@ -982,7 +1529,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-authority-ledger-append-only.mjs",
       "evidenceRef": "artifacts/oam/checks/authority-ledger-append-only-result.json",
-      "responsibilityZh": "Capability 生命周期、兼容隔离或投影清单权威；不得作为业务事实或 GO 权威。",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -995,10 +1542,10 @@
       "evidence": "artifacts/oam/checks/current-projection-from-ledger-result.json",
       "currentTruthAllowed": false,
       "notesZh": "Capability current projection；不得替代 append-only ledger 成为唯一权威源。",
-      "layer": "manual",
-      "authorityRole": "policySource",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
       "businessFactAuthorityAllowed": false,
-      "contractAuthorityAllowed": true,
+      "contractAuthorityAllowed": false,
       "runtimeWriteAllowed": false,
       "financeLedgerTruthAllowed": false,
       "readModelTruthAllowed": false,
@@ -1007,7 +1554,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-current-projection-from-ledger.mjs",
       "evidenceRef": "artifacts/oam/checks/current-projection-from-ledger-result.json",
-      "responsibilityZh": "Capability 生命周期、兼容隔离或投影清单权威；不得作为业务事实或 GO 权威。",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -1020,10 +1567,10 @@
       "evidence": "artifacts/oam/checks/current-projection-from-ledger-result.json",
       "currentTruthAllowed": false,
       "notesZh": "Capability registry；声明 capabilityId、ledger、projection 和 compatibility box 绑定。",
-      "layer": "manual",
-      "authorityRole": "policySource",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
       "businessFactAuthorityAllowed": false,
-      "contractAuthorityAllowed": true,
+      "contractAuthorityAllowed": false,
       "runtimeWriteAllowed": false,
       "financeLedgerTruthAllowed": false,
       "readModelTruthAllowed": false,
@@ -1032,7 +1579,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-current-projection-from-ledger.mjs",
       "evidenceRef": "artifacts/oam/checks/current-projection-from-ledger-result.json",
-      "responsibilityZh": "Capability 生命周期、兼容隔离或投影清单权威；不得作为业务事实或 GO 权威。",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -1045,10 +1592,10 @@
       "evidence": "artifacts/oam/checks/capability-state-machine-transition-result.json",
       "currentTruthAllowed": false,
       "notesZh": "Capability state-machine projection；当前停在 runtime test admitted，不授权 business landing。",
-      "layer": "manual",
-      "authorityRole": "policySource",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
       "businessFactAuthorityAllowed": false,
-      "contractAuthorityAllowed": true,
+      "contractAuthorityAllowed": false,
       "runtimeWriteAllowed": false,
       "financeLedgerTruthAllowed": false,
       "readModelTruthAllowed": false,
@@ -1057,7 +1604,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-capability-state-machine-transition.mjs",
       "evidenceRef": "artifacts/oam/checks/capability-state-machine-transition-result.json",
-      "responsibilityZh": "Capability 生命周期、兼容隔离或投影清单权威；不得作为业务事实或 GO 权威。",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -1095,10 +1642,10 @@
       "evidence": "artifacts/oam/checks/compatibility-box-boundary-result.json",
       "currentTruthAllowed": false,
       "notesZh": "统一 Compatibility Box；旧身份只能在此隔离，不得进入 active authority。",
-      "layer": "manual",
-      "authorityRole": "policySource",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
       "businessFactAuthorityAllowed": false,
-      "contractAuthorityAllowed": true,
+      "contractAuthorityAllowed": false,
       "runtimeWriteAllowed": false,
       "financeLedgerTruthAllowed": false,
       "readModelTruthAllowed": false,
@@ -1107,7 +1654,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-compatibility-box-boundary.mjs",
       "evidenceRef": "artifacts/oam/checks/compatibility-box-boundary-result.json",
-      "responsibilityZh": "Capability 生命周期、兼容隔离或投影清单权威；不得作为业务事实或 GO 权威。",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -1120,10 +1667,10 @@
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": false,
       "notesZh": "Legacy slice manifest；第一金链只能以 migration_read_only 形式存在。",
-      "layer": "manual",
-      "authorityRole": "policySource",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
       "businessFactAuthorityAllowed": false,
-      "contractAuthorityAllowed": true,
+      "contractAuthorityAllowed": false,
       "runtimeWriteAllowed": false,
       "financeLedgerTruthAllowed": false,
       "readModelTruthAllowed": false,
@@ -1132,7 +1679,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/validate-compatibility-contracts.mjs",
       "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
-      "responsibilityZh": "Capability 生命周期、兼容隔离或投影清单权威；不得作为业务事实或 GO 权威。",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -1937,7 +2484,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-capability-state-machine-transition.mjs",
       "evidenceRef": "artifacts/oam/checks/capability-state-machine-transition-result.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -1962,7 +2509,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-compatibility-box-boundary.mjs",
       "evidenceRef": "artifacts/oam/checks/compatibility-box-boundary-result.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -1987,7 +2534,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-current-architecture-manifest.mjs",
       "evidenceRef": "artifacts/oam/checks/current-architecture-manifest-result.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2012,7 +2559,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-current-engineering-ledger.mjs",
       "evidenceRef": "artifacts/oam/checks/current-engineering-ledger-result.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2037,7 +2584,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-current-evidence-root.mjs",
       "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2062,7 +2609,157 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-current-oam.mjs",
       "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "scripts/oam/check-dormitory-bed-cardinality-authority.mjs",
+      "identity": "current_rule_script",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-dormitory-bed-cardinality-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-bed-cardinality-authority-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "校验宿舍第一金链床位基数 authority。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-dormitory-bed-cardinality-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-bed-cardinality-authority-result.json",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "scripts/oam/check-dormitory-capability-decision-authority.mjs",
+      "identity": "current_rule_script",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-dormitory-capability-decision-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-capability-decision-authority-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "校验宿舍第一金链能力裁决 authority。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-dormitory-capability-decision-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-capability-decision-authority-result.json",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "scripts/oam/check-dormitory-command-contract-authority.mjs",
+      "identity": "current_rule_script",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-dormitory-command-contract-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-command-contract-authority-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "校验宿舍第一金链命令合同 authority。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-dormitory-command-contract-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-command-contract-authority-result.json",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "scripts/oam/check-dormitory-failure-semantics-authority.mjs",
+      "identity": "current_rule_script",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-dormitory-failure-semantics-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-failure-semantics-authority-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "校验宿舍第一金链失败语义 authority。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-dormitory-failure-semantics-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-failure-semantics-authority-result.json",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "scripts/oam/check-dormitory-invariant-authority.mjs",
+      "identity": "current_rule_script",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-dormitory-invariant-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-invariant-authority-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "校验宿舍第一金链业务不变量 authority。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-dormitory-invariant-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-invariant-authority-result.json",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "scripts/oam/check-dormitory-object-graph-authority.mjs",
+      "identity": "current_rule_script",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-dormitory-object-graph-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-object-graph-authority-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "校验宿舍第一金链对象图谱 authority。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-dormitory-object-graph-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-object-graph-authority-result.json",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2112,7 +2809,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-no-active-legacy-authority.mjs",
       "evidenceRef": "artifacts/oam/checks/no-active-legacy-authority-result.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2137,7 +2834,32 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-no-active-path-legacy-identity.mjs",
       "evidenceRef": "artifacts/oam/checks/no-active-path-legacy-identity-result.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "scripts/oam/check-no-business-landing-without-business-authority.mjs",
+      "identity": "current_rule_script",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-no-business-landing-without-business-authority.mjs",
+      "evidence": "artifacts/oam/checks/no-business-landing-without-business-authority-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "校验缺少业务权威前不得进入 business landing。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-no-business-landing-without-business-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/no-business-landing-without-business-authority-result.json",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2162,7 +2884,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-no-current-capability-uses-legacy-seed.mjs",
       "evidenceRef": "artifacts/oam/checks/no-current-capability-uses-legacy-seed-result.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2187,7 +2909,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-no-stage-number-active-authority.mjs",
       "evidenceRef": "artifacts/oam/checks/no-stage-number-active-authority-result.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2212,7 +2934,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-oam-kernel-graph.mjs",
       "evidenceRef": "artifacts/oam/checks/oam-kernel-graph-result.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2287,7 +3009,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-current-evidence-root.mjs",
       "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2312,7 +3034,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/oam/check-current-projection-from-ledger.mjs",
       "evidenceRef": "artifacts/oam/checks/current-projection-from-ledger-result.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2337,7 +3059,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/validate-capability-contracts.mjs",
       "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2362,7 +3084,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/validate-compatibility-contracts.mjs",
       "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2387,7 +3109,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/validate-contracts.mjs",
       "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2412,7 +3134,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/validate-production-slice-contracts.mjs",
       "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2437,7 +3159,7 @@
       "doNotEdit": false,
       "checkerRef": "scripts/validate-release-contracts.mjs",
       "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
-      "responsibilityZh": "门禁脚本只校验 OAM/capability 边界，不写业务事实权威。",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
       "sourceRefs": [
         "docs/oam/current-authority-index.json"
       ]
@@ -2527,38 +3249,58 @@
       "humanManual"
     ],
     "sourceLayerWhitelist": [
-      "docs/business/admission/business-line-levels.yml",
-      "docs/business/business-line-registry.json",
-      "docs/business/domains/dormitory/dormitory-operating-kernel.json",
-      "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
-      "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
-      "docs/business/domains/finance/finance-operating-kernel.json",
-      "docs/business/domains/maintenance/maintenance-operating-kernel.json",
-      "docs/business/truth-owner-registry.yml",
-      "docs/contracts/database/oam-db-ownership-map.json",
-      "docs/contracts/language/language-contract.json",
-      "docs/contracts/oam.current.json",
-      "docs/finance/finance-ledger-kernel.json",
-      "docs/identity/identity-permission-kernel.json",
-      "docs/oam/codex-execution-channel-policy.json",
-      "docs/oam/compiler-generated-contract-kernel.json",
-      "docs/oam/current-admission-state.json",
-      "docs/oam/current-architecture.manifest.json",
       "docs/oam/current-architecture.md",
+      "docs/oam/current-architecture.manifest.json",
       "docs/oam/current-authority-index.json",
-      "docs/oam/current-oam-cross-domain-conflict-rules.json",
+      "docs/contracts/oam.current.json",
       "docs/oam/current-oam-kernel-responsibility-map.json",
-      "docs/oam/file-lifecycle-policy.json",
-      "docs/oam/iteration-kernel.json",
       "docs/oam/oam-kernel-graph.json",
+      "docs/oam/system-operating-kernel.json",
+      "docs/oam/compiler-generated-contract-kernel.json",
+      "docs/oam/file-lifecycle-policy.json",
+      "docs/oam/current-oam-cross-domain-conflict-rules.json",
+      "docs/oam/codex-execution-channel-policy.json",
       "docs/oam/professional-ai-review-seats.json",
       "docs/oam/system-change-governance-contract.json",
       "docs/oam/system-failure-routing-contract.json",
       "docs/oam/system-handoff-contract.json",
-      "docs/oam/system-operating-kernel.json",
+      "docs/oam/iteration-kernel.json",
+      "docs/system/oam-p0-rule-ledger.json",
+      "docs/business/business-line-registry.json",
+      "docs/business/admission/business-line-levels.yml",
+      "docs/oam/current-admission-state.json",
+      "docs/business/truth-owner-registry.yml",
+      "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json",
+      "docs/business/domains/dormitory/dormitory-command-contracts.authority.json",
+      "docs/business/domains/dormitory/dormitory-failure-semantics.authority.json",
+      "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json",
+      "docs/business/domains/dormitory/dormitory-invariants.authority.json",
+      "docs/business/domains/dormitory/dormitory-object-graph.authority.json",
+      "docs/business/domains/finance/finance-operating-kernel.json",
+      "docs/business/domains/maintenance/maintenance-operating-kernel.json",
+      "docs/finance/finance-ledger-kernel.json",
+      "docs/identity/identity-permission-kernel.json",
       "docs/read-intelligence/read-intelligence-kernel.json",
       "docs/surface/surface-contract.yml",
-      "docs/system/oam-p0-rule-ledger.json"
+      "docs/contracts/language/language-contract.json",
+      "docs/contracts/database/oam-db-ownership-map.json"
     ]
   },
   "sourceLayerWhitelist": [
@@ -2651,8 +3393,92 @@
       "reasonZh": "宿舍领域唯一 Source，派生文件不得覆盖它。"
     },
     {
-      "path": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
-      "reasonZh": "宿舍资源可售第一金链 Source 级场景定稿包，只能人工维护。"
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "reasonZh": "住宿经营 13 场景总控 Source Authority，只能人工维护；旧场景包只能作为迁移参考。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "reasonZh": "住宿经营场景包总索引 Source Authority，只能人工维护；旧项目表达只能作为迁移参考。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+      "reasonZh": "场景 1 标杆继承合同 Source Authority，只能人工维护；定义后续场景方法继承、启动门禁、差异模板和证据分层。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+      "reasonZh": "房源建档与基础就绪 Source Authority，只能人工维护；定义场景包 1 的对象、步骤、字段、CRUD、证据和边界。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+      "reasonZh": "房源运营就绪与状态维护 Source Authority，只能人工维护；定义场景包 2 的运营检查、状态维护、阻断和恢复边界。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "reasonZh": "住宿商品与价格 Source Authority，只能人工维护；定义场景包 3 的商品、价格方案、价格日历、版本和证据边界。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+      "reasonZh": "询价与报价 Source Authority，只能人工维护；定义场景包 4 的客户询价、入住需求、报价版本、价格快照和转预订准备边界。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "reasonZh": "预订与库存锁定 Source Authority，只能人工维护；定义场景包 5 的可订复核、库存锁定、预订确认、预订号和下游入住办理边界。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "reasonZh": "收款、押金与担保 Source Authority，只能人工维护；定义场景包 6 的应收、押金、担保、凭证、finance-gate 和下游入住办理边界。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "reasonZh": "入住办理 Source Authority，只能人工维护；定义场景包 7 的预订承接、身份核验、协议确认、房间/床位交付、确认入住和入住凭证边界。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "reasonZh": "在住管理 Source Authority，只能人工维护；定义场景包 8 的在住状态、服务、异常、续住、换房换床、凭证和退房准备边界。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "reasonZh": "退房结算 Source Authority，只能人工维护；定义场景包 9 的退房办理、交接、验房、费用核算、押金抵扣、财务请求和资源恢复边界。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "reasonZh": "取消、未到店与退款处理 Source Authority，只能人工维护；定义场景包 10 的取消、未到店、政策金额、库存释放、退款/扣费请求和 finance-gate 边界。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "reasonZh": "房务、维修与停售协同 Source Authority，只能人工维护；定义场景包 11 的保洁、维修、检查、停售建议、恢复建议、费用意向和证据边界。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "reasonZh": "渠道与企业客户 Source Authority，只能人工维护；定义场景包 12 的渠道、企业客户、协议、商品资格、发布规则、佣金/结算意向和证据边界。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "reasonZh": "经营报表、审计与复盘 Source Authority，只能人工维护；定义场景包 13 的报表、指标、审计、复盘、行动计划、只读治理和 finance-gate 读取边界。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-command-contracts.authority.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-failure-semantics.authority.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-invariants.authority.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-object-graph.authority.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
     },
     {
       "path": "docs/business/domains/finance/finance-operating-kernel.json",
@@ -2685,10 +3511,6 @@
     {
       "path": "docs/contracts/database/oam-db-ownership-map.json",
       "reasonZh": "数据库 ownership 边界 Source；具体 migration 不得作为业务 Source。"
-    },
-    {
-      "path": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
-      "reasonZh": "宿舍场景包矩阵与衔接合同 Source，只能人工维护。"
     }
   ]
 }

@@ -215,7 +215,7 @@ async function syncCommittedReadSide({ result, workspace, onProjection, onLens, 
   }
 
   try {
-    const operationWorkItems = await fetchOperationWorkItems();
+    const operationWorkItems = await fetchOperationWorkItems(workspace?.id ? { workspaceId: workspace.id } : { activeOnly: "true" });
     if (onOperationWorkItems) onOperationWorkItems(operationWorkItems);
     syncResult.workItemsStatus = "refreshed";
   } catch {

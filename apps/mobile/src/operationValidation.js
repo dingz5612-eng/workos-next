@@ -1,4 +1,5 @@
 import { splitBedLabels } from "./controls/bedLabelControls.js";
+import { isBedSetupCardId } from "./capabilityProjection.js";
 import { isScopedResourceFieldRequired } from "./controls/resourceScopeControls.js";
 import { operationFieldId } from "./operationFieldKernel.js";
 import { contextContractSummary, fieldContextRole, fieldParticipatesInUserValidation } from "./systemContextContract.js";
@@ -43,12 +44,12 @@ function operationFieldParticipatesInUserSubmit(card = {}, field = {}) {
   const role = fieldContextRole(card?.id, fieldId);
   if (role.kind !== "user") return false;
   if (!fieldParticipatesInUserValidation(card?.id, fieldId)) return false;
-  if (card?.id === "bedSetup" && fieldId === "bedStatus") return false;
+  if (isBedSetupCardId(card?.id) && fieldId === "bedStatus") return false;
   return true;
 }
 
 function bedSetupCardinalityViolations(card = {}, values = {}, ctx) {
-  if (card.id !== "bedSetup") return [];
+  if (!isBedSetupCardId(card.id)) return [];
   const bedCount = Number(values.bedCount || 0);
   if (!Number.isFinite(bedCount) || bedCount <= 0) return [];
   const labelField = (card.fields?.business || []).find((field) => operationFieldId(field) === "bedLabels");

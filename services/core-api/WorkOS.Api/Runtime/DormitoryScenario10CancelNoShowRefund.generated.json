@@ -1,0 +1,798 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario10-runtimeMirror.generated",
+  "version": "oam.dormitory-scenario10-runtimeMirror.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario10-cancel-noshow-refund-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario10-cancel-noshow-refund-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:16104801cbbc1e755d5884c174421d102a5b98f71119e888b8e4341cf9b002c3",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "digest": "sha256:aeea01a93fc218da847f1c763bd350121d955aaad4799428ca610b702b87db08"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:aeea01a93fc218da847f1c763bd350121d955aaad4799428ca610b702b87db08",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario10.CancelNoShowRefund",
+  "scenarioPackageNo": 10,
+  "scenarioId": "lodging.cancel-noshow-refund-intake",
+  "outputContentDigest": "sha256:3dd9a0ab49e599f4ec22d25891ab6fb0b486867d2d387049f11f2b29f0c6f4d7",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "取消、未到店与退款处理",
+  "businessGoalZh": "承接场景包 5 的预订确认摘要、场景包 6 的收款/押金/担保摘要、场景包 7 的入住状态摘要和场景包 9 的退房结算意向，处理预订取消、客户未到店、取消费/未到店费计算、退款或扣费申请、库存释放请求、客户确认和证据留存。",
+  "sourceScenarioDigest": "sha256:aeea01a93fc218da847f1c763bd350121d955aaad4799428ca610b702b87db08",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "consumer": "runtime",
+  "objects": [
+    {
+      "objectName": "CancellationCase",
+      "businessNameZh": "取消处理单",
+      "descriptionZh": "承接有效预订、收款押金摘要和客户沟通结果，组织普通取消、政策计算、库存释放和财务请求。",
+      "ownedByScenarioPackageNo": 10,
+      "writeDisposition": "caseEnvelopeAppendOnly",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "amountVersionHistory",
+        "policySnapshot",
+        "evidenceHistory",
+        "financeProcessingHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "NoShowCase",
+      "businessNameZh": "未到店处理单",
+      "descriptionZh": "基于到店日期/最晚保留时间和无有效入住记录，组织未到店关闭、未到店费计算、库存释放和财务请求。",
+      "ownedByScenarioPackageNo": 10,
+      "writeDisposition": "caseEnvelopeAppendOnly",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "amountVersionHistory",
+        "policySnapshot",
+        "evidenceHistory",
+        "financeProcessingHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "ReservationClosureSnapshot",
+      "businessNameZh": "预订关闭快照",
+      "descriptionZh": "来自场景包 5 的只读预订确认、库存锁定、日期和资源摘要。",
+      "ownedByScenarioPackageNo": 5,
+      "writeDisposition": "readonlyUpstreamSummary",
+      "requiredLifecycle": [
+        "currentState",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CancellationPolicySnapshot",
+      "businessNameZh": "取消政策快照",
+      "descriptionZh": "取消政策、未到店政策、免费取消截止时间、不可退规则和例外减免依据的版本化快照。",
+      "ownedByScenarioPackageNo": 10,
+      "writeDisposition": "appendOnlySnapshot",
+      "requiredLifecycle": [
+        "currentState",
+        "policySnapshot",
+        "amountVersionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "PaymentDepositSnapshot",
+      "businessNameZh": "收款押金快照",
+      "descriptionZh": "来自场景包 6 的已收款、押金、担保和财务确认状态只读摘要。",
+      "ownedByScenarioPackageNo": 6,
+      "writeDisposition": "readonlyUpstreamSummary",
+      "requiredLifecycle": [
+        "currentState",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "RefundCalculationDraft",
+      "businessNameZh": "退款/扣费计算草稿",
+      "descriptionZh": "根据政策、价格快照、已收款/押金摘要、入住/退房状态和证据计算可退、应扣、应补和不可退金额。",
+      "ownedByScenarioPackageNo": 10,
+      "writeDisposition": "appendOnlyDraftVersion",
+      "requiredLifecycle": [
+        "currentState",
+        "amountVersionHistory",
+        "policySnapshot",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "RefundRequestIntent",
+      "businessNameZh": "退款申请意向",
+      "descriptionZh": "向 finance-gate 提交的退款申请意向，不等于真实 Refund 或退款到账。",
+      "ownedByScenarioPackageNo": 10,
+      "writeDisposition": "appendOnlyIntent",
+      "requiredLifecycle": [
+        "currentState",
+        "amountVersionHistory",
+        "financeProcessingHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CancellationFeeIntent",
+      "businessNameZh": "取消费申请意向",
+      "descriptionZh": "向 finance-gate 提交的取消费或未到店费扣费意向，不等于扣费入账。",
+      "ownedByScenarioPackageNo": 10,
+      "writeDisposition": "appendOnlyIntent",
+      "internalMigrationAlias": "ForfeitOrFeeIntent",
+      "requiredLifecycle": [
+        "currentState",
+        "amountVersionHistory",
+        "financeProcessingHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "ForfeitOrFeeIntent",
+      "businessNameZh": "扣费/没收申请意向",
+      "descriptionZh": "押金扣抵、取消费、未到店费或不可退金额的 finance-gate 处理意向，不是账务真值。",
+      "ownedByScenarioPackageNo": 10,
+      "writeDisposition": "appendOnlyIntent",
+      "requiredLifecycle": [
+        "currentState",
+        "amountVersionHistory",
+        "financeProcessingHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "InventoryReleaseRequest",
+      "businessNameZh": "库存释放请求",
+      "descriptionZh": "仅针对当前预订绑定资源和日期范围的释放请求，不能释放他人锁定或已入住资源。",
+      "ownedByScenarioPackageNo": 10,
+      "writeDisposition": "appendOnlyRequest",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CustomerConfirmationRecord",
+      "businessNameZh": "客户确认记录",
+      "descriptionZh": "客户对取消、未到店、金额、扣费或退款申请的确认、拒绝、争议和沟通证据。",
+      "ownedByScenarioPackageNo": 10,
+      "writeDisposition": "appendOnlyFact",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CustomerNotificationRecord",
+      "businessNameZh": "客户通知记录",
+      "descriptionZh": "取消或未到店结果、财务处理状态和补证请求的客户通知摘要。",
+      "ownedByScenarioPackageNo": 10,
+      "writeDisposition": "appendOnlyFact",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "FinanceProcessingRequest",
+      "businessNameZh": "财务处理请求",
+      "descriptionZh": "把退款/扣费申请、政策依据、已收/押金摘要、客户确认和证据提交给 finance-gate 的请求。",
+      "ownedByScenarioPackageNo": 10,
+      "writeDisposition": "appendOnlyRequest",
+      "requiredLifecycle": [
+        "currentState",
+        "financeProcessingHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CancellationEvidence",
+      "businessNameZh": "取消/未到店证据",
+      "descriptionZh": "聊天记录、电话记录、客户确认、内部审批、政策快照、金额计算、库存释放和财务处理请求证据。",
+      "ownedByScenarioPackageNo": 10,
+      "writeDisposition": "appendOnlyEvidence",
+      "requiredLifecycle": [
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CancellationStatusHistory",
+      "businessNameZh": "取消/未到店状态历史",
+      "descriptionZh": "取消、未到店、政策计算、客户确认、库存释放、财务处理、争议复核和纠错的追加历史。",
+      "ownedByScenarioPackageNo": 10,
+      "writeDisposition": "appendOnlyHistory",
+      "internalMigrationAlias": "StatusHistory",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "amountVersionHistory",
+        "policySnapshot",
+        "evidenceHistory",
+        "financeProcessingHistory",
+        "legalNextActions"
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "commandId": "Dorm.CancelNoShowCaseDraftStart",
+      "businessNameZh": "发起取消/未到店处理",
+      "writesObjects": [
+        "CancellationCase",
+        "NoShowCase",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CancellationCaseDraftStart",
+      "businessNameZh": "发起取消处理",
+      "writesObjects": [
+        "CancellationCase",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.NoShowCaseDraftStart",
+      "businessNameZh": "发起未到店关闭",
+      "writesObjects": [
+        "NoShowCase",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CancelNoShowReasonCustomerConfirm",
+      "businessNameZh": "登记原因与客户确认",
+      "writesObjects": [
+        "CustomerConfirmationRecord",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CancelNoShowPolicyCalculationGenerate",
+      "businessNameZh": "生成政策金额计算",
+      "writesObjects": [
+        "CancellationPolicySnapshot",
+        "RefundCalculationDraft",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CancelNoShowInventoryReleaseRequestConfirm",
+      "businessNameZh": "确认库存释放请求",
+      "writesObjects": [
+        "InventoryReleaseRequest",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CancelNoShowFinanceProcessingRequestCreate",
+      "businessNameZh": "提交财务处理请求",
+      "writesObjects": [
+        "RefundRequestIntent",
+        "CancellationFeeIntent",
+        "ForfeitOrFeeIntent",
+        "FinanceProcessingRequest",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CancelNoShowConfirmClosure",
+      "businessNameZh": "确认取消或未到店关闭",
+      "writesObjects": [
+        "CancellationCase",
+        "NoShowCase",
+        "InventoryReleaseRequest",
+        "FinanceProcessingRequest",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CancellationConfirm",
+      "businessNameZh": "确认取消",
+      "writesObjects": [
+        "CancellationCase",
+        "InventoryReleaseRequest",
+        "FinanceProcessingRequest",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.NoShowConfirm",
+      "businessNameZh": "确认未到店关闭",
+      "writesObjects": [
+        "NoShowCase",
+        "InventoryReleaseRequest",
+        "FinanceProcessingRequest",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CancelNoShowDisputeReview",
+      "businessNameZh": "取消/未到店争议复核",
+      "writesObjects": [
+        "CustomerConfirmationRecord",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CancelNoShowFollowUpRecord",
+      "businessNameZh": "记录后续跟进",
+      "writesObjects": [
+        "CustomerNotificationRecord",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CancelNoShowFinanceEvidenceSupplement",
+      "businessNameZh": "财务退回补证",
+      "writesObjects": [
+        "FinanceProcessingRequest",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CancelNoShowCorrectionRequest",
+      "businessNameZh": "取消/未到店纠错申请",
+      "writesObjects": [
+        "CancellationCase",
+        "NoShowCase",
+        "CancellationEvidence",
+        "CancellationStatusHistory"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "no_effective_reservation",
+      "messageZh": "没有有效预订，不能办理取消或未到店处理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "payment_deposit_snapshot_required",
+      "messageZh": "缺少有效收款、押金或担保摘要，不能发起退款或扣费申请。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "settlement_intent_required_for_checkout_refund",
+      "messageZh": "承接退房后续退款或扣费时，必须有退房结算意向。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "reservation_already_checked_in",
+      "messageZh": "该预订已入住，不能按普通取消或未到店关闭处理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "reservation_already_checked_out",
+      "messageZh": "该订单已退房，不能按普通取消处理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "reservation_already_cancelled",
+      "messageZh": "该预订已经取消或关闭，不能重复处理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "noshow_hold_time_not_elapsed",
+      "messageZh": "最晚保留时间尚未到，不能确认未到店关闭。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "noshow_effective_checkin_exists",
+      "messageZh": "已有有效入住记录，不能按未到店关闭。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "customer_confirmation_required",
+      "messageZh": "缺少客户确认，不能直接关闭取消或未到店处理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "dispute_requires_review",
+      "messageZh": "存在争议，必须转负责人复核，不能普通关闭。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "policy_amount_source_missing",
+      "messageZh": "金额必须来自取消政策、价格快照、已收/押金摘要和证据。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "final_refund_manual_input_forbidden",
+      "messageZh": "不能手填最终退款、扣费或账务结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "inventory_release_scope_invalid",
+      "messageZh": "库存释放只能针对本预订绑定资源和日期范围。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用由系统绑定，用户不能填写内部编号。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_result_write_attempt",
+      "messageZh": "搜索、列表、看板和报表只读，不能直接写取消或退款事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "direct_refund_payment_ledger_forbidden",
+      "messageZh": "取消、未到店与退款处理不能直接退款、收款或写账。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "finance_gate_required",
+      "messageZh": "退款、扣费、冲正和账务处理必须交给 finance-gate。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_cancellation_submission",
+      "messageZh": "该取消或未到店提交已处理，请查看结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_cancellation_conflict",
+      "messageZh": "同一预订正在被其他处理更新，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "confirmed_closure_inline_edit_forbidden",
+      "messageZh": "已确认取消或未到店关闭不能原地编辑，只能补充证据、复核或纠错。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "unauthorized_cancellation_action",
+      "messageZh": "当前角色不能执行该取消、未到店或退款处理动作。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "invariants": [
+    "取消必须基于有效预订，且该预订未入住、未退房、未被重复取消。",
+    "未到店必须基于到店日期/最晚保留时间已过且没有有效入住记录。",
+    "退款类处理必须有有效收款押金摘要；承接退房后续退款/扣费必须有退房结算意向。",
+    "库存释放只能释放当前预订绑定的资源和日期范围，不得释放他人锁定或他人预订。",
+    "已入住资源不得通过取消或未到店释放。",
+    "退款金额、取消费、未到店费必须来自取消政策、价格快照、已收款/押金摘要、入住/退房状态和证据，不得由用户手填最终账务真值。",
+    "客户确认缺失或存在争议时，不得直接普通关闭，必须进入复核或争议路径。",
+    "实际退款、扣费、冲正只能由 finance-gate 处理。",
+    "查询、搜索、列表、看板、报表永远只读，不得写取消、库存释放、退款、扣费或账务事实。",
+    "失败路径不得关闭预订、不得释放库存、不得生成退款或账务事实、不得刷新错误 Projection/Search/Dashboard。"
+  ],
+  "cancellationStatusOptions": [
+    "取消草稿",
+    "未到店草稿",
+    "待客户确认",
+    "待政策计算",
+    "待负责人复核",
+    "待财务处理",
+    "已取消",
+    "未到店已关闭",
+    "退款申请已提交",
+    "扣费申请已提交",
+    "库存释放已请求",
+    "争议处理中",
+    "财务退回待补证"
+  ],
+  "cancelNoShowInvariantRule": {
+    "validReservationRequired": true,
+    "paymentDepositSnapshotRequiredForRefund": true,
+    "settlementIntentRequiredForCheckoutRefund": true,
+    "alreadyCheckedInBlocksOrdinaryCancellation": true,
+    "alreadyCheckedOutBlocksOrdinaryCancellation": true,
+    "alreadyCancelledBlocksDuplicateCancellation": true,
+    "noShowRequiresHoldTimeElapsed": true,
+    "noShowRequiresNoEffectiveCheckin": true,
+    "customerConfirmationRequired": true,
+    "disputeRequiresReview": true,
+    "amountSourcesAuthoritative": true,
+    "finalFinanceTruthManualInputForbidden": true,
+    "inventoryReleaseScopeBoundToReservation": true,
+    "financeGateHandlesRefundFeeLedger": true,
+    "failureNoSideEffects": true,
+    "querySearchListBoardReportReadonly": true
+  },
+  "fields": {
+    "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“张三，预订号 R202606200001，客户取消，预计退款 200 元，待财务处理”。普通用户不得输入或记住内部编号。",
+    "upstreamReadonly": [
+      "客户姓名",
+      "联系电话",
+      "预订号",
+      "入住/离店日期",
+      "房间/床位",
+      "预订状态",
+      "库存锁定历史",
+      "已收款/押金/担保摘要",
+      "财务确认状态",
+      "入住状态摘要",
+      "退房结算意向",
+      "报价/价格快照"
+    ],
+    "userFilled": [
+      "取消原因",
+      "客户沟通结果",
+      "处理备注",
+      "客户确认方式",
+      "补充说明",
+      "后续跟进备注",
+      "纠错原因"
+    ],
+    "userSelected": [
+      "客户主动取消",
+      "商家取消",
+      "未到店关闭",
+      "取消草稿",
+      "返回预订",
+      "原因类型",
+      "是否客户确认",
+      "是否有争议",
+      "是否需负责人复核",
+      "是否申请例外减免",
+      "是否提交负责人复核",
+      "确认库存释放请求",
+      "提交财务处理请求",
+      "确认取消",
+      "确认未到店关闭",
+      "转争议处理"
+    ],
+    "systemGenerated": [
+      "cancellationCaseRef",
+      "noShowCaseRef",
+      "reservationRef",
+      "paymentDepositSnapshotRef",
+      "policySnapshotRef",
+      "sourceScenarioRef",
+      "customerConfirmationRef",
+      "reasonCode",
+      "confirmationEvidenceRef",
+      "caseVersion",
+      "refundCalculationDraftRef",
+      "calculationVersion",
+      "priceSnapshotRef",
+      "financeSnapshotRef",
+      "inventoryReleaseRequestRef",
+      "releasedResourceRefs",
+      "releasedDateRange",
+      "releaseReason",
+      "refundRequestIntentRef",
+      "cancellationFeeIntentRef",
+      "forfeitOrFeeIntentRef",
+      "financeProcessingRequestRef",
+      "cancellationNo",
+      "noShowClosureNo",
+      "closedAt",
+      "closedBy",
+      "customerNotificationRef",
+      "statusHistoryRef",
+      "projectionVersion",
+      "domainEventId"
+    ],
+    "systemCalculated": [
+      "取消费",
+      "未到店费",
+      "退款申请金额",
+      "扣费申请金额",
+      "不可退金额",
+      "可退金额",
+      "应补金额",
+      "财务处理方向"
+    ],
+    "evidenceBound": [
+      "聊天记录",
+      "电话记录",
+      "客户确认",
+      "内部审批证据",
+      "例外减免依据",
+      "政策补充证据",
+      "库存释放确认证据",
+      "财务处理请求补充证据",
+      "财务退回补证",
+      "客户通知证据",
+      "纠错证据"
+    ],
+    "financeGate": [
+      "退款申请意向",
+      "取消费申请意向",
+      "扣费/没收申请意向",
+      "finance-gate 处理状态"
+    ],
+    "internalAudit": [
+      "cancellationCaseRef",
+      "noShowCaseRef",
+      "reservationRef",
+      "paymentDepositSnapshotRef",
+      "refundRequestIntentRef",
+      "cancellationFeeIntentRef",
+      "forfeitOrFeeIntentRef",
+      "financeProcessingRequestRef",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "forbiddenUserInputFields": [
+      "cancellationCaseId",
+      "refundId",
+      "paymentId",
+      "depositId",
+      "ledgerEntryId",
+      "reservationId",
+      "roomId",
+      "bedId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId",
+      "ledgerTransactionId",
+      "checkoutCaseId",
+      "stayId"
+    ]
+  },
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "businessRuntimeMayWriteLedger": false,
+    "businessRuntimeMayWritePaymentRefund": false,
+    "businessRuntimeMayWriteStayCheckout": false,
+    "businessRuntimeMayRestoreOperationalStatus": false,
+    "financeGateMayConsumeRefundFeeIntentOnly": true,
+    "inventoryReadModelMayConsumeReleaseRequestOnly": true,
+    "failurePathBusinessSideEffectsAllowed": false,
+    "successMayWriteCancellationNoShowFactsAndRequestsOnly": true
+  },
+  "upstream": {
+    "allowedSourcePackageNos": [
+      5,
+      6,
+      7,
+      9
+    ],
+    "requiredReadonlyInputs": [
+      "预订确认摘要",
+      "预订号",
+      "客户信息",
+      "日期范围",
+      "房间/床位",
+      "价格快照",
+      "库存锁定历史",
+      "预订状态",
+      "收款确认摘要",
+      "押金确认摘要",
+      "担保确认摘要",
+      "财务确认状态",
+      "入住状态摘要",
+      "退房确认摘要",
+      "应退/应补意向",
+      "财务处理请求",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "validReservationRequiredZh": "没有场景包 5 的有效预订确认摘要，不得发起取消或未到店处理。",
+    "paymentDepositRequiredForRefundZh": "没有场景包 6 的有效收款、押金或担保摘要时，不得发起退款或扣费申请。",
+    "settlementIntentRequiredForCheckoutRefundZh": "承接退房后续退款/扣费时，必须读取场景包 9 的退房结算意向和财务处理请求。",
+    "upstreamWriteBackAllowed": false,
+    "mustNotRequireRefillZh": "场景包 10 只能读取预订、财务、入住状态和退房结算意向摘要，不得要求用户重新填写已确认预订、收款押金或退房字段。"
+  },
+  "downstream": {
+    "allowedConsumers": [
+      {
+        "consumer": "finance-gate",
+        "allowedReadOutputs": [
+          "退款/扣费申请",
+          "政策计算摘要",
+          "客户确认摘要",
+          "财务处理请求",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "finance-gate 只能读取退款/扣费意向、政策依据、已收/押金摘要、客户确认和证据摘要后处理实际退款、扣费、冲正或账务；场景包 10 不写 Payment、Refund、LedgerEntry 或 LedgerTransaction。"
+      },
+      {
+        "consumer": "inventory-reservation-read-model",
+        "allowedReadOutputs": [
+          "取消/未到店关闭摘要",
+          "库存释放请求",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "库存/预订读模型只能读取库存释放请求更新可用状态；场景包 10 不直接释放他人库存或写入首次库存锁定。"
+      },
+      {
+        "consumerPackageNo": 11,
+        "consumerPackageNameZh": "房务、维修与停售协同",
+        "allowedReadOutputs": [
+          "取消/未到店关闭摘要",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "后续治理或作业复盘只能读取摘要和证据，不得要求用户重新填写取消和未到店处理字段。"
+      },
+      {
+        "consumerPackageNo": 13,
+        "consumerPackageNameZh": "经营看板与复盘",
+        "allowedReadOutputs": [
+          "取消/未到店关闭摘要",
+          "政策计算摘要",
+          "财务处理状态摘要",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "看板和复盘只读，不得写取消、退款、扣费、库存或账务事实。"
+      }
+    ],
+    "handoffOutputs": [
+      "取消/未到店关闭摘要",
+      "政策计算摘要",
+      "退款/扣费申请",
+      "库存释放请求",
+      "客户确认摘要",
+      "财务处理请求",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "forbiddenOutputsZh": [
+      "Payment",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction",
+      "Stay",
+      "CheckoutCase",
+      "RoomOperationStatus=可运营",
+      "已退款到账",
+      "已入账",
+      "已入住",
+      "已退房"
+    ],
+    "downstreamRecheckRuleZh": "场景包 10 只输出取消/未到店关闭摘要、政策计算摘要、退款/扣费申请、库存释放请求、客户确认摘要、财务处理请求、证据摘要和只读对象引用；finance-gate 处理实际退款/扣费/冲正/账务，库存/预订读模型读取释放请求，后续治理复盘只读摘要。"
+  },
+  "noGo": {
+    "productionConfirmAllowed": false,
+    "businessGoLiveAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario9-testPlan.generated",
+  "version": "oam.dormitory-scenario9-testPlan.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario9-checkout-settlement-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario9-checkout-settlement-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:e8998094072fad350cab863c53b0ead0b98533c26d440c76a3c632dfb43aa6d1",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "digest": "sha256:9faf23637569daa6b849def8f73228f9c54238ea019b8d7ee4810491a5c19c9b"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9faf23637569daa6b849def8f73228f9c54238ea019b8d7ee4810491a5c19c9b",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario9.CheckoutSettlement",
+  "scenarioPackageNo": 9,
+  "scenarioId": "lodging.checkout-and-settlement",
+  "outputContentDigest": "sha256:bd5367a0fa552f4994a7b2d73075742cd7687dd8e483dd03cb1b630fb16e1ca9",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "退房结算",
+  "businessGoalZh": "承接场景包 7 的入住事实和场景包 8 的在住管理/退房准备摘要，办理实际退房、交接、验房、费用核算、押金抵扣、应退/应补结算意向、退房确认、凭证回收、财务处理请求和资源待恢复请求。",
+  "sourceScenarioDigest": "sha256:9faf23637569daa6b849def8f73228f9c54238ea019b8d7ee4810491a5c19c9b",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "positiveBrowserTestPlan": [
+    "从今日待退房进入。",
+    "查看住客和在住摘要。",
+    "确认实际离店。",
+    "完成房间/床位检查。",
+    "登记损坏或正常。",
+    "生成费用核算。",
+    "客户确认结算。",
+    "确认退房。",
+    "看到系统生成退房单号。",
+    "查看应退/应补财务处理请求。",
+    "查看资源转为待保洁/待检查。",
+    "查看今日、工作项、搜索、我的入口表现。"
+  ],
+  "negativeBrowserTestPlan": [
+    "无有效在住办理退房。",
+    "已退房重复办理。",
+    "缺实际离店时间。",
+    "缺验房证据。",
+    "有损坏但无说明。",
+    "客户未确认直接退房。",
+    "有争议直接普通结算。",
+    "伪造 stayId/checkoutCaseId/refundId/ledgerEntryId。",
+    "搜索结果直接写退房。",
+    "退房确认后直接退款。",
+    "退房确认后直接房源可运营。",
+    "重复提交。",
+    "并发退房同一入住记录。"
+  ],
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "enter-checkout-processing": [
+        "有效入住摘要",
+        "当前在住/占用摘要"
+      ],
+      "confirm-actual-checkout-handover": [
+        "客户签字或沟通记录",
+        "交接照片"
+      ],
+      "room-bed-inspection": [
+        "验房照片",
+        "物品清单或检查记录"
+      ],
+      "fee-settlement-calculation": [
+        "价格快照",
+        "财务确认摘要",
+        "服务/损坏证据或授权调整"
+      ],
+      "customer-settlement-confirmation": [
+        "客户确认凭证或争议记录"
+      ],
+      "checkout-confirmation": [
+        "交接摘要",
+        "验房摘要",
+        "费用核算摘要",
+        "客户确认摘要"
+      ],
+      "finance-resource-handoff": [
+        "财务处理请求证据",
+        "资源恢复交接证据"
+      ]
+    },
+    "screenshotAnalysisRequired": true,
+    "noSideEffectsProofRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "screenshotAnalysisRequired": true,
+  "noSideEffectsProofRequired": true,
+  "localEvidencePassAllowed": true
+}

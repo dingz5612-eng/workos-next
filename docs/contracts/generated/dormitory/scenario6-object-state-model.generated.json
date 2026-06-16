@@ -1,0 +1,235 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario6-objectStateModel.generated",
+  "version": "oam.dormitory-scenario6-objectStateModel.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario6-payment-deposit-and-guarantee-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario6-payment-deposit-and-guarantee-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:cffa84c910c72c5fad442bc4d7b4d8d65115cc58d806b1762082bfcffdec4430",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "digest": "sha256:99ce884d2bf6fc1f168eaa20970dc4fe62535dafe0a6ce2a69a115c3a931de41"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:99ce884d2bf6fc1f168eaa20970dc4fe62535dafe0a6ce2a69a115c3a931de41",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+  "scenarioPackageNo": 6,
+  "scenarioId": "lodging.payment-deposit-and-guarantee",
+  "outputContentDigest": "sha256:122ffb0c303bd8aa687bf5c5a96cb72ce3178059c9a3c6fa50ad34ecee5682ca",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "收款、押金与担保",
+  "businessGoalZh": "承接场景包 5 已确认预订，生成应收、押金和担保要求，采集收款凭证、押金凭证和担保信息，并通过 finance-gate 完成财务确认。",
+  "sourceScenarioDigest": "sha256:99ce884d2bf6fc1f168eaa20970dc4fe62535dafe0a6ce2a69a115c3a931de41",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "objects": [
+    {
+      "objectName": "PaymentRequirement",
+      "businessNameZh": "应收要求",
+      "descriptionZh": "基于预订价格快照和报价版本形成的房费、订金、剩余待收、币种和收款期限要求。",
+      "ownedByScenarioPackageNo": 6,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "financeConfirmationHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "PaymentIntent",
+      "businessNameZh": "收款意向",
+      "descriptionZh": "业务侧提交的房费或订金收款请求和凭证，不是财务真值。",
+      "ownedByScenarioPackageNo": 6,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "financeConfirmationHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "PaymentReceiptEvidence",
+      "businessNameZh": "收款凭证",
+      "descriptionZh": "转账截图、收据、POS 凭证、现金收款记录等证据绑定。",
+      "ownedByScenarioPackageNo": 6,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "financeConfirmationHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "DepositRequirement",
+      "businessNameZh": "押金要求",
+      "descriptionZh": "基于押金政策形成的押金金额、币种、期限和退还说明。",
+      "ownedByScenarioPackageNo": 6,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "financeConfirmationHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "DepositIntent",
+      "businessNameZh": "押金意向",
+      "descriptionZh": "押金凭证提交请求；押金不得计入收入。",
+      "ownedByScenarioPackageNo": 6,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "financeConfirmationHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "DepositGuarantee",
+      "businessNameZh": "担保记录",
+      "descriptionZh": "担保人、担保方式、预授权和有效期信息；担保不得视作收款。",
+      "ownedByScenarioPackageNo": 6,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "financeConfirmationHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "FinanceReviewRequest",
+      "businessNameZh": "财务确认请求",
+      "descriptionZh": "提交给 finance-gate 的确认请求，承载金额、币种、凭证和授权角色上下文。",
+      "ownedByScenarioPackageNo": 6,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "financeConfirmationHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "FinanceConfirmationSnapshot",
+      "businessNameZh": "财务确认快照",
+      "descriptionZh": "finance-gate 确认证据、金额、币种、收款方式和对象后的只读摘要；LedgerEntry 仍只由财务内核写。",
+      "ownedByScenarioPackageNo": 6,
+      "writtenByFinanceGate": true,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "financeConfirmationHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "PaymentStatusHistory",
+      "businessNameZh": "收款状态历史",
+      "descriptionZh": "应收、凭证、财务确认、退回补证和部分确认的状态历史。",
+      "ownedByScenarioPackageNo": 6,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "financeConfirmationHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "DepositStatusHistory",
+      "businessNameZh": "押金状态历史",
+      "descriptionZh": "押金、担保、预授权、财务确认和退回补证的状态历史。",
+      "ownedByScenarioPackageNo": 6,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "financeConfirmationHistory",
+        "legalNextActions"
+      ]
+    }
+  ],
+  "paymentDepositStatusOptions": [
+    "待提交凭证",
+    "待财务确认",
+    "财务已确认",
+    "财务退回",
+    "部分确认",
+    "押金已确认",
+    "担保已确认",
+    "需补充证据"
+  ],
+  "stateLayering": {
+    "scenario5StatusZh": [
+      "已预订"
+    ],
+    "scenario6StatusZh": [
+      "待收款",
+      "待押金",
+      "待担保",
+      "待提交凭证",
+      "待财务确认",
+      "财务已确认",
+      "财务退回",
+      "部分确认",
+      "押金已确认",
+      "担保已确认",
+      "需补充证据"
+    ],
+    "downstreamCheckInStatusZh": [
+      "可入住"
+    ],
+    "forbiddenStateLeapZh": [
+      "场景包 6 不得产生已入住。",
+      "场景包 6 不得产生已退房。",
+      "场景包 6 不得产生已退款。",
+      "场景包 6 不得释放库存或变更房源状态。"
+    ]
+  },
+  "invariants": [
+    "未确认预订不得进入收款、押金与担保。",
+    "应收金额必须来自价格快照、报价版本或押金政策，不得由用户手填最终财务真值。",
+    "普通收款、押金、担保必须分账分对象。",
+    "房费/订金只能形成 PaymentIntent。",
+    "押金必须形成 DepositIntent 或 DepositGuarantee，不得计入收入。",
+    "担保/预授权只能形成 GuaranteeRecord，不得当作已收款。",
+    "业务侧上传凭证不代表财务已确认。",
+    "只有 finance-gate 校验证据、金额、币种、收款方式、收款对象后，才能生成财务确认摘要。",
+    "业务 runtime 不得直接写 LedgerEntry 或 LedgerTransaction。",
+    "财务未确认不等于已收款。",
+    "押金不是收入。",
+    "担保不是收款。",
+    "收款确认不等于已入住。",
+    "确认失败不得写 CommandSubmission、DomainEvent、Outbox、Projection、Lens、Search、Dashboard、Ledger。",
+    "失败路径不得写 CommandSubmission、DomainEvent、Outbox、Projection、Lens、Search、Dashboard、Ledger。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。"
+  ],
+  "financeBoundaryRule": {
+    "financeGateRequired": true,
+    "businessRuntimeMayWriteLedger": false,
+    "ledgerEntryWrittenOnlyByFinanceKernel": true,
+    "paymentIntentIsNotFinanceTruth": true,
+    "depositIsNotIncome": true,
+    "guaranteeIsNotPayment": true,
+    "financeConfirmationRequiresAuthorizedRole": true,
+    "failureCodeForDirectLedgerWrite": "ledger_write_forbidden",
+    "failureCodeForFinanceBypass": "finance_gate_required"
+  }
+}

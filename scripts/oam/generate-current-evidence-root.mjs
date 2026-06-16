@@ -98,6 +98,724 @@ const testPlanGeneratedFromCapabilityResultPath =
   "artifacts/oam/checks/test-plan-generated-from-capability-result.json";
 const evidenceDigestChainSingleSourceResultPath =
   "artifacts/oam/checks/evidence-digest-chain-single-source-result.json";
+const dormitory13ScenarioSourcePath =
+  "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json";
+const dormitory13ScenarioGeneratedFiles = [
+  "docs/contracts/generated/dormitory/13-scenario-control.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-13-scenario-control.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioControl.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-index.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-state-ladder.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-object-ownership.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-field-source-matrix.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-evidence-policy.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-finance-boundary.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-handoff-summaries.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-old-package-migration.generated.json",
+  "docs/contracts/generated/dormitory/13-scenario-test-plan.generated.json"
+];
+const dormitory13ScenarioToolingFiles = [
+  "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "scripts/business/check-dormitory-13-scenario-control-authority.mjs",
+  "scripts/business/check-dormitory-13-scenario-generated-contracts.mjs",
+  "scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs"
+];
+const dormitory13ScenarioResultFiles = [
+  "artifacts/oam/checks/dormitory-13-scenario-control-authority-result.json",
+  "artifacts/oam/checks/dormitory-13-scenario-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-13-scenario-consumption-boundary-result.json"
+];
+const dormitory13ScenarioIntegrationChainToolingFiles = [
+  "scripts/business/check-dormitory-13-scenario-integration-chain.mjs"
+];
+const dormitory13ScenarioIntegrationChainResultFiles = [
+  "artifacts/oam/checks/dormitory-13-scenario-integration-chain-result.json"
+];
+const dormitory13ScenarioEvidenceFiles = [
+  dormitory13ScenarioSourcePath,
+  ...dormitory13ScenarioGeneratedFiles,
+  ...dormitory13ScenarioToolingFiles,
+  ...dormitory13ScenarioResultFiles
+];
+const dormitory13ScenarioIntegrationChainEvidenceFiles = [
+  ...dormitory13ScenarioIntegrationChainToolingFiles,
+  ...dormitory13ScenarioIntegrationChainResultFiles
+];
+const dormitoryScenario1SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json";
+const lodgingScenarioPackageIndexPath =
+  "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json";
+const dormitoryScenario1GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario1-resource-basic-readiness.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-object-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario1-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario1-resource-basic-readiness.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario1ResourceBasicReadiness.generated.json"
+];
+const dormitoryScenario1ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario1-resource-basic-readiness-contracts.mjs",
+  "scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs",
+  "scripts/business/check-dormitory-scenario1-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario1-consumption-boundary.mjs"
+];
+const dormitoryScenario1ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario1-resource-basic-readiness-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario1-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario1-consumption-boundary-result.json"
+];
+const dormitoryScenario1EvidenceFiles = [
+  lodgingScenarioPackageIndexPath,
+  dormitoryScenario1SourcePath,
+  ...dormitoryScenario1GeneratedFiles,
+  ...dormitoryScenario1ToolingFiles,
+  ...dormitoryScenario1ResultFiles
+];
+const dormitoryBenchmarkInheritanceSourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json";
+const dormitoryBenchmarkInheritanceGeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario1-benchmark-inheritance-contract.generated.json",
+  "docs/contracts/generated/dormitory/subsequent-scenario-start-gate.generated.json",
+  "docs/contracts/generated/dormitory/subsequent-scenario-difference-checklist-template.generated.json",
+  "docs/contracts/generated/dormitory/subsequent-scenario-field-review-template.generated.json",
+  "docs/contracts/generated/dormitory/subsequent-scenario-button-state-template.generated.json",
+  "docs/contracts/generated/dormitory/subsequent-scenario-screenshot-report-template.generated.json",
+  "docs/contracts/generated/dormitory/subsequent-scenario-failure-attribution-routing.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-start-gate-trial.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario1-benchmark-inheritance.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario1BenchmarkInheritance.generated.json"
+];
+const dormitoryBenchmarkInheritanceToolingFiles = [
+  "scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs",
+  "scripts/business/check-dormitory-scenario1-benchmark-inheritance-authority.mjs",
+  "scripts/business/check-dormitory-scenario1-benchmark-inheritance-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario2-start-gate-trial.mjs"
+];
+const dormitoryBenchmarkInheritanceResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario1-benchmark-inheritance-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario1-benchmark-inheritance-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario2-start-gate-trial-result.json"
+];
+const dormitoryBenchmarkInheritanceEvidenceFiles = [
+  dormitoryBenchmarkInheritanceSourcePath,
+  ...dormitoryBenchmarkInheritanceGeneratedFiles,
+  ...dormitoryBenchmarkInheritanceToolingFiles,
+  ...dormitoryBenchmarkInheritanceResultFiles
+];
+const dormitoryScenario2SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json";
+const dormitoryScenario2GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario2-resource-operation-status.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario2-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario2-resource-operation-status.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2ResourceOperationStatus.generated.json"
+];
+const dormitoryScenario2ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario2-resource-operation-status-contracts.mjs",
+  "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+  "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario2-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario2-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario2-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario2-negative-browser-audit.mjs"
+];
+const dormitoryScenario2RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario2BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario2-resource-operation-status-positive-browser/scenario2-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario2-resource-operation-status-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario2-resource-operation-status-negative-browser/scenario2-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario2-resource-operation-status-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario2ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario2-resource-operation-status-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario2-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario2-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario2-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario2-negative-browser-result.json"
+];
+const dormitoryScenario2EvidenceFiles = [
+  dormitoryScenario2SourcePath,
+  ...dormitoryScenario2GeneratedFiles,
+  ...dormitoryScenario2ToolingFiles,
+  ...dormitoryScenario2RuntimeEvidenceFiles,
+  ...dormitoryScenario2BrowserEvidenceFiles,
+  ...dormitoryScenario2ResultFiles
+];
+const dormitoryScenario3SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json";
+const dormitoryScenario3GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario3-product-and-pricing.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario3-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario3-product-and-pricing.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario3ProductAndPricing.generated.json"
+];
+const dormitoryScenario3ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario3-product-and-pricing-contracts.mjs",
+  "scripts/business/check-dormitory-scenario3-product-and-pricing-authority.mjs",
+  "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario3-product-and-pricing-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario3-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario3-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario3-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario3-negative-browser-audit.mjs"
+];
+const dormitoryScenario3RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario3BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario3-product-and-pricing-positive-browser/scenario3-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario3-product-and-pricing-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario3-product-and-pricing-negative-browser/scenario3-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario3-product-and-pricing-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario3ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario3-product-and-pricing-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario3-product-and-pricing-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario3-product-and-pricing-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario3-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario3-negative-browser-result.json"
+];
+const dormitoryScenario3EvidenceFiles = [
+  dormitoryScenario3SourcePath,
+  ...dormitoryScenario3GeneratedFiles,
+  ...dormitoryScenario3ToolingFiles,
+  ...dormitoryScenario3RuntimeEvidenceFiles,
+  ...dormitoryScenario3BrowserEvidenceFiles,
+  ...dormitoryScenario3ResultFiles
+];
+const dormitoryScenario4SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json";
+const dormitoryScenario4GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario4-inquiry-and-quote.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario4-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario4-inquiry-and-quote.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario4InquiryAndQuote.generated.json"
+];
+const dormitoryScenario4ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario4-inquiry-and-quote-contracts.mjs",
+  "scripts/business/check-dormitory-scenario4-inquiry-and-quote-authority.mjs",
+  "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario4-inquiry-and-quote-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario4-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario4-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario4-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario4-negative-browser-audit.mjs"
+];
+const dormitoryScenario4RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario4BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario4-inquiry-and-quote-positive-browser/scenario4-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario4-inquiry-and-quote-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario4-inquiry-and-quote-negative-browser/scenario4-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario4-inquiry-and-quote-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario4ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario4-inquiry-and-quote-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario4-inquiry-and-quote-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario4-inquiry-and-quote-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario4-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario4-negative-browser-result.json"
+];
+const dormitoryScenario4EvidenceFiles = [
+  dormitoryScenario4SourcePath,
+  ...dormitoryScenario4GeneratedFiles,
+  ...dormitoryScenario4ToolingFiles,
+  ...dormitoryScenario4RuntimeEvidenceFiles,
+  ...dormitoryScenario4BrowserEvidenceFiles,
+  ...dormitoryScenario4ResultFiles
+];
+const dormitoryScenario5SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json";
+const dormitoryScenario5GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario5-reservation-and-inventory-hold.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario5-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario5-reservation-and-inventory-hold.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario5ReservationAndInventoryHold.generated.json"
+];
+const dormitoryScenario5ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario5-reservation-and-inventory-hold-contracts.mjs",
+  "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-authority.mjs",
+  "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario5-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario5-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario5-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario5-negative-browser-audit.mjs"
+];
+const dormitoryScenario5RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario5BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario5-reservation-and-inventory-hold-positive-browser/scenario5-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario5-reservation-and-inventory-hold-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario5-reservation-and-inventory-hold-negative-browser/scenario5-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario5-reservation-and-inventory-hold-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario5ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario5-reservation-and-inventory-hold-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario5-reservation-and-inventory-hold-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario5-reservation-and-inventory-hold-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario5-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario5-negative-browser-result.json"
+];
+const dormitoryScenario5EvidenceFiles = [
+  dormitoryScenario5SourcePath,
+  ...dormitoryScenario5GeneratedFiles,
+  ...dormitoryScenario5ToolingFiles,
+  ...dormitoryScenario5RuntimeEvidenceFiles,
+  ...dormitoryScenario5BrowserEvidenceFiles,
+  ...dormitoryScenario5ResultFiles
+];
+const dormitoryScenario6SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json";
+const dormitoryScenario6GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario6-payment-deposit-and-guarantee.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario6-test-plan.generated.json",
+  "docs/contracts/generated/finance/scenario6-finance-gate.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario6-payment-deposit-and-guarantee.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario6PaymentDepositAndGuarantee.generated.json"
+];
+const dormitoryScenario6ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario6-payment-deposit-and-guarantee-contracts.mjs",
+  "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-authority.mjs",
+  "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario6-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario6-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario6-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario6-negative-browser-audit.mjs"
+];
+const dormitoryScenario6RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario6BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario6-payment-deposit-and-guarantee-positive-browser/scenario6-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario6-payment-deposit-and-guarantee-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario6-payment-deposit-and-guarantee-negative-browser/scenario6-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario6-payment-deposit-and-guarantee-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario6ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario6-payment-deposit-and-guarantee-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario6-payment-deposit-and-guarantee-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario6-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario6-negative-browser-result.json"
+];
+const dormitoryScenario6EvidenceFiles = [
+  dormitoryScenario6SourcePath,
+  ...dormitoryScenario6GeneratedFiles,
+  ...dormitoryScenario6ToolingFiles,
+  ...dormitoryScenario6RuntimeEvidenceFiles,
+  ...dormitoryScenario6BrowserEvidenceFiles,
+  ...dormitoryScenario6ResultFiles
+];
+const dormitoryScenario7SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json";
+const dormitoryScenario7GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario7-check-in-processing.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario7-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario7-check-in-processing.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario7CheckInProcessing.generated.json"
+];
+const dormitoryScenario7ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario7-check-in-processing-contracts.mjs",
+  "scripts/business/check-dormitory-scenario7-check-in-processing-authority.mjs",
+  "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario7-check-in-processing-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario7-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario7-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario7-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario7-negative-browser-audit.mjs"
+];
+const dormitoryScenario7RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario7BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario7-check-in-processing-positive-browser/scenario7-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario7-check-in-processing-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario7-check-in-processing-negative-browser/scenario7-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario7-check-in-processing-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario7ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario7-check-in-processing-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario7-check-in-processing-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario7-check-in-processing-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario7-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario7-negative-browser-result.json"
+];
+const dormitoryScenario7EvidenceFiles = [
+  dormitoryScenario7SourcePath,
+  ...dormitoryScenario7GeneratedFiles,
+  ...dormitoryScenario7ToolingFiles,
+  ...dormitoryScenario7RuntimeEvidenceFiles,
+  ...dormitoryScenario7BrowserEvidenceFiles,
+  ...dormitoryScenario7ResultFiles
+];
+const dormitoryScenario8SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json";
+const dormitoryScenario8GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario8-in-stay-management.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario8-test-plan.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario8-in-stay-management.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario8InStayManagement.generated.json"
+];
+const dormitoryScenario8ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario8-in-stay-management-contracts.mjs",
+  "scripts/business/check-dormitory-scenario8-in-stay-management-authority.mjs",
+  "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario8-in-stay-management-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario8-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario8-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario8-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario8-negative-browser-audit.mjs"
+];
+const dormitoryScenario8RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario8BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario8-in-stay-management-positive-browser/scenario8-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario8-in-stay-management-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario8-in-stay-management-negative-browser/scenario8-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario8-in-stay-management-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario8ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario8-in-stay-management-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario8-in-stay-management-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario8-in-stay-management-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario8-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario8-negative-browser-result.json"
+];
+const dormitoryScenario8EvidenceFiles = [
+  dormitoryScenario8SourcePath,
+  ...dormitoryScenario8GeneratedFiles,
+  ...dormitoryScenario8ToolingFiles,
+  ...dormitoryScenario8RuntimeEvidenceFiles,
+  ...dormitoryScenario8BrowserEvidenceFiles,
+  ...dormitoryScenario8ResultFiles
+];
+const dormitoryScenario9SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json";
+const dormitoryScenario9GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario9-checkout-settlement.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario9-test-plan.generated.json",
+  "docs/contracts/generated/finance/scenario9-finance-gate.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario9-checkout-settlement.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario9CheckoutSettlement.generated.json"
+];
+const dormitoryScenario9ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario9-checkout-settlement-contracts.mjs",
+  "scripts/business/check-dormitory-scenario9-checkout-settlement-authority.mjs",
+  "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario9-checkout-settlement-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario9-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario9-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario9-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario9-negative-browser-audit.mjs"
+];
+const dormitoryScenario9RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario9BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario9-checkout-settlement-positive-browser/scenario9-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario9-checkout-settlement-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario9-checkout-settlement-negative-browser/scenario9-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario9-checkout-settlement-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario9ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario9-checkout-settlement-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario9-checkout-settlement-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario9-checkout-settlement-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario9-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario9-negative-browser-result.json"
+];
+const dormitoryScenario9EvidenceFiles = [
+  dormitoryScenario9SourcePath,
+  ...dormitoryScenario9GeneratedFiles,
+  ...dormitoryScenario9ToolingFiles,
+  ...dormitoryScenario9RuntimeEvidenceFiles,
+  ...dormitoryScenario9BrowserEvidenceFiles,
+  ...dormitoryScenario9ResultFiles
+];
+const dormitoryScenario10SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json";
+const dormitoryScenario10GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario10-cancel-noshow-refund.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario10-test-plan.generated.json",
+  "docs/contracts/generated/finance/scenario10-finance-gate.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario10-cancel-noshow-refund.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario10CancelNoShowRefund.generated.json"
+];
+const dormitoryScenario10ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario10-cancel-noshow-refund-contracts.mjs",
+  "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-authority.mjs",
+  "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario10-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario10-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario10-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario10-negative-browser-audit.mjs"
+];
+const dormitoryScenario10RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario10BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario10-cancel-noshow-refund-positive-browser/scenario10-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario10-cancel-noshow-refund-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario10-cancel-noshow-refund-negative-browser/scenario10-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario10-cancel-noshow-refund-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario10ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario10-cancel-noshow-refund-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario10-cancel-noshow-refund-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario10-cancel-noshow-refund-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario10-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario10-negative-browser-result.json"
+];
+const dormitoryScenario10EvidenceFiles = [
+  dormitoryScenario10SourcePath,
+  ...dormitoryScenario10GeneratedFiles,
+  ...dormitoryScenario10ToolingFiles,
+  ...dormitoryScenario10RuntimeEvidenceFiles,
+  ...dormitoryScenario10BrowserEvidenceFiles,
+  ...dormitoryScenario10ResultFiles
+];
+const dormitoryScenario11SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json";
+const dormitoryScenario11GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario11-housekeeping-maintenance-outofservice.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario11-test-plan.generated.json",
+  "docs/contracts/generated/finance/scenario11-finance-gate.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario11-housekeeping-maintenance-outofservice.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario11HousekeepingMaintenanceOutOfService.generated.json"
+];
+const dormitoryScenario11ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario11-housekeeping-maintenance-outofservice-contracts.mjs",
+  "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-authority.mjs",
+  "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario11-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario11-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario11-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario11-negative-browser-audit.mjs"
+];
+const dormitoryScenario11RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario11BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario11-housekeeping-maintenance-outofservice-positive-browser/scenario11-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario11-housekeeping-maintenance-outofservice-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario11-housekeeping-maintenance-outofservice-negative-browser/scenario11-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario11-housekeeping-maintenance-outofservice-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario11ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario11-housekeeping-maintenance-outofservice-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario11-housekeeping-maintenance-outofservice-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario11-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario11-negative-browser-result.json"
+];
+const dormitoryScenario11EvidenceFiles = [
+  dormitoryScenario11SourcePath,
+  ...dormitoryScenario11GeneratedFiles,
+  ...dormitoryScenario11ToolingFiles,
+  ...dormitoryScenario11RuntimeEvidenceFiles,
+  ...dormitoryScenario11BrowserEvidenceFiles,
+  ...dormitoryScenario11ResultFiles
+];
+const dormitoryScenario12SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json";
+const dormitoryScenario12GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario12-channel-corporate-customer.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario12-test-plan.generated.json",
+  "docs/contracts/generated/finance/scenario12-finance-gate.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario12-channel-corporate-customer.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario12ChannelCorporateCustomer.generated.json"
+];
+const dormitoryScenario12ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario12-channel-corporate-customer-contracts.mjs",
+  "scripts/business/check-dormitory-scenario12-channel-corporate-customer-authority.mjs",
+  "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario12-channel-corporate-customer-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario12-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario12-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario12-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario12-negative-browser-audit.mjs"
+];
+const dormitoryScenario12RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario12BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario12-channel-corporate-customer-positive-browser/scenario12-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario12-channel-corporate-customer-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario12-channel-corporate-customer-negative-browser/scenario12-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario12-channel-corporate-customer-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario12ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario12-channel-corporate-customer-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario12-channel-corporate-customer-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario12-channel-corporate-customer-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario12-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario12-negative-browser-result.json"
+];
+const dormitoryScenario12EvidenceFiles = [
+  dormitoryScenario12SourcePath,
+  ...dormitoryScenario12GeneratedFiles,
+  ...dormitoryScenario12ToolingFiles,
+  ...dormitoryScenario12RuntimeEvidenceFiles,
+  ...dormitoryScenario12BrowserEvidenceFiles,
+  ...dormitoryScenario12ResultFiles
+];
+const dormitoryScenario13SourcePath =
+  "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json";
+const dormitoryScenario13GeneratedFiles = [
+  "docs/contracts/generated/dormitory/scenario13-reporting-audit-review.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-object-state-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-metric-model.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-steps-fields.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-crud-policy.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-runtime-rules.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-surface-navigation.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-handoff.generated.json",
+  "docs/contracts/generated/dormitory/scenario13-test-plan.generated.json",
+  "docs/contracts/generated/read-model/scenario13-reporting-read-model.generated.json",
+  "docs/contracts/generated/finance/scenario13-finance-gate-readonly.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-scenario13-reporting-audit-review.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario13ReportingAuditReview.generated.json"
+];
+const dormitoryScenario13ToolingFiles = [
+  "scripts/business/generate-dormitory-scenario13-reporting-audit-review-contracts.mjs",
+  "scripts/business/check-dormitory-scenario13-reporting-audit-review-authority.mjs",
+  "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+  "scripts/business/check-dormitory-scenario13-reporting-audit-review-consumption-boundary.mjs",
+  "scripts/surface/run-dormitory-scenario13-positive-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario13-positive-browser-audit.mjs",
+  "scripts/surface/run-dormitory-scenario13-negative-browser-audit.mjs",
+  "scripts/surface/check-dormitory-scenario13-negative-browser-audit.mjs"
+];
+const dormitoryScenario13RuntimeEvidenceFiles = [
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
+  "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+];
+const dormitoryScenario13BrowserEvidenceFiles = [
+  "artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-positive-browser/scenario13-positive-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-positive-browser/screenshot-index.json",
+  "artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-negative-browser/scenario13-negative-browser-report.json",
+  "artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-negative-browser/screenshot-index.json"
+];
+const dormitoryScenario13ResultFiles = [
+  "artifacts/oam/checks/dormitory-scenario13-reporting-audit-review-authority-result.json",
+  "artifacts/oam/checks/dormitory-scenario13-reporting-audit-review-generated-contracts-result.json",
+  "artifacts/oam/checks/dormitory-scenario13-reporting-audit-review-consumption-boundary-result.json",
+  "artifacts/oam/checks/dormitory-scenario13-positive-browser-result.json",
+  "artifacts/oam/checks/dormitory-scenario13-negative-browser-result.json"
+];
+const dormitoryScenario13EvidenceFiles = [
+  dormitoryScenario13SourcePath,
+  ...dormitoryScenario13GeneratedFiles,
+  ...dormitoryScenario13ToolingFiles,
+  ...dormitoryScenario13RuntimeEvidenceFiles,
+  ...dormitoryScenario13BrowserEvidenceFiles,
+  ...dormitoryScenario13ResultFiles
+];
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 const evidenceRootDigestPlaceholder = "__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__";
 const pendingExternalAttestation = "pending_external_attestation";
@@ -180,6 +898,22 @@ const requiredEvidenceFiles = [
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  ...dormitory13ScenarioEvidenceFiles,
+  ...dormitory13ScenarioIntegrationChainEvidenceFiles,
+  ...dormitoryScenario1EvidenceFiles,
+  ...dormitoryBenchmarkInheritanceEvidenceFiles,
+  ...dormitoryScenario2EvidenceFiles,
+  ...dormitoryScenario3EvidenceFiles,
+  ...dormitoryScenario4EvidenceFiles,
+  ...dormitoryScenario5EvidenceFiles,
+  ...dormitoryScenario6EvidenceFiles,
+  ...dormitoryScenario7EvidenceFiles,
+  ...dormitoryScenario8EvidenceFiles,
+  ...dormitoryScenario9EvidenceFiles,
+  ...dormitoryScenario10EvidenceFiles,
+  ...dormitoryScenario11EvidenceFiles,
+  ...dormitoryScenario12EvidenceFiles,
+  ...dormitoryScenario13EvidenceFiles,
   FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH,
   FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH,
   FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH,
@@ -261,7 +995,22 @@ const generatedContractFiles = [
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
   FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH,
-  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  ...dormitory13ScenarioGeneratedFiles,
+  ...dormitoryScenario1GeneratedFiles,
+  ...dormitoryBenchmarkInheritanceGeneratedFiles,
+  ...dormitoryScenario2GeneratedFiles,
+  ...dormitoryScenario3GeneratedFiles,
+  ...dormitoryScenario4GeneratedFiles,
+  ...dormitoryScenario5GeneratedFiles,
+  ...dormitoryScenario6GeneratedFiles,
+  ...dormitoryScenario7GeneratedFiles,
+  ...dormitoryScenario8GeneratedFiles,
+  ...dormitoryScenario9GeneratedFiles,
+  ...dormitoryScenario10GeneratedFiles,
+  ...dormitoryScenario11GeneratedFiles,
+  ...dormitoryScenario12GeneratedFiles,
+  ...dormitoryScenario13GeneratedFiles
 ];
 
 const files = new Map();
@@ -285,6 +1034,8 @@ const testSummary = buildTestSummary();
 const coverageSummary = buildCoverageSummary();
 const mobileBranchRiskKernel = buildMobileBranchRiskKernel();
 const realBrowserEvidence = buildRealBrowserEvidence();
+const dormitory13ScenarioIntegrationChain =
+  readJsonIfExists(dormitory13ScenarioIntegrationChainResultFiles[0]) ?? {};
 const mutationTests = readMutationTestsResult();
 const ciArtifactProvenance = readCiArtifactProvenanceReport();
 const sourcePackageCheck = readSourcePackageCheckResult();
@@ -331,14 +1082,21 @@ const capabilityProjectionDigestChain = buildProjectionDigestChain(root);
 const generatedCapabilityTestPlan = readJsonIfExists(FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH) ?? {};
 const firstGoldenChainBrowserAuditReport = readJsonIfExists(FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH) ?? {};
 const firstGoldenChainBrowserAuditResult = readJsonIfExists(FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH) ?? {};
+const compilerCapabilityDigestChain = readJsonIfExists(FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH) ?? {};
 const capabilityDigestChain = {
-  version: "oam.capability-evidence-digest-chain.v1",
+  ...compilerCapabilityDigestChain,
+  version: compilerCapabilityDigestChain.version ?? "oam.capability-evidence-digest-chain.v1",
   capabilityId: capabilityProjectionDigestChain.capabilityId,
   authorityLedgerDigest: capabilityProjectionDigestChain.authorityLedgerDigest,
   acceptedGeneratedBundleDigest: capabilityProjectionDigestChain.acceptedGeneratedBundleDigest,
   runtimeProjectionDigest: capabilityProjectionDigestChain.runtimeProjectionDigest,
   surfaceProjectionDigest: capabilityProjectionDigestChain.surfaceProjectionDigest,
   searchProjectionDigest: capabilityProjectionDigestChain.searchProjectionDigest,
+  environmentProfileDigest: capabilityProjectionDigestChain.environmentProfileDigest,
+  positiveBrowserAuditDigest: capabilityProjectionDigestChain.positiveBrowserAuditDigest,
+  negativeBrowserAuditDigest: capabilityProjectionDigestChain.negativeBrowserAuditDigest,
+  noSideEffectsProofDigest: capabilityProjectionDigestChain.noSideEffectsProofDigest,
+  subjectChainDigest: capabilityProjectionDigestChain.subjectChainDigest,
   testPlanDigest: generatedCapabilityTestPlan.testPlanDigest ?? "missing",
   browserAuditDigest: firstGoldenChainBrowserAuditReport.browserAuditDigest ??
     firstGoldenChainBrowserAuditResult.browserAuditDigest ??
@@ -724,6 +1482,8 @@ const generatedCompileExecutionProofNodes = buildGeneratedCompileExecutionProofN
 const generatedCandidateAcceptanceProofNodes = buildGeneratedCandidateAcceptanceProofNodes();
 const dormitoryRuntimeAdmissionProofNodes = buildDormitoryRuntimeAdmissionProofNodes();
 const dormitoryFirstGoldenChainLandingProofNodes = buildDormitoryFirstGoldenChainLandingProofNodes();
+const dormitory13ScenarioIntegrationChainProofNode =
+  buildDormitory13ScenarioIntegrationChainProofNode(dormitory13ScenarioIntegrationChain);
 const candidateEvidenceObject = {
   ...proof("current-oam-candidate-evidence-object", "当前 OAM Candidate Evidence Object", {
     proofType: "candidate-evidence",
@@ -992,6 +1752,15 @@ const finalReport = {
   skippedOrNotApplicable: buildSkippedOrNotApplicable(),
   coverageSummary,
   mobileBranchRiskKernel,
+  dormitory13ScenarioIntegrationChain: {
+    status: dormitory13ScenarioIntegrationChain.status ?? "MISSING",
+    chainCount: dormitory13ScenarioIntegrationChain.chainCount ?? 0,
+    completedChainCount: dormitory13ScenarioIntegrationChain.completedChainCount ?? 0,
+    result: dormitory13ScenarioIntegrationChainResultFiles[0],
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  },
   ciEvidenceRootStatus: {
     generated: true,
     checkedBy: "scripts/oam/check-current-evidence-root.mjs",
@@ -1097,6 +1866,16 @@ const evidenceGraph = {
   coverageSummary,
   mobileBranchRiskKernel,
   realBrowserEvidence: realBrowserEvidence.summary,
+  dormitory13ScenarioIntegrationChain: {
+    status: dormitory13ScenarioIntegrationChain.status ?? "MISSING",
+    chainCount: dormitory13ScenarioIntegrationChain.chainCount ?? 0,
+    completedChainCount: dormitory13ScenarioIntegrationChain.completedChainCount ?? 0,
+    result: dormitory13ScenarioIntegrationChainResultFiles[0],
+    digest: dormitory13ScenarioIntegrationChain.resultDigest ?? "missing",
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  },
   firstGoldenChainBrowserAudit: {
     report: FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH,
     result: FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH,
@@ -1137,6 +1916,7 @@ const evidenceGraph = {
     ...generatedCandidateAcceptanceProofNodes,
     ...dormitoryRuntimeAdmissionProofNodes,
     ...dormitoryFirstGoldenChainLandingProofNodes,
+    dormitory13ScenarioIntegrationChainProofNode,
     ...realBrowserEvidence.nodes
   ],
   edges: realBrowserEvidence.edges
@@ -1309,7 +2089,6 @@ const releaseAttestation = {
   nextStageAllowed: false
 };
 addEvidence(releaseAttestationPath, releaseAttestation);
-addEvidence(FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH, capabilityDigestChain);
 addEvidence(dormitoryRuntimeTestOnlyProofPath, buildDormitoryRuntimeTestOnlyEvidenceProof());
 addEvidence(dormitoryFirstGoldenChainLandingProofPath, buildDormitoryFirstGoldenChainBusinessLandingEvidenceProof());
 addTextEvidence("artifacts/oam/evidence/execution-log.jsonl", executionLogText(digestPlaceholder));
@@ -1970,9 +2749,15 @@ function digestFor(fileMap) {
 function digestForDisk(fileList) {
   const normalized = {};
   for (const file of [...fileList].sort((left, right) => left.localeCompare(right))) {
-    normalized[file] = normalizeForDigest(file.endsWith(".jsonl") ? readJsonl(file) : readJson(file));
+    normalized[file] = normalizeForDigest(readEvidenceFile(file));
   }
   return `sha256:${sha256(JSON.stringify(normalized))}`;
+}
+
+function readEvidenceFile(file) {
+  if (file.endsWith(".jsonl")) return readJsonl(file);
+  if (file.endsWith(".json")) return readJson(file);
+  return readText(file);
 }
 
 function digestForFiles(fileList) {
@@ -2182,6 +2967,61 @@ function buildWorkstreamProofNodes() {
       finalReportFields: workstream.finalReportFields ?? []
     };
   });
+}
+
+function buildDormitory13ScenarioIntegrationChainProofNode(result) {
+  const sources = [
+    dormitory13ScenarioSourcePath,
+    "docs/contracts/generated/dormitory/13-scenario-handoff-summaries.generated.json",
+    "docs/contracts/generated/dormitory/13-scenario-object-ownership.generated.json",
+    "docs/contracts/generated/dormitory/13-scenario-finance-boundary.generated.json",
+    ...dormitory13ScenarioIntegrationChainToolingFiles,
+    ...dormitory13ScenarioIntegrationChainResultFiles
+  ];
+  const sourceHashes = sources.map((file) => ({
+    path: file,
+    hash: hashFileIfPresent(file)
+  }));
+  const payload = {
+    proofType: "dormitory-13-scenario-integration-chain",
+    status: result?.status ?? "MISSING",
+    chainCount: result?.chainCount ?? 0,
+    completedChainCount: result?.completedChainCount ?? 0,
+    guarantees: result?.guarantees ?? {},
+    resultDigest: result?.resultDigest ?? "missing",
+    finalGoNoGo: "NO_GO",
+    sourceHashes
+  };
+  const proofHash = `sha256:${sha256(JSON.stringify(normalizeForDigest(payload)))}`;
+  return {
+    id: "DORMITORY-13-SCENARIO-INTEGRATION-CHAIN",
+    type: "integration_chain_evidence",
+    scope: "dormitory_13_scenario_local_test_evidence",
+    status: result?.status === "PASS" ? "passed" : "failed",
+    proofType: "dormitory-13-scenario-integration-chain",
+    source: sources,
+    hash: proofHash,
+    dependsOn: sources,
+    producedBy: "scripts/oam/generate-current-evidence-root.mjs",
+    verifiedBy: "scripts/business/check-dormitory-13-scenario-integration-chain.mjs",
+    command: "node scripts/business/check-dormitory-13-scenario-integration-chain.mjs",
+    checker: "scripts/business/check-dormitory-13-scenario-integration-chain.mjs",
+    inputHashes: sourceHashes,
+    outputHashes: [{ path: "evidence-node:DORMITORY-13-SCENARIO-INTEGRATION-CHAIN", hash: proofHash }],
+    gateResult: {
+      status: result?.status ?? "MISSING",
+      chainCount: result?.chainCount ?? 0,
+      completedChainCount: result?.completedChainCount ?? 0
+    },
+    negativeTestResult: result?.status === "PASS" ? "blocked" : "failed",
+    goNoGoImpact: ["finalGoNoGo", "productionConfirmAllowed", "releaseAuthority"],
+    guarantees: result?.guarantees ?? {},
+    goNoGo: "NO_GO",
+    finalGoNoGo: "NO_GO",
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    notesZh: "住宿经营 13 场景 A-E 跨场景集成链 proof DAG 节点；只证明本地/测试证据闭环，不授权生产发布或 final GO。"
+  };
 }
 
 function buildWorkstreamGoNoGoFields(nodes) {
@@ -3846,14 +4686,114 @@ function readControlPlaneGateResult() {
 
 function buildRealBrowserEvidence() {
   const firstGoldenChain = readFirstGoldenChainBrowserEvidence();
+  const scenario2Positive = readScenario2PositiveBrowserEvidence();
+  const scenario2Negative = readScenario2NegativeBrowserEvidence();
+  const scenario3Positive = readScenario3PositiveBrowserEvidence();
+  const scenario3Negative = readScenario3NegativeBrowserEvidence();
+  const scenario4Positive = readScenario4PositiveBrowserEvidence();
+  const scenario4Negative = readScenario4NegativeBrowserEvidence();
+  const scenario5Positive = readScenario5PositiveBrowserEvidence();
+  const scenario5Negative = readScenario5NegativeBrowserEvidence();
+  const scenario6Positive = readScenario6PositiveBrowserEvidence();
+  const scenario6Negative = readScenario6NegativeBrowserEvidence();
+  const scenario7Positive = readScenario7PositiveBrowserEvidence();
+  const scenario7Negative = readScenario7NegativeBrowserEvidence();
+  const scenario8Positive = readScenario8PositiveBrowserEvidence();
+  const scenario8Negative = readScenario8NegativeBrowserEvidence();
+  const scenario9Positive = readScenario9PositiveBrowserEvidence();
+  const scenario9Negative = readScenario9NegativeBrowserEvidence();
+  const scenario10Positive = readScenario10PositiveBrowserEvidence();
+  const scenario10Negative = readScenario10NegativeBrowserEvidence();
+  const scenario11Positive = readScenario11PositiveBrowserEvidence();
+  const scenario11Negative = readScenario11NegativeBrowserEvidence();
+  const scenario12Positive = readScenario12PositiveBrowserEvidence();
+  const scenario12Negative = readScenario12NegativeBrowserEvidence();
+  const scenario13Positive = readScenario13PositiveBrowserEvidence();
+  const scenario13Negative = readScenario13NegativeBrowserEvidence();
   const legacyL1 = readL1BrowserEvidence();
   const tenScenario = readTenScenarioBrowserEvidence();
-  const nodes = [firstGoldenChain.node].filter(Boolean);
+  const nodes = [
+    firstGoldenChain.node,
+    scenario2Positive.node,
+    scenario2Negative.node,
+    scenario3Positive.node,
+    scenario3Negative.node,
+    scenario4Positive.node,
+    scenario4Negative.node,
+    scenario5Positive.node,
+    scenario5Negative.node,
+    scenario6Positive.node,
+    scenario6Negative.node,
+    scenario7Positive.node,
+    scenario7Negative.node,
+    scenario8Positive.node,
+    scenario8Negative.node,
+    scenario9Positive.node,
+    scenario9Negative.node,
+    scenario10Positive.node,
+    scenario10Negative.node,
+    scenario11Positive.node,
+    scenario11Negative.node,
+    scenario12Positive.node,
+    scenario12Negative.node,
+    scenario13Positive.node,
+    scenario13Negative.node
+  ].filter(Boolean);
   const edges = [
-    firstGoldenChain.node ? { from: firstGoldenChain.node.id, to: "DORMITORY_FIRST_GOLDEN_CHAIN_CAPABILITY", relation: "binds_current_capability_browser_evidence" } : null
+    firstGoldenChain.node ? { from: firstGoldenChain.node.id, to: "DORMITORY_FIRST_GOLDEN_CHAIN_CAPABILITY", relation: "binds_current_capability_browser_evidence" } : null,
+    scenario2Positive.node ? { from: scenario2Positive.node.id, to: "DORMITORY_SCENARIO2_RESOURCE_OPERATION_STATUS", relation: "binds_scenario2_positive_browser_evidence" } : null,
+    scenario2Negative.node ? { from: scenario2Negative.node.id, to: "DORMITORY_SCENARIO2_RESOURCE_OPERATION_STATUS", relation: "binds_scenario2_negative_browser_evidence" } : null,
+    scenario3Positive.node ? { from: scenario3Positive.node.id, to: "DORMITORY_SCENARIO3_PRODUCT_AND_PRICING", relation: "binds_scenario3_positive_browser_evidence" } : null,
+    scenario3Negative.node ? { from: scenario3Negative.node.id, to: "DORMITORY_SCENARIO3_PRODUCT_AND_PRICING", relation: "binds_scenario3_negative_browser_evidence" } : null,
+    scenario4Positive.node ? { from: scenario4Positive.node.id, to: "DORMITORY_SCENARIO4_INQUIRY_AND_QUOTE", relation: "binds_scenario4_positive_browser_evidence" } : null,
+    scenario4Negative.node ? { from: scenario4Negative.node.id, to: "DORMITORY_SCENARIO4_INQUIRY_AND_QUOTE", relation: "binds_scenario4_negative_browser_evidence" } : null,
+    scenario5Positive.node ? { from: scenario5Positive.node.id, to: "DORMITORY_SCENARIO5_RESERVATION_AND_INVENTORY_HOLD", relation: "binds_scenario5_positive_browser_evidence" } : null,
+    scenario5Negative.node ? { from: scenario5Negative.node.id, to: "DORMITORY_SCENARIO5_RESERVATION_AND_INVENTORY_HOLD", relation: "binds_scenario5_negative_browser_evidence" } : null,
+    scenario6Positive.node ? { from: scenario6Positive.node.id, to: "DORMITORY_SCENARIO6_PAYMENT_DEPOSIT_AND_GUARANTEE", relation: "binds_scenario6_positive_browser_evidence" } : null,
+    scenario6Negative.node ? { from: scenario6Negative.node.id, to: "DORMITORY_SCENARIO6_PAYMENT_DEPOSIT_AND_GUARANTEE", relation: "binds_scenario6_negative_browser_evidence" } : null,
+    scenario7Positive.node ? { from: scenario7Positive.node.id, to: "DORMITORY_SCENARIO7_CHECK_IN_PROCESSING", relation: "binds_scenario7_positive_browser_evidence" } : null,
+    scenario7Negative.node ? { from: scenario7Negative.node.id, to: "DORMITORY_SCENARIO7_CHECK_IN_PROCESSING", relation: "binds_scenario7_negative_browser_evidence" } : null,
+    scenario8Positive.node ? { from: scenario8Positive.node.id, to: "DORMITORY_SCENARIO8_IN_STAY_MANAGEMENT", relation: "binds_scenario8_positive_browser_evidence" } : null,
+    scenario8Negative.node ? { from: scenario8Negative.node.id, to: "DORMITORY_SCENARIO8_IN_STAY_MANAGEMENT", relation: "binds_scenario8_negative_browser_evidence" } : null,
+    scenario9Positive.node ? { from: scenario9Positive.node.id, to: "DORMITORY_SCENARIO9_CHECKOUT_SETTLEMENT", relation: "binds_scenario9_positive_browser_evidence" } : null,
+    scenario9Negative.node ? { from: scenario9Negative.node.id, to: "DORMITORY_SCENARIO9_CHECKOUT_SETTLEMENT", relation: "binds_scenario9_negative_browser_evidence" } : null,
+    scenario10Positive.node ? { from: scenario10Positive.node.id, to: "DORMITORY_SCENARIO10_CANCEL_NOSHOW_REFUND", relation: "binds_scenario10_positive_browser_evidence" } : null,
+    scenario10Negative.node ? { from: scenario10Negative.node.id, to: "DORMITORY_SCENARIO10_CANCEL_NOSHOW_REFUND", relation: "binds_scenario10_negative_browser_evidence" } : null,
+    scenario11Positive.node ? { from: scenario11Positive.node.id, to: "DORMITORY_SCENARIO11_HOUSEKEEPING_MAINTENANCE_OUTOFSERVICE", relation: "binds_scenario11_positive_browser_evidence" } : null,
+    scenario11Negative.node ? { from: scenario11Negative.node.id, to: "DORMITORY_SCENARIO11_HOUSEKEEPING_MAINTENANCE_OUTOFSERVICE", relation: "binds_scenario11_negative_browser_evidence" } : null,
+    scenario12Positive.node ? { from: scenario12Positive.node.id, to: "DORMITORY_SCENARIO12_CHANNEL_CORPORATE_CUSTOMER", relation: "binds_scenario12_positive_browser_evidence" } : null,
+    scenario12Negative.node ? { from: scenario12Negative.node.id, to: "DORMITORY_SCENARIO12_CHANNEL_CORPORATE_CUSTOMER", relation: "binds_scenario12_negative_browser_evidence" } : null,
+    scenario13Positive.node ? { from: scenario13Positive.node.id, to: "DORMITORY_SCENARIO13_REPORTING_AUDIT_REVIEW", relation: "binds_scenario13_positive_browser_evidence" } : null,
+    scenario13Negative.node ? { from: scenario13Negative.node.id, to: "DORMITORY_SCENARIO13_REPORTING_AUDIT_REVIEW", relation: "binds_scenario13_negative_browser_evidence" } : null
   ].filter(Boolean);
   const screenshotHashCount = nodes.reduce((total, node) => total + (node.screenshotHashes?.length ?? 0), 0);
-  const status = firstGoldenChain.status === "passed" ? "passed" : "missing_or_failed";
+  const status = firstGoldenChain.status === "passed" &&
+    scenario2Positive.status === "passed" &&
+    scenario2Negative.status === "passed" &&
+    scenario3Positive.status === "passed" &&
+    scenario3Negative.status === "passed" &&
+    scenario4Positive.status === "passed" &&
+    scenario4Negative.status === "passed" &&
+    scenario5Positive.status === "passed" &&
+    scenario5Negative.status === "passed" &&
+    scenario6Positive.status === "passed" &&
+    scenario6Negative.status === "passed" &&
+    scenario7Positive.status === "passed" &&
+    scenario7Negative.status === "passed" &&
+    scenario8Positive.status === "passed" &&
+    scenario8Negative.status === "passed" &&
+    scenario9Positive.status === "passed" &&
+    scenario9Negative.status === "passed" &&
+    scenario10Positive.status === "passed" &&
+    scenario10Negative.status === "passed" &&
+    scenario11Positive.status === "passed" &&
+    scenario11Negative.status === "passed" &&
+    scenario12Positive.status === "passed" &&
+    scenario12Negative.status === "passed" &&
+    scenario13Positive.status === "passed" &&
+    scenario13Negative.status === "passed"
+    ? "passed"
+    : "missing_or_failed";
   return {
     nodes,
     edges,
@@ -3862,6 +4802,102 @@ function buildRealBrowserEvidence() {
       singleWriter: "scripts/oam/generate-current-evidence-root.mjs",
       l1: firstGoldenChain,
       firstGoldenChain,
+      scenario2: {
+        positive: scenario2Positive,
+        negative: scenario2Negative,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
+      scenario3: {
+        positive: scenario3Positive,
+        negative: scenario3Negative,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
+      scenario4: {
+        positive: scenario4Positive,
+        negative: scenario4Negative,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
+      scenario5: {
+        positive: scenario5Positive,
+        negative: scenario5Negative,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
+      scenario6: {
+        positive: scenario6Positive,
+        negative: scenario6Negative,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
+      scenario7: {
+        positive: scenario7Positive,
+        negative: scenario7Negative,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
+      scenario8: {
+        positive: scenario8Positive,
+        negative: scenario8Negative,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
+      scenario9: {
+        positive: scenario9Positive,
+        negative: scenario9Negative,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
+      scenario10: {
+        positive: scenario10Positive,
+        negative: scenario10Negative,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
+      scenario11: {
+        positive: scenario11Positive,
+        negative: scenario11Negative,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
+      scenario12: {
+        positive: scenario12Positive,
+        negative: scenario12Negative,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
+      scenario13: {
+        positive: scenario13Positive,
+        negative: scenario13Negative,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
       tenScenario: {
         ...tenScenario,
         lane: "legacy_regression_only",
@@ -3874,6 +4910,1870 @@ function buildRealBrowserEvidence() {
       },
       screenshotHashCount
     }
+  };
+}
+
+function readScenario2PositiveBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario2-resource-operation-status-positive-browser/scenario2-positive-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario2-positive-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario2-resource-operation-status-positive-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "房源运营就绪与状态维护 positive browser evidence；证明主流程和入口职责来自 generated 场景 2 合同。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 2,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.steps?.length ?? 0,
+      expectedSteps: 11
+    },
+    scenarioCount: report?.steps?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    positiveBrowserAuditDigest: report?.positiveBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO2-POSITIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO2-POSITIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario2.ResourceOperationStatus.Positive"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "房源运营就绪与状态维护 positive browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.steps?.length ?? 0,
+        expectedSteps: 11
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario2-resource-operation-status-positive-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario2-test-plan.generated.json",
+        "scripts/surface/run-dormitory-scenario2-positive-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario2-positive-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario2NegativeBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario2-resource-operation-status-negative-browser/scenario2-negative-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario2-negative-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario2-resource-operation-status-negative-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "房源运营就绪与状态维护 negative browser evidence；证明失败路径无副作用且不越界。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 2,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.scenarios?.length ?? 0,
+      expectedSteps: 12
+    },
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    negativeBrowserAuditDigest: report?.negativeBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO2-NEGATIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO2-NEGATIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario2.ResourceOperationStatus.Negative"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "房源运营就绪与状态维护 negative browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.scenarios?.length ?? 0,
+        expectedSteps: 12
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario2-resource-operation-status-negative-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario2-test-plan.generated.json",
+        "scripts/surface/run-dormitory-scenario2-negative-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario2-negative-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario3PositiveBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario3-product-and-pricing-positive-browser/scenario3-positive-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario3-positive-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario3-product-and-pricing-positive-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "住宿商品与价格 positive browser evidence；证明主流程和入口职责来自 generated 场景 3 合同。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 3,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.steps?.length ?? 0,
+      expectedSteps: 10
+    },
+    scenarioCount: report?.steps?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    positiveBrowserAuditDigest: report?.positiveBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO3-POSITIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO3-POSITIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario3.ProductAndPricing.Positive"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "住宿商品与价格 positive browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.steps?.length ?? 0,
+        expectedSteps: 10
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario3-product-and-pricing-positive-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario3-test-plan.generated.json",
+        "scripts/surface/run-dormitory-scenario3-positive-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario3-positive-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario3NegativeBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario3-product-and-pricing-negative-browser/scenario3-negative-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario3-negative-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario3-product-and-pricing-negative-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "住宿商品与价格 negative browser evidence；证明失败路径无副作用且不越界。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 3,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.scenarios?.length ?? 0,
+      expectedSteps: 13
+    },
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    negativeBrowserAuditDigest: report?.negativeBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO3-NEGATIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO3-NEGATIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario3.ProductAndPricing.Negative"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "住宿商品与价格 negative browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.scenarios?.length ?? 0,
+        expectedSteps: 13
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario3-product-and-pricing-negative-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario3-test-plan.generated.json",
+        "scripts/surface/run-dormitory-scenario3-negative-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario3-negative-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario4PositiveBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario4-inquiry-and-quote-positive-browser/scenario4-positive-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario4-positive-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario4-inquiry-and-quote-positive-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "询价与报价 positive browser evidence；证明主流程、报价有效期、转预订准备交接和入口职责来自 generated 场景 4 合同。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 4,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.steps?.length ?? 0,
+      expectedSteps: 11
+    },
+    scenarioCount: report?.steps?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    positiveBrowserAuditDigest: report?.positiveBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO4-POSITIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO4-POSITIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario4.InquiryAndQuote.Positive"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "询价与报价 positive browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.steps?.length ?? 0,
+        expectedSteps: 11
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario4-inquiry-and-quote-positive-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario4-test-plan.generated.json",
+        "scripts/surface/run-dormitory-scenario4-positive-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario4-positive-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario4NegativeBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario4-inquiry-and-quote-negative-browser/scenario4-negative-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario4-negative-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario4-inquiry-and-quote-negative-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "询价与报价 negative browser evidence；证明失败路径无副作用、搜索只读、内部引用阻断和跨场景越界阻断。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 4,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.scenarios?.length ?? 0,
+      expectedSteps: 14
+    },
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    negativeBrowserAuditDigest: report?.negativeBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO4-NEGATIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO4-NEGATIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario4.InquiryAndQuote.Negative"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "询价与报价 negative browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.scenarios?.length ?? 0,
+        expectedSteps: 14
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario4-inquiry-and-quote-negative-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario4-test-plan.generated.json",
+        "scripts/surface/run-dormitory-scenario4-negative-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario4-negative-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario5PositiveBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario5-reservation-and-inventory-hold-positive-browser/scenario5-positive-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario5-positive-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario5-reservation-and-inventory-hold-positive-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "预订与库存锁定 positive browser evidence；证明主流程、库存锁定、系统生成预订号、下游重新核验和入口职责来自 generated 场景 5 合同。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 5,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.steps?.length ?? 0,
+      expectedSteps: 11
+    },
+    scenarioCount: report?.steps?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    positiveBrowserAuditDigest: report?.positiveBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO5-POSITIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO5-POSITIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario5.ReservationAndInventoryHold.Positive"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "预订与库存锁定 positive browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.steps?.length ?? 0,
+        expectedSteps: 11
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario5-reservation-and-inventory-hold-positive-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario5-test-plan.generated.json",
+        "scripts/surface/run-dormitory-scenario5-positive-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario5-positive-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario5NegativeBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario5-reservation-and-inventory-hold-negative-browser/scenario5-negative-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario5-negative-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario5-reservation-and-inventory-hold-negative-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "预订与库存锁定 negative browser evidence；证明失败路径无副作用、搜索只读、内部引用阻断、库存冲突和跨场景越权阻断。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 5,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.scenarios?.length ?? 0,
+      expectedSteps: 15
+    },
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    negativeBrowserAuditDigest: report?.negativeBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO5-NEGATIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO5-NEGATIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario5.ReservationAndInventoryHold.Negative"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "预订与库存锁定 negative browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.scenarios?.length ?? 0,
+        expectedSteps: 15
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario5-reservation-and-inventory-hold-negative-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario5-test-plan.generated.json",
+        "scripts/surface/run-dormitory-scenario5-negative-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario5-negative-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario6PositiveBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario6-payment-deposit-and-guarantee-positive-browser/scenario6-positive-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario6-positive-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario6-payment-deposit-and-guarantee-positive-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "收款、押金与担保 positive browser evidence；证明主流程、押金/担保边界、finance-gate、下游重新核验和入口职责来自 generated 场景 6 合同。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 6,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.steps?.length ?? 0,
+      expectedSteps: 11
+    },
+    scenarioCount: report?.steps?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    positiveBrowserAuditDigest: report?.positiveBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO6-POSITIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO6-POSITIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario6.PaymentDepositAndGuarantee.Positive"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "收款、押金与担保 positive browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.steps?.length ?? 0,
+        expectedSteps: 11
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario6-payment-deposit-and-guarantee-positive-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario6-test-plan.generated.json",
+        "docs/contracts/generated/finance/scenario6-finance-gate.generated.json",
+        "scripts/surface/run-dormitory-scenario6-positive-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario6-positive-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario6NegativeBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario6-payment-deposit-and-guarantee-negative-browser/scenario6-negative-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario6-negative-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario6-payment-deposit-and-guarantee-negative-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "收款、押金与担保 negative browser evidence；证明失败路径无副作用、搜索只读、内部引用阻断、finance-gate 和跨场景越权阻断。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 6,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.scenarios?.length ?? 0,
+      expectedSteps: 14
+    },
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    negativeBrowserAuditDigest: report?.negativeBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO6-NEGATIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO6-NEGATIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario6.PaymentDepositAndGuarantee.Negative"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "收款、押金与担保 negative browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.scenarios?.length ?? 0,
+        expectedSteps: 14
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario6-payment-deposit-and-guarantee-negative-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario6-test-plan.generated.json",
+        "docs/contracts/generated/finance/scenario6-finance-gate.generated.json",
+        "scripts/surface/run-dormitory-scenario6-negative-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario6-negative-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario7PositiveBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario7-check-in-processing-positive-browser/scenario7-positive-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario7-positive-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario7-check-in-processing-positive-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "入住办理 positive browser evidence；证明主流程、系统生成入住记录号、凭证发放、下游在住管理摘要和入口职责来自 generated 场景 7 合同。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 7,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.steps?.length ?? 0,
+      expectedSteps: 10
+    },
+    scenarioCount: report?.steps?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    positiveBrowserAuditDigest: report?.positiveBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO7-POSITIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO7-POSITIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario7.CheckInProcessing.Positive"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "入住办理 positive browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.steps?.length ?? 0,
+        expectedSteps: 10
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario7-check-in-processing-positive-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario7-test-plan.generated.json",
+        "scripts/surface/run-dormitory-scenario7-positive-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario7-positive-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario7NegativeBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario7-check-in-processing-negative-browser/scenario7-negative-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario7-negative-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario7-check-in-processing-negative-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "入住办理 negative browser evidence；证明失败路径无副作用、搜索只读、内部引用阻断、未入住不发凭证和跨场景越权阻断。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 7,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.scenarios?.length ?? 0,
+      expectedSteps: 14
+    },
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    negativeBrowserAuditDigest: report?.negativeBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO7-NEGATIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO7-NEGATIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario7.CheckInProcessing.Negative"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "入住办理 negative browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.scenarios?.length ?? 0,
+        expectedSteps: 14
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario7-check-in-processing-negative-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario7-test-plan.generated.json",
+        "scripts/surface/run-dormitory-scenario7-negative-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario7-negative-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario8PositiveBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario8-in-stay-management-positive-browser/scenario8-positive-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario8-positive-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario8-in-stay-management-positive-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "在住管理 positive browser evidence；证明在住详情、状态、服务、异常、续住、换房换床、凭证、退房准备和入口职责来自 generated 场景 8 合同。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 8,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.steps?.length ?? 0,
+      expectedSteps: 10
+    },
+    scenarioCount: report?.steps?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    positiveBrowserAuditDigest: report?.positiveBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO8-POSITIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO8-POSITIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario8.InStayManagement.Positive"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "在住管理 positive browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.steps?.length ?? 0,
+        expectedSteps: 10
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario8-in-stay-management-positive-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario8-test-plan.generated.json",
+        "scripts/surface/run-dormitory-scenario8-positive-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario8-positive-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario8NegativeBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario8-in-stay-management-negative-browser/scenario8-negative-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario8-negative-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario8-in-stay-management-negative-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "在住管理 negative browser evidence；证明失败路径无副作用、搜索只读、内部引用阻断、凭证/换床/续住/退房准备越界阻断。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 8,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.scenarios?.length ?? 0,
+      expectedSteps: 13
+    },
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    negativeBrowserAuditDigest: report?.negativeBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO8-NEGATIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO8-NEGATIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario8.InStayManagement.Negative"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "在住管理 negative browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.scenarios?.length ?? 0,
+        expectedSteps: 13
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario8-in-stay-management-negative-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario8-test-plan.generated.json",
+        "scripts/surface/run-dormitory-scenario8-negative-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario8-negative-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario9PositiveBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario9-checkout-settlement-positive-browser/scenario9-positive-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario9-positive-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario9-checkout-settlement-positive-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "退房结算 positive browser evidence；证明今日待退房、实际离店、交接、验房、费用核算、客户确认、退房单号、finance-gate 请求、资源待恢复和入口职责来自 generated 场景 9 合同。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 9,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.steps?.length ?? 0,
+      expectedSteps: 12
+    },
+    scenarioCount: report?.steps?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    positiveBrowserAuditDigest: report?.positiveBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO9-POSITIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO9-POSITIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario9.CheckoutSettlement.Positive"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "退房结算 positive browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.steps?.length ?? 0,
+        expectedSteps: 12
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario9-checkout-settlement-positive-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario9-test-plan.generated.json",
+        "docs/contracts/generated/finance/scenario9-finance-gate.generated.json",
+        "scripts/surface/run-dormitory-scenario9-positive-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario9-positive-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario9NegativeBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario9-checkout-settlement-negative-browser/scenario9-negative-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario9-negative-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario9-checkout-settlement-negative-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "退房结算 negative browser evidence；证明无有效在住、重复退房、缺离店时间/验房证据、损坏缺说明、客户未确认、争议、伪造内部引用、搜索写事实、直接款项处理、直接可运营、重复提交和并发均无副作用。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 9,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.scenarios?.length ?? 0,
+      expectedSteps: 13
+    },
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    negativeBrowserAuditDigest: report?.negativeBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO9-NEGATIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO9-NEGATIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario9.CheckoutSettlement.Negative"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "退房结算 negative browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.scenarios?.length ?? 0,
+        expectedSteps: 13
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario9-checkout-settlement-negative-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario9-test-plan.generated.json",
+        "docs/contracts/generated/finance/scenario9-finance-gate.generated.json",
+        "scripts/surface/run-dormitory-scenario9-negative-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario9-negative-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario10PositiveBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario10-cancel-noshow-refund-positive-browser/scenario10-positive-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario10-positive-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario10-cancel-noshow-refund-positive-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "取消、未到店与退款处理 positive browser evidence；证明预订取消、未到店关闭、政策金额计算、库存释放请求、finance-gate 财务处理请求、结果跟进和入口职责来自 generated 场景 10 合同。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 10,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.steps?.length ?? 0,
+      expectedSteps: 12
+    },
+    scenarioCount: report?.steps?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    positiveBrowserAuditDigest: report?.positiveBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO10-POSITIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO10-POSITIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario10.CancelNoShowRefund.Positive"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "取消、未到店与退款处理 positive browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.steps?.length ?? 0,
+        expectedSteps: 12
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario10-cancel-noshow-refund-positive-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario10-test-plan.generated.json",
+        "docs/contracts/generated/finance/scenario10-finance-gate.generated.json",
+        "scripts/surface/run-dormitory-scenario10-positive-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario10-positive-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario10NegativeBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario10-cancel-noshow-refund-negative-browser/scenario10-negative-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario10-negative-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario10-cancel-noshow-refund-negative-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "取消、未到店与退款处理 negative browser evidence；证明无有效预订、已有到店/离店记录、重复关闭、未到保留时间、缺客户确认、争议、金额缺来源、手填最终款项、越界释放、伪造内部引用、搜索写事实、直接真实款项、重复提交和并发均无副作用。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 10,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.scenarios?.length ?? 0,
+      expectedSteps: 15
+    },
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    negativeBrowserAuditDigest: report?.negativeBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO10-NEGATIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO10-NEGATIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario10.CancelNoShowRefund.Negative"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "取消、未到店与退款处理 negative browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.scenarios?.length ?? 0,
+        expectedSteps: 15
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario10-cancel-noshow-refund-negative-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario10-test-plan.generated.json",
+        "docs/contracts/generated/finance/scenario10-finance-gate.generated.json",
+        "scripts/surface/run-dormitory-scenario10-negative-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario10-negative-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario11PositiveBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario11-housekeeping-maintenance-outofservice-positive-browser/scenario11-positive-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario11-positive-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario11-housekeeping-maintenance-outofservice-positive-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "房务、维修与停售协同 positive browser evidence；证明保洁、维修、派工、进度、完成、验收、返工、恢复建议、费用意向和入口职责来自 generated 场景 11 合同。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 11,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.steps?.length ?? 0,
+      expectedSteps: 13
+    },
+    scenarioCount: report?.steps?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    positiveBrowserAuditDigest: report?.positiveBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO11-POSITIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO11-POSITIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario11.HousekeepingMaintenanceOutOfService.Positive"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "房务、维修与停售协同 positive browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.steps?.length ?? 0,
+        expectedSteps: 13
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario11-housekeeping-maintenance-outofservice-positive-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario11-test-plan.generated.json",
+        "docs/contracts/generated/finance/scenario11-finance-gate.generated.json",
+        "scripts/surface/run-dormitory-scenario11-positive-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario11-positive-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario11NegativeBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario11-housekeeping-maintenance-outofservice-negative-browser/scenario11-negative-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario11-negative-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario11-housekeeping-maintenance-outofservice-negative-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "房务、维修与停售协同 negative browser evidence；证明无合法来源、缺负责人、缺证据、未完成验收、返工缺失、未关闭维修建议恢复、直接运营恢复、直接写账、伪造内部引用、搜索写事实、重复和并发均无副作用。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 11,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.scenarios?.length ?? 0,
+      expectedSteps: 12
+    },
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    negativeBrowserAuditDigest: report?.negativeBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO11-NEGATIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO11-NEGATIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario11.HousekeepingMaintenanceOutOfService.Negative"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "房务、维修与停售协同 negative browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.scenarios?.length ?? 0,
+        expectedSteps: 12
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario11-housekeeping-maintenance-outofservice-negative-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario11-test-plan.generated.json",
+        "docs/contracts/generated/finance/scenario11-finance-gate.generated.json",
+        "scripts/surface/run-dormitory-scenario11-negative-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario11-negative-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario12PositiveBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario12-channel-corporate-customer-positive-browser/scenario12-positive-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario12-positive-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario12-channel-corporate-customer-positive-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "渠道与企业客户 positive browser evidence；证明企业客户、协议、商品资格、渠道发布、佣金/结算规则意向、审核启停、续签和入口职责来自 generated 场景 12 合同。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 12,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.steps?.length ?? 0,
+      expectedSteps: 12
+    },
+    scenarioCount: report?.steps?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    positiveBrowserAuditDigest: report?.positiveBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO12-POSITIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO12-POSITIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario12.ChannelCorporateCustomer.Positive"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "渠道与企业客户 positive browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.steps?.length ?? 0,
+        expectedSteps: 12
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario12-channel-corporate-customer-positive-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario12-test-plan.generated.json",
+        "docs/contracts/generated/finance/scenario12-finance-gate.generated.json",
+        "scripts/surface/run-dormitory-scenario12-positive-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario12-positive-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario12NegativeBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario12-channel-corporate-customer-negative-browser/scenario12-negative-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario12-negative-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario12-channel-corporate-customer-negative-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "渠道与企业客户 negative browser evidence；证明缺证据、日期倒置、过期协议、未生效商品、无有效价格、维修/停售发布、直接写账、锁库存、直接生成报价/预订、伪造内部引用、搜索写事实、重复和并发均无副作用。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 12,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.scenarios?.length ?? 0,
+      expectedSteps: 13
+    },
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    negativeBrowserAuditDigest: report?.negativeBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO12-NEGATIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO12-NEGATIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario12.ChannelCorporateCustomer.Negative"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "渠道与企业客户 negative browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.scenarios?.length ?? 0,
+        expectedSteps: 13
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario12-channel-corporate-customer-negative-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario12-test-plan.generated.json",
+        "docs/contracts/generated/finance/scenario12-finance-gate.generated.json",
+        "scripts/surface/run-dormitory-scenario12-negative-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario12-negative-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario13PositiveBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-positive-browser/scenario13-positive-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario13-positive-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario13-reporting-audit-review-positive-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "经营报表、审计与复盘 positive browser evidence；证明报表范围、数据完整性、经营指标、财务核对、审计发现、行动计划、发布导出和入口职责来自 generated 场景 13 合同。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 13,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.steps?.length ?? 0,
+      expectedSteps: 11
+    },
+    scenarioCount: report?.steps?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    positiveBrowserAuditDigest: report?.positiveBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO13-POSITIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO13-POSITIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario13.ReportingAuditReview.Positive"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "经营报表、审计与复盘 positive browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.steps?.length ?? 0,
+        expectedSteps: 11
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-positive-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario13-test-plan.generated.json",
+        "docs/contracts/generated/dormitory/scenario13-metric-model.generated.json",
+        "docs/contracts/generated/read-model/scenario13-reporting-read-model.generated.json",
+        "docs/contracts/generated/finance/scenario13-finance-gate-readonly.generated.json",
+        "scripts/surface/run-dormitory-scenario13-positive-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario13-positive-browser-audit.mjs"
+      ]
+    }) : null
+  };
+}
+
+function readScenario13NegativeBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-negative-browser/scenario13-negative-browser-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-scenario13-negative-browser-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    result: result ? resultRef : "",
+    runId: "dormitory-scenario13-reporting-audit-review-negative-browser",
+    auditLevel: report?.auditLevel || "",
+    auditPurpose: "经营报表、审计与复盘 negative browser evidence；证明缺权限、缺血缘、数据过期、页面状态指标、非 finance-gate 财务真值、审计直接改源事实、已发布原地编辑、伪造内部引用、搜索写事实、重复和并发均无副作用。",
+    allowedInterpretation: [],
+    forbiddenInterpretation: report?.forbiddenInterpretations ?? [],
+    scenarioScope: {
+      authorityId: report?.authorityId || "",
+      scenarioPackageNo: report?.scenarioPackageNo ?? 13,
+      currentMainGate: true,
+      businessAcceptance: false
+    },
+    businessGoAllowed: false,
+    progress: {
+      status,
+      completedSteps: report?.scenarios?.length ?? 0,
+      expectedSteps: 11
+    },
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    negativeBrowserAuditDigest: report?.negativeBrowserAuditDigest || "",
+    generatedContractDigest: report?.generatedContractDigest || "",
+    node: report ? buildBrowserProofNode({
+      id: "DORM-SCENARIO13-NEGATIVE-BROWSER",
+      status,
+      gate: "DORMITORY-SCENARIO13-NEGATIVE-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: ["Dormitory.Scenario13.ReportingAuditReview.Negative"],
+      screenshotHashes,
+      reportRef,
+      auditLevel: report.auditLevel,
+      auditPurpose: "经营报表、审计与复盘 negative browser evidence",
+      allowedInterpretation: [],
+      forbiddenInterpretation: report.forbiddenInterpretations,
+      scenarioScope: {
+        authorityId: report.authorityId,
+        scenarioPackageNo: report.scenarioPackageNo,
+        currentMainGate: true,
+        businessAcceptance: false
+      },
+      businessGoAllowed: false,
+      progress: {
+        status,
+        completedSteps: report.scenarios?.length ?? 0,
+        expectedSteps: 11
+      },
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.screenshotIndex || "artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-negative-browser/screenshot-index.json"),
+        resultRef,
+        "docs/contracts/generated/dormitory/scenario13-test-plan.generated.json",
+        "docs/contracts/generated/dormitory/scenario13-runtime-rules.generated.json",
+        "docs/contracts/generated/read-model/scenario13-reporting-read-model.generated.json",
+        "docs/contracts/generated/finance/scenario13-finance-gate-readonly.generated.json",
+        "scripts/surface/run-dormitory-scenario13-negative-browser-audit.mjs",
+        "scripts/surface/check-dormitory-scenario13-negative-browser-audit.mjs"
+      ]
+    }) : null
   };
 }
 

@@ -52,8 +52,8 @@ for (const expected of FIRST_GOLDEN_CHAIN_STEPS) {
   if (!stepIds.includes(expected.cardId)) failures.push(`browser report missing step ${expected.cardId}.`);
   if (!JSON.stringify(report).includes(expected.step)) failures.push(`browser report missing visible step label ${expected.step}.`);
 }
-if (!JSON.stringify(report).includes("第一金链内测完成")) {
-  failures.push("browser report must prove 第一金链内测完成 is visible.");
+if (!JSON.stringify(report).includes("房源建档与基础就绪完成")) {
+  failures.push("browser report must prove 房源建档与基础就绪完成 is visible.");
 }
 for (const requiredAssertion of [
   "search.object_query_d01_no_command",
@@ -63,7 +63,10 @@ for (const requiredAssertion of [
   "draft.current_step_user_fields_only",
   "draft.restore_current_step",
   "draft.submit_success_cleans_current_step",
+  "capacity.1.exact_beds_01",
+  "capacity.4.exact_beds_01_02_03_04",
   "completion.business_values_visible",
+  "completion.scenario1_visible",
   "completion.no_raw_stable_id",
   "completion.technical_details_collapsed",
   "readiness.no_free_text_ready"
@@ -84,7 +87,7 @@ for (const fieldId of ["roomId", "bedId"]) {
     failures.push(`browser report ${fieldId} readonly/hidden-submit assertions must PASS.`);
   }
 }
-for (const label of ["可分配", "待清洁", "待维修", "待补材料", "暂不可用"]) {
+for (const label of ["通过", "不通过", "需补充"]) {
   const id = `readiness.closed_option.${safeName(label)}`;
   const assertion = (report.assertions ?? []).find((item) => item.id === id);
   if (!assertion || assertion.status !== "passed") {

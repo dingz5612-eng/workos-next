@@ -1,0 +1,626 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario12-mobileMirror.generated",
+  "version": "oam.dormitory-scenario12-mobileMirror.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario12-channel-corporate-customer-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario12-channel-corporate-customer-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:d504bad001d84d42799afcfcddb383376b494f5dbc5ee6787b025d90409d4b15",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "digest": "sha256:ab296f3dcf35e86acff50f22118336d4a36607c232d31e2fd712cf94cc36bfde"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:ab296f3dcf35e86acff50f22118336d4a36607c232d31e2fd712cf94cc36bfde",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario12.ChannelCorporateCustomer",
+  "scenarioPackageNo": 12,
+  "scenarioId": "lodging.channel-corporate-customer",
+  "outputContentDigest": "sha256:2a56a867ff96135e651ac444467c194df3bd8eebcb746d5dd2f3c4ee9cba1478",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "渠道与企业客户",
+  "businessGoalZh": "维护外部渠道、企业客户、协议客户、渠道发布规则、企业协议资格、渠道对接状态、佣金/结算规则意向和证据，并向场景包 3、4、5、finance-gate 和看板提供只读条件。",
+  "sourceScenarioDigest": "sha256:ab296f3dcf35e86acff50f22118336d4a36607c232d31e2fd712cf94cc36bfde",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "consumer": "surface",
+  "surfaceNavigation": {
+    "entryPages": [
+      "渠道列表",
+      "渠道详情",
+      "企业客户列表",
+      "企业客户详情",
+      "协议维护页",
+      "商品资格绑定页",
+      "渠道发布规则页",
+      "佣金结算意向页",
+      "审核页",
+      "版本历史页"
+    ],
+    "todayZh": "今日只展示今天需要处理的被动任务：协议即将到期、渠道待审核、资料待补、发布异常待处理、财务规则待确认。",
+    "workItemsZh": "工作项展示全部渠道、企业客户、协议、发布规则、续签、补证和财务规则意向被动任务池。",
+    "searchZh": "搜索可以查渠道名、企业名、联系人、协议编号、商品、状态；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "pageMustShowZh": [
+      "当前状态",
+      "有效期",
+      "适用范围",
+      "证据缺失项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": {
+      "渠道草稿": [
+        "继续填写",
+        "提交审核"
+      ],
+      "企业客户草稿": [
+        "继续填写",
+        "提交审核"
+      ],
+      "待审核": [
+        "审核通过",
+        "退回修改"
+      ],
+      "已启用": [
+        "暂停",
+        "停用",
+        "新建版本"
+      ],
+      "已暂停": [
+        "恢复审核",
+        "停用"
+      ],
+      "已停用": [
+        "查看历史",
+        "新建版本"
+      ],
+      "协议待审核": [
+        "审核通过",
+        "退回修改"
+      ],
+      "协议已生效": [
+        "续签",
+        "停用协议",
+        "新建版本"
+      ],
+      "协议已过期": [
+        "续签",
+        "新建协议"
+      ],
+      "发布待检查": [
+        "检查发布",
+        "暂停发布"
+      ],
+      "发布已启用": [
+        "暂停发布",
+        "新建版本"
+      ],
+      "财务规则待确认": [
+        "提交财务规则复核",
+        "补充证据"
+      ]
+    },
+    "forbiddenUserVisibleTermsZh": [
+      "已报价",
+      "已预订",
+      "已收款",
+      "已入账",
+      "final GO",
+      "生产发布",
+      "业务上线",
+      "lead-reservation",
+      "RatePlan",
+      "PaymentConfirm",
+      "channel/OTA 临时字段"
+    ]
+  },
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "create-channel-or-corporate-profile",
+      "nameZh": "建立渠道或企业客户档案",
+      "commandId": "Dorm.ChannelCorporateProfileDraftStart",
+      "secondaryCommandIds": [
+        "Dorm.ChannelPartnerProfileCreate",
+        "Dorm.CorporateCustomerProfileCreate"
+      ],
+      "entryFromZh": [
+        "渠道列表",
+        "企业客户列表",
+        "今日任务",
+        "工作项"
+      ],
+      "userSees": [
+        "渠道/企业名称",
+        "渠道类型",
+        "企业客户类型",
+        "合作状态",
+        "负责人",
+        "证据摘要"
+      ],
+      "userFilledFields": [
+        "渠道/企业名称",
+        "统一社会信用代码或证件信息",
+        "联系人",
+        "联系电话",
+        "邮箱",
+        "地址",
+        "备注"
+      ],
+      "userSelectedFields": [
+        "渠道类型",
+        "企业客户类型",
+        "合作状态",
+        "负责人"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "营业执照",
+        "合作协议",
+        "授权证明"
+      ],
+      "systemGeneratedFields": [
+        "partnerRef",
+        "corporateAccountRef",
+        "contactRef",
+        "createdAt",
+        "createdBy",
+        "evidenceEnvelopeRef"
+      ],
+      "validations": [
+        "名称和联系方式不能为空",
+        "关键证据缺失时不得启用",
+        "用户不得填写 channelId、corporateAccountId、stableRef"
+      ],
+      "outputs": [
+        "渠道/企业客户草稿",
+        "联系人摘要",
+        "证据摘要"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "maintain-cooperation-agreement",
+      "nameZh": "维护合作协议",
+      "commandId": "Dorm.CorporateAgreementDraftSubmit",
+      "secondaryCommandIds": [
+        "Dorm.CorporateAgreementApproveActivate"
+      ],
+      "userSees": [
+        "企业客户摘要",
+        "渠道摘要",
+        "现有协议版本",
+        "证据摘要"
+      ],
+      "userFilledFields": [
+        "协议名称",
+        "协议编号业务展示",
+        "协议开始日期",
+        "结束日期",
+        "付款/结算说明",
+        "取消规则说明",
+        "入住规则说明"
+      ],
+      "userSelectedFields": [
+        "适用客户类型",
+        "适用渠道",
+        "适用商品范围",
+        "是否需要负责人审核"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "合同扫描件",
+        "审批记录",
+        "补充协议"
+      ],
+      "systemGeneratedFields": [
+        "agreementRef",
+        "agreementVersion",
+        "effectiveFrom",
+        "effectiveTo",
+        "approvalState"
+      ],
+      "validations": [
+        "协议日期必须合法",
+        "协议未审核不得生效",
+        "用户不得填写 agreementId、stableRef"
+      ],
+      "outputs": [
+        "协议摘要",
+        "协议版本",
+        "证据摘要"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "bind-product-and-eligibility",
+      "nameZh": "绑定商品与适用资格",
+      "commandId": "Dorm.ChannelProductEligibilityBind",
+      "userSees": [
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "运营阻断摘要"
+      ],
+      "userSelectedFields": [
+        "适用商品",
+        "适用售卖单位",
+        "适用客户类型",
+        "适用渠道"
+      ],
+      "systemGeneratedFields": [
+        "eligibilityRef",
+        "productRef",
+        "priceVersionRef",
+        "eligibilityVersion"
+      ],
+      "systemCalculatedFields": [
+        "是否有有效价格",
+        "是否有运营阻断",
+        "是否有协议有效期冲突"
+      ],
+      "validations": [
+        "未生效商品/价格不得绑定为可用资格",
+        "维修/停售资源不得发布为可用",
+        "用户不得填写 productId、priceVersionId"
+      ],
+      "outputs": [
+        "适用商品/价格资格摘要"
+      ]
+    },
+    {
+      "stepNo": 4,
+      "stepId": "configure-channel-publication-rule",
+      "nameZh": "配置渠道发布规则",
+      "commandId": "Dorm.ChannelPublicationRuleConfigure",
+      "secondaryCommandIds": [
+        "Dorm.ChannelPublicationEnable"
+      ],
+      "userFilledFields": [
+        "渠道展示名称",
+        "渠道房型/床型映射",
+        "发布备注"
+      ],
+      "userSelectedFields": [
+        "发布渠道",
+        "上下架状态",
+        "是否同步库存展示",
+        "是否需要人工确认"
+      ],
+      "systemGeneratedFields": [
+        "channelPublicationRuleRef",
+        "channelMappingRef",
+        "publicationVersion",
+        "syncMode"
+      ],
+      "validations": [
+        "发布规则只能作为展示/可见条件，不得直接锁库存",
+        "外部渠道回传预订必须进入场景包 5 校验",
+        "无有效价格不得启用发布"
+      ],
+      "outputs": [
+        "渠道发布规则摘要",
+        "渠道商品映射摘要"
+      ]
+    },
+    {
+      "stepNo": 5,
+      "stepId": "configure-commission-settlement-intent",
+      "nameZh": "配置佣金与结算规则意向",
+      "commandId": "Dorm.CommissionSettlementIntentSubmit",
+      "userFilledFields": [
+        "佣金说明",
+        "账期说明",
+        "发票要求",
+        "结算备注"
+      ],
+      "userSelectedFields": [
+        "佣金类型",
+        "结算周期",
+        "对账方式",
+        "是否需要财务确认"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "佣金依据",
+        "结算说明",
+        "合同证据"
+      ],
+      "systemGeneratedFields": [
+        "commissionRuleIntentRef",
+        "settlementRuleIntentRef",
+        "financeReviewRequestRef"
+      ],
+      "validations": [
+        "佣金和结算规则只能交给 finance-gate 或财务规则权威确认",
+        "不得在本包直接生成账务"
+      ],
+      "outputs": [
+        "佣金/结算规则意向"
+      ]
+    },
+    {
+      "stepNo": 6,
+      "stepId": "audit-enable",
+      "nameZh": "审核启用",
+      "commandId": "Dorm.ChannelCorporateAuditDecision",
+      "secondaryCommandIds": [
+        "Dorm.ChannelPublicationEnable",
+        "Dorm.ChannelPause",
+        "Dorm.ChannelDisable"
+      ],
+      "userSees": [
+        "渠道/企业资料",
+        "协议",
+        "商品资格",
+        "发布规则",
+        "佣金结算意向",
+        "证据摘要",
+        "风险提示"
+      ],
+      "userSelectedFields": [
+        "保存草稿",
+        "提交审核",
+        "审核通过",
+        "退回修改",
+        "暂停",
+        "停用"
+      ],
+      "systemGeneratedFields": [
+        "ChannelPartnerEnabled",
+        "CorporateAgreementActivated",
+        "ChannelPublicationEnabled",
+        "EvidenceBinding",
+        "Projection update"
+      ],
+      "validations": [
+        "禁止写入价格金额真值、报价、预订、库存锁定、收款、账务",
+        "审核通过前不得启用渠道或协议"
+      ],
+      "outputs": [
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "渠道发布规则摘要"
+      ]
+    },
+    {
+      "stepNo": 7,
+      "stepId": "daily-maintenance",
+      "nameZh": "日常维护",
+      "commandId": "Dorm.ChannelCorporateDailyMaintenance",
+      "secondaryCommandIds": [
+        "Dorm.CorporateAgreementRenew",
+        "Dorm.ChannelCorporateEvidenceSupplement",
+        "Dorm.ChannelCorporateCorrectionRequest"
+      ],
+      "entryFromZh": [
+        "今日任务",
+        "工作项",
+        "渠道详情",
+        "企业客户详情",
+        "搜索只读跳转"
+      ],
+      "userSelectedFields": [
+        "补充资料",
+        "续签协议",
+        "暂停渠道",
+        "停用协议",
+        "更新联系人",
+        "提交财务规则复核"
+      ],
+      "validations": [
+        "已生效协议不得原地覆盖",
+        "只能新版本、续签、停用、作废或纠错"
+      ],
+      "outputs": [
+        "版本历史",
+        "状态历史",
+        "证据摘要"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“携程渠道，已启用，适用 301 整房按晚价”“某某公司协议客户，有效至 2026-12-31”。普通用户不得输入或记住内部编号。",
+    "upstreamReadonly": [
+      "房间/床位运营状态摘要",
+      "运营阻断摘要",
+      "商品摘要",
+      "价格方案摘要",
+      "价格版本摘要",
+      "适用日期",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "userFilled": [
+      "渠道/企业名称",
+      "统一社会信用代码或证件信息",
+      "联系人",
+      "联系电话",
+      "邮箱",
+      "地址",
+      "备注",
+      "协议名称",
+      "协议编号业务展示",
+      "协议开始日期",
+      "结束日期",
+      "付款/结算说明",
+      "取消规则说明",
+      "入住规则说明",
+      "渠道展示名称",
+      "渠道房型/床型映射",
+      "发布备注",
+      "佣金说明",
+      "账期说明",
+      "发票要求",
+      "结算备注"
+    ],
+    "userSelected": [
+      "渠道类型",
+      "企业客户类型",
+      "合作状态",
+      "负责人",
+      "适用客户类型",
+      "适用渠道",
+      "适用商品范围",
+      "是否需要负责人审核",
+      "适用商品",
+      "适用售卖单位",
+      "上下架状态",
+      "是否同步库存展示",
+      "是否需要人工确认",
+      "佣金类型",
+      "结算周期",
+      "对账方式",
+      "是否需要财务确认",
+      "保存草稿",
+      "提交审核",
+      "审核通过",
+      "退回修改",
+      "暂停",
+      "停用",
+      "续签协议"
+    ],
+    "systemGenerated": [
+      "partnerRef",
+      "corporateAccountRef",
+      "contactRef",
+      "createdAt",
+      "createdBy",
+      "evidenceEnvelopeRef",
+      "agreementRef",
+      "agreementVersion",
+      "effectiveFrom",
+      "effectiveTo",
+      "approvalState",
+      "eligibilityRef",
+      "productRef",
+      "priceVersionRef",
+      "eligibilityVersion",
+      "channelPublicationRuleRef",
+      "channelMappingRef",
+      "publicationVersion",
+      "syncMode",
+      "commissionRuleIntentRef",
+      "settlementRuleIntentRef",
+      "financeReviewRequestRef",
+      "projectionVersion",
+      "domainEventId"
+    ],
+    "systemCalculated": [
+      "是否有有效价格",
+      "是否有运营阻断",
+      "是否有协议有效期冲突",
+      "证据缺失项",
+      "协议到期提醒",
+      "发布风险提示"
+    ],
+    "evidenceBound": [
+      "营业执照",
+      "合作协议",
+      "授权证明",
+      "合同扫描件",
+      "审批记录",
+      "补充协议",
+      "佣金依据",
+      "结算说明",
+      "合同证据",
+      "纠错证据"
+    ],
+    "financeGate": [
+      "佣金/结算规则意向",
+      "佣金依据",
+      "结算说明",
+      "finance-gate 处理状态"
+    ],
+    "internalAudit": [
+      "partnerRef",
+      "corporateAccountRef",
+      "contactRef",
+      "agreementRef",
+      "eligibilityRef",
+      "productRef",
+      "priceVersionRef",
+      "channelPublicationRuleRef",
+      "commissionRuleIntentRef",
+      "settlementRuleIntentRef",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "forbiddenUserInputFields": [
+      "channelId",
+      "corporateAccountId",
+      "agreementId",
+      "productId",
+      "priceVersionId",
+      "ratePlanId",
+      "quoteId",
+      "reservationId",
+      "inventoryHoldId",
+      "paymentId",
+      "refundId",
+      "ledgerEntryId",
+      "ledgerTransactionId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ]
+  },
+  "channelCorporateStatusOptions": [
+    "渠道草稿",
+    "待审核",
+    "已启用",
+    "已暂停",
+    "已停用",
+    "企业客户草稿",
+    "协议待审核",
+    "协议已生效",
+    "协议已过期",
+    "协议已停用",
+    "发布待检查",
+    "发布已启用",
+    "发布已暂停",
+    "财务规则待确认"
+  ],
+  "readSideOutputs": [
+    "渠道摘要",
+    "企业客户摘要",
+    "协议摘要",
+    "适用商品/价格资格摘要",
+    "渠道发布规则摘要",
+    "佣金/结算规则意向",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "forbiddenUserVisibleTermsZh": [
+    "已报价",
+    "已预订",
+    "已收款",
+    "已入账",
+    "final GO",
+    "生产发布",
+    "业务上线",
+    "lead-reservation",
+    "RatePlan",
+    "PaymentConfirm",
+    "channel/OTA 临时字段"
+  ],
+  "noGo": {
+    "productionConfirmAllowed": false,
+    "businessGoLiveAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

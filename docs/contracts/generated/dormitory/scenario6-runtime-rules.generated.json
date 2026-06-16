@@ -1,0 +1,471 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario6-runtimeRules.generated",
+  "version": "oam.dormitory-scenario6-runtimeRules.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario6-payment-deposit-and-guarantee-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario6-payment-deposit-and-guarantee-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:cffa84c910c72c5fad442bc4d7b4d8d65115cc58d806b1762082bfcffdec4430",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "digest": "sha256:99ce884d2bf6fc1f168eaa20970dc4fe62535dafe0a6ce2a69a115c3a931de41"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:99ce884d2bf6fc1f168eaa20970dc4fe62535dafe0a6ce2a69a115c3a931de41",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+  "scenarioPackageNo": 6,
+  "scenarioId": "lodging.payment-deposit-and-guarantee",
+  "outputContentDigest": "sha256:ec51518049f934d2bd7c4f47defaf8539b853b92a74c71979476879aeb3967d6",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "收款、押金与担保",
+  "businessGoalZh": "承接场景包 5 已确认预订，生成应收、押金和担保要求，采集收款凭证、押金凭证和担保信息，并通过 finance-gate 完成财务确认。",
+  "sourceScenarioDigest": "sha256:99ce884d2bf6fc1f168eaa20970dc4fe62535dafe0a6ce2a69a115c3a931de41",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "commands": [
+    {
+      "commandId": "Dorm.PaymentDepositCaseStart",
+      "businessNameZh": "进入收款押金办理",
+      "writesObjects": [
+        "PaymentStatusHistory",
+        "DepositStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "requiresFinanceGate": false,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Checkout",
+        "Refund",
+        "InventoryRelease",
+        "ResourceStatusChange",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.PaymentDepositRequirementConfirm",
+      "businessNameZh": "确认应收与押金要求",
+      "writesObjects": [
+        "PaymentRequirement",
+        "DepositRequirement",
+        "PaymentStatusHistory",
+        "DepositStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "requiresFinanceGate": false,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Checkout",
+        "Refund",
+        "InventoryRelease",
+        "ResourceStatusChange",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.PaymentReceiptSubmit",
+      "businessNameZh": "提交收款凭证",
+      "writesObjects": [
+        "PaymentIntent",
+        "PaymentReceiptEvidence",
+        "PaymentStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "requiresFinanceGate": false,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Checkout",
+        "Refund",
+        "InventoryRelease",
+        "ResourceStatusChange",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.DepositGuaranteeSubmit",
+      "businessNameZh": "提交押金或担保信息",
+      "writesObjects": [
+        "DepositIntent",
+        "DepositGuarantee",
+        "DepositStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "requiresFinanceGate": false,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Checkout",
+        "Refund",
+        "InventoryRelease",
+        "ResourceStatusChange",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.FinanceReviewRequest",
+      "businessNameZh": "发起财务确认",
+      "writesObjects": [
+        "FinanceReviewRequest",
+        "PaymentStatusHistory",
+        "DepositStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "requiresFinanceGate": true,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Checkout",
+        "Refund",
+        "InventoryRelease",
+        "ResourceStatusChange",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.FinanceGateConfirm",
+      "businessNameZh": "finance-gate 财务确认",
+      "writesObjects": [
+        "FinanceConfirmationSnapshot",
+        "PaymentStatusHistory",
+        "DepositStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "requiresFinanceGate": true,
+      "authorizedRoleRequired": true,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Checkout",
+        "Refund",
+        "InventoryRelease",
+        "ResourceStatusChange",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.FinanceGateReturn",
+      "businessNameZh": "财务退回补证",
+      "writesObjects": [
+        "FinanceReviewRequest",
+        "PaymentStatusHistory",
+        "DepositStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "requiresFinanceGate": true,
+      "authorizedRoleRequired": true,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Checkout",
+        "Refund",
+        "InventoryRelease",
+        "ResourceStatusChange",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.FinanceEvidenceSupplement",
+      "businessNameZh": "补充证据",
+      "writesObjects": [
+        "PaymentReceiptEvidence",
+        "FinanceReviewRequest",
+        "PaymentStatusHistory",
+        "DepositStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "requiresFinanceGate": false,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Checkout",
+        "Refund",
+        "InventoryRelease",
+        "ResourceStatusChange",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.FinanceReadySummaryOutput",
+      "businessNameZh": "入住前财务摘要输出",
+      "writesObjects": [
+        "PaymentStatusHistory",
+        "DepositStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "requiresFinanceGate": false,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Checkout",
+        "Refund",
+        "InventoryRelease",
+        "ResourceStatusChange",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "reservation_not_confirmed",
+      "messageZh": "只有已确认预订才能办理收款、押金与担保。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "reservation_cancelled",
+      "messageZh": "预订已取消，不能继续办理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "price_snapshot_required",
+      "messageZh": "缺少价格快照，不能确认应收或押金要求。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "payment_requirement_source_invalid",
+      "messageZh": "金额来源必须来自价格快照、报价版本或押金政策。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "amount_must_be_positive",
+      "messageZh": "提交金额必须大于 0。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "currency_mismatch",
+      "messageZh": "币种与应收或押金要求不一致。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "receipt_evidence_required",
+      "messageZh": "请先上传或绑定凭证。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "deposit_marked_as_income_forbidden",
+      "messageZh": "押金不是收入，不能按收入确认。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "guarantee_marked_as_payment_forbidden",
+      "messageZh": "担保不是收款，不能按收款确认。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "finance_gate_required",
+      "messageZh": "财务确认必须通过 finance-gate。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "unauthorized_finance_confirmation",
+      "messageZh": "当前角色无权进行财务确认。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用不匹配，请从页面重新选择预订、应收、押金或凭证。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "ledger_write_forbidden",
+      "messageZh": "业务侧不能直接写账务事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_result_write_attempt",
+      "messageZh": "查询、搜索、列表、看板、报表只读，不能在这里写入收款、押金或担保事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "post_submission_inline_edit_forbidden",
+      "messageZh": "已提交财务的凭证不能原地覆盖，请补充证据或按退回原因重提。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "confirmed_finance_inline_edit_forbidden",
+      "messageZh": "财务已确认记录不能编辑，只能走财务纠错或冲正机制。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_submission",
+      "messageZh": "该提交已处理，系统将返回原处理结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_finance_version_conflict",
+      "messageZh": "财务状态已被更新，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "cross_scenario_checkin_forbidden",
+      "messageZh": "本场景只输出财务摘要，不能直接办理入住。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "finance_evidence_missing",
+      "messageZh": "缺少必要财务证据，不能提交。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "guarantee_validity_required",
+      "messageZh": "担保或预授权必须填写有效期。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "invariants": [
+    "未确认预订不得进入收款、押金与担保。",
+    "应收金额必须来自价格快照、报价版本或押金政策，不得由用户手填最终财务真值。",
+    "普通收款、押金、担保必须分账分对象。",
+    "房费/订金只能形成 PaymentIntent。",
+    "押金必须形成 DepositIntent 或 DepositGuarantee，不得计入收入。",
+    "担保/预授权只能形成 GuaranteeRecord，不得当作已收款。",
+    "业务侧上传凭证不代表财务已确认。",
+    "只有 finance-gate 校验证据、金额、币种、收款方式、收款对象后，才能生成财务确认摘要。",
+    "业务 runtime 不得直接写 LedgerEntry 或 LedgerTransaction。",
+    "财务未确认不等于已收款。",
+    "押金不是收入。",
+    "担保不是收款。",
+    "收款确认不等于已入住。",
+    "确认失败不得写 CommandSubmission、DomainEvent、Outbox、Projection、Lens、Search、Dashboard、Ledger。",
+    "失败路径不得写 CommandSubmission、DomainEvent、Outbox、Projection、Lens、Search、Dashboard、Ledger。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。"
+  ],
+  "paymentDepositStatusOptions": [
+    "待提交凭证",
+    "待财务确认",
+    "财务已确认",
+    "财务退回",
+    "部分确认",
+    "押金已确认",
+    "担保已确认",
+    "需补充证据"
+  ],
+  "financeBoundaryRule": {
+    "financeGateRequired": true,
+    "businessRuntimeMayWriteLedger": false,
+    "ledgerEntryWrittenOnlyByFinanceKernel": true,
+    "paymentIntentIsNotFinanceTruth": true,
+    "depositIsNotIncome": true,
+    "guaranteeIsNotPayment": true,
+    "financeConfirmationRequiresAuthorizedRole": true,
+    "failureCodeForDirectLedgerWrite": "ledger_write_forbidden",
+    "failureCodeForFinanceBypass": "finance_gate_required"
+  },
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "enter-payment-deposit-processing": [
+        "预订确认摘要证据"
+      ],
+      "confirm-payment-and-deposit-requirements": [
+        "应收依据证据",
+        "押金政策证据"
+      ],
+      "submit-payment-receipt-evidence": [
+        "收款凭证"
+      ],
+      "submit-deposit-or-guarantee": [
+        "押金凭证",
+        "担保证据"
+      ],
+      "finance-gate-confirmation": [
+        "财务确认凭证",
+        "finance-gate 审核证据"
+      ],
+      "output-finance-ready-summary": [
+        "财务确认摘要证据"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "financeGateEvidenceRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "financeGateMayConfirmFinanceFacts": true,
+    "businessRuntimeMayWriteLedger": false,
+    "commandsImplemented": [
+      "Dorm.PaymentDepositCaseStart",
+      "Dorm.PaymentDepositRequirementConfirm",
+      "Dorm.PaymentReceiptSubmit",
+      "Dorm.DepositGuaranteeSubmit",
+      "Dorm.FinanceReviewRequest",
+      "Dorm.FinanceGateConfirm",
+      "Dorm.FinanceGateReturn",
+      "Dorm.FinanceEvidenceSupplement",
+      "Dorm.FinanceReadySummaryOutput"
+    ],
+    "mustSupportZh": [
+      "幂等提交",
+      "并发版本检查",
+      "凭证完整性校验",
+      "金额币种校验",
+      "角色权限校验",
+      "伪造内部引用阻断",
+      "finance-gate 强制确认",
+      "业务侧禁止直接写账",
+      "失败无副作用"
+    ],
+    "failureNoSideEffectTargets": [
+      "CommandSubmission",
+      "DomainEvent",
+      "Outbox",
+      "Projection",
+      "Lens",
+      "Search",
+      "Dashboard",
+      "Ledger"
+    ],
+    "forbiddenRuntimeWritesZh": [
+      "Stay",
+      "CheckIn",
+      "Checkout",
+      "Refund",
+      "InventoryRelease",
+      "ResourceStatusChange",
+      "LedgerEntry",
+      "LedgerTransaction"
+    ]
+  }
+}

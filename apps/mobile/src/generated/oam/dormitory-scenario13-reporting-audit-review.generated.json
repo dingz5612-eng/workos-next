@@ -1,0 +1,528 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario13-mobileMirror.generated",
+  "version": "oam.dormitory-scenario13-mobileMirror.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario13-reporting-audit-review-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario13-reporting-audit-review-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:ec9e4323625d8da6857f729a039a8b1cef9a7bfafd228b2940c2598b37ef5480",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "digest": "sha256:fb9eed6c807882d1f60cf4a98937c73e09429be68d99102d6b282c399781b315"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:fb9eed6c807882d1f60cf4a98937c73e09429be68d99102d6b282c399781b315",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario13.ReportingAuditReview",
+  "scenarioPackageNo": 13,
+  "scenarioId": "lodging.reporting-audit-review",
+  "outputContentDigest": "sha256:23499ebb60ec3cdfc610df1f72975770b63db378c327a3fb56a93264843c79ca",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "经营报表、审计与复盘",
+  "businessGoalZh": "读取场景包 1-12 和 finance-gate 的已确认事实、证据、投影和摘要，形成经营报表、财务核对视图、审计发现、周期复盘、行动计划和问题追踪。",
+  "sourceScenarioDigest": "sha256:fb9eed6c807882d1f60cf4a98937c73e09429be68d99102d6b282c399781b315",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "consumer": "surface",
+  "surfaceNavigation": {
+    "entryPages": [
+      "经营报表首页",
+      "报表范围选择页",
+      "数据完整性检查页",
+      "经营总览页",
+      "财务核对页",
+      "审计发现页",
+      "复盘页",
+      "行动计划页",
+      "报表版本历史页",
+      "导出记录页"
+    ],
+    "todayZh": "今日只展示今天需要处理的被动任务：复盘待提交、审计问题待处理、行动计划到期、数据缺失待补。",
+    "workItemsZh": "工作项展示全部复盘、审计发现、行动计划、问题追踪、数据缺失和导出复核被动任务池。",
+    "searchZh": "搜索可以查报表、指标、客户、房间、预订号、入住记录业务展示、审计问题；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "pageMustShowZh": [
+      "数据来源",
+      "口径",
+      "更新时间",
+      "缺失项",
+      "下一步动作",
+      "不可发布原因"
+    ],
+    "buttonByState": {
+      "报表草稿": [
+        "继续编辑",
+        "生成快照"
+      ],
+      "数据待确认": [
+        "查看缺失项",
+        "生成问题清单"
+      ],
+      "数据不可用于正式报表": [
+        "查看缺失项",
+        "新建审计发现"
+      ],
+      "报表已生成": [
+        "提交复盘",
+        "发布内部报表"
+      ],
+      "报表已发布": [
+        "导出",
+        "归档",
+        "新建版本"
+      ],
+      "审计发现待确认": [
+        "生成行动计划",
+        "关闭问题"
+      ],
+      "行动计划待处理": [
+        "更新进度",
+        "跳转处理"
+      ],
+      "问题已关闭": [
+        "查看历史",
+        "新建版本"
+      ]
+    },
+    "forbiddenUserVisibleTermsZh": [
+      "已修复原事实",
+      "已入账",
+      "已上线",
+      "final GO",
+      "生产发布",
+      "业务上线",
+      "reportId",
+      "metricId",
+      "ledgerEntryId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId",
+      "period-review",
+      "dashboard",
+      "analytics"
+    ]
+  },
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "select-report-scope",
+      "nameZh": "选择报表范围",
+      "commandId": "Dorm.ReportScopeSelect",
+      "entryFromZh": [
+        "经营报表首页",
+        "今日任务",
+        "工作项",
+        "我的草稿"
+      ],
+      "userFilledFields": [
+        "报表名称",
+        "备注"
+      ],
+      "userSelectedFields": [
+        "时间范围",
+        "楼栋/区域",
+        "渠道",
+        "企业客户",
+        "商品",
+        "房间/床位范围",
+        "报表类型"
+      ],
+      "systemGeneratedFields": [
+        "reportScopeRef",
+        "periodStart",
+        "periodEnd",
+        "scopeVersion",
+        "createdBy"
+      ],
+      "validations": [
+        "时间范围不能为空",
+        "用户不得填写 reportId、objectId、digest、projectionVersion"
+      ],
+      "outputs": [
+        "报表范围草稿",
+        "报表周期"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "data-completeness-check",
+      "nameZh": "数据完整性检查",
+      "commandId": "Dorm.ReportDataQualityCheck",
+      "userSees": [
+        "数据来源",
+        "刷新时间",
+        "缺失项",
+        "权限状态",
+        "血缘状态"
+      ],
+      "systemGeneratedFields": [
+        "dataQualityCheckRef",
+        "freshnessStatus",
+        "lineageStatus",
+        "permissionStatus"
+      ],
+      "systemCalculatedFields": [
+        "permissionEnvelope",
+        "lineageEnvelope",
+        "freshnessEnvelope",
+        "evidenceCompleteness"
+      ],
+      "validations": [
+        "数据不完整时不得生成正式报表",
+        "缺权限、缺血缘或数据过期只能生成草稿或问题清单"
+      ],
+      "outputs": [
+        "数据完整性检查结果",
+        "缺失项清单"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "generate-business-report-snapshot",
+      "nameZh": "生成经营报表快照",
+      "commandId": "Dorm.BusinessReportSnapshotGenerate",
+      "userSelectedFields": [
+        "经营总览",
+        "房源利用",
+        "预订转化",
+        "入住在住",
+        "退房周转",
+        "渠道企业",
+        "房务维修",
+        "异常治理"
+      ],
+      "systemGeneratedFields": [
+        "reportSnapshotRef",
+        "metricSnapshotRefs",
+        "calculationVersion",
+        "generatedAt"
+      ],
+      "systemCalculatedFields": [
+        "指标值",
+        "同比/环比",
+        "趋势",
+        "分组",
+        "异常点"
+      ],
+      "validations": [
+        "指标必须来自已确认事实或授权投影",
+        "不得从 UI 页面状态计算指标"
+      ],
+      "outputs": [
+        "报表快照",
+        "指标快照"
+      ]
+    },
+    {
+      "stepNo": 4,
+      "stepId": "generate-finance-review-view",
+      "nameZh": "生成财务核对视图",
+      "commandId": "Dorm.FinanceReviewSnapshotGenerate",
+      "userSees": [
+        "已确认收款",
+        "押金余额",
+        "退款申请",
+        "扣费申请",
+        "支出意向",
+        "finance-gate 确认状态"
+      ],
+      "systemReadonlyInputs": [
+        "finance-gate 已确认账务事实",
+        "收款/押金/退款/扣费处理状态"
+      ],
+      "systemGeneratedFields": [
+        "financeReviewSnapshotRef",
+        "financeSourceVersion"
+      ],
+      "validations": [
+        "非 finance-gate 数据不得作为财务真值"
+      ],
+      "outputs": [
+        "财务核对视图"
+      ]
+    },
+    {
+      "stepNo": 5,
+      "stepId": "audit-finding-and-location",
+      "nameZh": "审计发现与问题定位",
+      "commandId": "Dorm.AuditFindingCreate",
+      "userSees": [
+        "异常指标",
+        "缺证据",
+        "流程断点",
+        "状态冲突",
+        "重复/并发异常",
+        "未闭环任务"
+      ],
+      "userFilledFields": [
+        "审计说明",
+        "风险等级",
+        "建议处理人",
+        "处理期限"
+      ],
+      "userSelectedFields": [
+        "问题类型",
+        "责任场景包",
+        "是否生成行动计划"
+      ],
+      "systemGeneratedFields": [
+        "auditFindingRef",
+        "findingSeverity",
+        "sourceScenarioRef",
+        "drilldownRefs"
+      ],
+      "validations": [
+        "审计发现只能引用原事实，不得覆盖原事实"
+      ],
+      "outputs": [
+        "审计发现",
+        "问题定位"
+      ]
+    },
+    {
+      "stepNo": 6,
+      "stepId": "review-conclusion-action-plan",
+      "nameZh": "复盘结论与行动计划",
+      "commandId": "Dorm.ReviewConclusionActionPlanCreate",
+      "secondaryCommandIds": [
+        "Dorm.ActionPlanCreate",
+        "Dorm.IssueTrackingItemCreate"
+      ],
+      "userFilledFields": [
+        "复盘结论",
+        "行动目标",
+        "改进措施",
+        "负责人",
+        "完成期限"
+      ],
+      "userSelectedFields": [
+        "行动计划类型",
+        "关联场景包",
+        "优先级"
+      ],
+      "systemGeneratedFields": [
+        "reviewConclusionRef",
+        "actionPlanRef",
+        "issueTrackingItemRef"
+      ],
+      "validations": [
+        "行动计划只能生成后续任务或跳转到对应场景包处理",
+        "不得直接修改业务数据"
+      ],
+      "outputs": [
+        "复盘结论",
+        "行动计划",
+        "问题追踪项"
+      ]
+    },
+    {
+      "stepNo": 7,
+      "stepId": "publish-export-timeline",
+      "nameZh": "发布、导出与历史",
+      "commandId": "Dorm.ReportPublish",
+      "secondaryCommandIds": [
+        "Dorm.ReportExportRecordCreate",
+        "Dorm.ReportArchive"
+      ],
+      "userSelectedFields": [
+        "保存草稿",
+        "提交复盘",
+        "发布内部报表",
+        "导出",
+        "归档"
+      ],
+      "systemGeneratedFields": [
+        "reportVersion",
+        "publishedAt",
+        "exportRecordRef",
+        "auditTrailRef"
+      ],
+      "validations": [
+        "发布报表锁定快照",
+        "后续更正必须生成新版本，不得覆盖已发布报表"
+      ],
+      "outputs": [
+        "发布报表",
+        "导出记录",
+        "版本历史"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“6 月经营复盘”“301 房间周转异常”“企业客户转化下降”。",
+    "upstreamReadonly": [
+      "场景包 1-12 已确认事实摘要",
+      "状态历史",
+      "证据摘要",
+      "只读对象引用",
+      "授权投影",
+      "finance-gate 已确认账务事实",
+      "permission envelope",
+      "lineage envelope",
+      "freshness envelope"
+    ],
+    "userFilled": [
+      "报表名称",
+      "备注",
+      "审计说明",
+      "风险等级",
+      "建议处理人",
+      "处理期限",
+      "复盘结论",
+      "行动目标",
+      "改进措施",
+      "负责人",
+      "完成期限"
+    ],
+    "userSelected": [
+      "时间范围",
+      "楼栋/区域",
+      "渠道",
+      "企业客户",
+      "商品",
+      "房间/床位范围",
+      "报表类型",
+      "指标视图",
+      "问题类型",
+      "责任场景包",
+      "是否生成行动计划",
+      "行动计划类型",
+      "优先级",
+      "发布内部报表",
+      "导出",
+      "归档"
+    ],
+    "systemGenerated": [
+      "reportScopeRef",
+      "periodStart",
+      "periodEnd",
+      "scopeVersion",
+      "createdBy",
+      "dataQualityCheckRef",
+      "reportSnapshotRef",
+      "metricSnapshotRefs",
+      "calculationVersion",
+      "generatedAt",
+      "financeReviewSnapshotRef",
+      "auditFindingRef",
+      "reviewConclusionRef",
+      "actionPlanRef",
+      "issueTrackingItemRef",
+      "reportVersion",
+      "publishedAt",
+      "exportRecordRef",
+      "auditTrailRef",
+      "projectionVersion",
+      "domainEventId"
+    ],
+    "systemCalculated": [
+      "permissionEnvelope",
+      "lineageEnvelope",
+      "freshnessEnvelope",
+      "evidenceCompleteness",
+      "指标值",
+      "同比/环比",
+      "趋势",
+      "分组",
+      "异常点",
+      "缺失项",
+      "不可发布原因"
+    ],
+    "evidenceBound": [
+      "源数据证据摘要",
+      "指标计算证据",
+      "审计证据",
+      "复盘会议记录",
+      "导出审计轨迹"
+    ],
+    "internalAudit": [
+      "reportScopeRef",
+      "reportSnapshotRef",
+      "metricSnapshotRefs",
+      "financeReviewSnapshotRef",
+      "auditFindingRef",
+      "reviewConclusionRef",
+      "actionPlanRef",
+      "issueTrackingItemRef",
+      "exportRecordRef",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "forbiddenUserInputFields": [
+      "reportId",
+      "metricId",
+      "ledgerEntryId",
+      "reservationId",
+      "stayId",
+      "roomId",
+      "bedId",
+      "paymentId",
+      "depositId",
+      "refundId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ]
+  },
+  "reportingStatusOptions": [
+    "报表草稿",
+    "数据待确认",
+    "数据不可用于正式报表",
+    "报表已生成",
+    "报表已发布",
+    "报表已归档",
+    "审计发现待确认",
+    "行动计划待处理",
+    "问题已关闭"
+  ],
+  "readSideOutputs": [
+    "报表快照",
+    "指标快照",
+    "财务核对视图",
+    "审计发现",
+    "复盘结论",
+    "行动计划",
+    "问题追踪",
+    "导出记录",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "forbiddenUserVisibleTermsZh": [
+    "已修复原事实",
+    "已入账",
+    "已上线",
+    "final GO",
+    "生产发布",
+    "业务上线",
+    "reportId",
+    "metricId",
+    "ledgerEntryId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId",
+    "period-review",
+    "dashboard",
+    "analytics"
+  ],
+  "noGo": {
+    "productionConfirmAllowed": false,
+    "businessGoLiveAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

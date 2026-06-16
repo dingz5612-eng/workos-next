@@ -1,0 +1,170 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario11-surfaceNavigation.generated",
+  "version": "oam.dormitory-scenario11-surfaceNavigation.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario11-housekeeping-maintenance-outofservice-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario11-housekeeping-maintenance-outofservice-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:a8efad76c99b86f3c3f1391fee130cced7a17f5f111dda186b8e563588c5e782",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "digest": "sha256:4b0f8f146168cb6e055dbdd4ed1c70aa7fef18256281b7760a5fdabfc09359a3"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:4b0f8f146168cb6e055dbdd4ed1c70aa7fef18256281b7760a5fdabfc09359a3",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+  "scenarioPackageNo": 11,
+  "scenarioId": "lodging.housekeeping-maintenance-outofservice",
+  "outputContentDigest": "sha256:bb237bec60f2df131e648ded6829f1264d47da88fc55c798a79e5d43b7fb596f",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "房务、维修与停售协同",
+  "businessGoalZh": "承接场景包 2 的运营阻断、场景包 8 的在住服务请求、场景包 9 的退房资源待恢复、场景包 10 的释放后待处理资源，完成保洁、维修、检查、停售申请、恢复建议、作业证据和任务闭环。",
+  "sourceScenarioDigest": "sha256:4b0f8f146168cb6e055dbdd4ed1c70aa7fef18256281b7760a5fdabfc09359a3",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "surfaceNavigation": {
+    "entryPages": [
+      "房务任务列表",
+      "维修任务列表",
+      "任务详情",
+      "派工页",
+      "进度更新页",
+      "完成提交页",
+      "验收页",
+      "停售建议页",
+      "恢复建议页",
+      "费用意向页",
+      "状态历史页"
+    ],
+    "todayZh": "今日只展示今天需要处理的被动任务：今日待派工、维修超期、待验收、返工中、预计今日恢复。",
+    "workItemsZh": "工作项展示全部房务、维修、检查、停售、返工、验收和费用意向被动任务池。",
+    "searchZh": "搜索可以查房间、床位、任务类型、负责人、状态、预计恢复时间；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "pageMustShowZh": [
+      "来源",
+      "影响范围",
+      "当前状态",
+      "证据缺失项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": {
+      "待派工": [
+        "派工"
+      ],
+      "处理中": [
+        "更新进度",
+        "提交完成"
+      ],
+      "待验收": [
+        "验收通过",
+        "返工"
+      ],
+      "验收通过": [
+        "建议恢复运营",
+        "关闭任务"
+      ],
+      "验收不通过": [
+        "生成返工",
+        "转停售建议"
+      ],
+      "返工中": [
+        "更新进度",
+        "提交完成"
+      ],
+      "建议停售": [
+        "查看停售建议"
+      ],
+      "需财务处理": [
+        "提交费用意向",
+        "查看财务状态"
+      ]
+    },
+    "forbiddenUserVisibleTermsZh": [
+      "已可预订",
+      "已可运营",
+      "已入账",
+      "已退款",
+      "final GO",
+      "生产发布",
+      "业务上线",
+      "service-task",
+      "maintenance",
+      "resource-saleability"
+    ]
+  },
+  "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“301 房间退房后保洁待验收”“301-02 床位维修中，预计 18:00 完成”。普通用户不得输入或记住内部编号。",
+  "forbiddenUserInputFields": [
+    "taskId",
+    "workItemId",
+    "roomId",
+    "bedId",
+    "stayId",
+    "serviceRequestId",
+    "serviceWorkCaseId",
+    "workAssignmentId",
+    "expenseIntentId",
+    "ledgerEntryId",
+    "reservationId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId"
+  ],
+  "buttonByState": {
+    "待派工": [
+      "派工"
+    ],
+    "处理中": [
+      "更新进度",
+      "提交完成"
+    ],
+    "待验收": [
+      "验收通过",
+      "返工"
+    ],
+    "验收通过": [
+      "建议恢复运营",
+      "关闭任务"
+    ],
+    "验收不通过": [
+      "生成返工",
+      "转停售建议"
+    ],
+    "返工中": [
+      "更新进度",
+      "提交完成"
+    ],
+    "建议停售": [
+      "查看停售建议"
+    ],
+    "需财务处理": [
+      "提交费用意向",
+      "查看财务状态"
+    ]
+  },
+  "workStatusOptions": [
+    "待派工",
+    "已派工",
+    "处理中",
+    "待验收",
+    "验收通过",
+    "验收不通过",
+    "返工中",
+    "建议停售",
+    "建议恢复",
+    "已关闭",
+    "需财务处理"
+  ]
+}

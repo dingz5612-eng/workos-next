@@ -654,6 +654,91 @@ describe("OAM Surface WorkItem route identity", () => {
     vi.useRealTimers();
     vi.unstubAllGlobals();
   });
+
+  it("auto-advances generated dormitory cards from refreshed WorkItems when the active workspace comes from the WorkItem snapshot", async () => {
+    vi.useFakeTimers();
+    const workspaceId = "Dormitory.FirstGoldenChain-UNIT-AUTO";
+    const calls = [];
+    vi.stubGlobal("fetch", vi.fn(async (url) => {
+      const href = String(url);
+      calls.push(href);
+      if (href.endsWith("/prepare")) {
+        return { ok: true, json: async () => ({ prepared: true, commandSubmissionId: "sub-generated-room" }) };
+      }
+      if (href.endsWith("/confirm")) {
+        return {
+          ok: true,
+          json: async () => ({
+            confirmed: true,
+            commitStatus: "committed",
+            projectionStatus: "pending",
+            commandSubmissionId: "sub-generated-room",
+            resultEventIds: ["evt-generated-room"]
+          })
+        };
+      }
+      if (href.includes("/api/operations/work-items")) {
+        return {
+          ok: true,
+          json: async () => ([{
+            workItemId: "wi-generated-room-confirmed",
+            workspaceId,
+            cardId: "Dorm.RoomSetupConfirm",
+            workItemType: "Dorm.RoomSetupConfirm",
+            lifecycleState: "confirmed",
+            ownerRole: "operator",
+            workspace: generatedDormitoryWorkspace(workspaceId)
+          }, {
+            workItemId: "wi-generated-bed-next",
+            workspaceId,
+            cardId: "Dorm.BedSetupConfirm",
+            workItemType: "Dorm.BedSetupConfirm",
+            lifecycleState: "available",
+            ownerRole: "operator",
+            workspace: generatedDormitoryWorkspace(workspaceId)
+          }])
+        };
+      }
+      return { ok: true, json: async () => ({}) };
+    }));
+    const store = runtimeStore();
+    store.workspaces = [];
+    store.operationWorkItems = [{
+      workItemId: "wi-generated-room-active",
+      workspaceId,
+      cardId: "Dorm.RoomSetupConfirm",
+      workItemType: "Dorm.RoomSetupConfirm",
+      lifecycleState: "available",
+      ownerRole: "operator",
+      workspace: generatedDormitoryWorkspace(workspaceId)
+    }];
+    store.workQueue = [...store.operationWorkItems];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-generated-room-active",
+      selectedWorkspace: workspaceId,
+      selectedCardId: "Dorm.RoomSetupConfirm",
+      runtimeStore: store,
+      render: vi.fn()
+    });
+    ctx.workspace = () => generatedDormitoryWorkspace(workspaceId);
+
+    await submitCurrentCard(ctx);
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(calls.some((href) => href.includes("/api/operations/work-items") && href.includes(`workspaceId=${workspaceId}`))).toBe(true);
+    expect(ctx.state.selectedWorkItemId).toBe("wi-generated-bed-next");
+    expect(ctx.state.selectedCardId).toBe("Dorm.BedSetupConfirm");
+    expect(ctx.state.lastActionResult?.autoAdvanced).toBe(true);
+    expect(ctx.state.lastActionResult?.autoAdvancedToCardId).toBe("Dorm.BedSetupConfirm");
+    expect(html).toContain('data-surface="operation-panel-route"');
+    expect(html).not.toContain('data-surface="completed-workspace-record"');
+    expect(text).toContain("床位组确认");
+    vi.clearAllTimers();
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
 });
 
 function field(id, zh) {
@@ -667,5 +752,45 @@ function field(id, zh) {
     visibleToUser: true,
     ui: { control: "text", optionSet: "", options: [], defaultValue: "", derivedFrom: "", readonly: false },
     help: { "zh-CN": "请输入本步需要的信息。" }
+  };
+}
+
+function generatedDormitoryWorkspace(id) {
+  return {
+    id,
+    domain: "stay",
+    caseId: `case:${id}`,
+    title: { "zh-CN": "房源建档与基础就绪" },
+    summary: { "zh-CN": "按页面顺序完成当前办理。" },
+    next: { "zh-CN": "确认床位组" },
+    blockers: [],
+    cards: [{
+      id: "Dorm.RoomSetupConfirm",
+      status: "ready",
+      title: { "zh-CN": "房间建档确认" },
+      fields: { business: [], system: [], analytics: [] },
+      evidence: [],
+      checks: [],
+      blockerRules: [],
+      confirmation: { required: true, requiredRole: "operator", policyRef: "operations-runtime-policy" }
+    }, {
+      id: "Dorm.BedSetupConfirm",
+      status: "notStarted",
+      title: { "zh-CN": "床位组确认" },
+      fields: { business: [], system: [], analytics: [] },
+      evidence: [],
+      checks: [],
+      blockerRules: [],
+      confirmation: { required: true, requiredRole: "operator", policyRef: "operations-runtime-policy" }
+    }, {
+      id: "Dorm.ResourceReadinessConfirm",
+      status: "notStarted",
+      title: { "zh-CN": "基础就绪确认" },
+      fields: { business: [], system: [], analytics: [] },
+      evidence: [],
+      checks: [],
+      blockerRules: [],
+      confirmation: { required: true, requiredRole: "operator", policyRef: "operations-runtime-policy" }
+    }]
   };
 }

@@ -70,6 +70,50 @@ public sealed class OperationsRuntimeServiceTests
     }
 
     [TestMethod]
+    public void workspace_start_returns_only_current_case_work_items()
+    {
+        var workspace = FakeOperationsRuntime.Workspace("W-STAY-RESOURCE-202606040101");
+        var service = Service(out _, out _, out _, workspaces: new[] { workspace });
+        var store = new InMemoryOperationsStore();
+        var unitOfWork = new OperationsUnitOfWork(
+            new CommandEnvelopeBuilder(),
+            new CommandSubmissionService(store),
+            new IdempotencyService(store),
+            new PayloadHashService(),
+            new SliceCommandHandlerRouter().Register(
+                CanonicalOperationsApiService.ConfirmCommandDefinition,
+                CanonicalOperationsApiService.HandleConfirmCommand));
+        var operations = new CanonicalOperationsApiService(service, unitOfWork, store);
+        var actor = new RuntimeActorContext(
+            "operator-1",
+            "operator",
+            "tenant-start",
+            new[] { "workos.write", "operations.confirm" },
+            "test",
+            "token-start");
+        operations.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-previous-start-room",
+            TenantId: "tenant-start",
+            WorkItemType: "Dorm.RoomSetupConfirm",
+            WorkspaceId: "W-STAY-RESOURCE-OLD",
+            CardId: "roomSetup",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "W-STAY-RESOURCE-OLD",
+                ["cardId"] = "roomSetup",
+                ["definitionId"] = "definition.dormitory.roomSetupConfirm.v1"
+            }));
+
+        var started = operations.StartWorkspaceCase(workspace, "W-STAY-RESOURCE", actor);
+
+        Assert.HasCount(1, started.OperationWorkItems);
+        Assert.AreEqual(started.WorkItem.WorkItemId, started.OperationWorkItems.Single().WorkItemId);
+        Assert.AreEqual(workspace.Id, started.OperationWorkItems.Single().WorkspaceId);
+        Assert.IsFalse(started.OperationWorkItems.Any(item => item.WorkItemId == "wi-previous-start-room"));
+    }
+
+    [TestMethod]
     public void finance_direct_start_workspaces_bind_operations_start_context()
     {
         foreach (var scenario in new[]
@@ -355,6 +399,74 @@ public sealed class OperationsRuntimeServiceTests
             item.WorkItemId != correction.WorkItemId &&
             item.Payload.TryGetValue("cardId", out var cardId) &&
             cardId == "bedSetup"));
+    }
+
+    [TestMethod]
+    public void work_item_listing_can_scope_to_workspace_and_active_items()
+    {
+        var workspaceA = FakeOperationsRuntime.Workspace("W-SCOPE-A");
+        var workspaceB = FakeOperationsRuntime.Workspace("W-SCOPE-B");
+        var service = Service(out _, out _, out _, workspaces: new[] { workspaceA, workspaceB });
+        var activeA = service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-scope-active-a",
+            TenantId: "tenant-scope",
+            WorkItemType: "Dorm.RoomSetupConfirm",
+            WorkspaceId: workspaceA.Id,
+            CardId: "roomSetup",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = workspaceA.Id,
+                ["cardId"] = "roomSetup",
+                ["definitionId"] = "definition.dormitory.roomSetupConfirm.v1"
+            }));
+        var closedA = service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-scope-closed-a",
+            TenantId: "tenant-scope",
+            WorkItemType: "Dorm.RoomSetupConfirm",
+            WorkspaceId: workspaceA.Id,
+            CardId: "roomSetup",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = workspaceA.Id,
+                ["cardId"] = "roomSetup",
+                ["definitionId"] = "definition.dormitory.roomSetupConfirm.v1"
+            }));
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-scope-active-b",
+            TenantId: "tenant-scope",
+            WorkItemType: "Dorm.RoomSetupConfirm",
+            WorkspaceId: workspaceB.Id,
+            CardId: "roomSetup",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = workspaceB.Id,
+                ["cardId"] = "roomSetup",
+                ["definitionId"] = "definition.dormitory.roomSetupConfirm.v1"
+            }));
+        service.RecordWorkItemTransition(
+            "tenant-scope",
+            workspaceA.Id,
+            closedA!.WorkItemId,
+            closedA.Status,
+            "confirmed",
+            "sub-scope-closed-a",
+            "test_confirmed",
+            "operator-1");
+
+        var scoped = service.ListWorkItemSurfaces("tenant-scope", workspaceId: workspaceA.Id);
+        var activeScoped = service.ListWorkItemSurfaces("tenant-scope", workspaceId: workspaceA.Id, activeOnly: true);
+
+        Assert.IsNotNull(activeA);
+        CollectionAssert.AreEquivalent(
+            new[] { "wi-scope-active-a", "wi-scope-closed-a" },
+            scoped.Select(item => item.WorkItemId).ToArray());
+        CollectionAssert.AreEquivalent(
+            new[] { "wi-scope-active-a" },
+            activeScoped.Select(item => item.WorkItemId).ToArray());
+        Assert.IsFalse(activeScoped.Any(item => item.WorkspaceId == workspaceB.Id));
     }
 
     private static OperationsRuntimeService Service(

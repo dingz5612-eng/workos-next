@@ -1,0 +1,513 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario5-mobileMirror.generated",
+  "version": "oam.dormitory-scenario5-mobileMirror.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario5-reservation-and-inventory-hold-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario5-reservation-and-inventory-hold-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:5469772b478f954bfbfd2e7c1f29c53672a7b062ae1e90dbfe7295a5b7bb23bb",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "digest": "sha256:89ee0867faccfdebb4869ee1da6370f50de6b9f8ef7f7d6e83d1793d86e6662b"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:89ee0867faccfdebb4869ee1da6370f50de6b9f8ef7f7d6e83d1793d86e6662b",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario5.ReservationAndInventoryHold",
+  "scenarioPackageNo": 5,
+  "scenarioId": "lodging.reservation-and-inventory-hold",
+  "outputContentDigest": "sha256:cf2faaeaa06d06e7b9bb9a20864d8091500cf3c95adef7c302dfb82164ee29cf",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "预订与库存锁定",
+  "businessGoalZh": "承接场景包 4 已确认的报价/客户意向，重新校验资源、价格、报价有效期、日期和当前占用后，完成库存锁定、确认预订并生成预订号。",
+  "sourceScenarioDigest": "sha256:89ee0867faccfdebb4869ee1da6370f50de6b9f8ef7f7d6e83d1793d86e6662b",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "consumer": "surface",
+  "surfaceNavigation": {
+    "pagesZh": [
+      "预订准备列表",
+      "可订资源复核页",
+      "库存锁定页",
+      "预订确认页",
+      "预订结果页",
+      "预订详情页",
+      "锁定历史页",
+      "预订状态历史页"
+    ],
+    "todayZh": "今日只展示锁定即将过期、待确认预订、今日预订待入住准备等今天需要处理的被动任务。",
+    "workItemsZh": "工作项展示全部预订与库存锁定被动任务池。",
+    "searchZh": "搜索可以查客户、手机号、预订号、日期、房间/床位、预订状态；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "mustShowZh": [
+      "当前锁定状态",
+      "预订状态",
+      "截止时间",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": [
+      {
+        "state": "quote_valid",
+        "buttonsZh": [
+          "选择资源",
+          "锁定"
+        ]
+      },
+      {
+        "state": "held",
+        "buttonsZh": [
+          "确认预订",
+          "释放锁定"
+        ]
+      },
+      {
+        "state": "hold_expired",
+        "buttonsZh": [
+          "重新锁定"
+        ]
+      },
+      {
+        "state": "reserved",
+        "buttonsZh": [
+          "查看预订",
+          "进入入住办理准备"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "已入住",
+      "已收款",
+      "押金已收",
+      "退款",
+      "final GO",
+      "生产发布",
+      "lead-reservation",
+      "reservationCreate",
+      "reservationConvert",
+      "check-in"
+    ]
+  },
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "enter-reservation-preparation",
+      "nameZh": "进入预订确认",
+      "commandId": "Dorm.BookingPreparationStart",
+      "commandBusinessNameZh": "发起预订准备",
+      "userSees": [
+        "客户姓名",
+        "联系方式",
+        "入住日期",
+        "离店日期",
+        "人数",
+        "报价单号",
+        "报价有效期",
+        "客户选择意向"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "continueReservation",
+        "returnToRequote",
+        "closeReservationPreparation"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "报价确认证据",
+        "客户意向证据"
+      ],
+      "systemGeneratedFields": [
+        "bookingRequestRef",
+        "quoteRef",
+        "quoteVersionRef",
+        "quoteSnapshotRef",
+        "sourceScenarioRef"
+      ],
+      "validations": [
+        "报价过期或缺价格快照时，必须返回场景包 4 重新报价。",
+        "客户联系方式缺失不得进入锁定。"
+      ],
+      "outputs": [
+        "BookingRequest",
+        "ReservationEvidence",
+        "ReservationStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "review-available-resource",
+      "nameZh": "复核可订资源",
+      "commandId": "Dorm.AvailabilityRecheck",
+      "commandBusinessNameZh": "可订资源复核",
+      "userSees": [
+        "可订房间/床位",
+        "运营状态",
+        "价格快照",
+        "不可订原因"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "resourceChoice",
+        "roomOrBedChoice"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "可订复核证据"
+      ],
+      "systemGeneratedFields": [
+        "availabilitySnapshotRef",
+        "resourceRef",
+        "dateRangeRef",
+        "availabilityVersion"
+      ],
+      "validations": [
+        "维修、停售、暂停、异常、无有效价格、已锁定、已预订、已入住占用都必须阻断。"
+      ],
+      "outputs": [
+        "AvailabilityCheck",
+        "AvailabilitySnapshot"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "create-inventory-hold",
+      "nameZh": "锁定库存",
+      "commandId": "Dorm.InventoryHoldCreate",
+      "commandBusinessNameZh": "创建库存锁定",
+      "userSees": [
+        "资源摘要",
+        "日期范围",
+        "当前可锁定状态",
+        "不可提交原因"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "holdDurationOption",
+        "lockInventory"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "库存锁定证据"
+      ],
+      "systemGeneratedFields": [
+        "inventoryHoldRef",
+        "holdNo",
+        "holdUntil",
+        "holdVersion",
+        "lockedResourceRefs"
+      ],
+      "validations": [
+        "锁定必须原子成功。",
+        "并发冲突只允许一个成功。",
+        "失败无副作用。"
+      ],
+      "outputs": [
+        "InventoryHold",
+        "ReservationEvidence",
+        "ReservationStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 4,
+      "stepId": "confirm-reservation-information",
+      "nameZh": "确认预订信息",
+      "commandId": "Dorm.ReservationDraftConfirm",
+      "commandBusinessNameZh": "确认预订信息",
+      "userSees": [
+        "客户信息",
+        "入住/离店日期",
+        "人数",
+        "房间/床位",
+        "价格明细",
+        "报价来源",
+        "锁定截止时间",
+        "预订规则摘要"
+      ],
+      "userFilledFields": [
+        "reservationNotes",
+        "customerConfirmationMethod",
+        "specialRequestsSupplement"
+      ],
+      "userSelectedFields": [
+        "confirmReservation",
+        "backToEdit",
+        "releaseHold"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "客户确认证据",
+        "预订规则证据"
+      ],
+      "systemGeneratedFields": [
+        "reservationDraftRef",
+        "reservationPolicySnapshotRef",
+        "reservationPriceSnapshotRef"
+      ],
+      "validations": [
+        "不得让用户填写 reservationId、reservationNo、roomId、bedId、ratePlanId。"
+      ],
+      "outputs": [
+        "ReservationPolicySnapshot",
+        "ReservationPriceSnapshot",
+        "ReservationEvidence"
+      ]
+    },
+    {
+      "stepNo": 5,
+      "stepId": "confirm-reservation",
+      "nameZh": "生成预订",
+      "commandId": "Dorm.ReservationConfirm",
+      "commandBusinessNameZh": "确认预订",
+      "userSees": [
+        "客户信息",
+        "资源摘要",
+        "价格快照",
+        "锁定截止时间",
+        "不可提交原因"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "confirmReservation"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "预订确认证据"
+      ],
+      "systemGeneratedFields": [
+        "reservationRef",
+        "reservationNo",
+        "confirmedAt",
+        "confirmedBy",
+        "reservationStatus"
+      ],
+      "validations": [
+        "锁定未过期、资源仍可用、报价仍有效、价格快照一致、客户信息完整。",
+        "禁止写入入住、收款、押金、退款、账务。"
+      ],
+      "outputs": [
+        "Reservation",
+        "ReservationGuest",
+        "ReservationResourceBinding",
+        "ReservationPriceSnapshot",
+        "ReservationConfirmation"
+      ]
+    },
+    {
+      "stepNo": 6,
+      "stepId": "reservation-result-and-checkin-preparation",
+      "nameZh": "预订结果与下游准备",
+      "commandId": "Dorm.ReservationSummaryOutput",
+      "commandBusinessNameZh": "预订摘要输出",
+      "userSees": [
+        "预订号",
+        "客户",
+        "日期",
+        "房间/床位",
+        "价格摘要",
+        "预订状态",
+        "下一步进入入住办理准备"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "viewReservation",
+        "startCheckInPreparation"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "预订结果证据"
+      ],
+      "systemGeneratedFields": [
+        "reservationSummaryRef",
+        "checkInPreparationRef",
+        "reservationStatusHistoryRef"
+      ],
+      "validations": [
+        "取消、未到店、退款不在本包处理，只能展示后续任务入口或状态提示。",
+        "后续入住办理必须重新核验入住所需证件、协议、押金/收款规则。"
+      ],
+      "outputs": [
+        "预订确认摘要",
+        "预订号",
+        "只读对象引用"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“张三，6 月 20 日至 6 月 23 日，301 房间，已锁定至 20:00”“预订号 R202606200001”。",
+    "upstreamReadonly": [
+      "customerName",
+      "contactPhone",
+      "checkInDate",
+      "checkOutDate",
+      "guestCount",
+      "quoteNo",
+      "quoteValidity",
+      "customerIntent",
+      "roomSummary",
+      "bedSetSummary",
+      "operationStatus",
+      "productSummary",
+      "priceVersionHistory",
+      "quotePriceSnapshot",
+      "evidenceSummary"
+    ],
+    "userFilled": [
+      "reservationNotes",
+      "customerConfirmationMethod",
+      "specialRequestsSupplement"
+    ],
+    "userSelected": [
+      "continueReservation",
+      "returnToRequote",
+      "closeReservationPreparation",
+      "resourceChoice",
+      "roomOrBedChoice",
+      "holdDurationOption",
+      "lockInventory",
+      "confirmReservation",
+      "backToEdit",
+      "releaseHold",
+      "viewReservation",
+      "startCheckInPreparation"
+    ],
+    "userUploadedOrBoundEvidence": [
+      "报价确认证据",
+      "客户意向证据",
+      "可订复核证据",
+      "库存锁定证据",
+      "客户确认证据",
+      "预订规则证据",
+      "预订确认证据",
+      "预订结果证据",
+      "锁定释放证据",
+      "锁定过期证据",
+      "纠错证据"
+    ],
+    "systemGenerated": [
+      "bookingRequestRef",
+      "quoteRef",
+      "quoteVersionRef",
+      "quoteSnapshotRef",
+      "sourceScenarioRef",
+      "availabilitySnapshotRef",
+      "resourceRef",
+      "dateRangeRef",
+      "availabilityVersion",
+      "inventoryHoldRef",
+      "holdNo",
+      "holdUntil",
+      "holdVersion",
+      "lockedResourceRefs",
+      "reservationDraftRef",
+      "reservationPolicySnapshotRef",
+      "reservationPriceSnapshotRef",
+      "reservationRef",
+      "reservationNo",
+      "confirmedAt",
+      "confirmedBy",
+      "reservationStatus",
+      "reservationSummaryRef",
+      "checkInPreparationRef",
+      "reservationStatusHistoryRef",
+      "projectionVersion",
+      "domainEventId",
+      "commandSubmissionRef"
+    ],
+    "systemCalculated": [
+      "dateRangeValid",
+      "guestCountValid",
+      "quoteStillValid",
+      "priceSnapshotMatched",
+      "resourceAvailableFlag",
+      "holdExpiredFlag",
+      "holdRemainingMinutes",
+      "cannotSubmitReasons",
+      "legalNextActions"
+    ],
+    "evidenceBound": [
+      "ReservationEvidence",
+      "EvidenceBinding",
+      "evidenceEnvelopeRef"
+    ],
+    "internalAuditOnlyFields": [
+      "bookingRequestRef",
+      "quoteRef",
+      "quoteVersionRef",
+      "quoteSnapshotRef",
+      "availabilitySnapshotRef",
+      "resourceRef",
+      "inventoryHoldRef",
+      "reservationRef",
+      "reservationPolicySnapshotRef",
+      "reservationPriceSnapshotRef",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId",
+      "commandSubmissionRef"
+    ],
+    "forbiddenUserInputFields": [
+      "bookingRequestId",
+      "inventoryHoldId",
+      "holdId",
+      "reservationId",
+      "reservationNo",
+      "quoteId",
+      "productId",
+      "ratePlanId",
+      "roomId",
+      "bedId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ]
+  },
+  "reservationStatusOptions": [
+    "待锁定",
+    "锁定中",
+    "已锁定",
+    "锁定过期",
+    "待确认预订",
+    "已预订",
+    "预订确认失败",
+    "转入住准备"
+  ],
+  "readSideOutputs": [
+    "预订确认摘要",
+    "预订号",
+    "客户信息",
+    "日期范围",
+    "人数",
+    "房间/床位",
+    "价格快照",
+    "库存锁定历史",
+    "预订状态",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "forbiddenUserVisibleTermsZh": [
+    "已入住",
+    "已收款",
+    "押金已收",
+    "退款",
+    "final GO",
+    "生产发布",
+    "lead-reservation",
+    "reservationCreate",
+    "reservationConvert",
+    "check-in"
+  ],
+  "noGo": {
+    "businessFeatureDevelopmentAllowed": false,
+    "businessGoLiveAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO",
+    "reasonZh": "本 Source 只完成场景包 5 精准落地闭环，不授予生产发布、业务上线或 final GO。"
+  }
+}

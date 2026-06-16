@@ -97,17 +97,17 @@ public sealed class CanonicalOperationsApiService
             workspace,
             operationCase,
             workItem,
-            ListWorkItems(actor.TenantId).Select(item => AttachAdmission(item, actor)).ToArray());
+            ListWorkItems(actor.TenantId, operationCase.CaseId, workspace.Id).Select(item => AttachAdmission(item, actor)).ToArray());
     }
 
-    public IReadOnlyList<WorkItem> ListWorkItems(string? tenantId = null, string? caseId = null) =>
-        catalog.ListWorkItems(tenantId, caseId);
+    public IReadOnlyList<WorkItem> ListWorkItems(string? tenantId = null, string? caseId = null, string? workspaceId = null, bool activeOnly = false) =>
+        catalog.ListWorkItems(tenantId, caseId, workspaceId, activeOnly);
 
-    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(string? tenantId = null, string? caseId = null) =>
-        catalog.ListWorkItemSurfaces(tenantId, caseId);
+    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(string? tenantId = null, string? caseId = null, string? workspaceId = null, bool activeOnly = false) =>
+        catalog.ListWorkItemSurfaces(tenantId, caseId, workspaceId, activeOnly);
 
-    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(RuntimeActorContext actor, string? caseId = null) =>
-        catalog.ListWorkItemSurfaces(actor.TenantId, caseId)
+    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(RuntimeActorContext actor, string? caseId = null, string? workspaceId = null, bool activeOnly = false) =>
+        catalog.ListWorkItemSurfaces(actor.TenantId, caseId, workspaceId, activeOnly)
             .Select(item => AttachAdmission(item, actor))
             .ToArray();
 
@@ -292,6 +292,22 @@ public sealed class CanonicalOperationsApiService
                 definition);
         }
 
+        var generatedRuleValidation = GeneratedCapabilityRuntimeRulePipeline.Validate(workItem, normalized, definition);
+        if (!generatedRuleValidation.Allowed)
+        {
+            return ConfirmWorkItemResult.GeneratedRuleRejected(
+                caseId,
+                workItem.WorkItemId,
+                normalized.SubmissionId,
+                normalized.IdempotencyKey,
+                generatedRuleValidation);
+        }
+
+        var validated = normalized with
+        {
+            FieldValues = generatedRuleValidation.FieldValues
+        };
+
         var command = new OperationsCommandRequest(
             workItem.TenantId,
             caseId,
@@ -299,11 +315,11 @@ public sealed class CanonicalOperationsApiService
             ConfirmCommandType,
             "CommandEnvelope.v1",
             definition.DefinitionId,
-            normalized.IdempotencyKey!,
-            PayloadFor(workItem, normalized, actor, definition, admissionDecision, deviceTrust),
+            validated.IdempotencyKey!,
+            PayloadFor(workItem, validated, actor, definition, admissionDecision, deviceTrust),
             actor.ActorId,
             $"{workItem.TenantId}:{workItem.WorkItemId}:confirm",
-            normalized.SubmissionId,
+            validated.SubmissionId,
             requestId);
 
         var commit = unitOfWork.Commit(command);
@@ -326,7 +342,7 @@ public sealed class CanonicalOperationsApiService
                 caseId);
         }
 
-        return ToConfirmResult(commit, normalized);
+        return ToConfirmResult(commit, validated);
     }
 
     private void DispatchNextOperationWorkItem(
@@ -864,7 +880,10 @@ public sealed class CanonicalOperationsApiService
             return Array.Empty<string>();
         }
 
-        return AcceptedCapabilityRuntimeProjection.DerivedFieldKeys(cardId);
+        return AcceptedCapabilityRuntimeProjection.DerivedFieldKeys(cardId)
+            .Concat(GeneratedRuleSourceMapRuntimeAdapter.ReadonlyStableRefKeys)
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
     }
 
     private static readonly string[] ReservedControlFieldKeys =

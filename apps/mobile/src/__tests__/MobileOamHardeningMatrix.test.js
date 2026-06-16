@@ -485,7 +485,7 @@ describe("OAM hardening queue and Search readonly matrix", () => {
       currentActor: { role: "unknownRole", displayName: "未知角色" },
       currentDevice: { surface: "mobile", deviceTrustStatus: "trusted" }
     });
-    ctx.task = () => ({ title: { "zh-CN": "确认房间配置" } });
+    ctx.task = () => ({ title: { "zh-CN": "房间建档确认" } });
 
     const drafts = visibleText(simpleView("drafts", "draftsBody", { ...ctx, state: { ...ctx.state, view: "drafts" } }));
     const uploadQueue = visibleText(simpleView("uploadQueue", "uploadQueueBody", { ...ctx, state: { ...ctx.state, view: "uploadQueue" } }));
@@ -510,7 +510,7 @@ describe("OAM hardening queue and Search readonly matrix", () => {
     expect(businessRecords).toContain("住宿资源");
     expect(completedRecords).toContain("已完成记录");
     expect(evidenceLibrary).toContain("room-photo.txt");
-    expect(visibleText(confirmPageView(ctx))).toContain("确认房间配置");
+    expect(visibleText(confirmPageView(ctx))).toContain("房间建档确认");
     expect(visibleText(resultView(ctx))).toContain("工作项");
   });
 });

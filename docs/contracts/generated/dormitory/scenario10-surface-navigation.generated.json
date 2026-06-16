@@ -1,0 +1,156 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario10-surfaceNavigation.generated",
+  "version": "oam.dormitory-scenario10-surfaceNavigation.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario10-cancel-noshow-refund-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario10-cancel-noshow-refund-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:16104801cbbc1e755d5884c174421d102a5b98f71119e888b8e4341cf9b002c3",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "digest": "sha256:aeea01a93fc218da847f1c763bd350121d955aaad4799428ca610b702b87db08"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:aeea01a93fc218da847f1c763bd350121d955aaad4799428ca610b702b87db08",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario10.CancelNoShowRefund",
+  "scenarioPackageNo": 10,
+  "scenarioId": "lodging.cancel-noshow-refund-intake",
+  "outputContentDigest": "sha256:1f4bc1360b65f25968295773d2920d2ed682bf06cacc109355c630917def251b",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "取消、未到店与退款处理",
+  "businessGoalZh": "承接场景包 5 的预订确认摘要、场景包 6 的收款/押金/担保摘要、场景包 7 的入住状态摘要和场景包 9 的退房结算意向，处理预订取消、客户未到店、取消费/未到店费计算、退款或扣费申请、库存释放请求、客户确认和证据留存。",
+  "sourceScenarioDigest": "sha256:aeea01a93fc218da847f1c763bd350121d955aaad4799428ca610b702b87db08",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "surfaceNavigation": {
+    "entryPages": [
+      "取消/未到店列表",
+      "取消办理页",
+      "未到店关闭页",
+      "客户确认页",
+      "政策金额计算页",
+      "库存释放确认页",
+      "退款/扣费申请页",
+      "财务处理状态页",
+      "取消结果页",
+      "状态历史页"
+    ],
+    "todayZh": "今日只展示今天需要处理的被动任务：今日未到店待处理、取消待确认、退款申请待财务、财务退回待补证、争议待复核。",
+    "workItemsZh": "工作项展示全部取消、未到店和退款/扣费被动任务池。",
+    "searchZh": "搜索可以查客户、手机号、预订号、房间/床位、取消状态、退款处理状态；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "pageMustShowZh": [
+      "当前取消/未到店状态",
+      "金额依据",
+      "财务状态",
+      "证据缺失项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": {
+      "待处理": [
+        "办理取消/未到店"
+      ],
+      "待客户确认": [
+        "补充确认"
+      ],
+      "待政策计算": [
+        "查看金额"
+      ],
+      "待财务处理": [
+        "查看财务状态"
+      ],
+      "已取消": [
+        "查看取消摘要"
+      ],
+      "未到店已关闭": [
+        "查看未到店摘要"
+      ],
+      "争议处理中": [
+        "转负责人复核",
+        "补充证据"
+      ]
+    },
+    "forbiddenUserVisibleTermsZh": [
+      "已退款到账",
+      "已入账",
+      "已入住",
+      "已退房",
+      "final GO",
+      "生产发布",
+      "业务上线",
+      "reservationCancel",
+      "reservationNoShow",
+      "RefundApprove",
+      "CheckoutSettlementApprove"
+    ]
+  },
+  "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“张三，预订号 R202606200001，客户取消，预计退款 200 元，待财务处理”。普通用户不得输入或记住内部编号。",
+  "forbiddenUserInputFields": [
+    "cancellationCaseId",
+    "refundId",
+    "paymentId",
+    "depositId",
+    "ledgerEntryId",
+    "reservationId",
+    "roomId",
+    "bedId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId",
+    "ledgerTransactionId",
+    "checkoutCaseId",
+    "stayId"
+  ],
+  "buttonByState": {
+    "待处理": [
+      "办理取消/未到店"
+    ],
+    "待客户确认": [
+      "补充确认"
+    ],
+    "待政策计算": [
+      "查看金额"
+    ],
+    "待财务处理": [
+      "查看财务状态"
+    ],
+    "已取消": [
+      "查看取消摘要"
+    ],
+    "未到店已关闭": [
+      "查看未到店摘要"
+    ],
+    "争议处理中": [
+      "转负责人复核",
+      "补充证据"
+    ]
+  },
+  "cancellationStatusOptions": [
+    "取消草稿",
+    "未到店草稿",
+    "待客户确认",
+    "待政策计算",
+    "待负责人复核",
+    "待财务处理",
+    "已取消",
+    "未到店已关闭",
+    "退款申请已提交",
+    "扣费申请已提交",
+    "库存释放已请求",
+    "争议处理中",
+    "财务退回待补证"
+  ]
+}

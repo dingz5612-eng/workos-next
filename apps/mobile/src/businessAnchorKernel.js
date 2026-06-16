@@ -1,3 +1,5 @@
+import { normalizeOperationLifecycleState } from "./operationStatus.js";
+
 const anchorFieldAliases = {
   roomLabel: ["roomLabel", "room_label", "roomDisplay", "room_display", "roomName", "room_name"],
   buildingName: ["buildingName", "building_name", "building", "buildingId", "building_id"],
@@ -333,7 +335,7 @@ function isDisplayValue(value) {
 }
 
 function activeCard(workspace = {}) {
-  return workspace?.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(card.status)) || workspace?.cards?.[0] || {};
+  return workspace?.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(normalizeOperationLifecycleState(card.status, ""))) || workspace?.cards?.[0] || {};
 }
 
 function localized(value, ctx = {}) {

@@ -1,0 +1,99 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario3-testPlan.generated",
+  "version": "oam.dormitory-scenario3-testPlan.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario3-product-and-pricing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario3-product-and-pricing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:85b38109c8d72046b87f14b3a642e018a3b5ff7ec851ae9ae29b7e6fdc8bf751",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "digest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario3.ProductAndPricing",
+  "scenarioPackageNo": 3,
+  "scenarioId": "lodging.product-and-rate",
+  "outputContentDigest": "sha256:2d7f8b85e08e5aae192f5c51edf91fdd711af6fb70d323d5e130a5f20053b710",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "住宿商品与价格",
+  "businessGoalZh": "承接场景包 1 的房源摘要和场景包 2 已确认可运营且未阻断的运营状态摘要，配置住宿商品、售卖单位、商品资源绑定、价格方案、适用日期、价格版本及价格生效/停用记录。",
+  "sourceScenarioDigest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "positiveBrowserTestPlan": [
+    "从场景包 2 可运营房源进入“住宿商品与价格”。",
+    "选择整房创建商品。",
+    "配置按晚价格。",
+    "配置生效日期。",
+    "审核并生效。",
+    "查看价格日历。",
+    "新建调价版本。",
+    "停用旧价格。",
+    "创建单床位商品。",
+    "查看今日、工作项、搜索、我的入口表现。"
+  ],
+  "negativeBrowserTestPlan": [
+    "未可运营资源创建商品。",
+    "维修中资源创建价格。",
+    "价格为空或负数。",
+    "缺币种。",
+    "缺计价周期。",
+    "日期倒置。",
+    "同日期范围价格冲突。",
+    "已生效价格原地编辑。",
+    "伪造 roomId、bedId、ratePlanId。",
+    "搜索结果直接写价格。",
+    "价格生效后直接生成报价或预订。",
+    "重复提交。",
+    "并发调价。"
+  ],
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "select-operable-resource": [
+        "场景包 2 可运营摘要",
+        "只读对象引用绑定记录"
+      ],
+      "define-accommodation-product": [
+        "商品定义证据",
+        "资源绑定证据"
+      ],
+      "configure-rate-plan": [
+        "价格依据证据",
+        "审批材料"
+      ],
+      "configure-price-calendar": [
+        "日期规则证据",
+        "特殊价格证据"
+      ],
+      "review-and-activate-price": [
+        "审核证据",
+        "生效确认记录"
+      ],
+      "price-maintenance": [
+        "调价证据",
+        "停用证据",
+        "作废证据",
+        "补充证据"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "screenshotAnalysisRequired": true,
+  "noSideEffectsProofRequired": true
+}

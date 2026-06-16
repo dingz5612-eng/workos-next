@@ -1,0 +1,172 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario13-objectStateModel.generated",
+  "version": "oam.dormitory-scenario13-objectStateModel.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario13-reporting-audit-review-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario13-reporting-audit-review-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:ec9e4323625d8da6857f729a039a8b1cef9a7bfafd228b2940c2598b37ef5480",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "digest": "sha256:fb9eed6c807882d1f60cf4a98937c73e09429be68d99102d6b282c399781b315"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:fb9eed6c807882d1f60cf4a98937c73e09429be68d99102d6b282c399781b315",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario13.ReportingAuditReview",
+  "scenarioPackageNo": 13,
+  "scenarioId": "lodging.reporting-audit-review",
+  "outputContentDigest": "sha256:4244e2d3c09cc0e28642143e03c5890b430401a7eb78804fdbf4d87905cd98ae",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "经营报表、审计与复盘",
+  "businessGoalZh": "读取场景包 1-12 和 finance-gate 的已确认事实、证据、投影和摘要，形成经营报表、财务核对视图、审计发现、周期复盘、行动计划和问题追踪。",
+  "sourceScenarioDigest": "sha256:fb9eed6c807882d1f60cf4a98937c73e09429be68d99102d6b282c399781b315",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "objects": [
+    {
+      "objectName": "ReportPeriod",
+      "businessNameZh": "报表周期",
+      "descriptionZh": "报表锁定的开始时间、结束时间和周期标签。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyPeriod"
+    },
+    {
+      "objectName": "ReportScope",
+      "businessNameZh": "报表范围",
+      "descriptionZh": "楼栋、渠道、企业客户、商品、房间/床位和报表类型范围。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "versionedScope"
+    },
+    {
+      "objectName": "MetricDefinition",
+      "businessNameZh": "指标定义",
+      "descriptionZh": "指标口径来源、公式、数据来源、时间范围、权限、血缘和刷新要求。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "definitionSnapshot"
+    },
+    {
+      "objectName": "MetricSnapshot",
+      "businessNameZh": "指标快照",
+      "descriptionZh": "按照锁定口径和数据版本生成的指标值、趋势、分组和异常点。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlySnapshot"
+    },
+    {
+      "objectName": "ReportSnapshot",
+      "businessNameZh": "报表快照",
+      "descriptionZh": "锁定范围、时间、数据版本、计算口径和报表内容。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlySnapshot"
+    },
+    {
+      "objectName": "AuditFinding",
+      "businessNameZh": "审计发现",
+      "descriptionZh": "异常指标、缺证据、流程断点、状态冲突、重复/并发异常或未闭环任务。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyFinding"
+    },
+    {
+      "objectName": "EvidenceReviewRecord",
+      "businessNameZh": "证据审阅记录",
+      "descriptionZh": "针对报表数据、指标和审计发现的证据完整性审阅记录。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyEvidenceReview"
+    },
+    {
+      "objectName": "ReviewMeetingRecord",
+      "businessNameZh": "复盘会议记录",
+      "descriptionZh": "周期复盘的会议纪要、参与人、结论和跟进事项。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyReviewRecord"
+    },
+    {
+      "objectName": "ReviewConclusion",
+      "businessNameZh": "复盘结论",
+      "descriptionZh": "复盘结论、行动目标和改进方向。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyConclusion"
+    },
+    {
+      "objectName": "ActionPlan",
+      "businessNameZh": "行动计划",
+      "descriptionZh": "改进措施、负责人、期限、优先级和关联场景包跳转。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyPlan"
+    },
+    {
+      "objectName": "IssueTrackingItem",
+      "businessNameZh": "问题追踪项",
+      "descriptionZh": "行动计划或审计发现的处理状态、责任人和关闭记录。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyIssue"
+    },
+    {
+      "objectName": "ReportExportRecord",
+      "businessNameZh": "报表导出记录",
+      "descriptionZh": "导出人、导出范围、导出时间、报表版本和审计轨迹。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyExport"
+    },
+    {
+      "objectName": "ReportStatusTimeline",
+      "businessNameZh": "报表状态历史",
+      "descriptionZh": "报表草稿、数据待确认、已生成、已发布、已归档等状态变更。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyTimeline"
+    },
+    {
+      "objectName": "StatusTimeline",
+      "businessNameZh": "状态历史",
+      "descriptionZh": "记录报表、审计发现、复盘和行动计划的状态历史。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyTimeline"
+    }
+  ],
+  "reportingStatusOptions": [
+    "报表草稿",
+    "数据待确认",
+    "数据不可用于正式报表",
+    "报表已生成",
+    "报表已发布",
+    "报表已归档",
+    "审计发现待确认",
+    "行动计划待处理",
+    "问题已关闭"
+  ],
+  "invariants": [
+    "报表、看板、搜索、导出均只读，不得写业务事实。",
+    "任何指标必须带 permission、lineage、freshness；缺任一项时只能显示不可用于正式报表或数据待确认。",
+    "报表快照必须锁定时间范围、数据版本和计算口径。",
+    "指标必须来自已确认事实或授权投影，不得从 UI 页面状态计算。",
+    "财务指标只能读取 finance-gate 确认事实。",
+    "审计发现只能生成问题和行动计划，不能直接修正原事实。",
+    "纠错必须回到对应场景包或 finance-gate。",
+    "发布报表锁定快照；后续更正必须生成新版本，不得覆盖已发布报表。",
+    "失败路径不得生成正式报表、不得发布错误指标、不得触发业务状态变更，不得写业务事实、账务事实或刷新错误正式报表。"
+  ],
+  "reportingInvariantRule": {
+    "reportDashboardSearchExportReadonly": true,
+    "permissionRequiredForFormalReport": true,
+    "lineageRequiredForFormalMetric": true,
+    "freshnessRequiredForPublish": true,
+    "metricCalculationFromConfirmedFactsOnly": true,
+    "uiStateMetricCalculationForbidden": true,
+    "financialMetricsReadFinanceGateOnly": true,
+    "auditFindingCannotModifySourceFact": true,
+    "actionPlanRoutesBackOnly": true,
+    "publishedReportAppendOnlyVersion": true,
+    "failureNoSideEffects": true,
+    "querySearchListBoardReportReadonly": true
+  }
+}

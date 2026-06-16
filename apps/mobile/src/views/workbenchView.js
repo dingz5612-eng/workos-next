@@ -1,4 +1,5 @@
 import { queueFiltersFromState } from "../queueFilterState.js";
+import { normalizeOperationLifecycleState } from "../operationStatus.js";
 import { countEvidenceState, countTransferable, queueTasks } from "../selectors/queueSelectors.js";
 import { selectCompletedWorkbenchQueue, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
 import { WorkItemCard } from "./experienceComponents.js";
@@ -105,7 +106,7 @@ function filterSummary(filters, ctx) {
 function countMyCanDo(state) {
   return selectWorkbenchQueue(state).filter((item) =>
     (item.badges?.includes("mine") || item.ownerRole === state.currentActor?.role) &&
-    (item.status === "ready" || item.lifecycleState === "ready" || item.card?.status === "ready")).length;
+    [item.status, item.lifecycleState, item.card?.status].some((status) => normalizeOperationLifecycleState(status, "") === "ready")).length;
 }
 
 function countWaitingOthers(state) {

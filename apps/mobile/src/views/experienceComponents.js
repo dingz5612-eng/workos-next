@@ -14,7 +14,7 @@ import {
 import { normalizeOperationLifecycleState } from "../operationStatus.js";
 import { resolveOperationPanelTarget, resolvePersistedWorkItem } from "../operationRouteResolver.js";
 import { evidenceStateFor } from "../selectors/queueSelectors.js";
-import { isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
+import { isActionableCardStatus, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { permissionDiagnosticCopy } from "../surfaceGuard.js";
 import { buildBusinessAnchor, businessAnchorFieldsHtml, businessAnchorHtml } from "../businessAnchorKernel.js";
 import { isBedSetupCardId } from "../capabilityProjection.js";
@@ -741,7 +741,7 @@ function queuePanel(component, label, count, message, ctx) {
 }
 
 function activeCard(workspace) {
-  return workspace?.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(card.status)) || workspace?.cards?.[0] || {};
+  return workspace?.cards?.find((card) => isActionableCardStatus(card.status)) || workspace?.cards?.[0] || {};
 }
 
 function roleLabel(role, ctx) {

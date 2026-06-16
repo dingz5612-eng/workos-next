@@ -7,7 +7,7 @@ import { operationFieldId } from "../operationFieldKernel.js";
 import { lensIdsForWorkspace, lensPreview, lensTitle } from "../runtimeLensCatalog.js";
 import { buildOperationActionState } from "../operationActionState.js";
 import { FIRST_GOLDEN_CHAIN_STEPS, defaultBedTypeForCount, isBedSetupCardId, isFirstGoldenChainWorkspaceId, isUserSubmittedCapabilityField, runtimeWorkItemMatchesCapabilityCard } from "../capabilityProjection.js";
-import { activeCardForWorkspace, activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
+import { activeCardForWorkspace, activeWorkspaceCard, isActionableCardStatus, isCardActionDisabled, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { checkoutServiceMobilePanel, checkoutServiceOperationAddon } from "./checkoutServiceView.js";
 import { EvidenceStateVM, OperationStepRail } from "./experienceComponents.js";
 import {
@@ -127,7 +127,7 @@ export function completedWorkspaceRecord(item, card, ctx) {
     ? firstGoldenChainCompletionValues(item, ctx)
     : [];
   const firstGoldenChainCompletionBanner = firstGoldenChainCompleted
-    ? `<section class="operation-state" data-capability-completion="Dormitory.FirstGoldenChain"><b>第一金链内测完成</b>${firstGoldenChainBusinessValues.length ? `<p>${firstGoldenChainBusinessValues.map((value) => ctx.escapeHtml(value)).join(" / ")}</p>` : ""}<p>仅代表内测办理记录完成；不代表上线、发布或最终放行。</p></section>`
+    ? `<section class="operation-state" data-capability-completion="Dormitory.FirstGoldenChain"><b>房源建档与基础就绪完成</b>${firstGoldenChainBusinessValues.length ? `<p>${firstGoldenChainBusinessValues.map((value) => ctx.escapeHtml(value)).join(" / ")}</p>` : ""}<p>仅代表房源建档与基础就绪记录完成；不代表可运营、可报价、可预订、上线、发布或最终放行。</p></section>`
     : "";
   return `<section class="completed-record-control" data-component="completedWorkspaceRecord" data-surface="completed-workspace-record" data-lifecycle-state="${ctx.escapeAttr(selectedStep.status)}" data-admission-decision="visible_readonly_completed" data-runtime-decision="work_item_terminal:${ctx.escapeAttr(selectedStep.status)}">
     ${OperationStepRail(item, selectedStep, ctx, {
@@ -226,7 +226,7 @@ function firstGoldenChainCompletionValues(item, ctx) {
 
 function readinessDisplayValue(value, ctx) {
   if (!value) return "";
-  return displayFieldValue({ id: "readinessState", label: { "zh-CN": "就绪状态" }, ui: { optionSet: "readinessState" } }, value, ctx);
+  return displayFieldValue({ id: "readinessState", label: { "zh-CN": "基础就绪结论" }, ui: { optionSet: "readinessState" } }, value, ctx);
 }
 
 function evidenceForRecord(item, card) {
@@ -384,7 +384,7 @@ export function workspaceCard(item, ctx, cardId = "") {
 }
 
 export function workspaceCardPanel(card, item, expanded, ctx) {
-  return expanded || ["ready", "blocked", "inProgress"].includes(card.status)
+  return expanded || isActionableCardStatus(card.status)
     ? OperationCardShell(card, item, ctx)
     : "";
 }
@@ -480,7 +480,7 @@ export function confirmationText(card, item, ctx) {
 export function operationActionText(card, item, ctx) {
   if (card.id === "activate") {
     return ctx.state.lang === "zh-CN"
-      ? "确认房间和床位检查通过，把资源从建档状态切换为可分配状态。不会自动分配给入住人。"
+      ? "确认房间、床位组和基础检查结果，生成基础就绪摘要；不会自动开放运营、报价或预订。"
       : "Подтвердите проверку комнаты и койки, затем переведите ресурс в доступный для назначения статус.";
   }
   if (card.status === "blocked") return ctx.tx(item.next);

@@ -1,0 +1,172 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario2-surfaceNavigation.generated",
+  "version": "oam.dormitory-scenario2-surfaceNavigation.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario2-resource-operation-status-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario2-resource-operation-status-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:d4008d770dd9616a85bd931e5714d103e030fa099f120aa34661cc660d3170b4",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+      "digest": "sha256:0dec768856889f72889f67b4e0444674bf9da57678db5015a5219b9ac649132d"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:0dec768856889f72889f67b4e0444674bf9da57678db5015a5219b9ac649132d",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario2.ResourceOperationStatus",
+  "scenarioPackageNo": 2,
+  "scenarioId": "lodging.resource-operation-status",
+  "outputContentDigest": "sha256:d4e8e03bce1e9758d9b19a13cefe49138f4b8a12bae11c516ea9a0f07b504941",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "房源运营就绪与状态维护",
+  "businessGoalZh": "承接场景包 1 已完成的房间建档、床位组确认、基础就绪确认摘要，完成房间或床位的运营检查、运营状态设置、阻断维护和恢复确认。",
+  "sourceScenarioDigest": "sha256:0dec768856889f72889f67b4e0444674bf9da57678db5015a5219b9ac649132d",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "surfaceNavigation": {
+    "pages": [
+      "房源运营状态列表",
+      "房源运营状态详情",
+      "运营检查页",
+      "状态变更确认页",
+      "阻断原因详情页",
+      "恢复运营页",
+      "状态历史页",
+      "纠错/作废入口"
+    ],
+    "todayZh": "今日只展示今天需要处理的被动任务，例如待运营检查、维修进度待补、阻断待关闭、待复查、恢复运营待确认。",
+    "workItemsZh": "工作项展示全部被动任务池。",
+    "searchZh": "搜索可以查楼栋、房间号、床位、运营状态、阻断原因，但搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "pageMustShowZh": [
+      "当前状态",
+      "已完成步骤",
+      "阻断原因",
+      "影响范围",
+      "缺失项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": [
+      {
+        "state": "unchecked",
+        "buttonsZh": [
+          "开始运营检查"
+        ]
+      },
+      {
+        "state": "operable",
+        "buttonsZh": [
+          "登记维修",
+          "暂停开放",
+          "停售"
+        ]
+      },
+      {
+        "state": "maintenance",
+        "buttonsZh": [
+          "补充维修进度",
+          "申请恢复运营"
+        ]
+      },
+      {
+        "state": "stopped",
+        "buttonsZh": [
+          "查看原因",
+          "申请恢复"
+        ]
+      },
+      {
+        "state": "draft",
+        "buttonsZh": [
+          "继续填写",
+          "保存草稿",
+          "撤销草稿"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "可报价",
+      "可预订",
+      "已上线",
+      "生产发布",
+      "final GO",
+      "金链",
+      "resource-saleability",
+      "lead-reservation",
+      "golden-chain"
+    ]
+  },
+  "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“1 号楼 3 层 301 房间、6 个床位、床位 01、维修中、预计明日复查”。",
+  "forbiddenUserInputFields": [
+    "operationStatusId",
+    "inspectionId",
+    "roomId",
+    "bedId",
+    "workItemId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId"
+  ],
+  "buttonByState": [
+    {
+      "state": "unchecked",
+      "buttonsZh": [
+        "开始运营检查"
+      ]
+    },
+    {
+      "state": "operable",
+      "buttonsZh": [
+        "登记维修",
+        "暂停开放",
+        "停售"
+      ]
+    },
+    {
+      "state": "maintenance",
+      "buttonsZh": [
+        "补充维修进度",
+        "申请恢复运营"
+      ]
+    },
+    {
+      "state": "stopped",
+      "buttonsZh": [
+        "查看原因",
+        "申请恢复"
+      ]
+    },
+    {
+      "state": "draft",
+      "buttonsZh": [
+        "继续填写",
+        "保存草稿",
+        "撤销草稿"
+      ]
+    }
+  ],
+  "operationStatusOptions": [
+    "可运营",
+    "暂不可运营",
+    "部分不可运营",
+    "暂停开放",
+    "维修中",
+    "保洁中",
+    "停售",
+    "异常待处理",
+    "待复查",
+    "已恢复"
+  ]
+}

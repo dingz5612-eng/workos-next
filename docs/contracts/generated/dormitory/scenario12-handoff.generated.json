@@ -1,0 +1,161 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario12-handoff.generated",
+  "version": "oam.dormitory-scenario12-handoff.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario12-channel-corporate-customer-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario12-channel-corporate-customer-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:d504bad001d84d42799afcfcddb383376b494f5dbc5ee6787b025d90409d4b15",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "digest": "sha256:ab296f3dcf35e86acff50f22118336d4a36607c232d31e2fd712cf94cc36bfde"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:ab296f3dcf35e86acff50f22118336d4a36607c232d31e2fd712cf94cc36bfde",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario12.ChannelCorporateCustomer",
+  "scenarioPackageNo": 12,
+  "scenarioId": "lodging.channel-corporate-customer",
+  "outputContentDigest": "sha256:ba759e127c35fe90f4816abe28c4e7d4534646c1e95b15577a2ccbeae392bc5f",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "渠道与企业客户",
+  "businessGoalZh": "维护外部渠道、企业客户、协议客户、渠道发布规则、企业协议资格、渠道对接状态、佣金/结算规则意向和证据，并向场景包 3、4、5、finance-gate 和看板提供只读条件。",
+  "sourceScenarioDigest": "sha256:ab296f3dcf35e86acff50f22118336d4a36607c232d31e2fd712cf94cc36bfde",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "upstream": {
+    "allowedSourcePackageNos": [
+      2,
+      3
+    ],
+    "requiredReadonlyInputs": [
+      "房间/床位运营状态摘要",
+      "运营阻断摘要",
+      "商品摘要",
+      "价格方案摘要",
+      "价格版本摘要",
+      "适用日期",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "upstreamWriteBackAllowed": false,
+    "mustNotRequireRefillZh": "场景包 12 只能读取场景包 2 的运营阻断摘要和场景包 3 的商品/价格摘要，不得要求用户重新填写上游已确认字段。",
+    "scenario3ProductPriceReadonlyRuleZh": "商品和价格金额真值来自场景包 3；场景包 12 只能引用商品摘要、价格方案摘要、价格版本摘要和适用日期。"
+  },
+  "downstream": {
+    "allowedConsumers": [
+      {
+        "consumerPackageNo": 3,
+        "consumerPackageNameZh": "住宿商品与价格",
+        "allowedReadOutputs": [
+          "渠道摘要",
+          "企业客户摘要",
+          "协议摘要",
+          "适用客户类型",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "场景包 3 可读取渠道或企业客户条件作为价格适用范围参考，但价格金额真值仍由场景包 3 自己确认。"
+      },
+      {
+        "consumerPackageNo": 4,
+        "consumerPackageNameZh": "询价与报价",
+        "allowedReadOutputs": [
+          "渠道摘要",
+          "企业客户摘要",
+          "协议摘要",
+          "适用商品/价格资格摘要",
+          "渠道发布规则摘要",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "场景包 4 只能读取渠道和企业资格生成报价资格判断，不得把资格摘要解释为已报价。"
+      },
+      {
+        "consumerPackageNo": 5,
+        "consumerPackageNameZh": "预订与库存锁定",
+        "allowedReadOutputs": [
+          "渠道摘要",
+          "企业客户摘要",
+          "协议摘要",
+          "适用商品/价格资格摘要",
+          "渠道发布规则摘要",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "场景包 5 只能读取这些摘要做预订渠道或企业资格校验，不得把渠道发布规则解释为库存已锁定。"
+      },
+      {
+        "consumer": "finance-gate",
+        "allowedReadOutputs": [
+          "佣金/结算规则意向",
+          "佣金依据",
+          "结算说明",
+          "合同证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "finance-gate 或财务规则权威只能读取佣金/结算规则意向后处理财务规则；场景包 12 不写 Payment、Refund、LedgerEntry 或 LedgerTransaction。"
+      },
+      {
+        "consumerPackageNo": 13,
+        "consumerPackageNameZh": "经营看板与复盘",
+        "allowedReadOutputs": [
+          "渠道摘要",
+          "企业客户摘要",
+          "协议摘要",
+          "渠道发布规则摘要",
+          "佣金/结算规则意向",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "看板和复盘只读，不得写渠道、协议、报价、预订、库存、财务或账务事实。"
+      }
+    ],
+    "handoffOutputs": [
+      "渠道摘要",
+      "企业客户摘要",
+      "协议摘要",
+      "适用商品/价格资格摘要",
+      "渠道发布规则摘要",
+      "佣金/结算规则意向",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "forbiddenOutputsZh": [
+      "RatePlan 金额真值",
+      "Quote",
+      "Reservation",
+      "InventoryHold",
+      "Payment",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction",
+      "已报价",
+      "已预订",
+      "已收款",
+      "已入账"
+    ],
+    "downstreamRecheckRuleZh": "场景包 12 只输出渠道摘要、企业客户摘要、协议摘要、适用商品/价格资格摘要、渠道发布规则摘要、佣金/结算规则意向、证据摘要和只读对象引用；场景包 4 必须重新生成报价资格，场景包 5 必须重新做预订渠道/企业资格校验，finance-gate 处理佣金/结算财务规则。"
+  },
+  "readSideOutputs": [
+    "渠道摘要",
+    "企业客户摘要",
+    "协议摘要",
+    "适用商品/价格资格摘要",
+    "渠道发布规则摘要",
+    "佣金/结算规则意向",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "downstreamRecheckRuleZh": "场景包 12 只输出渠道摘要、企业客户摘要、协议摘要、适用商品/价格资格摘要、渠道发布规则摘要、佣金/结算规则意向、证据摘要和只读对象引用；场景包 4 必须重新生成报价资格，场景包 5 必须重新做预订渠道/企业资格校验，finance-gate 处理佣金/结算财务规则。"
+}

@@ -1,0 +1,178 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario8-surfaceNavigation.generated",
+  "version": "oam.dormitory-scenario8-surfaceNavigation.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario8-in-stay-management-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario8-in-stay-management-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:816bca1a04345f64527e4042745256a6d87ead3f79ea9febf785954edb6af751",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "digest": "sha256:3b010d55e0e797f9c1502d9fc13e28e286a18c7d012dbf83e7fb80cc31c485ce"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:3b010d55e0e797f9c1502d9fc13e28e286a18c7d012dbf83e7fb80cc31c485ce",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario8.InStayManagement",
+  "scenarioPackageNo": 8,
+  "scenarioId": "lodging.in-stay-management",
+  "outputContentDigest": "sha256:db6cd7adfb7889ede536517b97528768f2458685d49be4a1b8ce61400d27ae5d",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "在住管理",
+  "businessGoalZh": "承接场景包 7 已确认入住后的只读入住摘要，在在住期间维护在住状态、入住凭证、续住申请、换房/换床申请、在住服务请求、在住异常记录，并为场景包 9 输出退房准备摘要。",
+  "sourceScenarioDigest": "sha256:3b010d55e0e797f9c1502d9fc13e28e286a18c7d012dbf83e7fb80cc31c485ce",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "surfaceNavigation": {
+    "pagesZh": [
+      "在住列表",
+      "在住详情",
+      "服务请求页",
+      "异常记录页",
+      "续住申请页",
+      "换房/换床页",
+      "凭证管理页",
+      "退房准备页",
+      "状态历史页"
+    ],
+    "todayZh": "今日只展示今日计划离店、服务超时、异常待处理、凭证待回收、续住待确认等今天需要处理的被动任务。",
+    "workItemsZh": "工作项展示全部在住管理被动任务池。",
+    "searchZh": "搜索可以查客户、手机号、入住记录号、房间/床位、在住状态、服务/异常状态；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "mustShowZh": [
+      "当前在住状态",
+      "未闭环事项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": [
+      {
+        "state": "正常在住",
+        "buttonsZh": [
+          "登记服务",
+          "登记异常",
+          "申请续住",
+          "申请换床",
+          "发起退房准备"
+        ]
+      },
+      {
+        "state": "服务处理中",
+        "buttonsZh": [
+          "补充进度",
+          "完成确认"
+        ]
+      },
+      {
+        "state": "异常待处理",
+        "buttonsZh": [
+          "提交复核",
+          "关闭异常"
+        ]
+      },
+      {
+        "state": "凭证待处理",
+        "buttonsZh": [
+          "补发",
+          "挂失",
+          "恢复"
+        ]
+      },
+      {
+        "state": "退房待准备",
+        "buttonsZh": [
+          "发起退房准备",
+          "返回处理未闭环项"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "已退房",
+      "已退款",
+      "已释放房源",
+      "账务入账",
+      "final GO",
+      "生产发布",
+      "StayLifecycle",
+      "bed-transfer-extend",
+      "service-task",
+      "AccessCredentialIssue",
+      "AccessCredentialRevoke"
+    ]
+  },
+  "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“张三，301-02 床位，正常在住，计划 6 月 30 日离店”“服务请求：门禁卡补发处理中”。",
+  "forbiddenUserInputFields": [
+    "stayId",
+    "occupancyId",
+    "credentialId",
+    "serviceRequestId",
+    "incidentId",
+    "roomId",
+    "bedId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId"
+  ],
+  "buttonByState": [
+    {
+      "state": "正常在住",
+      "buttonsZh": [
+        "登记服务",
+        "登记异常",
+        "申请续住",
+        "申请换床",
+        "发起退房准备"
+      ]
+    },
+    {
+      "state": "服务处理中",
+      "buttonsZh": [
+        "补充进度",
+        "完成确认"
+      ]
+    },
+    {
+      "state": "异常待处理",
+      "buttonsZh": [
+        "提交复核",
+        "关闭异常"
+      ]
+    },
+    {
+      "state": "凭证待处理",
+      "buttonsZh": [
+        "补发",
+        "挂失",
+        "恢复"
+      ]
+    },
+    {
+      "state": "退房待准备",
+      "buttonsZh": [
+        "发起退房准备",
+        "返回处理未闭环项"
+      ]
+    }
+  ],
+  "stayStatusOptions": [
+    "正常在住",
+    "待跟进",
+    "服务处理中",
+    "异常待处理",
+    "续住待确认",
+    "换房/换床待确认",
+    "凭证待处理",
+    "退房待准备"
+  ]
+}

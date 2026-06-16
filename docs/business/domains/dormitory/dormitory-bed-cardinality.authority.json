@@ -1,0 +1,66 @@
+{
+  "version": "oam.dormitory.bed-cardinality-authority.v1",
+  "status": "authoritative",
+  "authorityType": "dormitory_first_golden_chain_bed_cardinality",
+  "currentCapabilityId": "Dormitory.FirstGoldenChain",
+  "objectGraphRef": "docs/business/domains/dormitory/dormitory-object-graph.authority.json",
+  "canonicalBedQuantity": "room.bedCount",
+  "acceptedInputAliases": [
+    {
+      "field": "capacity",
+      "normalizesTo": "room.bedCount"
+    },
+    {
+      "field": "bedCount",
+      "normalizesTo": "room.bedCount"
+    }
+  ],
+  "cardinalityRules": [
+    {
+      "ruleId": "capacity_1_exactly_bed_01",
+      "when": "room.bedCount == 1",
+      "creates": [
+        "Dormitory.Bed[01]"
+      ],
+      "generatedBedCount": 1
+    },
+    {
+      "ruleId": "capacity_n_exactly_bed_01_to_n",
+      "when": "room.bedCount == N",
+      "creates": [
+        "Dormitory.Bed[01..N]"
+      ],
+      "generatedBedCount": "N"
+    },
+    {
+      "ruleId": "generated_bed_count_matches_room_bed_count",
+      "expression": "generatedBedCount == room.bedCount"
+    },
+    {
+      "ruleId": "resource_readiness_blocked_until_complete_bed_set",
+      "blockedCommand": "Dorm.ResourceReadinessConfirm",
+      "when": "createdBedCount < room.bedCount",
+      "failureCode": "bed_count_not_satisfied"
+    },
+    {
+      "ruleId": "same_room_same_bed_no_forbidden",
+      "scope": "same roomStableRef + same normalizedBedNo",
+      "allowed": false,
+      "failureCode": "bed_already_exists"
+    },
+    {
+      "ruleId": "different_room_same_bed_no_allowed",
+      "scope": "different roomStableRef + same normalizedBedNo",
+      "allowed": true
+    }
+  ],
+  "authorityBoundaries": {
+    "roomNoGlobalUniqueAllowed": false,
+    "bedNoGlobalUniqueAllowed": false,
+    "userSubmittedRoomIdTrusted": false,
+    "userSubmittedBedIdTrusted": false,
+    "userSubmittedBuildingContextRefTrusted": false,
+    "runtimeUiTestMayInventBedCardinalityRules": false,
+    "wStayResourceAsCurrentProofAllowed": false
+  }
+}

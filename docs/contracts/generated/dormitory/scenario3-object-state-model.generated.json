@@ -1,0 +1,214 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario3-objectStateModel.generated",
+  "version": "oam.dormitory-scenario3-objectStateModel.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario3-product-and-pricing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario3-product-and-pricing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:85b38109c8d72046b87f14b3a642e018a3b5ff7ec851ae9ae29b7e6fdc8bf751",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "digest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario3.ProductAndPricing",
+  "scenarioPackageNo": 3,
+  "scenarioId": "lodging.product-and-rate",
+  "outputContentDigest": "sha256:49617542b5470f45fe46f33db55391442ea2d664b1c675d7be574c51f295706d",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "住宿商品与价格",
+  "businessGoalZh": "承接场景包 1 的房源摘要和场景包 2 已确认可运营且未阻断的运营状态摘要，配置住宿商品、售卖单位、商品资源绑定、价格方案、适用日期、价格版本及价格生效/停用记录。",
+  "sourceScenarioDigest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "objects": [
+    {
+      "objectName": "AccommodationProduct",
+      "businessNameZh": "住宿商品",
+      "descriptionZh": "基于已可运营房间或床位定义的住宿商品，不拥有房间、床位或运营状态事实。",
+      "ownedByScenarioPackageNo": 3,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "SellableUnit",
+      "businessNameZh": "售卖单位",
+      "descriptionZh": "定义整房、单床位、床位组、包月、包周、按晚等商品售卖粒度。",
+      "ownedByScenarioPackageNo": 3,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "ProductResourceBinding",
+      "businessNameZh": "商品资源绑定",
+      "descriptionZh": "把住宿商品绑定到场景包 1/2 只读房间或床位摘要；商品名称不能替代资源绑定。",
+      "ownedByScenarioPackageNo": 3,
+      "upstreamReadonlyRefs": [
+        "roomStableRef",
+        "bedRef",
+        "operationStatusSnapshotRef"
+      ],
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "RatePlan",
+      "businessNameZh": "价格方案",
+      "descriptionZh": "商品的价格名称、基础价格、币种、计价周期、适用客户类型和适用渠道。",
+      "ownedByScenarioPackageNo": 3,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "RateRule",
+      "businessNameZh": "价格规则",
+      "descriptionZh": "工作日、周末、节假日、最小入住晚数/周期等规则。",
+      "ownedByScenarioPackageNo": 3,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "PriceCalendar",
+      "businessNameZh": "价格日历",
+      "descriptionZh": "价格适用日期、特殊日期价格、长期有效和日期范围冲突计算结果。",
+      "ownedByScenarioPackageNo": 3,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "PriceVersion",
+      "businessNameZh": "价格版本",
+      "descriptionZh": "已生效价格的版本事实；价格调整只能新建版本，不得原地覆盖。",
+      "ownedByScenarioPackageNo": 3,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "PriceEvidence",
+      "businessNameZh": "价格证据",
+      "descriptionZh": "商品、价格方案、价格日历、审核生效、停用和作废绑定的证据。",
+      "ownedByScenarioPackageNo": 3,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "PriceStatusHistory",
+      "businessNameZh": "价格状态历史",
+      "descriptionZh": "商品与价格状态、版本和证据历史，供详情、搜索、下游只读。",
+      "ownedByScenarioPackageNo": 3,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    }
+  ],
+  "priceStatusOptions": [
+    "价格草稿",
+    "待审核",
+    "已生效",
+    "已停用",
+    "已过期",
+    "已作废",
+    "需补充证据"
+  ],
+  "stateLayering": {
+    "scenario2StatusZh": [
+      "可运营"
+    ],
+    "scenario3StatusZh": [
+      "可定价",
+      "价格草稿",
+      "待审核",
+      "已生效",
+      "已停用",
+      "已过期",
+      "已作废",
+      "需补充证据"
+    ],
+    "scenario4StatusZh": [
+      "可报价"
+    ],
+    "scenario5StatusZh": [
+      "可锁定",
+      "已预订"
+    ],
+    "separationRulesZh": [
+      "可运营来自场景包 2。",
+      "可定价来自场景包 3。",
+      "可报价来自场景包 4。",
+      "可锁定和已预订来自场景包 5。"
+    ]
+  },
+  "invariants": [
+    "只有场景包 2 输出为可运营且未被维修、停售、暂停开放或异常阻断的房间/床位，才能绑定商品。",
+    "一个商品必须明确售卖单位：整房、单床位、床位组、包月、包周或按晚。",
+    "价格必须有币种、计价周期、适用日期、适用资源、版本号、生效时间和停用时间。",
+    "已生效价格不得原地覆盖；价格调整必须创建新版本。",
+    "相同商品、相同日期范围、相同渠道、相同客户类型下不得存在互相冲突的生效价格。",
+    "商品名称不能替代资源绑定。",
+    "价格必须大于等于 0。",
+    "价格方案不得写押金、收款或账务事实。",
+    "可定价不等于可报价。",
+    "价格已生效不等于库存可锁定。",
+    "价格存在不代表可预订。",
+    "确认失败不得写 CommandSubmission、DomainEvent、Outbox、Projection、Lens、Search、Dashboard、Ledger。",
+    "确认失败不得刷新报价可用读模型。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。"
+  ],
+  "priceConflictRule": {
+    "conflictDimensions": [
+      "productRef",
+      "dateRange",
+      "channel",
+      "customerType"
+    ],
+    "effectiveOverlapAllowed": false,
+    "failureCode": "price_date_conflict"
+  }
+}

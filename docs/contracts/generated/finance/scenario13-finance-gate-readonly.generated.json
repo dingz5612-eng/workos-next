@@ -1,0 +1,52 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario13-financeGate.generated",
+  "version": "oam.dormitory-scenario13-financeGate.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario13-reporting-audit-review-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario13-reporting-audit-review-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:ec9e4323625d8da6857f729a039a8b1cef9a7bfafd228b2940c2598b37ef5480",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "digest": "sha256:fb9eed6c807882d1f60cf4a98937c73e09429be68d99102d6b282c399781b315"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:fb9eed6c807882d1f60cf4a98937c73e09429be68d99102d6b282c399781b315",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario13.ReportingAuditReview",
+  "scenarioPackageNo": 13,
+  "scenarioId": "lodging.reporting-audit-review",
+  "outputContentDigest": "sha256:006038cb4c9bcd0b8d583c127a432546839116da54cb7a1973eb64fe1a5275cc",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "经营报表、审计与复盘",
+  "businessGoalZh": "读取场景包 1-12 和 finance-gate 的已确认事实、证据、投影和摘要，形成经营报表、财务核对视图、审计发现、周期复盘、行动计划和问题追踪。",
+  "sourceScenarioDigest": "sha256:fb9eed6c807882d1f60cf4a98937c73e09429be68d99102d6b282c399781b315",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "consumer": "finance-gate",
+  "financeGateTruthReadonlyOnly": true,
+  "exclusiveTruthWriters": [
+    "finance-gate",
+    "finance-kernel"
+  ],
+  "allowedReadonlyInputs": [
+    "finance-gate 已确认账务事实",
+    "财务确认快照",
+    "授权投影",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "businessRuntimeMayWriteLedger": false,
+  "businessRuntimeMayWritePaymentDepositRefund": false,
+  "financialMetricsReadFinanceGateOnly": true
+}

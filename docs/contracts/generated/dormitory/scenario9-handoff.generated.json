@@ -1,0 +1,141 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario9-handoff.generated",
+  "version": "oam.dormitory-scenario9-handoff.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario9-checkout-settlement-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario9-checkout-settlement-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:e8998094072fad350cab863c53b0ead0b98533c26d440c76a3c632dfb43aa6d1",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "digest": "sha256:9faf23637569daa6b849def8f73228f9c54238ea019b8d7ee4810491a5c19c9b"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9faf23637569daa6b849def8f73228f9c54238ea019b8d7ee4810491a5c19c9b",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario9.CheckoutSettlement",
+  "scenarioPackageNo": 9,
+  "scenarioId": "lodging.checkout-and-settlement",
+  "outputContentDigest": "sha256:ecf913813acceb38d3d90db71ceda597bf677e0bd22a3b8353aa9dfbcc0e617d",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "退房结算",
+  "businessGoalZh": "承接场景包 7 的入住事实和场景包 8 的在住管理/退房准备摘要，办理实际退房、交接、验房、费用核算、押金抵扣、应退/应补结算意向、退房确认、凭证回收、财务处理请求和资源待恢复请求。",
+  "sourceScenarioDigest": "sha256:9faf23637569daa6b849def8f73228f9c54238ea019b8d7ee4810491a5c19c9b",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "upstream": {
+    "allowedSourcePackageNos": [
+      7,
+      8,
+      6
+    ],
+    "requiredReadonlyInputs": [
+      "入住记录摘要",
+      "住客摘要",
+      "房间/床位占用摘要",
+      "入住凭证摘要",
+      "收款确认摘要",
+      "押金确认摘要",
+      "财务确认摘要",
+      "在住状态摘要",
+      "当前占用摘要",
+      "服务请求摘要",
+      "异常摘要",
+      "续住/换房换床结果",
+      "凭证状态",
+      "退房准备摘要",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "effectiveStayRequiredZh": "没有场景包 7 的有效入住记录和场景包 8 的当前在住/占用摘要，不得进入退房结算。",
+    "upstreamWriteBackAllowed": false,
+    "mustNotRequireRefillZh": "场景包 9 只能读取入住、在住、占用、收款、押金、财务、服务、异常、凭证、退房准备和证据摘要，不得要求用户重新填写已确认入住字段或财务确认字段。"
+  },
+  "downstream": {
+    "allowedConsumers": [
+      {
+        "consumer": "finance-gate",
+        "allowedReadOutputs": [
+          "结算意向",
+          "押金抵扣摘要",
+          "应退/应补意向",
+          "客户确认摘要",
+          "财务处理请求",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "finance-gate 只能读取结算意向处理实际退款、补收确认和账务入账；场景包 9 不写 Payment、Refund、LedgerEntry 或 LedgerTransaction。"
+      },
+      {
+        "consumerPackageNo": 2,
+        "consumerPackageNameZh": "房源运营就绪与状态维护",
+        "allowedReadOutputs": [
+          "资源待恢复请求",
+          "资源待保洁",
+          "资源待检查",
+          "资源待维修",
+          "异常待处理",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "场景包 2 只能读取资源待恢复请求并重新复查确认；场景包 9 不得直接把资源恢复为可运营。"
+      },
+      {
+        "consumerPackageNo": 10,
+        "consumerPackageNameZh": "取消、未到店与退款处理",
+        "allowedReadOutputs": [
+          "退房确认摘要",
+          "应退/应补意向",
+          "财务处理请求",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "后续财务处理只读取退房结算摘要，不得要求用户重新填写退房确认和验房字段。"
+      }
+    ],
+    "handoffOutputs": [
+      "退房确认摘要",
+      "费用核算摘要",
+      "押金抵扣摘要",
+      "应退/应补意向",
+      "客户确认摘要",
+      "财务处理请求",
+      "资源待恢复请求",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "forbiddenOutputsZh": [
+      "Payment",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction",
+      "RoomOperationStatus=可运营",
+      "已退款",
+      "已入账",
+      "房源已可运营"
+    ],
+    "downstreamRecheckRuleZh": "场景包 9 只输出退房确认、费用核算、押金抵扣、应退/应补意向、客户确认、财务处理请求、资源待恢复请求、证据摘要和只读对象引用；finance-gate 处理实际退款/补收/账务，场景包 2 处理保洁/维修/恢复运营复查。"
+  },
+  "readSideOutputs": [
+    "退房确认摘要",
+    "费用核算摘要",
+    "押金抵扣摘要",
+    "应退/应补意向",
+    "客户确认摘要",
+    "财务处理请求",
+    "资源待恢复请求",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "downstreamRecheckRuleZh": "场景包 9 只输出退房确认、费用核算、押金抵扣、应退/应补意向、客户确认、财务处理请求、资源待恢复请求、证据摘要和只读对象引用；finance-gate 处理实际退款/补收/账务，场景包 2 处理保洁/维修/恢复运营复查。"
+}

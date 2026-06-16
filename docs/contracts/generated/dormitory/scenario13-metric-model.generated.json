@@ -1,0 +1,181 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario13-metricModel.generated",
+  "version": "oam.dormitory-scenario13-metricModel.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario13-reporting-audit-review-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario13-reporting-audit-review-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:ec9e4323625d8da6857f729a039a8b1cef9a7bfafd228b2940c2598b37ef5480",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "digest": "sha256:fb9eed6c807882d1f60cf4a98937c73e09429be68d99102d6b282c399781b315"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:fb9eed6c807882d1f60cf4a98937c73e09429be68d99102d6b282c399781b315",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario13.ReportingAuditReview",
+  "scenarioPackageNo": 13,
+  "scenarioId": "lodging.reporting-audit-review",
+  "outputContentDigest": "sha256:77328c84b39982b3acd048feecd5dee5a016e13b1fd219f0114df8f3717f1c53",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "经营报表、审计与复盘",
+  "businessGoalZh": "读取场景包 1-12 和 finance-gate 的已确认事实、证据、投影和摘要，形成经营报表、财务核对视图、审计发现、周期复盘、行动计划和问题追踪。",
+  "sourceScenarioDigest": "sha256:fb9eed6c807882d1f60cf4a98937c73e09429be68d99102d6b282c399781b315",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "metricCatalog": [
+    {
+      "metricKey": "resource_count",
+      "nameZh": "房源数量",
+      "sourcePackages": [
+        1
+      ],
+      "financeGateOnly": false
+    },
+    {
+      "metricKey": "operable_resource_count",
+      "nameZh": "可运营房源",
+      "sourcePackages": [
+        2
+      ],
+      "financeGateOnly": false
+    },
+    {
+      "metricKey": "quotable_product_count",
+      "nameZh": "可报价商品",
+      "sourcePackages": [
+        3
+      ],
+      "financeGateOnly": false
+    },
+    {
+      "metricKey": "quote_conversion",
+      "nameZh": "报价转化",
+      "sourcePackages": [
+        4,
+        5
+      ],
+      "financeGateOnly": false
+    },
+    {
+      "metricKey": "reservation_count",
+      "nameZh": "预订数",
+      "sourcePackages": [
+        5
+      ],
+      "financeGateOnly": false
+    },
+    {
+      "metricKey": "checkin_count",
+      "nameZh": "入住数",
+      "sourcePackages": [
+        7
+      ],
+      "financeGateOnly": false
+    },
+    {
+      "metricKey": "in_stay_count",
+      "nameZh": "在住数",
+      "sourcePackages": [
+        8
+      ],
+      "financeGateOnly": false
+    },
+    {
+      "metricKey": "checkout_count",
+      "nameZh": "退房数",
+      "sourcePackages": [
+        9
+      ],
+      "financeGateOnly": false
+    },
+    {
+      "metricKey": "cancel_no_show_count",
+      "nameZh": "取消/未到店数",
+      "sourcePackages": [
+        10
+      ],
+      "financeGateOnly": false
+    },
+    {
+      "metricKey": "recognized_revenue",
+      "nameZh": "收入确认",
+      "sourcePackages": [
+        6,
+        9,
+        10
+      ],
+      "financeGateOnly": true
+    },
+    {
+      "metricKey": "deposit_balance",
+      "nameZh": "押金余额",
+      "sourcePackages": [
+        6,
+        9,
+        10
+      ],
+      "financeGateOnly": true
+    },
+    {
+      "metricKey": "refund_request_count",
+      "nameZh": "退款申请",
+      "sourcePackages": [
+        9,
+        10
+      ],
+      "financeGateOnly": true
+    },
+    {
+      "metricKey": "housekeeping_maintenance_tasks",
+      "nameZh": "维修房务任务",
+      "sourcePackages": [
+        11
+      ],
+      "financeGateOnly": false
+    },
+    {
+      "metricKey": "channel_corporate_contribution",
+      "nameZh": "渠道/企业客户贡献",
+      "sourcePackages": [
+        12,
+        4,
+        5
+      ],
+      "financeGateOnly": false
+    },
+    {
+      "metricKey": "exception_closure_rate",
+      "nameZh": "异常闭环率",
+      "sourcePackages": [
+        8,
+        10,
+        11,
+        13
+      ],
+      "financeGateOnly": false
+    }
+  ],
+  "metricDefinitionRule": {
+    "mustHaveFormula": true,
+    "mustHaveSourcePackages": true,
+    "mustHaveTimeRange": true,
+    "mustHavePermissionEnvelope": true,
+    "mustHaveLineageEnvelope": true,
+    "mustHaveFreshnessEnvelope": true,
+    "mustHaveCalculationVersion": true,
+    "financialMetricsReadFinanceGateOnly": true
+  },
+  "financeGateTruthReadonlyRuleZh": "财务指标只能读取 finance-gate 已确认账务事实、财务确认快照和授权投影；场景包 13 不写 Payment、Deposit、Refund、LedgerEntry 或 LedgerTransaction。",
+  "formalReportAdmissionRuleZh": "缺少 permission envelope、lineage envelope 或 freshness envelope 的数据不得进入正式报表，只能生成草稿、缺失项或问题清单。"
+}

@@ -1,0 +1,269 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario1-benchmark-inheritance-scenario2Trial.generated",
+  "version": "oam.dormitory-scenario1-benchmark-inheritance-scenario2Trial.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario1-benchmark-inheritance-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:c4e98f2dc18ce3ee8ba62ad09ab5f408a27c5101bcf82e5d4dc7eedf743e416d",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+      "digest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+      "digest": "sha256:455d8a4d79792756a9b6da93aa548dfa981c082737a5d5bfd397a030f64e62c4"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
+  "authorityId": "Dormitory.Scenario1BenchmarkInheritanceContract",
+  "outputContentDigest": "sha256:2ab1c747282a56e422d8d88a0eb9491b3893018f13a38b1532c659276f6ee537",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "场景 1 标杆继承合同",
+  "highestBusinessAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+  "highestBusinessAuthorityId": "Dormitory.Operating13ScenarioControl",
+  "benchmarkImplementationRef": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+  "controlAuthorityDigest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0",
+  "benchmarkContractDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
+  "scenario1SourceDigest": "sha256:455d8a4d79792756a9b6da93aa548dfa981c082737a5d5bfd397a030f64e62c4",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "scenario2ControlRow": {
+    "scenarioNo": 2,
+    "scenarioId": "lodging.resource-operation-status",
+    "nameZh": "房源运营就绪与状态维护",
+    "chainLayer": "main_operating_chain",
+    "writesObjects": [
+      "OperationStatus",
+      "OperationBlocker"
+    ],
+    "producesStates": [
+      "可运营"
+    ],
+    "summaryOutputs": [
+      "运营状态摘要",
+      "阻断原因",
+      "可否进入价格维护"
+    ],
+    "upstreamSummaryInputs": [
+      "房间摘要",
+      "床位组摘要",
+      "基础就绪摘要"
+    ],
+    "pageEntries": [
+      "today",
+      "workItems",
+      "search",
+      "mine"
+    ],
+    "historicalPackageReferences": [
+      "resource-saleability"
+    ],
+    "businessRuleZh": "只在基础就绪后确认运营状态；房务验收、基础就绪、运营状态三者不得互相替代。"
+  },
+  "trial": {
+    "scenarioNo": 2,
+    "scenarioId": "lodging.resource-operation-status",
+    "nameZh": "房源运营就绪与状态维护",
+    "status": "trial_gate_only_no_business_feature_development",
+    "reads": [
+      "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json"
+    ],
+    "positionConfirmedIn13ScenarioIndex": true,
+    "upstreamReadonlySummaries": [
+      "房间摘要",
+      "床位组摘要",
+      "基础就绪摘要",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用"
+    ],
+    "ownedObjects": [
+      "OperationStatus",
+      "OperationBlocker"
+    ],
+    "methodInheritedFromScenario1": [
+      "Source Authority 优先",
+      "generated 不手改",
+      "字段来源分类",
+      "按钮按状态出现",
+      "正反向截图和无副作用证明"
+    ],
+    "businessFieldsNotInheritedFromScenario1": [
+      "Room",
+      "BedSet",
+      "Bed",
+      "BasicReadiness",
+      "房间号",
+      "床位数",
+      "床位 01..N",
+      "基础就绪字段"
+    ],
+    "differenceChecklist": {
+      "objectDifference": {
+        "writes": [
+          "OperationStatus",
+          "OperationBlocker"
+        ],
+        "doesNotWrite": [
+          "Room",
+          "BedSet",
+          "Bed",
+          "BasicReadiness",
+          "RatePlan",
+          "Quote",
+          "Reservation",
+          "LedgerEntry"
+        ]
+      },
+      "stateDifference": {
+        "produces": [
+          "可运营"
+        ],
+        "mustNotProduce": [
+          "基础就绪",
+          "可报价",
+          "可预订",
+          "价格生效",
+          "账务真值"
+        ]
+      },
+      "fieldDifference": {
+        "userFilled": [
+          "运营状态备注",
+          "阻断原因说明",
+          "恢复运营说明"
+        ],
+        "userSelected": [
+          "运营状态",
+          "阻断原因类型",
+          "是否采纳场景 11 作业建议"
+        ],
+        "upstreamReadonly": [
+          "房间摘要",
+          "床位组摘要",
+          "基础就绪摘要"
+        ],
+        "systemGenerated": [
+          "operationStatusRef",
+          "operationStatusVersion",
+          "domainEventId",
+          "projectionVersion"
+        ],
+        "systemCalculated": [
+          "是否可进入价格维护",
+          "是否存在未关闭阻断"
+        ],
+        "evidenceBound": [
+          "运营检查记录",
+          "恢复运营证明"
+        ],
+        "financeConfirmed": [],
+        "internalAudit": [
+          "stableRef",
+          "digest",
+          "domainEventId",
+          "projectionVersion"
+        ]
+      },
+      "evidenceDifference": {
+        "requiredEvidence": [
+          "运营状态确认记录"
+        ],
+        "supplementableEvidence": [
+          "恢复运营补充证明"
+        ],
+        "systemAutoEvidence": [
+          "场景 1 上游摘要读取记录",
+          "状态变更事件"
+        ],
+        "internalAuditEvidence": [
+          "摘要 digest",
+          "投影版本",
+          "操作者"
+        ]
+      },
+      "financeDifference": {
+        "involvesAmount": false,
+        "allowedFinanceOutputs": []
+      },
+      "pageDifference": {
+        "pages": [
+          "运营状态维护入口",
+          "运营状态确认页",
+          "阻断原因维护页",
+          "恢复运营确认页",
+          "运营状态摘要页"
+        ],
+        "buttons": [
+          "确认运营状态",
+          "登记阻断原因",
+          "恢复运营",
+          "查看摘要"
+        ],
+        "entryRules": [
+          "今日只显示今日待确认运营状态和待处理阻断任务。",
+          "工作项显示全部运营状态维护任务。",
+          "搜索只读跳转合法动作。",
+          "我的只放草稿、收藏、个人跟进、导出、设置。"
+        ],
+        "cannotSubmitReasons": [
+          "缺少场景 1 基础摘要",
+          "存在未关闭阻断原因",
+          "缺少运营状态确认记录",
+          "试图进入价格或预订"
+        ]
+      },
+      "testDifference": {
+        "positive": [
+          "读取场景 1 摘要后确认运营状态",
+          "登记阻断原因",
+          "采纳或拒绝场景 11 作业建议",
+          "恢复运营后查看摘要"
+        ],
+        "negative": [
+          "未读取场景 1 摘要直接确认运营状态",
+          "复制房间/床位/基础就绪字段",
+          "运营状态后直接进入价格或预订",
+          "搜索结果写事实",
+          "伪造内部 ID",
+          "重复提交",
+          "并发冲突"
+        ],
+        "noSideEffects": [
+          "任何失败不得写 DomainEvent、Outbox、Projection、Search、Dashboard、Ledger"
+        ]
+      }
+    },
+    "highRiskBoundaries": {
+      "financeGate": false,
+      "inventory": false,
+      "price": false,
+      "operationStatus": true,
+      "readonlyReport": false,
+      "mustNotEnterPriceOrReservation": true,
+      "scenario11WorkSuggestionOnly": true
+    }
+  },
+  "trialResult": {
+    "status": "PASS",
+    "failures": []
+  }
+}

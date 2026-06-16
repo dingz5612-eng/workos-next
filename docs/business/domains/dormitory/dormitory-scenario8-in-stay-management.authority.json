@@ -1,0 +1,1287 @@
+{
+  "version": "oam.dormitory.scenario8-in-stay-management-source-authority.v1",
+  "status": "authoritative",
+  "manualEditAllowed": true,
+  "authorityId": "Dormitory.Scenario8.InStayManagement",
+  "scenarioPackageNo": 8,
+  "scenarioId": "lodging.in-stay-management",
+  "nameZh": "在住管理",
+  "businessGoalZh": "承接场景包 7 已确认入住后的只读入住摘要，在在住期间维护在住状态、入住凭证、续住申请、换房/换床申请、在住服务请求、在住异常记录，并为场景包 9 输出退房准备摘要。",
+  "highestAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+  "methodBenchmarkRef": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+  "packageIndexRef": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+  "upstream": {
+    "allowedSourcePackageNos": [
+      7,
+      6,
+      2,
+      3
+    ],
+    "requiredReadonlyInputs": [
+      "入住记录摘要",
+      "住客摘要",
+      "房间/床位占用摘要",
+      "入住凭证摘要",
+      "协议摘要",
+      "身份核验摘要",
+      "财务确认摘要",
+      "当前房源状态摘要",
+      "当前价格摘要",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "effectiveStayRequiredZh": "没有场景包 7 的有效入住记录，不得进入普通在住管理。",
+    "upstreamWriteBackAllowed": false,
+    "mustNotRequireRefillZh": "场景包 8 只能读取入住、住客、占用、凭证、协议、身份核验、财务、房源状态、价格和证据摘要，不得要求用户重新填写已确认入住字段。"
+  },
+  "downstream": {
+    "allowedConsumerPackageNo": 9,
+    "allowedConsumerPackageNameZh": "退房结算",
+    "handoffOutputs": [
+      "在住状态摘要",
+      "当前占用摘要",
+      "服务请求摘要",
+      "异常摘要",
+      "续住/换房换床结果",
+      "凭证状态",
+      "退房准备摘要",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "forbiddenOutputsZh": [
+      "CheckoutSettlement",
+      "CheckoutCase",
+      "RoomRelease",
+      "Payment",
+      "Deposit",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction",
+      "普通收款",
+      "押金确认",
+      "退款",
+      "退房结算",
+      "已退房",
+      "已退款",
+      "已释放房源",
+      "账务入账"
+    ],
+    "downstreamRecheckRuleZh": "场景包 9 只能读取在住状态、当前占用、服务请求、异常、续住/换房换床结果、凭证状态、退房准备、证据摘要和只读对象引用；不得要求用户重新填写已确认入住字段。"
+  },
+  "businessBoundaries": {
+    "responsibilityZh": "本场景包只负责已入住后的在住状态维护、入住凭证管理、续住申请、换房/换床申请、在住服务请求、在住异常记录和退房准备。",
+    "notResponsibleZh": [
+      "房源建档",
+      "价格报价",
+      "库存预订",
+      "入住办理",
+      "普通收款",
+      "押金确认",
+      "退款",
+      "退房结算",
+      "账务入账",
+      "房源释放"
+    ],
+    "allowedWritesZh": [
+      "StayStatus",
+      "StayChangeRequest",
+      "BedTransferRequest",
+      "StayExtensionRequest",
+      "ResidentServiceRequest",
+      "ResidentIncident",
+      "AccessCredentialStatus",
+      "StayEvidence",
+      "StatusHistory"
+    ],
+    "readonlyOrDerivedObjectsZh": [
+      "StayManagementCase",
+      "ResidentCurrentProfile",
+      "OccupancyStatus"
+    ],
+    "appendOnlyDerivedFactsZh": [
+      "OccupancyChanged 只能由换房/换床成功时追加为变更结果，不得覆盖场景包 7 的原入住事实。",
+      "checkoutPreparationSnapshot 只能作为退房准备摘要输出给场景包 9，不得生成退房、退款、结算或释放资源。"
+    ],
+    "forbiddenWritesZh": [
+      "Payment",
+      "Deposit",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction",
+      "CheckoutSettlement",
+      "CheckoutCase",
+      "RoomRelease"
+    ],
+    "semanticGuardsZh": [
+      "已入住来自场景包 7。",
+      "在住状态由场景包 8 维护。",
+      "可退房属于场景包 9。",
+      "正常在住不等于已结清。",
+      "退房待准备不等于已退房。",
+      "换房/换床不等于重新入住。",
+      "退房准备不等于退房结算或房源释放。"
+    ]
+  },
+  "objects": [
+    {
+      "objectName": "StayManagementCase",
+      "businessNameZh": "在住管理单",
+      "descriptionZh": "承接有效入住摘要并组织状态、服务、异常、续住、换房/换床、凭证和退房准备动作的上下文对象。",
+      "ownedByScenarioPackageNo": 8,
+      "writeDisposition": "caseEnvelopeNoFact",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "StayStatus",
+      "businessNameZh": "在住状态",
+      "descriptionZh": "在住期间的业务状态，必须追加状态历史，不得覆盖原历史。",
+      "ownedByScenarioPackageNo": 8,
+      "writeDisposition": "appendOnlyFact",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "ResidentCurrentProfile",
+      "businessNameZh": "当前住客摘要",
+      "descriptionZh": "来自入住办理的住客只读摘要，页面只展示业务可读信息。",
+      "ownedByScenarioPackageNo": 7,
+      "writeDisposition": "readonlyUpstreamSummary",
+      "requiredLifecycle": [
+        "currentState",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "OccupancyStatus",
+      "businessNameZh": "当前占用状态",
+      "descriptionZh": "当前房间/床位占用摘要；换房/换床只能追加占用变更结果，不得覆盖原入住占用事实。",
+      "ownedByScenarioPackageNo": 8,
+      "writeDisposition": "appendOnlyOccupancyChangeResult",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "AccessCredentialStatus",
+      "businessNameZh": "入住凭证状态",
+      "descriptionZh": "钥匙、门卡、门禁码、入住单等凭证的补发、挂失、暂停、恢复、撤销状态。",
+      "ownedByScenarioPackageNo": 8,
+      "writeDisposition": "appendOnlyFact",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "StayExtensionRequest",
+      "businessNameZh": "续住申请",
+      "descriptionZh": "在住期间发起的新计划离店日期申请；涉及费用只生成应收或财务准备，不直接收款或写账。",
+      "ownedByScenarioPackageNo": 8,
+      "writeDisposition": "appendOnlyFact",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "BedTransferRequest",
+      "businessNameZh": "换房/换床申请",
+      "descriptionZh": "在住期间选择目标房间/床位并校验目标可用性；成功后追加占用变更，不重新入住。",
+      "ownedByScenarioPackageNo": 8,
+      "writeDisposition": "appendOnlyFact",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "ResidentServiceRequest",
+      "businessNameZh": "在住服务请求",
+      "descriptionZh": "维修、保洁、用品、门禁、投诉或其他在住期间服务请求及进度。",
+      "ownedByScenarioPackageNo": 8,
+      "writeDisposition": "appendOnlyFact",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "ResidentIncident",
+      "businessNameZh": "在住异常",
+      "descriptionZh": "安全异常、设备异常、纠纷投诉、违规、失联或其他异常记录；高风险异常必须负责人复核。",
+      "ownedByScenarioPackageNo": 8,
+      "writeDisposition": "appendOnlyFact",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "StayEvidence",
+      "businessNameZh": "在住证据",
+      "descriptionZh": "沟通、现场、住客确认、照片、完成证据、异常证据、处理记录、审批记录等证据绑定。",
+      "ownedByScenarioPackageNo": 8,
+      "writeDisposition": "appendOnlyEvidence",
+      "requiredLifecycle": [
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "StayStatusHistory",
+      "businessNameZh": "在住状态历史",
+      "descriptionZh": "在住状态、服务、异常、续住、换房/换床、凭证和退房准备的追加历史。",
+      "ownedByScenarioPackageNo": 8,
+      "writeDisposition": "appendOnlyHistory",
+      "internalMigrationAlias": "StatusHistory",
+      "requiredLifecycle": [
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    }
+  ],
+  "stayStatusOptions": [
+    "正常在住",
+    "待跟进",
+    "服务处理中",
+    "异常待处理",
+    "续住待确认",
+    "换房/换床待确认",
+    "凭证待处理",
+    "退房待准备"
+  ],
+  "stateLayering": {
+    "scenario7StatusZh": [
+      "已入住"
+    ],
+    "scenario8StatusZh": [
+      "正常在住",
+      "待跟进",
+      "服务处理中",
+      "异常待处理",
+      "续住待确认",
+      "换房/换床待确认",
+      "凭证待处理",
+      "退房待准备"
+    ],
+    "scenario9StatusZh": [
+      "可退房",
+      "退房结算"
+    ],
+    "forbiddenStateLeapZh": [
+      "正常在住不等于已结清。",
+      "退房待准备不等于已退房。",
+      "换房/换床不等于重新入住。",
+      "退房准备不得释放房源。"
+    ]
+  },
+  "inStayInvariantRule": {
+    "effectiveStayRequired": true,
+    "currentOccupancyRequired": true,
+    "singleActiveOccupancyPerBedAtSameTime": true,
+    "transferAppendOnlyOccupancyChanged": true,
+    "transferReleasesOldAndBindsNewOnSuccess": true,
+    "extensionDateMustBeLaterThanCurrentCheckout": true,
+    "extensionFinanceHandledByFinanceGateOnly": true,
+    "credentialRequiresEffectiveStayAndOccupancy": true,
+    "checkoutAfterCredentialMustNotRemainActive": true,
+    "checkoutPreparationNotCheckoutSettlement": true,
+    "failureNoSideEffects": true
+  },
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "enter-in-stay-management",
+      "nameZh": "进入在住管理",
+      "commandId": "Dorm.StayManagementContextView",
+      "commandBusinessNameZh": "查看在住上下文",
+      "entrySourcesZh": [
+        "在住列表",
+        "房间/床位详情",
+        "今日任务",
+        "工作项",
+        "搜索只读跳转"
+      ],
+      "userSees": [
+        "住客姓名",
+        "入住记录号业务展示",
+        "房间/床位",
+        "入住日期",
+        "计划离店日期",
+        "凭证状态",
+        "财务摘要",
+        "当前在住状态"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "查看在住详情",
+        "登记服务",
+        "登记异常",
+        "申请续住",
+        "申请换房/换床",
+        "进入退房准备"
+      ],
+      "userUploadedOrBoundEvidence": [],
+      "systemGeneratedFields": [
+        "stayManagementCaseRef",
+        "stayRef",
+        "occupancyRef",
+        "financeSnapshotRef",
+        "sourceScenarioRef"
+      ],
+      "validations": [
+        "无有效 Stay 或已退房状态不得进入普通在住管理。"
+      ],
+      "outputs": [
+        "StayManagementCase"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "maintain-stay-status",
+      "nameZh": "维护在住状态",
+      "commandId": "Dorm.StayStatusChange",
+      "commandBusinessNameZh": "变更在住状态",
+      "userSees": [
+        "当前在住状态",
+        "住客",
+        "房间/床位",
+        "未闭环事项"
+      ],
+      "userFilledFields": [
+        "状态说明",
+        "跟进备注",
+        "预计处理时间"
+      ],
+      "userSelectedFields": [
+        "正常在住",
+        "待跟进",
+        "异常待处理",
+        "服务处理中",
+        "退房待准备"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "沟通记录",
+        "现场记录",
+        "住客确认"
+      ],
+      "systemGeneratedFields": [
+        "stayStatusRef",
+        "previousStatus",
+        "newStatus",
+        "statusVersion",
+        "effectiveAt"
+      ],
+      "validations": [
+        "状态变更必须基于当前有效入住。",
+        "不得覆盖历史状态。"
+      ],
+      "outputs": [
+        "StayStatus",
+        "StayEvidence",
+        "StayStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "resident-service-request",
+      "nameZh": "服务请求与跟进",
+      "commandId": "Dorm.ResidentServiceRequestRegister",
+      "secondaryCommandIds": [
+        "Dorm.ResidentServiceProgressUpdate"
+      ],
+      "commandBusinessNameZh": "登记服务请求",
+      "userSees": [
+        "住客",
+        "房间/床位",
+        "当前在住状态",
+        "已有服务进度"
+      ],
+      "userFilledFields": [
+        "服务请求内容",
+        "服务对象",
+        "紧急程度",
+        "期望完成时间",
+        "处理备注"
+      ],
+      "userSelectedFields": [
+        "维修",
+        "保洁",
+        "用品",
+        "门禁",
+        "投诉",
+        "其他"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "照片",
+        "语音/文字记录",
+        "完成证据"
+      ],
+      "systemGeneratedFields": [
+        "residentServiceRequestRef",
+        "serviceType",
+        "serviceStatus",
+        "evidenceEnvelopeRef"
+      ],
+      "validations": [
+        "服务请求可以生成后续服务任务，但不得直接形成支出、收款或账务。"
+      ],
+      "outputs": [
+        "ResidentServiceRequest",
+        "StayEvidence",
+        "StayStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 4,
+      "stepId": "resident-incident-record",
+      "nameZh": "在住异常记录",
+      "commandId": "Dorm.ResidentIncidentRegister",
+      "secondaryCommandIds": [
+        "Dorm.ResidentIncidentClose"
+      ],
+      "commandBusinessNameZh": "登记在住异常",
+      "userSees": [
+        "住客",
+        "房间/床位",
+        "当前在住状态",
+        "异常处理要求"
+      ],
+      "userFilledFields": [
+        "异常说明",
+        "发生时间",
+        "影响范围",
+        "处理建议"
+      ],
+      "userSelectedFields": [
+        "安全异常",
+        "设备异常",
+        "纠纷投诉",
+        "违规",
+        "失联",
+        "其他"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "异常证据",
+        "处理记录",
+        "审批记录"
+      ],
+      "systemGeneratedFields": [
+        "residentIncidentRef",
+        "incidentSeverity",
+        "incidentStatus",
+        "incidentVersion"
+      ],
+      "validations": [
+        "高风险异常必须进入负责人复核。",
+        "不得用异常记录直接改账或退房。"
+      ],
+      "outputs": [
+        "ResidentIncident",
+        "StayEvidence",
+        "StayStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 5,
+      "stepId": "stay-extension-request",
+      "nameZh": "续住申请",
+      "commandId": "Dorm.StayExtensionRequestSubmit",
+      "commandBusinessNameZh": "发起续住申请",
+      "userSees": [
+        "当前入住",
+        "当前房源状态",
+        "当前价格摘要",
+        "财务摘要"
+      ],
+      "userFilledFields": [
+        "新计划离店日期",
+        "续住原因",
+        "备注"
+      ],
+      "userSelectedFields": [
+        "续住天数/周期",
+        "是否需要重新确认价格/财务"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "住客确认",
+        "续住沟通记录"
+      ],
+      "systemGeneratedFields": [
+        "stayExtensionRequestRef",
+        "oldPlannedCheckoutDate",
+        "newPlannedCheckoutDate",
+        "extensionVersion"
+      ],
+      "validations": [
+        "新离店日期必须晚于当前计划离店日期。",
+        "涉及费用时只生成应收/财务准备，不得直接收款或写账。"
+      ],
+      "outputs": [
+        "StayExtensionRequest",
+        "StayChangeRequest",
+        "StayEvidence",
+        "StayStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 6,
+      "stepId": "bed-transfer-request",
+      "nameZh": "换房/换床申请",
+      "commandId": "Dorm.BedTransferRequestSubmit",
+      "commandBusinessNameZh": "发起换房/换床申请",
+      "userSees": [
+        "当前房间/床位",
+        "目标资源运营状态",
+        "目标占用状态",
+        "价格/规则摘要"
+      ],
+      "userFilledFields": [
+        "换房/换床原因",
+        "备注"
+      ],
+      "userSelectedFields": [
+        "目标房间/床位"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "住客确认",
+        "换房/换床审批记录"
+      ],
+      "systemGeneratedFields": [
+        "bedTransferRequestRef",
+        "fromOccupancyRef",
+        "toResourceRef",
+        "transferVersion"
+      ],
+      "systemWrites": [
+        "BedTransferRequested",
+        "OccupancyChanged",
+        "StayChangeRequest",
+        "StayEvidence",
+        "StayStatusHistory"
+      ],
+      "validations": [
+        "目标床位必须可用且未占用。",
+        "换房/换床成功必须追加 OccupancyChanged，不得覆盖原入住事实。"
+      ],
+      "outputs": [
+        "BedTransferRequest",
+        "StayChangeRequest",
+        "StayEvidence",
+        "StayStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 7,
+      "stepId": "access-credential-management",
+      "nameZh": "门禁/入住凭证管理",
+      "commandId": "Dorm.AccessCredentialStatusChange",
+      "commandBusinessNameZh": "变更入住凭证状态",
+      "userSees": [
+        "当前凭证状态",
+        "住客",
+        "房间/床位",
+        "有效入住状态"
+      ],
+      "userFilledFields": [
+        "凭证处理说明",
+        "领取/归还确认",
+        "异常原因"
+      ],
+      "userSelectedFields": [
+        "补发",
+        "挂失",
+        "暂停",
+        "恢复",
+        "撤销"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "领取/归还确认记录",
+        "凭证异常记录"
+      ],
+      "systemGeneratedFields": [
+        "credentialStatusRef",
+        "credentialRef",
+        "credentialVersion",
+        "credentialChangedAt"
+      ],
+      "validations": [
+        "无有效入住不得发放或恢复有效凭证。",
+        "退房准备可提示待回收，但不得在本包完成退房释放。"
+      ],
+      "outputs": [
+        "AccessCredentialStatus",
+        "StayEvidence",
+        "StayStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 8,
+      "stepId": "checkout-preparation",
+      "nameZh": "退房准备",
+      "commandId": "Dorm.CheckoutPreparationSnapshotCreate",
+      "commandBusinessNameZh": "发起退房准备",
+      "userSees": [
+        "计划离店日期",
+        "在住状态",
+        "未完成服务",
+        "未关闭异常",
+        "凭证状态",
+        "财务摘要"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "发起退房准备",
+        "返回处理未闭环项"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "退房准备沟通记录"
+      ],
+      "systemGeneratedFields": [
+        "checkoutPreparationSnapshotRef",
+        "preparedAt",
+        "preparedBy",
+        "evidenceEnvelopeRef"
+      ],
+      "validations": [
+        "本包只准备退房，不生成退房结算、不释放资源、不退款。"
+      ],
+      "outputs": [
+        "退房准备摘要",
+        "StayEvidence",
+        "StayStatusHistory"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“张三，301-02 床位，正常在住，计划 6 月 30 日离店”“服务请求：门禁卡补发处理中”。",
+    "upstreamReadonly": [
+      "入住记录摘要",
+      "住客摘要",
+      "房间/床位占用摘要",
+      "入住凭证摘要",
+      "协议摘要",
+      "身份核验摘要",
+      "财务确认摘要",
+      "当前房源状态摘要",
+      "当前价格摘要",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "userFilled": [
+      "状态说明",
+      "跟进备注",
+      "预计处理时间",
+      "服务请求内容",
+      "服务对象",
+      "紧急程度",
+      "期望完成时间",
+      "处理备注",
+      "异常说明",
+      "发生时间",
+      "影响范围",
+      "处理建议",
+      "新计划离店日期",
+      "续住原因",
+      "备注",
+      "换房/换床原因",
+      "凭证处理说明",
+      "领取/归还确认",
+      "异常原因"
+    ],
+    "userSelected": [
+      "查看在住详情",
+      "登记服务",
+      "登记异常",
+      "申请续住",
+      "申请换房/换床",
+      "进入退房准备",
+      "正常在住",
+      "待跟进",
+      "异常待处理",
+      "服务处理中",
+      "退房待准备",
+      "维修",
+      "保洁",
+      "用品",
+      "门禁",
+      "投诉",
+      "其他",
+      "安全异常",
+      "设备异常",
+      "纠纷投诉",
+      "违规",
+      "失联",
+      "续住天数/周期",
+      "是否需要重新确认价格/财务",
+      "目标房间/床位",
+      "补发",
+      "挂失",
+      "暂停",
+      "恢复",
+      "撤销",
+      "发起退房准备",
+      "返回处理未闭环项"
+    ],
+    "userUploadedOrBoundEvidence": [
+      "沟通记录",
+      "现场记录",
+      "住客确认",
+      "照片",
+      "语音/文字记录",
+      "完成证据",
+      "异常证据",
+      "处理记录",
+      "审批记录",
+      "续住沟通记录",
+      "换房/换床审批记录",
+      "领取/归还确认记录",
+      "凭证异常记录",
+      "退房准备沟通记录"
+    ],
+    "systemGenerated": [
+      "stayManagementCaseRef",
+      "stayRef",
+      "occupancyRef",
+      "financeSnapshotRef",
+      "sourceScenarioRef",
+      "stayStatusRef",
+      "previousStatus",
+      "newStatus",
+      "statusVersion",
+      "effectiveAt",
+      "residentServiceRequestRef",
+      "serviceType",
+      "serviceStatus",
+      "evidenceEnvelopeRef",
+      "residentIncidentRef",
+      "incidentSeverity",
+      "incidentStatus",
+      "incidentVersion",
+      "stayExtensionRequestRef",
+      "oldPlannedCheckoutDate",
+      "newPlannedCheckoutDate",
+      "extensionVersion",
+      "bedTransferRequestRef",
+      "fromOccupancyRef",
+      "toResourceRef",
+      "transferVersion",
+      "credentialStatusRef",
+      "credentialRef",
+      "credentialVersion",
+      "credentialChangedAt",
+      "checkoutPreparationSnapshotRef",
+      "preparedAt",
+      "preparedBy"
+    ],
+    "systemCalculated": [
+      "有效入住判断",
+      "当前占用有效性",
+      "目标床位可用性",
+      "续住日期合法性",
+      "服务是否超时",
+      "异常风险等级",
+      "凭证有效性",
+      "退房准备缺失项",
+      "合法下一步动作"
+    ],
+    "evidenceBound": [
+      "StayEvidence",
+      "EvidenceBinding",
+      "evidenceEnvelopeRef",
+      "summarySnapshotRef"
+    ],
+    "internalAuditOnlyFields": [
+      "stayId",
+      "occupancyId",
+      "credentialId",
+      "serviceRequestId",
+      "incidentId",
+      "roomId",
+      "bedId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "forbiddenUserInputFields": [
+      "stayId",
+      "occupancyId",
+      "credentialId",
+      "serviceRequestId",
+      "incidentId",
+      "roomId",
+      "bedId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ]
+  },
+  "crudRules": {
+    "createZh": "新增不是普通新增按钮，而是“登记服务请求 / 登记异常 / 发起续住 / 发起换房换床 / 变更凭证状态 / 发起退房准备”。",
+    "draftEditable": true,
+    "confirmedInStayFactInlineEditAllowed": false,
+    "allowedPostConfirmChangesZh": [
+      "补充证据",
+      "追加进度",
+      "状态变更",
+      "负责人复核",
+      "纠错申请",
+      "关闭",
+      "作废"
+    ],
+    "deletePolicyZh": "不得物理删除已确认事实；未提交草稿可撤销，已确认事实只能关闭、作废并追加纠错。",
+    "readOnlySurfacesZh": [
+      "查询",
+      "搜索",
+      "列表",
+      "看板",
+      "报表"
+    ],
+    "readOnlySurfacesWriteBusinessFactAllowed": false,
+    "requiredLifecyclePerObject": [
+      "currentState",
+      "statusHistory",
+      "evidenceHistory",
+      "legalNextActions"
+    ]
+  },
+  "commands": [
+    {
+      "commandId": "Dorm.StayManagementContextView",
+      "businessNameZh": "查看在住上下文",
+      "writesObjects": []
+    },
+    {
+      "commandId": "Dorm.StayStatusChange",
+      "businessNameZh": "变更在住状态",
+      "writesObjects": [
+        "StayStatus",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ResidentServiceRequestRegister",
+      "businessNameZh": "登记服务请求",
+      "writesObjects": [
+        "ResidentServiceRequest",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ResidentServiceProgressUpdate",
+      "businessNameZh": "补充服务进度",
+      "writesObjects": [
+        "ResidentServiceRequest",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ResidentIncidentRegister",
+      "businessNameZh": "登记在住异常",
+      "writesObjects": [
+        "ResidentIncident",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ResidentIncidentClose",
+      "businessNameZh": "关闭在住异常",
+      "writesObjects": [
+        "ResidentIncident",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.StayExtensionRequestSubmit",
+      "businessNameZh": "发起续住申请",
+      "writesObjects": [
+        "StayExtensionRequest",
+        "StayChangeRequest",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.BedTransferRequestSubmit",
+      "businessNameZh": "发起换房/换床申请",
+      "writesObjects": [
+        "BedTransferRequest",
+        "StayChangeRequest",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.AccessCredentialStatusChange",
+      "businessNameZh": "变更入住凭证状态",
+      "writesObjects": [
+        "AccessCredentialStatus",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CheckoutPreparationSnapshotCreate",
+      "businessNameZh": "发起退房准备",
+      "writesObjects": [
+        "StayChangeRequest",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.StayManagementCorrectionRequest",
+      "businessNameZh": "在住管理纠错入口",
+      "writesObjects": [
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "no_effective_stay",
+      "messageZh": "没有有效入住记录，不能进入在住管理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "stay_already_checked_out",
+      "messageZh": "该入住已结束，不能登记在住期间业务。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "current_occupancy_required",
+      "messageZh": "缺少当前房间/床位占用摘要，不能处理在住管理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "target_bed_occupied",
+      "messageZh": "目标床位当前已占用，不能发起换房/换床。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "target_resource_unavailable",
+      "messageZh": "目标房间或床位当前不可用，不能作为换房/换床目标。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "target_resource_blocked_for_transfer",
+      "messageZh": "目标房间或床位处于维修、停售、暂停或异常状态，不能换入。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "extension_date_invalid",
+      "messageZh": "新计划离店日期必须晚于当前计划离店日期。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "extension_finance_requires_finance_gate",
+      "messageZh": "续住涉及费用时只能生成财务准备，不能在在住管理中直接收款或写账。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "service_finance_write_forbidden",
+      "messageZh": "服务请求不能直接生成支出、收款或账务。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "incident_refund_forbidden",
+      "messageZh": "异常记录不能直接退款、改账或退房。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "high_risk_incident_review_required",
+      "messageZh": "高风险异常必须提交负责人复核并绑定审批证据。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "credential_without_effective_stay_forbidden",
+      "messageZh": "无有效入住不得发放、补发或恢复有效凭证。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "credential_after_checkout_forbidden",
+      "messageZh": "退房后不得保持或恢复有效入住凭证。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "checkout_preparation_release_forbidden",
+      "messageZh": "退房准备不能直接退房结算、退款或释放房源。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用不匹配，请从页面重新选择住客、入住记录、房间/床位或凭证。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_result_write_attempt",
+      "messageZh": "查询、搜索、列表、看板、报表只读，不能在这里写入在住事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_in_stay_submission",
+      "messageZh": "该在住管理提交已处理，系统将返回原处理结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_occupancy_conflict",
+      "messageZh": "房间/床位占用状态已变化，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "confirmed_fact_inline_edit_forbidden",
+      "messageZh": "已确认在住事实不能原地覆盖，只能补充证据、追加进度、状态变更、负责人复核或纠错。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "unauthorized_in_stay_action",
+      "messageZh": "当前角色不能执行该在住管理动作。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "cross_scenario_checkout_refund_ledger_forbidden",
+      "messageZh": "在住管理不能直接收款、退款、退房结算、释放房源或写账。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "invariants": [
+    "有效在住必须绑定一个有效 Stay 和一个当前占用房间/床位。",
+    "同一床位同一时间只能有一个有效在住占用。",
+    "换房/换床必须释放原床位占用并绑定新床位占用，但不得覆盖原入住事实；必须追加 OccupancyChanged 变更记录。",
+    "续住必须校验日期、房源状态、价格/财务条件，但不得直接收款或写账。",
+    "门禁/凭证状态必须跟随有效入住和有效占用；退房后不得保持有效凭证。",
+    "退房准备只输出退房准备摘要，不得生成退房、退款、结算、账务或房源释放。",
+    "正常在住不等于已结清。",
+    "退房待准备不等于已退房。",
+    "换房/换床不等于重新入住。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。",
+    "失败路径不得改变占用、不得生成退房、不得写账。",
+    "失败路径不得写非法 Occupancy、Checkout、Payment、Deposit、Refund、Ledger，不得刷新错误 Projection、Search、Dashboard。"
+  ],
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "enter-in-stay-management": [
+        "有效入住摘要证据",
+        "当前占用摘要证据"
+      ],
+      "maintain-stay-status": [
+        "沟通记录",
+        "现场记录",
+        "住客确认"
+      ],
+      "resident-service-request": [
+        "照片",
+        "语音/文字记录",
+        "完成证据"
+      ],
+      "resident-incident-record": [
+        "异常证据",
+        "处理记录",
+        "审批记录"
+      ],
+      "stay-extension-request": [
+        "住客确认",
+        "续住沟通记录"
+      ],
+      "bed-transfer-request": [
+        "住客确认",
+        "换房/换床审批记录"
+      ],
+      "access-credential-management": [
+        "领取/归还确认记录",
+        "凭证异常记录"
+      ],
+      "checkout-preparation": [
+        "退房准备沟通记录",
+        "未闭环事项摘要"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "readSideOutputs": [
+    "在住状态摘要",
+    "当前占用摘要",
+    "服务请求摘要",
+    "异常摘要",
+    "续住/换房换床结果",
+    "凭证状态",
+    "退房准备摘要",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "businessRuntimeMayWriteLedger": false,
+    "businessRuntimeMayWritePaymentDepositRefund": false,
+    "businessRuntimeMayWriteCheckoutSettlement": false,
+    "businessRuntimeMayReleaseRoom": false,
+    "failurePathBusinessSideEffectsAllowed": false,
+    "successMayWriteInStayFactsOnly": true
+  },
+  "surfaceNavigation": {
+    "pagesZh": [
+      "在住列表",
+      "在住详情",
+      "服务请求页",
+      "异常记录页",
+      "续住申请页",
+      "换房/换床页",
+      "凭证管理页",
+      "退房准备页",
+      "状态历史页"
+    ],
+    "todayZh": "今日只展示今日计划离店、服务超时、异常待处理、凭证待回收、续住待确认等今天需要处理的被动任务。",
+    "workItemsZh": "工作项展示全部在住管理被动任务池。",
+    "searchZh": "搜索可以查客户、手机号、入住记录号、房间/床位、在住状态、服务/异常状态；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "mustShowZh": [
+      "当前在住状态",
+      "未闭环事项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": [
+      {
+        "state": "正常在住",
+        "buttonsZh": [
+          "登记服务",
+          "登记异常",
+          "申请续住",
+          "申请换床",
+          "发起退房准备"
+        ]
+      },
+      {
+        "state": "服务处理中",
+        "buttonsZh": [
+          "补充进度",
+          "完成确认"
+        ]
+      },
+      {
+        "state": "异常待处理",
+        "buttonsZh": [
+          "提交复核",
+          "关闭异常"
+        ]
+      },
+      {
+        "state": "凭证待处理",
+        "buttonsZh": [
+          "补发",
+          "挂失",
+          "恢复"
+        ]
+      },
+      {
+        "state": "退房待准备",
+        "buttonsZh": [
+          "发起退房准备",
+          "返回处理未闭环项"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "已退房",
+      "已退款",
+      "已释放房源",
+      "账务入账",
+      "final GO",
+      "生产发布",
+      "StayLifecycle",
+      "bed-transfer-extend",
+      "service-task",
+      "AccessCredentialIssue",
+      "AccessCredentialRevoke"
+    ]
+  },
+  "positiveBrowserTestPlan": [
+    "从在住列表进入。",
+    "查看住客和占用摘要。",
+    "登记服务请求。",
+    "补充服务进度并完成。",
+    "登记在住异常并关闭。",
+    "发起续住申请。",
+    "发起换床申请并完成占用变更。",
+    "补发或挂失入住凭证。",
+    "发起退房准备。",
+    "查看今日、工作项、搜索、我的入口表现。"
+  ],
+  "negativeBrowserTestPlan": [
+    "无有效入住进入在住管理。",
+    "已退房仍登记服务。",
+    "目标床位已占用仍换床。",
+    "维修/停售床位被选为目标。",
+    "续住日期早于当前离店日期。",
+    "服务请求直接生成支出或收款。",
+    "异常记录直接退款。",
+    "无有效入住发放凭证。",
+    "退房准备直接释放资源。",
+    "伪造 stayId/occupancyId/bedId/credentialId。",
+    "搜索结果直接写在住状态。",
+    "重复提交。",
+    "并发换床同一床位。"
+  ],
+  "oldProjectExpressionIsolation": {
+    "forbiddenAsNewBusinessSource": [
+      "StayLifecycle",
+      "bed-transfer-extend",
+      "service-task",
+      "AccessCredentialIssue",
+      "AccessCredentialRevoke"
+    ],
+    "allowedUseZh": [
+      "内部迁移映射",
+      "兼容参考",
+      "证据隔离对象"
+    ],
+    "forbiddenUseZh": [
+      "业务用户可见名称",
+      "新设计 Source 名称",
+      "新业务按钮文案",
+      "新业务状态文案"
+    ]
+  },
+  "NO_GO": {
+    "productionConfirmAllowed": false,
+    "businessGoLiveAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

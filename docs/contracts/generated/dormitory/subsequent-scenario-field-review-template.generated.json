@@ -1,0 +1,178 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario1-benchmark-inheritance-fieldReview.generated",
+  "version": "oam.dormitory-scenario1-benchmark-inheritance-fieldReview.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario1-benchmark-inheritance-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:c4e98f2dc18ce3ee8ba62ad09ab5f408a27c5101bcf82e5d4dc7eedf743e416d",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+      "digest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+      "digest": "sha256:455d8a4d79792756a9b6da93aa548dfa981c082737a5d5bfd397a030f64e62c4"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
+  "authorityId": "Dormitory.Scenario1BenchmarkInheritanceContract",
+  "outputContentDigest": "sha256:88f0fc325e4d1f04d8e4ecf758b7267278a0180b55de111949a02c5ae1e87889",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "场景 1 标杆继承合同",
+  "highestBusinessAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+  "highestBusinessAuthorityId": "Dormitory.Operating13ScenarioControl",
+  "benchmarkImplementationRef": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+  "controlAuthorityDigest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0",
+  "benchmarkContractDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
+  "scenario1SourceDigest": "sha256:455d8a4d79792756a9b6da93aa548dfa981c082737a5d5bfd397a030f64e62c4",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "gate": {
+    "requiredColumns": [
+      "fieldKey",
+      "businessNameZh",
+      "source",
+      "editableByUser",
+      "displayMode",
+      "searchable",
+      "exportable",
+      "auditField"
+    ],
+    "allowedSources": [
+      "userFilled",
+      "userSelected",
+      "upstreamReadonly",
+      "systemGenerated",
+      "systemCalculated",
+      "evidenceBound",
+      "financeConfirmed",
+      "internalAudit"
+    ],
+    "forbiddenUserInputFields": [
+      "roomId",
+      "bedId",
+      "ratePlanId",
+      "quoteId",
+      "reservationId",
+      "stayId",
+      "paymentId",
+      "depositId",
+      "refundId",
+      "ledgerEntryId",
+      "stableRef",
+      "digest",
+      "projectionVersion",
+      "domainEventId"
+    ],
+    "internalIdExposureScanScope": [
+      "label",
+      "placeholder",
+      "表单字段",
+      "错误提示",
+      "提交 payload",
+      "截图报告"
+    ],
+    "businessDisplayRuleZh": "业务展示号可以展示和搜索，但内部引用必须由系统绑定，普通用户不得填写或记忆内部 ID。"
+  },
+  "controlFieldSourceMatrix": {
+    "userFilled": [
+      "姓名",
+      "电话",
+      "备注",
+      "原因",
+      "检查结果",
+      "说明",
+      "日期",
+      "人数"
+    ],
+    "userSelected": [
+      "房间/床位",
+      "状态",
+      "渠道",
+      "商品",
+      "价格方案",
+      "原因类型",
+      "操作类型"
+    ],
+    "upstreamReadonly": [
+      "房源摘要",
+      "运营状态",
+      "商品价格摘要",
+      "报价摘要",
+      "预订摘要",
+      "入住摘要",
+      "财务摘要"
+    ],
+    "systemGenerated": [
+      "业务单号",
+      "内部引用",
+      "版本",
+      "事件",
+      "时间戳",
+      "状态历史",
+      "证据摘要"
+    ],
+    "systemCalculated": [
+      "晚数",
+      "总价",
+      "可用状态",
+      "应退应补",
+      "过期状态",
+      "冲突状态"
+    ],
+    "evidenceBound": [
+      "照片",
+      "合同",
+      "凭证",
+      "确认记录",
+      "审计附件"
+    ],
+    "financeConfirmed": [
+      "收款",
+      "押金",
+      "退款",
+      "扣费",
+      "账务摘要"
+    ],
+    "internalAudit": [
+      "stableRef",
+      "domainEventId",
+      "projectionVersion",
+      "digest",
+      "ledgerEntryId"
+    ]
+  },
+  "controlForbiddenUserInputFields": [
+    "roomId",
+    "bedId",
+    "ratePlanId",
+    "quoteId",
+    "reservationId",
+    "stayId",
+    "paymentId",
+    "depositId",
+    "refundId",
+    "ledgerEntryId",
+    "stableRef",
+    "digest",
+    "projectionVersion",
+    "domainEventId"
+  ]
+}

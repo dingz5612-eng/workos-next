@@ -1,0 +1,464 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario7-stepsFields.generated",
+  "version": "oam.dormitory-scenario7-stepsFields.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario7-check-in-processing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario7-check-in-processing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:dfe996d93c0b4f21c229da2f0f8e9d72546125702021e577ca413a664b5628a8",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "digest": "sha256:61776719e14686b53f99673241cdc89a17eb6ea4979e51fff1f70d74c4b34767"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:61776719e14686b53f99673241cdc89a17eb6ea4979e51fff1f70d74c4b34767",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario7.CheckInProcessing",
+  "scenarioPackageNo": 7,
+  "scenarioId": "lodging.check-in-processing",
+  "outputContentDigest": "sha256:5257f81b839ae5525cac6047afc63e53cfb300e8a6906c1c990063633de1ef6b",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "入住办理",
+  "businessGoalZh": "承接已确认预订、财务确认摘要和房源运营状态摘要，核验客户到店、身份信息、入住协议、预订信息、房间/床位当前可入住状态后，生成入住记录、占用记录和入住凭证。",
+  "sourceScenarioDigest": "sha256:61776719e14686b53f99673241cdc89a17eb6ea4979e51fff1f70d74c4b34767",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "enter-check-in-processing",
+      "nameZh": "进入入住办理",
+      "commandId": "Dorm.CheckInDraftStart",
+      "commandBusinessNameZh": "发起入住办理",
+      "entrySourcesZh": [
+        "今日待入住",
+        "预订详情",
+        "工作项",
+        "搜索只读跳转"
+      ],
+      "userSees": [
+        "预订号",
+        "客户姓名",
+        "联系电话",
+        "入住/离店日期",
+        "人数",
+        "房间/床位",
+        "价格摘要",
+        "收款/押金/担保状态"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "办理入住",
+        "返回预订",
+        "标记待到店"
+      ],
+      "userUploadedOrBoundEvidence": [],
+      "systemGeneratedFields": [
+        "checkInCaseRef",
+        "reservationRef",
+        "financeReadySnapshotRef",
+        "sourceScenarioRef"
+      ],
+      "validations": [
+        "无有效预订或预订已取消/已转入住时不得办理。"
+      ],
+      "outputs": [
+        "CheckInCase",
+        "CheckInStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "arrival-and-identity-verification",
+      "nameZh": "到店与身份核验",
+      "commandId": "Dorm.GuestIdentityVerify",
+      "commandBusinessNameZh": "核验到店与身份",
+      "userSees": [
+        "预订客户",
+        "预订人数",
+        "已到店人员",
+        "身份核验要求"
+      ],
+      "userFilledFields": [
+        "实际到店时间",
+        "入住人姓名",
+        "证件类型",
+        "证件号码后脱敏展示",
+        "联系电话",
+        "紧急联系人"
+      ],
+      "userSelectedFields": [
+        "身份核验结果"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "证件照片/扫描件",
+        "本人确认",
+        "授权同意记录"
+      ],
+      "systemGeneratedFields": [
+        "residentRef",
+        "identityVerificationRef",
+        "identityTrustLevel",
+        "verifiedAt",
+        "verifiedBy"
+      ],
+      "validations": [
+        "身份缺失、证据不可信、入住人与预订不一致且未审批时不得继续。"
+      ],
+      "outputs": [
+        "ArrivingGuest",
+        "ResidentProfile",
+        "IdentityVerification",
+        "CheckInEvidence"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "finance-and-agreement-review",
+      "nameZh": "财务与协议复核",
+      "commandId": "Dorm.CheckInAgreementFinanceReview",
+      "commandBusinessNameZh": "复核财务摘要与入住协议",
+      "userSees": [
+        "房费/订金确认状态",
+        "押金确认状态",
+        "担保状态",
+        "剩余待处理",
+        "入住协议"
+      ],
+      "userFilledFields": [
+        "协议备注",
+        "负责人例外审批说明"
+      ],
+      "userSelectedFields": [
+        "协议已确认",
+        "需补财务",
+        "负责人例外审批"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "协议签署记录",
+        "客户确认凭证",
+        "负责人例外审批证据"
+      ],
+      "systemGeneratedFields": [
+        "agreementRef",
+        "agreementVersion",
+        "financeCheckSnapshotRef"
+      ],
+      "validations": [
+        "财务规则要求未满足时不得普通入住；例外入住必须走负责人审批并留证据。"
+      ],
+      "outputs": [
+        "CheckInAgreement",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 4,
+      "stepId": "room-bed-handover-recheck",
+      "nameZh": "房间/床位交付复核",
+      "commandId": "Dorm.RoomBedHandoverRecheck",
+      "commandBusinessNameZh": "复核房间/床位交付",
+      "userSees": [
+        "房间/床位当前运营状态",
+        "是否空置",
+        "是否已清洁",
+        "是否有维修/停售/异常阻断"
+      ],
+      "userFilledFields": [
+        "交付备注",
+        "钥匙/门禁说明"
+      ],
+      "userSelectedFields": [
+        "确认交付",
+        "暂缓入住",
+        "换房/换床申请入口"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "房间交付照片",
+        "床位交付照片",
+        "清洁确认记录"
+      ],
+      "systemGeneratedFields": [
+        "occupancyCandidateRef",
+        "resourceStatusSnapshotRef",
+        "handoverEvidenceRef"
+      ],
+      "validations": [
+        "资源被占用、维修、停售、暂停、异常时不得直接入住。"
+      ],
+      "outputs": [
+        "RoomBedOccupancy",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 5,
+      "stepId": "confirm-check-in",
+      "nameZh": "确认入住",
+      "commandId": "Dorm.StayConfirm",
+      "commandBusinessNameZh": "确认入住",
+      "userSees": [
+        "住客",
+        "预订",
+        "日期",
+        "房间/床位",
+        "财务摘要",
+        "协议摘要",
+        "交付摘要"
+      ],
+      "userFilledFields": [
+        "确认备注"
+      ],
+      "userSelectedFields": [
+        "确认入住",
+        "保存草稿",
+        "返回修改",
+        "转人工复核"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "入住确认凭证"
+      ],
+      "systemGeneratedFields": [
+        "stayRef",
+        "stayNo",
+        "occupancyRef",
+        "checkInSnapshotRef",
+        "confirmedAt",
+        "confirmedBy"
+      ],
+      "systemWrites": [
+        "StayCreated",
+        "OccupancyStarted",
+        "ReservationConvertedToStay",
+        "CheckInConfirmed",
+        "EvidenceBinding",
+        "Projection update"
+      ],
+      "validations": [
+        "全部入住不变量必须满足；失败不得生成 Stay、不得占用床位、不得发放入住凭证、不得写账。"
+      ],
+      "forbiddenWrites": [
+        "收款",
+        "押金",
+        "退款",
+        "退房",
+        "账务"
+      ],
+      "outputs": [
+        "Stay",
+        "RoomBedOccupancy",
+        "CheckInSnapshot",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 6,
+      "stepId": "issue-access-credential",
+      "nameZh": "发放入住凭证",
+      "commandId": "Dorm.StayCredentialIssue",
+      "commandBusinessNameZh": "发放入住凭证",
+      "userSees": [
+        "入住记录号",
+        "住客",
+        "房间/床位",
+        "可发放凭证类型"
+      ],
+      "userFilledFields": [
+        "发放备注",
+        "领取人确认"
+      ],
+      "userSelectedFields": [
+        "钥匙",
+        "门卡",
+        "门禁码",
+        "入住单"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "领取确认记录",
+        "凭证发放照片"
+      ],
+      "systemGeneratedFields": [
+        "accessCredentialRef",
+        "credentialStatus",
+        "issuedAt",
+        "issuedBy"
+      ],
+      "systemWrites": [
+        "AccessCredentialIssued",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ],
+      "validations": [
+        "未成功入住不得发放有效入住凭证。"
+      ],
+      "outputs": [
+        "AccessCredential",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“张三，预订号 R202606200001，301 房间，今日办理入住”“入住记录 S202606200001”。",
+    "upstreamReadonly": [
+      "预订号",
+      "客户信息",
+      "日期范围",
+      "人数",
+      "房间/床位",
+      "价格快照",
+      "预订状态",
+      "收款确认摘要",
+      "押金确认摘要",
+      "担保确认摘要",
+      "剩余待收",
+      "财务确认状态",
+      "房源运营状态摘要"
+    ],
+    "userFilled": [
+      "实际到店时间",
+      "入住人姓名",
+      "证件类型",
+      "证件号码后脱敏展示",
+      "联系电话",
+      "紧急联系人",
+      "协议备注",
+      "交付备注",
+      "钥匙/门禁说明",
+      "确认备注",
+      "发放备注",
+      "领取人确认"
+    ],
+    "userSelected": [
+      "办理入住",
+      "返回预订",
+      "标记待到店",
+      "身份核验结果",
+      "协议已确认",
+      "需补财务",
+      "负责人例外审批",
+      "确认交付",
+      "暂缓入住",
+      "换房/换床申请入口",
+      "确认入住",
+      "保存草稿",
+      "返回修改",
+      "转人工复核",
+      "钥匙",
+      "门卡",
+      "门禁码",
+      "入住单"
+    ],
+    "userUploadedOrBoundEvidence": [
+      "证件照片/扫描件",
+      "本人确认",
+      "授权同意记录",
+      "协议签署记录",
+      "客户确认凭证",
+      "负责人例外审批证据",
+      "房间交付照片",
+      "床位交付照片",
+      "清洁确认记录",
+      "入住确认凭证",
+      "领取确认记录",
+      "凭证发放照片"
+    ],
+    "systemGenerated": [
+      "checkInCaseRef",
+      "reservationRef",
+      "financeReadySnapshotRef",
+      "sourceScenarioRef",
+      "residentRef",
+      "identityVerificationRef",
+      "identityTrustLevel",
+      "verifiedAt",
+      "verifiedBy",
+      "agreementRef",
+      "agreementVersion",
+      "financeCheckSnapshotRef",
+      "occupancyCandidateRef",
+      "resourceStatusSnapshotRef",
+      "handoverEvidenceRef",
+      "stayRef",
+      "stayNo",
+      "occupancyRef",
+      "checkInSnapshotRef",
+      "confirmedAt",
+      "confirmedBy",
+      "accessCredentialRef",
+      "credentialStatus",
+      "issuedAt",
+      "issuedBy"
+    ],
+    "systemCalculated": [
+      "预订有效性",
+      "财务摘要是否满足入住规则",
+      "身份信任等级",
+      "资源可入住状态",
+      "日期范围占用冲突",
+      "合法下一步动作"
+    ],
+    "evidenceBound": [
+      "CheckInEvidence",
+      "EvidenceBinding",
+      "evidenceEnvelopeRef",
+      "summarySnapshotRef"
+    ],
+    "internalAuditOnlyFields": [
+      "stayId",
+      "residentId",
+      "reservationId",
+      "credentialId",
+      "roomId",
+      "bedId",
+      "occupancyId",
+      "checkInCaseId",
+      "identityVerificationId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "forbiddenUserInputFields": [
+      "stayId",
+      "residentId",
+      "reservationId",
+      "credentialId",
+      "roomId",
+      "bedId",
+      "occupancyId",
+      "checkInCaseId",
+      "identityVerificationId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ]
+  },
+  "checkInStatusOptions": [
+    "待到店",
+    "待身份核验",
+    "待协议确认",
+    "待财务补齐",
+    "待房源复核",
+    "可办理入住",
+    "已入住",
+    "入住失败",
+    "需人工复核",
+    "凭证待发放",
+    "凭证已发放"
+  ]
+}

@@ -11,10 +11,10 @@ describe("OAM Surface search intent hub contract", () => {
     const html = searchView(ctx);
 
     expect(html).toContain("主动办理");
-    expect(html).toContain("新增房间");
+    expect(html).toContain("房源建档与基础就绪");
     expect(html).not.toContain("工作内容");
     expect(html).not.toContain("处理：");
-    expect(html).toContain("先确认房间号");
+    expect(html).toContain("发起房源建档与基础就绪");
     expect(html).toContain(`data-start-operations-workspace="${FIRST_GOLDEN_CHAIN_WORKSPACE_ID}"`);
     expect(html).toContain(`data-first-card-id="${FIRST_GOLDEN_CHAIN_STEPS[0].cardId}"`);
     expect(html).not.toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
@@ -27,7 +27,7 @@ describe("OAM Surface search intent hub contract", () => {
 
     expect(html).toContain('data-search-section="activeCommands"');
     expect(html).toContain(`data-start-operations-workspace="${FIRST_GOLDEN_CHAIN_WORKSPACE_ID}"`);
-    expect(text).toContain("新增房间");
+    expect(text).toContain("房源建档与基础就绪");
     expect(text).toContain("开始观察记录");
   });
 
@@ -147,8 +147,8 @@ describe("OAM Surface search intent hub contract", () => {
 
     const text = visibleText(searchView(ctx));
 
-    expect(text).toContain("新增房间");
-    expect(text).toContain("先确认房间号");
+    expect(text).toContain("房源建档与基础就绪");
+    expect(text).toContain("发起房源建档与基础就绪");
     expect(text).not.toContain("我要办理退住结算");
     expect(text).not.toContain("人工处理记录");
   });

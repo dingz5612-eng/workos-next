@@ -809,7 +809,11 @@ static IResult StartOperationsWorkspace(
             started.OperationCase,
             started.WorkItem,
             started.OperationWorkItems,
-            projection = runtime.GetAll()
+            projection = new
+            {
+                workspaces = new[] { started.Workspace },
+                events = Array.Empty<object>()
+            }
         });
     }
     catch (InvalidOperationException ex) when (ex.Message.StartsWith("operation_workspace_start_", StringComparison.OrdinalIgnoreCase))

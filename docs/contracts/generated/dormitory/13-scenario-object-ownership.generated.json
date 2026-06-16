@@ -1,0 +1,136 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-objectOwnership.generated",
+  "version": "oam.dormitory-13-scenario-objectOwnership.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:4c3a13f3a7b929d8420f863c66bb6891b209aee38ab4cb168f785dc2865489a7",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0"
+    }
+  ],
+  "sourceContentDigest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:f60bfd10b43271b54023b6a99f5e692c2aae823a3ed33f3fa233b3bc330a3510",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "objectOwnership": [
+    {
+      "objects": [
+        "Room",
+        "BedSet",
+        "Bed",
+        "BasicReadiness"
+      ],
+      "writeOwnerScenario": 1
+    },
+    {
+      "objects": [
+        "OperationStatus",
+        "OperationBlocker"
+      ],
+      "writeOwnerScenario": 2
+    },
+    {
+      "objects": [
+        "Product",
+        "SellableUnit",
+        "RatePlan",
+        "PriceVersion"
+      ],
+      "writeOwnerScenario": 3
+    },
+    {
+      "objects": [
+        "Inquiry",
+        "Quote",
+        "QuoteVersion",
+        "QuoteSnapshot"
+      ],
+      "writeOwnerScenario": 4
+    },
+    {
+      "objects": [
+        "InventoryHold",
+        "Reservation",
+        "ReservationNo"
+      ],
+      "writeOwnerScenario": 5
+    },
+    {
+      "objects": [
+        "PaymentIntent",
+        "DepositIntent",
+        "GuaranteeRecord",
+        "FinanceConfirmationSnapshot"
+      ],
+      "writeOwnerScenario": 6,
+      "financeTruthOwner": "finance-gate"
+    },
+    {
+      "objects": [
+        "Stay",
+        "Resident",
+        "Occupancy",
+        "AccessCredential"
+      ],
+      "writeOwnerScenarios": [
+        7,
+        8
+      ]
+    },
+    {
+      "objects": [
+        "CheckoutCase",
+        "FeeSettlementDraft",
+        "ResourceRecoveryRequest"
+      ],
+      "writeOwnerScenario": 9
+    },
+    {
+      "objects": [
+        "CancellationCase",
+        "NoShowCase",
+        "RefundRequestIntent",
+        "InventoryReleaseRequest"
+      ],
+      "writeOwnerScenario": 10
+    },
+    {
+      "objects": [
+        "HousekeepingTask",
+        "MaintenanceTask",
+        "WorkVerification",
+        "RecoveryRecommendation"
+      ],
+      "writeOwnerScenario": 11
+    },
+    {
+      "objects": [
+        "ChannelPartner",
+        "CorporateAccount",
+        "AgreementEligibility",
+        "PublicationRule"
+      ],
+      "writeOwnerScenario": 12
+    },
+    {
+      "objects": [
+        "ReportSnapshot",
+        "MetricSnapshot",
+        "AuditFinding",
+        "ActionPlan"
+      ],
+      "writeOwnerScenario": 13,
+      "readonlyGovernanceOutput": true
+    }
+  ],
+  "singleWriterRuleZh": "一个对象只能有一个写事实归属；其他场景只能读取摘要或生成 Intent、Request、Draft、Snapshot。"
+}

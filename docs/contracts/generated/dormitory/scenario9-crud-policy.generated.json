@@ -1,0 +1,76 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario9-crudPolicy.generated",
+  "version": "oam.dormitory-scenario9-crudPolicy.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario9-checkout-settlement-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario9-checkout-settlement-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:e8998094072fad350cab863c53b0ead0b98533c26d440c76a3c632dfb43aa6d1",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "digest": "sha256:9faf23637569daa6b849def8f73228f9c54238ea019b8d7ee4810491a5c19c9b"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9faf23637569daa6b849def8f73228f9c54238ea019b8d7ee4810491a5c19c9b",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario9.CheckoutSettlement",
+  "scenarioPackageNo": 9,
+  "scenarioId": "lodging.checkout-and-settlement",
+  "outputContentDigest": "sha256:bb0e6306b8a7a1fa038a908008cb3939280ccac5eba84f8b428bba4c16daf0d9",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "退房结算",
+  "businessGoalZh": "承接场景包 7 的入住事实和场景包 8 的在住管理/退房准备摘要，办理实际退房、交接、验房、费用核算、押金抵扣、应退/应补结算意向、退房确认、凭证回收、财务处理请求和资源待恢复请求。",
+  "sourceScenarioDigest": "sha256:9faf23637569daa6b849def8f73228f9c54238ea019b8d7ee4810491a5c19c9b",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "crudRules": {
+    "createBusinessActionsZh": [
+      "发起退房办理",
+      "创建退房草稿",
+      "确认退房",
+      "发起财务处理请求",
+      "发起资源恢复请求"
+    ],
+    "draftEditable": true,
+    "confirmedCheckoutInlineEditAllowed": false,
+    "confirmedFactMutationRulesZh": [
+      "已确认退房不得原地覆盖。",
+      "修改只能走补充证据、追加结算说明、争议复核、财务退回补证、纠错申请。",
+      "删除不得物理删除已确认退房事实；未提交草稿可撤销，已确认退房只能追加纠错或后续财务处理。"
+    ],
+    "readOnlySurfacesZh": [
+      "查询",
+      "搜索",
+      "列表",
+      "看板",
+      "报表"
+    ],
+    "readOnlySurfacesWriteBusinessFactAllowed": false,
+    "requiredLifecyclePerObject": [
+      "currentState",
+      "feeVersionHistory",
+      "evidenceHistory",
+      "financeProcessingHistory",
+      "resourceRecoveryHistory",
+      "legalNextActions"
+    ]
+  },
+  "requiredLifecyclePerObject": [
+    "currentState",
+    "feeVersionHistory",
+    "evidenceHistory",
+    "financeProcessingHistory",
+    "resourceRecoveryHistory",
+    "legalNextActions"
+  ]
+}

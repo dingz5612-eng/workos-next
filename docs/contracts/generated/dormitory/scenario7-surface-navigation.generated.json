@@ -1,0 +1,168 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario7-surfaceNavigation.generated",
+  "version": "oam.dormitory-scenario7-surfaceNavigation.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario7-check-in-processing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario7-check-in-processing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:dfe996d93c0b4f21c229da2f0f8e9d72546125702021e577ca413a664b5628a8",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "digest": "sha256:61776719e14686b53f99673241cdc89a17eb6ea4979e51fff1f70d74c4b34767"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:61776719e14686b53f99673241cdc89a17eb6ea4979e51fff1f70d74c4b34767",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario7.CheckInProcessing",
+  "scenarioPackageNo": 7,
+  "scenarioId": "lodging.check-in-processing",
+  "outputContentDigest": "sha256:39da7f9c45a15960548ceb387951a351b8d79f1e2122db004611981a3831d24d",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "入住办理",
+  "businessGoalZh": "承接已确认预订、财务确认摘要和房源运营状态摘要，核验客户到店、身份信息、入住协议、预订信息、房间/床位当前可入住状态后，生成入住记录、占用记录和入住凭证。",
+  "sourceScenarioDigest": "sha256:61776719e14686b53f99673241cdc89a17eb6ea4979e51fff1f70d74c4b34767",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "surfaceNavigation": {
+    "pagesZh": [
+      "今日待入住",
+      "入住办理页",
+      "身份核验页",
+      "财务协议复核页",
+      "房间/床位交付页",
+      "确认入住页",
+      "入住结果页",
+      "凭证发放页",
+      "入住详情页",
+      "状态历史页"
+    ],
+    "todayZh": "今日只展示今日待入住、身份待核验、协议待签、财务需补、凭证待发放等今天需要处理的被动任务。",
+    "workItemsZh": "工作项展示全部入住办理被动任务池。",
+    "searchZh": "搜索可以查客户、手机号、预订号、入住记录号、房间/床位、入住状态；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "mustShowZh": [
+      "当前办理状态",
+      "缺失项",
+      "下一步动作",
+      "不可提交原因",
+      "财务状态",
+      "身份核验状态",
+      "房间/床位交付状态"
+    ],
+    "buttonByState": [
+      {
+        "state": "待到店",
+        "buttonsZh": [
+          "办理入住"
+        ]
+      },
+      {
+        "state": "待身份核验",
+        "buttonsZh": [
+          "继续核验"
+        ]
+      },
+      {
+        "state": "待财务补齐",
+        "buttonsZh": [
+          "查看需补项"
+        ]
+      },
+      {
+        "state": "可办理入住",
+        "buttonsZh": [
+          "确认入住"
+        ]
+      },
+      {
+        "state": "已入住",
+        "buttonsZh": [
+          "发放入住凭证",
+          "查看入住详情"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "已退房",
+      "已退款",
+      "押金已退",
+      "final GO",
+      "生产发布",
+      "CheckinConfirm",
+      "reservationConvert",
+      "AccessCredentialIssue"
+    ]
+  },
+  "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“张三，预订号 R202606200001，301 房间，今日办理入住”“入住记录 S202606200001”。",
+  "forbiddenUserInputFields": [
+    "stayId",
+    "residentId",
+    "reservationId",
+    "credentialId",
+    "roomId",
+    "bedId",
+    "occupancyId",
+    "checkInCaseId",
+    "identityVerificationId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId"
+  ],
+  "buttonByState": [
+    {
+      "state": "待到店",
+      "buttonsZh": [
+        "办理入住"
+      ]
+    },
+    {
+      "state": "待身份核验",
+      "buttonsZh": [
+        "继续核验"
+      ]
+    },
+    {
+      "state": "待财务补齐",
+      "buttonsZh": [
+        "查看需补项"
+      ]
+    },
+    {
+      "state": "可办理入住",
+      "buttonsZh": [
+        "确认入住"
+      ]
+    },
+    {
+      "state": "已入住",
+      "buttonsZh": [
+        "发放入住凭证",
+        "查看入住详情"
+      ]
+    }
+  ],
+  "checkInStatusOptions": [
+    "待到店",
+    "待身份核验",
+    "待协议确认",
+    "待财务补齐",
+    "待房源复核",
+    "可办理入住",
+    "已入住",
+    "入住失败",
+    "需人工复核",
+    "凭证待发放",
+    "凭证已发放"
+  ]
+}

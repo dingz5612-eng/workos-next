@@ -21,6 +21,16 @@ const runtimeProjectionPath = "services/core-api/WorkOS.Api/Runtime/GeneratedCap
 const dbProjectionPolicyPath = "docs/contracts/generated/dormitory/db-projection-policy.generated.json";
 const testPlanPath = "docs/contracts/generated/dormitory/test-plan.generated.json";
 const digestChainPath = "artifacts/oam/evidence/capability-digest-chain.json";
+const subjectChainPath = "artifacts/oam/evidence/capability-evidence-subject-chain.json";
+const objectIdentityPath = "docs/contracts/generated/dormitory/object-identity.generated.json";
+const bedCardinalityPath = "docs/contracts/generated/dormitory/bed-cardinality.generated.json";
+const businessInvariantsPath = "docs/contracts/generated/dormitory/business-invariants.generated.json";
+const commandContractsPath = "docs/contracts/generated/dormitory/command-contracts.generated.json";
+const failureSemanticsPath = "docs/contracts/generated/dormitory/failure-semantics.generated.json";
+const ruleSourceMapPath = "docs/contracts/generated/dormitory/rule-source-map.generated.json";
+const scenario1RuntimeRulesPath = "docs/contracts/generated/dormitory/scenario1-runtime-rules.generated.json";
+const scenario1StepsFieldsPath = "docs/contracts/generated/dormitory/scenario1-steps-fields.generated.json";
+const scenario1SurfaceNavigationPath = "docs/contracts/generated/dormitory/scenario1-surface-navigation.generated.json";
 const workitemsPath = "docs/contracts/generated/dormitory/workitems.generated.json";
 const surfaceModelPath = "docs/contracts/generated/dormitory/surface-input-model.generated.json";
 const mobileSurfaceModelPath = "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json";
@@ -28,9 +38,17 @@ const fieldBindingsPath = "docs/contracts/generated/dormitory/field-bindings.gen
 const runtimeAdmissionPath = "docs/oam/dormitory-runtime-admission.current.json";
 const landingPath = "docs/oam/dormitory-first-golden-chain-landing.current.json";
 const environmentProfilePath = "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json";
+const capabilityDecisionAuthorityPath = "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json";
+const objectGraphAuthorityPath = "docs/business/domains/dormitory/dormitory-object-graph.authority.json";
+const bedCardinalityAuthorityPath = "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json";
+const invariantAuthorityPath = "docs/business/domains/dormitory/dormitory-invariants.authority.json";
+const commandContractAuthorityPath = "docs/business/domains/dormitory/dormitory-command-contracts.authority.json";
+const failureSemanticsAuthorityPath = "docs/business/domains/dormitory/dormitory-failure-semantics.authority.json";
 const dbProjectionProofResultPath = "artifacts/oam/checks/dormitory-first-golden-chain-db-projection-proof-result.json";
 const browserAuditReportPath = "artifacts/oam/evidence/dormitory-first-golden-chain-real-browser/first-golden-chain-real-browser-report.json";
-const evidenceGraphPath = "artifacts/oam/evidence/evidence-graph.json";
+const negativeBrowserAuditReportPath = "artifacts/oam/evidence/dormitory-first-golden-chain-negative-browser/negative-browser-report.json";
+const noSideEffectsProofResultPath = "artifacts/oam/checks/dormitory-first-golden-chain-no-side-effects-proof-result.json";
+const environmentProfileProofResultPath = "artifacts/oam/checks/dormitory-evidence-environment-profile-result.json";
 
 const { registry, ledger, projection } = loadCapabilityDocuments(root);
 const projectionState = validateCurrentProjection({ registry, ledger, projection });
@@ -45,6 +63,15 @@ const environmentProfile = readJson(environmentProfilePath);
 const workitems = readJson(workitemsPath);
 const surfaceModel = readJson(surfaceModelPath);
 const fieldBindings = readJson(fieldBindingsPath);
+const capabilityDecisionAuthority = readJson(capabilityDecisionAuthorityPath);
+const objectGraphAuthority = readJson(objectGraphAuthorityPath);
+const bedCardinalityAuthority = readJson(bedCardinalityAuthorityPath);
+const invariantAuthority = readJson(invariantAuthorityPath);
+const commandContractAuthority = readJson(commandContractAuthorityPath);
+const failureSemanticsAuthority = readJson(failureSemanticsAuthorityPath);
+const scenario1RuntimeRules = readJson(scenario1RuntimeRulesPath);
+const scenario1StepsFields = readJson(scenario1StepsFieldsPath);
+const scenario1SurfaceNavigation = readJson(scenario1SurfaceNavigationPath);
 
 const acceptedGeneratedBundleDigest = projection.activeAuthority?.acceptedGeneratedBundleDigest;
 if (!isDigest(acceptedGeneratedBundleDigest)) {
@@ -61,15 +88,28 @@ const generatedFrom = [
   CAPABILITY_LEDGER_PATH,
   CAPABILITY_PROJECTION_PATH,
   GENERATED_CANDIDATE_ACCEPTANCE_PATH,
+  capabilityDecisionAuthorityPath,
+  objectGraphAuthorityPath,
+  bedCardinalityAuthorityPath,
+  invariantAuthorityPath,
+  commandContractAuthorityPath,
+  failureSemanticsAuthorityPath,
+  scenario1RuntimeRulesPath,
+  scenario1StepsFieldsPath,
+  scenario1SurfaceNavigationPath,
   workitemsPath,
   surfaceModelPath,
   fieldBindingsPath,
   runtimeAdmissionPath,
   landingPath,
-  environmentProfilePath,
+  environmentProfilePath
+];
+const evidenceProofInputs = [
+  environmentProfileProofResultPath,
   dbProjectionProofResultPath,
   browserAuditReportPath,
-  evidenceGraphPath
+  negativeBrowserAuditReportPath,
+  noSideEffectsProofResultPath
 ];
 const inputDigests = generatedFrom.map((file) => ({ path: file, digest: fileDigest(file) }));
 const inputDigest = digestObject({
@@ -78,6 +118,14 @@ const inputDigest = digestObject({
   acceptedGeneratedBundleDigest,
   inputDigests
 });
+const subjectGeneratedFrom = [...generatedFrom, ...evidenceProofInputs];
+const subjectInputDigests = subjectGeneratedFrom.map((file) => ({ path: file, digest: fileDigest(file) }));
+const subjectInputDigest = digestObject({
+  version: "oam.capability-evidence-subject-input.v1",
+  capabilityId: CAPABILITY_ID,
+  acceptedGeneratedBundleDigest,
+  inputDigests: subjectInputDigests
+});
 
 const optionSetDefaults = {
   bunkType: {
@@ -85,9 +133,23 @@ const optionSetDefaults = {
     multiBed: "bunk_pair"
   },
   readinessState: {
-    default: "available"
+    default: "passed"
   }
 };
+const scenario1ReadinessConclusionOptions = (scenario1RuntimeRules.readinessConclusionOptions ?? []).map((item) => ({
+  value: item.value,
+  label: {
+    "zh-CN": item.labelZh,
+    "ru-RU": item.labelRu ?? item.labelZh,
+    "ky-KG": item.labelKy ?? item.labelZh
+  },
+  branchOutput: item.value === "passed"
+    ? "basic_readiness_summary"
+    : item.value === "needs_supplement"
+      ? "supplement_required"
+      : "basic_readiness_not_passed",
+  requiredFields: item.value === "needs_supplement" ? ["basicReadinessRemark"] : []
+}));
 const optionSets = {
   bunkType: [
     { value: "bunk_pair", label: { "zh-CN": "上下铺：两上两下", "ru-RU": "Двухъярусные: две верхние и две нижние", "ky-KG": "Эки кабат: эки үстүңкү жана эки астыңкы" } },
@@ -95,14 +157,17 @@ const optionSets = {
     { value: "lower", label: { "zh-CN": "全部下铺", "ru-RU": "Все нижние", "ky-KG": "Баары астыңкы" } },
     { value: "whole", label: { "zh-CN": "全部平铺", "ru-RU": "Обычные койки", "ky-KG": "Жалпак койкалар" } }
   ],
-  readinessState: [
-    { value: "available", label: { "zh-CN": "可分配", "ru-RU": "Можно распределить", "ky-KG": "Бөлүштүрүүгө болот" }, branchOutput: "complete", requiredFields: [] },
-    { value: "cleaningRequired", label: { "zh-CN": "待清洁", "ru-RU": "Нужна уборка", "ky-KG": "Тазалоо керек" }, branchOutput: "cleaningRequired", requiredFields: [] },
-    { value: "maintenanceRequired", label: { "zh-CN": "待维修", "ru-RU": "Нужен ремонт", "ky-KG": "Оңдоо керек" }, branchOutput: "serviceVerificationRef", requiredFields: ["serviceVerificationRef"] },
-    { value: "materialsRequired", label: { "zh-CN": "待补材料", "ru-RU": "Нужны материалы", "ky-KG": "Материал керек" }, branchOutput: "materialsRequired", requiredFields: [] },
-    { value: "notSaleable", label: { "zh-CN": "暂不可用", "ru-RU": "Временно недоступно", "ky-KG": "Азырынча жеткиликсиз" }, branchOutput: "notSaleableReason", requiredFields: ["notSaleableReason"] }
-  ]
+  readinessState: scenario1ReadinessConclusionOptions
 };
+const generatedBusinessContracts = buildGeneratedBusinessContracts();
+const {
+  objectIdentity,
+  bedCardinality,
+  businessInvariants,
+  commandContracts,
+  failureSemantics,
+  ruleSourceMap
+} = generatedBusinessContracts;
 const steps = buildSteps();
 const fieldCategories = buildFieldCategories(steps);
 const mobileSurfaceModel = finalizeGenerated({
@@ -115,6 +180,13 @@ const mobileSurfaceModel = finalizeGenerated({
   fieldCategories,
   optionSets,
   optionSetDefaults,
+  generatedBusinessRuleRefs: generatedBusinessRuleRefs(),
+  objectIdentityRef: objectIdentityPath,
+  bedCardinalityRef: bedCardinalityPath,
+  businessInvariantsRef: businessInvariantsPath,
+  commandContractsRef: commandContractsPath,
+  failureSemanticsRef: failureSemanticsPath,
+  ruleSourceMapRef: ruleSourceMapPath,
   surfaceOnlyConsumesGeneratedSurfaceModel: true,
   productionConfirmAllowed: false,
   releaseAuthority: false,
@@ -135,7 +207,35 @@ const runtimeProjectionCore = {
   fieldCategories,
   optionSets,
   optionSetDefaults,
+  generatedBusinessRuleRefs: generatedBusinessRuleRefs(),
+  objectIdentityRef: objectIdentityPath,
+  bedCardinalityRef: bedCardinalityPath,
+  businessInvariantsRef: businessInvariantsPath,
+  commandContractsRef: commandContractsPath,
+  failureSemanticsRef: failureSemanticsPath,
+  ruleSourceMapRef: ruleSourceMapPath,
   readinessBranchBindings: readinessBranchBindings(),
+  confirmExecutionOrder: [
+    "capability_admission",
+    "field_normalization",
+    "required_validation",
+    "readonly_system_derived_validation",
+    "object_identity_resolution",
+    "bed_cardinality_validation",
+    "business_invariant_validation",
+    "uniqueness_reservation",
+    "idempotency_concurrency_validation",
+    "permission_device_evidence_validation",
+    "transaction_commit",
+    "projection_outbox"
+  ],
+  failureNoSideEffects: [
+    "DomainEvent",
+    "WorkItem advance",
+    "Outbox",
+    "DB row",
+    "ReadModel mutation"
+  ],
   draftPolicy: capabilityDraftPolicy(),
   businessUi: capabilityBusinessUi(),
   legacyRegressionAliases: legacyRegressionAliases(),
@@ -161,6 +261,13 @@ const surfaceCore = {
   fieldCategories,
   optionSets,
   optionSetDefaults,
+  generatedBusinessRuleRefs: generatedBusinessRuleRefs(),
+  objectIdentityRef: objectIdentityPath,
+  bedCardinalityRef: bedCardinalityPath,
+  businessInvariantsRef: businessInvariantsPath,
+  commandContractsRef: commandContractsPath,
+  failureSemanticsRef: failureSemanticsPath,
+  ruleSourceMapRef: ruleSourceMapPath,
   readinessBranchBindings: readinessBranchBindings(),
   draftPolicy: capabilityDraftPolicy(),
   businessUi: capabilityBusinessUi(),
@@ -212,6 +319,26 @@ const dbProjectionPolicy = finalizeGenerated({
     ? "business_landing_projection_required"
     : "null_if_runtime_test_only",
   runtimeStorageMode: environmentProfile.runtimeStorageMode,
+  supportedEnvironmentProfiles: [
+    "local.in_memory.browser_evidence",
+    "local.postgres.browser_evidence",
+    "ci.postgres.browser_evidence"
+  ],
+  currentEnvironmentProfileId: environmentProfile.environmentProfileId,
+  businessLandingBlockedBecause: "db_projection_not_active",
+  objectIdentityRef: objectIdentityPath,
+  bedCardinalityRef: bedCardinalityPath,
+  businessInvariantsRef: businessInvariantsPath,
+  commandContractsRef: commandContractsPath,
+  failureSemanticsRef: failureSemanticsPath,
+  ruleSourceMapRef: ruleSourceMapPath,
+  generatedBusinessRuleRefs: generatedBusinessRuleRefs(),
+  generatedRuleRefs: {
+    objectIdentityRuleIds: objectIdentity.objectRules.map((rule) => rule.generatedRuleId),
+    bedCardinalityRuleIds: bedCardinality.rules.map((rule) => rule.generatedRuleId),
+    businessInvariantRuleIds: businessInvariants.invariants.map((rule) => rule.generatedRuleId),
+    failureSemanticsRuleIds: failureSemantics.failureSemantics.map((rule) => rule.generatedRuleId)
+  },
   activeDbProjectionMappings: [],
   inactiveBusinessLandingMappings: [
     {
@@ -244,17 +371,77 @@ const testPlanDraft = buildTestPlan({
   capabilityDigestChainDigest: "sha256:pending"
 });
 const testPlanDigest = digestObject(withoutGeneratedDigests(testPlanDraft));
-const digestChainCore = {
-  ...generatedBase("capability-digest-chain"),
+const subjectChainCore = {
+  ...generatedBase("capability-evidence-subject-chain", {
+    generatedFrom: subjectGeneratedFrom,
+    inputDigest: subjectInputDigest,
+    inputDigests: subjectInputDigests
+  }),
+  version: "oam.capability-evidence-subject-chain.v1",
   authorityLedgerDigest: fileDigest(CAPABILITY_LEDGER_PATH),
+  capabilityDecisionDigest: fileDigest(capabilityDecisionAuthorityPath),
+  objectGraphDigest: fileDigest(objectGraphAuthorityPath),
+  bedCardinalityDigest: fileDigest(bedCardinalityAuthorityPath),
+  invariantAuthorityDigest: fileDigest(invariantAuthorityPath),
+  commandContractDigest: fileDigest(commandContractAuthorityPath),
+  failureSemanticsDigest: fileDigest(failureSemanticsAuthorityPath),
+  acceptedGeneratedBundleDigest,
+  businessAuthorityDigests: businessAuthorityDigests(),
+  objectIdentityGeneratedDigest: objectIdentity.outputContentDigest,
+  bedCardinalityGeneratedDigest: bedCardinality.outputContentDigest,
+  businessInvariantsGeneratedDigest: businessInvariants.outputContentDigest,
+  commandContractsGeneratedDigest: commandContracts.outputContentDigest,
+  failureSemanticsGeneratedDigest: failureSemantics.outputContentDigest,
+  ruleSourceMapGeneratedDigest: ruleSourceMap.outputContentDigest,
+  objectIdentityDigest: objectIdentity.outputContentDigest,
+  businessInvariantsDigest: businessInvariants.outputContentDigest,
+  commandContractsDigest: commandContracts.outputContentDigest,
+  ruleSourceMapDigest: ruleSourceMap.outputContentDigest,
   runtimeProjectionDigest: runtimeProjection.runtimeProjectionDigest,
   surfaceProjectionDigest: mobileProjection.surfaceProjectionDigest,
   searchProjectionDigest: mobileProjection.searchProjectionDigest,
   dbProjectionPolicyDigest: dbProjectionPolicy.outputContentDigest,
+  environmentProfileDigest: currentEnvironmentProfileDigest(),
+  positiveBrowserAuditDigest: currentPositiveBrowserAuditDigest(),
+  negativeBrowserAuditDigest: currentNegativeBrowserAuditDigest(),
+  noSideEffectsProofDigest: currentNoSideEffectsProofDigest(),
   dbProjectionProofDigest: currentDbProjectionProofDigest(),
   testPlanDigest,
-  browserAuditDigest: currentBrowserAuditDigest(),
-  evidenceRootDigest: currentEvidenceRootDigest(),
+  browserAuditDigest: currentPositiveBrowserAuditDigest(),
+  businessLandingReviewStatus: currentBusinessLandingReviewStatus(),
+  businessLandingAdmittedForbidden: true,
+  productionConfirmAllowed: false,
+  releaseAuthority: false,
+  finalGoNoGo: "NO_GO"
+};
+const subjectChain = finalizeGenerated(subjectChainCore);
+const digestChainCore = {
+  ...generatedBase("capability-digest-chain", {
+    generatedFrom: subjectGeneratedFrom,
+    inputDigest: subjectInputDigest,
+    inputDigests: subjectInputDigests
+  }),
+  version: "oam.capability-evidence-digest-chain.v1",
+  authorityLedgerDigest: fileDigest(CAPABILITY_LEDGER_PATH),
+  subjectChainRef: subjectChainPath,
+  subjectChainDigest: subjectChain.outputContentDigest,
+  runtimeProjectionDigest: runtimeProjection.runtimeProjectionDigest,
+  surfaceProjectionDigest: mobileProjection.surfaceProjectionDigest,
+  searchProjectionDigest: mobileProjection.searchProjectionDigest,
+  objectIdentityDigest: objectIdentity.outputContentDigest,
+  bedCardinalityDigest: bedCardinality.outputContentDigest,
+  businessInvariantsDigest: businessInvariants.outputContentDigest,
+  commandContractsDigest: commandContracts.outputContentDigest,
+  failureSemanticsDigest: failureSemantics.outputContentDigest,
+  ruleSourceMapDigest: ruleSourceMap.outputContentDigest,
+  dbProjectionPolicyDigest: dbProjectionPolicy.outputContentDigest,
+  environmentProfileDigest: currentEnvironmentProfileDigest(),
+  positiveBrowserAuditDigest: currentPositiveBrowserAuditDigest(),
+  negativeBrowserAuditDigest: currentNegativeBrowserAuditDigest(),
+  noSideEffectsProofDigest: currentNoSideEffectsProofDigest(),
+  dbProjectionProofDigest: currentDbProjectionProofDigest(),
+  testPlanDigest,
+  browserAuditDigest: currentPositiveBrowserAuditDigest(),
   browserFixtureScope: {
     browserScopeSource: "capability compiler projection",
     includedWorkItems: steps.map((step) => step.workItemType),
@@ -278,10 +465,17 @@ const finalizedTestPlan = finalizeGenerated({
   testPlanDigest
 });
 
+writeJson(objectIdentityPath, objectIdentity);
+writeJson(bedCardinalityPath, bedCardinality);
+writeJson(businessInvariantsPath, businessInvariants);
+writeJson(commandContractsPath, commandContracts);
+writeJson(failureSemanticsPath, failureSemantics);
+writeJson(ruleSourceMapPath, ruleSourceMap);
 writeJson(runtimeProjectionPath, runtimeProjection);
 writeJson(mobileSurfaceModelPath, mobileSurfaceModel);
 writeJson(mobileProjectionPath, mobileProjection);
 writeJson(dbProjectionPolicyPath, dbProjectionPolicy);
+writeJson(subjectChainPath, subjectChain);
 writeJson(digestChainPath, digestChain);
 writeJson(testPlanPath, finalizedTestPlan);
 
@@ -471,11 +665,11 @@ function branchOutputForField(fieldId) {
 
 function branchRequiredFieldsForField(fieldId) {
   if (fieldId !== "readinessState") return [];
-  return ["serviceVerificationRef", "notSaleableReason"];
+  return ["basicReadinessRemark"];
 }
 
 function branchOutputFieldIds() {
-  return ["serviceVerificationRef", "blockedReason", "notSaleableReason", "readinessEvidenceRefs"];
+  return ["basicReadinessRemark", "readinessEvidenceRefs", "supplementEvidenceRefs"];
 }
 
 function readinessBranchBindings() {
@@ -504,7 +698,8 @@ function buildFieldCategories(currentSteps) {
     optionalBusinessFields: [],
     systemDerivedFields: entries.filter((entry) => ["roomId", "bedId"].includes(entry.fieldId)),
     branchOutputFields: fieldBindings.fieldBindings
-      .filter((binding) => binding.branchOutputOnly === true || ["serviceVerificationRef", "readinessEvidenceRefs"].includes(binding.fieldId))
+      .filter((binding) => binding.branchOutputOnly === true || ["basicReadinessRemark", "readinessEvidenceRefs", "supplementEvidenceRefs"].includes(binding.fieldId))
+      .filter((binding) => !["notSaleableReason", "serviceVerificationRef"].includes(binding.fieldId))
       .map((binding) => ({
         fieldId: binding.fieldId,
         semanticRole: binding.semanticRole,
@@ -512,11 +707,9 @@ function buildFieldCategories(currentSteps) {
         userSubmitted: false,
         readonly: true,
         sourceBindingRef: binding.sourceBindingRef,
-        requiredWhen: binding.fieldId === "serviceVerificationRef"
-          ? { readinessState: "maintenanceRequired" }
-          : binding.fieldId === "notSaleableReason"
-            ? { readinessState: "notSaleable" }
-            : null
+        requiredWhen: binding.fieldId === "basicReadinessRemark"
+          ? { readinessState: "needs_supplement" }
+          : null
       })),
     evidenceFields: currentSteps.flatMap((step) => step.evidenceIds.map((fieldId) => ({
       cardId: step.cardId,
@@ -526,8 +719,8 @@ function buildFieldCategories(currentSteps) {
       userSubmitted: false
     }))),
     plannedFields: [
-      { fieldId: "serviceVerificationRef", status: "branch-required-evidence-ref", requiredWhen: { readinessState: "maintenanceRequired" } },
-      { fieldId: "notSaleableReason", status: "branch-required-reason", requiredWhen: { readinessState: "notSaleable" } }
+      { fieldId: "basicReadinessRemark", status: "branch-required-reason", requiredWhen: { readinessState: "needs_supplement" } },
+      { fieldId: "supplementEvidenceRefs", status: "branch-required-evidence-ref", requiredWhen: { readinessState: "needs_supplement" } }
     ]
   };
 }
@@ -549,9 +742,9 @@ function capabilityBusinessUi() {
     technicalDetailsDefaultExpanded: false,
     runtimeTestOnlySubmitLabel: { "zh-CN": "提交内测记录", "ru-RU": "Отправить тестовую запись", "ky-KG": "Ички тест жазуусун тапшыруу" },
     businessLandingSubmitLabels: {
-      "Dorm.RoomSetupConfirm": { "zh-CN": "确认房间配置", "ru-RU": "Подтвердить комнату", "ky-KG": "Бөлмөнү ырастоо" },
-      "Dorm.BedSetupConfirm": { "zh-CN": "确认床位配置", "ru-RU": "Подтвердить койку", "ky-KG": "Койканы ырастоо" },
-      "Dorm.ResourceReadinessConfirm": { "zh-CN": "确认资源就绪", "ru-RU": "Подтвердить готовность", "ky-KG": "Даярдыгын ырастоо" }
+      "Dorm.RoomSetupConfirm": { "zh-CN": "房间建档确认", "ru-RU": "Подтвердить комнату", "ky-KG": "Бөлмөнү ырастоо" },
+      "Dorm.BedSetupConfirm": { "zh-CN": "床位组确认", "ru-RU": "Подтвердить койки", "ky-KG": "Койкаларды ырастоо" },
+      "Dorm.ResourceReadinessConfirm": { "zh-CN": "基础就绪确认", "ru-RU": "Подтвердить базовую готовность", "ky-KG": "Негизги даярдыкты ырастоо" }
     },
     completionBusinessValueFields: ["roomNo", "bedNo", "readinessState"],
     forbiddenMainFormTerms: ["accepted capability bundle projection", "generated capability projection", "acceptedGeneratedBundleDigest"]
@@ -564,17 +757,17 @@ function buildCommandCatalog(currentSteps) {
     templateWorkspaceId: CAPABILITY_ID,
     firstCardId: first.cardId,
     title: {
-      "zh-CN": "新增房间",
+      "zh-CN": scenario1SurfaceNavigation.nameZh ?? "房源建档与基础就绪",
       "ru-RU": "Добавить комнату",
       "ky-KG": "Бөлмө кошуу"
     },
     subtitle: {
-      "zh-CN": "按房间配置、床位配置、资源就绪三步办理。",
+      "zh-CN": "按房间建档、床位组确认、基础就绪确认三步办理。",
       "ru-RU": "Три шага: комната, койка, готовность.",
       "ky-KG": "Үч кадам: бөлмө, койка, даярдык."
     },
     nextAction: {
-      "zh-CN": "先确认房间号",
+      "zh-CN": "发起房源建档与基础就绪",
       "ru-RU": "Начать с номера комнаты",
       "ky-KG": "Бөлмө номеринен баштоо"
     },
@@ -583,9 +776,11 @@ function buildCommandCatalog(currentSteps) {
       "创建房间",
       "宿舍建档",
       "房间建档",
+      "房源建档与基础就绪",
+      "床位组确认",
+      "基础就绪确认",
       "新建房间",
-      "配置房间",
-      "宿舍第一金链",
+      "发起房源建档与基础就绪",
       "room setup",
       "create room",
       "add room",
@@ -627,6 +822,14 @@ function buildTestPlan(digests) {
     searchProjectionDigest: digests.searchProjectionDigest,
     dbProjectionPolicyDigest: digests.dbProjectionPolicyDigest,
     capabilityDigestChainDigest: digests.capabilityDigestChainDigest,
+    subjectChainRef: subjectChainPath,
+    objectIdentityRef: objectIdentityPath,
+    bedCardinalityRef: bedCardinalityPath,
+    businessInvariantsRef: businessInvariantsPath,
+    commandContractsRef: commandContractsPath,
+    failureSemanticsRef: failureSemanticsPath,
+    ruleSourceMapRef: ruleSourceMapPath,
+    generatedBusinessRuleRefs: generatedBusinessRuleRefs(),
     mainGatePolicy: {
       currentMainGate: "dormitory_first_golden_chain_capability_only",
       legacyScenarioMainGate: false,
@@ -660,6 +863,14 @@ function buildTestPlan(digests) {
       workItemType: step.workItemType,
       expectedVisibleStepLabel: step.step,
       requiresBrowserProof: true,
+      objectIdentityRules: objectIdentity.objectRules
+        .filter((rule) => rule.createdBy === step.workItemType || rule.configuredBy === step.workItemType || rule.createdOrUpdatedBy === step.workItemType)
+        .map((rule) => rule.generatedRuleId),
+      commandContractRule: commandContracts.commands
+        .find((rule) => rule.command === step.workItemType)?.generatedRuleId ?? "",
+      failureSemanticsRules: failureSemantics.failureSemantics
+        .filter((rule) => rule.appliesTo.includes(step.workItemType))
+        .map((rule) => rule.generatedRuleId),
       forbiddenVisibleTerms: [
         "价格配置",
         "房间床位阻断",
@@ -679,23 +890,327 @@ function buildTestPlan(digests) {
   };
 }
 
-function generatedBase(kind) {
+function buildGeneratedBusinessContracts() {
+  const sourceAuthorityRefs = {
+    capabilityDecisionAuthority: capabilityDecisionAuthorityPath,
+    objectGraphAuthority: objectGraphAuthorityPath,
+    bedCardinalityAuthority: bedCardinalityAuthorityPath,
+    invariantAuthority: invariantAuthorityPath,
+    commandContractAuthority: commandContractAuthorityPath,
+    failureSemanticsAuthority: failureSemanticsAuthorityPath,
+    scenario1RuntimeRules: scenario1RuntimeRulesPath
+  };
+  const objectRules = (objectGraphAuthority.objects ?? []).map((object) => ({
+    generatedRuleId: `dormitory.object_identity.${safeRuleToken(object.objectId)}`,
+    sourceAuthorityRef: objectGraphAuthorityPath,
+    sourceRuleId: object.objectId,
+    objectId: object.objectId,
+    stableRef: object.stableRef,
+    role: object.role,
+    uniqueKey: object.uniqueKey ?? [],
+    createdBy: object.createdBy ?? "",
+    configuredBy: object.configuredBy ?? "",
+    createdOrUpdatedBy: object.createdOrUpdatedBy ?? "",
+    requires: object.requires ?? [],
+    declares: object.declares ?? [],
+    createdByCurrentChain: object.createdByCurrentChain ?? Boolean(object.createdBy || object.configuredBy || object.createdOrUpdatedBy),
+    userSubmittedAsTrustedSource: object.userSubmittedAsTrustedSource === true
+  }));
+  const bedRules = (bedCardinalityAuthority.cardinalityRules ?? []).map((rule) => ({
+    generatedRuleId: `dormitory.bed_cardinality.${safeRuleToken(rule.ruleId)}`,
+    sourceAuthorityRef: bedCardinalityAuthorityPath,
+    sourceRuleId: rule.ruleId,
+    ...rule
+  }));
+  const scenario1SuppressedOldReadinessRuleIds = new Set([
+    "not_saleable_requires_reason",
+    "maintenance_requires_service_verification"
+  ]);
+  const scenario1SuppressedOldReadinessFailureCodes = new Set([
+    "not_saleable_reason_required",
+    "service_verification_required"
+  ]);
+  const invariantRules = (invariantAuthority.invariants ?? [])
+    .filter((rule) => !scenario1SuppressedOldReadinessRuleIds.has(rule.invariantId))
+    .map((rule) => ({
+    generatedRuleId: `dormitory.business_invariant.${safeRuleToken(rule.invariantId)}`,
+    sourceAuthorityRef: invariantAuthorityPath,
+    sourceRuleId: rule.invariantId,
+    ...rule
+  }));
+  const commandRules = (commandContractAuthority.commands ?? []).map((rule) => {
+    const invariantRefs = (rule.invariantRefs ?? []).filter((id) => !scenario1SuppressedOldReadinessRuleIds.has(id));
+    const base = {
+      generatedRuleId: `dormitory.command_contract.${safeRuleToken(rule.command)}`,
+      sourceAuthorityRef: commandContractAuthorityPath,
+      sourceRuleId: rule.command,
+      ...rule,
+      invariantRefs,
+      invariantRuleIds: invariantRefs.map((id) => `dormitory.business_invariant.${safeRuleToken(id)}`)
+    };
+    if (rule.command !== "Dorm.ResourceReadinessConfirm") return base;
+    return {
+      ...base,
+      runtimeCommandType: "BasicReadiness.Confirm",
+      derivedInputs: [
+        "readinessSnapshotVersion",
+        "basicReadinessRef",
+        "basicReadinessStableRef",
+        "createdBedCount"
+      ],
+      normalizedInputs: [
+        "readinessState",
+        "basicReadinessRemark"
+      ],
+      successEvents: [
+        "Accommodation.BasicReadinessConfirmed"
+      ],
+      validationResponses: [
+        "422 bed_count_not_satisfied",
+        "422 readonly_stable_ref_violation",
+        "422 invalid_readiness_state",
+        "422 missing_required_evidence",
+        "422 supplement_reason_required"
+      ],
+      surfaceRenderingPolicy: "render_basic_readiness_conclusion_options_only",
+      dbProjectionPolicy: "Accommodation.BasicReadinessConfirmed -> basic-readiness/read model",
+      testProofPolicy: "basic_readiness_positive_closed_option_and_missing_bed_negative_required_before_business_landing"
+    };
+  });
+  const authorityFailureRules = (failureSemanticsAuthority.failureSemantics ?? []).map((rule) => ({
+    generatedRuleId: `dormitory.failure_semantics.${safeRuleToken(rule.caseId)}`,
+    sourceAuthorityRef: failureSemanticsAuthorityPath,
+    sourceRuleId: rule.caseId,
+    sideEffectsAllowedOnFailure: failureSemanticsAuthority.globalFailurePolicy?.sideEffectsAllowedOnFailure === true,
+    domainEventsAllowedOnFailure: failureSemanticsAuthority.globalFailurePolicy?.domainEventsAllowedOnFailure === true,
+    projectionMutationsAllowedOnFailure: failureSemanticsAuthority.globalFailurePolicy?.projectionMutationsAllowedOnFailure === true,
+    workItemStateChangeAllowedOnFailure: failureSemanticsAuthority.globalFailurePolicy?.workItemStateChangeAllowedOnFailure === true,
+    ledgerEffectAllowedOnFailure: failureSemanticsAuthority.globalFailurePolicy?.ledgerEffectAllowedOnFailure === true,
+    ...rule
+  })).filter((rule) => !scenario1SuppressedOldReadinessFailureCodes.has(rule.code));
+  const scenario1FailureRules = (scenario1RuntimeRules.failureSemantics ?? [])
+    .filter((rule) => rule.failureCode === "missing_required_evidence" || rule.failureCode === "bedset_incomplete")
+    .map((rule) => ({
+      generatedRuleId: `dormitory.failure_semantics.${safeRuleToken(rule.failureCode)}`,
+      sourceAuthorityRef: scenario1RuntimeRulesPath,
+      sourceRuleId: rule.failureCode,
+      caseId: rule.failureCode,
+      code: rule.failureCode === "bedset_incomplete" ? "bed_count_not_satisfied" : rule.failureCode,
+      httpStatus: 422,
+      appliesTo: ["Dorm.ResourceReadinessConfirm"],
+      businessMessageZh: rule.businessMessageZh,
+      sideEffectsAllowedOnFailure: false,
+      domainEventsAllowedOnFailure: false,
+      projectionMutationsAllowedOnFailure: false,
+      workItemStateChangeAllowedOnFailure: false,
+      ledgerEffectAllowedOnFailure: false
+    }));
+  scenario1FailureRules.push({
+    generatedRuleId: "dormitory.failure_semantics.supplement_reason_required",
+    sourceAuthorityRef: scenario1RuntimeRulesPath,
+    sourceRuleId: "needs_supplement_requires_remark",
+    caseId: "needs_supplement_requires_remark",
+    code: "supplement_reason_required",
+    httpStatus: 422,
+    appliesTo: ["Dorm.ResourceReadinessConfirm"],
+    businessMessageZh: "选择需补充时，请填写需要补充的基础资料或检查说明。",
+    sideEffectsAllowedOnFailure: false,
+    domainEventsAllowedOnFailure: false,
+    projectionMutationsAllowedOnFailure: false,
+    workItemStateChangeAllowedOnFailure: false,
+    ledgerEffectAllowedOnFailure: false
+  });
+  const failureRules = [...authorityFailureRules, ...scenario1FailureRules];
+  const objectIdentityDraft = finalizeGenerated({
+    ...generatedBase("dormitory-object-identity.generated"),
+    version: "oam.dormitory.object-identity.generated.v1",
+    sourceAuthorityRefs,
+    capabilityDecision: {
+      ref: capabilityDecisionAuthorityPath,
+      currentChain: capabilityDecisionAuthority.currentChain ?? [],
+      currentBedModel: capabilityDecisionAuthority.currentBedModel
+    },
+    trustedSourcePolicy: objectGraphAuthority.trustedSourcePolicy,
+    relationships: objectGraphAuthority.relationships ?? [],
+    objectRules,
+    forbiddenRules: objectGraphAuthority.forbiddenRules ?? [],
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  });
+  const bedCardinalityDraft = finalizeGenerated({
+    ...generatedBase("dormitory-bed-cardinality.generated"),
+    version: "oam.dormitory.bed-cardinality.generated.v1",
+    sourceAuthorityRefs,
+    canonicalBedQuantity: bedCardinalityAuthority.canonicalBedQuantity,
+    acceptedInputAliases: bedCardinalityAuthority.acceptedInputAliases ?? [],
+    rules: bedRules,
+    authorityBoundaries: bedCardinalityAuthority.authorityBoundaries,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  });
+  const businessInvariantsDraft = finalizeGenerated({
+    ...generatedBase("dormitory-business-invariants.generated"),
+    version: "oam.dormitory.business-invariants.generated.v1",
+    sourceAuthorityRefs,
+    closedOptionSets: {
+      ...(invariantAuthority.closedOptionSets ?? {}),
+      readinessState: scenario1ReadinessConclusionOptions.map((item) => item.value)
+    },
+    invariants: invariantRules,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  });
+  const commandContractsDraft = finalizeGenerated({
+    ...generatedBase("dormitory-command-contracts.generated"),
+    version: "oam.dormitory.command-contracts.generated.v1",
+    sourceAuthorityRefs,
+    commands: commandRules,
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  });
+  const failureSemanticsDraft = finalizeGenerated({
+    ...generatedBase("dormitory-failure-semantics.generated"),
+    version: "oam.dormitory.failure-semantics.generated.v1",
+    sourceAuthorityRefs,
+    globalFailurePolicy: failureSemanticsAuthority.globalFailurePolicy,
+    failureSemantics: failureRules,
+    noSideEffectFailureCodes: failureRules.map((rule) => rule.code),
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  });
+  const sourceMapEntries = [
+    ...objectRules.map((rule) => ruleSourceMapEntry("object_identity", rule, objectIdentityPath)),
+    ...bedRules.map((rule) => ruleSourceMapEntry("bed_cardinality", rule, bedCardinalityPath)),
+    ...invariantRules.map((rule) => ruleSourceMapEntry("business_invariant", rule, businessInvariantsPath)),
+    ...commandRules.map((rule) => ruleSourceMapEntry("command_contract", rule, commandContractsPath)),
+    ...failureRules.map((rule) => ruleSourceMapEntry("failure_semantics", rule, failureSemanticsPath))
+  ];
+  const ruleSourceMapDraft = finalizeGenerated({
+    ...generatedBase("dormitory-rule-source-map.generated"),
+    version: "oam.dormitory.rule-source-map.generated.v1",
+    sourceAuthorityRefs,
+    generatedOutputs: {
+      objectIdentityRef: objectIdentityPath,
+      bedCardinalityRef: bedCardinalityPath,
+      businessInvariantsRef: businessInvariantsPath,
+      commandContractsRef: commandContractsPath,
+      failureSemanticsRef: failureSemanticsPath
+    },
+    sourceMapEntries,
+    ruleCounts: {
+      objectIdentity: objectRules.length,
+      bedCardinality: bedRules.length,
+      businessInvariants: invariantRules.length,
+      commandContracts: commandRules.length,
+      failureSemantics: failureRules.length,
+      total: sourceMapEntries.length
+    },
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  });
+  return {
+    objectIdentity: objectIdentityDraft,
+    bedCardinality: bedCardinalityDraft,
+    businessInvariants: businessInvariantsDraft,
+    commandContracts: commandContractsDraft,
+    failureSemantics: failureSemanticsDraft,
+    ruleSourceMap: ruleSourceMapDraft
+  };
+}
+
+function generatedBusinessRuleRefs() {
+  return {
+    objectIdentity: {
+      ref: objectIdentityPath,
+      digest: objectIdentity.outputContentDigest,
+      ruleIds: objectIdentity.objectRules.map((rule) => rule.generatedRuleId)
+    },
+    bedCardinality: {
+      ref: bedCardinalityPath,
+      digest: bedCardinality.outputContentDigest,
+      ruleIds: bedCardinality.rules.map((rule) => rule.generatedRuleId)
+    },
+    businessInvariants: {
+      ref: businessInvariantsPath,
+      digest: businessInvariants.outputContentDigest,
+      ruleIds: businessInvariants.invariants.map((rule) => rule.generatedRuleId)
+    },
+    commandContracts: {
+      ref: commandContractsPath,
+      digest: commandContracts.outputContentDigest,
+      ruleIds: commandContracts.commands.map((rule) => rule.generatedRuleId)
+    },
+    failureSemantics: {
+      ref: failureSemanticsPath,
+      digest: failureSemantics.outputContentDigest,
+      ruleIds: failureSemantics.failureSemantics.map((rule) => rule.generatedRuleId)
+    },
+    ruleSourceMap: {
+      ref: ruleSourceMapPath,
+      digest: ruleSourceMap.outputContentDigest,
+      ruleIds: ruleSourceMap.sourceMapEntries.map((rule) => rule.generatedRuleId)
+    }
+  };
+}
+
+function businessAuthorityDigests() {
+  return [
+    capabilityDecisionAuthorityPath,
+    objectGraphAuthorityPath,
+    bedCardinalityAuthorityPath,
+    invariantAuthorityPath,
+    commandContractAuthorityPath,
+    failureSemanticsAuthorityPath
+  ].map((file) => ({ path: file, digest: fileDigest(file) }));
+}
+
+function ruleSourceMapEntry(ruleType, rule, generatedOutputRef) {
+  return {
+    generatedRuleId: rule.generatedRuleId,
+    ruleType,
+    sourceAuthorityRef: rule.sourceAuthorityRef,
+    sourceRuleId: rule.sourceRuleId,
+    generatedOutputRef,
+    acceptedGeneratedBundleDigest
+  };
+}
+
+function safeRuleToken(value) {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+function generatedBase(kind, options = {}) {
   return {
     generated: true,
     doNotEdit: true,
     kind,
     generatorVersion: compilerVersion,
     generatedBy,
-    generatedFrom,
-    inputDigest,
-    inputDigests,
+    generatedFrom: options.generatedFrom ?? generatedFrom,
+    inputDigest: options.inputDigest ?? inputDigest,
+    inputDigests: options.inputDigests ?? inputDigests,
     outputContentDigest: "sha256:pending",
     capabilityId: CAPABILITY_ID,
     acceptedGeneratedBundleDigest,
     currentFilesMode: projection.currentFilesMode,
+    capabilityLedgerReplay: {
+      status: projectionState.status,
+      eventCount: ledger.events?.length ?? 0
+    },
     lifecycleState: projection.lifecycleAchieved?.at(-1) ?? "UNKNOWN",
     runtimeAdmissionStatus: runtimeAdmission.runtimeAdmissionStatus,
-    landingStatus: landing.landingStatus
+    landingStatus: landing.landingStatus,
+    environmentProfileId: environmentProfile.environmentProfileId
   };
 }
 
@@ -725,9 +1240,32 @@ function currentDbProjectionProofDigest() {
   return isDigest(result?.dbProjectionProofDigest) ? result.dbProjectionProofDigest : "missing";
 }
 
-function currentBrowserAuditDigest() {
+function currentEnvironmentProfileDigest() {
+  const result = readJsonIfExists(environmentProfileProofResultPath);
+  return isDigest(result?.environmentProfileDigest) ? result.environmentProfileDigest : fileDigest(environmentProfilePath);
+}
+
+function currentPositiveBrowserAuditDigest() {
   const report = readJsonIfExists(browserAuditReportPath);
   return isDigest(report?.browserAuditDigest) ? report.browserAuditDigest : "missing";
+}
+
+function currentNegativeBrowserAuditDigest() {
+  const report = readJsonIfExists(negativeBrowserAuditReportPath);
+  return isDigest(report?.negativeBrowserAuditDigest) ? report.negativeBrowserAuditDigest : "missing";
+}
+
+function currentNoSideEffectsProofDigest() {
+  const result = readJsonIfExists(noSideEffectsProofResultPath);
+  return isDigest(result?.noSideEffectsProofDigest) ? result.noSideEffectsProofDigest : "missing";
+}
+
+function currentBusinessLandingReviewStatus() {
+  const result = readJsonIfExists(dbProjectionProofResultPath);
+  if (result?.reviewPackageStatus === "READY_FOR_00_BUSINESS_LANDING_REVIEW") {
+    return "READY_FOR_00_BUSINESS_LANDING_REVIEW";
+  }
+  return "BUSINESS_LANDING_NOT_READY_REVIEW_PACKAGE";
 }
 
 function currentEvidenceRootDigest() {
@@ -744,17 +1282,17 @@ function currentEvidenceRootDigest() {
 function titleFor(workItemType, index, total) {
   const titles = {
     "Dorm.RoomSetupConfirm": {
-      "zh-CN": `${index}/${total} 房间配置确认`,
+      "zh-CN": `${index}/${total} 房间建档确认`,
       "ru-RU": `${index}/${total} Подтверждение комнаты`,
       "ky-KG": `${index}/${total} Бөлмө тастыктоо`
     },
     "Dorm.BedSetupConfirm": {
-      "zh-CN": `${index}/${total} 床位配置确认`,
+      "zh-CN": `${index}/${total} 床位组确认`,
       "ru-RU": `${index}/${total} Подтверждение койки`,
       "ky-KG": `${index}/${total} Койка тастыктоо`
     },
     "Dorm.ResourceReadinessConfirm": {
-      "zh-CN": `${index}/${total} 资源就绪确认`,
+      "zh-CN": `${index}/${total} 基础就绪确认`,
       "ru-RU": `${index}/${total} Подтверждение готовности`,
       "ky-KG": `${index}/${total} Даярдык тастыктоо`
     }
@@ -775,7 +1313,9 @@ function labelFor(fieldId) {
     bedNo: ["床位号", "Номер койки", "Койка номери"],
     bedType: ["床位类型", "Тип койки", "Койка түрү"],
     bedId: ["床位", "Койка", "Койка"],
-    readinessState: ["就绪状态", "Статус готовности", "Даярдык абалы"],
+    readinessState: ["基础就绪结论", "Статус готовности", "Даярдык абалы"],
+    basicReadinessRemark: ["基础就绪备注", "Комментарий", "Эскертүү"],
+    supplementEvidenceRefs: ["补充证据", "Дополнительные доказательства", "Кошумча далил"],
     "room-photo": ["房间照片", "Фото комнаты", "Бөлмө сүрөтү"],
     "room-basic-info": ["房间基础信息", "Основная информация комнаты", "Бөлмө негизги маалыматы"],
     "bed-photo": ["床位照片", "Фото койки", "Койка сүрөтү"],

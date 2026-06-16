@@ -2,6 +2,7 @@ import { selectRuntimeWorkspaces, selectSearchSurfaceResults, selectWorkbenchQue
 import { buildSearchResultVM, rankSearchResults } from "../searchIntentHub.js";
 import { isAccommodationResourceSetupQuery, searchIntentSuggestions, searchIntentTerms } from "../searchIntentRegistry.js";
 import { capabilityCommandCatalog } from "../capabilityProjection.js";
+import { normalizeOperationLifecycleState } from "../operationStatus.js";
 import { buildBusinessAnchor } from "../businessAnchorKernel.js";
 import { BusinessSummaryHeader, BusinessTaskOverview } from "./experienceComponents.js";
 
@@ -414,7 +415,7 @@ function isTerminalWorkspace(workspace = {}) {
 }
 
 function activeDisplayCard(workspace = {}) {
-  return workspace.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(card.status)) || workspace.cards?.[0];
+  return workspace.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(normalizeOperationLifecycleState(card.status, ""))) || workspace.cards?.[0];
 }
 
 function workspaceMatchesQuery(workspace = {}, query = "", ctx = {}) {

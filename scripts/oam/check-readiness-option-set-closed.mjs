@@ -8,18 +8,23 @@ const root = process.cwd();
 const resultPath = "artifacts/oam/checks/readiness-option-set-closed-result.json";
 const projection = readJsonIfExists("apps/mobile/src/generated/oam/capability-projection.generated.json", root);
 const runtimeProjection = readJsonIfExists("services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json", root);
+const businessInvariants = readJsonIfExists("docs/contracts/generated/dormitory/business-invariants.generated.json", root);
 const failures = [];
-const requiredLabels = ["可分配", "待清洁", "待维修", "待补材料", "暂不可用"];
+const requiredLabels = ["通过", "不通过", "需补充"];
 const requiredBranches = {
-  available: "complete",
-  cleaningRequired: "cleaningRequired",
-  maintenanceRequired: "serviceVerificationRef",
-  notSaleable: "notSaleableReason"
+  passed: "basic_readiness_summary",
+  failed: "basic_readiness_not_passed",
+  needs_supplement: "supplement_required"
 };
+const requiredValues = businessInvariants?.closedOptionSets?.readinessState ?? [];
 
 checkProjection("mobile", projection);
 checkProjection("runtime", runtimeProjection);
 
+const values = (projection?.optionSets?.readinessState ?? []).map((item) => item.value);
+if (JSON.stringify(values) !== JSON.stringify(requiredValues)) {
+  failures.push(`readinessState values must match generated business invariants: ${requiredValues.join(", ")}.`);
+}
 const labels = (projection?.optionSets?.readinessState ?? []).map((item) => item.label?.["zh-CN"] || "");
 for (const label of requiredLabels) {
   if (!labels.includes(label)) failures.push(`readinessState option set missing ${label}.`);
@@ -33,11 +38,8 @@ for (const [value, branchOutput] of Object.entries(requiredBranches)) {
     failures.push(`readinessState ${value} must bind branchOutput=${branchOutput}.`);
   }
 }
-if (!(branchBindings.maintenanceRequired?.requiredFields ?? []).includes("serviceVerificationRef")) {
-  failures.push("待维修 branch must require serviceVerificationRef.");
-}
-if (!(branchBindings.notSaleable?.requiredFields ?? []).includes("notSaleableReason")) {
-  failures.push("暂不可用 branch must require notSaleableReason.");
+if (!(branchBindings.needs_supplement?.requiredFields ?? []).includes("basicReadinessRemark")) {
+  failures.push("需补充 branch must require basicReadinessRemark.");
 }
 
 const result = {
@@ -46,6 +48,7 @@ const result = {
   status: failures.length === 0 ? "PASS" : "NO_GO",
   capabilityId: CAPABILITY_ID,
   optionSet: "readinessState",
+  closedOptionValues: requiredValues,
   closedOptionLabels: requiredLabels,
   freeTextReadyAllowed: false,
   productionConfirmAllowed: false,

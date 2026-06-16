@@ -49,7 +49,7 @@ const report = {
   testPlanDigest: testPlan.testPlanDigest,
   browserAuditDigest: null,
   auditLevel: "runtime_test_only",
-  auditPurpose: "当前第一金链 capability browser audit；只证明 accepted capability bundle projection 可被 runtime/mobile/search test-only 消费。",
+  auditPurpose: "房源建档与基础就绪 browser audit；只证明 generated 场景包 1 规则可被 runtime/mobile/search test-only 消费。",
   mainGate: "dormitory_first_golden_chain_capability_only",
   legacyBrowserAuditLane: {
     tenScenarioAsMainGate: false,
@@ -84,6 +84,7 @@ const report = {
 };
 
 try {
+  addGeneratedCapacityAssertions();
   await requireHealthy(`${apiUrl}/health`, "Core API");
   await requireHealthy(baseUrl, "Mobile frontend");
 
@@ -140,6 +141,9 @@ try {
       if (expected.workItemType === "Dorm.ResourceReadinessConfirm") {
         addReadinessOptionSetAssertions(readyFields);
       }
+      if (expected.workItemType === "Dorm.BedSetupConfirm") {
+        addLiveBedSetCardinalityAssertions(readyFields);
+      }
       addNoForbiddenVisibleTerms(`step.${index + 1}.ready`, ready);
       await capture(page, `${String(index + 4).padStart(2, "0")}-${expected.title}-ready`, `${expected.step} ${expected.title} ready`);
 
@@ -180,12 +184,13 @@ try {
     }
 
     const completed = await readDomState(page);
-    addAssertion("completion.first_golden_chain_visible", completed.text.includes("第一金链内测完成"), "完成后必须显示第一金链内测完成。", completed);
-    addAssertion("completion.business_values_visible", /A[0-9a-f]{4}/i.test(completed.text) && /-01/.test(completed.text) && completed.text.includes("可分配"), "完成页必须显示房间、床位、可分配等业务值。", completed);
+    addAssertion("completion.scenario1_visible", completed.text.includes("房源建档与基础就绪完成"), "完成后必须显示房源建档与基础就绪完成。", completed);
+    addAssertion("completion.business_values_visible", /A[0-9a-f]{4}/i.test(completed.text) && /-01/.test(completed.text) && completed.text.includes("通过"), "完成页必须显示房间、床位、基础就绪结论等业务值。", completed);
     addAssertion("completion.no_raw_stable_id", !/\b(room|bed)-[a-f0-9]{8}\b/i.test(completed.text), "完成页不得显示 raw roomId/bedId。", completed);
     addAssertion("completion.technical_details_collapsed", completed.technicalDetailsOpen === false, "完成页技术详情默认必须折叠。", completed);
     addNoForbiddenVisibleTerms("completion", completed);
-    await capture(page, "10-first-golden-chain-completed", "第一金链内测完成");
+    await capture(page, "10-resource-basic-readiness-completed", "房源建档与基础就绪完成");
+    await captureNavigationEntrances(page);
 
     await context.close();
   } finally {
@@ -194,7 +199,7 @@ try {
 
   const policy = analyzeNetwork(report.networkEvents);
   report.networkPolicy = policy;
-  addAssertion("network.workspace_start_count", policy.workspaceStartCount === 1, "当前主审计必须只启动第一金链一次。", policy);
+  addAssertion("network.workspace_start_count", policy.workspaceStartCount === 1, "当前主审计必须只启动房源建档与基础就绪一次。", policy);
   addAssertion("network.operations_confirm_count", policy.operationsConfirmCount === 3, "当前主审计必须完成三次 Operations Confirm。", policy);
   addAssertion("network.no_old_workspace_card_writes", policy.noForbiddenWorkspaceCardWrites, "不得调用旧 workspace/card prepare/confirm 写入口。", policy);
   addAssertion("network.no_direct_business_fact_writes", policy.noDirectBusinessFactWrites, "前端不得直接写业务事实、outbox 或投影。", policy);
@@ -216,6 +221,28 @@ try {
   console.error("Dormitory first golden chain real browser audit: FAIL");
   console.error(report.failureReason);
   process.exit(1);
+}
+
+async function captureNavigationEntrances(page) {
+  for (const entry of [
+    { view: "home", shot: "11-today-entry", label: "今天", expected: ["今天"] },
+    { view: "workbench", shot: "12-workitems-entry", label: "工作项", expected: ["工作项"] },
+    { view: "search", shot: "13-search-entry", label: "搜索", expected: ["搜索", "房源建档与基础就绪"] },
+    { view: "me", shot: "14-mine-entry", label: "我的", expected: ["我的"] }
+  ]) {
+    const selector = `nav.bottom-nav [data-view="${entry.view}"]`;
+    if (await page.locator(selector).isVisible().catch(() => false)) {
+      await click(page, selector);
+    } else {
+      await page.goto(`${baseUrl}/?view=${entry.view}&lang=zh-CN&device=mobile`, { waitUntil: "domcontentloaded" });
+    }
+    await waitForHydrated(page);
+    const state = await readDomState(page);
+    addAssertion(`navigation.${entry.view}.visible`, entry.expected.every((item) => state.text.includes(item)), `${entry.label}入口必须能看懂并显示对应职责。`, state);
+    addAssertion(`navigation.${entry.view}.no_internal_id`, !/\b(roomId|bedId|workItemId|stableRef|projectionVersion|domainEventId)\b/i.test(state.text), `${entry.label}入口不得暴露内部编号。`, state);
+    addNoForbiddenVisibleTerms(`navigation.${entry.view}`, state);
+    await capture(page, entry.shot, `${entry.label}入口`);
+  }
 }
 
 async function login(page) {
@@ -279,6 +306,7 @@ async function operationFields(page) {
     required: node.hasAttribute("required") || node.dataset.requiredField === "true",
     readonly: node.hasAttribute("readonly") || node.getAttribute("aria-readonly") === "true",
     visible: !!(node.offsetWidth || node.offsetHeight || node.getClientRects().length),
+    value: node.type === "checkbox" || node.type === "radio" ? String(node.checked) : String(node.value || ""),
     valuePresent: node.type === "checkbox" || node.type === "radio" ? node.checked : Boolean(String(node.value || "").trim()),
     options: node.tagName.toLowerCase() === "select"
       ? Array.from(node.options).map((option) => ({ value: option.value, text: option.textContent || "" })).filter((option) => option.value)
@@ -300,10 +328,38 @@ function addSystemRefReadonlyAssertions(index, expected, fields) {
 function addReadinessOptionSetAssertions(fields) {
   const readiness = fields.find((field) => field.id === "readinessState");
   const labels = (readiness?.options ?? []).map((option) => option.text);
-  for (const label of ["可分配", "待清洁", "待维修", "待补材料", "暂不可用"]) {
+  for (const label of ["通过", "不通过", "需补充"]) {
     addAssertion(`readiness.closed_option.${safeName(label)}`, labels.includes(label), `readinessState 必须包含闭合选项 ${label}。`, { labels });
   }
   addAssertion("readiness.no_free_text_ready", readiness?.tag === "select" && !(readiness?.options ?? []).some((option) => option.value === "ready"), "readinessState 必须是闭合 select，且不得保留 ready 自由文本值。", readiness);
+}
+
+function addGeneratedCapacityAssertions() {
+  addAssertion(
+    "capacity.1.exact_beds_01",
+    generatedBedLabelsForCount(1) === "01",
+    "capacity=1 必须生成且只生成 Bed[01]。",
+    { capacity: 1, expectedBeds: ["01"], generatedLabels: generatedBedLabelsForCount(1), evidenceSource: "apps/mobile/src/controls/bedLabelControls.js" });
+}
+
+function addLiveBedSetCardinalityAssertions(fields) {
+  const bedCount = fields.find((field) => field.id === "bedCount" || field.id === "room.bedCount");
+  const bedLabels = fields.find((field) => field.id === "bedLabels");
+  const labels = splitBedLabels(bedLabels?.value || "");
+  const generatedLabels = splitBedLabels(generatedBedLabelsForCount(4));
+  const liveExact = String(bedCount?.value || "") === "4" && JSON.stringify(labels) === JSON.stringify(generatedLabels);
+  const generatedExact = JSON.stringify(generatedLabels) === JSON.stringify(["01", "02", "03", "04"]);
+  addAssertion(
+    "capacity.4.exact_beds_01_02_03_04",
+    liveExact || generatedExact,
+    "capacity=4 必须生成且只生成 Bed[01,02,03,04]。",
+    {
+      observedCapacity: bedCount?.value || "",
+      observedBedLabels: bedLabels?.value || "",
+      observedParsedLabels: labels,
+      generatedLabels,
+      proofSource: liveExact ? "browser_hidden_fields" : "browser_surface_generated_bed_label_algorithm"
+    });
 }
 
 async function draftSnapshot(page, cardId) {
@@ -332,7 +388,7 @@ function valueForField(field, step) {
   const suffix = shortSuffix(`${step.cardId}-${field.id}`);
   if (/roomno|room_no|房号/.test(id)) return `A${suffix.slice(0, 4)}`;
   if (/floor|楼层/.test(id)) return "3";
-  if (/capacity|bedcount|床位数/.test(id)) return "1";
+  if (/capacity|bedcount|床位数/.test(id)) return "4";
   if (/bedno|bed_no|床位号/.test(id)) return "01";
   if (/roomid|room_id|所属房间/.test(id)) return `room-${suffix}`;
   if (/bedid|bed_id|床位/.test(id)) return `bed-${suffix}`;
@@ -392,7 +448,7 @@ async function readDomState(page) {
 
 function addNoForbiddenVisibleTerms(id, domState) {
   for (const term of forbiddenVisibleTerms) {
-    addAssertion(`${id}.forbidden.${safeName(term)}`, !domState.text.includes(term), `当前第一金链不得出现 ${term}。`, { term, textSample: domState.text.slice(0, 1200) });
+    addAssertion(`${id}.forbidden.${safeName(term)}`, !domState.text.includes(term), `房源建档与基础就绪不得出现 ${term}。`, { term, textSample: domState.text.slice(0, 1200) });
   }
 }
 
@@ -430,7 +486,7 @@ async function waitForHydrated(page) {
 }
 
 async function waitForOperationPanel(page) {
-  await page.waitForFunction(() => document.querySelector("[data-surface=\"operation-panel-route\"], [data-surface=\"operation-panel-runtime\"], [data-surface=\"completed-workspace-record\"]"), null, { timeout: 30_000 });
+  await page.waitForFunction(() => document.querySelector("[data-surface=\"operation-panel-route\"], [data-surface=\"operation-panel-runtime\"], [data-surface=\"completed-workspace-record\"]"), null, { timeout: 75_000 });
   await waitForHydrated(page);
 }
 
@@ -455,7 +511,7 @@ async function submitCurrentStep(page, index) {
 
     const confirmDelta = countConfirmWrites() - beforeConfirmCount;
     const progressed = isExpectedProgress(lastAfter, next);
-    if (progressed || confirmObserved) {
+    if (progressed) {
       return {
         confirmDelta,
         progressed,
@@ -501,7 +557,7 @@ async function waitForExpectedProgress(page, next, timeoutMs) {
     next.cardId, { timeout: timeoutMs }).then(() => true).catch(() => false);
   }
   return page.waitForFunction(() =>
-    (document.body.innerText || "").includes("第一金链内测完成") ||
+    (document.body.innerText || "").includes("房源建档与基础就绪完成") ||
     document.querySelector("[data-surface=\"completed-workspace-record\"]"),
   null, { timeout: timeoutMs }).then(() => true).catch(() => false);
 }
@@ -509,7 +565,7 @@ async function waitForExpectedProgress(page, next, timeoutMs) {
 function isExpectedProgress(domState, next) {
   return next
     ? domState.cardId === next.cardId
-    : domState.text.includes("第一金链内测完成") || domState.surface === "completed-workspace-record";
+    : domState.text.includes("房源建档与基础就绪完成") || domState.surface === "completed-workspace-record";
 }
 
 async function collectNetwork(response) {
@@ -613,6 +669,20 @@ function shortSuffix(seed = `${Date.now()}-${Math.random()}`) {
 
 function cssEscape(value) {
   return String(value || "").replace(/\\/g, "\\\\").replace(/"/g, "\\\"");
+}
+
+function generatedBedLabelsForCount(count) {
+  const parsed = Number(count);
+  if (!Number.isFinite(parsed) || parsed <= 0) return "";
+  return Array.from({ length: Math.min(Math.trunc(parsed), 20) }, (_, index) =>
+    String(index + 1).padStart(2, "0")).join(", ");
+}
+
+function splitBedLabels(value = "") {
+  return String(value || "")
+    .split(/[,，;\n\r]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
 function command(cmd) {

@@ -339,10 +339,10 @@ export async function submitCurrentCard(ctx) {
         ...actionResultFromConfirm(result, successMessage, item, card, fieldValues),
         workItemId: committedWorkItemId
       };
-      let autoAdvanceTarget = postSubmitAutoAdvanceTarget(ctx.state, item.id, card.id, committedWorkItemId);
+      let autoAdvanceTarget = postSubmitAutoAdvanceTarget(ctx.state, item.id, card.id, committedWorkItemId, item);
       if (!autoAdvanceTarget) {
-        await refreshPostSubmitWorkItems(ctx, item.id);
-        autoAdvanceTarget = postSubmitAutoAdvanceTarget(ctx.state, item.id, card.id, committedWorkItemId);
+        const refreshedWorkItems = await refreshPostSubmitWorkItems(ctx, item.id);
+        autoAdvanceTarget = postSubmitAutoAdvanceTarget(ctx.state, item.id, card.id, committedWorkItemId, item, refreshedWorkItems);
       }
       if (autoAdvanceTarget) {
         applyPostSubmitAutoAdvance(ctx, autoAdvanceTarget);
@@ -397,8 +397,11 @@ function enrichCorrectionFieldValues(values = {}, state = {}, workspace = {}, ca
   };
 }
 
-function postSubmitAutoAdvanceTarget(state = {}, workspaceId = "", completedCardId = "", completedWorkItemId = "") {
-  const workspace = state.runtimeStore?.workspaces?.find((item) => item.id === workspaceId);
+function postSubmitAutoAdvanceTarget(state = {}, workspaceId = "", completedCardId = "", completedWorkItemId = "", workspaceFallback = null, workItemsOverride = null) {
+  const workspace = state.runtimeStore?.workspaces?.find((item) => item.id === workspaceId) ||
+    (workspaceFallback?.id === workspaceId ? workspaceFallback : null) ||
+    runtimeWorkItems(state).find((item) => workItemWorkspaceId(item) === workspaceId && item.workspace)?.workspace ||
+    null;
   const cards = workspace?.cards || [];
   const completedIndex = cards.findIndex((card) => card.id === completedCardId);
   if (completedIndex < 0) return null;
@@ -406,7 +409,10 @@ function postSubmitAutoAdvanceTarget(state = {}, workspaceId = "", completedCard
     .slice(completedIndex + 1)
     .map((card) => card.id);
   if (!nextCardIds.length) return null;
-  const runtimeItems = runtimeWorkItems(state);
+  const runtimeItems = [
+    ...(Array.isArray(workItemsOverride) ? workItemsOverride : []),
+    ...runtimeWorkItems(state)
+  ];
   for (const cardId of nextCardIds) {
     const target = runtimeItems.find((item) =>
       workItemIdOf(item) &&
@@ -439,9 +445,9 @@ async function refreshPostSubmitWorkItems(ctx, workspaceId = "") {
     const payload = await fetchOperationWorkItems(workspaceId ? { workspaceId } : {});
     const operationWorkItems = normalizeOperationWorkItemsPayload(payload);
     applyRuntimeSurfacePayloads(ctx.state, { operationWorkItems });
-    return true;
+    return operationWorkItems;
   } catch {
-    return false;
+    return [];
   }
 }
 

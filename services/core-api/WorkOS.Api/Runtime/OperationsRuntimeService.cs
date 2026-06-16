@@ -96,17 +96,20 @@ public sealed class OperationsRuntimeService
         return null;
     }
 
-    public IReadOnlyList<WorkItem> ListWorkItems(string? tenantId = null, string? caseId = null) =>
+    public IReadOnlyList<WorkItem> ListWorkItems(string? tenantId = null, string? caseId = null, string? workspaceId = null, bool activeOnly = false) =>
         workItems.List(tenantId, caseId)
+            .Where(item => WorkspaceMatches(item, workspaceId))
             .Concat(runtime.GetProcessWorkItemIntents(tenantId)
             .Where(item => string.IsNullOrWhiteSpace(caseId) || PayloadValue(item.Payload, "caseId").Equals(caseId, StringComparison.OrdinalIgnoreCase))
+            .Where(item => string.IsNullOrWhiteSpace(workspaceId) || item.TargetWorkspaceId.Equals(workspaceId, StringComparison.OrdinalIgnoreCase))
             .Select(ToWorkItem))
             .GroupBy(item => item.WorkItemId, StringComparer.OrdinalIgnoreCase)
             .Select(group => group.First())
+            .Where(item => !activeOnly || !IsTerminalStatus(item.Status))
             .ToArray();
 
-    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(string? tenantId = null, string? caseId = null) =>
-        ListWorkItems(tenantId, caseId).Select(ToSurface).ToArray();
+    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(string? tenantId = null, string? caseId = null, string? workspaceId = null, bool activeOnly = false) =>
+        ListWorkItems(tenantId, caseId, workspaceId, activeOnly).Select(ToSurface).ToArray();
 
     public RuntimeDeviceSession? FindDeviceSession(string tenantId, string? deviceId) =>
         string.IsNullOrWhiteSpace(deviceId) ? null : runtime.FindDeviceSession(tenantId, deviceId);
@@ -457,6 +460,10 @@ public sealed class OperationsRuntimeService
         new[] { "done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped" }
             .Contains(status, StringComparer.OrdinalIgnoreCase);
 
+    private static bool WorkspaceMatches(WorkItem item, string? workspaceId) =>
+        string.IsNullOrWhiteSpace(workspaceId) ||
+        item.WorkspaceId.Equals(workspaceId, StringComparison.OrdinalIgnoreCase);
+
     private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key) =>
         payload.TryGetValue(key, out var value) ? value : string.Empty;
 
@@ -790,6 +797,37 @@ public sealed record ConfirmWorkItemResult(
                 ["definitionMode"] = definition.DefinitionMode
             },
             "operations_admission_kernel",
+            idempotencyKey,
+            null,
+            null);
+
+    internal static ConfirmWorkItemResult GeneratedRuleRejected(
+        string caseId,
+        string workItemId,
+        string? submissionId,
+        string? idempotencyKey,
+        GeneratedCapabilityRuntimeValidationResult validation) =>
+        new(
+            validation.StatusCode,
+            validation.Code,
+            validation.Code,
+            false,
+            "not_committed",
+            "not_projected",
+            caseId,
+            workItemId,
+            submissionId ?? string.Empty,
+            Array.Empty<string>(),
+            validation.UserMessage,
+            new Dictionary<string, object>
+            {
+                ["disableRetry"] = validation.StatusCode is StatusCodes.Status409Conflict,
+                ["refreshProjection"] = false,
+                ["observeOutbox"] = false,
+                ["generatedRuleId"] = validation.GeneratedRuleId,
+                ["confirmExecutionOrder"] = GeneratedCapabilityRuntimeRulePipeline.ConfirmExecutionOrder
+            },
+            "generated_capability_runtime_rules",
             idempotencyKey,
             null,
             null);

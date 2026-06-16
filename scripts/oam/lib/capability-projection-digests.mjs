@@ -25,6 +25,26 @@ export const FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_SCREENSHOT_INDEX_PATH =
   `${FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_DIR}/screenshot-index.json`;
 export const FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_RESULT_PATH =
   "artifacts/oam/checks/dormitory-first-golden-chain-real-browser-result.json";
+export const FIRST_GOLDEN_CHAIN_NEGATIVE_BROWSER_AUDIT_DIR =
+  "artifacts/oam/evidence/dormitory-first-golden-chain-negative-browser";
+export const FIRST_GOLDEN_CHAIN_NEGATIVE_BROWSER_AUDIT_REPORT_PATH =
+  `${FIRST_GOLDEN_CHAIN_NEGATIVE_BROWSER_AUDIT_DIR}/negative-browser-report.json`;
+export const FIRST_GOLDEN_CHAIN_NEGATIVE_BROWSER_AUDIT_SCREENSHOT_INDEX_PATH =
+  `${FIRST_GOLDEN_CHAIN_NEGATIVE_BROWSER_AUDIT_DIR}/screenshot-index.json`;
+export const FIRST_GOLDEN_CHAIN_NEGATIVE_BROWSER_AUDIT_RESULT_PATH =
+  "artifacts/oam/checks/dormitory-first-golden-chain-negative-browser-result.json";
+export const FIRST_GOLDEN_CHAIN_NO_SIDE_EFFECTS_PROOF_RESULT_PATH =
+  "artifacts/oam/checks/dormitory-first-golden-chain-no-side-effects-proof-result.json";
+export const FIRST_GOLDEN_CHAIN_ENVIRONMENT_PROFILE_PROOF_RESULT_PATH =
+  "artifacts/oam/checks/dormitory-evidence-environment-profile-result.json";
+export const FIRST_GOLDEN_CHAIN_SUBJECT_CHAIN_PATH =
+  "artifacts/oam/evidence/capability-evidence-subject-chain.json";
+export const FIRST_GOLDEN_CHAIN_SUBJECT_CHAIN_RESULT_PATH =
+  "artifacts/oam/checks/capability-evidence-subject-chain-complete-result.json";
+export const FIRST_GOLDEN_CHAIN_SUBJECT_CHAIN_PROJECTION_RESULT_PATH =
+  "artifacts/oam/checks/evidence-projects-capability-subject-chain-only-result.json";
+export const FIRST_GOLDEN_CHAIN_BUSINESS_LANDING_REVIEW_ATTESTATION_PATH =
+  "docs/oam/evidence-attestation-packages/dormitory-first-golden-chain-business-landing-review.attestation.json";
 
 export const FIRST_GOLDEN_CHAIN_STEPS = currentCapabilitySteps();
 
@@ -46,6 +66,11 @@ export function buildProjectionDigestChain(root = process.cwd()) {
     searchProjectionDigest: searchProjectionDigest(root, acceptedGeneratedBundleDigest),
     dbProjectionPolicyDigest: dbProjectionPolicyDigest(root),
     dbProjectionProofDigest: dbProjectionProofDigest(root),
+    environmentProfileDigest: environmentProfileDigest(root),
+    positiveBrowserAuditDigest: positiveBrowserAuditDigest(root),
+    negativeBrowserAuditDigest: negativeBrowserAuditDigest(root),
+    noSideEffectsProofDigest: noSideEffectsProofDigest(root),
+    subjectChainDigest: subjectChainDigest(root),
     capabilityDigestChainDigest: generatedOutputDigest(FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH, root)
   };
 }
@@ -135,6 +160,33 @@ export function dbProjectionProofDigest(root = process.cwd()) {
     return "null_if_runtime_test_only";
   }
   return isSha256Digest(result?.dbProjectionProofDigest) ? result.dbProjectionProofDigest : "missing";
+}
+
+export function environmentProfileDigest(root = process.cwd()) {
+  const result = readJsonIfExists(FIRST_GOLDEN_CHAIN_ENVIRONMENT_PROFILE_PROOF_RESULT_PATH, root);
+  return isSha256Digest(result?.environmentProfileDigest)
+    ? result.environmentProfileDigest
+    : fileDigest("docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json", root);
+}
+
+export function positiveBrowserAuditDigest(root = process.cwd()) {
+  const report = readJsonIfExists(FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH, root);
+  return isSha256Digest(report?.browserAuditDigest) ? report.browserAuditDigest : "missing";
+}
+
+export function negativeBrowserAuditDigest(root = process.cwd()) {
+  const report = readJsonIfExists(FIRST_GOLDEN_CHAIN_NEGATIVE_BROWSER_AUDIT_REPORT_PATH, root);
+  return isSha256Digest(report?.negativeBrowserAuditDigest) ? report.negativeBrowserAuditDigest : "missing";
+}
+
+export function noSideEffectsProofDigest(root = process.cwd()) {
+  const result = readJsonIfExists(FIRST_GOLDEN_CHAIN_NO_SIDE_EFFECTS_PROOF_RESULT_PATH, root);
+  return isSha256Digest(result?.noSideEffectsProofDigest) ? result.noSideEffectsProofDigest : "missing";
+}
+
+export function subjectChainDigest(root = process.cwd()) {
+  const result = readJsonIfExists(FIRST_GOLDEN_CHAIN_SUBJECT_CHAIN_PATH, root);
+  return isSha256Digest(result?.outputContentDigest) ? result.outputContentDigest : "missing";
 }
 
 export function buildCapabilityTestPlan(root = process.cwd()) {

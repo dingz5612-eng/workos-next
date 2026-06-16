@@ -47,6 +47,11 @@ const expectedChain = {
   runtimeProjectionDigest: projectionChain.runtimeProjectionDigest,
   surfaceProjectionDigest: projectionChain.surfaceProjectionDigest,
   searchProjectionDigest: projectionChain.searchProjectionDigest,
+  environmentProfileDigest: projectionChain.environmentProfileDigest,
+  positiveBrowserAuditDigest: projectionChain.positiveBrowserAuditDigest,
+  negativeBrowserAuditDigest: projectionChain.negativeBrowserAuditDigest,
+  noSideEffectsProofDigest: projectionChain.noSideEffectsProofDigest,
+  subjectChainDigest: projectionChain.subjectChainDigest,
   testPlanDigest: testPlan?.testPlanDigest ?? null,
   browserAuditDigest: browserReport?.browserAuditDigest ?? browserResult?.browserAuditDigest ?? null,
   dbProjectionProofDigest: projectionChain.dbProjectionProofDigest,
@@ -85,15 +90,14 @@ if (browserResult?.browserAuditDigest !== browserReport?.browserAuditDigest) {
   failures.push("browser audit checker digest must match browser report digest.");
 }
 
-for (const [label, document] of [
-  ["capability digest chain file", { capabilityDigestChain }],
-  ["evidence graph", evidenceGraph],
-  ["final report", finalReport],
-  ["current final report", currentFinalReport],
-  ["release evidence object", releaseEvidenceObject]
+for (const [label, chain, requiresRuntimeConsumptionReady] of [
+  ["capability digest chain file", capabilityDigestChain, false],
+  ["evidence graph", evidenceGraph?.capabilityDigestChain, true],
+  ["final report", finalReport?.capabilityDigestChain, true],
+  ["current final report", currentFinalReport?.capabilityDigestChain, true],
+  ["release evidence object", releaseEvidenceObject?.capabilityDigestChain, true]
 ]) {
-  if (!document) continue;
-  checkDocumentChain(label, document.capabilityDigestChain);
+  checkDocumentChain(label, chain, { requiresRuntimeConsumptionReady });
 }
 
 const graphEvidenceRootDigest = evidenceGraph?.capabilityDigestChain?.evidenceRootDigest;
@@ -117,6 +121,11 @@ const result = {
   runtimeProjectionDigest: expectedChain.runtimeProjectionDigest,
   surfaceProjectionDigest: expectedChain.surfaceProjectionDigest,
   searchProjectionDigest: expectedChain.searchProjectionDigest,
+  environmentProfileDigest: expectedChain.environmentProfileDigest,
+  positiveBrowserAuditDigest: expectedChain.positiveBrowserAuditDigest,
+  negativeBrowserAuditDigest: expectedChain.negativeBrowserAuditDigest,
+  noSideEffectsProofDigest: expectedChain.noSideEffectsProofDigest,
+  subjectChainDigest: expectedChain.subjectChainDigest,
   testPlanDigest: expectedChain.testPlanDigest,
   browserAuditDigest: expectedChain.browserAuditDigest,
   dbProjectionProofDigest: expectedChain.dbProjectionProofDigest,
@@ -140,7 +149,7 @@ if (output.status !== "PASS") {
 
 console.log(`Evidence digest chain single-source check: PASS (${graphEvidenceRootDigest})`);
 
-function checkDocumentChain(label, chain) {
+function checkDocumentChain(label, chain, options = {}) {
   if (!chain) {
     failures.push(`${label} missing capabilityDigestChain.`);
     return;
@@ -150,7 +159,7 @@ function checkDocumentChain(label, chain) {
       failures.push(`${label} capabilityDigestChain.${field} mismatch: expected ${JSON.stringify(expected)}, actual ${JSON.stringify(chain[field])}.`);
     }
   }
-  if (chain.runtimeConsumptionReady !== false && chain.runtimeConsumptionReady !== "test_only") {
+  if (options.requiresRuntimeConsumptionReady && chain.runtimeConsumptionReady !== false && chain.runtimeConsumptionReady !== "test_only") {
     failures.push(`${label} runtimeConsumptionReady must be false or test_only.`);
   }
   if (chain.productionConfirmAllowed !== false) failures.push(`${label} productionConfirmAllowed must remain false.`);

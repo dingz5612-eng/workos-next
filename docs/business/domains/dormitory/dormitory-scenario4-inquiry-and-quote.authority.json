@@ -1,0 +1,1306 @@
+{
+  "version": "oam.dormitory.scenario4-inquiry-and-quote-source-authority.v1",
+  "status": "authoritative",
+  "manualEditAllowed": true,
+  "authorityId": "Dormitory.Scenario4.InquiryAndQuote",
+  "scenarioPackageNo": 4,
+  "scenarioId": "lodging.inquiry-and-quote",
+  "nameZh": "询价与报价",
+  "businessGoalZh": "承接场景包 1 的房源摘要、场景包 2 的运营状态摘要、场景包 3 的商品与价格摘要，为客户生成询价记录、报价方案、报价单、报价版本和报价有效期。",
+  "highestAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+  "methodBenchmarkRef": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+  "packageIndexRef": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+  "upstream": {
+    "allowedSourcePackageNos": [
+      1,
+      2,
+      3
+    ],
+    "requiredReadonlyInputs": [
+      "房间摘要",
+      "床位组摘要",
+      "房间/床位运营状态摘要",
+      "阻断原因",
+      "商品摘要",
+      "价格方案摘要",
+      "价格日历摘要",
+      "价格版本历史",
+      "可否进入询价报价",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用"
+    ],
+    "effectiveProductPriceRequiredZh": "只有场景包 3 输出已生效商品与价格版本，且标记可进入询价报价，才能生成正式报价。",
+    "upstreamWriteBackAllowed": false,
+    "mustNotRequireRefillZh": "场景包 4 只能读取场景包 1、2、3 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品或价格字段。"
+  },
+  "downstream": {
+    "allowedConsumerPackageNo": 5,
+    "allowedConsumerPackageNameZh": "预订与库存锁定",
+    "handoffOutputs": [
+      "询价摘要",
+      "客户需求摘要",
+      "报价单摘要",
+      "报价版本",
+      "价格快照",
+      "报价有效期",
+      "客户反馈",
+      "转预订准备摘要",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "forbiddenOutputsZh": [
+      "InventoryHold",
+      "Reservation",
+      "Stay",
+      "Payment",
+      "Deposit",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction",
+      "库存锁定",
+      "预订",
+      "入住",
+      "收款",
+      "押金",
+      "退款",
+      "账务",
+      "已锁定",
+      "已预订",
+      "已入住",
+      "已收款"
+    ],
+    "downstreamRecheckRuleZh": "场景包 5 只能读取询价摘要、客户需求摘要、报价单摘要、报价版本、价格快照、报价有效期、客户反馈、转预订准备摘要、证据摘要和只读对象引用，并必须重新校验库存和报价有效期，不得直接把报价当成预订。"
+  },
+  "businessBoundaries": {
+    "responsibilityZh": "本场景包只负责客户询价登记、入住需求、可报价商品选择、报价草稿、报价版本、报价发送、客户反馈、重新报价、关闭报价和转预订准备摘要。",
+    "notResponsibleZh": [
+      "库存锁定",
+      "预订确认",
+      "入住",
+      "收款",
+      "押金",
+      "退款",
+      "账务"
+    ],
+    "semanticGuardsZh": [
+      "可运营来自场景包 2，不由场景包 4 产生。",
+      "价格已生效来自场景包 3，不由场景包 4 产生。",
+      "可报价来自场景包 4。",
+      "已报价不等于已锁定。",
+      "客户接受报价不等于已预订。",
+      "报价单存在不保证库存仍可用，场景包 5 必须重新校验并锁定库存。"
+    ]
+  },
+  "objects": [
+    {
+      "objectName": "Inquiry",
+      "businessNameZh": "询价",
+      "descriptionZh": "客户发起的住宿咨询记录，承载客户、来源、跟进和当前状态。",
+      "ownedByScenarioPackageNo": 4,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CustomerContact",
+      "businessNameZh": "客户联系信息",
+      "descriptionZh": "客户姓名、联系方式、客户类型、渠道和跟进人。",
+      "ownedByScenarioPackageNo": 4,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "StayDemand",
+      "businessNameZh": "入住需求",
+      "descriptionZh": "入住日期、离店日期、人数、偏好、周期、预算和特殊要求。",
+      "ownedByScenarioPackageNo": 4,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "QuoteOption",
+      "businessNameZh": "报价选项",
+      "descriptionZh": "从场景包 1/2/3 只读摘要中选择的可报价商品、资源范围、价格来源和不可报价原因。",
+      "ownedByScenarioPackageNo": 4,
+      "upstreamReadonlyRefs": [
+        "productRef",
+        "priceVersionRef",
+        "operationStatusSnapshotRef"
+      ],
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "Quote",
+      "businessNameZh": "报价单",
+      "descriptionZh": "面向客户的报价单主体，包含报价单号、报价状态、客户需求摘要和当前版本。",
+      "ownedByScenarioPackageNo": 4,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "QuoteVersion",
+      "businessNameZh": "报价版本",
+      "descriptionZh": "报价发送、调整和重新报价形成的不可覆盖版本事实。",
+      "ownedByScenarioPackageNo": 4,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "QuotePriceSnapshot",
+      "businessNameZh": "报价价格快照",
+      "descriptionZh": "报价生成时对场景包 3 价格来源、价格版本、适用日期、晚数/周期、客户人数和价格明细的快照。",
+      "ownedByScenarioPackageNo": 4,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "QuoteValidity",
+      "businessNameZh": "报价有效期",
+      "descriptionZh": "报价有效期起止、过期状态和转预订准备前的有效性判断。",
+      "ownedByScenarioPackageNo": 4,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "QuoteDeliveryRecord",
+      "businessNameZh": "报价发送记录",
+      "descriptionZh": "报价发送给客户的渠道、时间、发送人和客户可读摘要。",
+      "ownedByScenarioPackageNo": 4,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "QuoteEvidence",
+      "businessNameZh": "报价证据",
+      "descriptionZh": "询价、需求、报价草稿、报价发送、客户反馈、重新报价和关闭报价绑定的证据。",
+      "ownedByScenarioPackageNo": 4,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "FollowUpTask",
+      "businessNameZh": "跟进任务",
+      "descriptionZh": "报价待跟进、今日过期、客户待确认和报价需重算等被动任务。",
+      "ownedByScenarioPackageNo": 4,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "QuoteStatusHistory",
+      "businessNameZh": "报价状态历史",
+      "descriptionZh": "询价与报价状态、版本、发送、反馈和证据历史，供详情、搜索和下游只读。",
+      "ownedByScenarioPackageNo": 4,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    }
+  ],
+  "quoteStatusOptions": [
+    "询价草稿",
+    "待补充需求",
+    "可报价",
+    "报价草稿",
+    "已报价",
+    "报价已发送",
+    "客户待确认",
+    "报价过期",
+    "报价关闭",
+    "转预订准备"
+  ],
+  "stateLayering": {
+    "scenario2StatusZh": [
+      "可运营"
+    ],
+    "scenario3StatusZh": [
+      "价格已生效"
+    ],
+    "scenario4StatusZh": [
+      "询价草稿",
+      "待补充需求",
+      "可报价",
+      "报价草稿",
+      "已报价",
+      "报价已发送",
+      "客户待确认",
+      "报价过期",
+      "报价关闭",
+      "转预订准备"
+    ],
+    "scenario5StatusZh": [
+      "可锁定",
+      "已预订"
+    ],
+    "separationRulesZh": [
+      "可运营来自场景包 2。",
+      "价格已生效来自场景包 3。",
+      "可报价来自场景包 4。",
+      "可锁定和已预订来自场景包 5。",
+      "已报价不等于已锁定。",
+      "客户接受报价不等于已预订。"
+    ]
+  },
+  "invariants": [
+    "报价必须来自场景包 3 的已生效商品与价格版本，不能由前台手填最终价格真值。",
+    "报价必须记录价格来源、价格版本、适用日期、晚数/周期、资源范围、客户人数和报价有效期。",
+    "报价生成时可以读取当时可报价资源，但不得锁定资源。",
+    "报价发送后不得原地覆盖；调整报价必须创建新 QuoteVersion。",
+    "报价有效期过期后不能直接转预订，只能重新报价或重新确认。",
+    "维修、停售、暂停开放或异常资源不得进入报价选项。",
+    "没有有效商品与价格，不得生成正式报价。",
+    "优惠如果超出权限必须进入审批或阻断。",
+    "报价方案不得写收款、押金、退款或账务事实。",
+    "已报价不等于已锁定。",
+    "客户接受报价不等于已预订。",
+    "报价单存在不保证库存仍可用，场景包 5 必须重新校验并锁定库存。",
+    "确认失败不得写 CommandSubmission、DomainEvent、Outbox、Projection、Lens、Search、Dashboard、Ledger。",
+    "确认失败不得刷新下游预订读模型。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。"
+  ],
+  "priceSnapshotRule": {
+    "mustUseScenario3EffectivePriceVersion": true,
+    "snapshotFields": [
+      "priceSource",
+      "priceVersionRef",
+      "productRef",
+      "applicableDateRange",
+      "nightOrPeriodCount",
+      "resourceScope",
+      "guestCount",
+      "lineItems",
+      "totalAmount",
+      "validUntil"
+    ],
+    "userMayOverrideFinalPriceTruth": false,
+    "failureCode": "price_snapshot_mismatch"
+  },
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "register-customer-inquiry",
+      "nameZh": "客户询价登记",
+      "commandId": "Dorm.InquiryRegister",
+      "commandBusinessNameZh": "询价登记",
+      "userSees": [
+        "客户信息",
+        "客户来源",
+        "跟进人",
+        "不可提交原因"
+      ],
+      "userFilledFields": [
+        "customerName",
+        "contactPhone",
+        "customerSource",
+        "inquiryNotes"
+      ],
+      "userSelectedFields": [
+        "customerType",
+        "sourceChannel",
+        "followUpOwner"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "客户询价证据",
+        "客户来源证据"
+      ],
+      "systemGeneratedFields": [
+        "inquiryRef",
+        "customerContactRef",
+        "sourceChannelRef",
+        "createdAt",
+        "createdBy"
+      ],
+      "validations": [
+        "客户姓名和联系方式至少满足当前业务联系规则。",
+        "用户不得填写 inquiryId、customerId、stableRef。"
+      ],
+      "outputs": [
+        "Inquiry",
+        "CustomerContact",
+        "QuoteEvidence"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "confirm-stay-demand",
+      "nameZh": "填写入住需求",
+      "commandId": "Dorm.StayDemandConfirm",
+      "commandBusinessNameZh": "入住需求确认",
+      "userSees": [
+        "客户摘要",
+        "入住日期",
+        "离店日期",
+        "人数",
+        "偏好",
+        "不可提交原因"
+      ],
+      "userFilledFields": [
+        "checkInDate",
+        "checkOutDate",
+        "guestCount",
+        "roomOrBedPreference",
+        "specialRequests",
+        "budgetRange",
+        "demandNotes"
+      ],
+      "userSelectedFields": [
+        "resourceScopePreference",
+        "pricingPeriodPreference",
+        "roomTypePreference",
+        "bedTypePreference"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "入住需求证据"
+      ],
+      "systemCalculatedFields": [
+        "nightOrPeriodCount",
+        "guestCountValid",
+        "dateRangeValid"
+      ],
+      "systemGeneratedFields": [
+        "stayDemandRef",
+        "dateRangeRef",
+        "demandVersion"
+      ],
+      "validations": [
+        "入住日期必须早于离店日期。",
+        "人数必须大于 0。",
+        "日期范围不能为空。"
+      ],
+      "outputs": [
+        "StayDemand",
+        "QuoteStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "select-quotable-product",
+      "nameZh": "查看可报价商品",
+      "commandId": "Dorm.QuoteOptionSelect",
+      "commandBusinessNameZh": "报价选项选择",
+      "userSees": [
+        "可报价商品",
+        "房间/床位说明",
+        "运营状态",
+        "价格方案",
+        "价格来源",
+        "适用日期",
+        "不可报价原因"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "quoteOptionSelection",
+        "productChoice",
+        "resourceScopeChoice"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "报价选项证据"
+      ],
+      "systemReads": [
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格日历摘要",
+        "价格版本历史"
+      ],
+      "systemGeneratedFields": [
+        "quoteOptionRef",
+        "productRef",
+        "priceVersionRef",
+        "operationStatusSnapshotRef"
+      ],
+      "validations": [
+        "维修、停售、暂停或异常资源不得进入报价选项。",
+        "无有效价格不得报价。"
+      ],
+      "outputs": [
+        "QuoteOption"
+      ]
+    },
+    {
+      "stepNo": 4,
+      "stepId": "generate-quote-draft",
+      "nameZh": "生成报价草稿",
+      "commandId": "Dorm.QuoteDraftGenerate",
+      "commandBusinessNameZh": "报价草稿生成",
+      "userSees": [
+        "客户需求",
+        "商品选项",
+        "价格明细",
+        "晚数/周期",
+        "总价",
+        "报价有效期",
+        "价格来源",
+        "不可提交原因"
+      ],
+      "userFilledFields": [
+        "quoteNotes",
+        "discountDescription",
+        "followUpAt"
+      ],
+      "userSelectedFields": [
+        "quoteValidityOption",
+        "sendToCustomer"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "报价依据证据",
+        "优惠说明证据"
+      ],
+      "systemCalculatedFields": [
+        "quoteTotalAmount",
+        "quoteLineItems",
+        "validUntil",
+        "priceSnapshot"
+      ],
+      "systemGeneratedFields": [
+        "quoteRef",
+        "quoteNo",
+        "quoteVersionRef",
+        "priceSnapshotRef",
+        "validUntil"
+      ],
+      "validations": [
+        "优惠如果超出权限必须进入审批或阻断。",
+        "不得生成账务金额事实。"
+      ],
+      "outputs": [
+        "Quote",
+        "QuoteVersion draft",
+        "QuotePriceSnapshot",
+        "QuoteValidity"
+      ]
+    },
+    {
+      "stepNo": 5,
+      "stepId": "issue-and-send-quote",
+      "nameZh": "确认并发送报价",
+      "commandId": "Dorm.QuoteSend",
+      "commandBusinessNameZh": "报价发送",
+      "userSees": [
+        "报价单预览",
+        "报价版本",
+        "报价有效期",
+        "客户可读报价摘要",
+        "证据摘要"
+      ],
+      "userFilledFields": [
+        "deliveryNotes"
+      ],
+      "userSelectedFields": [
+        "confirmQuote",
+        "sendQuote",
+        "saveDraft",
+        "backToEdit"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "报价确认记录",
+        "报价发送证据"
+      ],
+      "systemWrites": [
+        "QuoteCreated",
+        "QuoteVersionIssued",
+        "QuoteDeliveryRecord",
+        "EvidenceBinding",
+        "Projection update"
+      ],
+      "systemGeneratedFields": [
+        "quoteIssuedRef",
+        "quoteDeliveryRef",
+        "evidenceBindingRef",
+        "projectionVersion"
+      ],
+      "forbiddenWritesZh": [
+        "库存锁定",
+        "预订",
+        "入住",
+        "收款",
+        "押金",
+        "退款",
+        "账务"
+      ],
+      "validations": [
+        "必须已有报价草稿、价格快照和报价有效期。",
+        "发送后不得原地覆盖报价版本。"
+      ],
+      "outputs": [
+        "Quote",
+        "QuoteVersion",
+        "QuoteDeliveryRecord",
+        "QuoteEvidence"
+      ]
+    },
+    {
+      "stepNo": 6,
+      "stepId": "quote-follow-up-and-reservation-prep",
+      "nameZh": "报价跟进与转预订准备",
+      "commandId": "Dorm.ReservationPreparationStart",
+      "commandBusinessNameZh": "转预订准备",
+      "entrySourcesZh": [
+        "今日任务",
+        "工作项",
+        "客户详情",
+        "报价详情",
+        "搜索结果只读跳转"
+      ],
+      "userSees": [
+        "报价状态",
+        "报价有效期",
+        "客户反馈",
+        "合法下一步动作",
+        "不可提交原因"
+      ],
+      "userFilledFields": [
+        "customerFeedback",
+        "followUpNotes",
+        "closeReason",
+        "requoteReason"
+      ],
+      "userSelectedFields": [
+        "recordFeedback",
+        "closeQuote",
+        "createRequote",
+        "startReservationPreparation"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "客户反馈证据",
+        "关闭报价证据",
+        "重新报价证据"
+      ],
+      "systemGeneratedFields": [
+        "followUpTaskRef",
+        "reservationPreparationRef",
+        "quoteStatusHistoryRef"
+      ],
+      "validations": [
+        "转预订准备只把报价摘要交给场景包 5。",
+        "报价过期后不得直接转预订准备。",
+        "场景包 4 不得锁库存或生成预订号。"
+      ],
+      "outputs": [
+        "FollowUpTask",
+        "QuoteStatusHistory",
+        "转预订准备摘要"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“张三 6 月 20 日至 6 月 23 日，2 人，301 整房，报价 540 元，有效至今晚 20:00”。",
+    "upstreamReadonly": [
+      "buildingArea",
+      "roomNo",
+      "bedList",
+      "operationStatus",
+      "operationBlockerReason",
+      "productSummary",
+      "ratePlanSummary",
+      "priceCalendarSummary",
+      "priceVersionHistory",
+      "canEnterInquiryQuote",
+      "evidenceSummary"
+    ],
+    "userFilled": [
+      "customerName",
+      "contactPhone",
+      "customerSource",
+      "inquiryNotes",
+      "checkInDate",
+      "checkOutDate",
+      "guestCount",
+      "roomOrBedPreference",
+      "specialRequests",
+      "budgetRange",
+      "demandNotes",
+      "quoteNotes",
+      "discountDescription",
+      "followUpAt",
+      "deliveryNotes",
+      "customerFeedback",
+      "followUpNotes",
+      "closeReason",
+      "requoteReason"
+    ],
+    "userSelected": [
+      "customerType",
+      "sourceChannel",
+      "followUpOwner",
+      "resourceScopePreference",
+      "pricingPeriodPreference",
+      "roomTypePreference",
+      "bedTypePreference",
+      "quoteOptionSelection",
+      "productChoice",
+      "resourceScopeChoice",
+      "quoteValidityOption",
+      "sendToCustomer",
+      "confirmQuote",
+      "sendQuote",
+      "saveDraft",
+      "backToEdit",
+      "recordFeedback",
+      "closeQuote",
+      "createRequote",
+      "startReservationPreparation"
+    ],
+    "userUploadedOrBoundEvidence": [
+      "客户询价证据",
+      "客户来源证据",
+      "入住需求证据",
+      "报价选项证据",
+      "报价依据证据",
+      "优惠说明证据",
+      "报价确认记录",
+      "报价发送证据",
+      "客户反馈证据",
+      "关闭报价证据",
+      "重新报价证据"
+    ],
+    "systemGenerated": [
+      "inquiryRef",
+      "customerContactRef",
+      "sourceChannelRef",
+      "createdAt",
+      "createdBy",
+      "stayDemandRef",
+      "dateRangeRef",
+      "demandVersion",
+      "quoteOptionRef",
+      "productRef",
+      "priceVersionRef",
+      "operationStatusSnapshotRef",
+      "quoteRef",
+      "quoteNo",
+      "quoteVersionRef",
+      "priceSnapshotRef",
+      "validUntil",
+      "quoteIssuedRef",
+      "quoteDeliveryRef",
+      "evidenceBindingRef",
+      "projectionVersion",
+      "followUpTaskRef",
+      "reservationPreparationRef",
+      "quoteStatusHistoryRef",
+      "domainEventId",
+      "commandSubmissionRef"
+    ],
+    "systemCalculated": [
+      "nightOrPeriodCount",
+      "guestCountValid",
+      "dateRangeValid",
+      "quoteTotalAmount",
+      "quoteLineItems",
+      "validUntil",
+      "priceSnapshot",
+      "cannotSubmitReasons",
+      "legalNextActions"
+    ],
+    "evidenceBound": [
+      "QuoteEvidence",
+      "EvidenceBinding",
+      "evidenceEnvelopeRef"
+    ],
+    "internalAuditOnlyFields": [
+      "inquiryRef",
+      "customerContactRef",
+      "stayDemandRef",
+      "quoteOptionRef",
+      "productRef",
+      "priceVersionRef",
+      "quoteRef",
+      "quoteVersionRef",
+      "priceSnapshotRef",
+      "quoteDeliveryRef",
+      "reservationPreparationRef",
+      "evidenceBindingRef",
+      "commandSubmissionRef",
+      "domainEventId",
+      "projectionVersion",
+      "digest"
+    ],
+    "forbiddenUserInputFields": [
+      "inquiryId",
+      "customerId",
+      "quoteId",
+      "quoteVersionId",
+      "productId",
+      "ratePlanId",
+      "roomId",
+      "bedId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ]
+  },
+  "crudRules": {
+    "create": {
+      "ordinaryNewButtonAllowed": false,
+      "buttonsZh": [
+        "新建询价",
+        "新建报价草稿",
+        "新建报价版本"
+      ]
+    },
+    "draftEdit": {
+      "allowed": true,
+      "scopeZh": "询价草稿、待补充需求、报价草稿可修改。"
+    },
+    "confirmedFactEdit": {
+      "allowed": false,
+      "allowedPathsZh": [
+        "草稿修改",
+        "新报价版本",
+        "补充客户反馈",
+        "关闭报价",
+        "作废未发送草稿",
+        "纠错申请"
+      ]
+    },
+    "delete": {
+      "physicalDeleteConfirmedFactAllowed": false,
+      "draftVoidAllowed": true,
+      "issuedQuoteCloseOrReplaceOnly": true
+    },
+    "read": {
+      "querySearchListBoardReportReadonly": true,
+      "writeFromReadSurfaceAllowed": false
+    },
+    "requiredLifecyclePerObject": [
+      "currentState",
+      "versionHistory",
+      "evidenceHistory",
+      "legalNextActions"
+    ]
+  },
+  "commands": [
+    {
+      "commandId": "Dorm.InquiryRegister",
+      "businessNameZh": "询价登记",
+      "writesObjects": [
+        "Inquiry",
+        "CustomerContact",
+        "QuoteEvidence",
+        "QuoteStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "InventoryHold",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.StayDemandConfirm",
+      "businessNameZh": "入住需求确认",
+      "writesObjects": [
+        "StayDemand",
+        "QuoteEvidence",
+        "QuoteStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "InventoryHold",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.QuoteDraftGenerate",
+      "businessNameZh": "报价草稿生成",
+      "writesObjects": [
+        "Quote",
+        "QuoteOption",
+        "QuoteVersion",
+        "QuotePriceSnapshot",
+        "QuoteValidity",
+        "QuoteEvidence",
+        "QuoteStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "InventoryHold",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.QuoteVersionConfirm",
+      "businessNameZh": "报价版本确认",
+      "writesObjects": [
+        "Quote",
+        "QuoteVersion",
+        "QuotePriceSnapshot",
+        "QuoteValidity",
+        "QuoteEvidence",
+        "QuoteStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "InventoryHold",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.QuoteSend",
+      "businessNameZh": "报价发送",
+      "writesObjects": [
+        "Quote",
+        "QuoteVersion",
+        "QuoteDeliveryRecord",
+        "QuoteEvidence",
+        "QuoteStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "InventoryHold",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.QuoteClose",
+      "businessNameZh": "报价关闭",
+      "writesObjects": [
+        "Quote",
+        "QuoteEvidence",
+        "QuoteStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "InventoryHold",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.RequoteCreate",
+      "businessNameZh": "重新报价",
+      "writesObjects": [
+        "Quote",
+        "QuoteVersion",
+        "QuotePriceSnapshot",
+        "QuoteValidity",
+        "QuoteEvidence",
+        "QuoteStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "InventoryHold",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.ReservationPreparationStart",
+      "businessNameZh": "转预订准备",
+      "writesObjects": [
+        "FollowUpTask",
+        "QuoteStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "InventoryHold",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "contact_required",
+      "messageZh": "请补充客户姓名和有效联系方式后再登记询价。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "date_range_invalid",
+      "messageZh": "入住日期必须早于离店日期。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "guest_count_invalid",
+      "messageZh": "入住人数必须大于 0。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "valid_product_required",
+      "messageZh": "缺少可报价商品，不能生成报价。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "effective_price_required",
+      "messageZh": "缺少已生效价格版本，不能生成正式报价。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "operation_blocked_for_quote",
+      "messageZh": "该房源存在运营阻断，不能进入报价选项。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "quote_validity_required",
+      "messageZh": "请设置报价有效期后再提交。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "discount_approval_required",
+      "messageZh": "优惠超出权限，需要审批通过后才能生成报价。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "price_snapshot_mismatch",
+      "messageZh": "报价价格快照与价格来源不一致，请重新生成报价。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "quote_expired_for_reservation_preparation",
+      "messageZh": "报价已过期，不能发起转预订准备，请重新报价。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "post_issue_inline_edit_forbidden",
+      "messageZh": "已发送报价不能原地编辑，请新建报价版本或重新报价。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用不匹配，请从页面重新选择客户、商品或报价。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_submission",
+      "messageZh": "该提交已处理，系统将返回原处理结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_quote_version_conflict",
+      "messageZh": "报价版本已被他人更新，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_result_write_attempt",
+      "messageZh": "查询、搜索、列表、看板、报表只读，不能在这里写入询价或报价事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "cross_scenario_inventory_reservation_forbidden",
+      "messageZh": "本场景不能锁定库存、生成预订或写入住事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "finance_fact_forbidden",
+      "messageZh": "询价与报价不能写入收款、押金、退款或账务信息。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "quote_evidence_missing",
+      "messageZh": "缺少必要询价或报价证据，不能提交。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "register-customer-inquiry": [
+        "客户询价证据",
+        "客户来源证据"
+      ],
+      "confirm-stay-demand": [
+        "入住需求证据"
+      ],
+      "select-quotable-product": [
+        "场景包 3 商品价格摘要",
+        "报价选项证据"
+      ],
+      "generate-quote-draft": [
+        "报价依据证据",
+        "价格快照证据",
+        "优惠说明证据"
+      ],
+      "issue-and-send-quote": [
+        "报价确认记录",
+        "报价发送证据"
+      ],
+      "quote-follow-up-and-reservation-prep": [
+        "客户反馈证据",
+        "关闭报价证据",
+        "重新报价证据"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "commandsImplemented": [
+      "Dorm.InquiryRegister",
+      "Dorm.StayDemandConfirm",
+      "Dorm.QuoteDraftGenerate",
+      "Dorm.QuoteVersionConfirm",
+      "Dorm.QuoteSend",
+      "Dorm.QuoteClose",
+      "Dorm.RequoteCreate",
+      "Dorm.ReservationPreparationStart"
+    ],
+    "mustSupportZh": [
+      "幂等提交",
+      "并发版本检查",
+      "上游商品价格校验",
+      "运营状态校验",
+      "日期人数校验",
+      "价格快照校验",
+      "报价有效期校验",
+      "伪造内部引用阻断",
+      "失败无副作用"
+    ],
+    "failureNoSideEffectTargets": [
+      "CommandSubmission",
+      "DomainEvent",
+      "Outbox",
+      "Projection",
+      "Lens",
+      "Search",
+      "Dashboard",
+      "Ledger"
+    ],
+    "forbiddenRuntimeWritesZh": [
+      "InventoryHold",
+      "Reservation",
+      "Stay",
+      "Payment",
+      "Deposit",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction"
+    ]
+  },
+  "surfaceNavigation": {
+    "pagesZh": [
+      "询价列表",
+      "询价详情",
+      "客户需求页",
+      "可报价商品页",
+      "报价草稿页",
+      "报价单预览页",
+      "报价发送页",
+      "报价版本历史页",
+      "客户反馈页",
+      "转预订准备入口"
+    ],
+    "todayZh": "今日只展示今天需要处理的被动任务，例如今日待跟进、报价今日过期、客户待确认、报价需重算。",
+    "workItemsZh": "工作项展示全部被动任务池。",
+    "searchZh": "搜索可以查客户、手机号、报价单号、入住日期、商品、报价状态，但搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "pageMustShowZh": [
+      "当前报价状态",
+      "有效期",
+      "价格来源",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": [
+      {
+        "state": "inquiry_draft",
+        "buttonsZh": [
+          "继续填写",
+          "生成报价"
+        ]
+      },
+      {
+        "state": "quote_draft",
+        "buttonsZh": [
+          "确认报价",
+          "返回修改"
+        ]
+      },
+      {
+        "state": "quote_sent",
+        "buttonsZh": [
+          "记录反馈",
+          "重新报价",
+          "发起转预订准备",
+          "关闭报价"
+        ]
+      },
+      {
+        "state": "expired",
+        "buttonsZh": [
+          "重新报价"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "已锁定",
+      "已预订",
+      "已入住",
+      "已收款",
+      "final GO",
+      "生产发布",
+      "lead-reservation",
+      "reservationCreate",
+      "RatePlanConfirm"
+    ]
+  },
+  "readSideOutputs": [
+    "询价摘要",
+    "客户需求摘要",
+    "报价单摘要",
+    "报价版本",
+    "价格快照",
+    "报价有效期",
+    "客户反馈",
+    "转预订准备摘要",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "positiveBrowserTestPlan": [
+    "从客户询价入口进入。",
+    "登记客户。",
+    "填写入住日期、离店日期、人数。",
+    "查看可报价商品。",
+    "查看价格来源和价格明细。",
+    "生成报价草稿。",
+    "确认并发送报价。",
+    "查看报价单号和有效期。",
+    "记录客户反馈。",
+    "发起转预订准备。",
+    "查看今日、工作项、搜索、我的入口表现。"
+  ],
+  "negativeBrowserTestPlan": [
+    "缺客户联系方式。",
+    "入住日期晚于或等于离店日期。",
+    "人数为 0。",
+    "无有效商品。",
+    "无有效价格。",
+    "维修或停售资源进入报价。",
+    "报价有效期为空。",
+    "报价过期后转预订。",
+    "已发送报价原地编辑。",
+    "伪造 productId、ratePlanId、roomId、bedId、quoteId。",
+    "搜索结果直接写报价。",
+    "报价生成后直接锁库存或生成预订。",
+    "重复提交。",
+    "并发改报价。"
+  ],
+  "oldProjectExpressionIsolation": {
+    "leadReservationAllowedUseZh": "只允许作为内部迁移映射或兼容参考，不得作为“询价与报价”的新设计源、用户可见名称或规则来源。",
+    "forbiddenAsNewBusinessSource": [
+      "lead-reservation",
+      "reservationCreate",
+      "RatePlanConfirm"
+    ]
+  },
+  "NO_GO": {
+    "businessFeatureDevelopmentAllowed": false,
+    "businessGoLiveAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO",
+    "reasonZh": "本 Source 只完成场景包 4 精准落地闭环，不授予生产发布、业务上线或 final GO。"
+  }
+}

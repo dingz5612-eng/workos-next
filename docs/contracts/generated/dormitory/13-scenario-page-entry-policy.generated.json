@@ -1,0 +1,38 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-pageEntryPolicy.generated",
+  "version": "oam.dormitory-13-scenario-pageEntryPolicy.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:4c3a13f3a7b929d8420f863c66bb6891b209aee38ab4cb168f785dc2865489a7",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0"
+    }
+  ],
+  "sourceContentDigest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:c2316e5bb77faa9434d15ea9192a044b6933754ef0413d1554706c0241126003",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "pageEntryPolicy": {
+    "today": "今天需要处理的被动任务，只显示到期、逾期、今天计划、今天待确认。",
+    "workItems": "全量被动任务池。",
+    "search": "主动查询，只读结果，只能跳转合法动作，不能搜索即写事实。",
+    "mine": "草稿、收藏、个人跟进、导出、设置等个人入口。",
+    "displayRequirements": [
+      "当前状态",
+      "缺失项",
+      "下一步动作",
+      "不可提交原因",
+      "完成摘要"
+    ],
+    "buttonRuleZh": "所有按钮按状态出现，不得固定一个大提交按钮。"
+  }
+}

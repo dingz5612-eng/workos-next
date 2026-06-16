@@ -1,0 +1,109 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-fieldMatrix.generated",
+  "version": "oam.dormitory-13-scenario-fieldMatrix.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:4c3a13f3a7b929d8420f863c66bb6891b209aee38ab4cb168f785dc2865489a7",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0"
+    }
+  ],
+  "sourceContentDigest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:de312d71c730ce40eb370111283f5f5fd164d19388600fe1760e094d61741ba6",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "fieldSourceMatrix": {
+    "userFilled": [
+      "姓名",
+      "电话",
+      "备注",
+      "原因",
+      "检查结果",
+      "说明",
+      "日期",
+      "人数"
+    ],
+    "userSelected": [
+      "房间/床位",
+      "状态",
+      "渠道",
+      "商品",
+      "价格方案",
+      "原因类型",
+      "操作类型"
+    ],
+    "upstreamReadonly": [
+      "房源摘要",
+      "运营状态",
+      "商品价格摘要",
+      "报价摘要",
+      "预订摘要",
+      "入住摘要",
+      "财务摘要"
+    ],
+    "systemGenerated": [
+      "业务单号",
+      "内部引用",
+      "版本",
+      "事件",
+      "时间戳",
+      "状态历史",
+      "证据摘要"
+    ],
+    "systemCalculated": [
+      "晚数",
+      "总价",
+      "可用状态",
+      "应退应补",
+      "过期状态",
+      "冲突状态"
+    ],
+    "evidenceBound": [
+      "照片",
+      "合同",
+      "凭证",
+      "确认记录",
+      "审计附件"
+    ],
+    "financeConfirmed": [
+      "收款",
+      "押金",
+      "退款",
+      "扣费",
+      "账务摘要"
+    ],
+    "internalAudit": [
+      "stableRef",
+      "domainEventId",
+      "projectionVersion",
+      "digest",
+      "ledgerEntryId"
+    ]
+  },
+  "forbiddenUserInputFields": [
+    "roomId",
+    "bedId",
+    "ratePlanId",
+    "quoteId",
+    "reservationId",
+    "stayId",
+    "paymentId",
+    "depositId",
+    "refundId",
+    "ledgerEntryId",
+    "stableRef",
+    "digest",
+    "projectionVersion",
+    "domainEventId"
+  ],
+  "displayIdRuleZh": "业务展示号可以展示和搜索，内部绑定必须由系统完成。"
+}

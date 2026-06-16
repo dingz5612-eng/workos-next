@@ -1,0 +1,97 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario3-crudPolicy.generated",
+  "version": "oam.dormitory-scenario3-crudPolicy.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario3-product-and-pricing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario3-product-and-pricing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:85b38109c8d72046b87f14b3a642e018a3b5ff7ec851ae9ae29b7e6fdc8bf751",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "digest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario3.ProductAndPricing",
+  "scenarioPackageNo": 3,
+  "scenarioId": "lodging.product-and-rate",
+  "outputContentDigest": "sha256:d1bc6ff8c20615f60ba469678d9ded0161877a7fdcc29e20bad3aac889510fbc",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "住宿商品与价格",
+  "businessGoalZh": "承接场景包 1 的房源摘要和场景包 2 已确认可运营且未阻断的运营状态摘要，配置住宿商品、售卖单位、商品资源绑定、价格方案、适用日期、价格版本及价格生效/停用记录。",
+  "sourceScenarioDigest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "crudRules": {
+    "create": {
+      "ordinaryCreateButtonAllowed": false,
+      "buttonsZh": [
+        "新建住宿商品",
+        "新建价格方案",
+        "新建价格版本"
+      ],
+      "createsDraft": true
+    },
+    "draftEdit": {
+      "allowed": true,
+      "buttonsZh": [
+        "继续填写",
+        "提交审核",
+        "保存草稿",
+        "撤销草稿"
+      ]
+    },
+    "confirmedFactEdit": {
+      "allowed": false,
+      "allowedChangePathsZh": [
+        "草稿修改",
+        "新版本",
+        "停用",
+        "作废",
+        "补充证据",
+        "纠错申请"
+      ]
+    },
+    "delete": {
+      "physicalDeleteConfirmedFactAllowed": false,
+      "draftCanVoid": true,
+      "effectivePriceCanDisableOnly": true,
+      "effectivePriceCanBeReplacedByNewVersion": true
+    },
+    "read": {
+      "querySearchListBoardReportReadonly": true,
+      "readonlyEntriesZh": [
+        "列表",
+        "详情",
+        "今日",
+        "工作项",
+        "搜索",
+        "看板",
+        "报表"
+      ]
+    },
+    "requiredLifecyclePerObject": [
+      "currentState",
+      "versionHistory",
+      "evidenceHistory",
+      "legalNextActions"
+    ]
+  },
+  "requiredLifecyclePerObject": [
+    "currentState",
+    "versionHistory",
+    "evidenceHistory",
+    "legalNextActions"
+  ]
+}
