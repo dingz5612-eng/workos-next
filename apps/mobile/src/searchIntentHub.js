@@ -1,7 +1,7 @@
 import { resolveOperationPanelTarget } from "./operationRouteResolver.js";
 import { operationStatusTranslationKey } from "./operationStatus.js";
 import { isAccommodationResourceSetupQuery } from "./searchIntentRegistry.js";
-import { FIRST_GOLDEN_CHAIN_STEPS, FIRST_GOLDEN_CHAIN_WORKSPACE_ID } from "./capabilityProjection.js";
+import { DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS } from "./capabilityProjection.js";
 import { admissionCopy, missingAdmissionState, normalizeAdmissionState } from "./admissionSurface.js";
 
 export function buildSearchResultVM(item = {}, ctx = {}) {
@@ -180,8 +180,8 @@ function rankFor(item, query) {
     || query.split(/\s+/).filter(Boolean).some((part) => text.includes(part))
     || (roomSetupIntent && text.includes("房间"));
   if (!matched) return 0;
-  const currentRoomSetupCardId = FIRST_GOLDEN_CHAIN_STEPS[0]?.cardId || "";
-  if (roomSetupIntent && (item.templateWorkspaceId === FIRST_GOLDEN_CHAIN_WORKSPACE_ID || item.cardId === currentRoomSetupCardId || item.workItemType === currentRoomSetupCardId)) return 100;
+  const currentRoomSetupCardId = DORMITORY_SCENARIO1_STEPS[0]?.cardId || "";
+  if (roomSetupIntent && (item.templateWorkspaceId === DORMITORY_MAINLINE_WORKSPACE_ID || item.cardId === currentRoomSetupCardId || item.workItemType === currentRoomSetupCardId)) return 100;
   if (roomSetupIntent && text.includes("房间")) return 90;
   if (item.workItemId) return 80;
   if (["room", "bed", "stay"].includes(item.resultType || item.type)) return 70;
@@ -207,11 +207,11 @@ function sourceRefs(item, ids) {
 function admissionActionLabel(action = {}, admission = {}, ctx = {}) {
   if (action.type === "openWorkItem") {
     if (!admission.confirmAllowed) return ctx.tr?.("viewOnly") || "查看记录";
-    if (!admission.productionAllowed) return ctx.tr?.("searchActionObservation") || "继续观察记录";
+    if (!admission.productionAllowed) return ctx.tr?.("searchActionObservation") || "继续填写";
   }
   if (action.type === "startOperationsWorkspace") {
     if (!admission.prepareAllowed) return ctx.tr?.("searchActionLearning") || "开始学习";
-    if (!admission.productionAllowed) return ctx.tr?.("startObservation") || "开始观察记录";
+    if (!admission.productionAllowed) return ctx.tr?.("startObservation") || "开始填写";
   }
   return action.label;
 }

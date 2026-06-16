@@ -62,7 +62,7 @@ export async function submitWorkItemOperation({
       projectionStatus: "not_started",
       error: "persisted_work_item_required",
       reason: "persisted_work_item_required",
-      message: "需要先生成可办理任务，再提交观察记录。",
+      message: "需要先生成可办理任务，再提交办理记录。",
       source: "operations_runtime_pure"
     };
   }

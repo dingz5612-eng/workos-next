@@ -20,6 +20,13 @@ const { chromium } = require("../../apps/mobile/node_modules/playwright");
 const root = process.cwd();
 const baseUrl = process.env.WORKOS_MOBILE_URL || "http://127.0.0.1:5175";
 const apiUrl = process.env.WORKOS_API_URL || "http://127.0.0.1:5191";
+const CURRENT_MAINLINE_WORKSPACE_ID = "W-DORM-MAINLINE";
+const LEGACY_WORKSPACE_IDS = ["Dormitory.FirstGoldenChain", "W-STAY-RESOURCE"];
+const CURRENT_ROUTE_CARD_IDS = {
+  "Dorm.RoomSetupConfirm": "cert.roomSetupConfirm",
+  "Dorm.BedSetupConfirm": "cert.bedSetupConfirm",
+  "Dorm.ResourceReadinessConfirm": "cert.resourceReadinessConfirm"
+};
 const screenshotRoot = path.join(root, FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_DIR, "screenshots");
 const reportPath = path.join(root, FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH);
 const screenshotIndexPath = path.join(root, FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_SCREENSHOT_INDEX_PATH);
@@ -50,8 +57,9 @@ const report = {
   browserAuditDigest: null,
   auditLevel: "runtime_test_only",
   auditPurpose: "房源建档与基础就绪 browser audit；只证明 generated 场景包 1 规则可被 runtime/mobile/search test-only 消费。",
-  mainGate: "dormitory_first_golden_chain_capability_only",
+  mainGate: "dormitory_13_scenario_mainline_scenario1",
   legacyBrowserAuditLane: {
+    firstGoldenChainAsMainGate: false,
     tenScenarioAsMainGate: false,
     allStepsAsMainGate: false,
     lane: "legacy_regression_only"
@@ -121,19 +129,19 @@ try {
     searchState = await readDomState(page);
     addAssertion("search.object_query_101_room_no_command", searchState.currentStartCount === 0, "搜索 101房间 必须是对象查询，不得启动 current command。", searchState);
 
-    await fill(page, "#query", "新增房间");
+    await fill(page, "#query", "房源建档与基础就绪");
     await click(page, "#searchNow");
     await waitForHydrated(page);
-    await capture(page, "03-search-current-capability", "搜索新增房间只返回当前 capability 入口");
+    await capture(page, "03-search-current-capability", "搜索房源建档与基础就绪只返回当前主链入口");
     searchState = await readDomState(page);
-    addAssertion("search.only_current_capability_entry", searchState.currentStartCount === 1 && searchState.legacyStartCount === 0, "搜索新增房间必须只暴露当前 capability start。", searchState);
+    addAssertion("search.only_current_capability_entry", searchState.currentStartCount === 1 && searchState.legacyStartCount === 0, "搜索房源建档与基础就绪必须只暴露当前主链 start。", searchState);
 
-    await click(page, `[data-start-operations-workspace="${CAPABILITY_ID}"]`);
+    await click(page, `[data-start-operations-workspace="${CURRENT_MAINLINE_WORKSPACE_ID}"]`);
     await waitForOperationPanel(page);
 
     for (const [index, expected] of FIRST_GOLDEN_CHAIN_STEPS.entries()) {
       const ready = await readDomState(page);
-      addAssertion(`step.${index + 1}.card_id`, ready.cardId === expected.cardId, `${expected.step} 必须停在 ${expected.cardId}。`, ready);
+      addAssertion(`step.${index + 1}.card_id`, routeCardId(ready.cardId) === routeCardId(expected.cardId), `${expected.step} 必须停在 ${routeCardId(expected.cardId)}。`, ready);
       addAssertion(`step.${index + 1}.label_visible`, ready.text.includes(expected.step), `${expected.step} 必须可见。`, ready);
       addAssertion(`step.${index + 1}.technical_details_collapsed`, ready.technicalDetailsOpen === false, "技术详情默认必须折叠。", ready);
       const readyFields = await operationFields(page);
@@ -158,11 +166,12 @@ try {
       }
 
       await fillRequiredOperationFields(page, expected);
+      await ensureScenario1StepValues(page, index, expected);
       await waitForHydrated(page);
       if (index === 0) {
         await click(page, "[data-save-draft]");
         await waitForHydrated(page);
-        const savedDraft = await draftSnapshot(page, expected.cardId);
+        const savedDraft = await draftSnapshot(page, routeCardId(expected.cardId));
         addAssertion("draft.current_step_user_fields_only", savedDraft.hasDraft && !savedDraft.fieldIds.includes("roomId") && !savedDraft.fieldIds.includes("bedId"), "草稿只能保存当前步骤用户输入字段，不得保存系统字段。", savedDraft);
         await page.reload({ waitUntil: "domcontentloaded" });
         await waitForOperationPanel(page);
@@ -176,7 +185,7 @@ try {
       const after = submitResult.after;
       addAssertion(`step.${index + 1}.confirm_once`, submitResult.confirmDelta === 1 && submitResult.progressed, `${expected.step} 必须形成一次有效 Operations Confirm。`, submitResult);
       if (index === 0) {
-        const cleanedDraft = await draftSnapshot(page, expected.cardId);
+        const cleanedDraft = await draftSnapshot(page, routeCardId(expected.cardId));
         addAssertion("draft.submit_success_cleans_current_step", cleanedDraft.hasDraft === false, "提交成功后必须清理当前步骤草稿。", cleanedDraft);
       }
       addNoForbiddenVisibleTerms(`step.${index + 1}.after_submit`, after);
@@ -185,7 +194,7 @@ try {
 
     const completed = await readDomState(page);
     addAssertion("completion.scenario1_visible", completed.text.includes("房源建档与基础就绪完成"), "完成后必须显示房源建档与基础就绪完成。", completed);
-    addAssertion("completion.business_values_visible", /A[0-9a-f]{4}/i.test(completed.text) && /-01/.test(completed.text) && completed.text.includes("通过"), "完成页必须显示房间、床位、基础就绪结论等业务值。", completed);
+    addAssertion("completion.business_values_visible", /A[0-9a-f]{4}/i.test(completed.text) && /01/.test(completed.text) && completed.text.includes("通过"), "完成页必须显示房间、床位组、基础就绪结论等业务值。", completed);
     addAssertion("completion.no_raw_stable_id", !/\b(room|bed)-[a-f0-9]{8}\b/i.test(completed.text), "完成页不得显示 raw roomId/bedId。", completed);
     addAssertion("completion.technical_details_collapsed", completed.technicalDetailsOpen === false, "完成页技术详情默认必须折叠。", completed);
     addNoForbiddenVisibleTerms("completion", completed);
@@ -257,8 +266,11 @@ async function login(page) {
   await fill(page, "#loginAccount", account.username);
   await fill(page, "#loginPassword", account.password);
   await click(page, "#loginSubmit");
-  await page.waitForFunction(() => !document.querySelector("#loginSubmit") &&
-    (document.querySelector("[data-surface]") || document.querySelector("main") || document.querySelector("nav")), null, { timeout: 30_000 });
+  await page.waitForFunction(() => {
+    const view = new URL(window.location.href).searchParams.get("view");
+    return view !== "login" &&
+      (document.querySelector("[data-surface]") || document.querySelector("main") || document.querySelector("nav"));
+  }, null, { timeout: 30_000 });
   await waitForHydrated(page);
   await capture(page, "00-login-dormOperator", "dormOperator 登录");
 }
@@ -298,6 +310,43 @@ async function fillRequiredOperationFields(page, step) {
   }
 }
 
+async function ensureScenario1StepValues(page, index, step) {
+  if (index === 0) {
+    await ensureFieldValue(page, "roomNo", valueForField({ id: "roomNo" }, step));
+    await ensureFieldValue(page, "floor", "3");
+    await ensureFieldValue(page, "capacity", "4");
+  }
+  if (index === 2) {
+    await setFieldValue(page, "readinessState", "passed");
+  }
+}
+
+async function ensureFieldValue(page, fieldId, value) {
+  const selector = `[data-operation-field="${cssEscape(fieldId)}"]`;
+  const target = page.locator(selector).first();
+  if ((await target.count()) === 0) return;
+  const current = await target.inputValue().catch(() => "");
+  if (String(current || "").trim()) return;
+  const tagName = await target.evaluate((node) => node.tagName.toLowerCase()).catch(() => "");
+  if (tagName === "select") {
+    await select(page, selector, value);
+  } else {
+    await fill(page, selector, value);
+  }
+}
+
+async function setFieldValue(page, fieldId, value) {
+  const selector = `[data-operation-field="${cssEscape(fieldId)}"]`;
+  const target = page.locator(selector).first();
+  if ((await target.count()) === 0) return;
+  const tagName = await target.evaluate((node) => node.tagName.toLowerCase()).catch(() => "");
+  if (tagName === "select") {
+    await select(page, selector, value);
+  } else {
+    await fill(page, selector, value);
+  }
+}
+
 async function operationFields(page) {
   return page.evaluate(() => Array.from(document.querySelectorAll("[data-operation-field]")).map((node) => ({
     id: node.dataset.operationField || node.getAttribute("name") || node.id || "",
@@ -315,13 +364,13 @@ async function operationFields(page) {
 }
 
 function addSystemRefReadonlyAssertions(index, expected, fields) {
-  const systemRefs = fields.filter((field) => ["roomId", "bedId"].includes(field.id));
-  for (const field of systemRefs) {
+  for (const fieldId of ["roomId", "bedId"]) {
+    const field = fields.find((candidate) => candidate.id === fieldId);
     addAssertion(
-      `step.${index + 1}.${field.id}.not_editable`,
-      field.readonly || !field.visible || field.type === "hidden",
-      `${expected.step} ${field.id} 必须 readonly 或 hidden-submit-only。`,
-      field);
+      `step.${index + 1}.${fieldId}.not_editable`,
+      !field || field.readonly || !field.visible || field.type === "hidden",
+      `${expected.step} ${fieldId} 必须 readonly、hidden-submit-only 或不在普通表单出现。`,
+      field || { id: fieldId, hiddenFromOrdinarySurface: true });
   }
 }
 
@@ -397,6 +446,10 @@ function valueForField(field, step) {
   return `audit-${suffix}`;
 }
 
+function routeCardId(cardId) {
+  return CURRENT_ROUTE_CARD_IDS[cardId] || cardId;
+}
+
 function preferredSelectValue(field, step) {
   const id = String(field.id || "").toLowerCase();
   if (/bedtype|床位类型/.test(id)) return "whole";
@@ -426,16 +479,18 @@ async function capture(page, stepId, title) {
 }
 
 async function readDomState(page) {
-  return page.evaluate(() => {
+  return page.evaluate(({ currentWorkspaceId, legacyWorkspaceIds }) => {
     const url = new URL(window.location.href);
     const text = (document.body.innerText || "").replace(/\s+/g, " ").trim();
+    const countWorkspaceStarts = (workspaceId) =>
+      document.querySelectorAll(`[data-start-operations-workspace="${workspaceId}"]`).length;
     return {
       surface: document.querySelector("[data-surface]")?.dataset?.surface || "",
       workspaceId: url.searchParams.get("workspace") || "",
       cardId: url.searchParams.get("card") || "",
       workItemId: url.searchParams.get("workItem") || "",
-      currentStartCount: document.querySelectorAll('[data-start-operations-workspace="Dormitory.FirstGoldenChain"]').length,
-      legacyStartCount: document.querySelectorAll('[data-start-operations-workspace="W-STAY-RESOURCE"]').length,
+      currentStartCount: countWorkspaceStarts(currentWorkspaceId),
+      legacyStartCount: legacyWorkspaceIds.reduce((sum, workspaceId) => sum + countWorkspaceStarts(workspaceId), 0),
       submitCount: document.querySelectorAll("[data-submit-card]").length,
       technicalDetailsOpen: Array.from(document.querySelectorAll(".operation-technical-details, .system-check-details"))
         .some((node) => node.hasAttribute("open")),
@@ -443,7 +498,7 @@ async function readDomState(page) {
       text,
       url: window.location.href
     };
-  });
+  }, { currentWorkspaceId: CURRENT_MAINLINE_WORKSPACE_ID, legacyWorkspaceIds: LEGACY_WORKSPACE_IDS });
 }
 
 function addNoForbiddenVisibleTerms(id, domState) {
@@ -466,7 +521,19 @@ async function fill(page, selector, value) {
 
 async function select(page, selector, value) {
   const target = await firstVisible(page.locator(selector));
-  await target.selectOption(value);
+  const selected = await target.selectOption(value).catch(async () => {
+    const matchingLabel = await target.evaluate((node, desired) => {
+      const normalized = String(desired || "").trim().toLowerCase();
+      return Array.from(node.options || []).find((option) =>
+        String(option.value || "").trim().toLowerCase() === normalized ||
+        String(option.textContent || "").trim().toLowerCase() === normalized ||
+        (normalized === "passed" && String(option.textContent || "").trim() === "通过"))?.value || "";
+    }, value);
+    return matchingLabel ? target.selectOption(matchingLabel) : [];
+  });
+  if (!selected?.length) {
+    throw new Error(`Unable to select ${value} for ${selector}`);
+  }
   await page.waitForTimeout(120);
 }
 
@@ -516,7 +583,7 @@ async function submitCurrentStep(page, index) {
         confirmDelta,
         progressed,
         attempts: attempts + 1,
-        expectedNextCardId: next?.cardId ?? "completed-workspace-record",
+        expectedNextCardId: routeCardId(next?.cardId) ?? "completed-workspace-record",
         beforeUrl,
         afterUrl: page.url(),
         after: lastAfter
@@ -534,7 +601,7 @@ async function submitCurrentStep(page, index) {
     confirmDelta,
     progressed: isExpectedProgress(after, next),
     attempts,
-    expectedNextCardId: next?.cardId ?? "completed-workspace-record",
+    expectedNextCardId: routeCardId(next?.cardId) ?? "completed-workspace-record",
     beforeUrl,
     afterUrl: page.url(),
     after
@@ -554,7 +621,7 @@ async function waitForExpectedProgress(page, next, timeoutMs) {
   if (next) {
     return page.waitForFunction((nextCardId) =>
       new URL(window.location.href).searchParams.get("card") === nextCardId,
-    next.cardId, { timeout: timeoutMs }).then(() => true).catch(() => false);
+    routeCardId(next.cardId), { timeout: timeoutMs }).then(() => true).catch(() => false);
   }
   return page.waitForFunction(() =>
     (document.body.innerText || "").includes("房源建档与基础就绪完成") ||
@@ -564,7 +631,7 @@ async function waitForExpectedProgress(page, next, timeoutMs) {
 
 function isExpectedProgress(domState, next) {
   return next
-    ? domState.cardId === next.cardId
+    ? routeCardId(domState.cardId) === routeCardId(next.cardId)
     : domState.text.includes("房源建档与基础就绪完成") || domState.surface === "completed-workspace-record";
 }
 

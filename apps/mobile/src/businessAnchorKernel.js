@@ -18,6 +18,9 @@ const anchorFieldAliases = {
 };
 
 const actionByCardId = {
+  "cert.roomSetupConfirm": "anchorActionRoomSetup",
+  "cert.bedSetupConfirm": "anchorActionBedSetup",
+  "cert.resourceReadinessConfirm": "anchorActionRoomReadiness",
   roomSetup: "anchorActionRoomSetup",
   bedSetup: "anchorActionBedSetup",
   rateSetup: "anchorActionRateSetup",
@@ -157,8 +160,8 @@ function pushField(fields = [], key = "", label = "", value = "") {
 
 function actionFieldByCardId(cardId = "") {
   const groups = {
-    room: ["roomSetup", "roomReadiness", "roomBlock", "roomRelease", "roomReleaseAfterService"],
-    bed: ["bedSetup", "bedAssign", "bedRelease"],
+    room: ["cert.roomSetupConfirm", "cert.resourceReadinessConfirm", "roomSetup", "roomReadiness", "roomBlock", "roomRelease", "roomReleaseAfterService"],
+    bed: ["cert.bedSetupConfirm", "bedSetup", "bedAssign", "bedRelease"],
     price: ["rateSetup", "tariff"],
     resident: ["lead", "residentProfile"],
     deposit: ["depositAssessment", "depositReceipt", "depositConfirmation", "depositDeduction", "depositRefundApproval", "depositRefundPayment", "depositClose"],

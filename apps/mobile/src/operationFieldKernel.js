@@ -21,9 +21,9 @@ const operationFieldAliases = {
   "家具状态": "furnitureStatus",
   "技术状态": "technicalState",
   "房间备注": "roomNote",
-  "所属房间": "roomId",
-  "房间": "roomId",
-  "关联房间": "roomId",
+  "所属房间": "roomRef",
+  "房间": "roomRef",
+  "关联房间": "roomRef",
   "床位": "bedId",
   "关联床位": "bedId",
   "床位号": "bedNo",
@@ -291,7 +291,8 @@ const operationFieldAliases = {
 
 const taskValueAliases = {
   buildingName: ["building_name", "building", "buildingId", "building_id", "楼栋", "楼栋/地点"],
-  roomId: ["room_id", "roomLabel", "room_label", "roomDisplay", "room_display", "所属房间", "房间", "关联房间"],
+  roomRef: ["roomRef", "room_ref", "roomId", "room_id", "roomLabel", "room_label", "roomDisplay", "room_display", "所属房间", "房间", "关联房间"],
+  roomId: ["room_id", "roomRef", "room_ref", "roomLabel", "room_label", "roomDisplay", "room_display", "所属房间", "房间", "关联房间"],
   roomNo: ["room_no", "roomNumber", "room_number", "房间号"],
   roomType: ["room_type", "房型", "房间类型"],
   bedCount: ["bed_count", "capacity", "容量", "床位数", "需要床位"],
@@ -424,6 +425,7 @@ taskLabelAliases["关闭结果"] = "closeResult";
 const taskFallbackLabels = {
   "zh-CN": {
     buildingName: "楼栋",
+    roomRef: "所属房间",
     roomId: "房间",
     roomNo: "房间号",
     roomType: "房型",
@@ -466,6 +468,7 @@ const taskFallbackLabels = {
   },
   "ru-RU": {
     buildingName: "Корпус",
+    roomRef: "Комната",
     roomId: "Комната",
     roomNo: "Номер комнаты",
     roomType: "Тип комнаты",
@@ -490,6 +493,7 @@ const taskFallbackLabels = {
   },
   "ky-KG": {
     buildingName: "Имарат",
+    roomRef: "Бөлмө",
     roomId: "Бөлмө",
     roomNo: "Бөлмө номери",
     roomType: "Бөлмө түрү",

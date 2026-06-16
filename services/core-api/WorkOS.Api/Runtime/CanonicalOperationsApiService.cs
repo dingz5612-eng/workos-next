@@ -497,7 +497,7 @@ public sealed class CanonicalOperationsApiService
 
     private static string RouteCardIdForRuntime(string workspaceId, WorkItemDefinition? definition, string fallbackCardId) =>
         IsAcceptedCapabilityWorkspace(workspaceId) && !string.IsNullOrWhiteSpace(definition?.WorkItemType)
-            ? definition.WorkItemType
+            ? CurrentMainlineRouteCardId(definition.WorkItemType)
             : UiRouteCardIdForDefinition(definition, fallbackCardId);
 
     private static bool IsAcceptedCapabilityWorkspace(string workspaceId) =>
@@ -512,6 +512,14 @@ public sealed class CanonicalOperationsApiService
             "definition.dormitory.resourceReadinessConfirm.v1" => "roomReadiness",
             _ => fallbackCardId
         };
+
+    private static string CurrentMainlineRouteCardId(string workItemType)
+    {
+        var suffix = workItemType.Split('.', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? string.Empty;
+        return string.IsNullOrWhiteSpace(suffix)
+            ? workItemType
+            : $"cert.{char.ToLowerInvariant(suffix[0])}{suffix[1..]}";
+    }
 
     private sealed record DormitoryAnchor(
         string Query,

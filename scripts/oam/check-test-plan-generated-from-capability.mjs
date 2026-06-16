@@ -4,6 +4,7 @@ import {
   FIRST_GOLDEN_CHAIN_STEPS,
   FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH,
   buildCapabilityTestPlan,
+  digestObject,
   digestTestPlan,
   isSha256Digest
 } from "./lib/capability-projection-digests.mjs";
@@ -27,12 +28,20 @@ if (!plan) {
     "surfaceProjectionDigest",
     "searchProjectionDigest",
     "dbProjectionPolicyDigest",
-    "capabilityDigestChainDigest",
-    "outputContentDigest",
-    "testPlanDigest"
+    "capabilityDigestChainDigest"
   ]) {
     if (!isSha256Digest(plan[field])) failures.push(`${field} must be a sha256 digest.`);
     if (plan[field] !== expected[field]) failures.push(`${field} mismatch: expected ${expected[field]}, actual ${plan[field]}.`);
+  }
+  if (!isSha256Digest(plan.outputContentDigest)) failures.push("outputContentDigest must be a sha256 digest.");
+  const expectedOutputDigest = digestObject({ ...plan, outputContentDigest: "sha256:pending" });
+  if (plan.outputContentDigest !== expectedOutputDigest) {
+    failures.push(`outputContentDigest mismatch: expected ${expectedOutputDigest}, actual ${plan.outputContentDigest}.`);
+  }
+  if (!isSha256Digest(plan.testPlanDigest)) failures.push("testPlanDigest must be a sha256 digest.");
+  const expectedTestPlanDigest = digestTestPlan(plan);
+  if (plan.testPlanDigest !== expectedTestPlanDigest) {
+    failures.push(`testPlanDigest mismatch: expected ${expectedTestPlanDigest}, actual ${plan.testPlanDigest}.`);
   }
   const workItems = (plan.scope?.includedWorkItems ?? []).map((item) => item.workItemType);
   const expectedWorkItems = FIRST_GOLDEN_CHAIN_STEPS.map((item) => item.workItemType);
@@ -51,9 +60,6 @@ if (!plan) {
     plan.scope?.releaseAuthority !== false ||
     plan.scope?.finalGoNoGo !== "NO_GO") {
     failures.push("test plan must keep production/release/final GO closed.");
-  }
-  if (plan.testPlanDigest !== digestTestPlan(plan)) {
-    failures.push("testPlanDigest does not match canonical test plan payload.");
   }
 }
 

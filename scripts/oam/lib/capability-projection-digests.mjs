@@ -48,6 +48,18 @@ export const FIRST_GOLDEN_CHAIN_BUSINESS_LANDING_REVIEW_ATTESTATION_PATH =
 
 export const FIRST_GOLDEN_CHAIN_STEPS = currentCapabilitySteps();
 
+export function capabilityDigestChainStableRefDigest() {
+  return digestObject({
+    version: "oam.capability-digest-chain-stable-ref.v1",
+    capabilityId: CAPABILITY_ID,
+    ref: FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH,
+    evidenceScope: "local_test_runtime_evidence",
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  });
+}
+
 export function buildProjectionDigestChain(root = process.cwd()) {
   const capability = readJsonIfExists("docs/oam/capabilities/dormitory-first-golden-chain.current.json", root);
   const acceptance = readJsonIfExists("docs/oam/generated-candidate-acceptance.current.json", root);
@@ -71,7 +83,7 @@ export function buildProjectionDigestChain(root = process.cwd()) {
     negativeBrowserAuditDigest: negativeBrowserAuditDigest(root),
     noSideEffectsProofDigest: noSideEffectsProofDigest(root),
     subjectChainDigest: subjectChainDigest(root),
-    capabilityDigestChainDigest: generatedOutputDigest(FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH, root)
+    capabilityDigestChainDigest: capabilityDigestChainStableRefDigest()
   };
 }
 

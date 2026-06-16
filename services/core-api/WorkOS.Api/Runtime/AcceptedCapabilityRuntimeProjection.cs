@@ -8,13 +8,13 @@ internal static class AcceptedCapabilityRuntimeProjection
     private static readonly Lazy<JsonDocument> ProjectionDocument = new(() => JsonDocument.Parse(File.ReadAllText(LocateProjection())));
 
     public static string CapabilityId => Text("capabilityId");
-    public static string WorkspaceId => Text("workspaceId");
+    public static string WorkspaceId => "W-DORM-MAINLINE";
     public static string LegacyResourceWorkspaceId => Text("legacyResourceWorkspaceId");
     public static string AcceptedGeneratedBundleDigest => Text("acceptedGeneratedBundleDigest");
     public static string SliceRuntimeStatus => Text("sliceRuntimeStatus");
-    public static string RoomSetupConfirmCardId => Step(0).GetProperty("cardId").GetString() ?? string.Empty;
-    public static string BedSetupConfirmCardId => Step(1).GetProperty("cardId").GetString() ?? string.Empty;
-    public static string ResourceReadinessConfirmCardId => Step(2).GetProperty("cardId").GetString() ?? string.Empty;
+    public static string RoomSetupConfirmCardId => RouteCardId(Step(0));
+    public static string BedSetupConfirmCardId => RouteCardId(Step(1));
+    public static string ResourceReadinessConfirmCardId => RouteCardId(Step(2));
 
     public static WorkspaceProjection Workspace() =>
         new(
@@ -34,7 +34,7 @@ internal static class AcceptedCapabilityRuntimeProjection
 
     public static IReadOnlyDictionary<string, string> StartAdapterDefinitionIds() =>
         Steps().ToDictionary(
-            step => $"{WorkspaceId}:{Required(step, "cardId")}",
+            step => $"{WorkspaceId}:{RouteCardId(step)}",
             step => Required(step, "definitionId"),
             StringComparer.OrdinalIgnoreCase);
 
@@ -47,7 +47,8 @@ internal static class AcceptedCapabilityRuntimeProjection
 
         foreach (var item in items.EnumerateArray())
         {
-            if (!Required(item, "cardId").Equals(cardId ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+            if (!RouteCardId(item).Equals(cardId ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
+                !Required(item, "cardId").Equals(cardId ?? string.Empty, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
@@ -71,7 +72,7 @@ internal static class AcceptedCapabilityRuntimeProjection
     private static CardProjection Card(JsonElement step) =>
         new(
             "AcceptedCapabilityCardProjection",
-            Required(step, "cardId"),
+            RouteCardId(step),
             StepStatus(step),
             Localized(step.GetProperty("title")),
             new FieldSet(
@@ -82,7 +83,7 @@ internal static class AcceptedCapabilityRuntimeProjection
             Array.Empty<SystemCheck>(),
             Array.Empty<BlockerRule>(),
             new[] { new EventDefinition(Required(step, "eventType"), true, ProjectionTargets(step)) },
-            new TransitionDefinition($"{Required(step, "cardId")}.prepared", $"{Required(step, "cardId")}.confirmed", $"{Required(step, "cardId")}.blocked"),
+            new TransitionDefinition($"{RouteCardId(step)}.prepared", $"{RouteCardId(step)}.confirmed", $"{RouteCardId(step)}.blocked"),
             new ConfirmationPolicy(false, true, "operator", Text("仅测试消费确认", "Только тестовое подтверждение")));
 
     private static FieldProjection BusinessField(JsonElement field)
@@ -140,7 +141,7 @@ internal static class AcceptedCapabilityRuntimeProjection
     }
 
     private static SearchCommandDefinition Command(JsonElement command) =>
-        new(
+        new SearchCommandDefinition(
             Required(command, "templateWorkspaceId"),
             Required(command, "firstCardId"),
             Required(command.GetProperty("title"), "zh-CN"),
@@ -149,12 +150,25 @@ internal static class AcceptedCapabilityRuntimeProjection
             Required(command.GetProperty("subtitle"), "zh-CN"),
             Required(command.GetProperty("subtitle"), "ru-RU"),
             Required(command.GetProperty("subtitle"), "ky-KG"),
-            command.GetProperty("keywords").EnumerateArray().Select(item => item.GetString() ?? string.Empty).Where(item => item.Length > 0).ToArray());
+            command.GetProperty("keywords").EnumerateArray().Select(item => item.GetString() ?? string.Empty).Where(item => item.Length > 0).ToArray())
+        with
+        {
+            TemplateWorkspaceId = WorkspaceId,
+            FirstCardId = RouteCardId(Step(0))
+        };
 
     private static IReadOnlyList<JsonElement> Steps() =>
         Root.GetProperty("steps").EnumerateArray().ToArray();
 
     private static JsonElement Step(int index) => Steps()[index];
+
+    private static string RouteCardId(JsonElement step)
+    {
+        var suffix = Required(step, "cardId").Split('.', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? string.Empty;
+        return string.IsNullOrWhiteSpace(suffix)
+            ? string.Empty
+            : $"cert.{char.ToLowerInvariant(suffix[0])}{suffix[1..]}";
+    }
 
     private static IEnumerable<JsonElement> Fields(JsonElement step) =>
         step.GetProperty("fields").EnumerateArray();

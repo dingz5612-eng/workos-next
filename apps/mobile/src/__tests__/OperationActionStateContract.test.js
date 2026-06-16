@@ -13,7 +13,7 @@ describe("OAM Surface primary action state machine", () => {
     const html = routeView(ctx);
 
     expect((html.match(/data-submit-card/g) || []).length).toBe(1);
-    expect(visibleText(html)).toContain("提交观察记录");
+    expect(visibleText(html)).toContain("房间建档确认");
   });
 
   it("does not render a second card-internal submit button", () => {
@@ -76,7 +76,7 @@ describe("OAM Surface primary action state machine", () => {
 
     expect(text).toContain("查看提交轨迹");
     expect(text).not.toContain("提交处理");
-    expect(text).not.toContain("提交观察记录");
+    expect(text).not.toContain("提交办理记录");
     expect(text).not.toContain("确认办理");
   });
 

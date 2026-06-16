@@ -1,4 +1,4 @@
-import { bedLayoutForLabels, generatedBedLabelsForCount, serializeBedLayout } from "../controls/bedLabelControls.js";
+import { bedLayoutForLabels, generatedBedLabelsForCount, serializeBedLayout, splitBedLabels } from "../controls/bedLabelControls.js";
 import { fieldControlKind, isDerivedReadonlyField, optionsForField } from "../controls/fieldControls.js";
 import { isScopedResourceFieldVisible } from "../controls/resourceScopeControls.js";
 import { loadCompletedRecordSnapshot, loadDraft } from "../operationDrafts.js";
@@ -6,7 +6,7 @@ import { completedRecordActionPolicy } from "../operationRecordPolicy.js";
 import { operationFieldId } from "../operationFieldKernel.js";
 import { lensIdsForWorkspace, lensPreview, lensTitle } from "../runtimeLensCatalog.js";
 import { buildOperationActionState } from "../operationActionState.js";
-import { FIRST_GOLDEN_CHAIN_STEPS, defaultBedTypeForCount, isBedSetupCardId, isFirstGoldenChainWorkspaceId, isUserSubmittedCapabilityField, runtimeWorkItemMatchesCapabilityCard } from "../capabilityProjection.js";
+import { DORMITORY_SCENARIO1_STEPS, defaultBedTypeForCount, isBedSetupCardId, isDormitoryScenario1WorkspaceId, isUserSubmittedCapabilityField, runtimeWorkItemMatchesCapabilityCard } from "../capabilityProjection.js";
 import { activeCardForWorkspace, activeWorkspaceCard, isActionableCardStatus, isCardActionDisabled, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { checkoutServiceMobilePanel, checkoutServiceOperationAddon } from "./checkoutServiceView.js";
 import { EvidenceStateVM, OperationStepRail } from "./experienceComponents.js";
@@ -120,14 +120,14 @@ export function completedWorkspaceRecord(item, card, ctx) {
   const fieldsMissing = fieldRows.length > 0 && fieldRows.every((row) => !row.hasValue);
   const recordEvidence = evidenceForRecord(item, selectedStep);
   const evidenceText = recordEvidence.length ? recordEvidence.map((entry) => ctx.localTerm(entry)).join(" · ") : ctx.tr("noRequiredEvidence");
-  const firstGoldenChainCompleted = isFirstGoldenChainWorkspaceId(item.id) &&
-    FIRST_GOLDEN_CHAIN_STEPS.every((step) =>
+  const scenario1Completed = isDormitoryScenario1WorkspaceId(item.id) &&
+    DORMITORY_SCENARIO1_STEPS.every((step) =>
       isTerminalCardStatus((item.cards || []).find((candidate) => candidate.id === step.cardId)?.status));
-  const firstGoldenChainBusinessValues = firstGoldenChainCompleted
-    ? firstGoldenChainCompletionValues(item, ctx)
+  const scenario1BusinessValues = scenario1Completed
+    ? scenario1CompletionValues(item, ctx)
     : [];
-  const firstGoldenChainCompletionBanner = firstGoldenChainCompleted
-    ? `<section class="operation-state" data-capability-completion="Dormitory.FirstGoldenChain"><b>房源建档与基础就绪完成</b>${firstGoldenChainBusinessValues.length ? `<p>${firstGoldenChainBusinessValues.map((value) => ctx.escapeHtml(value)).join(" / ")}</p>` : ""}<p>仅代表房源建档与基础就绪记录完成；不代表可运营、可报价、可预订、上线、发布或最终放行。</p></section>`
+  const scenario1CompletionBanner = scenario1Completed
+    ? `<section class="operation-state" data-mainline-completion="Dormitory.13ScenarioMainline" data-scenario="lodging.resource-basic-readiness"><b>房源建档与基础就绪完成</b>${scenario1BusinessValues.length ? `<p>${scenario1BusinessValues.map((value) => ctx.escapeHtml(value)).join(" / ")}</p>` : ""}<p>仅代表房源建档与基础就绪记录完成；不代表可运营、可报价、可预订、上线、发布或最终放行。</p></section>`
     : "";
   return `<section class="completed-record-control" data-component="completedWorkspaceRecord" data-surface="completed-workspace-record" data-lifecycle-state="${ctx.escapeAttr(selectedStep.status)}" data-admission-decision="visible_readonly_completed" data-runtime-decision="work_item_terminal:${ctx.escapeAttr(selectedStep.status)}">
     ${OperationStepRail(item, selectedStep, ctx, {
@@ -145,7 +145,7 @@ export function completedWorkspaceRecord(item, card, ctx) {
         <b>${ctx.tr(selectedStep.status)}</b>
         <p>${ctx.tr("completedReviewBeforeCorrection")}</p>
       </section>
-      ${firstGoldenChainCompletionBanner}
+      ${scenario1CompletionBanner}
       ${fieldRows.length ? `<section class="completed-record-facts">
       <b>${ctx.tr("businessFields")}</b>
       ${fieldsMissing ? `<p class="record-sync-warning">${ctx.tr("recordFieldsNotSynced")}</p>` : ""}
@@ -201,7 +201,7 @@ function fieldsForRecord(card, item, ctx) {
   const values = completedRecordPayload(item, card, ctx);
   return (card.fields?.business || []).filter((field) => {
     const fieldId = operationFieldId(field);
-    if (isFirstGoldenChainWorkspaceId(item?.id) && !isUserSubmittedCapabilityField(card?.id, fieldId)) return false;
+    if (isDormitoryScenario1WorkspaceId(item?.id) && !isUserSubmittedCapabilityField(card?.id, fieldId)) return false;
     const hasSubmittedValue = hasCarryValue(values[fieldId]) || hasCarryValue(values[field.id]);
     const fallbackVisible = hasSubmittedValue ||
       Boolean(field.required) ||
@@ -210,18 +210,30 @@ function fieldsForRecord(card, item, ctx) {
   });
 }
 
-function firstGoldenChainCompletionValues(item, ctx) {
+function scenario1CompletionValues(item, ctx) {
+  const values = scenario1CompletedPayload(item, ctx);
+  return [
+    values.roomNo,
+    scenario1BedGroupSummary(values),
+    readinessDisplayValue(values.readinessState || values.basicReadinessConclusion, ctx)
+  ].filter(Boolean);
+}
+
+function scenario1CompletedPayload(item, ctx) {
   const values = {};
-  for (const step of FIRST_GOLDEN_CHAIN_STEPS) {
+  for (const step of DORMITORY_SCENARIO1_STEPS) {
     const card = (item.cards || []).find((candidate) => candidate.id === step.cardId);
     if (!card) continue;
     Object.assign(values, completedRecordPayload(item, card, ctx));
   }
-  return [
-    values.roomNo,
-    values.bedNo ? `${values.roomNo || ""}-${values.bedNo}`.replace(/^-/, "") : "",
-    readinessDisplayValue(values.readinessState, ctx)
-  ].filter(Boolean);
+  return values;
+}
+
+function scenario1BedGroupSummary(values = {}) {
+  const labels = splitBedLabels(values.bedLabels || generatedBedLabelsForCount(values.bedCount || values.capacity || ""));
+  if (!labels.length && values.bedNo) return `床位 ${values.bedNo}`;
+  if (!labels.length) return "";
+  return `${values.bedCount || labels.length} 个床位 ${labels.join(", ")}`;
 }
 
 function readinessDisplayValue(value, ctx) {
@@ -255,8 +267,17 @@ function completedRecordFieldRows(card, item, ctx) {
 }
 
 function completedRecordRawValue(field, item, card, ctx) {
-  const payload = completedRecordPayload(item, card, ctx);
+  const basePayload = completedRecordPayload(item, card, ctx);
+  const payload = isDormitoryScenario1WorkspaceId(item?.id) && card?.id === DORMITORY_SCENARIO1_STEPS[2]?.cardId
+    ? mergeRecordValues(scenario1CompletedPayload(item, ctx), basePayload)
+    : basePayload;
   const fieldId = operationFieldId(field);
+  if (isDormitoryScenario1WorkspaceId(item?.id) && ["roomId", "roomRef"].includes(fieldId)) {
+    return payload.roomNo || payload.roomRef || payload.roomId || "";
+  }
+  if (isDormitoryScenario1WorkspaceId(item?.id) && fieldId === "bedId") {
+    return scenario1BedGroupSummary(payload) || payload.bedId || "";
+  }
   return payload?.[fieldId] || payload?.[field.id] || "";
 }
 

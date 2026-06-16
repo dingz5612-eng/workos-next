@@ -18,6 +18,8 @@ const { chromium } = require("../../apps/mobile/node_modules/playwright");
 const root = process.cwd();
 const baseUrl = process.env.WORKOS_MOBILE_URL || "http://127.0.0.1:5175";
 const apiUrl = process.env.WORKOS_API_URL || "http://127.0.0.1:5191";
+const CURRENT_MAINLINE_WORKSPACE_ID = "W-DORM-MAINLINE";
+const HISTORICAL_WORKSPACE_IDS = ["Dormitory.FirstGoldenChain", "W-STAY-RESOURCE"];
 const screenshotRoot = path.join(root, FIRST_GOLDEN_CHAIN_NEGATIVE_BROWSER_AUDIT_DIR, "screenshots");
 const reportPath = path.join(root, FIRST_GOLDEN_CHAIN_NEGATIVE_BROWSER_AUDIT_REPORT_PATH);
 const screenshotIndexPath = path.join(root, FIRST_GOLDEN_CHAIN_NEGATIVE_BROWSER_AUDIT_SCREENSHOT_INDEX_PATH);
@@ -44,8 +46,9 @@ const report = {
   negativeBrowserAuditDigest: null,
   auditLevel: "runtime_test_only",
   auditPurpose: "房源建档与基础就绪 negative browser audit；只证明 generated 场景包 1 规则在 browser/runtime-test-only 证据面可被拒绝或阻断。",
-  mainGate: "dormitory_first_golden_chain_negative_capability_only",
+  mainGate: "dormitory_13_scenario_mainline_scenario1_negative",
   historicalBrowserAuditLane: {
+    firstGoldenChainAsCurrentProof: false,
     wStayResourceAsCurrentProof: false,
     roomSetupAsCurrentProof: false,
     bedSetupAsCurrentProof: false,
@@ -112,14 +115,14 @@ try {
     addScenario("ordinary_object_query_does_not_start_create", dom.currentStartCount === 0, "普通对象查询不启动创建。", { dom });
     await capture(page, "01-object-query-no-create", "普通对象查询不启动创建");
 
-    await fill(page, "#query", "新增房间");
+    await fill(page, "#query", "房源建档与基础就绪");
     await click(page, "#searchNow");
     await waitForHydrated(page);
     await waitForCurrentCapabilityStart(page);
     dom = await readDomState(page);
     addScenario("current_capability_entry_available_for_negative_audit", dom.currentStartCount === 1 && dom.historicalStartCount === 0, "负向审计必须从当前房源建档与基础就绪入口进入。", { dom });
     await capture(page, "02-current-capability-entry", "当前房源建档与基础就绪入口");
-    await click(page, `[data-start-operations-workspace="${CAPABILITY_ID}"]`);
+    await click(page, `[data-start-operations-workspace="${CURRENT_MAINLINE_WORKSPACE_ID}"]`);
     await waitForOperationPanel(page);
     dom = await readDomState(page);
     const fields = await operationFields(page);
@@ -245,8 +248,11 @@ async function login(page) {
   await fill(page, "#loginAccount", account.username);
   await fill(page, "#loginPassword", account.password);
   await click(page, "#loginSubmit");
-  await page.waitForFunction(() => !document.querySelector("#loginSubmit") &&
-    (document.querySelector("[data-surface]") || document.querySelector("main") || document.querySelector("nav")), null, { timeout: 30_000 });
+  await page.waitForFunction(() => {
+    const view = new URL(window.location.href).searchParams.get("view");
+    return view !== "login" &&
+      (document.querySelector("[data-surface]") || document.querySelector("main") || document.querySelector("nav"));
+  }, null, { timeout: 30_000 });
   await waitForHydrated(page);
   await capture(page, "00-login-dormOperator", "dormOperator 登录");
 }
@@ -292,19 +298,21 @@ async function capture(page, stepId, title) {
 }
 
 async function readDomState(page) {
-  return page.evaluate(() => {
+  return page.evaluate(({ currentWorkspaceId, historicalWorkspaceIds }) => {
     const url = new URL(window.location.href);
     const text = (document.body.innerText || "").replace(/\s+/g, " ").trim();
+    const countWorkspaceStarts = (workspaceId) =>
+      document.querySelectorAll(`[data-start-operations-workspace="${workspaceId}"]`).length;
     return {
       surface: document.querySelector("[data-surface]")?.dataset?.surface || "",
       workspaceId: url.searchParams.get("workspace") || "",
       cardId: url.searchParams.get("card") || "",
-      currentStartCount: document.querySelectorAll('[data-start-operations-workspace="Dormitory.FirstGoldenChain"]').length,
-      historicalStartCount: document.querySelectorAll('[data-start-operations-workspace="W-STAY-RESOURCE"]').length,
+      currentStartCount: countWorkspaceStarts(currentWorkspaceId),
+      historicalStartCount: historicalWorkspaceIds.reduce((sum, workspaceId) => sum + countWorkspaceStarts(workspaceId), 0),
       text,
       url: window.location.href
     };
-  });
+  }, { currentWorkspaceId: CURRENT_MAINLINE_WORKSPACE_ID, historicalWorkspaceIds: HISTORICAL_WORKSPACE_IDS });
 }
 
 async function click(page, selector) {
@@ -340,9 +348,9 @@ async function waitForOperationPanel(page) {
 }
 
 async function waitForCurrentCapabilityStart(page) {
-  await page.waitForFunction((capabilityId) =>
-    document.querySelectorAll(`[data-start-operations-workspace="${capabilityId}"]`).length === 1,
-  CAPABILITY_ID, { timeout: 30_000 });
+  await page.waitForFunction((workspaceId) =>
+    document.querySelectorAll(`[data-start-operations-workspace="${workspaceId}"]`).length === 1,
+  CURRENT_MAINLINE_WORKSPACE_ID, { timeout: 30_000 });
   await waitForHydrated(page);
 }
 

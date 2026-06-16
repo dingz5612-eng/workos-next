@@ -20,7 +20,8 @@ public sealed class WorkItemDefinitionRegistryService
             ["W-DORM-SERVICE-CHECKOUT:cert.expenseRecord"] = "definition.finance.expenseRecord.v1",
             ["W-DORM-GOVERNANCE:cert.periodReview"] = "definition.dormitory.periodReview.v1"
         })
-        .ToDictionary(item => item.Key, item => item.Value, StringComparer.OrdinalIgnoreCase);
+        .GroupBy(item => item.Key, StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(group => group.Key, group => group.Last().Value, StringComparer.OrdinalIgnoreCase);
     private static readonly IReadOnlyDictionary<string, string> StartUiRouteDefinitionKeys =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {

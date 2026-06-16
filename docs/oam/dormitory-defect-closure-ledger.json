@@ -121,13 +121,57 @@
         "重跑场景 2-12 正反向浏览器证据并更新 evidence generator。"
       ],
       "verificationScripts": [
-        "node scripts/surface/audit-dormitory-scenario-browser.mjs",
+        "node scripts/surface/run-dormitory-scenario2-positive-browser-audit.mjs && node scripts/surface/check-dormitory-scenario2-positive-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario2-negative-browser-audit.mjs && node scripts/surface/check-dormitory-scenario2-negative-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario3-positive-browser-audit.mjs && node scripts/surface/check-dormitory-scenario3-positive-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario3-negative-browser-audit.mjs && node scripts/surface/check-dormitory-scenario3-negative-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario4-positive-browser-audit.mjs && node scripts/surface/check-dormitory-scenario4-positive-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario4-negative-browser-audit.mjs && node scripts/surface/check-dormitory-scenario4-negative-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario5-positive-browser-audit.mjs && node scripts/surface/check-dormitory-scenario5-positive-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario5-negative-browser-audit.mjs && node scripts/surface/check-dormitory-scenario5-negative-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario6-positive-browser-audit.mjs && node scripts/surface/check-dormitory-scenario6-positive-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario6-negative-browser-audit.mjs && node scripts/surface/check-dormitory-scenario6-negative-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario7-positive-browser-audit.mjs && node scripts/surface/check-dormitory-scenario7-positive-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario7-negative-browser-audit.mjs && node scripts/surface/check-dormitory-scenario7-negative-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario8-positive-browser-audit.mjs && node scripts/surface/check-dormitory-scenario8-positive-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario8-negative-browser-audit.mjs && node scripts/surface/check-dormitory-scenario8-negative-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario9-positive-browser-audit.mjs && node scripts/surface/check-dormitory-scenario9-positive-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario9-negative-browser-audit.mjs && node scripts/surface/check-dormitory-scenario9-negative-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario10-positive-browser-audit.mjs && node scripts/surface/check-dormitory-scenario10-positive-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario10-negative-browser-audit.mjs && node scripts/surface/check-dormitory-scenario10-negative-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario11-positive-browser-audit.mjs && node scripts/surface/check-dormitory-scenario11-positive-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario11-negative-browser-audit.mjs && node scripts/surface/check-dormitory-scenario11-negative-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario12-positive-browser-audit.mjs && node scripts/surface/check-dormitory-scenario12-positive-browser-audit.mjs",
+        "node scripts/surface/run-dormitory-scenario12-negative-browser-audit.mjs && node scripts/surface/check-dormitory-scenario12-negative-browser-audit.mjs",
         "node scripts/oam/check-current-evidence-root.mjs"
       ],
       "blocksEvidenceRoot": true,
       "blocksCI": true,
-      "status": "open",
-      "closingEvidence": []
+      "status": "closed",
+      "closingEvidence": [
+        "artifacts/oam/checks/dormitory-scenario2-positive-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario2-negative-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario3-positive-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario3-negative-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario4-positive-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario4-negative-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario5-positive-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario5-negative-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario6-positive-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario6-negative-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario7-positive-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario7-negative-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario8-positive-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario8-negative-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario9-positive-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario9-negative-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario10-positive-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario10-negative-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario11-positive-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario11-negative-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario12-positive-browser-result.json",
+        "artifacts/oam/checks/dormitory-scenario12-negative-browser-result.json"
+      ]
     },
     {
       "defectId": "DORM-P0-005",
@@ -247,8 +291,10 @@
       ],
       "blocksEvidenceRoot": true,
       "blocksCI": true,
-      "status": "fixing",
-      "closingEvidence": []
+      "status": "closed",
+      "closingEvidence": [
+        "artifacts/oam/checks/lodging-consumer-graph-result.json"
+      ]
     },
     {
       "defectId": "DORM-P1-009",
@@ -274,8 +320,10 @@
       ],
       "blocksEvidenceRoot": true,
       "blocksCI": false,
-      "status": "fixing",
-      "closingEvidence": []
+      "status": "closed",
+      "closingEvidence": [
+        "artifacts/oam/checks/legacy-retirement-ledger-result.json"
+      ]
     },
     {
       "defectId": "DORM-P1-010",

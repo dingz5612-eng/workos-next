@@ -34,6 +34,7 @@ import {
   toggleEvidenceSelection,
   updateDerivedFields
 } from "../operationController.js";
+import { DORMITORY_SCENARIO1_STEPS } from "../capabilityProjection.js";
 import { loadDraft } from "../operationDrafts.js";
 import { createSurfaceCtx, runtimeStore } from "./surfaceContractTestHelpers.js";
 
@@ -92,7 +93,7 @@ describe("operationController hardening matrix", () => {
   it("saves draft and evidence selection with submission protocol", () => {
     const node = evidenceNode("room-photo", false);
     installDocument({
-      fields: [input("roomId", "R-101")],
+      fields: [input("roomNo", "A101")],
       evidence: [node]
     });
     const ctx = operationCtx();
@@ -100,9 +101,9 @@ describe("operationController hardening matrix", () => {
     toggleEvidenceSelection({ target: node }, ctx);
     saveCurrentDraft(ctx);
 
-    const draft = loadDraft("W-STAY-RESOURCE", "roomSetup");
+    const draft = loadDraft("W-DORM-MAINLINE", "cert.roomSetupConfirm");
     expect(node.classList.contains("selected")).toBe(true);
-    expect(draft.values.roomId).toBe("R-101");
+    expect(draft.values.roomNo).toBe("A101");
     expect(draft.evidenceDrafts[0].requirementId).toBe("room-photo");
     expect(draft.submissionProtocol).toMatchObject({ submissionId: "sub-mock" });
     expect(ctx.state.operationMessage).toBe(ctx.tr("draftSaved"));
@@ -118,7 +119,7 @@ describe("operationController hardening matrix", () => {
     const bedLayout = input("bedLayout", "");
     const preview = previewNode();
     installDocument({
-      fields: [input("roomId", "R-101"), amount, unitRate, tariffQuantity, bedCount, bedLabels, bedType, bedLayout],
+      fields: [input("roomNo", "A101"), amount, unitRate, tariffQuantity, bedCount, bedLabels, bedType, bedLayout],
       preview
     });
     const ctx = operationCtx();
@@ -133,7 +134,7 @@ describe("operationController hardening matrix", () => {
       type: "change",
       target: {
         tagName: "SELECT",
-        dataset: { operationField: "roomId" },
+        dataset: { operationField: "roomNo" },
         matches: () => true
       }
     }, ctx);
@@ -145,6 +146,46 @@ describe("operationController hardening matrix", () => {
     expect(ctx.state.lastActionResult).toBeNull();
     expect(ctx.state.fieldValidation).toBeNull();
     expect(ctx.render).toHaveBeenCalled();
+  });
+
+  it("keeps the scenario 1 readiness select alias in the current-step draft", () => {
+    const store = runtimeStore();
+    const cardId = DORMITORY_SCENARIO1_STEPS[2].cardId;
+    store.workspaces[0].cards = [{
+      id: cardId,
+      status: "ready",
+      title: { "zh-CN": "基础就绪确认" },
+      fields: { business: [field("readinessState", "基础就绪结论")], system: [], analytics: [] },
+      evidence: [],
+      checks: [],
+      blockerRules: [],
+      confirmation: { required: true, requiredRole: "operator" }
+    }];
+    store.operationWorkItems = [{
+      workItemId: "wi-readiness-select",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId,
+      lifecycleState: "ready",
+      ownerRole: "operator"
+    }];
+    store.workQueue = [...store.operationWorkItems];
+    const readiness = { ...input("readinessState", "passed"), tagName: "SELECT" };
+    installDocument({ fields: [readiness] });
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-readiness-select",
+      selectedWorkspace: "W-DORM-MAINLINE",
+      selectedCardId: cardId,
+      runtimeStore: store
+    });
+    ctx.render = vi.fn();
+
+    collectDraftingValuesOnInput({
+      type: "change",
+      target: readiness
+    }, ctx);
+
+    expect(loadDraft("W-DORM-MAINLINE", cardId).values.readinessState).toBe("passed");
   });
 
   it("binds segmented field buttons and ignores disabled or missing controls", () => {
@@ -187,7 +228,7 @@ describe("operationController hardening matrix", () => {
     offline.hydrateProjectionFromApi = vi.fn(async () => {
       offline.state.apiStatus = "offline";
     });
-    installDocument({ fields: [input("roomId", "R-101")] });
+    installDocument({ fields: [input("roomNo", "A101")] });
     await submitCurrentCard(offline);
     expect(offline.state.operationMessage).toBe(offline.tr("apiOfflineSubmit"));
     expect(submitWorkItemOperation).not.toHaveBeenCalled();
@@ -195,7 +236,7 @@ describe("operationController hardening matrix", () => {
 
   it("submits committed results, preserves pending/failed projection states, and maps blocked/errors", async () => {
     installDocument({
-      fields: [input("roomId", "R-101")],
+      fields: [input("roomNo", "A101")],
       evidence: [evidenceNode("room-photo", true)]
     });
     materializeEvidenceObjects.mockResolvedValue(["evd-room"]);
@@ -256,7 +297,7 @@ function operationCtx(overrides = {}) {
   store.workspaces[0].cards[0] = {
     ...store.workspaces[0].cards[0],
     fields: {
-      business: [field("roomId", "房间")],
+      business: [field("roomNo", "房间号")],
       system: [],
       analytics: []
     },

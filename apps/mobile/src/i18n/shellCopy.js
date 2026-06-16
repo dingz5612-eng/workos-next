@@ -234,7 +234,7 @@ export const shellCopy = {
     "workspaceProjectionMissing": "办理项存在，但对象视图暂未同步，请稍后重试或联系经理。",
     "prepareContract": "预检合同",
     "prepareContractReady": "将按运行时合同预检",
-    "prepareContractHelp": "系统会校验字段、证据、角色、设备和内测范围。",
+    "prepareContractHelp": "系统会校验字段、证据、角色、设备和准入范围。",
     "confirmCommit": "确认写入",
     "confirmCommitReady": "只通过运行时确认",
     "confirmCommitHelp": "确认后由 Operations Runtime 写入提交、事件、账务和轨迹。",

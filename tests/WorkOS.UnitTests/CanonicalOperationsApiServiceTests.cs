@@ -10,7 +10,7 @@ public sealed class CanonicalOperationsApiServiceTests
     [TestMethod]
     public void operations_confirm_uses_unit_of_work_and_exposes_fact_trace()
     {
-        var service = Service(out var runtime, out var store);
+        var service = Service(out var runtime, out var store, workspaces: new[] { AcceptedCapabilityRuntimeProjection.Workspace() });
         service.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemId: "wi-current-resource-readiness-unit-of-work",
             TenantId: "tenant-s3",
@@ -22,12 +22,20 @@ public sealed class CanonicalOperationsApiServiceTests
             {
                 ["caseId"] = "case-current-resource-readiness",
                 ["cardId"] = "cert.resourceReadinessConfirm",
-                ["definitionId"] = "definition.dormitory.resourceReadinessConfirm.v1"
+                ["definitionId"] = "definition.dormitory.resourceReadinessConfirm.v1",
+                ["bedCount"] = "2",
+                ["createdBedCount"] = "2"
             }));
 
         var result = service.ConfirmWorkItem(
             "wi-current-resource-readiness-unit-of-work",
-            Request("idem-current-resource-readiness", cardId: "cert.resourceReadinessConfirm", fieldValues: new Dictionary<string, string>()),
+            Request("idem-current-resource-readiness", cardId: "cert.resourceReadinessConfirm", fieldValues: new Dictionary<string, string>
+            {
+                ["readinessState"] = "passed"
+            }) with
+            {
+                EvidenceIds = new[] { "ev-readiness-positive" }
+            },
             OperatorActor(),
             "req-current-resource-readiness");
         var trace = service.GetSubmissionTrace(result.CommandSubmissionId!);
@@ -539,7 +547,7 @@ public sealed class CanonicalOperationsApiServiceTests
     [TestMethod]
     public void operations_confirm_dispatches_next_work_item_from_generated_transition_policy()
     {
-        var service = Service(out _, out _);
+        var service = Service(out _, out _, workspaces: new[] { AcceptedCapabilityRuntimeProjection.Workspace() });
         service.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemId: "wi-room-setup-confirm-generated-flow",
             TenantId: "tenant-s3",
@@ -556,11 +564,19 @@ public sealed class CanonicalOperationsApiServiceTests
 
         var result = service.ConfirmWorkItem(
             "wi-room-setup-confirm-generated-flow",
-            Request("idem-generated-room-flow", cardId: "cert.roomSetupConfirm", fieldValues: new Dictionary<string, string>()),
+            Request("idem-generated-room-flow", cardId: "cert.roomSetupConfirm", fieldValues: new Dictionary<string, string>
+            {
+                ["roomNo"] = "A101",
+                ["capacity"] = "2"
+            }) with
+            {
+                WorkspaceId = AcceptedCapabilityRuntimeProjection.WorkspaceId,
+                EvidenceIds = new[] { "ev-room-positive" }
+            },
             OperatorActor(),
             "req-generated-room-flow");
         var next = service.ListWorkItems("tenant-s3")
-            .SingleOrDefault(item => item.WorkspaceId == "W-DORM-MAINLINE" && item.Payload.TryGetValue("cardId", out var cardId) && cardId == "bedSetup");
+            .SingleOrDefault(item => item.WorkspaceId == "W-DORM-MAINLINE" && item.Payload.TryGetValue("cardId", out var cardId) && cardId == "cert.bedSetupConfirm");
 
         Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
         Assert.IsNotNull(next);
@@ -583,7 +599,7 @@ public sealed class CanonicalOperationsApiServiceTests
 
         var result = service.ConfirmWorkItem(
             "wi-generated-duplicate-room",
-            Request("idem-generated-duplicate-room", cardId: "Dorm.RoomSetupConfirm", fieldValues: new Dictionary<string, string>
+            Request("idem-generated-duplicate-room", cardId: "cert.roomSetupConfirm", fieldValues: new Dictionary<string, string>
             {
                 ["roomNo"] = "duplicate-room",
                 ["capacity"] = "2"
@@ -616,7 +632,7 @@ public sealed class CanonicalOperationsApiServiceTests
 
         var result = service.ConfirmWorkItem(
             "wi-generated-forged-ref",
-            Request("idem-generated-forged-ref", cardId: "Dorm.RoomSetupConfirm", fieldValues: new Dictionary<string, string>
+            Request("idem-generated-forged-ref", cardId: "cert.roomSetupConfirm", fieldValues: new Dictionary<string, string>
             {
                 ["roomNo"] = "A101",
                 ["capacity"] = "2",
@@ -655,7 +671,7 @@ public sealed class CanonicalOperationsApiServiceTests
 
         var forgedRoom = service.ConfirmWorkItem(
             "wi-generated-forged-room-id",
-            Request("idem-generated-forged-room-id", cardId: "Dorm.RoomSetupConfirm", fieldValues: new Dictionary<string, string>
+            Request("idem-generated-forged-room-id", cardId: "cert.roomSetupConfirm", fieldValues: new Dictionary<string, string>
             {
                 ["roomNo"] = "A102",
                 ["capacity"] = "2",
@@ -669,7 +685,7 @@ public sealed class CanonicalOperationsApiServiceTests
             "req-generated-forged-room-id");
         var forgedBed = service.ConfirmWorkItem(
             "wi-generated-forged-bed-id",
-            Request("idem-generated-forged-bed-id", cardId: "Dorm.BedSetupConfirm", fieldValues: new Dictionary<string, string>
+            Request("idem-generated-forged-bed-id", cardId: "cert.bedSetupConfirm", fieldValues: new Dictionary<string, string>
             {
                 ["bedId"] = "forged-bed-id",
                 ["bedNo"] = "01"
@@ -708,7 +724,7 @@ public sealed class CanonicalOperationsApiServiceTests
 
         var result = service.ConfirmWorkItem(
             "wi-generated-invalid-readiness",
-            Request("idem-generated-invalid-readiness", cardId: "Dorm.ResourceReadinessConfirm", fieldValues: new Dictionary<string, string>
+            Request("idem-generated-invalid-readiness", cardId: "cert.resourceReadinessConfirm", fieldValues: new Dictionary<string, string>
             {
                 ["readinessState"] = "ready"
             }) with
@@ -7264,10 +7280,11 @@ public sealed class CanonicalOperationsApiServiceTests
         string definitionId,
         IReadOnlyDictionary<string, string>? payload = null)
     {
+        var cardId = CurrentMainlineRouteCardId(workItemType);
         var values = new Dictionary<string, string>(payload ?? new Dictionary<string, string>(), StringComparer.Ordinal)
         {
             ["caseId"] = $"case-{workItemId}",
-            ["cardId"] = workItemType,
+            ["cardId"] = cardId,
             ["definitionId"] = definitionId,
             ["buildingContextRef"] = "building:tenant-s3:d01"
         };
@@ -7276,9 +7293,17 @@ public sealed class CanonicalOperationsApiServiceTests
             TenantId: "tenant-s3",
             WorkItemType: workItemType,
             WorkspaceId: AcceptedCapabilityRuntimeProjection.WorkspaceId,
-            CardId: workItemType,
+            CardId: cardId,
             OwnerRole: "operator",
             Payload: values);
+    }
+
+    private static string CurrentMainlineRouteCardId(string workItemType)
+    {
+        var suffix = workItemType.Split('.', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? string.Empty;
+        return string.IsNullOrWhiteSpace(suffix)
+            ? workItemType
+            : $"cert.{char.ToLowerInvariant(suffix[0])}{suffix[1..]}";
     }
 
     private static RuntimeActorContext FinanceActor() =>

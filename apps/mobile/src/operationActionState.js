@@ -1,5 +1,6 @@
 import { isTerminalCardStatus } from "./selectors/workspaceSelectors.js";
 import { admissionCopy, admissionStateFromWorkItem } from "./admissionSurface.js";
+import { capabilitySubmitLabelKey, isDormitoryScenario1CardId } from "./capabilityProjection.js";
 
 export function buildOperationActionState(workItem = {}, card = {}, runtimeResult = null, state = {}) {
   const candidateResult = runtimeResult || state.lastActionResult || null;
@@ -67,10 +68,8 @@ export function PrimaryActionVM(status, extra = {}) {
   };
   const entry = { ...(table[status] || table.ready) };
   const cardId = extra.card?.id || "";
-  if (["ready", "readyObservation"].includes(status) && cardId.startsWith("Dorm.")) {
-    entry.labelKey = status === "readyObservation"
-      ? "capabilitySubmit.runtimeTestOnly"
-      : `capabilitySubmit.${cardId}`;
+  if (["ready", "readyObservation"].includes(status) && isDormitoryScenario1CardId(cardId)) {
+    entry.labelKey = capabilitySubmitLabelKey(cardId, "business-landing");
   }
   return { status, ...entry, disabled: Boolean(extra.disabled || table[status]?.disabled) };
 }

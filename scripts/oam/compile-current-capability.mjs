@@ -458,7 +458,7 @@ const testPlan = buildTestPlan({
   surfaceProjectionDigest: mobileProjection.surfaceProjectionDigest,
   searchProjectionDigest: mobileProjection.searchProjectionDigest,
   dbProjectionPolicyDigest: dbProjectionPolicy.outputContentDigest,
-  capabilityDigestChainDigest: digestChain.outputContentDigest
+  capabilityDigestChainDigest: capabilityDigestChainStableRefDigest()
 });
 const finalizedTestPlan = finalizeGenerated({
   ...testPlan,
@@ -1217,6 +1217,18 @@ function generatedBase(kind, options = {}) {
 function finalizeGenerated(value) {
   const outputContentDigest = digestObject({ ...value, outputContentDigest: "sha256:pending" });
   return { ...value, outputContentDigest };
+}
+
+function capabilityDigestChainStableRefDigest() {
+  return digestObject({
+    version: "oam.capability-digest-chain-stable-ref.v1",
+    capabilityId: CAPABILITY_ID,
+    ref: digestChainPath,
+    evidenceScope: "local_test_runtime_evidence",
+    productionConfirmAllowed: false,
+    releaseAuthority: false,
+    finalGoNoGo: "NO_GO"
+  });
 }
 
 function withoutGeneratedDigests(value) {

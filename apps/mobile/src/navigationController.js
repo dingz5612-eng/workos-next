@@ -7,6 +7,7 @@ import { safeConfirmErrorKey, safeReasonCode } from "./admissionSurface.js";
 import { defaultHomeForCurrentSurface as resolveDefaultHomeForCurrentSurface } from "./surfaceResolver.js";
 import { resolveOperationPanelTarget } from "./operationRouteResolver.js";
 import { resolveSearchIntentId } from "./searchIntentRegistry.js";
+import { DORMITORY_MAINLINE_WORKSPACE_ID } from "./capabilityProjection.js";
 
 export function setView(view, ctx) {
   if (!ctx.state.currentActor && view !== "login") {
@@ -281,7 +282,7 @@ function handleStartWorkspaceError(error, ctx) {
   ctx.state.operationMessage = ctx.tr("apiOffline");
 }
 
-function latestStartedWorkspaceId(projection = {}, templateWorkspaceId = "W-STAY-RESOURCE") {
+function latestStartedWorkspaceId(projection = {}, templateWorkspaceId = DORMITORY_MAINLINE_WORKSPACE_ID) {
   return (projection.workspaces || projection.Workspaces || [])
     .filter((workspace) => String(workspace.id || workspace.Id || "").startsWith(`${templateWorkspaceId}-`))
     .map((workspace) => workspace.id || workspace.Id)

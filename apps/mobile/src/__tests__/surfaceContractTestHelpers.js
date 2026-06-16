@@ -14,13 +14,13 @@ export function createSurfaceCtx(overrides = {}) {
     queueDomain: "all",
     queueBadge: "all",
     todayFilter: "must-do",
-    selectedWorkItemId: "W-STAY-RESOURCE:roomSetup",
-    selectedWorkspace: "W-STAY-RESOURCE",
-    selectedCardId: "roomSetup",
+    selectedWorkItemId: "wi-dorm-room-setup",
+    selectedWorkspace: "W-DORM-MAINLINE",
+    selectedCardId: "cert.roomSetupConfirm",
     selectedCardIndex: -1,
     currentActor: {
       role: "operator",
-      displayName: "内测经办人",
+      displayName: "住宿经办人",
       token: "operator-token",
       capabilities: ["operation.confirm"]
     },
@@ -82,20 +82,35 @@ export function renderSurface(view, overrides = {}) {
 export function runtimeStore() {
   const internalPilotAdmission = internalPilotAdmissionFixture();
   const workspace = {
-    id: "W-STAY-RESOURCE",
+    id: "W-DORM-MAINLINE",
     domain: "stay",
-    caseId: "case:W-STAY-RESOURCE",
-    title: { "zh-CN": "住宿资源" },
-    summary: { "zh-CN": "房间床位入住资源" },
-    next: { "zh-CN": "先配置房间和床位" },
+    caseId: "case:W-DORM-MAINLINE",
+    title: { "zh-CN": "房源建档与基础就绪" },
+    summary: { "zh-CN": "房间建档、床位组确认和基础就绪确认" },
+    next: { "zh-CN": "发起房源建档与基础就绪" },
     blockers: [],
     cards: [{
-      id: "roomSetup",
+      id: "cert.roomSetupConfirm",
       status: "ready",
-      workItemId: "T-ROOM-CREATE",
-      title: { "zh-CN": "房间床位配置" },
-      fields: { business: [], system: [], analytics: [] },
-      evidence: [{ id: "room-duplicate-check", label: { "zh-CN": "房间重复校验" } }],
+      workItemId: "wi-dorm-room-setup",
+      title: { "zh-CN": "房间建档确认" },
+      fields: {
+        business: [
+          { id: "buildingContextRef", label: { "zh-CN": "楼栋/区域" }, required: true },
+          { id: "floor", label: { "zh-CN": "楼层" }, required: true },
+          { id: "roomNo", label: { "zh-CN": "房间号" }, required: true },
+          { id: "bedCount", label: { "zh-CN": "床位数量" }, required: true }
+        ],
+        system: [],
+        analytics: []
+      },
+      values: {
+        buildingContextRef: "1 号楼",
+        floor: "3 层",
+        roomNo: "301",
+        bedCount: 6
+      },
+      evidence: [{ id: "room-basic-info-evidence", label: { "zh-CN": "房间基础资料证据" } }],
       checks: [],
       blockerRules: [],
       confirmation: { required: true, requiredRole: "operator", policyRef: "operations-runtime-policy" }
@@ -105,29 +120,41 @@ export function runtimeStore() {
     workspaces: [workspace],
     workQueue: [{
       queueItemId: "q-room",
-      workItemId: "W-STAY-RESOURCE:roomSetup",
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "roomSetup",
-      caseId: "case:W-STAY-RESOURCE",
-      workItemType: "Dorm.RoomSetup",
+      workItemId: "wi-dorm-room-setup",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm",
+      caseId: "case:W-DORM-MAINLINE",
+      workItemType: "Dorm.RoomSetupConfirm",
       lifecycleState: "ready",
       ownerRole: "operator",
       badges: ["mine", "ready"],
       traceRefs: ["trace-room"],
       commandSubmissionId: "cmd-room",
-      reason: "先配置房间和床位",
+      reason: "发起房源建档与基础就绪",
+      businessAnchor: {
+        buildingContextRef: "1 号楼",
+        floor: "3 层",
+        roomNo: "301",
+        bedCount: 6
+      },
       admission: internalPilotAdmission
     }],
     operationWorkItems: [{
-      workItemId: "W-STAY-RESOURCE:roomSetup",
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "roomSetup",
-      caseId: "case:W-STAY-RESOURCE",
-      workItemType: "Dorm.RoomSetup",
+      workItemId: "wi-dorm-room-setup",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm",
+      caseId: "case:W-DORM-MAINLINE",
+      workItemType: "Dorm.RoomSetupConfirm",
       lifecycleState: "ready",
       ownerRole: "operator",
       traceRefs: ["trace-room"],
-      reason: "先配置房间和床位",
+      reason: "发起房源建档与基础就绪",
+      businessAnchor: {
+        buildingContextRef: "1 号楼",
+        floor: "3 层",
+        roomNo: "301",
+        bedCount: 6
+      },
       admission: internalPilotAdmission
     }],
     homeSurface: [],

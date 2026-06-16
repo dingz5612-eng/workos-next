@@ -4,6 +4,7 @@ import { buildOperationActionState } from "../operationActionState.js";
 import { syncUrlFromState } from "../navigationController.js";
 import { resolveOperationPanelTarget } from "../operationRouteResolver.js";
 import { activeWorkspaceCard, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
+import { DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS } from "../capabilityProjection.js";
 import { ActionResult, EvidenceSheet, OperationStepRail, TechnicalAuditDetails, TrustedConfirmSheet, workItemModel } from "./experienceComponents.js";
 import { completedWorkspaceRecord, currentActionResultForOperationCard, primaryActionButton, workspaceCardPanel } from "./workspaceView.js";
 
@@ -12,7 +13,7 @@ export function operationPanelView(ctx) {
   const item = resolveOperationItem(state, ctx);
   if (!item?.workItemId && !item?.work_item_id) {
     const startResourceAction = shouldOfferResourceSetup(state)
-      ? `<button data-start-operations-workspace="W-STAY-RESOURCE" data-first-card-id="roomSetup">${ctx.tr("operationUnavailableStartResource")}</button>`
+      ? `<button data-start-operations-workspace="${ctx.escapeAttr(DORMITORY_MAINLINE_WORKSPACE_ID)}" data-first-card-id="${ctx.escapeAttr(DORMITORY_SCENARIO1_STEPS[0]?.cardId || "")}">${ctx.tr("operationUnavailableStartResource")}</button>`
       : `<button data-view="search">${ctx.tr("operationUnavailableSearchAction")}</button>`;
     state.lastActionResult = {
       confirmed: false,
@@ -37,7 +38,7 @@ export function operationPanelView(ctx) {
   }
 
   const workspace = item.workspace;
-  const activeCard = item?.card || activeWorkspaceCard(workspace, state.selectedCardIndex, state.selectedCardId);
+  const activeCard = workspace ? (item?.card || activeWorkspaceCard(workspace, state.selectedCardIndex, state.selectedCardId)) : null;
   if (!workspace || !activeCard) {
     return shell(`
       <section class="operation-panel-empty" data-surface="operation-panel-runtime" data-admission-decision="visible_blocked_projection_missing" data-runtime-decision="blocked:workspace_projection_missing">
@@ -47,6 +48,11 @@ export function operationPanelView(ctx) {
       </section>
     `);
   }
+  return renderOperationPanelForItem(item, workspace, activeCard, ctx);
+}
+
+function renderOperationPanelForItem(item, workspace, activeCard, ctx) {
+  const { state, shell } = ctx;
   if (isTerminalCardStatus(activeCard.status)) {
     return shell(`
       ${completedWorkspaceRecord(workspace, activeCard, ctx)}
@@ -108,8 +114,8 @@ function actionResultForActiveCard(result = null, workspace = {}, activeCard = {
 }
 
 function shouldOfferResourceSetup(state = {}) {
-  return state.selectedWorkspace === "W-STAY-RESOURCE" &&
-    (!state.selectedCardId || state.selectedCardId === "roomSetup");
+  return state.selectedWorkspace === DORMITORY_MAINLINE_WORKSPACE_ID &&
+    (!state.selectedCardId || state.selectedCardId === DORMITORY_SCENARIO1_STEPS[0]?.cardId);
 }
 
 function operationAdmissionDecision(model, card, actionState) {

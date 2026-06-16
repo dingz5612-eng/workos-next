@@ -1,16 +1,16 @@
 import { capabilityCommandCatalog } from "./capabilityProjection.js";
 
-const [firstGoldenChainCommand] = capabilityCommandCatalog();
+const [dormitoryScenario1Command] = capabilityCommandCatalog();
 
 const searchIntents = {
   accommodationResourceSetup: {
     intentId: "accommodationResourceSetup",
     commandId: "startOperationsWorkspace",
-    templateWorkspaceId: firstGoldenChainCommand.templateWorkspaceId,
-    firstCardId: firstGoldenChainCommand.firstCardId,
-    title: firstGoldenChainCommand.title,
+    templateWorkspaceId: dormitoryScenario1Command.templateWorkspaceId,
+    firstCardId: dormitoryScenario1Command.firstCardId,
+    title: dormitoryScenario1Command.title,
     suggestionGroups: ["frequent", "team"],
-    terms: firstGoldenChainCommand.keywords
+    terms: dormitoryScenario1Command.keywords
   }
 };
 

@@ -99,7 +99,7 @@
       "digest": "sha256:69085b5c102cd8ba16e2c61c9b666fc3e622bc5747fc5ccc48551e5a0e6583e6"
     }
   ],
-  "outputContentDigest": "sha256:76f60f215ab88bfb9b94bde8ff79ae5e23bcf6cdd140380ba4f4294a5393f34b",
+  "outputContentDigest": "sha256:ada1c8ddab2d8d91ddc9737a8dfcb42629169f7e5deceb0be4ee1ce3283a84d7",
   "capabilityId": "Dormitory.FirstGoldenChain",
   "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
   "currentFilesMode": "ledger_replay_projection_only",
@@ -116,7 +116,7 @@
   "surfaceProjectionDigest": "sha256:4c7cc69fd8d4f3c1d32c2cfa2c89de236e309d38958f621c25701a794b5fe4f8",
   "searchProjectionDigest": "sha256:02a0f8586d9fcde00e5c56d5b49528e3a669e62abc34481f16923f5c4915a1a8",
   "dbProjectionPolicyDigest": "sha256:337165bc9927aae403ad10c46c6aa692d166f3fa37b500fc8e1bb27ec4bde2d3",
-  "capabilityDigestChainDigest": "sha256:961b8bb6a735858d78d4e986c4968a1d7f6d26a809a147289718a95351598a13",
+  "capabilityDigestChainDigest": "sha256:79602aedca1b984ff1afc0333115da402a2378508381bc4a6a73b924dd9d7c82",
   "subjectChainRef": "artifacts/oam/evidence/capability-evidence-subject-chain.json",
   "objectIdentityRef": "docs/contracts/generated/dormitory/object-identity.generated.json",
   "bedCardinalityRef": "docs/contracts/generated/dormitory/bed-cardinality.generated.json",

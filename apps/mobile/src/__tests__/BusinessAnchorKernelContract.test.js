@@ -132,7 +132,7 @@ describe("Business Anchor Kernel contract", () => {
       nextAction: { "zh-CN": "先填房号", "ru-RU": "Начать с номера комнаты" }
     }, ctx);
 
-    expect(visibleText(html)).toContain("房间待配置");
+    expect(visibleText(html)).toContain("房间建档确认");
     expect(visibleText(html)).not.toContain("[object Object]");
   });
 

@@ -19,6 +19,11 @@ const testPlan = readJsonIfExists(FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH) ?? {};
 const chain = buildProjectionDigestChain(root);
 const failures = [];
 const currentHead = command("git rev-parse HEAD");
+const currentRouteCardIds = {
+  "Dorm.RoomSetupConfirm": "cert.roomSetupConfirm",
+  "Dorm.BedSetupConfirm": "cert.bedSetupConfirm",
+  "Dorm.ResourceReadinessConfirm": "cert.resourceReadinessConfirm"
+};
 
 if (report.status !== "passed") failures.push("browser report status must be passed.");
 if (report.capabilityId !== CAPABILITY_ID) failures.push(`browser report must bind capabilityId=${CAPABILITY_ID}.`);
@@ -49,7 +54,7 @@ if (report.productionConfirmAllowed !== false ||
 }
 const stepIds = (report.steps ?? []).map((step) => step.domState?.cardId).filter(Boolean);
 for (const expected of FIRST_GOLDEN_CHAIN_STEPS) {
-  if (!stepIds.includes(expected.cardId)) failures.push(`browser report missing step ${expected.cardId}.`);
+  if (!stepIds.map(routeCardId).includes(routeCardId(expected.cardId))) failures.push(`browser report missing step ${routeCardId(expected.cardId)}.`);
   if (!JSON.stringify(report).includes(expected.step)) failures.push(`browser report missing visible step label ${expected.step}.`);
 }
 if (!JSON.stringify(report).includes("房源建档与基础就绪完成")) {
@@ -155,4 +160,8 @@ function command(cmd) {
 
 function safeName(value) {
   return String(value || "step").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function routeCardId(cardId) {
+  return currentRouteCardIds[cardId] || cardId;
 }

@@ -9,7 +9,7 @@ import { setView, syncUrlFromState } from "./navigationController.js";
 import { normalizeOperationLifecycleState } from "./operationStatus.js";
 import { operationFieldId } from "./operationFieldKernel.js";
 import { generatedContextValue, withSystemGeneratedOperationValues } from "./operationSystemValues.js";
-import { draftableCapabilityFieldIds, isFirstGoldenChainCardId } from "./capabilityProjection.js";
+import { draftableCapabilityFieldIds, isDormitoryScenario1CardId } from "./capabilityProjection.js";
 import { activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "./selectors/workspaceSelectors.js";
 import { applyRuntimeProjection, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
 import { validateRequiredFields } from "./operationValidation.js";
@@ -209,10 +209,9 @@ export function collectDraftingValuesOnInput(event, ctx) {
     ctx.state.lastActionResult = null;
     ctx.state.operationMessage = "";
   }
-  const shouldRefreshValidationSurface = event.type === "change" ||
+  const shouldRefreshValidationSurface =
     event.target.tagName === "SELECT" ||
-    event.target.dataset.operationField === "resourceScope" ||
-    !hasMissing;
+    event.target.dataset.operationField === "resourceScope";
   if (shouldRefreshValidationSurface) {
     ctx.render();
   }
@@ -379,8 +378,10 @@ function operationSubmissionValues(item = {}, card = {}, values = {}, ctx = {}) 
 }
 
 function draftableOperationValues(card = {}, fieldValues = {}) {
-  if (!isFirstGoldenChainCardId(card?.id)) return fieldValues;
+  if (!isDormitoryScenario1CardId(card?.id)) return fieldValues;
   const allowed = new Set(draftableCapabilityFieldIds(card.id));
+  if (allowed.has("bedCount")) allowed.add("capacity");
+  if (allowed.has("basicReadinessConclusion")) allowed.add("readinessState");
   if (!allowed.size) return fieldValues;
   return Object.fromEntries(
     Object.entries(fieldValues || {}).filter(([fieldId]) => allowed.has(fieldId))

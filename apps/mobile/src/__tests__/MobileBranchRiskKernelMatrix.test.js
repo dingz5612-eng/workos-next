@@ -114,7 +114,7 @@ describe("Mobile Branch Risk Kernel operation runtime matrix", () => {
     const synced = vi.fn();
 
     const result = await submitWorkItemOperation({
-      workspace: { id: "W-STAY-RESOURCE", runtimeWorkItemId: "wi-room-1" },
+      workspace: { id: "W-DORM-MAINLINE", runtimeWorkItemId: "wi-room-1" },
       card: { id: "roomSetup" },
       actor: { token: "operator-token" },
       fieldValues: { roomId: "R-1" },
@@ -164,21 +164,25 @@ describe("Mobile Branch Risk Kernel validation and boundary matrix", () => {
   it("blocks required missing fields and bed label cardinality errors", () => {
     const ctx = { state: { lang: "zh-CN" }, tr: (key) => key };
     const card = {
-      id: "bedSetup",
+      id: "cert.bedSetupConfirm",
       fields: {
         business: [
           { id: "bedCount", required: true, label: { "zh-CN": "床位数" } },
           { id: "bedLabels", required: true, label: { "zh-CN": "床位标签" } },
-          { id: "bedStatus", required: true, label: { "zh-CN": "床位状态" } }
+          { id: "bedStatus", required: true, label: { "zh-CN": "床位状态" } },
+          { id: "bedNo", required: true, label: { "zh-CN": "床位号" } },
+          { id: "bedLabel", required: true, label: { "zh-CN": "单床标签" } }
         ]
       }
     };
 
-    const result = validateRequiredFields(card, { bedCount: "2", bedLabels: "A" }, ctx);
+    const result = validateRequiredFields(card, { roomId: "R-1", bedCount: "2", bedLabels: "A" }, ctx);
 
     expect(result.displayLabels.join(" ")).toContain("床位标签");
     expect(result.displayLabels.join(" ")).toContain("bedLabelsMustMatchBedCount");
     expect(result.displayLabels.join(" ")).not.toContain("床位状态");
+    expect(result.displayLabels.join(" ")).not.toContain("床位号");
+    expect(result.displayLabels.join(" ")).not.toContain("单床标签");
   });
 
   it("keeps device, role, capability, production, and pilot blockers distinct", () => {

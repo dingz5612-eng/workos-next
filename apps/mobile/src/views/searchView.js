@@ -429,9 +429,7 @@ function workspaceMatchesQuery(workspace = {}, query = "", ctx = {}) {
     tx(workspace.next, ctx),
     workspace.cards?.map((card) => `${card.id} ${tx(card.title, ctx)} ${card.status || ""}`).join(" ")
   ].join(" ").toLocaleLowerCase();
-  if (isAccommodationResourceSetupQuery(normalized)) {
-    return /(Dorm\.RoomSetupConfirm|roomsetup|房间配置|房间床位配置|房间配置确认)/i.test(text);
-  }
+  if (isAccommodationResourceSetupQuery(normalized)) return /房源建档|基础就绪|房间建档|床位组确认|住宿经营/i.test(text);
   if ((workspace._score || workspace.score || 0) > 0) return true;
   return text.includes(normalized)
     || normalized.split(/\s+/).filter(Boolean).some((part) => text.includes(part))

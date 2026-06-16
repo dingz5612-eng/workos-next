@@ -39,6 +39,11 @@ export async function startCompletedStepCorrection(ctx, input = {}) {
     ctx.render();
     return;
   }
+  if (isArchivedLegacyWorkspace(target.workspaceId)) {
+    ctx.state.operationMessage = ctx.tr("legacyArchivedReadonly");
+    ctx.render();
+    return;
+  }
   const existing = existingOpenCorrectionWorkItem(ctx.state, target);
   if (existing) {
     openOperationPanel(workItemIdOf(existing), ctx, target);
@@ -135,8 +140,12 @@ function runtimeItems(state = {}) {
 }
 
 function templateWorkspaceIdFor(workspaceId = "") {
-  if (workspaceId.startsWith("W-STAY-RESOURCE-")) return "W-STAY-RESOURCE";
+  if (isArchivedLegacyWorkspace(workspaceId)) return "W-DORM-MAINLINE";
   return workspaceId;
+}
+
+function isArchivedLegacyWorkspace(workspaceId = "") {
+  return workspaceId === "W-STAY-RESOURCE" || workspaceId.startsWith("W-STAY-RESOURCE-");
 }
 
 function correctionErrorMessage(error, ctx) {

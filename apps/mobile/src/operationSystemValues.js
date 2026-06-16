@@ -162,7 +162,7 @@ export function contextReferenceDisplayValue(fieldId = "", value = "", payload =
   if (fieldId === "leadId") return leadDisplayValue(value, payload);
   if (fieldId === "reservationId") return reservationDisplayValue(value, payload);
   if (fieldId === "residentId") return personDisplayValue(value, payload);
-  if (fieldId === "roomId") return roomDisplayValue(value, payload);
+  if (fieldId === "roomRef" || fieldId === "roomId") return roomDisplayValue(value, payload);
   if (fieldId === "bedId") return bedDisplayValue(value, payload);
   if (fieldId === "stayId") return stayDisplayValue(value, payload);
   if (fieldId === "taskId") return taskDisplayValue(value, payload);

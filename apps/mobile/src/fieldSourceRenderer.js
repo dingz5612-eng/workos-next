@@ -1,6 +1,6 @@
 import { generatedBedLabelsForCount, splitBedLabels } from "./controls/bedLabelControls.js";
 import { capacityForRoomType, defaultValueForField, fieldControlKind } from "./controls/fieldControls.js";
-import { defaultBedTypeForCount, isBedSetupCardId } from "./capabilityProjection.js";
+import { defaultBedTypeForCount, isBedSetupCardId, isDormitoryScenario1CardId } from "./capabilityProjection.js";
 import { isScopedResourceFieldRequired, isScopedResourceFieldVisible } from "./controls/resourceScopeControls.js";
 import { loadCompletedRecordSnapshots, loadDraft } from "./operationDrafts.js";
 import { operationFieldId } from "./operationFieldKernel.js";
@@ -77,7 +77,7 @@ export function operationFieldState(field, item, card, ctx) {
 
 export function operationFieldRequired(field, card, item, ctx) {
   const fieldId = operationFieldId(field);
-  if (isBedSetupCardId(card?.id) && fieldId === "bedStatus") return false;
+  if (isBedSetupCardId(card?.id) && ["bedStatus", "bedNo", "bedLabel"].includes(fieldId)) return false;
   const values = operationDraftValues(item, card);
   const contextRequired = fieldRequiresUserAction(card?.id, fieldId, Boolean(field.required));
   return isScopedResourceFieldRequired(card?.id, fieldId, values, contextRequired);
@@ -86,7 +86,8 @@ export function operationFieldRequired(field, card, item, ctx) {
 export function operationFieldVisible(field, card, item, ctx) {
   const fieldId = operationFieldId(field);
   const values = operationDraftValues(item, card);
-  if (isBedSetupCardId(card?.id) && fieldId === "bedStatus") return false;
+  if (isDormitoryScenario1CardId(card?.id) && isCaseContextIdentityField(fieldId)) return false;
+  if (isBedSetupCardId(card?.id) && ["bedStatus", "bedNo", "bedLabel"].includes(fieldId)) return false;
   if (!fieldVisibleByContext(card?.id, fieldId)) return false;
   const fallbackVisible = operationFieldRequired(field, card, item, ctx) ||
     !["备注", "补充说明", "异议说明"].includes(ctx.localTerm(field, "zh-CN"));
@@ -182,7 +183,7 @@ export function isCaseContextReadonlyField(fieldId, card) {
 export function isForcedCaseContextReadonlyField(fieldId, card) {
   if (isContextCarriedField(card?.id, fieldId)) return true;
   if (fieldContextRole(card?.id, fieldId).contract) return false;
-  return isBedSetupCardId(card?.id) && ["roomId", "bedCount"].includes(fieldId);
+  return isBedSetupCardId(card?.id) && ["roomRef", "roomId", "bedCount"].includes(fieldId);
 }
 
 export function sameWorkspaceEvents(item, ctx) {
@@ -307,7 +308,7 @@ function carriedFieldFromPayload(fieldId, payload = {}, ctx) {
   if (hasCarryValue(direct)) {
     return { value: String(direct), displayValue: contextDisplayValue(fieldId, String(direct), payload, ctx) };
   }
-  if (fieldId === "roomId") {
+  if (fieldId === "roomRef" || fieldId === "roomId") {
     const roomNo = payload.roomNo || payload["房间号"];
     if (hasCarryValue(roomNo)) {
       const value = `room-${String(roomNo).trim()}`.toLowerCase();
@@ -344,7 +345,7 @@ function carriedFieldFromLatestCompletedSnapshot(fieldId, item, card, ctx) {
 function contextDisplayValue(fieldId, value, payload, ctx) {
   const sharedDisplay = contextReferenceDisplayValue(fieldId, value, payload);
   if (sharedDisplay && sharedDisplay !== value) return sharedDisplay;
-  if (fieldId === "roomId") return roomDisplayValue(value, payload, ctx);
+  if (fieldId === "roomRef" || fieldId === "roomId") return roomDisplayValue(value, payload, ctx);
   if (fieldId === "bedId") return bedDisplayValue(value, payload, ctx);
   return value;
 }
@@ -387,7 +388,7 @@ function hasRequiredFieldValue(field, item, card, ctx) {
 function filteredValidationMissingLabels(validation, card, item, ctx) {
   const missingIds = validation.missingFieldIds || [];
   if (!missingIds.length) return validation.missingLabels || [];
-  const currentRequiredIds = new Set((card.fields?.business || [])
+  const currentRequiredIds = new Set(operationInputFields(card, ctx, item)
     .filter((field) => operationFieldRequired(field, card, item, ctx))
     .map((field) => operationFieldId(field)));
   return (validation.missingLabels || []).filter((label, index) => {
@@ -404,6 +405,7 @@ function contextFieldLabel(field, fieldId, ctx) {
   if (field) return ctx.localTerm(field);
   const labels = {
     "zh-CN": {
+      roomRef: "所属房间",
       roomId: "所属房间",
       bedId: "床位",
       bedCount: "床位数",
@@ -417,6 +419,7 @@ function contextFieldLabel(field, fieldId, ctx) {
       checkoutId: "退住单"
     },
     "ru-RU": {
+      roomRef: "Комната",
       roomId: "Комната",
       bedId: "Койка",
       bedCount: "Количество коек",
@@ -430,6 +433,7 @@ function contextFieldLabel(field, fieldId, ctx) {
       checkoutId: "Выезд"
     },
     "ky-KG": {
+      roomRef: "Бөлмө",
       roomId: "Бөлмө",
       bedId: "Койка",
       bedCount: "Койка саны",

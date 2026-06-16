@@ -44,7 +44,7 @@ function operationFieldParticipatesInUserSubmit(card = {}, field = {}) {
   const role = fieldContextRole(card?.id, fieldId);
   if (role.kind !== "user") return false;
   if (!fieldParticipatesInUserValidation(card?.id, fieldId)) return false;
-  if (isBedSetupCardId(card?.id) && fieldId === "bedStatus") return false;
+  if (isBedSetupCardId(card?.id) && ["bedStatus", "bedNo", "bedLabel"].includes(fieldId)) return false;
   return true;
 }
 

@@ -11,6 +11,7 @@ import { runSearch, startOperationsWorkspaceCommand } from "../navigationControl
 import { routeView } from "../appRouter.js";
 import { applyRuntimeProjection, applyRuntimeSurfacePayloads } from "../runtime/runtimeStore.js";
 import { createSurfaceCtx, internalPilotAdmissionFixture, runtimeStore, source, visibleText } from "./surfaceContractTestHelpers.js";
+import { DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS } from "../capabilityProjection.js";
 
 describe("Operations Runtime start command contract", () => {
   beforeEach(() => {
@@ -21,19 +22,19 @@ describe("Operations Runtime start command contract", () => {
     const store = runtimeStore();
     const workspace = {
       ...store.workspaces[0],
-      id: "W-STAY-RESOURCE-202606040001"
+      id: `${DORMITORY_MAINLINE_WORKSPACE_ID}-202606040001`
     };
     const workItem = {
       workItemId: "wi-start-room-001",
       workspaceId: workspace.id,
       caseId: workspace.id,
-      workItemType: "Dorm.RoomSetup",
+      workItemType: DORMITORY_SCENARIO1_STEPS[0].workItemType,
       lifecycleState: "available",
       ownerRole: "operator",
       admission: internalPilotAdmissionFixture(),
       payload: {
-        cardId: "roomSetup",
-        templateWorkspaceId: "W-STAY-RESOURCE"
+        cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
+        templateWorkspaceId: DORMITORY_MAINLINE_WORKSPACE_ID
       }
     };
     startOperationsWorkspace.mockResolvedValue({
@@ -53,12 +54,12 @@ describe("Operations Runtime start command contract", () => {
     ctx.render = vi.fn();
     ctx.hydrateProjectionFromApi = vi.fn();
 
-    await startOperationsWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup", {
+    await startOperationsWorkspaceCommand(ctx, DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS[0].cardId, {
       anchorQuery: "D02 / 22 / 01 / 张三 / 13800001234"
     });
 
     expect(startOperationsWorkspace).toHaveBeenCalledWith(
-      "W-STAY-RESOURCE",
+      DORMITORY_MAINLINE_WORKSPACE_ID,
       "operator-token",
       "operation_workspace_start_failed",
       {
@@ -68,7 +69,7 @@ describe("Operations Runtime start command contract", () => {
     );
     expect(ctx.state.view).toBe("operationPanel");
     expect(ctx.state.selectedWorkspace).toBe(workspace.id);
-    expect(ctx.state.selectedCardId).toBe("roomSetup");
+    expect(ctx.state.selectedCardId).toBe(DORMITORY_SCENARIO1_STEPS[0].cardId);
     expect(ctx.state.selectedWorkItemId).toBe("wi-start-room-001");
     expect(ctx.state.operationMessage).toBe("");
     expect(ctx.state.runtimeStore.workspaces).toHaveLength(1);
@@ -77,7 +78,7 @@ describe("Operations Runtime start command contract", () => {
     expect(ctx.hydrateProjectionFromApi).not.toHaveBeenCalled();
     expect(routeView(ctx)).toContain('data-surface="operation-panel-route"');
     expect(visibleText(routeView(ctx))).toContain("本步要做");
-    expect(visibleText(routeView(ctx))).toContain("提交观察记录");
+    expect(visibleText(routeView(ctx))).toContain("房间建档确认");
     expect(visibleText(routeView(ctx))).toContain("提交前检查");
     expect(visibleText(routeView(ctx))).not.toContain("available");
     expect(visibleText(routeView(ctx))).not.toContain("暂不能直接办理");
@@ -95,19 +96,19 @@ describe("Operations Runtime start command contract", () => {
     const store = runtimeStore();
     const workspace = {
       ...store.workspaces[0],
-      id: "W-STAY-RESOURCE-202606040002"
+      id: `${DORMITORY_MAINLINE_WORKSPACE_ID}-202606040002`
     };
     const workItem = {
       workItemId: "wi-start-room-002",
       workspaceId: workspace.id,
       caseId: workspace.id,
-      workItemType: "Dorm.RoomSetup",
+      workItemType: DORMITORY_SCENARIO1_STEPS[0].workItemType,
       lifecycleState: "available",
       ownerRole: "operator",
       admission: internalPilotAdmissionFixture(),
       payload: {
-        cardId: "roomSetup",
-        templateWorkspaceId: "W-STAY-RESOURCE"
+        cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
+        templateWorkspaceId: DORMITORY_MAINLINE_WORKSPACE_ID
       }
     };
     startOperationsWorkspace.mockResolvedValue({
@@ -127,19 +128,19 @@ describe("Operations Runtime start command contract", () => {
       lastActionResult: {
         status: "business_blocked_422",
         reason: "operation_work_item_required",
-        message: "需要先生成可办理任务，再提交观察记录。"
+        message: "需要先生成可办理任务，再提交办理记录。"
       }
     });
     ctx.applyRuntimeProjection = (payload) => applyRuntimeProjection(ctx.state, payload);
     ctx.render = vi.fn();
     ctx.hydrateProjectionFromApi = vi.fn();
 
-    await startOperationsWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
+    await startOperationsWorkspaceCommand(ctx, DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS[0].cardId);
 
     expect(ctx.state.view).toBe("operationPanel");
     expect(ctx.state.selectedWorkItemId).toBe("wi-start-room-002");
     expect(ctx.state.lastActionResult).toBeNull();
-    expect(visibleText(routeView(ctx))).toContain("提交观察记录");
+    expect(visibleText(routeView(ctx))).toContain("房间建档确认");
     expect(visibleText(routeView(ctx))).not.toContain("查看不能提交原因");
   });
 
