@@ -1,0 +1,808 @@
+{
+  "authorityId": "Dormitory.ProductionMainlineActivation",
+  "name": "住宿经营 13 场景投产主链激活、架构回源修复与旧链退役闭环",
+  "version": "2026.06.16",
+  "status": "active-test-governance",
+  "highestAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+  "scope": "local/test/browser evidence mainline activation governance only",
+  "purpose": [
+    "把住宿经营 13 场景从权威源、generated 合同、运行时、页面、搜索、报表、财务边界、浏览器证据、CI 与 Evidence Root 串成唯一可检查主链。",
+    "建立投产前治理对象、职责域、场景投产卡、入口执行边界、旧链退役、性能体验、数据迁移和交付 SOP。",
+    "本文件不替代总控 Source Authority；所有业务规则仍以总控和各场景 Source Authority 为最高来源。"
+  ],
+  "phase0Baseline": {
+    "environment": "local/test/browser evidence",
+    "currentMainline": "住宿经营 13 场景总控",
+    "knownBaselineResults": [
+      {
+        "gate": "OAM purity",
+        "script": "node scripts/oam/check-current-oam.mjs",
+        "expected": "PASS"
+      },
+      {
+        "gate": "generated reproducibility",
+        "script": "node scripts/oam/check-generated-files-not-manually-edited.mjs",
+        "expected": "PASS"
+      },
+      {
+        "gate": "13 scenario source/generated/consumption",
+        "script": "node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs",
+        "expected": "PASS"
+      },
+      {
+        "gate": "mainline activation transaction",
+        "script": "node scripts/oam/check-dormitory-mainline-activation-transaction.mjs",
+        "expected": "PASS after evidence regeneration",
+        "currentFinding": "事务绑定的 currentHead 必须随当前提交重新生成。"
+      },
+      {
+        "gate": "browser evidence freshness",
+        "script": "node scripts/oam/check-evidence-root-hard-gate-matrix.mjs",
+        "expected": "PASS after browser rerun",
+        "currentFinding": "场景 1-13 正反向浏览器报告必须绑定当前提交 digest。"
+      }
+    ],
+    "reusableCapabilities": [
+      "13 场景总控 Source Authority",
+      "场景 1-13 Source Authority",
+      "generated 合同与 mobile/runtime mirror",
+      "MainlineManifest",
+      "LodgingConsumerGraph",
+      "LegacyRetirementLedger",
+      "VisibleBusinessCopyContract",
+      "DormitoryDefectClosureLedger",
+      "EvidenceRootHardGateMatrix",
+      "MainlineActivationTransaction",
+      "13 场景正反向浏览器审计脚本"
+    ],
+    "existingButUnconsumedCapabilities": [
+      "部分页面体验与性能预算需要由投产卡统一约束",
+      "本地环境管理器需要纳入投产前验收清单",
+      "数据迁移与旧链接归一化需要在旧链退役总账中持续复验"
+    ],
+    "architectureDefects": [
+      {
+        "id": "ARCH-PA-001",
+        "description": "Evidence Root 必须把投产主链激活源纳入硬门禁，避免专项治理文件存在但未被最终证据吸收。",
+        "route": "EvidenceRootHardGateMatrix and MainlineActivationTransaction"
+      },
+      {
+        "id": "ARCH-PA-002",
+        "description": "浏览器报告与主链生效事务必须随当前 HEAD 重生，禁止旧 digest 继续代表当前主链。",
+        "route": "browser audit rerun and transaction regeneration"
+      }
+    ],
+    "implementationDefects": [
+      {
+        "id": "IMPL-PA-001",
+        "description": "投产前需要 13 张场景投产卡统一说明业务前台名称、按钮、CRUD、失败语义、权限准入、证据、性能和 SOP。",
+        "route": "this authority and checker"
+      }
+    ],
+    "legacyRetirementObjects": [
+      "Dormitory.FirstGoldenChain",
+      "FIRST_GOLDEN_CHAIN_*",
+      "W-STAY-RESOURCE",
+      "roomSetup",
+      "bedSetup",
+      "roomReadiness",
+      "roomRelease",
+      "RoomSetupConfirm",
+      "BedSetupConfirm",
+      "ResourceReadinessConfirm",
+      "resource-saleability",
+      "lead-reservation",
+      "golden-chain",
+      "第一金链",
+      "金链"
+    ]
+  },
+  "productionMainline": {
+    "activeMainlineId": "Dormitory.13ScenarioMainline",
+    "activeMainlineName": "住宿经营 13 场景总控",
+    "sourceAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+    "onlyActiveMainlineAllowed": true,
+    "scenarioOrder": [
+      {
+        "scenarioNo": 1,
+        "frontName": "新增房间和床位",
+        "architectureName": "房源建档与基础就绪"
+      },
+      {
+        "scenarioNo": 2,
+        "frontName": "设置房源状态",
+        "architectureName": "房源运营就绪与状态维护"
+      },
+      {
+        "scenarioNo": 3,
+        "frontName": "设置住宿商品和价格",
+        "architectureName": "住宿商品与价格"
+      },
+      {
+        "scenarioNo": 4,
+        "frontName": "给客户报价",
+        "architectureName": "询价与报价"
+      },
+      {
+        "scenarioNo": 5,
+        "frontName": "创建预订并锁房",
+        "architectureName": "预订与库存锁定"
+      },
+      {
+        "scenarioNo": 6,
+        "frontName": "收款、押金和担保",
+        "architectureName": "收款、押金与担保"
+      },
+      {
+        "scenarioNo": 7,
+        "frontName": "办理入住",
+        "architectureName": "入住办理"
+      },
+      {
+        "scenarioNo": 8,
+        "frontName": "管理在住",
+        "architectureName": "在住管理"
+      },
+      {
+        "scenarioNo": 9,
+        "frontName": "办理退房结算",
+        "architectureName": "退房结算"
+      },
+      {
+        "scenarioNo": 10,
+        "frontName": "取消、未到店和退款",
+        "architectureName": "取消、未到店与退款处理"
+      },
+      {
+        "scenarioNo": 11,
+        "frontName": "保洁维修和停售恢复",
+        "architectureName": "房务、维修与停售协同"
+      },
+      {
+        "scenarioNo": 12,
+        "frontName": "渠道和企业客户",
+        "architectureName": "渠道与企业客户"
+      },
+      {
+        "scenarioNo": 13,
+        "frontName": "经营报表和审计",
+        "architectureName": "经营报表、审计与复盘"
+      }
+    ]
+  },
+  "responsibilityDomains": [
+    {
+      "domainNo": 1,
+      "domainId": "product_business",
+      "nameZh": "产品与业务定义",
+      "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json", "docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory/scenario-index.generated.json"],
+      "implementationConsumptionPoints": ["apps/mobile/src/generated/oam", "apps/mobile/src/views"],
+      "checkScripts": ["node scripts/business/check-dormitory-production-mainline-activation-authority.mjs"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/"],
+      "completionStandardZh": "业务前台名称、对象、边界、NO_GO 与旧链隔离全部可追溯。"
+    },
+    {
+      "domainNo": 2,
+      "domainId": "scenario_handoff",
+      "nameZh": "场景衔接与摘要交接",
+      "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory/cross-scenario-summary.generated.json"],
+      "implementationConsumptionPoints": ["services/core-api", "apps/mobile/src/generated/oam"],
+      "checkScripts": ["node scripts/business/check-dormitory-13-scenario-generated-contracts.mjs"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/"],
+      "completionStandardZh": "下游只读带入上游摘要，不重复填写，不越权写上游事实。"
+    },
+    {
+      "domainNo": 3,
+      "domainId": "business_naming",
+      "nameZh": "业务命名与旧词隔离",
+      "authoritySourceRefs": ["docs/oam/visible-business-copy-contract.json"],
+      "generatedContractRefs": ["apps/mobile/src/generated/oam/dormitoryBusinessCopy.generated.json"],
+      "implementationConsumptionPoints": ["apps/mobile/src"],
+      "checkScripts": ["node scripts/oam/check-business-ui-copy-no-technical-leak.mjs", "node scripts/oam/check-visible-business-copy-contract.mjs"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/"],
+      "completionStandardZh": "普通业务页面不暴露旧链词、技术词和内部 ID。"
+    },
+    {
+      "domainNo": 4,
+      "domainId": "ui_ux",
+      "nameZh": "页面体验、入口与按钮状态",
+      "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
+      "generatedContractRefs": ["apps/mobile/src/generated/oam/dormitorySurfaceNavigation.generated.json", "apps/mobile/src/generated/oam/dormitoryPageEntryPolicy.generated.json"],
+      "implementationConsumptionPoints": ["apps/mobile/src/views", "apps/mobile/src/navigation"],
+      "checkScripts": ["node scripts/oam/check-dormitory-active-path-gate.mjs"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/positive", "artifacts/browser/dormitory/scenario-*/negative"],
+      "completionStandardZh": "今日、工作项、搜索、我的职责清楚；按钮随状态变化。"
+    },
+    {
+      "domainNo": 5,
+      "domainId": "i18n_copy",
+      "nameZh": "文案与国际化",
+      "authoritySourceRefs": ["docs/oam/visible-business-copy-contract.json"],
+      "generatedContractRefs": ["apps/mobile/src/generated/oam/dormitoryBusinessCopy.generated.json"],
+      "implementationConsumptionPoints": ["apps/mobile/src/i18n", "apps/mobile/src/components"],
+      "checkScripts": ["node scripts/oam/check-business-ui-copy-no-technical-leak.mjs"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/"],
+      "completionStandardZh": "业务文案以新 13 场景表达为准，审计详情以外不展示技术字段。"
+    },
+    {
+      "domainNo": 6,
+      "domainId": "source_authority",
+      "nameZh": "Source Authority 治理",
+      "authoritySourceRefs": ["docs/oam/current-authority-index.json", "docs/business/domains/dormitory/"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory"],
+      "implementationConsumptionPoints": ["scripts/business", "scripts/oam"],
+      "checkScripts": ["node scripts/business/check-dormitory-13-scenario-control-authority.mjs"],
+      "browserEvidenceRefs": ["artifacts/oam/checks"],
+      "completionStandardZh": "规则先进入 Source Authority，再生成合同，再被消费者读取。"
+    },
+    {
+      "domainNo": 7,
+      "domainId": "compiler_generated",
+      "nameZh": "编译器与 generated 合同",
+      "authoritySourceRefs": ["docs/business/domains/dormitory"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory", "apps/mobile/src/generated/oam"],
+      "implementationConsumptionPoints": ["scripts/business", "scripts/oam"],
+      "checkScripts": ["node scripts/oam/check-generated-files-not-manually-edited.mjs", "node scripts/business/check-dormitory-13-scenario-generated-contracts.mjs"],
+      "browserEvidenceRefs": ["artifacts/oam/checks"],
+      "completionStandardZh": "generated 可复现，未手改，digest 与消费者一致。"
+    },
+    {
+      "domainNo": 8,
+      "domainId": "operations_runtime",
+      "nameZh": "运行时执行与无副作用",
+      "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
+      "generatedContractRefs": ["services/core-api/generated", "docs/contracts/generated/dormitory/runtime-rules.generated.json"],
+      "implementationConsumptionPoints": ["services/core-api", "tests/WorkOS.RuntimeContractTests"],
+      "checkScripts": ["dotnet test tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj --no-restore --verbosity minimal"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/negative"],
+      "completionStandardZh": "失败路径不写 CommandSubmission、DomainEvent、Projection、Search、Dashboard 或 Ledger。"
+    },
+    {
+      "domainNo": 9,
+      "domainId": "database_master_data",
+      "nameZh": "数据库、主数据与迁移归一",
+      "authoritySourceRefs": ["docs/oam/legacy-retirement-ledger.json"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory/object-ownership.generated.json"],
+      "implementationConsumptionPoints": ["services/core-api", "scripts/migration"],
+      "checkScripts": ["node scripts/oam/check-legacy-retirement-ledger.mjs"],
+      "browserEvidenceRefs": ["artifacts/oam/checks"],
+      "completionStandardZh": "旧数据只读、归一或迁移，不能继续办理和写事实。"
+    },
+    {
+      "domainNo": 10,
+      "domainId": "search_information_architecture",
+      "nameZh": "搜索与信息架构",
+      "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
+      "generatedContractRefs": ["apps/mobile/src/generated/oam/dormitoryPageEntryPolicy.generated.json"],
+      "implementationConsumptionPoints": ["apps/mobile/src/search", "services/core-api/search"],
+      "checkScripts": ["npm --prefix apps/mobile run test"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/negative"],
+      "completionStandardZh": "搜索只读跳转，不直接写业务事实。"
+    },
+    {
+      "domainNo": 11,
+      "domainId": "bi_kpi_reporting",
+      "nameZh": "BI、指标与报表",
+      "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-13.authority.json"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory/read-model-report.generated.json"],
+      "implementationConsumptionPoints": ["services/core-api/reports", "apps/mobile/src/views"],
+      "checkScripts": ["node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-13"],
+      "completionStandardZh": "报表只读，指标带 permission、lineage、freshness。"
+    },
+    {
+      "domainNo": 12,
+      "domainId": "finance_money_boundary",
+      "nameZh": "财务与资金边界",
+      "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory/finance-boundary.generated.json"],
+      "implementationConsumptionPoints": ["services/core-api/finance", "tests/WorkOS.RuntimeContractTests"],
+      "checkScripts": ["node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-6", "artifacts/browser/dormitory/scenario-9", "artifacts/browser/dormitory/scenario-10"],
+      "completionStandardZh": "业务场景只产生 Intent、Draft、Request、Snapshot，账务真值由 finance-gate 独占。"
+    },
+    {
+      "domainNo": 13,
+      "domainId": "permission_security",
+      "nameZh": "权限、准入与安全",
+      "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory/permission-admission.generated.json"],
+      "implementationConsumptionPoints": ["services/core-api/security", "apps/mobile/src/auth"],
+      "checkScripts": ["node scripts/oam/check-dormitory-active-path-gate.mjs"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/negative"],
+      "completionStandardZh": "伪造内部 ID、越权操作、跨场景提前操作全部被阻断且无副作用。"
+    },
+    {
+      "domainNo": 14,
+      "domainId": "controlplane_release",
+      "nameZh": "控制面与发布治理",
+      "authoritySourceRefs": ["docs/oam/dormitory-mainline-manifest.json", "docs/oam/evidence-root-hard-gate-matrix.json"],
+      "generatedContractRefs": ["artifacts/oam/mainline-activation-transaction.json"],
+      "implementationConsumptionPoints": [".github/workflows/ci.yml", "scripts/oam"],
+      "checkScripts": ["node scripts/oam/check-dormitory-ci-hard-gates.mjs", "node scripts/oam/check-dormitory-mainline-activation-transaction.mjs"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory"],
+      "completionStandardZh": "CI 与 Evidence Root 对主链失败硬阻断，仍保持 production/final GO 独立授权。"
+    },
+    {
+      "domainNo": 15,
+      "domainId": "qa_regression",
+      "nameZh": "QA、回归与真实浏览器",
+      "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory/test-plan.generated.json"],
+      "implementationConsumptionPoints": ["scripts/surface", "apps/mobile/tests"],
+      "checkScripts": ["powershell -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*"],
+      "completionStandardZh": "场景 1-13 正反向浏览器证据新鲜、截图齐全、digest 匹配。"
+    },
+    {
+      "domainNo": 16,
+      "domainId": "evidence_root",
+      "nameZh": "Evidence Root 与证据图",
+      "authoritySourceRefs": ["docs/oam/evidence-root-hard-gate-matrix.json"],
+      "generatedContractRefs": ["artifacts/oam/current-evidence-root.json"],
+      "implementationConsumptionPoints": ["scripts/oam"],
+      "checkScripts": ["node scripts/oam/check-current-evidence-root.mjs", "node scripts/oam/check-evidence-root-hard-gate-matrix.mjs"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory"],
+      "completionStandardZh": "Evidence Root 吸收所有专项失败，不允许浏览器失败但总证据 PASS。"
+    },
+    {
+      "domainNo": 17,
+      "domainId": "performance_stability",
+      "nameZh": "性能、稳定性与本地环境",
+      "authoritySourceRefs": ["docs/oam/dormitory-operation-execution-contract.json"],
+      "generatedContractRefs": ["artifacts/oam/checks/dormitory-operation-execution-contract-result.json"],
+      "implementationConsumptionPoints": ["services/core-api", "apps/mobile/src", "scripts/dev"],
+      "checkScripts": ["node scripts/oam/check-dormitory-operation-execution-contract.mjs", "node scripts/oam/check-dormitory-local-test-environment-manager.mjs"],
+      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*"],
+      "completionStandardZh": "新建、保存、确认、搜索、上传和摘要加载不依赖全量刷新。"
+    },
+    {
+      "domainNo": 18,
+      "domainId": "operations_delivery",
+      "nameZh": "运营交付、培训与回滚",
+      "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json"],
+      "generatedContractRefs": ["artifacts/oam/mainline-activation-transaction.json"],
+      "implementationConsumptionPoints": ["docs/operations/dormitory", "scripts/oam"],
+      "checkScripts": ["node scripts/business/check-dormitory-production-mainline-activation-authority.mjs"],
+      "browserEvidenceRefs": ["artifacts/oam/final-report"],
+      "completionStandardZh": "SOP、异常处理、权限说明、财务边界、数据修复、回滚、培训和验收清单齐全。"
+    }
+  ],
+  "globalMatrices": {
+    "crudOperations": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+    "fieldSources": ["用户填写", "用户选择", "上游只读带入", "系统生成", "系统计算", "证据绑定", "财务确认", "内部审计"],
+    "entryResponsibilities": {
+      "today": "只显示今天需要处理的被动任务",
+      "workItems": "显示全量被动任务池",
+      "search": "主动查询，只读跳转，不写事实",
+      "mine": "草稿、个人跟进、收藏、导出、设置"
+    },
+    "buttonStateRule": "按钮必须按对象状态和合法下一步动作出现，不得所有状态固定显示一个提交按钮。",
+    "permissionAdmissionRule": "普通用户不得填写内部 ID；越权、伪造内部引用、跨场景提前操作必须失败且无副作用。",
+    "performanceThresholds": {
+      "newDraftMs": 800,
+      "saveDraftMs": 800,
+      "confirmMs": 1500,
+      "searchMs": 500,
+      "uploadEvidenceMs": 2000,
+      "summaryOpenMs": 800,
+      "forbiddenPattern": "提交后全量刷新 workspace、全量刷新住宿 lens 或整页重绘"
+    },
+    "dataMigration": {
+      "legacyOpenMode": "历史只读、归一到新场景或提示已归档",
+      "legacySubmitMode": "阻断提交且无业务事实副作用",
+      "migrationEvidence": "历史证据保留 digest 和 lineage，不删除造成断链"
+    },
+    "compatibilityAliases": {
+      "Dorm.RoomSetupConfirm": "房间建档确认",
+      "Dorm.BedSetupConfirm": "床位组确认",
+      "Dorm.ResourceReadinessConfirm": "基础就绪确认"
+    },
+    "legacyIsolation": {
+      "activeMainlineAllowed": false,
+      "writeFactsAllowed": false,
+      "currentBrowserAuditAllowed": false,
+      "currentEvidenceRootAllowed": false,
+      "allowedPlaces": ["legacy_readonly", "historical_evidence", "test_fixture", "generated_legacy_reference", "documentation_archive"]
+    }
+  },
+  "productionCards": [
+    {
+      "scenarioNo": 1,
+      "frontName": "新增房间和床位",
+      "architectureName": "房源建档与基础就绪",
+      "businessGoal": "建立房间、床位组和基础就绪摘要，为后续运营状态维护提供只读基础房源。",
+      "upstreamReadonlyInputs": ["组织、楼栋、区域上下文"],
+      "userFilledFields": ["楼层", "房间号", "床位数量", "房间备注", "床型", "基础检查结果"],
+      "userSelectedFields": ["楼栋/区域", "床位启用状态", "基础就绪结论"],
+      "userEvidence": ["房间照片", "房间基础资料证据", "床位照片", "完成照片", "检查记录"],
+      "systemGeneratedFields": ["roomRef", "bedSetRef", "bedRef", "basicReadinessRef", "evidenceEnvelopeRef", "summarySnapshotRef"],
+      "readSideOutputs": ["房间摘要", "床位组摘要", "基础就绪摘要", "证据摘要", "状态历史"],
+      "downstreamReadableSummaries": ["场景 2 只读读取基础房源摘要"],
+      "noGoBoundaries": ["不得产生可运营、可报价、可预订、价格、预订或账务事实"],
+      "crudRules": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+      "stateMachine": ["草稿", "房间已建档", "床位组完整", "基础就绪已确认", "作废", "纠错中"],
+      "buttonMatrix": ["草稿: 继续填写、保存草稿", "房间已建档: 确认床位组", "床位组完整: 基础就绪检查", "基础就绪完成: 查看摘要、进入运营状态维护"],
+      "failureSemantics": ["重复房间号失败", "床位数量为 0 失败", "床位组不完整失败", "缺证据失败", "伪造内部引用失败"],
+      "permissionAdmission": ["普通用户只操作业务展示号", "内部引用由系统绑定"],
+      "evidenceRequirements": ["房间证据", "床位证据", "检查证据", "确认摘要"],
+      "performanceThresholds": {"newDraftMs": 800, "confirmMs": 1500, "summaryOpenMs": 800},
+      "browserPositiveAcceptance": ["完成房间建档、床位 01..N 生成、床位组确认、基础就绪确认和摘要查看"],
+      "browserNegativeAcceptance": ["重复房间号、缺证据、床位不匹配、伪造内部 ID、已确认原地编辑全部失败且无副作用"],
+      "exceptionHandling": ["走纠错、补证、作废、重新确认，不覆盖已确认事实"],
+      "legacyIsolationRules": ["RoomSetupConfirm、BedSetupConfirm、ResourceReadinessConfirm 只作为内部兼容映射"],
+      "sop": ["先选择楼栋和房间信息", "确认系统生成床位组", "补齐证据后提交基础就绪", "异常走纠错或作废"]
+    },
+    {
+      "scenarioNo": 2,
+      "frontName": "设置房源状态",
+      "architectureName": "房源运营就绪与状态维护",
+      "businessGoal": "承接基础就绪摘要，确认房间或床位是否进入运营可用状态并维护阻断原因。",
+      "upstreamReadonlyInputs": ["房间摘要", "床位组摘要", "基础就绪摘要", "证据摘要"],
+      "userFilledFields": ["运营检查说明", "阻断原因", "恢复说明"],
+      "userSelectedFields": ["运营状态", "停售/停用原因", "恢复建议"],
+      "userEvidence": ["运营检查照片", "阻断证据", "恢复证据"],
+      "systemGeneratedFields": ["operationalReadinessRef", "statusVersion", "statusHistoryRef"],
+      "readSideOutputs": ["运营状态摘要", "阻断摘要", "恢复建议摘要"],
+      "downstreamReadableSummaries": ["场景 3、4、5、11 只读读取运营状态"],
+      "noGoBoundaries": ["不得定价、报价、预订、入住或写账"],
+      "crudRules": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+      "stateMachine": ["待确认", "可运营", "运营阻断", "待恢复", "已停用", "纠错中"],
+      "buttonMatrix": ["待确认: 设置运营状态", "运营阻断: 发起房务协同", "待恢复: 重新确认", "可运营: 查看摘要"],
+      "failureSemantics": ["未基础就绪失败", "阻断原因缺失失败", "跨场景直接进价格或预订失败"],
+      "permissionAdmission": ["运营角色可确认状态", "房务角色只能提交建议"],
+      "evidenceRequirements": ["运营检查证据", "阻断/恢复证据"],
+      "performanceThresholds": {"newDraftMs": 800, "confirmMs": 1500, "searchMs": 500},
+      "browserPositiveAcceptance": ["从基础就绪摘要设置可运营或阻断状态"],
+      "browserNegativeAcceptance": ["未基础就绪、缺原因、越权恢复、直接定价预订失败且无副作用"],
+      "exceptionHandling": ["状态错误走纠错记录，阻断恢复走重新确认"],
+      "legacyIsolationRules": ["roomRelease 只允许历史或测试夹具，不作为当前运营语义"],
+      "sop": ["读取基础摘要", "选择运营状态", "补充阻断或恢复证据", "提交状态确认"]
+    },
+    {
+      "scenarioNo": 3,
+      "frontName": "设置住宿商品和价格",
+      "architectureName": "住宿商品与价格",
+      "businessGoal": "为可运营房源配置住宿商品、价格草案和生效快照。",
+      "upstreamReadonlyInputs": ["可运营房源摘要", "渠道/企业客户只读规则"],
+      "userFilledFields": ["商品名称", "价格说明", "适用日期", "限制条件"],
+      "userSelectedFields": ["商品类型", "价格模式", "适用对象", "生效范围"],
+      "userEvidence": ["价格审批证据", "协议或政策附件"],
+      "systemGeneratedFields": ["lodgingProductRef", "ratePlanRef", "priceSnapshotRef", "version"],
+      "readSideOutputs": ["商品摘要", "价格快照", "限制条件摘要"],
+      "downstreamReadableSummaries": ["场景 4 报价读取价格快照", "场景 12 读取渠道适配"],
+      "noGoBoundaries": ["不得直接创建报价、预订、收款或账务"],
+      "crudRules": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+      "stateMachine": ["草稿", "待确认", "已生效", "已停用", "已过期", "纠错中"],
+      "buttonMatrix": ["草稿: 保存草稿", "待确认: 确认价格", "已生效: 查看快照、停用", "已停用: 复制为新草稿"],
+      "failureSemantics": ["房源不可运营失败", "价格区间无效失败", "缺审批证据失败"],
+      "permissionAdmission": ["价格维护角色可确认", "普通查询只读"],
+      "evidenceRequirements": ["价格审批", "适用规则证据"],
+      "performanceThresholds": {"newDraftMs": 800, "confirmMs": 1500, "summaryOpenMs": 800},
+      "browserPositiveAcceptance": ["选择可运营房源并生成价格快照"],
+      "browserNegativeAcceptance": ["不可运营房源、无效价格、缺证据、越权改价失败且无副作用"],
+      "exceptionHandling": ["价格错误通过停用、纠错、复制新草稿处理"],
+      "legacyIsolationRules": ["resource-saleability 不得作为当前价格来源"],
+      "sop": ["读取可运营房源", "填写商品和价格", "绑定审批证据", "确认生成快照"]
+    },
+    {
+      "scenarioNo": 4,
+      "frontName": "给客户报价",
+      "architectureName": "询价与报价",
+      "businessGoal": "根据客户需求、可运营房源和价格快照生成报价，不等同预订。",
+      "upstreamReadonlyInputs": ["房源摘要", "运营状态", "价格快照", "客户/渠道规则"],
+      "userFilledFields": ["客户需求", "入住日期", "离店日期", "备注"],
+      "userSelectedFields": ["客户类型", "报价房源", "价格方案"],
+      "userEvidence": ["客户询价记录", "特殊报价审批"],
+      "systemGeneratedFields": ["inquiryRef", "quoteRef", "quoteVersion", "quoteSnapshotRef"],
+      "readSideOutputs": ["询价摘要", "报价摘要", "报价快照"],
+      "downstreamReadableSummaries": ["场景 5 读取已确认报价和客户意向"],
+      "noGoBoundaries": ["报价不锁库存，不创建预订，不收款"],
+      "crudRules": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+      "stateMachine": ["询价草稿", "报价待确认", "已报价", "已过期", "已关闭", "纠错中"],
+      "buttonMatrix": ["草稿: 保存草稿", "待确认: 确认报价", "已报价: 创建预订意向、关闭", "已过期: 复制为新草稿"],
+      "failureSemantics": ["缺价格快照失败", "不可运营房源失败", "日期无效失败", "越权优惠失败"],
+      "permissionAdmission": ["销售角色可报价", "价格越权需审批"],
+      "evidenceRequirements": ["询价记录", "特殊审批证据"],
+      "performanceThresholds": {"newDraftMs": 800, "confirmMs": 1500, "summaryOpenMs": 800},
+      "browserPositiveAcceptance": ["从价格快照生成报价快照"],
+      "browserNegativeAcceptance": ["无价格、不可运营、过期报价直接预订、伪造报价失败且无副作用"],
+      "exceptionHandling": ["报价变更复制为新草稿或关闭旧报价"],
+      "legacyIsolationRules": ["lead-reservation 不得把线索直接变成当前预订"],
+      "sop": ["录入询价", "选择房源和价格", "确认报价", "由预订场景重新校验库存"]
+    },
+    {
+      "scenarioNo": 5,
+      "frontName": "创建预订并锁房",
+      "architectureName": "预订与库存锁定",
+      "businessGoal": "承接已确认报价和客户意向，重新校验库存后创建预订并锁定资源。",
+      "upstreamReadonlyInputs": ["报价摘要", "客户意向", "房源运营状态", "价格快照"],
+      "userFilledFields": ["入住人信息", "预计到店时间", "预订备注"],
+      "userSelectedFields": ["锁定房源", "预订类型", "担保要求"],
+      "userEvidence": ["客户确认记录", "预订协议"],
+      "systemGeneratedFields": ["reservationRef", "inventoryLockRef", "reservationVersion"],
+      "readSideOutputs": ["预订摘要", "库存锁定摘要", "待收款/押金请求"],
+      "downstreamReadableSummaries": ["场景 6 读取预订应收意图", "场景 7 读取已确认预订"],
+      "noGoBoundaries": ["不得直接写收款、押金、退款或账务真值"],
+      "crudRules": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+      "stateMachine": ["预订草稿", "待确认", "已确认", "已锁定", "已取消", "已释放", "纠错中"],
+      "buttonMatrix": ["草稿: 保存草稿", "待确认: 确认预订并锁房", "已确认: 去收款押金、办理入住", "已取消: 查看释放摘要"],
+      "failureSemantics": ["库存不可用失败", "报价过期失败", "重复提交幂等返回", "并发锁定冲突失败"],
+      "permissionAdmission": ["预订角色可确认", "库存锁定必须系统执行"],
+      "evidenceRequirements": ["客户确认", "协议证据", "库存校验证据"],
+      "performanceThresholds": {"newDraftMs": 800, "confirmMs": 1500, "summaryOpenMs": 800},
+      "browserPositiveAcceptance": ["从报价创建预订并锁定库存"],
+      "browserNegativeAcceptance": ["库存冲突、过期报价、搜索直接写预订、伪造锁定失败且无副作用"],
+      "exceptionHandling": ["取消或未到店走场景 10，库存释放走请求"],
+      "legacyIsolationRules": ["lead-reservation 只能历史只读，不作为当前预订主路径"],
+      "sop": ["读取报价", "重新校验运营和库存", "确认预订", "生成锁定摘要"]
+    },
+    {
+      "scenarioNo": 6,
+      "frontName": "收款、押金和担保",
+      "architectureName": "收款、押金与担保",
+      "businessGoal": "基于已确认预订生成收款、押金、担保处理请求，并等待 finance-gate 确认。",
+      "upstreamReadonlyInputs": ["预订摘要", "价格快照", "担保要求"],
+      "userFilledFields": ["收款说明", "押金说明", "担保备注"],
+      "userSelectedFields": ["处理类型", "付款方式意向", "担保方式"],
+      "userEvidence": ["付款凭证", "担保文件", "押金协议"],
+      "systemGeneratedFields": ["paymentIntentRef", "depositRequestRef", "guaranteeRef", "financeRequestRef"],
+      "readSideOutputs": ["收款意图摘要", "押金请求摘要", "担保摘要", "finance-gate 回执摘要"],
+      "downstreamReadableSummaries": ["场景 7 读取支付/押金确认摘要"],
+      "noGoBoundaries": ["不得生成 LedgerEntry、LedgerTransaction、FinanceReceipt 账务真值"],
+      "crudRules": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+      "stateMachine": ["草稿", "待提交财务", "待财务确认", "已确认", "已拒绝", "已关闭", "纠错中"],
+      "buttonMatrix": ["草稿: 保存草稿", "待提交财务: 提交财务处理", "待财务确认: 查看进度", "已确认: 查看回执"],
+      "failureSemantics": ["无预订失败", "金额来源不一致失败", "业务场景直接写账失败"],
+      "permissionAdmission": ["业务角色可发起请求", "财务真值仅 finance-gate 确认"],
+      "evidenceRequirements": ["付款/押金/担保证据", "finance-gate 确认回执"],
+      "performanceThresholds": {"newDraftMs": 800, "confirmMs": 1500, "summaryOpenMs": 800},
+      "browserPositiveAcceptance": ["发起收款押金担保请求并读取财务确认摘要"],
+      "browserNegativeAcceptance": ["直接写账、押金当收入、担保当收款、缺凭证失败且无副作用"],
+      "exceptionHandling": ["财务拒绝后补证或关闭请求"],
+      "legacyIsolationRules": ["旧收款内测记录只读归档"],
+      "sop": ["读取预订", "录入处理意图", "绑定凭证", "提交 finance-gate"]
+    },
+    {
+      "scenarioNo": 7,
+      "frontName": "办理入住",
+      "architectureName": "入住办理",
+      "businessGoal": "把已确认预订转为实际入住事实，核验客户到店、身份和入住条件。",
+      "upstreamReadonlyInputs": ["预订摘要", "库存锁定摘要", "支付/押金确认摘要"],
+      "userFilledFields": ["入住人信息", "身份核验结果", "入住备注"],
+      "userSelectedFields": ["入住房间/床位", "核验结论", "钥匙/门禁交付状态"],
+      "userEvidence": ["身份凭证", "入住协议", "交付照片"],
+      "systemGeneratedFields": ["stayRef", "checkInRef", "occupancySnapshotRef"],
+      "readSideOutputs": ["入住摘要", "占用摘要", "交付摘要"],
+      "downstreamReadableSummaries": ["场景 8 读取在住事实", "场景 9 读取入住事实"],
+      "noGoBoundaries": ["不得重新定价、写账或绕过预订直接入住"],
+      "crudRules": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+      "stateMachine": ["待入住", "入住办理中", "已入住", "入住拒绝", "已关闭", "纠错中"],
+      "buttonMatrix": ["待入住: 办理入住", "办理中: 保存草稿、确认入住", "已入住: 查看入住摘要、进入在住管理"],
+      "failureSemantics": ["无有效预订失败", "未满足押金/担保要求失败", "身份核验失败", "重复入住失败"],
+      "permissionAdmission": ["前台角色可办理入住", "身份信息按权限脱敏"],
+      "evidenceRequirements": ["身份核验证据", "入住协议", "交付证据"],
+      "performanceThresholds": {"newDraftMs": 800, "confirmMs": 1500, "summaryOpenMs": 800},
+      "browserPositiveAcceptance": ["从已确认预订完成入住"],
+      "browserNegativeAcceptance": ["无预订、重复入住、缺核验、直接写占用失败且无副作用"],
+      "exceptionHandling": ["核验不通过关闭或转取消/未到店处理"],
+      "legacyIsolationRules": ["旧入住测试夹具不得写当前入住事实"],
+      "sop": ["读取预订", "核验身份和条件", "确认入住", "生成在住摘要"]
+    },
+    {
+      "scenarioNo": 8,
+      "frontName": "管理在住",
+      "architectureName": "在住管理",
+      "businessGoal": "管理已入住期间的服务、变更、异常和在住状态摘要。",
+      "upstreamReadonlyInputs": ["入住摘要", "占用摘要", "客户摘要"],
+      "userFilledFields": ["服务记录", "异常说明", "变更备注"],
+      "userSelectedFields": ["在住状态", "服务类型", "是否需要房务协同"],
+      "userEvidence": ["服务照片", "客户确认", "异常记录"],
+      "systemGeneratedFields": ["stayManagementRef", "serviceRecordRef", "stayStatusVersion"],
+      "readSideOutputs": ["在住状态摘要", "服务记录摘要", "异常摘要"],
+      "downstreamReadableSummaries": ["场景 9 读取在住费用/异常摘要", "场景 11 读取房务协同请求"],
+      "noGoBoundaries": ["不得直接退房结算、退款或写账"],
+      "crudRules": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+      "stateMachine": ["在住", "服务处理中", "异常处理中", "待退房", "已结束", "纠错中"],
+      "buttonMatrix": ["在住: 新增服务、记录异常", "异常处理中: 发起房务协同", "待退房: 进入退房结算"],
+      "failureSemantics": ["未入住失败", "已退房后新增在住服务失败", "越权改入住事实失败"],
+      "permissionAdmission": ["运营角色记录服务", "敏感客户信息按权限展示"],
+      "evidenceRequirements": ["服务证据", "异常证据", "客户确认"],
+      "performanceThresholds": {"newDraftMs": 800, "confirmMs": 1500, "summaryOpenMs": 800},
+      "browserPositiveAcceptance": ["对已入住客户记录在住服务和异常"],
+      "browserNegativeAcceptance": ["未入住、已退房、旧 roomRelease 主路径、伪造 stayId 失败且无副作用"],
+      "exceptionHandling": ["异常转房务协同或退房结算摘要"],
+      "legacyIsolationRules": ["roomRelease 不作为当前在住释放语义"],
+      "sop": ["读取在住摘要", "登记服务或异常", "需要协同时交给场景 11"]
+    },
+    {
+      "scenarioNo": 9,
+      "frontName": "办理退房结算",
+      "architectureName": "退房结算",
+      "businessGoal": "基于入住和在住管理摘要生成退房结算快照和财务处理请求。",
+      "upstreamReadonlyInputs": ["入住事实", "在住服务/异常摘要", "finance-gate 确认摘要"],
+      "userFilledFields": ["退房检查结果", "应退应补说明", "结算备注"],
+      "userSelectedFields": ["退房结论", "费用处理类型", "房源恢复状态"],
+      "userEvidence": ["退房照片", "费用说明", "客户确认"],
+      "systemGeneratedFields": ["checkoutRef", "settlementSnapshotRef", "financeRequestRef", "restoreRequestRef"],
+      "readSideOutputs": ["退房摘要", "结算快照", "财务处理请求摘要", "待恢复房源摘要"],
+      "downstreamReadableSummaries": ["场景 11 读取待恢复房务任务", "finance-gate 读取处理请求"],
+      "noGoBoundaries": ["退房结算不等于退款到账，不写账务真值"],
+      "crudRules": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+      "stateMachine": ["待退房", "结算草稿", "待确认", "已退房", "待财务处理", "纠错中"],
+      "buttonMatrix": ["待退房: 办理退房", "待确认: 确认结算", "已退房: 查看结算、发起恢复"],
+      "failureSemantics": ["未入住失败", "费用来源不清失败", "直接退款到账失败"],
+      "permissionAdmission": ["前台可办理退房", "财务真值由 finance-gate 确认"],
+      "evidenceRequirements": ["退房检查", "费用说明", "客户确认"],
+      "performanceThresholds": {"newDraftMs": 800, "confirmMs": 1500, "summaryOpenMs": 800},
+      "browserPositiveAcceptance": ["生成退房结算快照和财务请求"],
+      "browserNegativeAcceptance": ["未入住、直接退款、报表反写、缺费用证据失败且无副作用"],
+      "exceptionHandling": ["费用争议保持待处理，走补证或纠错"],
+      "legacyIsolationRules": ["旧退房测试记录不得写当前结算事实"],
+      "sop": ["读取入住和在住摘要", "完成退房检查", "确认结算快照", "提交财务请求"]
+    },
+    {
+      "scenarioNo": 10,
+      "frontName": "取消、未到店和退款",
+      "architectureName": "取消、未到店与退款处理",
+      "businessGoal": "处理预订取消、客户未到店、取消费/未到店费和退款处理请求。",
+      "upstreamReadonlyInputs": ["预订摘要", "库存锁定摘要", "收款/押金确认摘要"],
+      "userFilledFields": ["取消原因", "未到店说明", "退款申请说明"],
+      "userSelectedFields": ["处理类型", "库存释放方式", "费用处理结论"],
+      "userEvidence": ["客户取消记录", "未到店证明", "退款申请凭证"],
+      "systemGeneratedFields": ["cancellationRef", "noShowRef", "refundRequestRef", "inventoryReleaseRequestRef"],
+      "readSideOutputs": ["取消摘要", "未到店摘要", "退款请求摘要", "库存释放请求摘要"],
+      "downstreamReadableSummaries": ["finance-gate 读取退款请求", "场景 5 读取库存释放结果"],
+      "noGoBoundaries": ["退款申请不是退款到账，不直接写账务或库存释放真值"],
+      "crudRules": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+      "stateMachine": ["待处理", "取消草稿", "未到店草稿", "待财务处理", "已关闭", "纠错中"],
+      "buttonMatrix": ["待处理: 取消预订、登记未到店", "待财务处理: 查看财务进度", "已关闭: 查看摘要"],
+      "failureSemantics": ["无有效预订失败", "已入住后普通取消失败", "直接退款到账失败"],
+      "permissionAdmission": ["预订角色可发起取消", "财务退款由 finance-gate 确认"],
+      "evidenceRequirements": ["取消/未到店证据", "退款申请证据"],
+      "performanceThresholds": {"newDraftMs": 800, "confirmMs": 1500, "summaryOpenMs": 800},
+      "browserPositiveAcceptance": ["完成取消或未到店处理并发起释放/财务请求"],
+      "browserNegativeAcceptance": ["已入住取消、直接退款、缺证据、重复释放失败且无副作用"],
+      "exceptionHandling": ["争议费用补证，退款失败回到财务处理请求"],
+      "legacyIsolationRules": ["旧取消流程只读归档"],
+      "sop": ["读取预订", "选择取消或未到店", "绑定证据", "提交释放和财务请求"]
+    },
+    {
+      "scenarioNo": 11,
+      "frontName": "保洁维修和停售恢复",
+      "architectureName": "房务、维修与停售协同",
+      "businessGoal": "承接运营阻断、在住服务和退房待恢复，发起房务维修任务并输出恢复建议。",
+      "upstreamReadonlyInputs": ["运营阻断摘要", "在住服务异常", "退房待恢复摘要"],
+      "userFilledFields": ["作业说明", "维修说明", "恢复建议"],
+      "userSelectedFields": ["作业类型", "优先级", "完成结论"],
+      "userEvidence": ["作业前照片", "作业后照片", "维修记录"],
+      "systemGeneratedFields": ["housekeepingTaskRef", "maintenanceTaskRef", "restoreSuggestionRef"],
+      "readSideOutputs": ["房务任务摘要", "维修摘要", "恢复建议摘要"],
+      "downstreamReadableSummaries": ["场景 2 读取恢复建议并重新确认运营状态"],
+      "noGoBoundaries": ["不得直接恢复可运营，不直接定价或预订"],
+      "crudRules": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+      "stateMachine": ["待处理", "作业中", "待验收", "已完成", "建议恢复", "已关闭", "纠错中"],
+      "buttonMatrix": ["待处理: 派工", "作业中: 记录完成", "待验收: 提交恢复建议", "建议恢复: 返回运营确认"],
+      "failureSemantics": ["无上游任务失败", "缺完成证据失败", "直接恢复运营失败"],
+      "permissionAdmission": ["房务角色可作业", "运营状态由场景 2 确认"],
+      "evidenceRequirements": ["作业前后照片", "维修记录", "验收证据"],
+      "performanceThresholds": {"newDraftMs": 800, "confirmMs": 1500, "summaryOpenMs": 800},
+      "browserPositiveAcceptance": ["完成房务维修并输出恢复建议"],
+      "browserNegativeAcceptance": ["无任务、缺证据、直接恢复可运营、越权派工失败且无副作用"],
+      "exceptionHandling": ["验收不通过继续作业或关闭说明"],
+      "legacyIsolationRules": ["roomRelease 不得作为当前恢复确认"],
+      "sop": ["读取阻断或待恢复摘要", "执行作业", "上传证据", "输出恢复建议"]
+    },
+    {
+      "scenarioNo": 12,
+      "frontName": "渠道和企业客户",
+      "architectureName": "渠道与企业客户",
+      "businessGoal": "维护外部渠道、企业客户、协议客户和渠道发布规则，供报价和价格读取。",
+      "upstreamReadonlyInputs": ["商品价格摘要", "客户资料摘要"],
+      "userFilledFields": ["渠道说明", "企业协议说明", "发布规则备注"],
+      "userSelectedFields": ["渠道类型", "客户类型", "发布范围", "协议状态"],
+      "userEvidence": ["渠道协议", "企业合同", "发布审批"],
+      "systemGeneratedFields": ["channelRef", "corporateCustomerRef", "publishRuleRef", "agreementSnapshotRef"],
+      "readSideOutputs": ["渠道摘要", "企业客户摘要", "发布规则摘要", "协议快照"],
+      "downstreamReadableSummaries": ["场景 3 读取协议规则", "场景 4 读取客户和渠道规则"],
+      "noGoBoundaries": ["不得争夺价格真值，不直接报价、预订或写账"],
+      "crudRules": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+      "stateMachine": ["草稿", "待确认", "已生效", "已暂停", "已终止", "纠错中"],
+      "buttonMatrix": ["草稿: 保存草稿", "待确认: 确认协议/规则", "已生效: 暂停、终止、查看摘要"],
+      "failureSemantics": ["协议缺证据失败", "价格越权失败", "发布范围冲突失败"],
+      "permissionAdmission": ["渠道/客户维护角色可确认", "价格确认仍由场景 3"],
+      "evidenceRequirements": ["渠道协议", "企业合同", "审批证据"],
+      "performanceThresholds": {"newDraftMs": 800, "confirmMs": 1500, "summaryOpenMs": 800},
+      "browserPositiveAcceptance": ["维护渠道和企业协议并输出规则摘要"],
+      "browserNegativeAcceptance": ["无协议证据、直接改价格、越权发布、伪造客户 ID 失败且无副作用"],
+      "exceptionHandling": ["协议变更用新快照，旧快照保留只读"],
+      "legacyIsolationRules": ["旧渠道测试数据只读归档"],
+      "sop": ["录入客户/渠道", "绑定协议", "确认发布规则", "供价格和报价读取"]
+    },
+    {
+      "scenarioNo": 13,
+      "frontName": "经营报表和审计",
+      "architectureName": "经营报表、审计与复盘",
+      "businessGoal": "只读读取场景 1-12 和 finance-gate 确认事实，形成经营指标、审计和复盘。",
+      "upstreamReadonlyInputs": ["场景 1-12 confirmed facts", "authorized projections", "finance-gate 确认事实"],
+      "userFilledFields": ["报表筛选条件", "复盘备注"],
+      "userSelectedFields": ["指标范围", "时间区间", "导出格式"],
+      "userEvidence": ["审计说明附件", "复盘材料"],
+      "systemGeneratedFields": ["reportRef", "metricSnapshotRef", "auditLineageRef", "freshnessRef"],
+      "readSideOutputs": ["经营指标", "审计追溯", "复盘摘要", "导出文件"],
+      "downstreamReadableSummaries": ["管理层只读查看，不作为业务写事实来源"],
+      "noGoBoundaries": ["报表不得反写业务事实，不得把 UI 状态当指标来源"],
+      "crudRules": ["新建草稿", "保存草稿", "继续办理", "修改草稿", "确认", "作废/取消/停用/关闭", "纠错", "查询", "导出", "复制为新草稿"],
+      "stateMachine": ["待生成", "已生成", "已导出", "已归档", "已作废"],
+      "buttonMatrix": ["待生成: 生成报表", "已生成: 查看、导出、归档", "已归档: 查看历史"],
+      "failureSemantics": ["缺 permission、lineage、freshness 任一 envelope 失败", "写业务事实失败"],
+      "permissionAdmission": ["按指标权限展示和导出", "敏感数据脱敏"],
+      "evidenceRequirements": ["指标 lineage", "数据 freshness", "权限 envelope", "导出审计"],
+      "performanceThresholds": {"searchMs": 500, "summaryOpenMs": 800, "confirmMs": 1500},
+      "browserPositiveAcceptance": ["生成只读报表并查看审计链路"],
+      "browserNegativeAcceptance": ["报表写事实、无 lineage、无权限、旧链作为 current audit 失败且无副作用"],
+      "exceptionHandling": ["缺 envelope 时只显示不可生成原因"],
+      "legacyIsolationRules": ["FirstGoldenChain 只允许 historical evidence，不作为 current main audit"],
+      "sop": ["选择指标范围", "确认 permission、lineage、freshness", "生成报表", "导出留痕"]
+    }
+  ],
+  "operatingDelivery": {
+    "sop": [
+      "投产前先运行 Source/generated/consumption、旧链退役、文案、防 ID 暴露、浏览器、性能、Evidence Root 和 CI 硬门禁。",
+      "业务操作以 13 张场景投产卡为培训目录；一线只看前台名称，架构名称用于审计和交付文档。",
+      "任何失败先按失败归因回到 Source Authority、compiler、runtime、surface、测试或 evidence generator 修复。"
+    ],
+    "exceptionHandlingManual": [
+      "业务规则缺失回 Source Authority。",
+      "字段来源错误回字段矩阵。",
+      "状态越权回状态阶梯和对象归属。",
+      "runtime 硬编码迁回 generated 合同。",
+      "财务越权回 finance-gate。",
+      "证据缺失回证据策略。",
+      "测试绕过回测试计划。"
+    ],
+    "humanReview": [
+      "P0/P1 缺陷不能无主。",
+      "关闭缺陷必须带复验证据。",
+      "专项失败但 Evidence Root PASS 必须作为 P0 重新打开。"
+    ],
+    "permissionStatement": [
+      "普通用户只能操作业务可读名称和合法按钮。",
+      "内部 ID 只允许审计详情、迁移报告、开发证据包和控制台报告出现。"
+    ],
+    "financeBoundaryStatement": [
+      "Payment、Deposit、Refund、LedgerEntry、LedgerTransaction、FinanceReceipt 只能由 finance-gate 或 finance kernel 产生。",
+      "业务场景只能生成 Intent、Draft、Request、Snapshot。"
+    ],
+    "dataRepair": [
+      "旧 workspace/workItem 只读归档、归一到新场景或迁移证据。",
+      "错误确认不得物理删除，只能追加纠错记录。"
+    ],
+    "rollback": [
+      "主链治理失败时回滚到最后一个 Evidence Root PASS 的本地测试基线。",
+      "回滚不等于恢复旧链办理能力；旧链仍保持只读和隔离。"
+    ],
+    "training": [
+      "按 13 个前台名称培训业务用户。",
+      "按 18 个职责域培训产品、研发、测试、运维、财务和审计协作边界。"
+    ],
+    "launchChecklist": [
+      "13 场景唯一 active。",
+      "旧链无办理能力。",
+      "所有消费者消费同一 13 场景合同。",
+      "浏览器正反向证据新鲜且 PASS。",
+      "CI 无主门禁 continue-on-error。",
+      "Evidence Root 无假阳性。",
+      "生产发布、业务上线、final GO 已单独授权前仍保持 NO_GO。"
+    ]
+  },
+  "finalSafety": {
+    "productionConfirmAllowed": false,
+    "businessGoLiveAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO",
+    "statement": "本权威只证明本地/测试/浏览器证据主链治理闭环，不代表生产发布、业务上线或 final GO。"
+  }
+}

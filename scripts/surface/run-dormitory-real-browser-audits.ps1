@@ -114,6 +114,11 @@ try {
   Wait-HttpOk -Url "$env:WORKOS_API_URL/health" -Name "Core API"
   Wait-HttpOk -Url $env:WORKOS_MOBILE_URL -Name "Mobile frontend"
 
+  Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs")
+  Invoke-Native -Command "node" -Arguments @("scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs")
+  Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-performance-recoverability-audit.mjs")
+  Invoke-Native -Command "node" -Arguments @("scripts/surface/check-dormitory-performance-recoverability-audit.mjs")
+
   for ($scenario = 1; $scenario -le 13; $scenario++) {
     foreach ($kind in @("positive", "negative")) {
       Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-scenario$scenario-$kind-browser-audit.mjs")

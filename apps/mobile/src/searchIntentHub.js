@@ -216,7 +216,7 @@ function admissionActionLabel(action = {}, admission = {}, ctx = {}) {
   }
   if (action.type === "startOperationsWorkspace") {
     if (!admission.prepareAllowed) return ctx.tr?.("searchActionLearning") || "开始学习";
-    if (!admission.productionAllowed) return ctx.tr?.("startObservation") || "开始填写";
+    return action.label;
   }
   return action.label;
 }
@@ -233,6 +233,16 @@ function genericProcessCopy(value, ctx = {}) {
 
 function admissionForSearchItem(item = {}, action = {}) {
   if (item.admission) return normalizeAdmissionState(item.admission);
+  if (action.type === "startOperationsWorkspace") {
+    return normalizeAdmissionState({
+      visibleAllowed: true,
+      prepareAllowed: true,
+      confirmAllowed: false,
+      productionAllowed: false,
+      mode: "contract_preview",
+      reason: "generated_mainline_entry"
+    });
+  }
   if (["openWorkItem", "startOperationsWorkspace"].includes(action.type)) {
     return missingAdmissionState("contract_preview");
   }

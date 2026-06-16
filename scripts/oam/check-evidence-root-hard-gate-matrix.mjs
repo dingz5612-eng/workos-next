@@ -21,6 +21,7 @@ const requiredResultFiles = [
   ["DormitoryDefectClosureLedger", "artifacts/oam/checks/dormitory-defect-closure-ledger-result.json"],
   ["GeneratedReproducible", "artifacts/oam/checks/generated-files-not-manually-edited-result.json"],
   ["Dormitory13Source", "artifacts/oam/checks/dormitory-13-scenario-control-authority-result.json"],
+  ["ProductionMainlineActivation", "artifacts/oam/checks/dormitory-production-mainline-activation-result.json"],
   ["Dormitory13Generated", "artifacts/oam/checks/dormitory-13-scenario-generated-contracts-result.json"],
   ["Dormitory13Consumption", "artifacts/oam/checks/dormitory-13-scenario-consumption-boundary-result.json"],
   ["ActivePathGate", "artifacts/oam/checks/dormitory-active-path-gate-result.json"],
@@ -28,6 +29,8 @@ const requiredResultFiles = [
   ["LocalEnvironmentManager", "artifacts/oam/checks/dormitory-local-test-environment-manager-result.json"],
   ["OldChainActivePath", oldActiveResultPath],
   ["BusinessUiDomCopy", "artifacts/oam/checks/business-ui-copy-no-technical-leak-result.json"],
+  ["Dormitory13EntryBrowser", "artifacts/oam/checks/dormitory-13-scenario-entry-browser-result.json"],
+  ["PerformanceRecoverabilityBrowser", "artifacts/oam/checks/dormitory-performance-recoverability-result.json"],
   ["CiHardGateConfig", "artifacts/oam/checks/dormitory-ci-hard-gates-result.json"]
 ];
 
@@ -86,6 +89,17 @@ if ((uiCopy?.violationCount ?? uiCopy?.technicalLeakCount ?? 0) !== 0) {
   fail("business DOM old/technical copy violation count must be 0.");
 }
 
+const performanceRecoverability = readJsonIfExists("artifacts/oam/evidence/dormitory-performance-recoverability/performance-recoverability-report.json");
+if (!performanceRecoverability) {
+  fail("performance and recoverability browser report missing.");
+} else {
+  if (performanceRecoverability.status !== "passed") fail("performance and recoverability browser report must be passed.");
+  if (performanceRecoverability.git?.headSha !== currentHead) {
+    fail(`performance and recoverability browser report is stale: expected ${currentHead}, actual ${performanceRecoverability.git?.headSha ?? "missing"}.`);
+  }
+  if ((performanceRecoverability.findings ?? []).length !== 0) fail("performance and recoverability browser report findings must be empty.");
+}
+
 const defectLedger = readJsonIfExists("docs/oam/dormitory-defect-closure-ledger.json");
 const openP0P1 = (defectLedger?.defects ?? []).filter((item) =>
   ["P0", "P1"].includes(item.severity) && ["open", "fixing"].includes(item.status));
@@ -108,6 +122,18 @@ if (!graph) {
     }
     if (item.positive?.status !== "passed") fail(`Evidence graph scenario${scenario} positive browser must be passed.`);
     if (item.negative?.status !== "passed") fail(`Evidence graph scenario${scenario} negative browser must be passed.`);
+  }
+  const performanceRecoverabilitySummary = browser.performanceRecoverability;
+  if (performanceRecoverabilitySummary?.status !== "passed" ||
+    performanceRecoverabilitySummary?.currentMainGate !== true ||
+    !performanceRecoverabilitySummary?.report ||
+    !performanceRecoverabilitySummary?.result) {
+    fail("Evidence graph performance and recoverability browser summary must be passed and current main gate.");
+  }
+  const performanceRecoverabilityNode = (graph.nodes ?? []).find((candidate) =>
+    candidate.gate === "DORMITORY-PERFORMANCE-RECOVERABILITY-BROWSER");
+  if (!performanceRecoverabilityNode || performanceRecoverabilityNode.status !== "passed" || performanceRecoverabilityNode.reportFresh !== true) {
+    fail("Evidence graph performance and recoverability browser node must be fresh and passed.");
   }
   const quarantine = browser[`${oldWord}Quarantine`];
   const firstGolden = quarantine?.firstGoldenChain ?? browser.firstGoldenChain;

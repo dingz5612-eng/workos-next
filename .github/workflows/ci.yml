@@ -196,6 +196,7 @@ jobs:
           node scripts/business/check-dormitory-metrics-lens-contract.mjs
           node scripts/oam/check-dormitory-golden-chain-source-package.mjs --write-proof
           node scripts/business/check-dormitory-13-scenario-control-authority.mjs
+          node scripts/business/check-dormitory-production-mainline-activation-authority.mjs
           node scripts/business/check-dormitory-13-scenario-generated-contracts.mjs
           node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs
           node scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs

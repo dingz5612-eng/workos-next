@@ -188,7 +188,7 @@ export function selectSearchSurfaceResults(state, query) {
     .map((workspace) => withSurfaceScore(workspace, normalized))
     .filter((item) => item._score > 0)
     .sort((a, b) => b._score - a._score);
-  return found.length ? found : workspaces;
+  return found;
 }
 
 export function selectLearningCatalog(state) {

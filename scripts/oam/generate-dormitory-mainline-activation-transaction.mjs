@@ -6,6 +6,8 @@ import { digestObject, fileDigest, writeJson } from "./lib/capability-delivery-c
 const root = process.cwd();
 const transactionPath = "artifacts/oam/evidence/dormitory-mainline-activation-transaction.json";
 const sourcePath = "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json";
+const productionActivationAuthorityPath = "docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json";
+const productionActivationResultPath = "artifacts/oam/checks/dormitory-production-mainline-activation-result.json";
 const generatedResultPath = "artifacts/oam/checks/dormitory-13-scenario-generated-contracts-result.json";
 const consumerGraphResultPath = "artifacts/oam/checks/lodging-consumer-graph-result.json";
 const oldWord = "leg" + "acy";
@@ -15,12 +17,15 @@ const defectClosureResultPath = "artifacts/oam/checks/dormitory-defect-closure-l
 const activePathGateResultPath = "artifacts/oam/checks/dormitory-active-path-gate-result.json";
 const operationExecutionResultPath = "artifacts/oam/checks/dormitory-operation-execution-contract-result.json";
 const localEnvironmentResultPath = "artifacts/oam/checks/dormitory-local-test-environment-manager-result.json";
+const entryBrowserResultPath = "artifacts/oam/checks/dormitory-13-scenario-entry-browser-result.json";
+const performanceRecoverabilityResultPath = "artifacts/oam/checks/dormitory-performance-recoverability-result.json";
 const ciHardGateResultPath = "artifacts/oam/checks/dormitory-ci-hard-gates-result.json";
 const evidenceHardGateResultPath = "artifacts/oam/checks/evidence-root-hard-gate-matrix-result.json";
 const evidenceGraphPath = "artifacts/oam/evidence/evidence-graph.json";
 const finalReportPath = "artifacts/oam/final-report.json";
 const workflowPath = ".github/workflows/ci.yml";
 
+const productionActivation = readJsonIfExists(productionActivationResultPath);
 const generatedResult = readJsonIfExists(generatedResultPath);
 const consumerGraph = readJsonIfExists(consumerGraphResultPath);
 const oldRetirement = readJsonIfExists(oldRetirementResultPath);
@@ -29,6 +34,8 @@ const defectClosure = readJsonIfExists(defectClosureResultPath);
 const activePathGate = readJsonIfExists(activePathGateResultPath);
 const operationExecution = readJsonIfExists(operationExecutionResultPath);
 const localEnvironment = readJsonIfExists(localEnvironmentResultPath);
+const entryBrowser = readJsonIfExists(entryBrowserResultPath);
+const performanceRecoverability = readJsonIfExists(performanceRecoverabilityResultPath);
 const ciHardGate = readJsonIfExists(ciHardGateResultPath);
 const evidenceHardGate = readJsonIfExists(evidenceHardGateResultPath);
 const finalReport = readJsonIfExists(finalReportPath);
@@ -56,6 +63,7 @@ const evidenceRootDigest = digestObject({
 });
 
 const subchecks = [
+  ["productionActivation", productionActivation],
   ["generated", generatedResult],
   ["consumerGraph", consumerGraph],
   ["oldChainRetirement", oldRetirement],
@@ -64,6 +72,8 @@ const subchecks = [
   ["activePathGate", activePathGate],
   ["operationExecution", operationExecution],
   ["localEnvironment", localEnvironment],
+  ["entryBrowser", entryBrowser],
+  ["performanceRecoverability", performanceRecoverability],
   ["ciHardGate", ciHardGate],
   ["evidenceHardGate", evidenceHardGate]
 ];
@@ -88,6 +98,7 @@ const transaction = {
   environment: "local/test/browser evidence",
   currentHead: command("git rev-parse HEAD"),
   sourceDigest: fileDigest(sourcePath, root),
+  productionActivationDigest: productionActivation?.authorityDigest ?? fileDigest(productionActivationAuthorityPath, root),
   generatedBundleDigest,
   consumerGraphDigest: consumerGraph?.graphDigest ?? fileDigest("docs/oam/lodging-consumer-graph.json", root),
   oldChainRetirementDigest: oldRetirement?.ledgerDigest ?? fileDigest(`docs/oam/${oldWord}-retirement-ledger.json`, root),
@@ -95,6 +106,8 @@ const transaction = {
   activePathGateDigest: fileDigest(activePathGateResultPath, root),
   operationExecutionDigest: operationExecution?.contractDigest ?? fileDigest("docs/oam/dormitory-operation-execution-contract.json", root),
   localEnvironmentDigest: localEnvironment?.scriptDigest ?? fileDigest("scripts/dev/manage-local-test-environment.ps1", root),
+  entryBrowserDigest: fileDigest(entryBrowserResultPath, root),
+  performanceRecoverabilityDigest: fileDigest(performanceRecoverabilityResultPath, root),
   browserEvidenceDigest,
   defectClosureDigest: defectClosure?.ledgerDigest ?? fileDigest("docs/oam/dormitory-defect-closure-ledger.json", root),
   ciWorkflowDigest: fileDigest(workflowPath, root),
@@ -130,7 +143,7 @@ if (transaction.finalTransactionStatus !== "PASS") {
 console.log(`Dormitory mainline activation transaction generated: PASS (${transaction.transactionDigest})`);
 
 function browserResultRefs() {
-  const refs = [];
+  const refs = [entryBrowserResultPath, performanceRecoverabilityResultPath];
   for (let scenario = 1; scenario <= 13; scenario += 1) {
     refs.push(`artifacts/oam/checks/dormitory-scenario${scenario}-positive-browser-result.json`);
     refs.push(`artifacts/oam/checks/dormitory-scenario${scenario}-negative-browser-result.json`);

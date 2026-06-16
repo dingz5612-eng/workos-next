@@ -829,6 +829,13 @@ const dormitoryScenario13EvidenceFiles = [
   ...dormitoryScenario13BrowserEvidenceFiles,
   ...dormitoryScenario13ResultFiles
 ];
+const dormitoryPerformanceRecoverabilityEvidenceFiles = [
+  "scripts/surface/run-dormitory-performance-recoverability-audit.mjs",
+  "scripts/surface/check-dormitory-performance-recoverability-audit.mjs",
+  "artifacts/oam/evidence/dormitory-performance-recoverability/performance-recoverability-report.json",
+  "artifacts/oam/evidence/dormitory-performance-recoverability/screenshot-index.json",
+  "artifacts/oam/checks/dormitory-performance-recoverability-result.json"
+];
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 const evidenceRootDigestPlaceholder = "__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__";
 const pendingExternalAttestation = "pending_external_attestation";
@@ -927,6 +934,7 @@ const requiredEvidenceFiles = [
   ...dormitoryScenario11EvidenceFiles,
   ...dormitoryScenario12EvidenceFiles,
   ...dormitoryScenario13EvidenceFiles,
+  ...dormitoryPerformanceRecoverabilityEvidenceFiles,
   FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH,
   FIRST_GOLDEN_CHAIN_CAPABILITY_DIGEST_CHAIN_PATH,
   FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH,
@@ -1879,6 +1887,7 @@ const evidenceGraph = {
   coverageSummary,
   mobileBranchRiskKernel,
   realBrowserEvidence: realBrowserEvidence.summary,
+  performanceRecoverabilityEvidence: realBrowserEvidence.summary.performanceRecoverability,
   dormitory13ScenarioIntegrationChain: {
     status: dormitory13ScenarioIntegrationChain.status ?? "MISSING",
     chainCount: dormitory13ScenarioIntegrationChain.chainCount ?? 0,
@@ -4729,6 +4738,7 @@ function buildRealBrowserEvidence() {
   const scenario12Negative = readScenario12NegativeBrowserEvidence();
   const scenario13Positive = readScenario13PositiveBrowserEvidence();
   const scenario13Negative = readScenario13NegativeBrowserEvidence();
+  const performanceRecoverability = readPerformanceRecoverabilityBrowserEvidence();
   const legacyL1 = readL1BrowserEvidence();
   const tenScenario = readTenScenarioBrowserEvidence();
   const nodes = [
@@ -4757,7 +4767,8 @@ function buildRealBrowserEvidence() {
     scenario12Positive.node,
     scenario12Negative.node,
     scenario13Positive.node,
-    scenario13Negative.node
+    scenario13Negative.node,
+    performanceRecoverability.node
   ].filter(Boolean);
   const edges = [
     scenario1Positive.node ? { from: scenario1Positive.node.id, to: "DORMITORY_SCENARIO1_RESOURCE_BASIC_READINESS", relation: "binds_scenario1_positive_browser_evidence" } : null,
@@ -4785,7 +4796,8 @@ function buildRealBrowserEvidence() {
     scenario12Positive.node ? { from: scenario12Positive.node.id, to: "DORMITORY_SCENARIO12_CHANNEL_CORPORATE_CUSTOMER", relation: "binds_scenario12_positive_browser_evidence" } : null,
     scenario12Negative.node ? { from: scenario12Negative.node.id, to: "DORMITORY_SCENARIO12_CHANNEL_CORPORATE_CUSTOMER", relation: "binds_scenario12_negative_browser_evidence" } : null,
     scenario13Positive.node ? { from: scenario13Positive.node.id, to: "DORMITORY_SCENARIO13_REPORTING_AUDIT_REVIEW", relation: "binds_scenario13_positive_browser_evidence" } : null,
-    scenario13Negative.node ? { from: scenario13Negative.node.id, to: "DORMITORY_SCENARIO13_REPORTING_AUDIT_REVIEW", relation: "binds_scenario13_negative_browser_evidence" } : null
+    scenario13Negative.node ? { from: scenario13Negative.node.id, to: "DORMITORY_SCENARIO13_REPORTING_AUDIT_REVIEW", relation: "binds_scenario13_negative_browser_evidence" } : null,
+    performanceRecoverability.node ? { from: performanceRecoverability.node.id, to: "DORMITORY_13_SCENARIO_PRODUCTION_MAINLINE_ACTIVATION", relation: "binds_performance_recoverability_browser_evidence" } : null
   ].filter(Boolean);
   const screenshotHashCount = nodes.reduce((total, node) => total + (node.screenshotHashes?.length ?? 0), 0);
   const status = scenario1Positive.status === "passed" &&
@@ -4813,7 +4825,8 @@ function buildRealBrowserEvidence() {
     scenario12Positive.status === "passed" &&
     scenario12Negative.status === "passed" &&
     scenario13Positive.status === "passed" &&
-    scenario13Negative.status === "passed"
+    scenario13Negative.status === "passed" &&
+    performanceRecoverability.status === "passed"
     ? "passed"
     : "missing_or_failed";
   return {
@@ -4927,6 +4940,13 @@ function buildRealBrowserEvidence() {
         productionConfirmAllowed: false,
         finalGoNoGo: "NO_GO"
       },
+      performanceRecoverability: {
+        ...performanceRecoverability,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
       legacyQuarantine: {
         firstGoldenChain,
         legacyL1,
@@ -4946,6 +4966,61 @@ function buildRealBrowserEvidence() {
       },
       screenshotHashCount
     }
+  };
+}
+
+function readPerformanceRecoverabilityBrowserEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-performance-recoverability/performance-recoverability-report.json";
+  const resultRef = "artifacts/oam/checks/dormitory-performance-recoverability-result.json";
+  const screenshotIndexRef = "artifacts/oam/evidence/dormitory-performance-recoverability/screenshot-index.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.digest ?? item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && result?.status === "PASS" && report?.git?.headSha === commitSha
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: reportRef,
+    result: resultRef,
+    screenshotIndex: screenshotIndexRef,
+    performanceRecoverabilityDigest: report?.auditDigest || "",
+    measurementCount: report?.measurements?.length ?? 0,
+    recoverabilityCount: report?.recoverability?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    node: report ? buildBrowserProofNode({
+      id: "DORMITORY-PERFORMANCE-RECOVERABILITY-BROWSER",
+      status,
+      gate: "DORMITORY-PERFORMANCE-RECOVERABILITY-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      refs: [
+        "scripts/surface/run-dormitory-performance-recoverability-audit.mjs",
+        "scripts/surface/check-dormitory-performance-recoverability-audit.mjs",
+        reportRef,
+        resultRef,
+        screenshotIndexRef
+      ],
+      screenshotHashes,
+      scenarioIds: ["Dormitory.13ScenarioMainline.PerformanceRecoverability"],
+      auditLevel: "mobile_surface_performance_recoverability",
+      auditPurpose: "验证新建、保存、继续、确认、搜索、摘要打开和失败恢复提示。",
+      allowedInterpretation: ["本地/测试环境体验性能与可恢复性证据"],
+      forbiddenInterpretation: ["生产发布", "业务上线", "final GO"],
+      scenarioScope: {
+        currentMainGate: true,
+        productionConfirmAllowed: false,
+        releaseAuthority: false,
+        finalGoNoGo: "NO_GO"
+      },
+      businessGoAllowed: false,
+      progress: {
+        measurements: report?.measurements?.length ?? 0,
+        recoverability: report?.recoverability?.length ?? 0
+      }
+    }) : null
   };
 }
 

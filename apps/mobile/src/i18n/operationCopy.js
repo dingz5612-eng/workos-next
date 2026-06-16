@@ -116,7 +116,7 @@ export const operationCopy = {
     "searchActionObservation": "继续填写",
     "searchActionViewCase": "查看案件",
     "searchActionOpenObject": "打开对象",
-    "searchActionViewWorkItems": "查看工作项",
+    "searchActionViewWorkItems": "查看详情",
     "searchActionEvidence": "补充证据",
     "searchActionTrace": "查看轨迹",
     "searchActionLearning": "开始学习",

@@ -479,6 +479,32 @@
       ]
     },
     {
+      "path": "docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json",
+      "identity": "current_domain_governance",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-production-mainline-activation-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "住宿经营 13 场景投产主链激活治理 Source，定义职责域、投产卡、旧链退役、性能体验、交付 SOP 与 Evidence Root 吸收门禁；不得替代 13 场景总控业务权威。",
+      "layer": "source",
+      "authorityRole": "governanceSource",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-production-mainline-activation-result.json",
+      "responsibilityZh": "投产前主链唯一生效治理 Source；只约束执行、证据、职责和交付闭环，不新增业务事实规则。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json",
+        "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+      ]
+    },
+    {
       "path": "docs/business/domains/dormitory/dormitory-release-train.yml",
       "identity": "current_business_contract",
       "owner": "domain-owner",
@@ -3272,6 +3298,7 @@
       "docs/business/truth-owner-registry.yml",
       "docs/business/domains/dormitory/dormitory-operating-kernel.json",
       "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json",
       "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
       "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
@@ -3395,6 +3422,10 @@
     {
       "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
       "reasonZh": "住宿经营 13 场景总控 Source Authority，只能人工维护；旧场景包只能作为迁移参考。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json",
+      "reasonZh": "住宿经营 13 场景投产主链激活治理 Source，只约束执行、证据、职责、旧链退役和交付闭环；不得替代总控业务权威。"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",

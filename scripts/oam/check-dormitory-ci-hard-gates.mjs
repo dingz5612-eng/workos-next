@@ -32,6 +32,14 @@ if (!workflow.includes("Generate dormitory 13-scenario real-browser evidence")) 
 if (!workflow.includes("scripts/surface/run-dormitory-real-browser-audits.ps1")) {
   fail("CI must run the 13-scenario browser audit runner.");
 }
+if (!browserRunner.includes("scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs") ||
+  !browserRunner.includes("scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs")) {
+  fail("browser runner must hard-run 13-scenario entry browser audit before scenario positive/negative audits.");
+}
+if (!browserRunner.includes("scripts/surface/run-dormitory-performance-recoverability-audit.mjs") ||
+  !browserRunner.includes("scripts/surface/check-dormitory-performance-recoverability-audit.mjs")) {
+  fail("browser runner must hard-run performance and recoverability browser audit before scenario positive/negative audits.");
+}
 
 for (const required of [
   "node scripts/oam/check-dormitory-mainline-manifest.mjs",
@@ -42,6 +50,7 @@ for (const required of [
   "node scripts/oam/check-dormitory-active-path-gate.mjs",
   "node scripts/oam/check-dormitory-operation-execution-contract.mjs",
   "node scripts/oam/check-dormitory-local-test-environment-manager.mjs",
+  "node scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
   "node scripts/oam/check-generated-files-not-manually-edited.mjs",
   "node scripts/business/check-dormitory-13-scenario-control-authority.mjs",
   "node scripts/business/check-dormitory-13-scenario-generated-contracts.mjs",
@@ -70,6 +79,18 @@ for (let scenario = 1; scenario <= 13; scenario += 1) {
     if (!fs.existsSync(path.join(root, runScript))) fail(`browser run script missing on disk: ${runScript}.`);
     if (!fs.existsSync(path.join(root, checkScript))) fail(`browser check script missing on disk: ${checkScript}.`);
   }
+}
+if (!fs.existsSync(path.join(root, "scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs"))) {
+  fail("entry browser audit run script missing on disk.");
+}
+if (!fs.existsSync(path.join(root, "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"))) {
+  fail("entry browser audit check script missing on disk.");
+}
+if (!fs.existsSync(path.join(root, "scripts/surface/run-dormitory-performance-recoverability-audit.mjs"))) {
+  fail("performance and recoverability browser audit run script missing on disk.");
+}
+if (!fs.existsSync(path.join(root, "scripts/surface/check-dormitory-performance-recoverability-audit.mjs"))) {
+  fail("performance and recoverability browser audit check script missing on disk.");
 }
 
 for (let scenario = 1; scenario <= 13; scenario += 1) {

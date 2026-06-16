@@ -321,6 +321,8 @@ function normalizeCurrentAllowedTerms(file, text) {
     file === "scripts/oam/check-dormitory-mainline-manifest.mjs" ||
     file === "scripts/oam/check-lodging-consumer-graph.mjs" ||
     file === "scripts/oam/check-legacy-retirement-ledger.mjs" ||
+    file === "docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json" ||
+    file === "scripts/business/check-dormitory-production-mainline-activation-authority.mjs" ||
     file === "scripts/oam/check-dormitory-defect-closure-ledger.mjs" ||
     file === "scripts/oam/check-visible-business-copy-contract.mjs" ||
     file === "scripts/oam/check-business-ui-copy-no-technical-leak.mjs" ||

@@ -7581,6 +7581,37 @@ function checkRealBrowserEvidence(graph, finalReport) {
     }
   }
 
+  const performanceRecoverability = summary.performanceRecoverability;
+  if (!performanceRecoverability) {
+    failures.push("real browser evidence missing performance and recoverability audit.");
+  } else {
+    if (performanceRecoverability.status !== "passed") failures.push("performance and recoverability browser evidence must be passed.");
+    if (performanceRecoverability.currentMainGate !== true) failures.push("performance and recoverability browser evidence must be a current main gate.");
+    if (!performanceRecoverability.report || !exists(performanceRecoverability.report)) {
+      failures.push(`performance and recoverability browser report missing: ${performanceRecoverability.report || "(empty)"}.`);
+    }
+    if (!performanceRecoverability.result || !exists(performanceRecoverability.result)) {
+      failures.push(`performance and recoverability browser result missing: ${performanceRecoverability.result || "(empty)"}.`);
+    }
+    if ((performanceRecoverability.screenshotHashCount ?? 0) <= 0) {
+      failures.push("performance and recoverability browser evidence has no screenshot hashes.");
+    }
+    if (!sha256DigestPattern.test(performanceRecoverability.performanceRecoverabilityDigest ?? "")) {
+      failures.push("performance and recoverability browser digest missing.");
+    }
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === "DORMITORY-PERFORMANCE-RECOVERABILITY-BROWSER");
+    if (!node) {
+      failures.push("evidence graph missing node for DORMITORY-PERFORMANCE-RECOVERABILITY-BROWSER.");
+    } else {
+      if (node.status !== "passed") failures.push("DORMITORY-PERFORMANCE-RECOVERABILITY-BROWSER node must be passed.");
+      if (node.reportFresh !== true || node.reportHeadSha !== finalReport.latestCommit) {
+        failures.push("DORMITORY-PERFORMANCE-RECOVERABILITY-BROWSER evidence must be fresh for final report commit.");
+      }
+      if (!node.screenshotHashes?.length) failures.push("DORMITORY-PERFORMANCE-RECOVERABILITY-BROWSER node missing screenshot hashes.");
+      if (!node.refs?.includes(performanceRecoverability.report)) failures.push("DORMITORY-PERFORMANCE-RECOVERABILITY-BROWSER node missing report ref.");
+    }
+  }
+
   const quarantine = summary.legacyQuarantine ?? {};
   for (const [key, gate] of [
     ["firstGoldenChain", "DORMITORY-FIRST-GOLDEN-CHAIN-REAL-BROWSER"],

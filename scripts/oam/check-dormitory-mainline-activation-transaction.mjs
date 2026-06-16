@@ -27,12 +27,15 @@ if (transaction.transactionDigest !== digestObject({ ...transaction, transaction
 
 const expectedDigests = {
   sourceDigest: fileDigest("docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json", root),
+  productionActivationDigest: readJsonIfExists("artifacts/oam/checks/dormitory-production-mainline-activation-result.json")?.authorityDigest,
   consumerGraphDigest: readJsonIfExists("artifacts/oam/checks/lodging-consumer-graph-result.json")?.graphDigest,
   oldChainRetirementDigest: readJsonIfExists(`artifacts/oam/checks/${oldWord}-retirement-ledger-result.json`)?.ledgerDigest,
   visibleCopyDigest: readJsonIfExists("artifacts/oam/checks/visible-business-copy-contract-result.json")?.contractDigest,
   activePathGateDigest: fileDigest("artifacts/oam/checks/dormitory-active-path-gate-result.json", root),
   operationExecutionDigest: readJsonIfExists("artifacts/oam/checks/dormitory-operation-execution-contract-result.json")?.contractDigest,
   localEnvironmentDigest: readJsonIfExists("artifacts/oam/checks/dormitory-local-test-environment-manager-result.json")?.scriptDigest,
+  entryBrowserDigest: fileDigest("artifacts/oam/checks/dormitory-13-scenario-entry-browser-result.json", root),
+  performanceRecoverabilityDigest: fileDigest("artifacts/oam/checks/dormitory-performance-recoverability-result.json", root),
   defectClosureDigest: readJsonIfExists("artifacts/oam/checks/dormitory-defect-closure-ledger-result.json")?.ledgerDigest,
   ciWorkflowDigest: fileDigest(".github/workflows/ci.yml", root),
   ciHardGateDigest: fileDigest("artifacts/oam/checks/dormitory-ci-hard-gates-result.json", root),

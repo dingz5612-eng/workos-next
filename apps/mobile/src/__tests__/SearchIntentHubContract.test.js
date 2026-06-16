@@ -18,7 +18,7 @@ describe("OAM Surface search intent hub contract", () => {
     expect(html).toContain(`data-start-operations-workspace="${DORMITORY_MAINLINE_WORKSPACE_ID}"`);
     expect(html).toContain(`data-first-card-id="${DORMITORY_SCENARIO1_STEPS[0].cardId}"`);
     expect(html).not.toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
-    expect(html).toContain(">开始填写</button>");
+    expect(html).toContain(">开始办理</button>");
   });
 
   it("routes the explicit current capability wording to the Operations start command", () => {
@@ -28,7 +28,7 @@ describe("OAM Surface search intent hub contract", () => {
     expect(html).toContain('data-search-section="activeCommands"');
     expect(html).toContain(`data-start-operations-workspace="${DORMITORY_MAINLINE_WORKSPACE_ID}"`);
     expect(text).toContain("房源建档与基础就绪");
-    expect(text).toContain("开始填写");
+    expect(text).toContain("开始办理");
   });
 
   it("uses Search Kernel admission for active commands without local command admission", () => {
@@ -57,10 +57,10 @@ describe("OAM Surface search intent hub contract", () => {
     const text = visibleText(html);
 
     expect(html).toContain(`data-start-operations-workspace="${DORMITORY_MAINLINE_WORKSPACE_ID}"`);
-    expect(text).toContain("开始填写");
+    expect(text).toContain("开始办理");
   });
 
-  it("keeps active commands readonly when no backend Search Kernel admission exists", () => {
+  it("keeps generated mainline active commands startable when no backend Search Kernel admission exists", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "房源建档" });
     ctx.state.runtimeStore.commandAdmission = internalPilotAdmissionFixture();
     ctx.state.runtimeStore.businessLineAdmission = null;
@@ -68,8 +68,9 @@ describe("OAM Surface search intent hub contract", () => {
 
     const html = searchView(ctx);
 
-    expect(html).not.toContain(`data-start-operations-workspace="${DORMITORY_MAINLINE_WORKSPACE_ID}"`);
-    expect(html).toContain('data-view="learning"');
+    expect(html).toContain(`data-start-operations-workspace="${DORMITORY_MAINLINE_WORKSPACE_ID}"`);
+    expect(html).not.toContain('data-view="learning"');
+    expect(visibleText(html)).toContain("开始办理");
   });
 
   it("renders account recent searches and registered common intent suggestions", () => {
@@ -170,6 +171,16 @@ describe("OAM Surface search intent hub contract", () => {
 
     expect(html).not.toContain("wi-dorm-unrelated");
     expect(visibleText(html)).toContain("这条结果暂时没有可跳转目标");
+  });
+
+  it("keeps ordinary object search readonly and does not show start handling", () => {
+    const html = searchView(createSurfaceCtx({ view: "search", query: "D01" }));
+    const text = visibleText(html);
+
+    expect(html).not.toContain('data-search-section="activeCommands"');
+    expect(html).not.toContain(`data-start-operations-workspace="${DORMITORY_MAINLINE_WORKSPACE_ID}"`);
+    expect(text).not.toContain("开始办理");
+    expect(text).toContain("这条结果暂时没有可跳转目标");
   });
 
   it("recovers an unfinished room workflow by object number and continues on the paused card", () => {

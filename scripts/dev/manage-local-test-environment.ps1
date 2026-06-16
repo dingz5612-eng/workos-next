@@ -43,10 +43,12 @@ function Build-Workspace {
 
 function Start-Workspace {
   New-Item -ItemType Directory -Force -Path $ArtifactDir | Out-Null
-  $apiLog = Join-Path $ArtifactDir "api.log"
-  $mobileLog = Join-Path $ArtifactDir "mobile.log"
-  Start-Process -FilePath "dotnet" -ArgumentList @("run", "--project", "services/core-api/WorkOS.Api/WorkOS.Api.csproj", "--urls", "http://127.0.0.1:$ApiPort") -WorkingDirectory $RepoRoot -RedirectStandardOutput $apiLog -RedirectStandardError $apiLog -WindowStyle Hidden
-  Start-Process -FilePath "npm" -ArgumentList @("--prefix", "apps/mobile", "run", "dev", "--", "--host", "127.0.0.1", "--port", "$MobilePort") -WorkingDirectory $RepoRoot -RedirectStandardOutput $mobileLog -RedirectStandardError $mobileLog -WindowStyle Hidden
+  $apiOutLog = Join-Path $ArtifactDir "api.out.log"
+  $apiErrLog = Join-Path $ArtifactDir "api.err.log"
+  $mobileOutLog = Join-Path $ArtifactDir "mobile.out.log"
+  $mobileErrLog = Join-Path $ArtifactDir "mobile.err.log"
+  Start-Process -FilePath "dotnet" -ArgumentList @("run", "--project", "services/core-api/WorkOS.Api/WorkOS.Api.csproj", "--urls", "http://127.0.0.1:$ApiPort") -WorkingDirectory $RepoRoot -RedirectStandardOutput $apiOutLog -RedirectStandardError $apiErrLog -WindowStyle Hidden
+  Start-Process -FilePath "npm" -ArgumentList @("--prefix", "apps/mobile", "run", "dev", "--", "--host", "127.0.0.1", "--port", "$MobilePort") -WorkingDirectory $RepoRoot -RedirectStandardOutput $mobileOutLog -RedirectStandardError $mobileErrLog -WindowStyle Hidden
 }
 
 function Test-Workspace {
