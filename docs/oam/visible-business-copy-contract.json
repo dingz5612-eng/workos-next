@@ -1,0 +1,57 @@
+{
+  "version": "oam.visible-business-copy-contract.v1",
+  "status": "authoritative",
+  "purposeZh": "普通业务页面只能显示业务可理解文案；技术字段、旧链、发布结论和内部 ID 不得暴露给普通用户。",
+  "forbiddenVisibleTerms": [
+    "金链",
+    "第一金链",
+    "内测",
+    "runtime-test",
+    "技术详情",
+    "生产阻断",
+    "final GO",
+    "capability",
+    "digest",
+    "projectionVersion",
+    "stableRef",
+    "roomId",
+    "bedId",
+    "workItemId"
+  ],
+  "allowedContexts": [
+    "审计详情",
+    "迁移报告",
+    "开发证据包",
+    "控制台报告",
+    "historical evidence"
+  ],
+  "ordinaryBusinessCopyFiles": [
+    "apps/mobile/src/i18n/operationCopy.js"
+  ],
+  "ordinaryBusinessDomProbe": {
+    "probeName": "operationCopy rendered values",
+    "ruleZh": "检查器必须把业务文案渲染为 DOM 文本后检查，而不能只做源码字符串扫描。"
+  },
+  "requiredScenario1BusinessLabels": [
+    "房间建档确认",
+    "床位组确认",
+    "基础就绪确认"
+  ],
+  "forbiddenLegacyScenario1Labels": [
+    "确认房间配置",
+    "确认床位配置",
+    "确认资源就绪"
+  ],
+  "technicalTermAllowlistFiles": [
+    "docs/oam/visible-business-copy-contract.json",
+    "scripts/oam/check-visible-business-copy-contract.mjs",
+    "scripts/oam/check-business-ui-copy-no-technical-leak.mjs"
+  ],
+  "verificationScripts": [
+    "node scripts/oam/check-visible-business-copy-contract.mjs",
+    "node scripts/oam/check-business-ui-copy-no-technical-leak.mjs"
+  ],
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO"
+}

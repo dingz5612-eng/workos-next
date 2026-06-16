@@ -1,0 +1,309 @@
+{
+  "version": "oam.dormitory-defect-closure-ledger.v1",
+  "status": "authoritative",
+  "purposeZh": "住宿经营 13 场景主链治理缺陷闭环总账；P0/P1 不得无主，closed 必须有复验证据。",
+  "rules": {
+    "p0p1MustHaveOwner": true,
+    "closedRequiresVerificationEvidence": true,
+    "recurrenceReopensAutomatically": true,
+    "specializedFailureWithEvidenceRootPassIsP0": true
+  },
+  "defects": [
+    {
+      "defectId": "DORM-P0-001",
+      "severity": "P0",
+      "defectType": "legacy_active_path_failure",
+      "owner": "oam-mainline-owner",
+      "discoveredBy": "node scripts/oam/check-no-active-path-legacy-identity.mjs",
+      "fileLocations": [
+        "artifacts/oam/checks/no-active-path-legacy-identity-result.json"
+      ],
+      "impactLayers": [
+        "surface",
+        "runtime",
+        "browser",
+        "evidence"
+      ],
+      "rootCauseZh": "旧身份曾被当前路径消费，需要以主链清单和消费者图谱持续阻断。",
+      "fixActionsZh": [
+        "建立 MainlineManifest。",
+        "建立 LodgingConsumerGraph。",
+        "持续检查旧身份不得成为 current mainline。"
+      ],
+      "verificationScripts": [
+        "node scripts/oam/check-no-active-path-legacy-identity.mjs",
+        "node scripts/oam/check-dormitory-mainline-manifest.mjs",
+        "node scripts/oam/check-lodging-consumer-graph.mjs"
+      ],
+      "blocksEvidenceRoot": true,
+      "blocksCI": true,
+      "status": "closed",
+      "closingEvidence": [
+        "artifacts/oam/checks/business-ui-copy-no-technical-leak-result.json",
+        "artifacts/oam/checks/visible-business-copy-contract-result.json"
+      ]
+    },
+    {
+      "defectId": "DORM-P0-002",
+      "severity": "P0",
+      "defectType": "business_ui_copy_check_failure",
+      "owner": "surface-copy-owner",
+      "discoveredBy": "node scripts/oam/check-business-ui-copy-no-technical-leak.mjs",
+      "fileLocations": [
+        "scripts/oam/check-business-ui-copy-no-technical-leak.mjs",
+        "apps/mobile/src/i18n/operationCopy.js"
+      ],
+      "impactLayers": [
+        "surface",
+        "test"
+      ],
+      "rootCauseZh": "检查脚本仍期待旧按钮名；可见文案仍含内测、技术详情、生产阻断等普通业务页不应出现的词。",
+      "fixActionsZh": [
+        "改为检查房间建档确认、床位组确认、基础就绪确认。",
+        "建立 VisibleBusinessCopyContract。",
+        "按合同清理普通业务页技术泄漏词。"
+      ],
+      "verificationScripts": [
+        "node scripts/oam/check-business-ui-copy-no-technical-leak.mjs",
+        "node scripts/oam/check-visible-business-copy-contract.mjs"
+      ],
+      "blocksEvidenceRoot": true,
+      "blocksCI": true,
+      "status": "closed",
+      "closingEvidence": [
+        "artifacts/oam/checks/business-ui-copy-no-technical-leak-result.json"
+      ]
+    },
+    {
+      "defectId": "DORM-P0-003",
+      "severity": "P0",
+      "defectType": "ui_check_script_protects_legacy_buttons",
+      "owner": "surface-copy-owner",
+      "discoveredBy": "node scripts/oam/check-business-ui-copy-no-technical-leak.mjs",
+      "fileLocations": [
+        "scripts/oam/check-business-ui-copy-no-technical-leak.mjs"
+      ],
+      "impactLayers": [
+        "test",
+        "surface"
+      ],
+      "rootCauseZh": "脚本把确认房间配置、确认床位配置、确认资源就绪误当成当前业务表达。",
+      "fixActionsZh": [
+        "脚本消费 VisibleBusinessCopyContract。",
+        "拒绝旧按钮名重新进入业务可见文案。"
+      ],
+      "verificationScripts": [
+        "node scripts/oam/check-business-ui-copy-no-technical-leak.mjs"
+      ],
+      "blocksEvidenceRoot": true,
+      "blocksCI": true,
+      "status": "closed",
+      "closingEvidence": [
+        "artifacts/oam/checks/lodging-consumer-graph-result.json"
+      ]
+    },
+    {
+      "defectId": "DORM-P0-004",
+      "severity": "P0",
+      "defectType": "scenario_2_to_12_browser_digest_mismatch",
+      "owner": "browser-evidence-owner",
+      "discoveredBy": "browser scenario evidence digest audit",
+      "fileLocations": [
+        "artifacts/oam/browser/"
+      ],
+      "impactLayers": [
+        "browser",
+        "evidence"
+      ],
+      "rootCauseZh": "场景 2-12 浏览器证据摘要曾与当前生成合同不同步，需在下一指令重跑真实浏览器证据。",
+      "fixActionsZh": [
+        "按消费者图谱切换 current main browser audit。",
+        "重跑场景 2-12 正反向浏览器证据并更新 evidence generator。"
+      ],
+      "verificationScripts": [
+        "node scripts/surface/audit-dormitory-scenario-browser.mjs",
+        "node scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "blocksEvidenceRoot": true,
+      "blocksCI": true,
+      "status": "open",
+      "closingEvidence": []
+    },
+    {
+      "defectId": "DORM-P0-005",
+      "severity": "P0",
+      "defectType": "ci_browser_continue_on_error",
+      "owner": "ci-owner",
+      "discoveredBy": "CI workflow audit",
+      "fileLocations": [
+        ".github/workflows/"
+      ],
+      "impactLayers": [
+        "CI",
+        "browser",
+        "evidence"
+      ],
+      "rootCauseZh": "CI 浏览器审计若 continue-on-error，会让专项失败无法阻断 Evidence Root。",
+      "fixActionsZh": [
+        "移除 current main browser audit 的 continue-on-error。",
+        "CI 绑定 MainlineManifest 和 LodgingConsumerGraph。"
+      ],
+      "verificationScripts": [
+        "node scripts/oam/check-lodging-consumer-graph.mjs",
+        "node scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "blocksEvidenceRoot": true,
+      "blocksCI": true,
+      "status": "open",
+      "closingEvidence": []
+    },
+    {
+      "defectId": "DORM-P0-006",
+      "severity": "P0",
+      "defectType": "evidence_root_biased_to_first_golden_chain",
+      "owner": "evidence-owner",
+      "discoveredBy": "Evidence Root current main audit",
+      "fileLocations": [
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/lib/capability-delivery-control-plane.mjs"
+      ],
+      "impactLayers": [
+        "evidence",
+        "browser",
+        "control-plane"
+      ],
+      "rootCauseZh": "Evidence Root 生成器仍保留 FirstGoldenChain current main audit 语义，需要改成绑定住宿经营 13 场景主链并保留旧链只读证据。",
+      "fixActionsZh": [
+        "生成器读取 MainlineManifest。",
+        "Evidence Graph 必须从 13 场景总控追溯到所有消费者。",
+        "FirstGoldenChain 只保留 legacy/historical evidence 节点。"
+      ],
+      "verificationScripts": [
+        "node scripts/oam/check-current-evidence-root.mjs",
+        "node scripts/oam/check-dormitory-mainline-manifest.mjs"
+      ],
+      "blocksEvidenceRoot": true,
+      "blocksCI": true,
+      "status": "open",
+      "closingEvidence": []
+    },
+    {
+      "defectId": "DORM-P1-007",
+      "severity": "P1",
+      "defectType": "legacy_terms_and_entries_residue",
+      "owner": "oam-mainline-owner",
+      "discoveredBy": "node scripts/oam/check-legacy-retirement-ledger.mjs",
+      "fileLocations": [
+        "docs/oam/legacy-retirement-ledger.json"
+      ],
+      "impactLayers": [
+        "Source",
+        "runtime",
+        "surface",
+        "test",
+        "evidence"
+      ],
+      "rootCauseZh": "旧链词汇仍散落在历史证据、测试夹具、控制面和部分当前路径中。",
+      "fixActionsZh": [
+        "所有命中分类。",
+        "active_forbidden 进入后续替换清单。",
+        "只读分类证明不可写事实。"
+      ],
+      "verificationScripts": [
+        "node scripts/oam/check-legacy-retirement-ledger.mjs"
+      ],
+      "blocksEvidenceRoot": true,
+      "blocksCI": false,
+      "status": "closed",
+      "closingEvidence": [
+        "artifacts/oam/checks/legacy-retirement-ledger-result.json"
+      ]
+    },
+    {
+      "defectId": "DORM-P1-008",
+      "severity": "P1",
+      "defectType": "consumer_graph_uncovered_items",
+      "owner": "oam-mainline-owner",
+      "discoveredBy": "consumer graph coverage audit",
+      "fileLocations": [
+        "docs/oam/lodging-consumer-graph.json"
+      ],
+      "impactLayers": [
+        "surface",
+        "runtime",
+        "search",
+        "test",
+        "browser",
+        "evidence",
+        "CI"
+      ],
+      "rootCauseZh": "住宿经营 generated 合同消费者此前没有统一登记。",
+      "fixActionsZh": [
+        "登记 mobile surface、runtime、search、今日、工作项、我的、测试、浏览器、Evidence Root、CI。",
+        "未登记消费者消费合同即失败。"
+      ],
+      "verificationScripts": [
+        "node scripts/oam/check-lodging-consumer-graph.mjs"
+      ],
+      "blocksEvidenceRoot": true,
+      "blocksCI": true,
+      "status": "fixing",
+      "closingEvidence": []
+    },
+    {
+      "defectId": "DORM-P1-009",
+      "severity": "P1",
+      "defectType": "legacy_unclassified_items",
+      "owner": "oam-mainline-owner",
+      "discoveredBy": "node scripts/oam/check-legacy-retirement-ledger.mjs",
+      "fileLocations": [
+        "docs/oam/legacy-retirement-ledger.json"
+      ],
+      "impactLayers": [
+        "Source",
+        "test",
+        "evidence"
+      ],
+      "rootCauseZh": "旧词命中必须全部分类，否则无法判断是历史证据、测试夹具还是当前路径污染。",
+      "fixActionsZh": [
+        "建立分类规则。",
+        "unclassified 必须为 0。"
+      ],
+      "verificationScripts": [
+        "node scripts/oam/check-legacy-retirement-ledger.mjs"
+      ],
+      "blocksEvidenceRoot": true,
+      "blocksCI": false,
+      "status": "fixing",
+      "closingEvidence": []
+    },
+    {
+      "defectId": "DORM-P1-010",
+      "severity": "P1",
+      "defectType": "correction_automation_insufficient",
+      "owner": "automation-owner",
+      "discoveredBy": "defect recurrence policy audit",
+      "fileLocations": [
+        "docs/oam/dormitory-defect-closure-ledger.json"
+      ],
+      "impactLayers": [
+        "test",
+        "evidence",
+        "CI"
+      ],
+      "rootCauseZh": "同类问题复发后的自动重新打开和复验链路仍需接入完整 CI/Evidence Root。",
+      "fixActionsZh": [
+        "后续把 ledger checker 接入 CI。",
+        "同类失败出现时自动从 closed 回到 open。"
+      ],
+      "verificationScripts": [
+        "node scripts/oam/check-dormitory-defect-closure-ledger.mjs"
+      ],
+      "blocksEvidenceRoot": false,
+      "blocksCI": false,
+      "status": "open",
+      "closingEvidence": []
+    }
+  ],
+  "verificationScript": "scripts/oam/check-dormitory-defect-closure-ledger.mjs"
+}

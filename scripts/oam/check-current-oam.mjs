@@ -291,6 +291,11 @@ function normalizeCurrentAllowedTerms(file, text) {
     file === "docs/oam/capabilities/dormitory-first-golden-chain.current.json" ||
     file === "docs/oam/capabilities/compatibility-box.current.json" ||
     file === "docs/oam/capabilities/dormitory-first-golden-chain.active-path-boundary.json" ||
+    file === "docs/oam/dormitory-mainline-manifest.json" ||
+    file === "docs/oam/lodging-consumer-graph.json" ||
+    file === "docs/oam/legacy-retirement-ledger.json" ||
+    file === "docs/oam/dormitory-defect-closure-ledger.json" ||
+    file === "docs/oam/visible-business-copy-contract.json" ||
     file === "docs/oam/control-plane/gate-lane-taxonomy.current.json" ||
     file === "docs/contracts/generated/dormitory/test-plan.generated.json" ||
     file === "docs/contracts/generated/dormitory/db-projection-policy.generated.json" ||
@@ -313,6 +318,12 @@ function normalizeCurrentAllowedTerms(file, text) {
     file === "scripts/oam/generate-current-evidence-root.mjs" ||
     file === "scripts/oam/check-current-evidence-root.mjs" ||
     file === "scripts/oam/check-first-golden-chain-active-path-exact.mjs" ||
+    file === "scripts/oam/check-dormitory-mainline-manifest.mjs" ||
+    file === "scripts/oam/check-lodging-consumer-graph.mjs" ||
+    file === "scripts/oam/check-legacy-retirement-ledger.mjs" ||
+    file === "scripts/oam/check-dormitory-defect-closure-ledger.mjs" ||
+    file === "scripts/oam/check-visible-business-copy-contract.mjs" ||
+    file === "scripts/oam/check-business-ui-copy-no-technical-leak.mjs" ||
     file === "scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs" ||
     file === "scripts/oam/check-test-plan-generated-from-capability.mjs" ||
     file === "scripts/oam/check-evidence-digest-chain-single-source.mjs" ||

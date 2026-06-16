@@ -55,6 +55,13 @@
     ],
     "deletionLedger": [
       "docs/oam/current-engineering-ledger.json"
+    ],
+    "mainlineGovernanceLedger": [
+      "docs/oam/dormitory-mainline-manifest.json",
+      "docs/oam/lodging-consumer-graph.json",
+      "docs/oam/legacy-retirement-ledger.json",
+      "docs/oam/dormitory-defect-closure-ledger.json",
+      "docs/oam/visible-business-copy-contract.json"
     ]
   },
   "forbiddenActiveTerms": [
