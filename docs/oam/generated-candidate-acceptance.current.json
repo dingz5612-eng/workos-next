@@ -95,7 +95,7 @@
   },
   "subjectStatusAtWrite": "READY_FOR_00_ACCEPTANCE_REVIEW",
   "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
-  "decisionRecordHead": null,
+  "decisionRecordHead": "807af3edd960c3f9737e8ae898f690e7ca2be172",
   "decisionWritebackBaseHead": "b690e885918c8102e031ed3ab29f74a8f035c59a",
   "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
   "generatedFieldBindingClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
@@ -151,7 +151,8 @@
       "production confirm is not implied",
       "release authority is not implied",
       "final GO is not implied"
-    ]
+    ],
+    "decisionRecordHead": "807af3edd960c3f9737e8ae898f690e7ca2be172"
   },
   "historicalAppendix": {
     "deprecatedAliasReferences": [
