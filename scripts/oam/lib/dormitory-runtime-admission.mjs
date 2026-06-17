@@ -165,7 +165,11 @@ export function validateDormitoryRuntimeAdmissionAuthority({
     runtimeConsumedBundleDigest === acceptedGeneratedBundleDigest;
   let proof = readJsonIfExists(DORMITORY_RUNTIME_TEST_ONLY_PROOF_PATH, root);
   if (writeProof && authority?.runtimeAdmissionStatus === RUNTIME_ADMISSION_APPROVED_STATUS &&
-    (!proof || proof.acceptedGeneratedBundleDigest !== acceptedGeneratedBundleDigest ||
+    (!proof ||
+      proof.acceptedSubjectDigest !== authority.acceptedSubjectDigest ||
+      proof.generatedCandidateSubjectDigest !== authority.generatedCandidateSubjectDigest ||
+      proof.executionProofDigest !== authority.executionProofDigest ||
+      proof.acceptedGeneratedBundleDigest !== acceptedGeneratedBundleDigest ||
       proof.runtimeConsumedBundleDigest !== runtimeConsumedBundleDigest ||
       stableStringify(proof.runtimeConsumedFilesDigestList ?? []) !== stableStringify(runtimeConsumedFilesDigestList) ||
       proof.environmentProfileId !== authority.environmentProfileId ||
