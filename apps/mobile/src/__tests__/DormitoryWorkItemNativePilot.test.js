@@ -216,7 +216,7 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     expect(todayHtml).not.toContain("TodayFocusOverview");
     expect(todayHtml).not.toContain("WorkItem Mission Control");
     expect(meHtml).toContain("个人运营中心");
-    expect(meHtml).toContain("证据上传");
+    expect(meHtml).toContain("材料上传");
     expect(meHtml).toContain("提交队列");
     expect(meHtml).toContain("当前设备");
     expect(meHtml).toContain("学习中心");
@@ -314,12 +314,12 @@ function ctx(overrides = {}) {
       assignedWorkItems: "今日待办",
       todayLearning: "今日必学",
       personalOpsCenter: "个人运营中心",
-      evidenceUpload: "证据上传",
+      evidenceUpload: "材料上传",
       submissionQueue: "提交队列",
       currentDevice: "当前设备",
       noPendingEvidenceUpload: "没有待上传证据",
       noPendingSubmission: "没有待提交办理",
-      evidenceUploadWaiting: "证据等待上传",
+      evidenceUploadWaiting: "材料等待上传",
       submissionWaiting: "办理等待提交",
       deviceTrusted: "设备已验证",
       deviceUnknown: "设备状态待确认",
@@ -394,14 +394,14 @@ function resourceWorkspaceFixture() {
     id: "W-DORM-MAINLINE",
     domain: "stay",
     taskId: "draft-room-create",
-    title: { "zh-CN": "房源建档与基础就绪" },
-    summary: { "zh-CN": "房间建档、床位组确认和基础就绪确认" },
-    next: { "zh-CN": "房间建档确认" },
+    title: { "zh-CN": "新建房间和床位" },
+    summary: { "zh-CN": "房间建档、确认床位信息和完成基础检查" },
+    next: { "zh-CN": "填写房间信息" },
     cards: [{
       id: "cert.roomSetupConfirm",
       status: "ready",
       workItemId: "wi-dorm-room-setup",
-      title: { "zh-CN": "房间建档确认" },
+      title: { "zh-CN": "填写房间信息" },
       fields: {
         business: [
           { id: "buildingArea", label: { "zh-CN": "楼栋/区域" } },

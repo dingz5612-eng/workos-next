@@ -8,16 +8,16 @@
   "generatedFrom": [
     "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
   ],
-  "inputDigest": "sha256:4c3a13f3a7b929d8420f863c66bb6891b209aee38ab4cb168f785dc2865489a7",
+  "inputDigest": "sha256:d2d2ae59e3c738b48f595b1203dd288fb25b6d0ba691ce0033777f8b91c192ab",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
-      "digest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0"
+      "digest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a"
     }
   ],
-  "sourceContentDigest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0",
+  "sourceContentDigest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a",
   "authorityId": "Dormitory.Operating13ScenarioControl",
-  "outputContentDigest": "sha256:40710de76893504960ffa461b4ad6f31deb7c966fe79217425d30ee219184b8a",
+  "outputContentDigest": "sha256:0cc05fa0e7b471940a94ad97283fdc7b96aa04bfae980c3c456a18f380578720",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
@@ -163,7 +163,7 @@
     },
     {
       "scenarioNo": 6,
-      "scenarioId": "lodging.payment-deposit-guarantee-intake",
+      "scenarioId": "lodging.payment-deposit-and-guarantee",
       "positiveBrowserScreenshotRequired": true,
       "negativeBrowserScreenshotRequired": true,
       "screenshotAnalysisRequired": true,
@@ -185,7 +185,7 @@
     },
     {
       "scenarioNo": 7,
-      "scenarioId": "lodging.checkin",
+      "scenarioId": "lodging.check-in-processing",
       "positiveBrowserScreenshotRequired": true,
       "negativeBrowserScreenshotRequired": true,
       "screenshotAnalysisRequired": true,
@@ -229,7 +229,7 @@
     },
     {
       "scenarioNo": 9,
-      "scenarioId": "lodging.checkout-settlement",
+      "scenarioId": "lodging.checkout-and-settlement",
       "positiveBrowserScreenshotRequired": true,
       "negativeBrowserScreenshotRequired": true,
       "screenshotAnalysisRequired": true,
@@ -273,7 +273,7 @@
     },
     {
       "scenarioNo": 11,
-      "scenarioId": "lodging.housekeeping-maintenance-support",
+      "scenarioId": "lodging.housekeeping-maintenance-outofservice",
       "positiveBrowserScreenshotRequired": true,
       "negativeBrowserScreenshotRequired": true,
       "screenshotAnalysisRequired": true,
@@ -295,7 +295,7 @@
     },
     {
       "scenarioNo": 12,
-      "scenarioId": "lodging.channel-corporate-support",
+      "scenarioId": "lodging.channel-corporate-customer",
       "positiveBrowserScreenshotRequired": true,
       "negativeBrowserScreenshotRequired": true,
       "screenshotAnalysisRequired": true,

@@ -14,7 +14,7 @@ describe("Stage B ActionDecisionCard contract", () => {
     for (const label of ["工作内容", "处理："]) {
       expect(text).not.toContain(label);
     }
-    for (const label of ["当前能否处理", "处理说明", "需要的材料", "下一步怎么做", "风险等级", "责任角色", "截止时间", "业务对象"]) {
+    for (const label of ["当前能否处理", "处理说明", "需要的材料", "下一步怎么做", "风险", "责任角色", "截止时间", "业务对象"]) {
       expect(text).not.toContain(label);
     }
     expect(html).toContain('data-surface="business-summary-header"');

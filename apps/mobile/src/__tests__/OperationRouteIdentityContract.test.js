@@ -87,7 +87,7 @@ describe("OAM Surface WorkItem route identity", () => {
       cards: [{
         id: "cert.bedSetupConfirm",
         status: "ready",
-        title: { "zh-CN": "床位组确认" },
+        title: { "zh-CN": "确认床位信息" },
         fields: { business: [field("blockedReason", "阻断原因")], system: [], analytics: [] },
         evidence: [],
         checks: [],
@@ -103,7 +103,7 @@ describe("OAM Surface WorkItem route identity", () => {
       card: {
         id: "cert.bedSetupConfirm",
         status: "ready",
-        title: { "zh-CN": "床位组确认" },
+        title: { "zh-CN": "确认床位信息" },
         fields: { business: [field("bedNo", "床位号"), field("bedLabel", "床位标签")], system: [], analytics: [] },
         evidence: [],
         checks: [],
@@ -128,7 +128,7 @@ describe("OAM Surface WorkItem route identity", () => {
     const text = visibleText(routeView(ctx));
 
     expect(target.workItem.card.fields.business.map((item) => item.id)).toEqual(["bedNo", "bedLabel"]);
-    expect(text).toContain("床位组确认");
+    expect(text).toContain("确认床位信息");
     expect(text).toContain("可以提交");
     expect(text).not.toContain("床位号");
     expect(text).not.toContain("床位标签");
@@ -143,7 +143,7 @@ describe("OAM Surface WorkItem route identity", () => {
       cards: [{
         id: "cert.bedSetupConfirm",
         status: "notStarted",
-        title: { "zh-CN": "床位组确认" },
+        title: { "zh-CN": "确认床位信息" },
         fields: { business: [field("bedNo", "床位号")], system: [], analytics: [] },
         evidence: [],
         checks: [],
@@ -159,7 +159,7 @@ describe("OAM Surface WorkItem route identity", () => {
       card: {
         id: "cert.bedSetupConfirm",
         status: "ready",
-        title: { "zh-CN": "床位组确认" },
+        title: { "zh-CN": "确认床位信息" },
         fields: { business: [field("bedNo", "床位号")], system: [], analytics: [] },
         evidence: [],
         checks: [],
@@ -179,7 +179,7 @@ describe("OAM Surface WorkItem route identity", () => {
 
     expect(text).toContain("提交前检查");
     expect(text).toContain("可以提交");
-    expect(text).toContain("床位组确认");
+    expect(text).toContain("确认床位信息");
     expect(text).not.toContain("床位号");
     expect(text).not.toContain("这张卡还没轮到办理");
   });
@@ -225,8 +225,8 @@ describe("OAM Surface WorkItem route identity", () => {
     expect(html).toContain('data-step-marker="修"');
     expect(text).toContain("填写信息");
     expect(text).toContain("更正中");
-    expect(text).toContain("房间建档确认");
-    expect(text).not.toContain("办理记录");
+    expect(text).toContain("填写房间信息");
+    expect(text).not.toContain("只读记录");
     expect(html).not.toContain("intent-card");
     expect(html).toContain('data-operation-field="roomNo"');
   });
@@ -292,18 +292,18 @@ describe("OAM Surface WorkItem route identity", () => {
     expect(html).toContain('data-surface="completed-workspace-record"');
     expect(html).toContain('data-step-state="completed"');
     expect(html).toContain('data-step-marker="修"');
-    expect(html).toContain('aria-label="房间建档确认 已完成 · 有更正"');
+    expect(html).toContain('aria-label="填写房间信息 已完成 · 有更正"');
     expect(text).toContain("已完成 · 有更正");
     expect(text).toContain("已完成");
-    expect(html).not.toContain('aria-label="房间建档确认 更正中"');
+    expect(html).not.toContain('aria-label="填写房间信息 更正中"');
   });
 
   it("projects Operations WorkItem lifecycle states onto the operation progress rail", () => {
     const store = runtimeStore();
     store.workspaces[0].cards = [
-      { ...store.workspaces[0].cards[0], id: "cert.roomSetupConfirm", status: "ready", title: { "zh-CN": "房间建档确认" } },
-      { id: "cert.bedSetupConfirm", status: "notStarted", title: { "zh-CN": "床位组确认" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } },
-      { id: "cert.resourceReadinessConfirm", status: "notStarted", title: { "zh-CN": "基础就绪确认" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
+      { ...store.workspaces[0].cards[0], id: "cert.roomSetupConfirm", status: "ready", title: { "zh-CN": "填写房间信息" } },
+      { id: "cert.bedSetupConfirm", status: "notStarted", title: { "zh-CN": "确认床位信息" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } },
+      { id: "cert.resourceReadinessConfirm", status: "notStarted", title: { "zh-CN": "完成基础检查" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
     ];
     const ctx = createSurfaceCtx({
       view: "operationPanel",
@@ -323,11 +323,11 @@ describe("OAM Surface WorkItem route identity", () => {
     const text = visibleText(html);
 
     expect(text).toContain("第 3/3 步");
-    expect(html).toContain('aria-label="房间建档确认 已完成"');
-    expect(html).toContain('aria-label="床位组确认 已完成"');
-    expect(html).toContain('aria-label="基础就绪确认 待处理"');
-    expect(text).not.toContain("房间建档确认 待处理");
-    expect(text).not.toContain("床位组确认 未开始");
+    expect(html).toContain('aria-label="填写房间信息 已完成"');
+    expect(html).toContain('aria-label="确认床位信息 已完成"');
+    expect(html).toContain('aria-label="完成基础检查 待处理"');
+    expect(text).not.toContain("填写房间信息 待处理");
+    expect(text).not.toContain("确认床位信息 未开始");
   });
 
   it("uses runtime workspace state instead of stale WorkItem workspace snapshots on the progress rail", () => {
@@ -336,8 +336,8 @@ describe("OAM Surface WorkItem route identity", () => {
       ...store.workspaces[0],
       id: "W-DORM-MAINLINE-20260604142817-7a669",
       cards: [
-        { ...store.workspaces[0].cards[0], id: "cert.roomSetupConfirm", status: "ready", title: { "zh-CN": "房间建档确认" } },
-        { id: "cert.bedSetupConfirm", status: "notStarted", title: { "zh-CN": "床位组确认" }, fields: { business: [field("bedNo", "床位号")], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
+        { ...store.workspaces[0].cards[0], id: "cert.roomSetupConfirm", status: "ready", title: { "zh-CN": "填写房间信息" } },
+        { id: "cert.bedSetupConfirm", status: "notStarted", title: { "zh-CN": "确认床位信息" }, fields: { business: [field("bedNo", "床位号")], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
       ]
     };
     const staleWorkItemWorkspace = {
@@ -377,9 +377,9 @@ describe("OAM Surface WorkItem route identity", () => {
 
     expect(target.workItem.workspace.cards.find((card) => card.id === "cert.roomSetupConfirm").status).toBe("confirmed");
     expect(target.workItem.workspace.cards.find((card) => card.id === "cert.bedSetupConfirm").status).toBe("ready");
-    expect(html).toContain('aria-label="房间建档确认 已完成"');
-    expect(html).toContain('aria-label="床位组确认 待处理"');
-    expect(visibleText(html)).not.toContain("房间建档确认 待处理");
+    expect(html).toContain('aria-label="填写房间信息 已完成"');
+    expect(html).toContain('aria-label="确认床位信息 待处理"');
+    expect(visibleText(html)).not.toContain("填写房间信息 待处理");
   });
 
   it("does not render an operation CTA when no persisted WorkItem exists", () => {
@@ -493,8 +493,8 @@ describe("OAM Surface WorkItem route identity", () => {
   it("clears stale submit result when routing to a different WorkItem", () => {
     const store = runtimeStore();
     store.workspaces[0].cards = [
-      { ...store.workspaces[0].cards[0], id: "cert.roomSetupConfirm", status: "done", title: { "zh-CN": "房间建档确认" } },
-      { id: "cert.bedSetupConfirm", status: "ready", title: { "zh-CN": "床位组确认" }, fields: { business: [field("bedNo", "床位号")], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
+      { ...store.workspaces[0].cards[0], id: "cert.roomSetupConfirm", status: "done", title: { "zh-CN": "填写房间信息" } },
+      { id: "cert.bedSetupConfirm", status: "ready", title: { "zh-CN": "确认床位信息" }, fields: { business: [field("bedNo", "床位号")], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
     ];
     store.operationWorkItems = [
       { workItemId: "wi-room-done", workspaceId: "W-DORM-MAINLINE", cardId: "cert.roomSetupConfirm", lifecycleState: "confirmed" },
@@ -551,8 +551,8 @@ describe("OAM Surface WorkItem route identity", () => {
     }));
     const store = runtimeStore();
     store.workspaces[0].cards = [
-      { ...store.workspaces[0].cards[0], id: "cert.roomSetupConfirm", status: "ready", evidence: [], fields: { business: [], system: [], analytics: [] }, title: { "zh-CN": "房间建档确认" } },
-      { id: "cert.bedSetupConfirm", status: "ready", title: { "zh-CN": "床位组确认" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
+      { ...store.workspaces[0].cards[0], id: "cert.roomSetupConfirm", status: "ready", evidence: [], fields: { business: [], system: [], analytics: [] }, title: { "zh-CN": "填写房间信息" } },
+      { id: "cert.bedSetupConfirm", status: "ready", title: { "zh-CN": "确认床位信息" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
     ];
     store.operationWorkItems = [
       { workItemId: "wi-room-active", workspaceId: "W-DORM-MAINLINE", cardId: "cert.roomSetupConfirm", lifecycleState: "ready", ownerRole: "operator" },
@@ -568,6 +568,7 @@ describe("OAM Surface WorkItem route identity", () => {
       render: vi.fn()
     });
 
+    installSubmitDocument();
     await submitCurrentCard(ctx);
     const html = routeView(ctx);
     const text = visibleText(html);
@@ -578,7 +579,7 @@ describe("OAM Surface WorkItem route identity", () => {
     expect(ctx.state.lastActionResult?.autoAdvancedToCardId).toBe("cert.bedSetupConfirm");
     expect(html).toContain('data-surface="operation-panel-route"');
     expect(html).not.toContain('data-surface="completed-workspace-record"');
-    expect(text).toContain("床位组确认");
+    expect(text).toContain("确认床位信息");
     vi.clearAllTimers();
     vi.useRealTimers();
     vi.unstubAllGlobals();
@@ -623,8 +624,8 @@ describe("OAM Surface WorkItem route identity", () => {
     }));
     const store = runtimeStore();
     store.workspaces[0].cards = [
-      { ...store.workspaces[0].cards[0], id: "cert.roomSetupConfirm", status: "ready", evidence: [], fields: { business: [], system: [], analytics: [] }, title: { "zh-CN": "房间建档确认" } },
-      { id: "cert.bedSetupConfirm", status: "notStarted", title: { "zh-CN": "床位组确认" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
+      { ...store.workspaces[0].cards[0], id: "cert.roomSetupConfirm", status: "ready", evidence: [], fields: { business: [], system: [], analytics: [] }, title: { "zh-CN": "填写房间信息" } },
+      { id: "cert.bedSetupConfirm", status: "notStarted", title: { "zh-CN": "确认床位信息" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
     ];
     store.operationWorkItems = [
       { workItemId: "wi-room-active", workspaceId: "W-DORM-MAINLINE", cardId: "cert.roomSetupConfirm", lifecycleState: "ready", ownerRole: "operator" }
@@ -639,6 +640,7 @@ describe("OAM Surface WorkItem route identity", () => {
       render: vi.fn()
     });
 
+    installSubmitDocument();
     await submitCurrentCard(ctx);
 
     expect(calls.some((href) => href.includes("/api/operations/work-items") && href.includes("workspaceId=W-DORM-MAINLINE"))).toBe(true);
@@ -720,6 +722,7 @@ describe("OAM Surface WorkItem route identity", () => {
     });
     ctx.workspace = () => generatedDormitoryWorkspace(workspaceId);
 
+    installSubmitDocument();
     await submitCurrentCard(ctx);
     const html = routeView(ctx);
     const text = visibleText(html);
@@ -731,7 +734,7 @@ describe("OAM Surface WorkItem route identity", () => {
     expect(ctx.state.lastActionResult?.autoAdvancedToCardId).toBe("Dorm.BedSetupConfirm");
     expect(html).toContain('data-surface="operation-panel-route"');
     expect(html).not.toContain('data-surface="completed-workspace-record"');
-    expect(text).toContain("床位组确认");
+    expect(text).toContain("确认床位信息");
     vi.clearAllTimers();
     vi.useRealTimers();
     vi.unstubAllGlobals();
@@ -752,19 +755,47 @@ function field(id, zh) {
   };
 }
 
+function installSubmitDocument() {
+  const fields = [
+    input("roomNo", "A101"),
+    input("floor", "3"),
+    input("bedCount", "2"),
+    input("buildingContextRef", "1号楼")
+  ];
+  const fieldById = new Map(fields.map((node) => [node.dataset.operationField, node]));
+  vi.stubGlobal("document", {
+    querySelectorAll: (selector) => selector === "[data-operation-field]" ? fields : [],
+    querySelector: (selector) => {
+      const match = selector.match(/^\[data-operation-field="(.+)"\]$/);
+      return match ? fieldById.get(match[1]) || null : null;
+    }
+  });
+}
+
+function input(id, value = "") {
+  return {
+    dataset: { operationField: id },
+    value,
+    type: "text",
+    tagName: "INPUT",
+    closest: () => null,
+    matches: (selector) => selector.includes("[data-operation-field]")
+  };
+}
+
 function generatedDormitoryWorkspace(id) {
   return {
     id,
     domain: "stay",
     caseId: `case:${id}`,
-    title: { "zh-CN": "房源建档与基础就绪" },
+    title: { "zh-CN": "新建房间和床位" },
     summary: { "zh-CN": "按页面顺序完成当前办理。" },
     next: { "zh-CN": "确认床位组" },
     blockers: [],
     cards: [{
       id: "Dorm.RoomSetupConfirm",
       status: "ready",
-      title: { "zh-CN": "房间建档确认" },
+      title: { "zh-CN": "填写房间信息" },
       fields: { business: [], system: [], analytics: [] },
       evidence: [],
       checks: [],
@@ -773,7 +804,7 @@ function generatedDormitoryWorkspace(id) {
     }, {
       id: "Dorm.BedSetupConfirm",
       status: "notStarted",
-      title: { "zh-CN": "床位组确认" },
+      title: { "zh-CN": "确认床位信息" },
       fields: { business: [], system: [], analytics: [] },
       evidence: [],
       checks: [],
@@ -782,7 +813,7 @@ function generatedDormitoryWorkspace(id) {
     }, {
       id: "Dorm.ResourceReadinessConfirm",
       status: "notStarted",
-      title: { "zh-CN": "基础就绪确认" },
+      title: { "zh-CN": "完成基础检查" },
       fields: { business: [], system: [], analytics: [] },
       evidence: [],
       checks: [],

@@ -483,7 +483,7 @@ describe("OAM hardening queue and Search readonly matrix", () => {
       currentActor: { role: "unknownRole", displayName: "未知角色" },
       currentDevice: { surface: "mobile", deviceTrustStatus: "trusted" }
     });
-    ctx.task = () => ({ title: { "zh-CN": "房间建档确认" } });
+    ctx.task = () => ({ title: { "zh-CN": "填写房间信息" } });
 
     const drafts = visibleText(simpleView("drafts", "draftsBody", { ...ctx, state: { ...ctx.state, view: "drafts" } }));
     const uploadQueue = visibleText(simpleView("uploadQueue", "uploadQueueBody", { ...ctx, state: { ...ctx.state, view: "uploadQueue" } }));
@@ -498,17 +498,17 @@ describe("OAM hardening queue and Search readonly matrix", () => {
     const evidenceLibrary = visibleText(simpleView("evidenceLibrary", "evidenceLibraryBody", { ...ctx, state: { ...ctx.state, view: "evidenceLibrary" } }));
 
     expect(drafts).toContain("本地草稿 1");
-    expect(uploadQueue).toContain("证据上传 1");
+    expect(uploadQueue).toContain("材料上传 1");
     expect(submitQueue).toContain("committed_projection_failed");
     expect(failedSync).toContain("投影失败，等待恢复");
     expect(recentSubmissions).toContain("确认后的稳定审计引用");
     expect(recentTraces).toContain("1");
     expect(permissions).toContain("经办人");
     expect(deviceTrust).toContain("设备已验证");
-    expect(businessRecords).toContain("房源建档与基础就绪");
+    expect(businessRecords).toContain("新建房间和床位");
     expect(completedRecords).toContain("已完成记录");
     expect(evidenceLibrary).toContain("room-photo.txt");
-    expect(visibleText(confirmPageView(ctx))).toContain("房间建档确认");
+    expect(visibleText(confirmPageView(ctx))).toContain("填写房间信息");
     expect(visibleText(resultView(ctx))).toContain("工作项");
   });
 });

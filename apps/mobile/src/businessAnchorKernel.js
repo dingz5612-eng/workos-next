@@ -110,7 +110,7 @@ export function businessAnchorText(source = {}, ctx = {}) {
 export function businessAnchorHtml(source = {}, ctx = {}, options = {}) {
   const anchor = buildBusinessAnchor(source, ctx);
   if (!anchor.hasAnchor) return "";
-  const label = options.label || ctx.tr?.("businessAnchor") || "业务锚点";
+  const label = options.label || ctx.tr?.("businessAnchor") || "业务对象";
   const className = ["business-anchor", options.compact ? "compact" : ""].filter(Boolean).join(" ");
   return `<p class="${escapeAttr(className, ctx)}" data-surface="business-anchor" data-anchor-privacy="display-search-only"><span>${escapeHtml(label, ctx)}</span><strong>${escapeHtml(anchor.label, ctx)}</strong></p>`;
 }

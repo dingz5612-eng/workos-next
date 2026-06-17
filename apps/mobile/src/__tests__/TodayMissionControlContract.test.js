@@ -60,8 +60,8 @@ describe("SURFACE-C Today Mission Control contract", () => {
   it("does not count system-bound submit checks as missing evidence on Home", () => {
     const text = visibleText(renderSurface("home"));
 
-    expect(text).toContain("缺材料/缺证据 0");
-    expect(text).not.toContain("有办理项缺少可信证据");
+    expect(text).toContain("缺材料 0");
+    expect(text).not.toContain("有办理项缺少办理材料");
     expect(text).not.toContain("已有可办理任务等待处理");
   });
 
@@ -132,14 +132,14 @@ function sourceRuntimeStoreWithoutWorkItems() {
       id: DORMITORY_MAINLINE_WORKSPACE_ID,
       domain: "stay",
       caseId: `case:${DORMITORY_MAINLINE_WORKSPACE_ID}`,
-      title: { "zh-CN": "房源建档与基础就绪" },
-      summary: { "zh-CN": "房间建档、床位组确认和基础就绪确认" },
-      next: { "zh-CN": "发起房源建档与基础就绪" },
+      title: { "zh-CN": "新建房间和床位" },
+      summary: { "zh-CN": "房间建档、确认床位信息和完成基础检查" },
+      next: { "zh-CN": "开始新建房间和床位" },
       blockers: [],
       cards: [{
         id: DORMITORY_SCENARIO1_STEPS[0].cardId,
         status: "ready",
-        title: { "zh-CN": "房间建档确认" },
+        title: { "zh-CN": "填写房间信息" },
         fields: { business: [], system: [], analytics: [] },
         evidence: [],
         checks: [],

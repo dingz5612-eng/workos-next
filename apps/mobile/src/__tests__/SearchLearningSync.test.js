@@ -21,7 +21,7 @@ describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
     expect(html).not.toContain("Finance admin");
 
     const mainlineEntry = searchView(ctx({ view: "search", query: "新增房间" }));
-    expect(mainlineEntry).toContain("房源建档与基础就绪");
+    expect(mainlineEntry).toContain("新建房间和床位");
     expect(mainlineEntry).not.toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
   });
 
@@ -30,7 +30,7 @@ describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
 
     expect(html).not.toContain('data-search-section="searchLearning"');
     expect(html).not.toContain('data-search-section="searchEvidence"');
-    expect(html).toContain("记录、证据和学习内容请到我的查看");
+    expect(html).toContain("记录、材料和学习内容请到我的查看");
   });
 
   it("keeps personal activity log in Me instead of adding a fifth bottom tab", () => {
@@ -74,7 +74,7 @@ function ctx(overrides = {}) {
         badges: ["mine", "ready"],
         traceRefs: ["trace-room"],
         commandSubmissionId: "cmd-room",
-        reason: "发起房源建档与基础就绪"
+        reason: "开始新建房间和床位"
       }],
       operationWorkItems: [],
       homeSurface: [],
@@ -101,13 +101,13 @@ function workspace() {
     id: "W-DORM-MAINLINE",
     domain: "stay",
     caseId: "case:W-DORM-MAINLINE",
-    title: { "zh-CN": "房源建档与基础就绪" },
-    summary: { "zh-CN": "房间建档、床位组确认和基础就绪确认" },
-    next: { "zh-CN": "发起房源建档与基础就绪" },
+    title: { "zh-CN": "新建房间和床位" },
+    summary: { "zh-CN": "房间建档、确认床位信息和完成基础检查" },
+    next: { "zh-CN": "开始新建房间和床位" },
     cards: [{
       id: "cert.roomSetupConfirm",
       status: "ready",
-      title: { "zh-CN": "房间建档确认" },
+      title: { "zh-CN": "填写房间信息" },
       fields: { business: [], system: [], analytics: [] },
       evidence: [{ id: "room-basic-info-evidence", label: { "zh-CN": "房间基础资料证据" } }],
       blockerRules: [],

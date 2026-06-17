@@ -50,9 +50,9 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(html).toContain('data-runtime-decision="work_item_confirm_ready:production_blocked"');
     expect(html).toContain('data-lifecycle-state="ready"');
     expect(html).toContain('data-surface="operation-admission"');
-    expect(text).toContain("准入状态");
-    expect(text).toContain("当前可进入填写，但最终提交仍需再次校验。");
-    expect(text).toContain("房间建档确认");
+    expect(text).toContain("办理状态");
+    expect(text).toContain("可以开始填写；提交前还会检查必填项、材料、权限和设备。");
+    expect(text).toContain("填写房间信息");
   });
 
   it("renders route metadata on the progress rail without a repeated context container", () => {
@@ -70,8 +70,8 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(html).not.toContain('class="operation-panel-page"');
     expect(html).not.toContain('class="operation-context-title"');
     expect(html).not.toContain("intent-card");
-    expect(text).toContain("房源建档与基础就绪");
-    expect(text).toContain("房间建档确认");
+    expect(text).toContain("新建房间和床位");
+    expect(text).toContain("填写房间信息");
     expect(text).not.toContain("办理进度");
     expect(text).not.toContain("当前办理 我要创建住宿资源");
     expect(text).not.toContain("当前可处理");
@@ -102,11 +102,11 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
   it("does not render editable fields or submit checks for a not-started step", () => {
     const store = runtimeStore();
     store.workspaces[0].cards = [
-      { ...store.workspaces[0].cards[0], id: DORMITORY_SCENARIO1_STEPS[0].cardId, status: "ready", title: { "zh-CN": "房间建档确认" } },
+      { ...store.workspaces[0].cards[0], id: DORMITORY_SCENARIO1_STEPS[0].cardId, status: "ready", title: { "zh-CN": "填写房间信息" } },
       {
         id: DORMITORY_SCENARIO1_STEPS[1].cardId,
         status: "notStarted",
-        title: { "zh-CN": "床位组确认" },
+        title: { "zh-CN": "确认床位信息" },
         fields: { business: [field("bedNo", "床位号")], system: [], analytics: [] },
         evidence: [],
         checks: [],
@@ -136,7 +136,7 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(text).toContain("第 2/2 步");
     expect(text).not.toContain("填写信息");
     expect(text).not.toContain("提交前检查");
-    expect((text.match(/床位组确认/g) || []).length).toBeGreaterThanOrEqual(1);
+    expect((text.match(/确认床位信息/g) || []).length).toBeGreaterThanOrEqual(1);
     expect((text.match(/这张卡还没轮到办理。请先完成前一张卡。/g) || []).length).toBe(1);
     expect(html).not.toContain('data-operation-field="bedNo"');
   });
@@ -154,12 +154,12 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
 
     const text = visibleText(routeView(ctx));
 
-    expect(text).toContain("还需填写: 楼栋");
+    expect(text).toContain("还需填写: 楼栋/区域、楼层、房间号、床位数");
     expect(text).toContain("提交状态: 暂不能提交: 还需填写");
     expect(text).not.toContain("提交状态: 可以提交");
   });
 
-  it("does not treat a required select as filled just because options exist", () => {
+  it("does not treat a required building context selector as filled just because the control exists", () => {
     const store = runtimeStore();
     store.workspaces[0].cards[0] = {
       ...store.workspaces[0].cards[0],
@@ -191,8 +191,8 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     const html = routeView(ctx);
     const text = visibleText(html);
 
-    expect(html).toContain('<option value="" selected disabled>请选择</option>');
-    expect(text).toContain("还需填写: 房型");
+    expect(html).toContain('list="buildingContextRefOptions"');
+    expect(text).toContain("还需填写: 楼栋/区域、楼层、房间号、床位数");
     expect(text).toContain("提交状态: 暂不能提交: 还需填写");
     expect(text).not.toContain("提交状态: 可以提交");
   });
@@ -544,7 +544,7 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
         {
           id: DORMITORY_SCENARIO1_STEPS[1].cardId,
           status: "done",
-          title: { "zh-CN": "床位组确认" },
+          title: { "zh-CN": "确认床位信息" },
           fields: { business: [field("bedType", "床铺生成方式")], system: [], analytics: [] },
           evidence: [],
           checks: [],
@@ -554,7 +554,7 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
         {
           id: DORMITORY_SCENARIO1_STEPS[2].cardId,
           status: "done",
-          title: { "zh-CN": "基础就绪确认" },
+          title: { "zh-CN": "完成基础检查" },
           fields: { business: [field("readinessState", "基础就绪结论"), field("roomId", "所属房间"), field("bedId", "床位")], system: [], analytics: [] },
           evidence: [],
           checks: [],
@@ -588,7 +588,7 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
 
     const text = visibleText(routeView(ctx));
 
-    expect(text).toContain("房源建档与基础就绪完成");
+    expect(text).toContain("房间和床位已新建");
     expect(text).toContain("A301");
     expect(text).toContain("4 个床位 01, 02, 03, 04");
     expect(text).toContain("通过");
@@ -625,11 +625,11 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
       }
     };
     store.workspaces[0].cards = [
-      { ...store.workspaces[0].cards[0], id: DORMITORY_SCENARIO1_STEPS[0].cardId, status: "done", title: { "zh-CN": "房间建档确认" } },
+      { ...store.workspaces[0].cards[0], id: DORMITORY_SCENARIO1_STEPS[0].cardId, status: "done", title: { "zh-CN": "填写房间信息" } },
       {
         id: DORMITORY_SCENARIO1_STEPS[1].cardId,
         status: "ready",
-        title: { "zh-CN": "床位组确认" },
+        title: { "zh-CN": "确认床位信息" },
         fields: { business: [field("roomRef", "所属房间"), bedCount, bedLabels, bedType, field("bedStatus", "初始床位状态")], system: [], analytics: [] },
         evidence: [],
         checks: [],
@@ -719,11 +719,11 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
       ...store.workspaces[0],
       id: workspaceId,
       cards: [
-        { ...store.workspaces[0].cards[0], id: DORMITORY_SCENARIO1_STEPS[0].cardId, status: "done", title: { "zh-CN": "房间建档确认" } },
+        { ...store.workspaces[0].cards[0], id: DORMITORY_SCENARIO1_STEPS[0].cardId, status: "done", title: { "zh-CN": "填写房间信息" } },
         {
           id: DORMITORY_SCENARIO1_STEPS[1].cardId,
           status: "ready",
-          title: { "zh-CN": "床位组确认" },
+          title: { "zh-CN": "确认床位信息" },
           fields: {
             business: [
               field("roomRef", "所属房间"),
@@ -815,11 +815,11 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
       }
     };
     store.workspaces[0].cards = [
-      { ...store.workspaces[0].cards[0], id: DORMITORY_SCENARIO1_STEPS[0].cardId, status: "done", title: { "zh-CN": "房间建档确认" } },
+      { ...store.workspaces[0].cards[0], id: DORMITORY_SCENARIO1_STEPS[0].cardId, status: "done", title: { "zh-CN": "填写房间信息" } },
       {
         id: DORMITORY_SCENARIO1_STEPS[1].cardId,
         status: "ready",
-        title: { "zh-CN": "床位组确认" },
+        title: { "zh-CN": "确认床位信息" },
         fields: { business: [field("roomRef", "所属房间"), bedCount, bedLabels, bedType], system: [], analytics: [] },
         evidence: [],
         checks: [],

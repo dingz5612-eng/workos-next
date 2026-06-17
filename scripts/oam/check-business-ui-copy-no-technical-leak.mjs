@@ -41,7 +41,11 @@ for (const term of visibleCopyContract?.forbiddenVisibleTerms ?? []) {
 if (!experienceComponents.includes("const shouldOpen =") || !experienceComponents.includes('ctx.state?.debugSurface')) {
   failures.push("TechnicalAuditDetails must remain collapsed unless debug/audit context opens it.");
 }
-if (!workspaceView.includes("房源建档与基础就绪完成")) {
+const completionLabel = (visibleCopyContract?.displayTermReplacementsZh ?? [])
+  .find(([source]) => source === "房源建档与基础就绪完成")?.[1] ?? "房间和床位已新建";
+const completionIsGeneratedAtRuntime = workspaceView.includes("userFacingBusinessText")
+  && workspaceView.includes("房源建档与基础就绪完成");
+if (!workspaceView.includes(completionLabel) && !completionIsGeneratedAtRuntime) {
   failures.push("completion page must expose lodging scenario 1 business completion surface.");
 }
 if (!workspaceView.includes("不代表可运营、可报价、可预订")) {

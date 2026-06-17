@@ -10,6 +10,7 @@ import { DORMITORY_SCENARIO1_STEPS, defaultBedTypeForCount, isBedSetupCardId, is
 import { activeCardForWorkspace, activeWorkspaceCard, isActionableCardStatus, isCardActionDisabled, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { checkoutServiceMobilePanel, checkoutServiceOperationAddon } from "./checkoutServiceView.js";
 import { EvidenceStateVM, OperationStepRail } from "./experienceComponents.js";
+import { userFacingBusinessText } from "../businessDisplayLanguage.js";
 import {
   currentMissingContextLabels,
   currentMissingRequiredLabels,
@@ -127,7 +128,7 @@ export function completedWorkspaceRecord(item, card, ctx) {
     ? scenario1CompletionValues(item, ctx)
     : [];
   const scenario1CompletionBanner = scenario1Completed
-    ? `<section class="operation-state" data-mainline-completion="Dormitory.13ScenarioMainline" data-scenario="lodging.resource-basic-readiness"><b>房源建档与基础就绪完成</b>${scenario1BusinessValues.length ? `<p>${scenario1BusinessValues.map((value) => ctx.escapeHtml(value)).join(" / ")}</p>` : ""}<p>仅代表房源建档与基础就绪记录完成；不代表可运营、可报价、可预订、上线、发布或最终放行。</p></section>`
+    ? `<section class="operation-state" data-mainline-completion="Dormitory.13ScenarioMainline" data-scenario="lodging.resource-basic-readiness"><b>${ctx.escapeHtml(userFacingBusinessText("房源建档与基础就绪完成", ctx))}</b>${scenario1BusinessValues.length ? `<p>${scenario1BusinessValues.map((value) => ctx.escapeHtml(value)).join(" / ")}</p>` : ""}<p>${ctx.escapeHtml(userFacingBusinessText("仅代表房源建档与基础就绪记录完成；不代表可运营、可报价、可预订、上线、发布或最终放行。", ctx))}</p></section>`
     : "";
   return `<section class="completed-record-control" data-component="completedWorkspaceRecord" data-surface="completed-workspace-record" data-lifecycle-state="${ctx.escapeAttr(selectedStep.status)}" data-admission-decision="visible_readonly_completed" data-runtime-decision="work_item_terminal:${ctx.escapeAttr(selectedStep.status)}">
     ${OperationStepRail(item, selectedStep, ctx, {
@@ -621,7 +622,22 @@ function operationFieldHelp(field, fieldId, card, ctx) {
   if (isBedSetupCardId(card?.id) && fieldId === "bedStatus") {
     return ctx.tr("bedStatusTemplateHelp");
   }
-  return ctx.tx(field.help);
+  return userFacingFieldHelp(ctx.tx(field.help), fieldId, ctx);
+}
+
+function userFacingFieldHelp(help = "", fieldId = "", ctx = {}) {
+  const value = String(help || "").trim();
+  if (!value) return "";
+  const replacements = {
+    "按当前业务规则带入。": "请按实际业务情况填写。",
+    "按当前业务规则带入": "请按实际业务情况填写。"
+  };
+  if (replacements[value]) return replacements[value];
+  if (value.includes("业务规则带入")) return "请按实际业务情况填写；系统会在提交前检查。";
+  if (value.includes("系统字段") || value.includes("内部字段")) {
+    return ctx.tr("caseContextAutoFilledHelp");
+  }
+  return value;
 }
 
 function systemValidationPanel(card, item, draft, visibleBlockers, ctx) {

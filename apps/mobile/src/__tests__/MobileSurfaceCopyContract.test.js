@@ -30,10 +30,10 @@ describe("HOTFIX-SURFACE-UX-01 mobile visible copy contract", () => {
     expect(html).toContain("工作");
     expect(html).toContain("搜索");
     expect(html).toContain("我的");
-    expect(me).toContain("证据上传");
+    expect(me).toContain("材料上传");
     expect(me).toContain("提交队列");
     expect(me).toContain("当前设备");
-    expect(me).toContain("没有待上传证据");
+    expect(me).toContain("没有待上传材料");
     expect(me).toContain("没有待提交办理");
     expect(me).toContain("学习中心");
     expect(me).toContain("我的权限");
@@ -140,8 +140,8 @@ describe("HOTFIX-SURFACE-UX-01 mobile visible copy contract", () => {
     expect(text).toContain("产品/设计负责人");
     expect(text).toContain("指定账号");
     expect(text).toContain("反馈上下文");
-    expect(text).toContain("房源建档与基础就绪");
-    expect(text).toContain("房间建档确认");
+    expect(text).toContain("新建房间和床位");
+    expect(text).toContain("填写房间信息");
     expect(text).not.toMatch(/\b(workItemId|cardId|workspaceId|payloadHash|commandSubmissionId)\b/);
     vi.unstubAllGlobals();
   });
@@ -200,13 +200,13 @@ function runtimeStore() {
     workspaces: [{
       id: "W-DORM-MAINLINE",
       domain: "stay",
-      title: { "zh-CN": "房源建档与基础就绪" },
-      summary: { "zh-CN": "房间建档、床位组确认和基础就绪确认" },
-      next: { "zh-CN": "房间建档确认" },
+      title: { "zh-CN": "新建房间和床位" },
+      summary: { "zh-CN": "房间建档、确认床位信息和完成基础检查" },
+      next: { "zh-CN": "填写房间信息" },
       cards: [{
         id: "cert.roomSetupConfirm",
         status: "ready",
-        title: { "zh-CN": "房间建档确认" },
+        title: { "zh-CN": "填写房间信息" },
         fields: { business: [], system: [], analytics: [] },
         evidence: [{ id: "room-basic-info-evidence", label: { "zh-CN": "房间基础资料证据" } }],
         blockerRules: [],
@@ -224,7 +224,7 @@ function runtimeStore() {
       ownerRole: "operator",
       badges: ["mine", "ready"],
       traceRefs: ["trace-room"],
-      reason: "房间建档确认"
+      reason: "填写房间信息"
     }],
     operationWorkItems: [],
     homeSurface: [],

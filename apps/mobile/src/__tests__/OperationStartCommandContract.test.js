@@ -78,7 +78,7 @@ describe("Operations Runtime start command contract", () => {
     expect(ctx.hydrateProjectionFromApi).not.toHaveBeenCalled();
     expect(routeView(ctx)).toContain('data-surface="operation-panel-route"');
     expect(visibleText(routeView(ctx))).toContain("本步要做");
-    expect(visibleText(routeView(ctx))).toContain("房间建档确认");
+    expect(visibleText(routeView(ctx))).toContain("填写房间信息");
     expect(visibleText(routeView(ctx))).toContain("提交前检查");
     expect(visibleText(routeView(ctx))).not.toContain("available");
     expect(visibleText(routeView(ctx))).not.toContain("暂不能直接办理");
@@ -140,7 +140,7 @@ describe("Operations Runtime start command contract", () => {
     expect(ctx.state.view).toBe("operationPanel");
     expect(ctx.state.selectedWorkItemId).toBe("wi-start-room-002");
     expect(ctx.state.lastActionResult).toBeNull();
-    expect(visibleText(routeView(ctx))).toContain("房间建档确认");
+    expect(visibleText(routeView(ctx))).toContain("填写房间信息");
     expect(visibleText(routeView(ctx))).not.toContain("查看不能提交原因");
   });
 

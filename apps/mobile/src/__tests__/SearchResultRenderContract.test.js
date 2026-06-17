@@ -9,8 +9,8 @@ describe("Stage B search result render contract", () => {
       "住宿": [{
         workspaceId: "W-DORM-MAINLINE",
         cardId: "cert.roomSetupConfirm",
-        localizedTitle: { "zh-CN": "房间建档确认" },
-        localizedSubtitle: { "zh-CN": "房源建档与基础就绪" },
+        localizedTitle: { "zh-CN": "填写房间信息" },
+        localizedSubtitle: { "zh-CN": "新建房间和床位" },
         localizedStatus: { "zh-CN": "待处理" },
         localizedNextAction: { "zh-CN": "继续填写" }
       }]
@@ -19,8 +19,8 @@ describe("Stage B search result render contract", () => {
     const html = searchView(ctx);
 
     expect(visibleText(html)).not.toContain("[object Object]");
-    expect(html).toContain("房间建档确认");
-    expect(html).toContain("房源建档与基础就绪");
+    expect(html).toContain("填写房间信息");
+    expect(html).toContain("新建房间和床位");
     expect(html).toContain('data-surface="business-summary-header"');
     expect(html).toContain('data-surface="business-task-body"');
     expect(html).toContain('class="search-result-main"');
@@ -34,7 +34,7 @@ describe("Stage B search result render contract", () => {
     ctx.state.runtimeStore.workspaces.push({
       id: "W-DORM-RU-MAINLINE",
       domain: "stay",
-      title: { "zh-CN": "房源建档与基础就绪", "ru-RU": "Создать комнаты и койки" },
+      title: { "zh-CN": "新建房间和床位", "ru-RU": "Создать комнаты и койки" },
       summary: { "ru-RU": "Комнаты и койки" },
       next: { "ru-RU": "Открыть объект" },
       cards: [{

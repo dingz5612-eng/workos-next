@@ -5,6 +5,7 @@ import { capabilityCommandCatalog, mainlineScenarioCatalog } from "../capability
 import { normalizeOperationLifecycleState } from "../operationStatus.js";
 import { buildBusinessAnchor } from "../businessAnchorKernel.js";
 import { BusinessSummaryHeader, BusinessTaskOverview } from "./experienceComponents.js";
+import { userFacingBusinessText } from "../businessDisplayLanguage.js";
 
 export function searchView(ctx) {
   const results = workosSearchSections(ctx);
@@ -121,7 +122,7 @@ function searchBusinessTaskBody(normalized, ctx, item = {}) {
     blocker: normalized.admissionReasonLabel
   }, ctx, { item });
   const note = !overview && normalized.nextActionLabel
-    ? `<p class="business-task-note">${ctx.escapeHtml(normalized.nextActionLabel)}</p>`
+    ? `<p class="business-task-note">${ctx.escapeHtml(userFacingBusinessText(normalized.nextActionLabel, ctx))}</p>`
     : "";
   return `<div class="business-task-body search-business-task-body" data-surface="business-task-body">
     ${overview}
@@ -279,10 +280,10 @@ function normalizeSearchCard(item, ctx) {
   return {
     ...item,
     resultType: item.resultType || item.type || "object",
-    title: localized(item.localizedTitle ?? item.title, ctx) || ctx.tr("searchNoResult"),
-    subtitle: localized(item.localizedSubtitle ?? item.subtitle, ctx) || ctx.tr("workosSearchSubtitle"),
+    title: userFacingBusinessText(localized(item.localizedTitle ?? item.title, ctx) || ctx.tr("searchNoResult"), ctx),
+    subtitle: userFacingBusinessText(localized(item.localizedSubtitle ?? item.subtitle, ctx) || ctx.tr("workosSearchSubtitle"), ctx),
     status: localized(item.localizedStatus ?? item.status, ctx) || "-",
-    nextAction: localized(item.localizedNextAction ?? item.nextAction, ctx) || ctx.tr("search")
+    nextAction: userFacingBusinessText(localized(item.localizedNextAction ?? item.nextAction, ctx) || ctx.tr("search"), ctx)
   };
 }
 

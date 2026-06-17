@@ -29,6 +29,8 @@ const optionValueLabels = {
     repair_required: "需维修"
   },
   bunkType: generatedOptionLabels("bunkType"),
+  bedEnabledStatus: generatedOptionLabels("bedEnabledStatus"),
+  bedTypeBatchSetting: generatedOptionLabels("bedTypeBatchSetting"),
   readinessState: generatedOptionLabels("readinessState"),
   messenger: {
     whatsapp: "WhatsApp",
@@ -67,6 +69,8 @@ const optionValueLabels = {
 
 const preferredDefaults = {
   bunkType: capabilityProjection.optionSetDefaults?.bunkType?.oneBed || "whole",
+  bedEnabledStatus: "enabled",
+  bedTypeBatchSetting: capabilityProjection.optionSetDefaults?.bunkType?.multiBed || "bunk_pair",
   readinessState: capabilityProjection.optionSetDefaults?.readinessState?.default || ""
 };
 

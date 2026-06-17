@@ -119,7 +119,7 @@ describe("operationController hardening matrix", () => {
     const bedLayout = input("bedLayout", "");
     const preview = previewNode();
     installDocument({
-      fields: [input("roomNo", "A101"), amount, unitRate, tariffQuantity, bedCount, bedLabels, bedType, bedLayout],
+      fields: [input("roomNo", "A101"), input("floor", "3"), input("buildingContextRef", "1号楼"), amount, unitRate, tariffQuantity, bedCount, bedLabels, bedType, bedLayout],
       preview
     });
     const ctx = operationCtx();
@@ -154,7 +154,7 @@ describe("operationController hardening matrix", () => {
     store.workspaces[0].cards = [{
       id: cardId,
       status: "ready",
-      title: { "zh-CN": "基础就绪确认" },
+      title: { "zh-CN": "完成基础检查" },
       fields: { business: [field("readinessState", "基础就绪结论")], system: [], analytics: [] },
       evidence: [],
       checks: [],
@@ -228,7 +228,7 @@ describe("operationController hardening matrix", () => {
     offline.hydrateProjectionFromApi = vi.fn(async () => {
       offline.state.apiStatus = "offline";
     });
-    installDocument({ fields: [input("roomNo", "A101")] });
+    installDocument({ fields: roomSetupInputs() });
     await submitCurrentCard(offline);
     expect(offline.state.operationMessage).toBe(offline.tr("apiOfflineSubmit"));
     expect(submitWorkItemOperation).not.toHaveBeenCalled();
@@ -236,7 +236,7 @@ describe("operationController hardening matrix", () => {
 
   it("submits committed results, preserves pending/failed projection states, and maps blocked/errors", async () => {
     installDocument({
-      fields: [input("roomNo", "A101")],
+      fields: roomSetupInputs(),
       evidence: [evidenceNode("room-photo", true)]
     });
     materializeEvidenceObjects.mockResolvedValue(["evd-room"]);
@@ -270,6 +270,7 @@ describe("operationController hardening matrix", () => {
       projectionStatus: "not_started"
     });
     const blocked = operationCtx();
+    installDocument({ fields: roomSetupInputs(), evidence: [evidenceNode("room-photo", true)] });
     await submitCurrentCard(blocked);
     expect(blocked.state.lastActionResult).toMatchObject({
       status: "business_blocked_422",
@@ -283,6 +284,7 @@ describe("operationController hardening matrix", () => {
       requiredPermission: "operation.confirm"
     });
     const denied = operationCtx();
+    installDocument({ fields: roomSetupInputs(), evidence: [evidenceNode("room-photo", true)] });
     await submitCurrentCard(denied);
     expect(denied.state.permissionDiagnostic).toMatchObject({
       reason: "capability_missing",
@@ -334,6 +336,15 @@ function input(id, value = "") {
     closest: () => null,
     matches: (selector) => selector.includes("[data-operation-field]")
   };
+}
+
+function roomSetupInputs() {
+  return [
+    input("roomNo", "A101"),
+    input("floor", "3"),
+    input("bedCount", "2"),
+    input("buildingContextRef", "1号楼")
+  ];
 }
 
 function rangeStart(id, value = "") {

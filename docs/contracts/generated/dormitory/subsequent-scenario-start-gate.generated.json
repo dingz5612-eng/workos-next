@@ -11,7 +11,7 @@
     "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:c4e98f2dc18ce3ee8ba62ad09ab5f408a27c5101bcf82e5d4dc7eedf743e416d",
+  "inputDigest": "sha256:7025ee9f6bd02e60bad171d2fb0710fb4f3f58295d6e93a64fc5b1a145ff47ce",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
@@ -19,7 +19,7 @@
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
-      "digest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0"
+      "digest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a"
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
@@ -32,7 +32,7 @@
   ],
   "sourceContentDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
   "authorityId": "Dormitory.Scenario1BenchmarkInheritanceContract",
-  "outputContentDigest": "sha256:727cfe38344cb6074d82a01fce021f3622e4deea0809c3b710bfbd3284ea6cd8",
+  "outputContentDigest": "sha256:07ff9eb1877aa8ad6d8ff3751bcbaf26934b8c752fc85818922cdeb358eacfac",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
@@ -40,7 +40,7 @@
   "highestBusinessAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
   "highestBusinessAuthorityId": "Dormitory.Operating13ScenarioControl",
   "benchmarkImplementationRef": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
-  "controlAuthorityDigest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0",
+  "controlAuthorityDigest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a",
   "benchmarkContractDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
   "scenario1SourceDigest": "sha256:455d8a4d79792756a9b6da93aa548dfa981c082737a5d5bfd397a030f64e62c4",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
@@ -171,7 +171,7 @@
     },
     {
       "scenarioNo": 6,
-      "scenarioId": "lodging.payment-deposit-guarantee-intake",
+      "scenarioId": "lodging.payment-deposit-and-guarantee",
       "nameZh": "收款、押金与担保",
       "chainLayer": "main_operating_chain",
       "upstreamSummaryInputs": [
@@ -195,7 +195,7 @@
     },
     {
       "scenarioNo": 7,
-      "scenarioId": "lodging.checkin",
+      "scenarioId": "lodging.check-in-processing",
       "nameZh": "入住办理",
       "chainLayer": "main_operating_chain",
       "upstreamSummaryInputs": [
@@ -245,7 +245,7 @@
     },
     {
       "scenarioNo": 9,
-      "scenarioId": "lodging.checkout-settlement",
+      "scenarioId": "lodging.checkout-and-settlement",
       "nameZh": "退房结算",
       "chainLayer": "main_operating_chain",
       "upstreamSummaryInputs": [
@@ -292,7 +292,7 @@
     },
     {
       "scenarioNo": 11,
-      "scenarioId": "lodging.housekeeping-maintenance-support",
+      "scenarioId": "lodging.housekeeping-maintenance-outofservice",
       "nameZh": "房务、维修与停售协同",
       "chainLayer": "horizontal_support_chain",
       "upstreamSummaryInputs": [
@@ -317,7 +317,7 @@
     },
     {
       "scenarioNo": 12,
-      "scenarioId": "lodging.channel-corporate-support",
+      "scenarioId": "lodging.channel-corporate-customer",
       "nameZh": "渠道与企业客户",
       "chainLayer": "horizontal_support_chain",
       "upstreamSummaryInputs": [

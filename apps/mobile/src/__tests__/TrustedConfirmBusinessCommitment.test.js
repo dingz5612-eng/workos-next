@@ -10,10 +10,10 @@ describe("Stage B TrustedConfirm business commitment", () => {
     const html = TrustedConfirmSheet({ ...ctx.state.runtimeStore.operationWorkItems[0], workspace, card }, card, ctx);
     const text = visibleText(html);
 
-    expect(text).toContain("业务承诺");
-    expect(text).toContain("证据与权限");
-    expect(text).toContain("审计与回滚");
-    expect(text).toContain("必要时只能通过补偿或回滚指令处理");
+    expect(text).toContain("本次办理影响");
+    expect(text).toContain("材料与权限");
+    expect(text).toContain("提交后处理");
+    expect(text).toContain("提交后如需修改，请走更正或作废流程");
     expect(text).not.toMatch(/\b(workItemId|caseId|TrustedConfirmSheet)\b/);
   });
 });

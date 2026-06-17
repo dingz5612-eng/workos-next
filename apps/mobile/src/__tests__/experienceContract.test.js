@@ -127,7 +127,7 @@ describe("OAM Experience Contract", () => {
     expect(html).not.toContain("工作内容");
     expect(html).not.toContain("处理：");
     expect(workItemCardSchema).toContain("workItemId");
-    for (const label of ["当前能否处理", "处理说明", "需要的材料", "下一步怎么做", "风险等级", "责任角色", "截止时间", "业务对象"]) {
+    for (const label of ["当前能否处理", "处理说明", "需要的材料", "下一步怎么做", "风险", "责任角色", "截止时间", "业务对象"]) {
       expect(html).not.toContain(label);
     }
     expect(visibleText(html)).not.toMatch(/\b(workItemId|caseId|traceRefs|lifecycleState|ownerRole)\b/);
@@ -138,13 +138,13 @@ describe("OAM Experience Contract", () => {
     const workspace = {
       id: "W-DORM-MAINLINE-OVERVIEW",
       domain: "stay",
-      title: { "zh-CN": "房源建档与基础就绪" },
-      summary: { "zh-CN": "房间建档、床位组确认和基础就绪确认" },
+      title: { "zh-CN": "新建房间和床位" },
+      summary: { "zh-CN": "房间建档、确认床位信息和完成基础检查" },
       next: { "zh-CN": "确认床位组" },
       cards: [{
         id: "cert.roomSetupConfirm",
         status: "confirmed",
-        title: { "zh-CN": "房间建档确认" },
+        title: { "zh-CN": "填写房间信息" },
         fields: { business: [businessField("buildingName", "楼栋"), businessField("roomNo", "房间号"), businessField("roomType", "房型", { control: "select", optionSet: "roomType" }), businessField("bedCount", "床位数")], system: [], analytics: [] },
         evidence: [],
         checks: [],
@@ -153,7 +153,7 @@ describe("OAM Experience Contract", () => {
       }, {
         id: "cert.bedSetupConfirm",
         status: "ready",
-        title: { "zh-CN": "床位组确认" },
+        title: { "zh-CN": "确认床位信息" },
         fields: { business: [businessField("roomId", "所属房间"), businessField("bedCount", "床位数"), businessField("bedLabels", "床位标签"), businessField("bedType", "床位类型", { control: "select", optionSet: "bunkType", defaultValue: "bunk_pair" })], system: [], analytics: [] },
         evidence: [],
         checks: [],
@@ -206,7 +206,7 @@ describe("OAM Experience Contract", () => {
     expect(html).toContain('data-workspace="W-DORM-STAY"');
     expect(html).toContain('data-card-id="checkIn"');
     expect(html).not.toContain("必需证据");
-    expect(html).not.toContain("审计摘要");
+    expect(html).not.toContain("记录摘要");
   });
 
   it("renders trusted result, evidence, queue, device trust, and permission states", () => {
@@ -218,7 +218,7 @@ describe("OAM Experience Contract", () => {
     expect(ActionResult({ status: "committed_projection_failed" }, testCtx)).toContain('data-surface="failed-sync"');
     expect(EvidenceTile(activeCard.evidence[0], {}, "", testCtx)).toContain('data-surface="evidence-tile"');
     expect(EvidenceSheet(activeCard, {}, testCtx)).toContain('data-surface="evidence-sheet"');
-    expect(UploadQueue({}, testCtx)).toContain("证据上传");
+    expect(UploadQueue({}, testCtx)).toContain("材料上传");
     expect(SubmitQueue({}, testCtx)).toContain("提交队列");
     expect(DeviceTrustPanel({ currentDevice: { deviceId: "D-1", deviceTrustStatus: "trusted", surface: "mobile" } }, testCtx)).toContain("当前设备");
     const permission = PermissionDiagnostic({ reason: "role_surface_not_allowed", owner: "releaseOwner", requiredPermission: "release.flight_deck.view" }, testCtx);
@@ -262,12 +262,12 @@ function ctx(actor = { role: "operator" }) {
       retryApi: "retry",
       feedback: "feedback",
       submitProjectionPending: "submitProjectionPending",
-      evidenceUpload: "证据上传",
+      evidenceUpload: "材料上传",
       submissionQueue: "提交队列",
       currentDevice: "当前设备",
       noPendingEvidenceUpload: "没有待上传证据",
       noPendingSubmission: "没有待提交办理",
-      evidenceUploadWaiting: "证据等待上传",
+      evidenceUploadWaiting: "材料等待上传",
       submissionWaiting: "办理等待提交",
       deviceTrusted: "设备已验证",
       deviceUnknown: "设备状态待确认",
@@ -289,7 +289,7 @@ function ctx(actor = { role: "operator" }) {
       decisionBlocker: "为什么不能处理",
       decisionMissingEvidence: "需要的材料",
       decisionNextAction: "下一步怎么做",
-      decisionRisk: "风险等级",
+      decisionRisk: "风险",
       decisionOwner: "责任角色",
       decisionDueAt: "截止时间",
       decisionBusinessObject: "业务对象",
@@ -301,7 +301,7 @@ function ctx(actor = { role: "operator" }) {
       requiredEvidenceCopy: "必需证据",
       businessImpact: "业务影响",
       riskAndBlockers: "风险与阻断",
-      auditSummary: "审计摘要",
+      auditSummary: "记录摘要",
       traceWillBind: "提交后绑定审计轨迹",
       traceBound: "已绑定审计轨迹",
       nextAction: "下一步",
@@ -309,11 +309,11 @@ function ctx(actor = { role: "operator" }) {
       projectionPendingBody: "提交已经完成，投影同步中；这不是失败。",
       failedSync: "同步需要支持",
       failedSyncBody: "提交已经记录，但读侧同步需要支持人员跟进。",
-      trustedEvidence: "可信证据",
+      trustedEvidence: "办理材料",
       evidenceMissing: "缺少证据",
       evidenceTrustedDraft: "已选择，待可信校验",
       noRequiredEvidence: "无需补材料",
-      evidenceReady: "证据已就绪",
+      evidenceReady: "材料已就绪",
       evidenceNeedReview: "证据待补齐或复核",
       permissionDiagnostic: "权限诊断",
       permissionWhy: "为什么不能访问",

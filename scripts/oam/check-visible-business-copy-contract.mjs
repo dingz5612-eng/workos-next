@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import { fileDigest, readJson, writeJson } from "./lib/capability-delivery-control-plane.mjs";
 
 const root = process.cwd();
@@ -16,6 +17,8 @@ if (contract.status !== "authoritative") fail("contract.status must be authorita
 if (contract.productionConfirmAllowed !== false || contract.releaseAuthority !== false || contract.finalGoNoGo !== "NO_GO") {
   fail("visible business copy contract must keep production/release/final GO closed.");
 }
+await assertGeneratedBusinessDisplayModule();
+assertBusinessDisplayAdapterConsumesGeneratedModule();
 
 const copyValues = [];
 for (const file of contract.ordinaryBusinessCopyFiles ?? []) {
@@ -111,4 +114,49 @@ function escapeHtml(value) {
 
 function fail(message) {
   failures.push(message);
+}
+
+async function assertGeneratedBusinessDisplayModule() {
+  const modulePath = contract.businessDisplayGeneratedModule;
+  if (!modulePath) {
+    fail("businessDisplayGeneratedModule must be declared.");
+    return;
+  }
+  const full = path.join(root, modulePath);
+  if (!fs.existsSync(full)) {
+    fail(`business display generated module missing: ${modulePath}.`);
+    return;
+  }
+  const generated = await import(`${pathToFileURL(full).href}?check=${Date.now()}`);
+  if (JSON.stringify(generated.zhBusinessTermReplacements ?? []) !== JSON.stringify(contract.displayTermReplacementsZh ?? [])) {
+    fail("business display generated zhBusinessTermReplacements must match visible business copy contract.");
+  }
+  if (JSON.stringify(generated.zhRiskLabelReplacements ?? {}) !== JSON.stringify(contract.riskLabelReplacementsZh ?? {})) {
+    fail("business display generated zhRiskLabelReplacements must match visible business copy contract.");
+  }
+  if (generated.businessDisplayLanguageContract?.finalGoNoGo !== "NO_GO") {
+    fail("business display generated module must preserve finalGoNoGo=NO_GO.");
+  }
+}
+
+function assertBusinessDisplayAdapterConsumesGeneratedModule() {
+  const adapterPath = contract.businessDisplayAdapter;
+  if (!adapterPath) {
+    fail("businessDisplayAdapter must be declared.");
+    return;
+  }
+  const full = path.join(root, adapterPath);
+  if (!fs.existsSync(full)) {
+    fail(`business display adapter missing: ${adapterPath}.`);
+    return;
+  }
+  const text = fs.readFileSync(full, "utf8");
+  if (!text.includes("business-display-language.generated.js")) {
+    fail("business display adapter must consume generated business-display-language module.");
+  }
+  for (const [sourceTerm] of contract.displayTermReplacementsZh ?? []) {
+    if (text.includes(sourceTerm)) {
+      fail(`business display adapter must not hardcode source term: ${sourceTerm}.`);
+    }
+  }
 }

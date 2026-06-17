@@ -2,6 +2,7 @@ import fs from "node:fs";
 import { shell } from "../appShell.js";
 import { i18n } from "../i18n.js";
 import { routeView } from "../appRouter.js";
+import { userFacingBusinessText } from "../businessDisplayLanguage.js";
 
 export function createSurfaceCtx(overrides = {}) {
   ensureBrowserMocks();
@@ -33,9 +34,9 @@ export function createSurfaceCtx(overrides = {}) {
   const ctx = {
     state,
     shell: (content) => shell(content, ctx),
-    tr: (key) => escape(i18n[state.lang]?.[key] || key),
-    tx: (value) => escape(typeof value === "string" ? value : value?.[state.lang] || value?.["zh-CN"] || ""),
-    localTerm: (value) => escape(value?.label?.[state.lang] || value?.label?.["zh-CN"] || value?.id || value),
+    tr: (key) => escape(userFacingBusinessText(i18n[state.lang]?.[key] || key, { state })),
+    tx: (value) => escape(userFacingBusinessText(typeof value === "string" ? value : value?.[state.lang] || value?.["zh-CN"] || "", { state })),
+    localTerm: (value) => escape(userFacingBusinessText(value?.label?.[state.lang] || value?.label?.["zh-CN"] || value?.id || value, { state })),
     escapeHtml: escape,
     escapeAttr: escape,
     metric: (value, label) => `<article><span>${label}</span><strong>${value}</strong></article>`,
@@ -85,15 +86,15 @@ export function runtimeStore() {
     id: "W-DORM-MAINLINE",
     domain: "stay",
     caseId: "case:W-DORM-MAINLINE",
-    title: { "zh-CN": "房源建档与基础就绪" },
-    summary: { "zh-CN": "房间建档、床位组确认和基础就绪确认" },
-    next: { "zh-CN": "发起房源建档与基础就绪" },
+    title: { "zh-CN": "新建房间和床位" },
+    summary: { "zh-CN": "房间建档、确认床位信息和完成基础检查" },
+    next: { "zh-CN": "开始新建房间和床位" },
     blockers: [],
     cards: [{
       id: "cert.roomSetupConfirm",
       status: "ready",
       workItemId: "wi-dorm-room-setup",
-      title: { "zh-CN": "房间建档确认" },
+      title: { "zh-CN": "填写房间信息" },
       fields: {
         business: [
           { id: "buildingContextRef", label: { "zh-CN": "楼栋/区域" }, required: true },
@@ -130,7 +131,7 @@ export function runtimeStore() {
       badges: ["mine", "ready"],
       traceRefs: ["trace-room"],
       commandSubmissionId: "cmd-room",
-      reason: "发起房源建档与基础就绪",
+      reason: "开始新建房间和床位",
       businessAnchor: {
         buildingContextRef: "1 号楼",
         floor: "3 层",
@@ -148,7 +149,7 @@ export function runtimeStore() {
       lifecycleState: "ready",
       ownerRole: "operator",
       traceRefs: ["trace-room"],
-      reason: "发起房源建档与基础就绪",
+      reason: "开始新建房间和床位",
       businessAnchor: {
         buildingContextRef: "1 号楼",
         floor: "3 层",

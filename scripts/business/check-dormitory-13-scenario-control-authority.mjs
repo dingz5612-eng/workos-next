@@ -16,13 +16,13 @@ const expectedScenarios = [
   [3, "lodging.product-and-rate", "住宿商品与价格", "main_operating_chain"],
   [4, "lodging.inquiry-and-quote", "询价与报价", "main_operating_chain"],
   [5, "lodging.reservation-and-inventory-hold", "预订与库存锁定", "main_operating_chain"],
-  [6, "lodging.payment-deposit-guarantee-intake", "收款、押金与担保", "main_operating_chain"],
-  [7, "lodging.checkin", "入住办理", "main_operating_chain"],
+  [6, "lodging.payment-deposit-and-guarantee", "收款、押金与担保", "main_operating_chain"],
+  [7, "lodging.check-in-processing", "入住办理", "main_operating_chain"],
   [8, "lodging.in-stay-management", "在住管理", "main_operating_chain"],
-  [9, "lodging.checkout-settlement", "退房结算", "main_operating_chain"],
+  [9, "lodging.checkout-and-settlement", "退房结算", "main_operating_chain"],
   [10, "lodging.cancel-noshow-refund-intake", "取消、未到店与退款处理", "main_operating_chain"],
-  [11, "lodging.housekeeping-maintenance-support", "房务、维修与停售协同", "horizontal_support_chain"],
-  [12, "lodging.channel-corporate-support", "渠道与企业客户", "horizontal_support_chain"],
+  [11, "lodging.housekeeping-maintenance-outofservice", "房务、维修与停售协同", "horizontal_support_chain"],
+  [12, "lodging.channel-corporate-customer", "渠道与企业客户", "horizontal_support_chain"],
   [13, "lodging.reporting-audit-review", "经营报表、审计与复盘", "readonly_governance_chain"]
 ];
 const expectedStates = new Map([

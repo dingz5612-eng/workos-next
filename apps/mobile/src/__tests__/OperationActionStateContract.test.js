@@ -13,7 +13,7 @@ describe("OAM Surface primary action state machine", () => {
     const html = routeView(ctx);
 
     expect((html.match(/data-submit-card/g) || []).length).toBe(1);
-    expect(visibleText(html)).toContain("房间建档确认");
+    expect(visibleText(html)).toContain("填写房间信息");
   });
 
   it("does not render a second card-internal submit button", () => {

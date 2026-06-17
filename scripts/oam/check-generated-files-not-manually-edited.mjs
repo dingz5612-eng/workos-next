@@ -16,6 +16,7 @@ const generatedFiles = [
   "docs/contracts/generated/dormitory/read-model.generated.json",
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
   "apps/mobile/src/generated/oam/capability-projection.generated.json",
+  "apps/mobile/src/generated/oam/business-display-language.generated.js",
   "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
   "docs/contracts/generated/dormitory/object-identity.generated.json",
   "docs/contracts/generated/dormitory/bed-cardinality.generated.json",

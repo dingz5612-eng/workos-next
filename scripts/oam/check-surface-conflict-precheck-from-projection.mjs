@@ -47,12 +47,15 @@ for (const marker of [
 if (!fieldSourceRenderer.includes("generatedBedLabelsForCount") || !workspaceView.includes("generatedBedLabelsForCount")) {
   fail("surface must display generated BedSet labels from projected bed count.");
 }
-if (bedLabels.generatedBedLabelsForCount(1) !== "01") fail("capacity=1 must generate bed label 01.");
-if (bedLabels.generatedBedLabelsForCount(4) !== "01, 02, 03, 04") fail("capacity=N must generate bed label 01..N.");
+if (bedLabels.generatedBedLabelsForCount(1) !== "01") fail("bedCount=1 must generate bed label 01.");
+if (bedLabels.generatedBedLabelsForCount(4) !== "01, 02, 03, 04") fail("bedCount=N must generate bed label 01..N.");
 const roomSetup = (projection?.steps ?? []).find((item) => item.workItemType === "Dorm.RoomSetupConfirm");
 const bedSetup = (projection?.steps ?? []).find((item) => item.workItemType === "Dorm.BedSetupConfirm");
-if (!(roomSetup?.fields ?? []).some((item) => item.fieldId === "capacity" && item.userSubmitted === true)) {
-  fail("RoomSetupConfirm must be the source of bed count through capacity.");
+if (!(roomSetup?.fields ?? []).some((item) => item.fieldId === "bedCount" && item.userSubmitted === true)) {
+  fail("RoomSetupConfirm must be the source of bed count through bedCount.");
+}
+if ((roomSetup?.fields ?? []).some((item) => item.fieldId === "capacity" && item.userSubmitted === true)) {
+  fail("capacity must not remain the user-submitted surface field for bed count.");
 }
 if ((bedSetup?.fields ?? []).some((item) => ["capacity", "bedCount"].includes(item.fieldId) && item.userSubmitted === true)) {
   fail("BedSetupConfirm must not user-submit bed count.");

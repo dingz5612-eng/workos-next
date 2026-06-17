@@ -26,10 +26,11 @@ if (JSON.stringify(surfaceReadinessValues) !== JSON.stringify(closedReadinessVal
 const roomSetup = step("Dorm.RoomSetupConfirm");
 const bedSetup = step("Dorm.BedSetupConfirm");
 const readiness = step("Dorm.ResourceReadinessConfirm");
-if (!field(roomSetup, "capacity")?.userSubmitted) fail("capacity must be user submitted only on RoomSetupConfirm.");
+if (!field(roomSetup, "bedCount")?.userSubmitted) fail("bedCount must be user submitted only on RoomSetupConfirm.");
+if (field(roomSetup, "capacity")?.userSubmitted) fail("capacity is a historical alias and must not remain a user-submitted surface field.");
 for (const other of [bedSetup, readiness]) {
-  if ((other?.fields ?? []).some((item) => item.fieldId === "capacity" && item.userSubmitted === true)) {
-    fail(`${other.workItemType} must not user-submit capacity.`);
+  if ((other?.fields ?? []).some((item) => ["capacity", "bedCount"].includes(item.fieldId) && item.userSubmitted === true)) {
+    fail(`${other.workItemType} must not user-submit bedCount/capacity.`);
   }
 }
 for (const [currentStep, fieldIds] of [

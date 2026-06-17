@@ -18,6 +18,7 @@ import { isActionableCardStatus, isTerminalCardStatus } from "../selectors/works
 import { permissionDiagnosticCopy } from "../surfaceGuard.js";
 import { buildBusinessAnchor, businessAnchorFieldsHtml, businessAnchorHtml } from "../businessAnchorKernel.js";
 import { isBedSetupCardId } from "../capabilityProjection.js";
+import { userFacingBusinessText, userFacingRiskLabel } from "../businessDisplayLanguage.js";
 import { stepContextContract } from "../systemContextContract.js";
 import {
   DeviceTrustVM,
@@ -523,17 +524,18 @@ export function TrustedConfirmSheet(item, card, ctx) {
   const workspace = item.workspace || item;
   const model = workItemModel({ ...item, workspace, card, workspaceId: item.workspaceId || workspace.id, cardId: item.cardId || card.id }, ctx);
   const vm = TrustedConfirmVM({ ...item, workspace, card }, ctx);
+  const commitmentBody = trustedCommitmentBody(vm.businessCommitment.body, card, ctx);
   return `<section class="trusted-confirm-sheet" data-surface="trusted-confirm">
     <h2>${text(ctx.tr("trustedConfirm"), ctx)}</h2>
     <article>
       <h3>${text(vm.businessCommitment.title, ctx)}</h3>
-      <p>${text(vm.businessCommitment.body, ctx)}</p>
+      <p>${text(commitmentBody, ctx)}</p>
       <p>${text(vm.businessCommitment.ledgerImpact, ctx)}</p>
     </article>
     <article>
       <h3>${text(vm.evidenceAndPermission.title, ctx)}</h3>
       <p>${text(vm.evidenceAndPermission.body, ctx)}</p>
-      <p>${text(ctx.tr("permissionPolicyMatched"), ctx)} · ${text(ctx.tr("decisionRisk"), ctx)} ${text(vm.evidenceAndPermission.risk, ctx)}</p>
+      <p>${text(ctx.tr("permissionPolicyMatched"), ctx)} · ${text(ctx.tr("decisionRisk"), ctx)} ${text(userFacingRiskLabel(vm.evidenceAndPermission.risk, ctx), ctx)}</p>
     </article>
     <article>
       <h3>${text(vm.auditAndRollback.title, ctx)}</h3>
@@ -638,7 +640,7 @@ export function EvidenceStateVM(field, draft = null, ctx = {}) {
   const name = ctx.localTerm ? ctx.localTerm(field) : field?.id || "";
   if (!draft) return { status: "system_ready", name, label: ctx.tr?.("evidenceSystemReady") || "系统将在提交时自动绑定" };
   const status = draft.status || draft.verificationStatus || (isRuntimePlaceholder(draft) ? "pending_review" : "draft");
-  if (status === "verified") return { status, name, label: ctx.tr?.("evidenceReady") || "证据已就绪" };
+  if (status === "verified") return { status, name, label: ctx.tr?.("evidenceReady") || "材料已就绪" };
   if (status === "rejected") return { status, name, label: `${ctx.tr?.("evidenceRejected") || "证据被拒绝"}：${draft.reason || ctx.tr?.("evidenceRejectedNext") || "请重新补充并提交复核"}` };
   if (status === "scope_mismatch") return { status, name, label: ctx.tr?.("evidenceScopeMismatch") || "证据不属于当前办理，请重新选择" };
   if (status === "already_used" || status === "used") return { status, name, label: ctx.tr?.("evidenceAlreadyUsed") || "证据已被其他办理使用，请更换证据" };
@@ -801,9 +803,12 @@ function array(value) {
 
 function tx(value, ctx) {
   if (!value) return "";
-  if (typeof value === "string") return value;
-  if (ctx.tx) return ctx.tx(value);
-  return value["zh-CN"] || value["ru-RU"] || "";
+  const resolved = typeof value === "string"
+    ? value
+    : ctx.tx
+      ? ctx.tx(value)
+      : value["zh-CN"] || value["ru-RU"] || "";
+  return userFacingBusinessText(resolved, ctx);
 }
 
 function activeBlockers(item, card) {
@@ -812,7 +817,18 @@ function activeBlockers(item, card) {
 }
 
 function text(value, ctx) {
-  return ctx.escapeHtml ? ctx.escapeHtml(String(value ?? "")) : String(value ?? "");
+  const display = userFacingBusinessText(String(value ?? ""), ctx);
+  return ctx.escapeHtml ? ctx.escapeHtml(display) : display;
+}
+
+function trustedCommitmentBody(body = "", card = {}, ctx = {}) {
+  if (ctx.state?.lang !== "zh-CN") return body;
+  const byCard = {
+    "cert.roomSetupConfirm": "本次只提交房间信息；不会设置营业状态、价格或预订。",
+    "cert.bedSetupConfirm": "本次只提交床位信息；不会设置营业状态、价格或预订。",
+    "cert.resourceReadinessConfirm": "本次只提交基础检查结果；不会设置营业状态、价格或预订。"
+  };
+  return byCard[card?.id] || userFacingBusinessText(body, ctx);
 }
 
 function attr(value, ctx) {

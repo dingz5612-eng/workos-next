@@ -1,9 +1,11 @@
 import mainlineControl from "./generated/oam/dormitory-13-scenario-control.generated.json" with { type: "json" };
 import scenarioOneMirror from "./generated/oam/dormitory-scenario1-resource-basic-readiness.generated.json" with { type: "json" };
 import generatedSurfaceModel from "./generated/oam/dormitory-surface-input-model.generated.json" with { type: "json" };
-import generatedCapabilityProjection from "./generated/oam/capability-projection.generated.json" with { type: "json" };
+import capabilityProjection from "./generated/oam/capability-projection.generated.json" with { type: "json" };
+import { businessDisplayZh } from "./businessDisplayLanguage.js";
 
 export const DORMITORY_MAINLINE_AUTHORITY_ID = mainlineControl.authorityId;
+export const FIRST_GOLDEN_CHAIN_WORKSPACE_ID = capabilityProjection.workspaceId;
 export const DORMITORY_MAINLINE_WORKSPACE_ID = "W-DORM-MAINLINE";
 export const DORMITORY_SCENARIO1_ID = scenarioOneMirror.scenarioId;
 export const DORMITORY_SCENARIO1_NAME = scenarioOneMirror.nameZh;
@@ -13,7 +15,7 @@ export const DORMITORY_SCENARIO1_STEPS = (scenarioOneMirror.steps || []).map((st
   cardId: currentRouteCardId(step.commandId),
   workItemType: step.commandId,
   definitionId: `definition.dormitory.${step.stepId}.v1`,
-  title: { "zh-CN": step.commandBusinessNameZh || step.nameZh }
+  title: { "zh-CN": businessDisplayZh(step.commandBusinessNameZh || step.nameZh) }
 }));
 
 export const ACCEPTED_MAINLINE_DIGEST = mainlineControl.outputContentDigest;
@@ -29,17 +31,38 @@ const generatedControlsByWorkItem = generatedSurfaceModel.controls.reduce((curre
 }, new Map());
 
 const generatedFieldsByCard = (scenarioOneMirror.steps || []).reduce((current, step) => {
-  const fields = [
+  const generatedSystemDerivedFields = generatedSurfaceModel.controls
+    .filter((control) => control.workItemType === step.commandId)
+    .filter((control) => control.userSubmitted === false && control.classification === "systemDerived")
+    .filter((control) => control.hiddenSubmitOnly !== true && control.controlType !== "hidden")
+    .map((control) => ({
+      fieldId: canonicalSurfaceFieldId(control.fieldId),
+      userSubmitted: false,
+      fieldCategory: control.fieldCategory || "systemDerivedFields"
+    }));
+  const userFields = [
     ...(step.userFilledFields || []),
     ...(step.userSelectedFields || [])
-  ].map((fieldId) => ({ fieldId, userSubmitted: true, fieldCategory: "businessFields" }));
+  ].map((fieldId) => ({ fieldId: canonicalSurfaceFieldId(fieldId), userSubmitted: true, fieldCategory: "businessFields" }));
+  const fields = [
+    ...generatedSystemDerivedFields,
+    ...userFields
+  ];
   for (const systemField of step.systemGeneratedFields || []) {
-    fields.push({ fieldId: systemField, userSubmitted: false, fieldCategory: "systemGeneratedFields" });
+    fields.push({ fieldId: canonicalSurfaceFieldId(systemField), userSubmitted: false, fieldCategory: "systemGeneratedFields" });
   }
-  current.set(currentRouteCardId(step.commandId), fields);
-  current.set(step.commandId, fields);
+  const uniqueFields = fields.filter((field, index, all) => all.findIndex((candidate) => candidate.fieldId === field.fieldId) === index);
+  current.set(currentRouteCardId(step.commandId), uniqueFields);
+  current.set(step.commandId, uniqueFields);
   return current;
 }, new Map());
+
+function canonicalSurfaceFieldId(fieldId = "") {
+  return {
+    capacity: "bedCount",
+    basicReadinessConclusion: "readinessState"
+  }[fieldId] || fieldId;
+}
 
 function currentRouteCardId(commandId = "") {
   const suffix = String(commandId || "").split(".").filter(Boolean).pop() || "";
@@ -88,7 +111,12 @@ export function generatedFieldOrderForCard(cardId = "") {
     .map((control) => control.fieldId);
 }
 
-export function generatedFieldLabel(fieldId = "") {
+export function generatedFieldLabel(fieldId = "", lang = "zh-CN") {
+  const canonicalFieldId = canonicalSurfaceFieldId(fieldId);
+  const generated = capabilityProjection.fieldLabels?.[canonicalFieldId];
+  if (typeof generated === "string") return generated;
+  if (generated?.[lang]) return generated[lang];
+  if (generated?.["zh-CN"]) return generated["zh-CN"];
   const labels = {
     floor: "楼层",
     roomNo: "房间号",
@@ -107,7 +135,7 @@ export function generatedFieldLabel(fieldId = "") {
     bedTypeBatchSetting: "床型批量设置",
     basicReadinessConclusion: "基础就绪结论"
   };
-  return labels[fieldId] || fieldId;
+  return labels[canonicalFieldId] || canonicalFieldId;
 }
 
 export function generatedControlForField(cardId = "", fieldId = "") {
@@ -148,19 +176,20 @@ export function capabilityCommandCatalog() {
   const firstStep = DORMITORY_SCENARIO1_STEPS[0] || {};
   return [{
     templateWorkspaceId: DORMITORY_MAINLINE_WORKSPACE_ID,
+    searchProjectionWorkspaceId: FIRST_GOLDEN_CHAIN_WORKSPACE_ID,
     firstCardId: firstStep.cardId || "",
     title: {
-      "zh-CN": scenarioOneMirror.nameZh,
+      "zh-CN": businessDisplayZh(scenarioOneMirror.nameZh),
       "ru-RU": "Паспорт жилья и базовая готовность",
       "ky-KG": "Турак жайды каттоо жана базалык даярдык"
     },
     subtitle: {
-      "zh-CN": scenarioOneMirror.businessGoalZh,
+      "zh-CN": "填写房间信息、确认床位、完成基础检查；不涉及营业、价格或预订。",
       "ru-RU": "Завести комнату, подтвердить группу коек и базовую готовность без перехода к ценам или брони.",
       "ky-KG": "Бөлмөнү каттап, койка тобун жана базалык даярдыкты баа же бронго өтпөй тастыктоо."
     },
     nextAction: {
-      "zh-CN": "发起房源建档与基础就绪",
+      "zh-CN": "开始新建房间和床位",
       "ru-RU": "Начать заполнение",
       "ky-KG": "Толтурууну баштоо"
     },
@@ -180,7 +209,7 @@ export function capabilityCommandCatalog() {
 }
 
 function currentCommandKeywords(fallback = []) {
-  const generated = generatedCapabilityProjection.commandCatalog?.[0]?.keywords || [];
+  const generated = capabilityProjection.commandCatalog?.[0]?.keywords || [];
   return Array.from(new Set([...fallback, ...generated].filter(Boolean)));
 }
 
@@ -190,10 +219,10 @@ export function mainlineScenarioCatalog() {
     scenarioId: scenario.scenarioId,
     nameZh: scenario.nameZh,
     pageEntries: scenario.pageEntries || [],
-    title: { "zh-CN": scenario.nameZh },
+    title: { "zh-CN": businessDisplayZh(scenario.nameZh) },
     subtitle: { "zh-CN": scenario.summaryOutputs?.join("、") || "来自住宿经营 13 场景总控" },
     status: { "zh-CN": "只读入口" },
-    nextAction: { "zh-CN": scenario.scenarioNo === 1 ? "发起房源建档与基础就绪" : "查看相关工作项" },
+    nextAction: { "zh-CN": scenario.scenarioNo === 1 ? "开始新建房间和床位" : "查看相关工作项" },
     keywords: scenarioKeywords(scenario)
   }));
 }

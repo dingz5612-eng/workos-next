@@ -79,6 +79,8 @@ describe("Operation field kernel contract", () => {
     expect(bedLayoutPreviewValue("4", "bunk_pair", zhCtx)).toContain("01 · 上铺");
     expect(bedLayoutPreviewValue("4", "bunk_pair", zhCtx)).toContain("04 · 下铺");
     expect(preferredTaskFieldIds("cert.bedSetupConfirm")).toEqual([
+      "bedCount",
+      "bedLabels",
       "bedType",
       "bedRemark",
       "specialNotes",

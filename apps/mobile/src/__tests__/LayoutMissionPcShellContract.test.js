@@ -31,14 +31,14 @@ describe("OAM Surface layout, mission control, and PC shell contract", () => {
     let text = visibleText(routeView(ctx));
 
     expect(text).toContain("今日工作");
-    expect(text).toContain("缺证据 0");
+    expect(text).toContain("缺材料 0");
     expect(text).toContain("房间");
     expect(text).not.toContain("globalReason");
 
     ctx.state.runtimeStore.workQueue[0].evidenceState = "missing";
     text = visibleText(routeView(ctx));
 
-    expect(text).toContain("缺证据 1");
+    expect(text).toContain("缺材料 1");
 
     ctx.state.runtimeStore.workQueue = [];
     ctx.state.runtimeStore.operationWorkItems = [];

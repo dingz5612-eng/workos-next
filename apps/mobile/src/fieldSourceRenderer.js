@@ -1,6 +1,12 @@
 import { generatedBedLabelsForCount, splitBedLabels } from "./controls/bedLabelControls.js";
 import { capacityForRoomType, defaultValueForField, fieldControlKind } from "./controls/fieldControls.js";
-import { defaultBedTypeForCount, isBedSetupCardId, isDormitoryScenario1CardId } from "./capabilityProjection.js";
+import {
+  defaultBedTypeForCount,
+  generatedFieldLabel,
+  generatedSurfaceControlsForCard,
+  isBedSetupCardId,
+  isDormitoryScenario1CardId
+} from "./capabilityProjection.js";
 import { isScopedResourceFieldRequired, isScopedResourceFieldVisible } from "./controls/resourceScopeControls.js";
 import { loadCompletedRecordSnapshots, loadDraft } from "./operationDrafts.js";
 import { operationFieldId } from "./operationFieldKernel.js";
@@ -18,7 +24,9 @@ import {
 } from "./systemContextContract.js";
 
 export function operationInputFields(card, ctx, item = null) {
-  return (card.fields?.business || []).filter((field) => operationFieldVisible(field, card, item, ctx));
+  const generatedFields = generatedOperationInputFields(card, ctx);
+  const sourceFields = generatedFields.length ? generatedFields : (card.fields?.business || []);
+  return sourceFields.filter((field) => operationFieldVisible(field, card, item, ctx));
 }
 
 export function operationValue(field, item, card, ctx) {
@@ -47,6 +55,10 @@ export function operationFieldState(field, item, card, ctx) {
   }
   if (isBedSetupCardId(card?.id) && fieldId === "bedType") {
     return bedSetupGenerationModeState(field, item, card, values, ctx);
+  }
+  if (field?.classification === "contextReadonly" && fieldId === "buildingContextRef") {
+    const contextValue = values.buildingContextRef || values.buildingName || item?.buildingContextRef || item?.buildingName || "当前楼栋/区域";
+    return { value: contextValue, displayValue: contextValue, source: "caseContext" };
   }
   if (values[fieldId]) return { value: values[fieldId], source: "draft" };
   if (values[field.id]) return { value: values[field.id], source: "draft" };
@@ -217,6 +229,69 @@ function bedSetupGenerationModeState(field, item, card, values, ctx) {
     return { value: values.bedType, source: "draft" };
   }
   return { value: defaultValueForField(field) || defaultBedTypeForCount(bedCount), source: "default" };
+}
+
+function generatedOperationInputFields(card, ctx) {
+  return generatedSurfaceControlsForCard(card?.id)
+    .filter((control) => operationSurfaceControlVisible(control))
+    .map((control) => generatedControlField(displayControlForSurface(control, card), ctx));
+}
+
+function operationSurfaceControlVisible(control) {
+  if (control.hiddenSubmitOnly || control.controlType === "hidden") return false;
+  if (control.classification === "contextReadonly") return control.fieldId === "buildingContextRef";
+  return ["clientSubmitted", "selectedStableRef", "systemDerived"].includes(control.classification);
+}
+
+function displayControlForSurface(control, card) {
+  if (isBedSetupCardId(card?.id) && control.fieldId === "roomId") {
+    return {
+      ...control,
+      fieldId: "roomRef",
+      classification: "selectedStableRef",
+      controlType: "readonly",
+      readonly: true,
+      required: false,
+      label: { "zh-CN": "所属房间", "ru-RU": "Комната", "ky-KG": "Бөлмө" }
+    };
+  }
+  if (control.fieldId === "buildingContextRef") {
+    return {
+      ...control,
+      classification: "selectedStableRef",
+      controlType: "searchSelect",
+      readonly: false,
+      required: true,
+      optionSet: "",
+      defaultValue: ""
+    };
+  }
+  return control;
+}
+
+function generatedControlField(control, ctx) {
+  const lang = ctx?.state?.lang || "zh-CN";
+  const generatedLabel = control.label?.[lang] || control.label?.["zh-CN"] || generatedFieldLabel(control.fieldId, lang);
+  const controlKind = control.optionSet ? "select" : control.controlType || control.ui?.control || "text";
+  return {
+    id: control.fieldId,
+    label: {
+      [lang]: generatedLabel,
+      "zh-CN": control.label?.["zh-CN"] || generatedFieldLabel(control.fieldId, "zh-CN")
+    },
+    required: control.required === true,
+    classification: control.classification,
+    userSubmitted: control.userSubmitted === true,
+    readonly: control.readonly === true,
+    source: control.source,
+    ui: {
+      control: controlKind,
+      optionSet: control.optionSet || "",
+      defaultValue: control.defaultValue || "",
+      readonly: control.readonly === true,
+      hiddenSubmitOnly: control.hiddenSubmitOnly === true
+    }
+  };
 }
 
 function backendDefaultValue(fieldId, ctx) {

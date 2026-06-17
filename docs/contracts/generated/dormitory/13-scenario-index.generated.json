@@ -8,16 +8,16 @@
   "generatedFrom": [
     "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
   ],
-  "inputDigest": "sha256:4c3a13f3a7b929d8420f863c66bb6891b209aee38ab4cb168f785dc2865489a7",
+  "inputDigest": "sha256:d2d2ae59e3c738b48f595b1203dd288fb25b6d0ba691ce0033777f8b91c192ab",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
-      "digest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0"
+      "digest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a"
     }
   ],
-  "sourceContentDigest": "sha256:e3d15332a6cba89bb9306b2230a799e0dacb487f239add79383fad1fe6c9f8a0",
+  "sourceContentDigest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a",
   "authorityId": "Dormitory.Operating13ScenarioControl",
-  "outputContentDigest": "sha256:2b56b32729986df19fd505f1d16cc54e8a85907bd1d115d01b5c6a51ac23b028",
+  "outputContentDigest": "sha256:a1e540e71391e8fa36f6b86146d3f44293f34679c82c934f8cc31ec71c38785c",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
@@ -147,7 +147,7 @@
     },
     {
       "scenarioNo": 6,
-      "scenarioId": "lodging.payment-deposit-guarantee-intake",
+      "scenarioId": "lodging.payment-deposit-and-guarantee",
       "nameZh": "收款、押金与担保",
       "chainLayer": "main_operating_chain",
       "upstreamSummaryInputs": [
@@ -172,7 +172,7 @@
     },
     {
       "scenarioNo": 7,
-      "scenarioId": "lodging.checkin",
+      "scenarioId": "lodging.check-in-processing",
       "nameZh": "入住办理",
       "chainLayer": "main_operating_chain",
       "upstreamSummaryInputs": [
@@ -226,7 +226,7 @@
     },
     {
       "scenarioNo": 9,
-      "scenarioId": "lodging.checkout-settlement",
+      "scenarioId": "lodging.checkout-and-settlement",
       "nameZh": "退房结算",
       "chainLayer": "main_operating_chain",
       "upstreamSummaryInputs": [
@@ -277,7 +277,7 @@
     },
     {
       "scenarioNo": 11,
-      "scenarioId": "lodging.housekeeping-maintenance-support",
+      "scenarioId": "lodging.housekeeping-maintenance-outofservice",
       "nameZh": "房务、维修与停售协同",
       "chainLayer": "horizontal_support_chain",
       "upstreamSummaryInputs": [
@@ -305,7 +305,7 @@
     },
     {
       "scenarioNo": 12,
-      "scenarioId": "lodging.channel-corporate-support",
+      "scenarioId": "lodging.channel-corporate-customer",
       "nameZh": "渠道与企业客户",
       "chainLayer": "horizontal_support_chain",
       "upstreamSummaryInputs": [

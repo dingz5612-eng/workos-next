@@ -102,8 +102,8 @@ describe("Search and feedback branch matrix", () => {
     expect(html).toContain("localPending");
     expect(html).toContain("&lt;owner&gt;");
     expect(html).toContain("不能写业务事实 &lt;script&gt;");
-    expect(text).toContain("房源建档与基础就绪");
-    expect(text).toContain("房间建档确认");
+    expect(text).toContain("新建房间和床位");
+    expect(text).toContain("填写房间信息");
   });
 
   it("keeps feedback context safe when no workspace, card, role, or messages exist", () => {

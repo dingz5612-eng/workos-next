@@ -28,19 +28,60 @@
   "ordinaryBusinessCopyFiles": [
     "apps/mobile/src/i18n/operationCopy.js"
   ],
+  "businessDisplayGeneratedModule": "apps/mobile/src/generated/oam/business-display-language.generated.js",
+  "businessDisplayAdapter": "apps/mobile/src/businessDisplayLanguage.js",
   "ordinaryBusinessDomProbe": {
     "probeName": "operationCopy rendered values",
     "ruleZh": "检查器必须把业务文案渲染为 DOM 文本后检查，而不能只做源码字符串扫描。"
   },
   "requiredScenario1BusinessLabels": [
-    "房间建档确认",
-    "床位组确认",
-    "基础就绪确认"
+    "新建房间和床位",
+    "填写房间信息",
+    "确认床位信息",
+    "完成基础检查"
   ],
+  "displayTermReplacementsZh": [
+    ["发起房源建档与基础就绪", "开始新建房间和床位"],
+    ["房源建档与基础就绪完成", "房间和床位已新建"],
+    ["房源建档与基础就绪记录完成", "房间和床位资料已保存"],
+    ["房源建档与基础就绪", "新建房间和床位"],
+    ["房源运营就绪与状态维护", "设置房间营业状态"],
+    ["住宿商品与价格", "设置房型和价格"],
+    ["询价与报价", "给客户报价"],
+    ["预订与库存锁定", "创建预订并锁房/锁床"],
+    ["收款、押金与担保", "收款、押金和担保"],
+    ["入住办理", "办理入住"],
+    ["在住管理", "管理在住服务"],
+    ["退房结算", "办理退房结算"],
+    ["取消、未到店与退款处理", "取消、未到店和退款"],
+    ["房务、维修与停售协同", "房务、维修和停售"],
+    ["渠道与企业客户", "渠道和企业客户"],
+    ["经营报表、审计与复盘", "经营报表和复盘"],
+    ["房间建档确认", "填写房间信息"],
+    ["床位组确认", "确认床位信息"],
+    ["基础就绪确认", "完成基础检查"],
+    ["证据已就绪", "材料已就绪"],
+    ["可信证据", "办理材料"],
+    ["证据", "材料"]
+  ],
+  "riskLabelReplacementsZh": {
+    "critical": "紧急",
+    "high": "高",
+    "medium": "中",
+    "low": "低",
+    "p0": "紧急",
+    "p1": "高",
+    "p2": "中",
+    "p3": "低"
+  },
   "forbiddenLegacyScenario1Labels": [
     "确认房间配置",
     "确认床位配置",
-    "确认资源就绪"
+    "确认资源就绪",
+    "宿舍资源可售第一金链",
+    "房间建档确认",
+    "床位组确认",
+    "基础就绪确认"
   ],
   "technicalTermAllowlistFiles": [
     "docs/oam/visible-business-copy-contract.json",

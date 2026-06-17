@@ -11,9 +11,9 @@ describe("SURFACE-C evidence trust experience", () => {
     const sheet = EvidenceSheet(card, draft, ctx);
 
     expect(tile).toContain('data-surface="evidence-tile"');
-    expect(tile).toContain("房间基础资料证据");
+    expect(tile).toContain("房间基础资料材料");
     expect(tile).toContain("系统将在提交时自动绑定");
     expect(sheet).toContain('data-surface="evidence-sheet"');
-    expect(sheet).toContain("1/1 证据已就绪");
+    expect(sheet).toContain("1/1 材料已就绪");
   });
 });

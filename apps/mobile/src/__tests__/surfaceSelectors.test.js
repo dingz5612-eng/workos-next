@@ -31,7 +31,7 @@ describe("runtime surface selectors", () => {
   });
 
   it("does not put Finance or Repair scenario focus on an accommodation operator home", () => {
-    const stay = workspace("W-DORM-MAINLINE", "stay", "cert.roomSetupConfirm", "ready", "房源建档与基础就绪");
+    const stay = workspace("W-DORM-MAINLINE", "stay", "cert.roomSetupConfirm", "ready", "新建房间和床位");
     const finance = workspace("W-FINANCE-DEPOSIT", "finance", "depositReview", "ready", "押金异常");
     const repair = workspace("W-REPAIR-TICKET", "repair", "arrival", "ready", "报修处理");
     const state = runtimeState([stay, finance, repair], {
@@ -50,7 +50,7 @@ describe("runtime surface selectors", () => {
   });
 
   it("keeps stay-domain finance scenarios off the accommodation operator home", () => {
-    const resource = workspace("W-DORM-MAINLINE", "stay", "cert.roomSetupConfirm", "ready", "房源建档与基础就绪");
+    const resource = workspace("W-DORM-MAINLINE", "stay", "cert.roomSetupConfirm", "ready", "新建房间和床位");
     const ledger = workspace("W-STAY-DEPOSIT-LEDGER", "stay", "depositClose", "ready", "我要管理押金账本");
     const state = runtimeState([resource, ledger], {
       homeSurface: [
@@ -67,7 +67,7 @@ describe("runtime surface selectors", () => {
   });
 
   it("filters finance-like titles carried by homeSurface payloads for operators", () => {
-    const resource = workspace("W-DORM-MAINLINE", "stay", "cert.roomSetupConfirm", "ready", "房源建档与基础就绪");
+    const resource = workspace("W-DORM-MAINLINE", "stay", "cert.roomSetupConfirm", "ready", "新建房间和床位");
     const state = runtimeState([resource], {
       homeSurface: [
         {
