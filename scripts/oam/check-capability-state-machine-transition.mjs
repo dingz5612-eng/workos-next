@@ -63,6 +63,10 @@ for (const [index, event] of (ledger?.events ?? []).entries()) {
   }
   const state = eventToState[event.eventType];
   if (!state) continue;
+  revokeFromState(achievedStates, state);
+  for (const revokedState of stateOrder.slice(stateOrder.indexOf(state))) {
+    stateEvents.delete(revokedState);
+  }
   achievedStates.push(state);
   stateEvents.set(state, event);
 }
@@ -158,6 +162,14 @@ function removeAchievedState(achieved, state) {
   while (index !== -1) {
     achieved.splice(index, 1);
     index = achieved.lastIndexOf(state);
+  }
+}
+
+function revokeFromState(achieved, state) {
+  const index = stateOrder.indexOf(state);
+  if (index === -1) return;
+  for (const revokedState of stateOrder.slice(index)) {
+    removeAchievedState(achieved, revokedState);
   }
 }
 

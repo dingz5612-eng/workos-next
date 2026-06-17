@@ -84,7 +84,11 @@ if (result.status !== "PASS") {
 console.log(`Single capability bundle digest check: PASS (${canonicalDigest})`);
 
 function event(type) {
-  return (ledger?.events ?? []).find((item) => item.eventType === type);
+  const events = ledger?.events ?? [];
+  for (let index = events.length - 1; index >= 0; index -= 1) {
+    if (events[index]?.eventType === type) return events[index];
+  }
+  return null;
 }
 
 function eventDigest(type) {

@@ -198,7 +198,7 @@ export function validateAuthorityLedger({ ledger, root = process.cwd() } = {}) {
     previousDigest = eventDigest(event);
   }
   const currentBundleDigest = generatedBundleDigest(root);
-  const built = ledger.events?.find((event) => event.eventType === "GENERATED_BUNDLE_BUILT");
+  const built = lastEventOfType(ledger.events, "GENERATED_BUNDLE_BUILT");
   if (built?.bundleDigest !== currentBundleDigest) {
     failures.push(`GENERATED_BUNDLE_BUILT.bundleDigest must equal current generated bundle digest ${currentBundleDigest}.`);
   }
@@ -232,35 +232,57 @@ export function buildProjectionFromLedger(ledger, root = process.cwd()) {
     }
     if (event.eventType === "SOURCE_CLOSED") {
       activeAuthority.sourceClosureDigest = event.outputDigests?.sourceClosureDigest ?? event.subjectDigest;
-      achieved.push("SOURCE_CLOSED");
+      admitState(achieved, "SOURCE_CLOSED");
     }
     if (event.eventType === "GENERATED_BUNDLE_BUILT") {
+      revokeFromState(achieved, "GENERATED_BUNDLE_BUILT");
       activeAuthority.generatedBundleDigest = event.bundleDigest;
-      achieved.push("GENERATED_BUNDLE_BUILT");
+      activeAuthority.acceptedGeneratedBundleDigest = null;
+      activeAuthority.runtimeConsumedBundleDigest = null;
+      activeAuthority.runtimeAdmissionDigest = null;
+      activeAuthority.businessLandingDigest = null;
+      activeAuthority.productionConfirmationDigest = null;
+      activeAuthority.releaseAuthorityDigest = null;
+      admitState(achieved, "GENERATED_BUNDLE_BUILT");
     }
     if (event.eventType === "GENERATED_BUNDLE_ACCEPTED_BY_00") {
+      revokeFromState(achieved, "GENERATED_BUNDLE_ACCEPTED");
       activeAuthority.acceptedGeneratedBundleDigest = event.bundleDigest;
-      achieved.push("GENERATED_BUNDLE_ACCEPTED");
+      activeAuthority.runtimeConsumedBundleDigest = null;
+      activeAuthority.runtimeAdmissionDigest = null;
+      activeAuthority.businessLandingDigest = null;
+      activeAuthority.productionConfirmationDigest = null;
+      activeAuthority.releaseAuthorityDigest = null;
+      admitState(achieved, "GENERATED_BUNDLE_ACCEPTED");
     }
     if (event.eventType === "RUNTIME_TEST_ADMITTED") {
+      revokeFromState(achieved, "RUNTIME_TEST_ADMITTED");
       activeAuthority.runtimeConsumedBundleDigest = event.outputDigests?.runtimeConsumedBundleDigest ?? event.bundleDigest;
       activeAuthority.runtimeAdmissionDigest = event.subjectDigest;
-      achieved.push("RUNTIME_TEST_ADMITTED");
+      activeAuthority.businessLandingDigest = null;
+      activeAuthority.productionConfirmationDigest = null;
+      activeAuthority.releaseAuthorityDigest = null;
+      admitState(achieved, "RUNTIME_TEST_ADMITTED");
     }
     if (event.eventType === "BUSINESS_LANDING_ADMITTED") {
+      revokeFromState(achieved, "BUSINESS_LANDING_ADMITTED");
       activeAuthority.businessLandingDigest = event.subjectDigest;
-      achieved.push("BUSINESS_LANDING_ADMITTED");
+      activeAuthority.productionConfirmationDigest = null;
+      activeAuthority.releaseAuthorityDigest = null;
+      admitState(achieved, "BUSINESS_LANDING_ADMITTED");
     }
     if (event.eventType === "PRODUCTION_CONFIRMED") {
+      revokeFromState(achieved, "PRODUCTION_CONFIRMED");
       activeAuthority.productionConfirmationDigest = event.subjectDigest;
-      achieved.push("PRODUCTION_CONFIRMED");
+      activeAuthority.releaseAuthorityDigest = null;
+      admitState(achieved, "PRODUCTION_CONFIRMED");
     }
     if (event.eventType === "RELEASE_AUTHORIZED") {
       activeAuthority.releaseAuthorityDigest = event.subjectDigest;
-      achieved.push("RELEASE_AUTHORIZED");
+      admitState(achieved, "RELEASE_AUTHORIZED");
     }
   }
-  const uniqueAchieved = [...new Set(achieved)];
+  const uniqueAchieved = [...achieved];
   const businessLandingAdmitted = uniqueAchieved.includes("BUSINESS_LANDING_ADMITTED");
   return {
     version: "oam.capability-ledger-current-projection.v1",
@@ -434,6 +456,26 @@ function removeAchievedState(achieved, state) {
     achieved.splice(index, 1);
     index = achieved.lastIndexOf(state);
   }
+}
+
+function admitState(achieved, state) {
+  removeAchievedState(achieved, state);
+  achieved.push(state);
+}
+
+function revokeFromState(achieved, state) {
+  const index = lifecycleStates.indexOf(state);
+  if (index === -1) return;
+  for (const revoked of lifecycleStates.slice(index)) {
+    removeAchievedState(achieved, revoked);
+  }
+}
+
+function lastEventOfType(events = [], type) {
+  for (let index = events.length - 1; index >= 0; index -= 1) {
+    if (events[index]?.eventType === type) return events[index];
+  }
+  return null;
 }
 
 function acceptedGeneratedBundleAuthority(root) {

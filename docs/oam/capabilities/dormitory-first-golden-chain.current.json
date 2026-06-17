@@ -8,36 +8,36 @@
   "activeAuthority": {
     "capabilityId": "Dormitory.FirstGoldenChain",
     "sourceClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
-    "generatedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
-    "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
-    "runtimeConsumedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
-    "runtimeAdmissionDigest": "sha256:0aa4b6c3448ab9103aa401d8d225b374685be38a022df0db3c1d230f750f2c09",
+    "generatedBundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f",
+    "acceptedGeneratedBundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f",
+    "runtimeConsumedBundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f",
+    "runtimeAdmissionDigest": "sha256:3f4c91a1ae99b5aabe9cd91b8119586f8287c522705498cd4bb7b92d00eeeaf3",
     "businessLandingDigest": null,
     "productionConfirmationDigest": null,
     "releaseAuthorityDigest": null
   },
   "generatedBundle": {
-    "digest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
+    "digest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f",
     "files": [
       {
         "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
-        "digest": "sha256:cab56e48544f8bdfeaeaba8de7a2782d9574fef914314048a4a678badef80a69"
+        "digest": "sha256:26e1e3de09db09ec07034fa9f3615618579f84b1be19fc35d4faba575f51b3e1"
       },
       {
         "path": "docs/oam/domain-derived-contracts.json",
-        "digest": "sha256:ab565660d52f2f3fd07d5656c5b675afea2489c9d7e32f54ccfc19170f74bcae"
+        "digest": "sha256:828ea949f31ab6bb57d1a909fa4b0e7ca7bb6e4c957559537fe1f7bda0a56e91"
       },
       {
         "path": "docs/oam/generated-contracts-manifest.json",
-        "digest": "sha256:57543101e05c024f6c32f96dff5ab86cd54489d7519797b1875d3cc088bc1f3d"
+        "digest": "sha256:a7dc6452a61a33658b11140efae3fbc02a38cdd335d282c3a44292301870ac8a"
       },
       {
         "path": "docs/oam/kernel/oam-kernel-graph.generated.json",
-        "digest": "sha256:7c932e854402c29d22c3bd8ddd82a731ab4f9a4101f08e649f24d8df3a88925a"
+        "digest": "sha256:20253ba13d973e9ceceb05a3c169c735fc8156b404b3be409df38fc2c16a6b81"
       },
       {
         "path": "docs/oam/system-derived-contracts.json",
-        "digest": "sha256:e44fe49a0e4db9d97baf65d65218a18d76a8851260245a5988031297529f12a9"
+        "digest": "sha256:a25559aba09d0557af80483d1d275581b4f1cd1285e2fca6fd00dac6822ab405"
       }
     ]
   },

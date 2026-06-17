@@ -39,10 +39,10 @@
   "activeAuthority": {
     "capabilityId": "Dormitory.FirstGoldenChain",
     "sourceClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
-    "generatedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
-    "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
-    "runtimeConsumedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
-    "runtimeAdmissionDigest": "sha256:0aa4b6c3448ab9103aa401d8d225b374685be38a022df0db3c1d230f750f2c09",
+    "generatedBundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f",
+    "acceptedGeneratedBundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f",
+    "runtimeConsumedBundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f",
+    "runtimeAdmissionDigest": "sha256:3f4c91a1ae99b5aabe9cd91b8119586f8287c522705498cd4bb7b92d00eeeaf3",
     "businessLandingDigest": null,
     "productionConfirmationDigest": null,
     "releaseAuthorityDigest": null
