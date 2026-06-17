@@ -25,7 +25,7 @@
     "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
     "docs/oam/visible-business-copy-contract.json"
   ],
-  "inputDigest": "sha256:04c6515f731c0e1aace352bdc7042611d84af570aceca3d899fb3fa0bb158e69",
+  "inputDigest": "sha256:95cfe2752b53a0fd03c6d4cc78ccb82ec25d7dfb2a8b2d984c4be17939dd55bd",
   "inputDigests": [
     {
       "path": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
@@ -37,7 +37,7 @@
     },
     {
       "path": "docs/oam/generated-candidate-acceptance.current.json",
-      "digest": "sha256:ae71e8b0dd5a0950796a5d84418fbc57853294e0c8f60bc85893d1249dc049d0"
+      "digest": "sha256:1b853ddf9317dcd5aede2b9e4a25d23aa43e0d4035b3ab1ea22e921d2e8116d8"
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json",
@@ -104,7 +104,7 @@
       "digest": "sha256:67d2e1ecb47d1330fc7ebef908d9879eaed7f1b713b05eb28c29d6f347729fd8"
     }
   ],
-  "outputContentDigest": "sha256:31a05ece9c3143e89caa52a4574e5db5cf6b2ba6fa749b0e35d930a749333fcc",
+  "outputContentDigest": "sha256:a80c568a28943bf63dadfc1509e1c2e59bd907b5a5b1845d528a1ff86616d13a",
   "capabilityId": "Dormitory.FirstGoldenChain",
   "acceptedGeneratedBundleDigest": "sha256:83a8feea15cd100b6d3e2b2895a84e57dcdec0ecc8d9ba9243c04173a02bb7ea",
   "currentFilesMode": "ledger_replay_projection_only",

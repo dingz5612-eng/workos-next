@@ -1649,7 +1649,35 @@ function fileDigest(file) {
   if (!fs.existsSync(full)) {
     return digestObject({ missing: true, path: file });
   }
+  if (file === GENERATED_CANDIDATE_ACCEPTANCE_PATH) {
+    return digestObject({
+      version: "oam.generated-candidate-acceptance-semantic-input.v1",
+      acceptance: normalizeAcceptanceForCapabilityInput(readJson(file))
+    });
+  }
   return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(full)).digest("hex")}`;
+}
+
+function normalizeAcceptanceForCapabilityInput(value) {
+  if (Array.isArray(value)) return value.map(normalizeAcceptanceForCapabilityInput);
+  if (value && typeof value === "object") {
+    const normalized = {};
+    for (const [key, child] of Object.entries(value)) {
+      if ([
+        "decisionWritebackBaseHead",
+        "decisionRecordHead",
+        "currentGeneratedCandidateDivergence"
+      ].includes(key)) continue;
+      if (key === "acceptanceRecord" && child && typeof child === "object" && !Array.isArray(child)) {
+        const { acceptedAtUtc, currentRepositoryHead, ...semanticRecord } = child;
+        normalized[key] = normalizeAcceptanceForCapabilityInput(semanticRecord);
+        continue;
+      }
+      normalized[key] = normalizeAcceptanceForCapabilityInput(child);
+    }
+    return normalized;
+  }
+  return value;
 }
 
 function digestObject(value) {

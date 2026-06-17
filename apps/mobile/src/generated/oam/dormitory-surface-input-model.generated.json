@@ -16,7 +16,7 @@
   "sourceHash": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
   "sourceContentDigest": "sha256:e46f6fd85d063817ee6107c3046db646aa770b01d0016ebc6706bf75d245e551",
   "compilerInputDigest": "sha256:5c83295bb22ea592e7096323eb5d30e5bc084965a7f138fa15114e6228db7d66",
-  "outputContentDigest": "sha256:1a2529eb402fe7437e6e044abe5f329d1cd5de4a1051a4181fb275b9b3556ad5",
+  "outputContentDigest": "sha256:8b328f8f266a077e12244bcf7288299b1e163d7a417f5e6fdb8e52174d8566c1",
   "deterministicSort": true,
   "generatorVersion": "oam.capability-compiler.v1",
   "generatedFrom": [
@@ -1402,7 +1402,7 @@
     }
   ],
   "generatedBy": "scripts/oam/compile-current-capability.mjs",
-  "inputDigest": "sha256:04c6515f731c0e1aace352bdc7042611d84af570aceca3d899fb3fa0bb158e69",
+  "inputDigest": "sha256:95cfe2752b53a0fd03c6d4cc78ccb82ec25d7dfb2a8b2d984c4be17939dd55bd",
   "inputDigests": [
     {
       "path": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
@@ -1414,7 +1414,7 @@
     },
     {
       "path": "docs/oam/generated-candidate-acceptance.current.json",
-      "digest": "sha256:ae71e8b0dd5a0950796a5d84418fbc57853294e0c8f60bc85893d1249dc049d0"
+      "digest": "sha256:1b853ddf9317dcd5aede2b9e4a25d23aa43e0d4035b3ab1ea22e921d2e8116d8"
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json",
@@ -2046,7 +2046,7 @@
   "generatedBusinessRuleRefs": {
     "objectIdentity": {
       "ref": "docs/contracts/generated/dormitory/object-identity.generated.json",
-      "digest": "sha256:c1f8bae0a22d6ef47ca1ccc630d9dac4bac4f39e61bb6dc7911e4138374a58a8",
+      "digest": "sha256:f14d3056642563140354fb071107cc2351f3e5fa4ddc9a6b343198ea6af15f30",
       "ruleIds": [
         "dormitory.object_identity.dormitory_buildingcontext",
         "dormitory.object_identity.dormitory_room",
@@ -2057,7 +2057,7 @@
     },
     "bedCardinality": {
       "ref": "docs/contracts/generated/dormitory/bed-cardinality.generated.json",
-      "digest": "sha256:ee01b89a2c597bdd559264bdc688dd26dd2811c51061d7f9487ed59d4c1140f7",
+      "digest": "sha256:d5a881bb84b9b14cefcdd46134607ebeb355245404c35bae8963e76325e5e347",
       "ruleIds": [
         "dormitory.bed_cardinality.capacity_1_exactly_bed_01",
         "dormitory.bed_cardinality.capacity_n_exactly_bed_01_to_n",
@@ -2069,7 +2069,7 @@
     },
     "businessInvariants": {
       "ref": "docs/contracts/generated/dormitory/business-invariants.generated.json",
-      "digest": "sha256:b018d531997da8e5f693e3f253de841900fe38022597792d0fda1ab76c61e85f",
+      "digest": "sha256:d9be4792dfb0d52deacb7aaaff81c9a1b4c346e6cb208055bd258afd9b858fe7",
       "ruleIds": [
         "dormitory.business_invariant.room_unique_within_building_context",
         "dormitory.business_invariant.bed_unique_within_room",
@@ -2085,7 +2085,7 @@
     },
     "commandContracts": {
       "ref": "docs/contracts/generated/dormitory/command-contracts.generated.json",
-      "digest": "sha256:ab39a5b607b53dfc2f6d5ccab8c18a5f8bc211a80ddad31bca0ef765a258143f",
+      "digest": "sha256:c520c0a6689548a3a034c9f50e336437714910e25c6f547b86d4e51ee95e8c85",
       "ruleIds": [
         "dormitory.command_contract.dorm_roomsetupconfirm",
         "dormitory.command_contract.dorm_bedsetupconfirm",
@@ -2094,7 +2094,7 @@
     },
     "failureSemantics": {
       "ref": "docs/contracts/generated/dormitory/failure-semantics.generated.json",
-      "digest": "sha256:d09776e534908f2e9a9a49bf44c113e77c73df511adf90a6f2f785a3f6db8107",
+      "digest": "sha256:9d921e5558d09e06bfe714d5eccbaea31ccb5b4ede0faf6cc797e9e76eb9e0d6",
       "ruleIds": [
         "dormitory.failure_semantics.duplicate_room",
         "dormitory.failure_semantics.duplicate_bed",
@@ -2108,7 +2108,7 @@
     },
     "ruleSourceMap": {
       "ref": "docs/contracts/generated/dormitory/rule-source-map.generated.json",
-      "digest": "sha256:31a05ece9c3143e89caa52a4574e5db5cf6b2ba6fa749b0e35d930a749333fcc",
+      "digest": "sha256:a80c568a28943bf63dadfc1509e1c2e59bd907b5a5b1845d528a1ff86616d13a",
       "ruleIds": [
         "dormitory.object_identity.dormitory_buildingcontext",
         "dormitory.object_identity.dormitory_room",
