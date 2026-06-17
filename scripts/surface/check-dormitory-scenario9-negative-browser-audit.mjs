@@ -156,9 +156,9 @@ for (const shot of report.screenshots ?? []) {
 }
 if (!JSON.stringify(report.scenarios ?? []).includes("未写入任何业务结果") ||
   !JSON.stringify(report.scenarios ?? []).includes("搜索结果只读") ||
-  !JSON.stringify(report.scenarios ?? []).includes("finance-gate") ||
+  !JSON.stringify(report.scenarios ?? []).includes("财务确认流程") ||
   !JSON.stringify(report.scenarios ?? []).includes("房源运营状态维护复查")) {
-  failures.push("negative report must prove no side effects, readonly search, finance-gate handoff, and scenario 2 resource recovery separation.");
+  failures.push("negative report must prove no side effects, readonly search, finance confirmation handoff, and scenario 2 resource recovery separation.");
 }
 if (financeGate.consumer !== "finance-gate" || financeGate.settlementIntentOnly !== true) failures.push("scenario9 finance-gate contract must consume settlement intent only.");
 

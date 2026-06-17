@@ -143,11 +143,11 @@ try {
     surfaceContract.surfaceNavigation);
   addAssertion(
     "positive.finance_boundary_visible",
-    JSON.stringify(report.steps).includes("finance-gate") &&
+    JSON.stringify(report.steps).includes("财务确认流程") &&
       JSON.stringify(report.steps).includes("押金不是收入") &&
       JSON.stringify(report.steps).includes("担保不是收款") &&
       JSON.stringify(report.steps).includes("剩余待收"),
-    "正向主流程必须让用户感知 finance-gate、押金/担保边界和剩余待收。",
+    "正向主流程必须让用户感知财务确认流程、押金/担保边界和剩余待收。",
     report.steps.map((step) => ({ id: step.id, pageName: step.pageName })));
   addAssertion(
     "positive.no_downstream_or_ledger_writes",
@@ -236,7 +236,7 @@ function buildPositiveCases() {
       missingItems: [],
       nextActions: ["继续提交押金凭证"],
       buttons: ["提交凭证", "补充凭证"],
-      highlight: "业务侧提交的是凭证和意向，财务确认仍需 finance-gate。"
+      highlight: "业务侧提交的是凭证和意向，财务确认仍需走财务确认流程。"
     },
     {
       id: "04-submit-deposit-receipt",
@@ -269,15 +269,15 @@ function buildPositiveCases() {
       highlight: "担保只作为风险覆盖，不被当作已收款。"
     },
     {
-      id: "06-enter-finance-gate",
+      id: "06-enter-finance-confirmation",
       testPlanItemZh: "进入财务确认。",
       step: stepById.get("finance-gate-confirmation"),
-      title: "finance-gate 财务确认",
+      title: "财务确认流程",
       state: "待财务确认",
-      summary: "财务在 finance-gate 查看预订摘要、应收依据、押金依据、凭证、金额、币种和证据摘要。",
-      readonlyFacts: ["收款凭证：2 项待确认", "押金凭证：1 项待确认", "担保协议：1 项待确认", "finance-gate 状态：待确认"],
+      summary: "财务人员查看预订摘要、应收依据、押金依据、凭证、金额、币种和证据摘要。",
+      readonlyFacts: ["收款凭证：2 项待确认", "押金凭证：1 项待确认", "担保协议：1 项待确认", "财务确认状态：待确认"],
       filledFields: ["确认备注：凭证清晰，金额一致"],
-      evidence: ["财务确认凭证", "finance-gate 审核证据"],
+      evidence: ["财务确认凭证", "财务审核证据"],
       missingItems: [],
       nextActions: ["财务确认房费"],
       buttons: ["确认", "退回补证", "部分确认", "标记异常"],
@@ -444,6 +444,7 @@ function renderHtml(item) {
     button { border: 1px solid #0f766e; background: #0f766e; color: white; border-radius: 6px; min-height: 38px; padding: 0 12px; font-size: 14px; }
     button.secondary { background: #fff; color: #0f766e; }
     .note { color: #475569; line-height: 1.5; }
+    .boundary { border-color: #b8c7d9; background: #f8fbff; }
   </style>
 </head>
 <body>
@@ -454,6 +455,11 @@ function renderHtml(item) {
       <div class="state">${escapeHtml(item.state)}</div>
     </header>
     <section><h2>当前业务动作</h2><div class="note">${escapeHtml(item.summary)}</div></section>
+    <section class="boundary"><h2>财务边界</h2>${list([
+      "押金不是收入：押金保持可退或结算属性，不能当作收入确认。",
+      "担保不是收款：担保只表示风险覆盖，不能当作已收款到账。",
+      "财务确认流程完成后只输出摘要，业务运行层不直接写账。"
+    ])}</section>
     <div class="grid">
       <section><h2>系统已带入</h2>${list(item.readonlyFacts)}</section>
       <section><h2>用户填写或选择</h2>${list(item.filledFields.length ? item.filledFields : ["暂无需填写"])}</section>
@@ -496,7 +502,7 @@ function addContractAssertions() {
       financeGate.forbiddenLedgerWritesByBusinessRuntime === true &&
       financeGate.depositIsNotIncome === true &&
       financeGate.guaranteeIsNotPayment === true,
-    "场景 6 必须通过 finance-gate 确认，且业务运行层不得直接写账。",
+    "场景 6 必须通过财务确认流程确认，且业务运行层不得直接写账。",
     financeGate.financeBoundaryRule);
   addAssertion(
     "contract.downstream_package7_recheck",

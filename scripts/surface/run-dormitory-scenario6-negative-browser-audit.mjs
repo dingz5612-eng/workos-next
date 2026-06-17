@@ -270,8 +270,8 @@ function buildNegativeCases() {
       failureCode: "ledger_write_forbidden",
       attemptedActionZh: "业务侧直接写账务事实",
       pageZh: "账务边界校验",
-      visibleContextZh: ["业务侧不能直接写账务事实", "必须通过 finance-gate"],
-      legalNextActionZh: "回到 finance-gate 财务确认"
+      visibleContextZh: ["业务侧不能直接写账务事实", "必须通过财务确认流程"],
+      legalNextActionZh: "回到财务确认流程"
     },
     {
       id: "11-post-submission-inline-edit",
@@ -425,7 +425,7 @@ function addContractAssertions() {
     financeGate.consumer === "finance-gate" &&
       financeGate.financeBoundaryRule?.financeGateRequired === true &&
       financeGate.forbiddenLedgerWritesByBusinessRuntime === true,
-    "必须定义 finance-gate 和业务侧不得直接写账边界。",
+    "必须定义财务确认流程和业务侧不得直接写账边界。",
     financeGate.financeBoundaryRule);
   addAssertion(
     "contract.deposit_guarantee_failures_defined",
@@ -433,7 +433,7 @@ function addContractAssertions() {
       failureCodes.has("guarantee_marked_as_payment_forbidden") &&
       failureCodes.has("finance_gate_required") &&
       failureCodes.has("ledger_write_forbidden"),
-    "必须定义押金、担保、finance-gate 和账务越界失败。",
+    "必须定义押金、担保、财务确认流程和账务越界失败。",
     [...failureCodes]);
   addAssertion(
     "contract.readonly_and_cross_scenario_failures_defined",

@@ -142,6 +142,7 @@ try {
 
   Invoke-Native -Command "node" -Arguments @("scripts/surface/run-dormitory-prelaunch-ops-trial.mjs")
   Invoke-Native -Command "node" -Arguments @("scripts/surface/check-dormitory-prelaunch-ops-trial.mjs")
+  Invoke-Native -Command "node" -Arguments @("scripts/surface/generate-dormitory-final-frontend-ux-acceptance.mjs")
 } finally {
   foreach ($process in @($web, $api)) {
     if ($process -and -not $process.HasExited) {

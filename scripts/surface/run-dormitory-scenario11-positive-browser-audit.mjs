@@ -141,7 +141,7 @@ try {
       step.paymentRefundLedgerWriteAllowed === false &&
       step.financeGateHandlesExpenseTruth === true &&
       step.scenario2HandlesOperationalTruth === true),
-    "正向主流程不得写最终运营状态、预订、入住、收款、退款或账；费用真值交给 finance-gate，运营真值交给场景包 2。",
+    "正向主流程不得写最终运营状态、预订、入住、收款、退款或账；费用真值交给财务确认流程，运营真值交给场景包 2。",
     report.steps.map((step) => ({ stepId: step.stepId, financeGateHandlesExpenseTruth: step.financeGateHandlesExpenseTruth })));
   addAssertion(
     "positive.no_go_remains_closed",
@@ -192,7 +192,7 @@ function buildPositiveCases() {
     positiveCase("09-submit-maintenance-completion", "提交维修完成。", "submit-work-completion", "提交维修完成", "待验收", "维修完成后提交维修单、完成照片和处理结果。", ["301-02 床位", "维修任务摘要", "预计完成时间：18:00"], ["完成说明：更换空调启动电容", "实际完成时间：17:30", "处理结果：等待验收"], ["维修单", "完成照片", "供应商凭证"], ["提交验收", "补充证据"], "维修完成摘要可以给在住管理读取，但不写收款、退款或账务。"),
     positiveCase("10-verification-fail-rework", "验收不通过并生成返工。", "verify-work-result", "维修验收不通过", "验收不通过", "验收发现空调仍有噪音，必须生成返工或异常待处理。", ["301-02 床位", "完成证据：维修单、完成照片", "费用意向：待补"], ["未通过原因：运行噪音仍高", "验收备注：需要复检压缩机"], ["验收记录", "返工证据"], ["生成返工", "转停售建议"], "验收不通过不能关闭任务，必须生成返工。"),
     positiveCase("11-rework-verification-pass", "返工后验收通过。", "verify-work-result", "返工后验收", "验收通过", "返工完成后再次验收，通过后只输出恢复建议。", ["301-02 床位", "返工摘要：已复检压缩机", "完成证据：返工照片"], ["验收备注：返工后运行正常"], ["返工证据", "验收记录"], ["建议恢复运营", "关闭任务"], "返工后验收通过仍不直接改最终运营状态。"),
-    positiveCase("12-submit-expense-intent", "提交费用意向。", "submit-expense-intent", "费用意向与财务交接", "需财务处理", "提交维修费用说明、供应商和凭证给 finance-gate。", ["301-02 床位维修任务", "作业完成摘要", "验收摘要"], ["费用说明：空调配件与上门费", "供应商：社区维修服务", "凭证说明：报价单和维修单齐全"], ["报价单", "维修单", "供应商凭证"], ["提交费用意向", "查看财务状态"], "费用意向交给 finance-gate，不等于账务成本。"),
+    positiveCase("12-submit-expense-intent", "提交费用意向。", "submit-expense-intent", "费用意向与财务交接", "需财务处理", "提交维修费用说明、供应商和凭证给财务确认流程。", ["301-02 床位维修任务", "作业完成摘要", "验收摘要"], ["费用说明：空调配件与上门费", "供应商：社区维修服务", "凭证说明：报价单和维修单齐全"], ["报价单", "维修单", "供应商凭证"], ["提交费用意向", "查看财务状态"], "费用意向交给财务确认流程，不等于账务成本。"),
     positiveCase("13-navigation-entries", "查看今日、工作项、搜索、我的入口表现。", "output-outofservice-or-recovery-recommendation", "房务/维修入口", "今日待处理", "今日、工作项、搜索、我的按职责展示。", ["今日待派工", "维修超期", "待验收", "返工中", "预计今日恢复", "工作项展示全部房务、维修、检查、停售、返工、验收和费用意向被动任务池", "搜索结果只读跳转", "我的只放草稿、个人跟进、收藏、导出、设置"], [], ["入口截图证据"], ["按状态进入合法动作"], "搜索只读，不能直接写作业、运营状态、库存或财务事实。")
   ];
 }
@@ -324,7 +324,7 @@ function addContractAssertions() {
     financeGate.consumer === "finance-gate" &&
       financeGate.expenseIntentOnly === true &&
       financeGate.businessRuntimeMayWriteLedger === false,
-    "finance-gate 合同只能消费费用意向，业务 runtime 不写账。",
+    "财务确认流程合同只能消费费用意向，业务 runtime 不写账。",
     financeGate);
   addAssertion(
     "contract.steps_seven_business_actions",

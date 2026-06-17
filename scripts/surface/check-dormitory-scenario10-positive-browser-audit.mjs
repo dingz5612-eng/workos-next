@@ -116,10 +116,10 @@ for (const step of report.steps ?? []) {
   if (step.inventoryReadModelHandlesRelease !== true) failures.push(`positive step must route inventory release to inventory/reservation read model: ${step.id ?? step.stepId}.`);
 }
 if (!JSON.stringify(report).includes("取消单号 C202606200001") ||
-  !JSON.stringify(report).includes("finance-gate") ||
+  !JSON.stringify(report).includes("财务确认流程") ||
   !JSON.stringify(report).includes("搜索结果只读跳转") ||
   !JSON.stringify(report).includes("我的只放草稿")) {
-  failures.push("positive report must prove cancellation number, finance-gate handoff, readonly search, and Mine duties.");
+  failures.push("positive report must prove cancellation number, finance confirmation handoff, readonly search, and Mine duties.");
 }
 if ((stepsContract.steps ?? []).length !== 7) failures.push("scenario10 generated steps contract must expose seven business actions.");
 if (financeGate.consumer !== "finance-gate" || financeGate.refundFeeIntentOnly !== true) failures.push("scenario10 finance-gate contract must consume refund/fee intent only.");

@@ -118,9 +118,9 @@ if (!JSON.stringify(report).includes("301 房间退房后保洁待验收") ||
   !JSON.stringify(report).includes("301-02 床位维修中，预计 18:00 完成") ||
   !JSON.stringify(report).includes("搜索结果只读跳转") ||
   !JSON.stringify(report).includes("我的只放草稿") ||
-  !JSON.stringify(report).includes("finance-gate") ||
+  !JSON.stringify(report).includes("财务确认流程") ||
   !JSON.stringify(report).includes("场景包 2 重新确认运营状态")) {
-  failures.push("positive report must prove business-readable resources, readonly search, Mine duties, finance-gate handoff, and scenario 2 recheck.");
+  failures.push("positive report must prove business-readable resources, readonly search, Mine duties, finance confirmation handoff, and scenario 2 recheck.");
 }
 if ((stepsContract.steps ?? []).length !== 7) failures.push("scenario11 generated steps contract must expose seven business actions.");
 if (financeGate.consumer !== "finance-gate" ||

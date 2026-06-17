@@ -243,8 +243,8 @@ function buildNegativeCases() {
       failureCode: "direct_expense_ledger_forbidden",
       attemptedActionZh: "费用意向提交时直接写财务结果或账务成本",
       pageZh: "费用意向页",
-      visibleContextZh: ["费用意向必须交给 finance-gate", "本场景不能写财务结果或账务成本"],
-      legalNextActionZh: "提交费用意向并等待 finance-gate 处理"
+      visibleContextZh: ["费用意向必须交给财务确认流程", "本场景不能写财务结果或账务成本"],
+      legalNextActionZh: "提交费用意向并等待财务确认流程处理"
     },
     {
       id: "09-forged-internal-reference",
@@ -287,7 +287,9 @@ function buildNegativeCases() {
 }
 
 async function renderAndCapture(page, item) {
-  const generatedMessageZh = failureMessageByCode.get(item.failureCode) ?? "当前房务、维修与停售协同规则未通过，未写入任何业务结果。";
+  const generatedMessageZh = toBusinessVisibleText(
+    failureMessageByCode.get(item.failureCode) ?? "当前房务、维修与停售协同规则未通过，未写入任何业务结果。",
+  );
   const displayMessageZh = sanitizeVisibleMessage(generatedMessageZh);
   const sideEffects = Object.fromEntries(noSideEffectTargets.map((target) => [target, 0]));
   const visibleText = [
@@ -382,14 +384,14 @@ function addContractAssertions() {
       runtimeRules.housekeepingMaintenanceInvariantRule?.operationStatusOwnedByScenario2 === true &&
       runtimeRules.housekeepingMaintenanceInvariantRule?.financeGateHandlesExpenseTruth === true &&
       runtimeRules.housekeepingMaintenanceInvariantRule?.failureNoSideEffects === true,
-    "房务/维修不变量必须要求合法来源、场景包 2 运营权威、finance-gate 财务真值和失败无副作用。",
+    "房务/维修不变量必须要求合法来源、场景包 2 运营权威、财务确认流程财务真值和失败无副作用。",
     runtimeRules.housekeepingMaintenanceInvariantRule);
   addAssertion(
     "contract.finance_gate_boundary",
     financeGate.consumer === "finance-gate" &&
       financeGate.expenseIntentOnly === true &&
       financeGate.businessRuntimeMayWriteLedger === false,
-    "finance-gate 只能消费费用意向，业务 runtime 不写账。",
+    "财务确认流程只能消费费用意向，业务 runtime 不写账。",
     financeGate);
 }
 
@@ -425,8 +427,13 @@ function sanitizeVisibleMessage(value) {
   return String(value ?? "")
     .replaceAll("已入账", "账务状态待财务处理")
     .replaceAll("已退款", "款项状态待财务处理")
+    .replaceAll("finance-gate", "财务确认流程")
     .replaceAll("已可运营", "建议恢复后待场景包 2 确认")
     .replaceAll("已可预订", "待后续场景确认");
+}
+
+function toBusinessVisibleText(value) {
+  return String(value ?? "").replaceAll("finance-gate", "财务确认流程");
 }
 
 function containsAny(text, values) {

@@ -444,6 +444,7 @@ function renderHtml(item) {
     button { border: 1px solid #0f766e; background: #0f766e; color: white; border-radius: 6px; min-height: 38px; padding: 0 12px; font-size: 14px; }
     button.secondary { background: #fff; color: #0f766e; }
     .note { color: #475569; line-height: 1.5; }
+    .boundary { border-color: #b8c7d9; background: #f8fbff; }
   </style>
 </head>
 <body>
@@ -454,6 +455,10 @@ function renderHtml(item) {
       <div class="state">${escapeHtml(item.state)}</div>
     </header>
     <section><h2>当前业务动作</h2><div class="note">${escapeHtml(item.summary)}</div></section>
+    <section class="boundary"><h2>来源边界</h2>${list([
+      "价格来源：场景包 3 住宿商品与价格；本页只读价格快照，不改价格真值。",
+      "预订与库存锁定只处理锁定和预订，不直接进入入住或收款。"
+    ])}</section>
     <div class="grid">
       <section><h2>系统已带入</h2>${list(item.readonlyFacts)}</section>
       <section><h2>用户填写或选择</h2>${list(item.filledFields.length ? item.filledFields : ["暂无需填写"])}</section>

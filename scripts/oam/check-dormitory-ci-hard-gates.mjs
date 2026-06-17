@@ -44,6 +44,9 @@ if (!browserRunner.includes("scripts/surface/run-dormitory-prelaunch-ops-trial.m
   !browserRunner.includes("scripts/surface/check-dormitory-prelaunch-ops-trial.mjs")) {
   fail("browser runner must hard-run prelaunch operations trial after scenario positive/negative audits.");
 }
+if (!browserRunner.includes("scripts/surface/generate-dormitory-final-frontend-ux-acceptance.mjs")) {
+  fail("browser runner must hard-run final frontend UX acceptance after scenario and prelaunch browser audits.");
+}
 
 for (const required of [
   "node scripts/oam/check-dormitory-mainline-manifest.mjs",
@@ -103,6 +106,9 @@ if (!fs.existsSync(path.join(root, "scripts/surface/run-dormitory-prelaunch-ops-
 }
 if (!fs.existsSync(path.join(root, "scripts/surface/check-dormitory-prelaunch-ops-trial.mjs"))) {
   fail("prelaunch operations trial check script missing on disk.");
+}
+if (!fs.existsSync(path.join(root, "scripts/surface/generate-dormitory-final-frontend-ux-acceptance.mjs"))) {
+  fail("final frontend UX acceptance script missing on disk.");
 }
 
 for (let scenario = 1; scenario <= 13; scenario += 1) {

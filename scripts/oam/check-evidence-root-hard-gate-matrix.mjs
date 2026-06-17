@@ -33,6 +33,7 @@ const requiredResultFiles = [
   ["Dormitory13EntryBrowser", "artifacts/oam/checks/dormitory-13-scenario-entry-browser-result.json"],
   ["PerformanceRecoverabilityBrowser", "artifacts/oam/checks/dormitory-performance-recoverability-result.json"],
   ["PrelaunchOpsTrial", "artifacts/oam/checks/dormitory-prelaunch-ops-trial-result.json"],
+  ["FinalFrontendUxAcceptance", "artifacts/oam/checks/dormitory-final-frontend-ux-acceptance-result.json"],
   ["CiHardGateConfig", "artifacts/oam/checks/dormitory-ci-hard-gates-result.json"]
 ];
 
@@ -124,6 +125,28 @@ if (!prelaunchOpsTrial) {
     prelaunchOpsTrial.releaseAuthority !== false ||
     prelaunchOpsTrial.finalGoNoGo !== "NO_GO") {
     fail("prelaunch operations trial must keep production/business/release/final GO closed.");
+  }
+}
+
+const finalFrontendUx = readJsonIfExists("artifacts/oam/checks/dormitory-final-frontend-ux-acceptance-result.json");
+if (!finalFrontendUx) {
+  fail("final frontend UX acceptance result missing.");
+} else {
+  if (finalFrontendUx.status !== "PASS") fail("final frontend UX acceptance result must be PASS.");
+  if (finalFrontendUx.currentHead !== currentHead) {
+    fail(`final frontend UX acceptance result is stale: expected ${currentHead}, actual ${finalFrontendUx.currentHead ?? "missing"}.`);
+  }
+  if (finalFrontendUx.scenarioCount !== 13) fail(`final frontend UX acceptance must cover 13 scenarios, actual ${finalFrontendUx.scenarioCount ?? "missing"}.`);
+  if ((finalFrontendUx.scenarioScreenshotCount ?? 0) < 300) fail("final frontend UX acceptance must cover complete scenario screenshots.");
+  if ((finalFrontendUx.entryScreenshotCount ?? 0) < 5) fail("final frontend UX acceptance must cover entry screenshots.");
+  if ((finalFrontendUx.unresolvedAnalysisMarkerCount ?? 0) !== 0) fail("final frontend UX acceptance unresolved analysis markers must be 0.");
+  if ((finalFrontendUx.exposedInternalTermCount ?? 0) !== 0) fail("final frontend UX acceptance exposed internal/technical term count must be 0.");
+  if ((finalFrontendUx.oldChainVisibleTermCount ?? 0) !== 0) fail("final frontend UX acceptance old-chain visible term count must be 0.");
+  if (finalFrontendUx.productionConfirmAllowed !== false ||
+    finalFrontendUx.businessGoLiveAllowed !== false ||
+    finalFrontendUx.releaseAuthority !== false ||
+    finalFrontendUx.finalGoNoGo !== "NO_GO") {
+    fail("final frontend UX acceptance must keep production/business/release/final GO closed.");
   }
 }
 

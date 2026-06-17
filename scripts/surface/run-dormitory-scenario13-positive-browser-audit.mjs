@@ -135,8 +135,8 @@ try {
     "positive.reporting_flow_visible",
     JSON.stringify(report.steps).includes("6 月经营复盘") &&
       JSON.stringify(report.steps).includes("房源、预订、入住、退房、取消、维修、渠道指标") &&
-      JSON.stringify(report.steps).includes("finance-gate 确认摘要") &&
-      JSON.stringify(report.steps).includes("行动计划回到责任场景包或 finance-gate 处理"),
+      JSON.stringify(report.steps).includes("财务确认摘要") &&
+      JSON.stringify(report.steps).includes("行动计划回到责任场景包或财务确认流程处理"),
     "正向主流程必须让用户看懂经营报表、指标、财务核对、审计发现、复盘行动和只读路由边界。",
     report.steps.map((step) => ({ id: step.id, pageName: step.pageName })));
   addAssertion(
@@ -147,7 +147,7 @@ try {
       step.financialMetricsReadFinanceGateOnly === true &&
       step.businessFactWriteAllowed === false &&
       step.ledgerWriteAllowed === false),
-    "正式报表指标必须带权限、血缘和刷新包；财务指标只读 finance-gate；本场景不写业务事实或账务事实。",
+    "正式报表指标必须带权限、血缘和刷新包；财务指标只读财务确认流程；本场景不写业务事实或账务事实。",
     report.steps.map((step) => ({
       stepId: step.stepId,
       permissionEnvelopeBound: step.permissionEnvelopeBound,
@@ -197,9 +197,9 @@ function buildPositiveCases() {
     positiveCase("03-data-quality-check", "完成数据完整性检查。", "data-completeness-check", "数据完整性检查", "数据待确认", "系统检查权限、血缘、刷新时间和证据完整度。", ["数据来源：场景包 1-12 已确认摘要", "权限状态：通过", "血缘状态：通过", "刷新状态：2026-06-30 23:59"], [], ["permission envelope", "lineage envelope", "freshness envelope", "证据完整性检查记录"], ["查看缺失项", "生成经营总览"], "缺任一包时只能生成草稿或问题清单；本截图为三项均通过。"),
     positiveCase("04-business-overview", "生成经营总览。", "generate-business-report-snapshot", "生成经营总览", "报表已生成", "生成经营总览快照，锁定时间范围、数据版本和计算口径。", ["指标视图：经营总览", "数据版本：6 月确认摘要", "计算口径：月度复盘口径"], ["指标选择：经营总览、房源利用、异常治理"], ["指标计算证据", "数据来源摘要", "计算口径版本"], ["提交复盘", "发布内部报表"], "经营总览是快照，不代表已修复任何原事实。"),
     positiveCase("05-metric-drilldown", "查看房源、预订、入住、退房、取消、维修、渠道指标。", "generate-business-report-snapshot", "查看多维指标", "报表已生成", "展示房源、预订、入住、退房、取消、维修、渠道指标及异常点。", ["房源利用：读取场景包 1-3 摘要", "预订转化：读取场景包 4-5 摘要", "入住在住：读取场景包 7-8 摘要", "取消与维修：读取场景包 10-11 摘要", "渠道企业：读取场景包 12 摘要"], [], ["指标计算证据", "数据来源摘要"], ["查看异常", "新建审计发现"], "指标只能来自确认事实或授权投影，不能从页面状态计算。"),
-    positiveCase("06-finance-review", "查看财务核对视图。", "generate-finance-review-view", "查看财务核对视图", "报表已生成", "读取 finance-gate 确认摘要，展示收款、押金余额、退款申请和扣费申请。", ["finance-gate 确认摘要", "财务来源版本：6 月确认版", "授权投影：已绑定"], [], ["finance-gate 确认摘要", "财务来源版本"], ["查看差异", "生成审计发现"], "财务核对视图只读，不写收款、押金、退款或账务事实。"),
+    positiveCase("06-finance-review", "查看财务核对视图。", "generate-finance-review-view", "查看财务核对视图", "报表已生成", "读取财务确认摘要，展示收款、押金余额、退款申请和扣费申请。", ["财务确认摘要", "财务来源版本：6 月确认版", "授权投影：已绑定"], [], ["财务确认摘要", "财务来源版本"], ["查看差异", "生成审计发现"], "财务核对视图只读，不写收款、押金、退款或账务事实。"),
     positiveCase("07-audit-finding", "生成审计发现。", "audit-finding-and-location", "生成审计发现", "审计发现待确认", "定位 301 房间周转异常，生成审计发现和问题定位。", ["异常指标：301 房间周转异常", "源场景包：退房结算与房务协同", "缺失项：1 条补证任务"], ["审计说明：周转时长超过口径", "风险等级：中", "建议处理人：运营主管"], ["异常指标证据", "缺证据记录", "drilldown 引用"], ["生成行动计划", "关闭问题"], "审计发现只能引用原事实，不覆盖原事实。"),
-    positiveCase("08-action-plan", "创建行动计划。", "review-conclusion-action-plan", "创建行动计划", "行动计划待处理", "把复盘结论转为行动目标、负责人和完成期限。", ["关联审计发现：301 房间周转异常", "责任场景包：房务、维修与停售协同", "处理方式：跳转处理"], ["复盘结论：周转流程需补证", "行动目标：缩短周转时长", "负责人：运营主管", "完成期限：2026-07-05"], ["复盘会议记录", "行动计划证据"], ["更新进度", "跳转处理"], "行动计划回到责任场景包或 finance-gate 处理，不能在报表里直接修正。"),
+    positiveCase("08-action-plan", "创建行动计划。", "review-conclusion-action-plan", "创建行动计划", "行动计划待处理", "把复盘结论转为行动目标、负责人和完成期限。", ["关联审计发现：301 房间周转异常", "责任场景包：房务、维修与停售协同", "处理方式：跳转处理"], ["复盘结论：周转流程需补证", "行动目标：缩短周转时长", "负责人：运营主管", "完成期限：2026-07-05"], ["复盘会议记录", "行动计划证据"], ["更新进度", "跳转处理"], "行动计划回到责任场景包或财务确认流程处理，不能在报表里直接修正。"),
     positiveCase("09-publish-report", "发布内部报表。", "publish-export-timeline", "发布内部报表", "报表已发布", "发布 6 月经营复盘内部报表，锁定快照和版本历史。", ["数据完整性：通过", "缺失项：无", "版本历史：第 1 版"], [], ["发布审计轨迹"], ["导出", "归档", "新建版本"], "发布后只能新建版本、归档或补充说明，不原地覆盖。"),
     positiveCase("10-export-record", "导出记录。", "publish-export-timeline", "创建导出记录", "报表已发布", "记录导出人、导出范围和导出理由。", ["导出范围：6 月经营复盘", "导出用途：管理复盘", "版本：第 1 版"], ["导出理由：会议复盘"], ["导出记录", "发布审计轨迹"], ["查看历史", "归档"], "导出是审计记录，不写任何上游业务事实。"),
     positiveCase("11-navigation-entries", "查看今日、工作项、搜索、我的入口表现。", "publish-export-timeline", "经营报表入口", "今日待处理", "今日、工作项、搜索、我的按职责展示。", ["今日只显示复盘待提交、审计问题待处理、行动计划到期和数据缺失待补", "工作项展示全部复盘、审计发现、行动计划、问题追踪、数据缺失和导出复核", "搜索结果只读跳转", "我的只放草稿、个人跟进、收藏、导出、设置"], [], ["入口截图证据"], ["按状态进入合法动作"], "搜索只读，不能直接写报表、审计、行动计划以外的业务事实。")
@@ -343,7 +343,7 @@ function addContractAssertions() {
     financeGate.consumer === "finance-gate" &&
       financeGate.financeGateTruthReadonlyOnly === true &&
       financeGate.businessRuntimeMayWriteLedger === false,
-    "finance-gate 合同只能作为财务真值只读来源，业务 runtime 不写账。",
+    "财务确认流程合同只能作为财务真值只读来源，业务 runtime 不写账。",
     financeGate);
   addAssertion(
     "contract.read_model_readonly",

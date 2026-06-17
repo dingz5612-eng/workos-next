@@ -159,7 +159,7 @@ try {
       step.operationalRestoreWriteAllowed === false &&
       step.financeGateHandlesActualMoney === true &&
       step.scenario2HandlesOperationalRestore === true),
-    "正向主流程不得写退款、收款、账务或直接恢复可运营，实际款项交给 finance-gate，资源恢复交给场景包 2。",
+    "正向主流程不得写退款、收款、账务或直接恢复可运营，实际款项交给财务确认流程，资源恢复交给场景包 2。",
     report.steps.map((step) => ({ stepId: step.stepId, financeGateHandlesActualMoney: step.financeGateHandlesActualMoney })));
   addAssertion(
     "positive.no_go_remains_closed",
@@ -342,12 +342,12 @@ function buildPositiveCases() {
       step: stepById.get("finance-resource-handoff"),
       title: "财务处理请求",
       state: "待财务处理",
-      summary: "应退/应补只形成 finance-gate 请求，实际退款、补收确认和账务由 finance-gate 处理。",
-      readonlyFacts: ["应退意向：420 元", "finance-gate 待读取", "客户确认凭证"],
+      summary: "应退/应补只形成财务处理请求，实际退款、补收确认和账务由财务确认流程处理。",
+      readonlyFacts: ["应退意向：420 元", "财务确认流程待读取", "客户确认凭证"],
       filledFields: [],
       evidence: ["财务处理请求证据"],
       missingItems: [],
-      nextActions: ["等待 finance-gate 处理", "补充证据"],
+      nextActions: ["等待财务确认流程处理", "补充证据"],
       buttons: ["查看财务处理状态"],
       highlight: "这里只显示财务处理请求，不显示实际款项处理或账务完成。"
     },
@@ -500,7 +500,7 @@ function addContractAssertions() {
     financeGate.consumer === "finance-gate" &&
       financeGate.settlementIntentOnly === true &&
       financeGate.businessRuntimeMayWriteLedger === false,
-    "finance-gate 合同只能消费结算意向，业务 runtime 不写账。",
+    "财务确认流程合同只能消费结算意向，业务 runtime 不写账。",
     financeGate);
   addAssertion(
     "contract.steps_seven_business_actions",

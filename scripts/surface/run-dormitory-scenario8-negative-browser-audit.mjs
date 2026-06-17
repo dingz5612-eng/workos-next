@@ -234,7 +234,7 @@ function buildNegativeCases() {
       attemptedActionZh: "在服务请求里直接生成支出或收款",
       pageZh: "服务请求页",
       visibleContextZh: ["服务请求只能登记和跟进"],
-      legalNextActionZh: "需要费用时走对应财务准备或 finance-gate"
+      legalNextActionZh: "需要费用时走对应财务准备或财务确认流程"
     },
     {
       id: "07-incident-refund",

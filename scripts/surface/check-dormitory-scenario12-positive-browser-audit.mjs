@@ -120,10 +120,10 @@ if (!JSON.stringify(report).includes("某某公司协议客户，有效至 2026-
   !JSON.stringify(report).includes("携程渠道，已启用，适用 301 整房按晚价") ||
   !JSON.stringify(report).includes("搜索结果只读跳转") ||
   !JSON.stringify(report).includes("我的只放草稿") ||
-  !JSON.stringify(report).includes("finance-gate") ||
+  !JSON.stringify(report).includes("财务确认流程") ||
   !JSON.stringify(report).includes("场景包 4 重新生成报价资格") ||
   !JSON.stringify(report).includes("场景包 5 重新做预订渠道/企业资格校验")) {
-  failures.push("positive report must prove business-readable channel/corporate summaries, readonly search, Mine duties, finance-gate handoff, and scenario 4/5 rechecks.");
+  failures.push("positive report must prove business-readable channel/corporate summaries, readonly search, Mine duties, finance confirmation handoff, and scenario 4/5 rechecks.");
 }
 if ((stepsContract.steps ?? []).length !== 7) failures.push("scenario12 generated steps contract must expose seven business actions.");
 if (financeGate.consumer !== "finance-gate" ||

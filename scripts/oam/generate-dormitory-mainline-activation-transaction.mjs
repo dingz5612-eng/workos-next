@@ -21,6 +21,7 @@ const maintainabilityGovernanceResultPath = "artifacts/oam/checks/project-mainta
 const purityAuthoritySealResultPath = "artifacts/oam/checks/project-purity-authority-seal-result.json";
 const entryBrowserResultPath = "artifacts/oam/checks/dormitory-13-scenario-entry-browser-result.json";
 const performanceRecoverabilityResultPath = "artifacts/oam/checks/dormitory-performance-recoverability-result.json";
+const finalFrontendUxResultPath = "artifacts/oam/checks/dormitory-final-frontend-ux-acceptance-result.json";
 const ciHardGateResultPath = "artifacts/oam/checks/dormitory-ci-hard-gates-result.json";
 const evidenceHardGateResultPath = "artifacts/oam/checks/evidence-root-hard-gate-matrix-result.json";
 const evidenceGraphPath = "artifacts/oam/evidence/evidence-graph.json";
@@ -40,6 +41,7 @@ const maintainabilityGovernance = readJsonIfExists(maintainabilityGovernanceResu
 const purityAuthoritySeal = readJsonIfExists(purityAuthoritySealResultPath);
 const entryBrowser = readJsonIfExists(entryBrowserResultPath);
 const performanceRecoverability = readJsonIfExists(performanceRecoverabilityResultPath);
+const finalFrontendUx = readJsonIfExists(finalFrontendUxResultPath);
 const ciHardGate = readJsonIfExists(ciHardGateResultPath);
 const evidenceHardGate = readJsonIfExists(evidenceHardGateResultPath);
 const finalReport = readJsonIfExists(finalReportPath);
@@ -80,6 +82,7 @@ const subchecks = [
   ["purityAuthoritySeal", purityAuthoritySeal],
   ["entryBrowser", entryBrowser],
   ["performanceRecoverability", performanceRecoverability],
+  ["finalFrontendUx", finalFrontendUx],
   ["ciHardGate", ciHardGate],
   ["evidenceHardGate", evidenceHardGate]
 ];
@@ -116,6 +119,7 @@ const transaction = {
   purityAuthoritySealDigest: purityAuthoritySeal?.reportDigest ?? fileDigest("docs/oam/project-purity-authority-seal-report.md", root),
   entryBrowserDigest: fileDigest(entryBrowserResultPath, root),
   performanceRecoverabilityDigest: fileDigest(performanceRecoverabilityResultPath, root),
+  finalFrontendUxDigest: fileDigest(finalFrontendUxResultPath, root),
   browserEvidenceDigest,
   defectClosureDigest: defectClosure?.ledgerDigest ?? fileDigest("docs/oam/dormitory-defect-closure-ledger.json", root),
   ciWorkflowDigest: fileDigest(workflowPath, root),
@@ -151,7 +155,7 @@ if (transaction.finalTransactionStatus !== "PASS") {
 console.log(`Dormitory mainline activation transaction generated: PASS (${transaction.transactionDigest})`);
 
 function browserResultRefs() {
-  const refs = [entryBrowserResultPath, performanceRecoverabilityResultPath];
+  const refs = [entryBrowserResultPath, performanceRecoverabilityResultPath, finalFrontendUxResultPath];
   for (let scenario = 1; scenario <= 13; scenario += 1) {
     refs.push(`artifacts/oam/checks/dormitory-scenario${scenario}-positive-browser-result.json`);
     refs.push(`artifacts/oam/checks/dormitory-scenario${scenario}-negative-browser-result.json`);

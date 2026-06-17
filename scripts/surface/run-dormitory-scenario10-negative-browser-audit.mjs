@@ -290,7 +290,7 @@ function buildNegativeCases() {
       failureCode: "direct_refund_payment_ledger_forbidden",
       attemptedActionZh: "取消后直接处理真实款项或账务",
       pageZh: "取消结果页",
-      visibleContextZh: ["取消处理不能直接处理真实款项或账务", "必须交给 finance-gate"],
+      visibleContextZh: ["取消处理不能直接处理真实款项或账务", "必须交给财务确认流程"],
       legalNextActionZh: "生成财务处理请求并等待财务状态"
     },
     {
@@ -410,14 +410,14 @@ function addContractAssertions() {
       runtimeRules.cancelNoShowInvariantRule?.financeGateHandlesRefundFeeLedger === true &&
       runtimeRules.cancelNoShowInvariantRule?.inventoryReleaseScopeBoundToReservation === true &&
       runtimeRules.cancelNoShowInvariantRule?.failureNoSideEffects === true,
-    "取消/未到店不变量必须要求有效预订、finance-gate 财务真值、本预订库存释放范围和失败无副作用。",
+    "取消/未到店不变量必须要求有效预订、财务确认流程财务真值、本预订库存释放范围和失败无副作用。",
     runtimeRules.cancelNoShowInvariantRule);
   addAssertion(
     "contract.finance_gate_boundary",
     financeGate.consumer === "finance-gate" &&
       financeGate.refundFeeIntentOnly === true &&
       financeGate.businessRuntimeMayWriteLedger === false,
-    "finance-gate 只能消费退款/扣费意向，业务 runtime 不写账。",
+    "财务确认流程只能消费退款/扣费意向，业务 runtime 不写账。",
     financeGate);
 }
 

@@ -47,6 +47,16 @@ const requiredAnalysisKeys = [
   "担保是否被误当收款",
   "是否误导为已完成入住"
 ];
+const unresolvedAnalysisMarkers = [
+  "需要修复",
+  "不够清楚",
+  "不合理",
+  "不明确",
+  "遮挡",
+  "错位",
+  "拥挤",
+  "无法理解"
+];
 const currentHead = command("git rev-parse HEAD");
 
 if (report.status !== "passed") failures.push("positive browser report status must be passed.");
@@ -117,6 +127,13 @@ for (const shot of report.screenshots ?? []) {
   for (const key of requiredAnalysisKeys) {
     if (!shot.analysis?.[key]) failures.push(`positive screenshot ${shot.id ?? shot.path} missing analysis key: ${key}.`);
   }
+  for (const [key, value] of Object.entries(shot.analysis ?? {})) {
+    for (const marker of unresolvedAnalysisMarkers) {
+      if (String(value ?? "").includes(marker)) {
+        failures.push(`positive screenshot ${shot.id ?? shot.path} has unresolved analysis marker ${marker} in ${key}.`);
+      }
+    }
+  }
   for (const term of forbiddenInternalTerms) {
     if (String(shot.visibleText ?? "").includes(term)) failures.push(`positive screenshot exposed internal term ${term}: ${shot.id ?? shot.path}.`);
   }
@@ -130,11 +147,11 @@ for (const step of report.steps ?? []) {
 }
 if (!JSON.stringify(report).includes("押金不是收入") ||
   !JSON.stringify(report).includes("担保不是收款") ||
-  !JSON.stringify(report).includes("finance-gate") ||
+  !JSON.stringify(report).includes("财务确认流程") ||
   !JSON.stringify(report).includes("搜索结果只读跳转") ||
   !JSON.stringify(report).includes("我的只放草稿") ||
   !JSON.stringify(report).includes("下游仍需重新核验")) {
-  failures.push("positive report must prove deposit/guarantee boundary, finance-gate, readonly search, Mine duties, and downstream recheck.");
+  failures.push("positive report must prove deposit/guarantee boundary, finance confirmation flow, readonly search, Mine duties, and downstream recheck.");
 }
 if ((stepsContract.steps ?? []).length !== 6) failures.push("scenario6 generated steps contract must expose six business actions.");
 if (financeGate.financeBoundaryRule?.financeGateRequired !== true ||

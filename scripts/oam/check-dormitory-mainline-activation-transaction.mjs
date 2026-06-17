@@ -38,6 +38,7 @@ const expectedDigests = {
   purityAuthoritySealDigest: readJsonIfExists("artifacts/oam/checks/project-purity-authority-seal-result.json")?.reportDigest,
   entryBrowserDigest: fileDigest("artifacts/oam/checks/dormitory-13-scenario-entry-browser-result.json", root),
   performanceRecoverabilityDigest: fileDigest("artifacts/oam/checks/dormitory-performance-recoverability-result.json", root),
+  finalFrontendUxDigest: fileDigest("artifacts/oam/checks/dormitory-final-frontend-ux-acceptance-result.json", root),
   defectClosureDigest: readJsonIfExists("artifacts/oam/checks/dormitory-defect-closure-ledger-result.json")?.ledgerDigest,
   ciWorkflowDigest: fileDigest(".github/workflows/ci.yml", root),
   ciHardGateDigest: fileDigest("artifacts/oam/checks/dormitory-ci-hard-gates-result.json", root),

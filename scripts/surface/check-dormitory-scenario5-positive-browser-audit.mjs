@@ -47,6 +47,16 @@ const requiredAnalysisKeys = [
   "库存锁定是否可感知",
   "是否误导为已入住/已收款"
 ];
+const unresolvedAnalysisMarkers = [
+  "需要修复",
+  "不够清楚",
+  "不合理",
+  "不明确",
+  "遮挡",
+  "错位",
+  "拥挤",
+  "无法理解"
+];
 const currentHead = command("git rev-parse HEAD");
 
 if (report.status !== "passed") failures.push("positive browser report status must be passed.");
@@ -114,6 +124,13 @@ for (const shot of report.screenshots ?? []) {
   if (!isSha256Digest(shot.sha256)) failures.push(`positive screenshot sha256 invalid: ${shot.path ?? "(empty)"}.`);
   for (const key of requiredAnalysisKeys) {
     if (!shot.analysis?.[key]) failures.push(`positive screenshot ${shot.id ?? shot.path} missing analysis key: ${key}.`);
+  }
+  for (const [key, value] of Object.entries(shot.analysis ?? {})) {
+    for (const marker of unresolvedAnalysisMarkers) {
+      if (String(value ?? "").includes(marker)) {
+        failures.push(`positive screenshot ${shot.id ?? shot.path} has unresolved analysis marker ${marker} in ${key}.`);
+      }
+    }
   }
   for (const term of forbiddenInternalTerms) {
     if (String(shot.visibleText ?? "").includes(term)) failures.push(`positive screenshot exposed internal term ${term}: ${shot.id ?? shot.path}.`);

@@ -125,11 +125,11 @@ for (const step of report.steps ?? []) {
 }
 if (!JSON.stringify(report).includes("6 月经营复盘") ||
   !JSON.stringify(report).includes("房源、预订、入住、退房、取消、维修、渠道指标") ||
-  !JSON.stringify(report).includes("finance-gate 确认摘要") ||
+  !JSON.stringify(report).includes("财务确认摘要") ||
   !JSON.stringify(report).includes("搜索结果只读跳转") ||
   !JSON.stringify(report).includes("我的只放草稿") ||
-  !JSON.stringify(report).includes("行动计划回到责任场景包或 finance-gate 处理")) {
-  failures.push("positive report must prove readable reporting flow, finance-gate readonly handoff, readonly search, Mine duties, and action-plan routing.");
+  !JSON.stringify(report).includes("行动计划回到责任场景包或财务确认流程处理")) {
+  failures.push("positive report must prove readable reporting flow, finance confirmation readonly handoff, readonly search, Mine duties, and action-plan routing.");
 }
 if ((stepsContract.steps ?? []).length !== 7) failures.push("scenario13 generated steps contract must expose seven business actions.");
 if (metricContract.metricDefinitionRule?.financialMetricsReadFinanceGateOnly !== true) failures.push("scenario13 metric contract must require finance-gate only for financial metrics.");

@@ -142,7 +142,7 @@ try {
       step.stayCheckoutWriteAllowed === false &&
       step.financeGateHandlesActualMoney === true &&
       step.inventoryReadModelHandlesRelease === true),
-    "正向主流程不得写真实退款、收款、账务、入住或退房事实；实际款项交给 finance-gate，库存读模型读取释放请求。",
+    "正向主流程不得写真实退款、收款、账务、入住或退房事实；实际款项交给财务确认流程，库存读模型读取释放请求。",
     report.steps.map((step) => ({ stepId: step.stepId, financeGateHandlesActualMoney: step.financeGateHandlesActualMoney })));
   addAssertion(
     "positive.no_go_remains_closed",
@@ -187,13 +187,13 @@ function buildPositiveCases() {
     positiveCase("02-reason-confirm", "填写取消原因和客户确认。", "reason-and-customer-confirmation", "原因与客户确认", "待政策计算", "填写取消原因、沟通结果、处理备注并绑定客户确认。", ["客户：张三", "当前状态：客户主动取消"], ["取消原因：行程变更", "客户沟通结果：同意按政策处理", "客户确认方式：聊天确认"], ["聊天记录", "客户确认"], ["查看金额"], "缺客户确认或存在争议时会转复核路径。"),
     positiveCase("03-policy-calculation", "查看取消政策和退款/扣费计算。", "policy-and-amount-calculation", "政策金额计算", "待库存释放", "系统根据政策、价格快照、已收款和押金摘要计算可退、应扣与不可退金额。", ["免费取消截止时间", "取消政策", "已收金额：800 元", "押金金额：300 元"], ["补充说明：客户主动取消"], ["取消政策快照", "价格快照", "已收/押金摘要"], ["确认库存释放请求"], "金额来源清楚，用户不能手填最终款项或账务结果。", ["可退金额：200 元", "应扣金额：100 元", "不可退金额：100 元"]),
     positiveCase("04-inventory-release", "确认库存释放请求。", "inventory-release-confirmation", "库存释放确认", "库存释放已请求", "确认释放当前预订绑定的资源和日期范围。", ["301-02 床位", "日期范围：2026-06-20 至 2026-06-25", "预订绑定资源"], [], ["库存释放确认证据"], ["提交财务处理请求"], "库存释放请求只针对本预订绑定范围，不释放他人资源。"),
-    positiveCase("05-finance-request", "提交退款/扣费财务处理请求。", "finance-processing-request", "退款/扣费申请", "待财务处理", "提交退款/扣费申请、政策依据、客户确认和证据给 finance-gate。", ["退款申请：200 元", "扣费申请：100 元", "财务处理路径：finance-gate"], [], ["财务处理请求补充证据"], ["确认取消", "保存草稿"], "这里只生成财务处理请求，不写真实款项或账务。"),
+    positiveCase("05-finance-request", "提交退款/扣费财务处理请求。", "finance-processing-request", "退款/扣费申请", "待财务处理", "提交退款/扣费申请、政策依据、客户确认和证据给财务确认流程。", ["退款申请：200 元", "扣费申请：100 元", "财务处理路径：财务确认流程"], [], ["财务处理请求补充证据"], ["确认取消", "保存草稿"], "这里只生成财务处理请求，不写真实款项或账务。"),
     positiveCase("06-confirm-cancel", "确认取消。", "confirm-cancellation-or-noshow-closure", "确认取消", "已取消", "客户确认、政策计算、库存释放和财务处理请求完成后确认取消。", ["客户确认摘要", "政策计算摘要", "库存释放请求", "财务处理请求"], [], ["关闭补充证据"], ["查看取消摘要"], "确认取消只输出关闭摘要、库存释放请求和财务处理请求。"),
     positiveCase("07-result-finance-status", "查看取消结果和财务处理状态。", "result-and-follow-up", "处理结果", "待财务处理", "查看取消结果、释放资源摘要、退款/扣费申请状态和客户通知状态。", ["取消单号 C202606200001", "释放资源摘要", "财务处理状态：待处理", "客户通知状态：已通知"], ["后续跟进备注：等待财务处理"], ["客户通知证据"], ["查看财务状态", "补充证据"], "财务完成前只显示处理状态，不把申请解释为款项到账。"),
     positiveCase("08-today-noshow-entry", "从今日未到店任务进入。", "enter-cancel-noshow-processing", "今日未到店待处理", "待处理", "从今日任务进入未到店关闭，展示预订、客户、最晚保留时间和未到店任务。", ["今日未到店待处理", "预订号 R202606200002", "客户：李四", "最晚保留时间已过"], [], ["有效预订摘要"], ["办理取消/未到店"], "今日只展示今天需要处理的被动任务。"),
     positiveCase("09-confirm-noshow", "确认未到店。", "confirm-cancellation-or-noshow-closure", "确认未到店关闭", "未到店已关闭", "最晚保留时间已过且无有效到店记录时确认未到店关闭。", ["客户：李四", "到店任务未完成", "无有效到店记录"], [], ["电话记录", "内部审批证据"], ["计算未到店费"], "未到店关闭不代表款项到账或账务完成。"),
     positiveCase("10-noshow-fee", "计算未到店费。", "policy-and-amount-calculation", "未到店费计算", "待财务处理", "系统按未到店政策和已收押金摘要计算未到店费、可退和应扣金额。", ["未到店政策", "已收金额：500 元", "押金金额：200 元"], ["补充说明：客户未按时到店"], ["未到店政策快照", "电话记录"], ["释放库存并提交财务处理请求"], "未到店费来自政策和快照，不由用户手填最终结果。", ["未到店费：150 元", "可退金额：350 元"]),
-    positiveCase("11-noshow-release-finance", "释放库存并生成财务处理请求。", "finance-processing-request", "未到店财务处理", "待财务处理", "释放本预订绑定资源并生成退款/扣费处理请求。", ["库存释放请求", "财务处理请求", "证据摘要"], [], ["库存释放确认证据", "财务处理请求补充证据"], ["查看处理结果"], "库存读模型读取释放请求，finance-gate 处理实际款项。"),
+    positiveCase("11-noshow-release-finance", "释放库存并生成财务处理请求。", "finance-processing-request", "未到店财务处理", "待财务处理", "释放本预订绑定资源并生成退款/扣费处理请求。", ["库存释放请求", "财务处理请求", "证据摘要"], [], ["库存释放确认证据", "财务处理请求补充证据"], ["查看处理结果"], "库存读模型读取释放请求，财务确认流程处理实际款项。"),
     positiveCase("12-navigation-entries", "查看今日、工作项、搜索、我的入口表现。", "result-and-follow-up", "取消/未到店入口", "待处理任务", "今日、工作项、搜索、我的各自展示清晰职责。", ["今日未到店待处理", "取消待确认", "退款申请待财务", "工作项展示全部取消、未到店和退款/扣费被动任务池", "搜索结果只读跳转", "我的只放草稿、个人跟进、收藏、导出、设置"], [], ["入口截图证据"], ["按状态进入合法动作"], "搜索只读，不能直接写取消、库存或款项事实。")
   ];
 }
@@ -329,7 +329,7 @@ function addContractAssertions() {
     financeGate.consumer === "finance-gate" &&
       financeGate.refundFeeIntentOnly === true &&
       financeGate.businessRuntimeMayWriteLedger === false,
-    "finance-gate 合同只能消费退款/扣费意向，业务 runtime 不写账。",
+    "财务确认流程合同只能消费退款/扣费意向，业务 runtime 不写账。",
     financeGate);
   addAssertion(
     "contract.steps_seven_business_actions",

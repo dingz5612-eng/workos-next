@@ -7612,6 +7612,43 @@ function checkRealBrowserEvidence(graph, finalReport) {
     }
   }
 
+  const finalFrontendUx = summary.finalFrontendUx;
+  if (!finalFrontendUx) {
+    failures.push("real browser evidence missing final frontend UX acceptance.");
+  } else {
+    if (finalFrontendUx.status !== "passed") failures.push("final frontend UX acceptance evidence must be passed.");
+    if (finalFrontendUx.currentMainGate !== true) failures.push("final frontend UX acceptance evidence must be a current main gate.");
+    if (!finalFrontendUx.report || !exists(finalFrontendUx.report)) {
+      failures.push(`final frontend UX acceptance report missing: ${finalFrontendUx.report || "(empty)"}.`);
+    }
+    if (!finalFrontendUx.result || !exists(finalFrontendUx.result)) {
+      failures.push(`final frontend UX acceptance result missing: ${finalFrontendUx.result || "(empty)"}.`);
+    }
+    if (!finalFrontendUx.checklist || !exists(finalFrontendUx.checklist)) {
+      failures.push(`final frontend UX acceptance checklist missing: ${finalFrontendUx.checklist || "(empty)"}.`);
+    }
+    if ((finalFrontendUx.scenarioCount ?? 0) !== 13) failures.push("final frontend UX acceptance must cover 13 scenarios.");
+    if ((finalFrontendUx.scenarioScreenshotCount ?? 0) < 300) failures.push("final frontend UX acceptance must cover complete scenario screenshots.");
+    if ((finalFrontendUx.entryScreenshotCount ?? 0) < 5) failures.push("final frontend UX acceptance must cover entry screenshots.");
+    if ((finalFrontendUx.unresolvedAnalysisMarkerCount ?? 0) !== 0) failures.push("final frontend UX acceptance unresolved analysis markers must be 0.");
+    if ((finalFrontendUx.exposedInternalTermCount ?? 0) !== 0) failures.push("final frontend UX acceptance exposed internal/technical terms must be 0.");
+    if ((finalFrontendUx.oldChainVisibleTermCount ?? 0) !== 0) failures.push("final frontend UX acceptance old-chain visible terms must be 0.");
+    if (!sha256DigestPattern.test(finalFrontendUx.finalFrontendUxDigest ?? "")) {
+      failures.push("final frontend UX acceptance digest missing.");
+    }
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === "DORMITORY-FINAL-FRONTEND-UX-ACCEPTANCE");
+    if (!node) {
+      failures.push("evidence graph missing node for DORMITORY-FINAL-FRONTEND-UX-ACCEPTANCE.");
+    } else {
+      if (node.status !== "passed") failures.push("DORMITORY-FINAL-FRONTEND-UX-ACCEPTANCE node must be passed.");
+      if (node.reportFresh !== true || node.reportHeadSha !== finalReport.latestCommit) {
+        failures.push("DORMITORY-FINAL-FRONTEND-UX-ACCEPTANCE evidence must be fresh for final report commit.");
+      }
+      if (!node.screenshotHashes?.length) failures.push("DORMITORY-FINAL-FRONTEND-UX-ACCEPTANCE node missing screenshot hashes.");
+      if (!node.refs?.includes(finalFrontendUx.report)) failures.push("DORMITORY-FINAL-FRONTEND-UX-ACCEPTANCE node missing report ref.");
+    }
+  }
+
   const quarantine = summary.legacyQuarantine ?? {};
   for (const [key, gate] of [
     ["firstGoldenChain", "DORMITORY-FIRST-GOLDEN-CHAIN-REAL-BROWSER"],

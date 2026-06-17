@@ -131,11 +131,11 @@ for (const step of report.steps ?? []) {
   if (step.scenario2HandlesOperationalRestore !== true) failures.push(`positive step must route operational restore to scenario 2: ${step.id ?? step.stepId}.`);
 }
 if (!JSON.stringify(report).includes("退房单号：CO202606160001") ||
-  !JSON.stringify(report).includes("finance-gate") ||
+  !JSON.stringify(report).includes("财务确认流程") ||
   !JSON.stringify(report).includes("资源待恢复不是可运营") ||
   !JSON.stringify(report).includes("搜索结果只读跳转") ||
   !JSON.stringify(report).includes("我的只放草稿")) {
-  failures.push("positive report must prove checkout number, finance-gate handoff, resource recovery separation, readonly search, and Mine duties.");
+  failures.push("positive report must prove checkout number, finance confirmation handoff, resource recovery separation, readonly search, and Mine duties.");
 }
 if ((stepsContract.steps ?? []).length !== 7) failures.push("scenario9 generated steps contract must expose seven business actions.");
 if (financeGate.consumer !== "finance-gate" || financeGate.settlementIntentOnly !== true) failures.push("scenario9 finance-gate contract must consume settlement intent only.");

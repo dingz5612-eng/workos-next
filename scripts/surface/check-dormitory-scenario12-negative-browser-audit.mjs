@@ -102,7 +102,7 @@ for (const code of [
 for (const scenario of report.scenarios ?? []) {
   const failure = failureSemantics.get(scenario.failureCode);
   if (!failure) failures.push(`negative scenario uses unknown generated failure code: ${scenario.failureCode}`);
-  if (failure && scenario.generatedMessageZh !== failure.messageZh) failures.push(`negative scenario generated message mismatch for ${scenario.failureCode}.`);
+  if (failure && scenario.generatedMessageZh !== toBusinessVisibleText(failure.messageZh)) failures.push(`negative scenario generated message mismatch for ${scenario.failureCode}.`);
   if (!scenario.displayMessageZh) failures.push(`negative scenario missing user-safe display message: ${scenario.id}.`);
   if (scenario.sideEffectsAllowed !== false) failures.push(`negative scenario sideEffectsAllowed must be false: ${scenario.id}`);
   for (const target of noSideEffectTargets) {
@@ -145,10 +145,10 @@ for (const shot of report.screenshots ?? []) {
 }
 if (!JSON.stringify(report.scenarios ?? []).includes("未写入任何业务结果") ||
   !JSON.stringify(report.scenarios ?? []).includes("搜索结果只读") ||
-  !JSON.stringify(report.scenarios ?? []).includes("finance-gate") ||
+  !JSON.stringify(report.scenarios ?? []).includes("财务确认流程") ||
   !JSON.stringify(report.scenarios ?? []).includes("场景包 4") ||
   !JSON.stringify(report.scenarios ?? []).includes("场景包 5")) {
-  failures.push("negative report must prove no side effects, readonly search, finance-gate handoff, scenario 4 quote boundary, and scenario 5 reservation/inventory boundary.");
+  failures.push("negative report must prove no side effects, readonly search, finance confirmation handoff, scenario 4 quote boundary, and scenario 5 reservation/inventory boundary.");
 }
 if (financeGate.consumer !== "finance-gate" ||
   financeGate.commissionSettlementIntentOnly !== true ||
@@ -187,6 +187,10 @@ console.log(`Dormitory scenario12 negative browser audit check: PASS (${result.n
 
 function digestNegativeReport(value) {
   return digestObject({ ...value, negativeBrowserAuditDigest: "sha256:pending" });
+}
+
+function toBusinessVisibleText(value) {
+  return String(value ?? "").replaceAll("finance-gate", "财务确认流程");
 }
 
 function readJsonIfExists(file) {

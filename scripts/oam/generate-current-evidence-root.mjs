@@ -4759,6 +4759,7 @@ function buildRealBrowserEvidence() {
   const scenario13Negative = readScenario13NegativeBrowserEvidence();
   const performanceRecoverability = readPerformanceRecoverabilityBrowserEvidence();
   const prelaunchOpsTrial = readPrelaunchOpsTrialEvidence();
+  const finalFrontendUx = readFinalFrontendUxAcceptanceEvidence();
   const legacyL1 = readL1BrowserEvidence();
   const tenScenario = readTenScenarioBrowserEvidence();
   const nodes = [
@@ -4789,7 +4790,8 @@ function buildRealBrowserEvidence() {
     scenario13Positive.node,
     scenario13Negative.node,
     performanceRecoverability.node,
-    prelaunchOpsTrial.node
+    prelaunchOpsTrial.node,
+    finalFrontendUx.node
   ].filter(Boolean);
   const edges = [
     scenario1Positive.node ? { from: scenario1Positive.node.id, to: "DORMITORY_SCENARIO1_RESOURCE_BASIC_READINESS", relation: "binds_scenario1_positive_browser_evidence" } : null,
@@ -4819,7 +4821,8 @@ function buildRealBrowserEvidence() {
     scenario13Positive.node ? { from: scenario13Positive.node.id, to: "DORMITORY_SCENARIO13_REPORTING_AUDIT_REVIEW", relation: "binds_scenario13_positive_browser_evidence" } : null,
     scenario13Negative.node ? { from: scenario13Negative.node.id, to: "DORMITORY_SCENARIO13_REPORTING_AUDIT_REVIEW", relation: "binds_scenario13_negative_browser_evidence" } : null,
     performanceRecoverability.node ? { from: performanceRecoverability.node.id, to: "DORMITORY_13_SCENARIO_PRODUCTION_MAINLINE_ACTIVATION", relation: "binds_performance_recoverability_browser_evidence" } : null,
-    prelaunchOpsTrial.node ? { from: prelaunchOpsTrial.node.id, to: "DORMITORY_13_SCENARIO_PRODUCTION_MAINLINE_ACTIVATION", relation: "binds_prelaunch_ops_trial_evidence" } : null
+    prelaunchOpsTrial.node ? { from: prelaunchOpsTrial.node.id, to: "DORMITORY_13_SCENARIO_PRODUCTION_MAINLINE_ACTIVATION", relation: "binds_prelaunch_ops_trial_evidence" } : null,
+    finalFrontendUx.node ? { from: finalFrontendUx.node.id, to: "DORMITORY_13_SCENARIO_PRODUCTION_MAINLINE_ACTIVATION", relation: "binds_final_frontend_ux_acceptance" } : null
   ].filter(Boolean);
   const screenshotHashCount = nodes.reduce((total, node) => total + (node.screenshotHashes?.length ?? 0), 0);
   const status = scenario1Positive.status === "passed" &&
@@ -4849,7 +4852,8 @@ function buildRealBrowserEvidence() {
     scenario13Positive.status === "passed" &&
     scenario13Negative.status === "passed" &&
     performanceRecoverability.status === "passed" &&
-    prelaunchOpsTrial.status === "passed"
+    prelaunchOpsTrial.status === "passed" &&
+    finalFrontendUx.status === "passed"
     ? "passed"
     : "missing_or_failed";
   return {
@@ -4972,6 +4976,14 @@ function buildRealBrowserEvidence() {
       },
       prelaunchOpsTrial: {
         ...prelaunchOpsTrial,
+        currentMainGate: true,
+        businessAcceptance: false,
+        productionConfirmAllowed: false,
+        businessGoLiveAllowed: false,
+        finalGoNoGo: "NO_GO"
+      },
+      finalFrontendUx: {
+        ...finalFrontendUx,
         currentMainGate: true,
         businessAcceptance: false,
         productionConfirmAllowed: false,
@@ -5215,6 +5227,93 @@ function buildProjectPurityAuthoritySealEvidence() {
     sourceAuthorityDigest: result?.sourceAuthorityDigest ?? "missing",
     browserSpotcheck: spotcheck,
     node: reportExists ? nodePayload : null
+  };
+}
+
+function readFinalFrontendUxAcceptanceEvidence() {
+  const reportRef = "artifacts/oam/evidence/dormitory-final-frontend-ux-acceptance/final-frontend-ux-acceptance-report.json";
+  const markdownRef = "artifacts/oam/evidence/dormitory-final-frontend-ux-acceptance/final-frontend-ux-acceptance-report.md";
+  const checklistRef = "artifacts/oam/evidence/dormitory-final-frontend-ux-acceptance/final-frontend-ux-acceptance-checklist.json";
+  const docsIndexRef = "docs/oam/dormitory-final-frontend-ux-acceptance.md";
+  const resultRef = "artifacts/oam/checks/dormitory-final-frontend-ux-acceptance-result.json";
+  const report = readJsonIfExists(reportRef);
+  const result = readJsonIfExists(resultRef);
+  const screenshotHashes = (report?.scenarioEvidence ?? [])
+    .flatMap((scenario) => scenario.screenshotsForUserReview ?? [])
+    .map((item) => item.path)
+    .filter(Boolean)
+    .map((file) => hashFileIfPresent(file))
+    .filter((hash) => hash && hash !== "missing");
+  const status = report?.status === "passed" &&
+    result?.status === "PASS" &&
+    result?.currentHead === commitSha &&
+    result?.scenarioCount === 13 &&
+    (result?.scenarioScreenshotCount ?? 0) >= 300 &&
+    (result?.entryScreenshotCount ?? 0) >= 5 &&
+    (result?.unresolvedAnalysisMarkerCount ?? 0) === 0 &&
+    (result?.exposedInternalTermCount ?? 0) === 0 &&
+    (result?.oldChainVisibleTermCount ?? 0) === 0 &&
+    result?.productionConfirmAllowed === false &&
+    result?.businessGoLiveAllowed === false &&
+    result?.releaseAuthority === false &&
+    result?.finalGoNoGo === "NO_GO"
+    ? "passed"
+    : "missing_or_failed";
+  return {
+    status,
+    report: reportRef,
+    markdown: markdownRef,
+    checklist: checklistRef,
+    docsIndex: docsIndexRef,
+    result: resultRef,
+    finalFrontendUxDigest: result?.reportDigest || "",
+    scenarioCount: result?.scenarioCount ?? 0,
+    scenarioScreenshotCount: result?.scenarioScreenshotCount ?? 0,
+    entryScreenshotCount: result?.entryScreenshotCount ?? 0,
+    unresolvedAnalysisMarkerCount: result?.unresolvedAnalysisMarkerCount ?? 0,
+    exposedInternalTermCount: result?.exposedInternalTermCount ?? 0,
+    oldChainVisibleTermCount: result?.oldChainVisibleTermCount ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    node: report ? buildBrowserProofNode({
+      id: "DORMITORY-FINAL-FRONTEND-UX-ACCEPTANCE",
+      status,
+      gate: "DORMITORY-FINAL-FRONTEND-UX-ACCEPTANCE",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      refs: [
+        "scripts/surface/generate-dormitory-final-frontend-ux-acceptance.mjs",
+        reportRef,
+        markdownRef,
+        checklistRef,
+        docsIndexRef,
+        resultRef
+      ],
+      screenshotHashes,
+      scenarioIds: ["Dormitory.13ScenarioMainline.FinalFrontendUxAcceptance"],
+      auditLevel: "final_frontend_ux_acceptance_before_user_trial",
+      auditPurpose: "验证 13 场景移动端前台体验、截图分析、内部编号隐藏、旧链词隔离、搜索只读和用户亲测交接。",
+      allowedInterpretation: ["本地/测试环境前端最终体验验收证据"],
+      forbiddenInterpretation: ["生产发布", "业务上线", "release authority", "final GO"],
+      scenarioScope: {
+        currentMainGate: true,
+        scenarioCount: result?.scenarioCount ?? 0,
+        scenarioScreenshotCount: result?.scenarioScreenshotCount ?? 0,
+        entryScreenshotCount: result?.entryScreenshotCount ?? 0,
+        unresolvedAnalysisMarkerCount: result?.unresolvedAnalysisMarkerCount ?? 0,
+        exposedInternalTermCount: result?.exposedInternalTermCount ?? 0,
+        oldChainVisibleTermCount: result?.oldChainVisibleTermCount ?? 0,
+        productionConfirmAllowed: false,
+        businessGoLiveAllowed: false,
+        releaseAuthority: false,
+        finalGoNoGo: "NO_GO"
+      },
+      businessGoAllowed: false,
+      progress: {
+        scenarios: result?.scenarioCount ?? 0,
+        scenarioScreenshots: result?.scenarioScreenshotCount ?? 0,
+        entryScreenshots: result?.entryScreenshotCount ?? 0
+      }
+    }) : null
   };
 }
 

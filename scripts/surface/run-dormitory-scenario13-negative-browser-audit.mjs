@@ -188,8 +188,8 @@ function buildNegativeCases() {
     negativeCase("02-missing-lineage", "缺血缘生成正式指标。", "missing_lineage_envelope", "缺少数据血缘时生成正式指标", "数据完整性检查页", ["缺少数据血缘", "指标不能进入正式报表"], "补齐来源链路后重新生成"),
     negativeCase("03-stale-freshness", "数据过期发布报表。", "stale_freshness_envelope", "刷新时间过期时发布报表", "发布页", ["数据已过期", "不能发布本版本"], "重新刷新数据并检查完整性"),
     negativeCase("04-ui-state-metric", "UI 页面状态参与指标计算。", "ui_state_metric_forbidden", "用页面临时状态计算指标", "经营总览页", ["指标必须来自确认事实或授权投影", "页面临时状态不可作为指标来源"], "选择已确认摘要或授权投影"),
-    negativeCase("05-non-finance-gate", "非 finance-gate 数据作为财务真值。", "non_finance_gate_truth_forbidden", "用业务页面款项显示作为财务真值", "财务核对页", ["财务指标只能读取 finance-gate 确认事实", "业务页面显示不能作为财务真值"], "读取 finance-gate 确认摘要"),
-    negativeCase("06-direct-source-fix", "审计发现直接改房源/预订/账务。", "audit_direct_source_fix_forbidden", "审计发现直接修改上游事实", "审计发现页", ["审计发现只能生成问题和行动计划", "原事实必须回到责任场景包或 finance-gate 处理"], "生成行动计划并跳转处理"),
+    negativeCase("05-non-finance-confirmation", "非 finance-gate 数据作为财务真值。", "non_finance_gate_truth_forbidden", "用业务页面款项显示作为财务真值", "财务核对页", ["财务指标只能读取财务确认事实", "业务页面显示不能作为财务真值"], "读取财务确认摘要"),
+    negativeCase("06-direct-source-fix", "审计发现直接改房源/预订/账务。", "audit_direct_source_fix_forbidden", "审计发现直接修改上游事实", "审计发现页", ["审计发现只能生成问题和行动计划", "原事实必须回到责任场景包或财务确认流程处理"], "生成行动计划并跳转处理"),
     negativeCase("07-published-inline-edit", "已发布报表原地编辑。", "published_report_inline_edit_forbidden", "原地编辑已发布报表", "版本历史页", ["已发布报表锁定快照", "只能新建版本、归档或补充说明"], "新建版本后重新生成"),
     negativeCase("08-forged-internal-reference", "伪造 reportId/metricId/ledgerEntryId。", "forged_internal_reference", "用户尝试填写系统引用", "报表范围页", ["系统引用由系统自动绑定", "普通用户不能填写内部编号"], "通过今日、工作项或搜索只读跳转进入合法动作", ["reportId", "metricId", "ledgerEntryId"]),
     negativeCase("09-search-writes-fact", "搜索结果直接写业务事实。", "readonly_search_write_attempt", "从搜索结果直接写业务事实", "搜索结果", ["搜索结果只读", "只能跳转到合法动作"], "进入详情后按状态选择合法动作"),
@@ -203,7 +203,9 @@ function negativeCase(id, testPlanItemZh, failureCode, attemptedActionZh, pageZh
 }
 
 async function renderAndCapture(page, item) {
-  const generatedMessageZh = failureMessageByCode.get(item.failureCode) ?? "当前经营报表、审计与复盘规则未通过，未写入任何业务结果。";
+  const generatedMessageZh = toBusinessVisibleText(
+    failureMessageByCode.get(item.failureCode) ?? "当前经营报表、审计与复盘规则未通过，未写入任何业务结果。",
+  );
   const displayMessageZh = sanitizeVisibleMessage(generatedMessageZh);
   const sideEffects = Object.fromEntries(noSideEffectTargets.map((target) => [target, 0]));
   const visibleText = [
@@ -302,14 +304,14 @@ function addContractAssertions() {
       runtimeRules.reportingInvariantRule?.financialMetricsReadFinanceGateOnly === true &&
       runtimeRules.reportingInvariantRule?.auditFindingCannotModifySourceFact === true &&
       runtimeRules.reportingInvariantRule?.failureNoSideEffects === true,
-    "经营报表不变量必须要求只读入口、权限/血缘/刷新、finance-gate 财务真值、审计不修源事实和失败无副作用。",
+    "经营报表不变量必须要求只读入口、权限/血缘/刷新、财务确认流程财务真值、审计不修源事实和失败无副作用。",
     runtimeRules.reportingInvariantRule);
   addAssertion(
     "contract.finance_gate_readonly",
     financeGate.consumer === "finance-gate" &&
       financeGate.financeGateTruthReadonlyOnly === true &&
       financeGate.businessRuntimeMayWriteLedger === false,
-    "finance-gate 只能作为财务真值只读来源，业务 runtime 不写账。",
+    "财务确认流程只能作为财务真值只读来源，业务 runtime 不写账。",
     financeGate);
   addAssertion(
     "contract.read_model_readonly",
@@ -359,11 +361,16 @@ function sanitizeVisibleMessage(value) {
     .replaceAll("Refund", "退款事实")
     .replaceAll("LedgerEntry", "账务记录")
     .replaceAll("LedgerTransaction", "账务流水")
+    .replaceAll("finance-gate", "财务确认流程")
     .replaceAll("reportId", "系统引用")
     .replaceAll("metricId", "系统引用")
     .replaceAll("ledgerEntryId", "系统引用")
     .replaceAll("已入账", "账务状态待财务处理")
     .replaceAll("已上线", "上线状态不由本证据确认");
+}
+
+function toBusinessVisibleText(value) {
+  return String(value ?? "").replaceAll("finance-gate", "财务确认流程");
 }
 
 function containsAny(text, values) {

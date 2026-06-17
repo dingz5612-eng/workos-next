@@ -143,7 +143,7 @@ try {
       step.financeGateHandlesCommissionSettlementTruth === true &&
       step.scenario4HandlesQuoteTruth === true &&
       step.scenario5HandlesReservationInventoryTruth === true),
-    "正向主流程不得写价格金额真值、报价、预订、库存锁定、收退款或账务；佣金/结算真值交给 finance-gate。",
+    "正向主流程不得写价格金额真值、报价、预订、库存锁定、收退款或账务；佣金/结算真值交给财务确认流程。",
     report.steps.map((step) => ({ stepId: step.stepId, financeGateHandlesCommissionSettlementTruth: step.financeGateHandlesCommissionSettlementTruth })));
   addAssertion(
     "positive.no_go_remains_closed",
@@ -190,7 +190,7 @@ function buildPositiveCases() {
     positiveCase("05-corporate-product-summary", "查看企业客户可用商品摘要。", "bind-product-and-eligibility", "企业客户可用商品摘要", "协议已生效", "展示企业客户可用商品和资格摘要，下游仍需重校验。", ["某某公司协议客户，有效至 2026-12-31", "可用商品：301 整房按晚价", "证据摘要：协议、审批记录"], [], ["协议摘要", "商品资格摘要"], ["查看协议", "进入询价资格判断"], "场景包 4 重新生成报价资格；场景包 5 重新做预订渠道/企业资格校验。"),
     positiveCase("06-new-channel", "新建渠道。", "create-channel-or-corporate-profile", "新建渠道", "渠道草稿", "建立携程渠道档案、联系人和授权证明。", ["渠道名称：携程渠道", "渠道类型：OTA", "负责人：渠道经理"], ["联系人：王经理", "对接方式：人工确认", "备注：先人工对接"], ["合作协议", "授权证明"], ["保存草稿", "提交审核"], "渠道档案只写渠道事实，不写报价、预订或库存锁定。"),
     positiveCase("07-configure-publication-rule", "配置发布规则。", "configure-channel-publication-rule", "配置渠道发布规则", "发布待检查", "配置渠道展示名称、商品映射和人工确认规则。", ["携程渠道，已启用，适用 301 整房按晚价", "有效价格：已读取场景包 3 价格版本", "运营阻断：无"], ["渠道展示名称：WorkOS 301 整房", "是否同步库存展示：仅展示可见条件", "是否需要人工确认：是"], ["发布检查记录", "渠道映射说明"], ["保存规则", "检查发布"], "渠道发布规则不直接锁库存，外部回传必须进入场景包 5。"),
-    positiveCase("08-configure-commission-settlement", "配置佣金结算意向。", "configure-commission-settlement-intent", "配置佣金与结算规则意向", "财务规则待确认", "录入佣金说明、账期和结算备注，并交给 finance-gate。", ["携程渠道佣金/结算规则意向", "finance-gate 处理佣金/结算真值", "本场景只输出意向"], ["佣金说明：按协议比例", "账期说明：月结", "发票要求：平台发票"], ["佣金依据", "结算说明", "合同证据"], ["提交财务规则复核", "补充证据"], "佣金/结算规则意向不等于账务结果，财务真值由 finance-gate 处理。"),
+    positiveCase("08-configure-commission-settlement", "配置佣金结算意向。", "configure-commission-settlement-intent", "配置佣金与结算规则意向", "财务规则待确认", "录入佣金说明、账期和结算备注，并交给财务确认流程。", ["携程渠道佣金/结算规则意向", "财务确认流程处理佣金/结算真值", "本场景只输出意向"], ["佣金说明：按协议比例", "账期说明：月结", "发票要求：平台发票"], ["佣金依据", "结算说明", "合同证据"], ["提交财务规则复核", "补充证据"], "佣金/结算规则意向不等于账务结果，财务真值由财务确认流程处理。"),
     positiveCase("09-audit-enable-channel", "审核启用。", "audit-enable", "审核启用渠道", "已启用", "审核资料、证据、资格和发布检查后启用渠道。", ["携程渠道，已启用，适用 301 整房按晚价", "缺失项：无", "发布状态：发布已启用"], ["审核意见：同意启用", "发布说明：人工确认"], ["审核记录", "证据摘要"], ["暂停", "停用", "新建版本"], "渠道启用不等于报价结果，也不等于库存锁定。"),
     positiveCase("10-pause-channel", "暂停渠道。", "daily-maintenance", "暂停渠道", "已暂停", "因渠道维护暂停展示和对接，保留状态历史。", ["携程渠道，当前已暂停", "状态历史：已启用 -> 已暂停", "影响范围：渠道发布规则"], ["暂停原因：渠道维护", "预计恢复：待通知"], ["暂停说明", "状态历史"], ["恢复审核", "停用"], "暂停渠道只写渠道状态历史，不写退款、账务或预订结果。"),
     positiveCase("11-renew-agreement-version", "新建协议续签版本。", "daily-maintenance", "新建协议续签版本", "协议待审核", "基于旧协议新建续签版本，旧事实不原地覆盖。", ["某某公司协议客户，有效至 2026-12-31", "旧版本只读", "新版本待审核"], ["续签开始日期：2027-01-01", "续签结束日期：2027-12-31", "续签备注：条件不变"], ["续签协议", "补充证据"], ["保存新版本", "提交审核"], "已生效协议只能新版本、续签、停用、作废或纠错。"),
@@ -327,7 +327,7 @@ function addContractAssertions() {
     financeGate.consumer === "finance-gate" &&
       financeGate.commissionSettlementIntentOnly === true &&
       financeGate.businessRuntimeMayWriteLedger === false,
-    "finance-gate 合同只能消费佣金/结算规则意向，业务 runtime 不写账。",
+    "财务确认流程合同只能消费佣金/结算规则意向，业务 runtime 不写账。",
     financeGate);
   addAssertion(
     "contract.steps_seven_business_actions",

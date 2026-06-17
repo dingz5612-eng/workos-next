@@ -181,7 +181,7 @@ function buildNegativeCases() {
     negativeCase("04-inactive-product-price", "未生效商品绑定资格。", "inactive_product_price_forbidden", "未生效商品或价格版本被绑定为可用资格", "商品资格绑定页", ["商品或价格版本尚未生效", "只能引用场景包 3 已生效的摘要"], "回到场景包 3 确认商品和价格版本"),
     negativeCase("05-missing-effective-price", "无有效价格发布渠道。", "missing_effective_price", "缺少有效价格版本时启用渠道发布", "渠道发布规则页", ["没有有效价格版本", "不能启用发布规则"], "选择场景包 3 已生效价格版本后重新检查"),
     negativeCase("06-operation-blocked-publication", "维修/停售资源被发布。", "operation_blocked_publication_forbidden", "存在维修或停售阻断时发布资源", "渠道发布规则页", ["存在运营阻断", "维修或停售资源不得发布为可用"], "等待场景包 2 重新确认运营状态"),
-    negativeCase("07-direct-finance-ledger", "佣金规则直接写账。", "direct_finance_ledger_forbidden", "佣金或结算规则意向直接写账务结果", "佣金结算意向页", ["佣金和结算规则只能形成意向", "finance-gate 处理财务真值"], "提交佣金/结算规则意向给 finance-gate"),
+    negativeCase("07-direct-finance-ledger", "佣金规则直接写账。", "direct_finance_ledger_forbidden", "佣金或结算规则意向直接写账务结果", "佣金结算意向页", ["佣金和结算规则只能形成意向", "财务确认流程处理财务真值"], "提交佣金/结算规则意向给财务确认流程"),
     negativeCase("08-direct-inventory-hold", "渠道发布直接锁库存。", "direct_inventory_hold_forbidden", "渠道发布规则直接锁定库存", "渠道发布规则页", ["渠道发布只能作为展示和可见条件", "外部渠道回传必须进入场景包 5 校验"], "只保存发布规则，库存锁定交给场景包 5"),
     negativeCase("09-direct-quote-reservation", "企业协议直接生成报价或预订。", "direct_quote_reservation_forbidden", "企业协议或渠道资格直接生成报价或预订", "企业客户详情页", ["资格摘要不能直接生成报价或预订", "场景包 4 和场景包 5 必须重新校验"], "进入场景包 4 生成报价资格，进入场景包 5 校验预订资格"),
     negativeCase("10-forged-internal-reference", "伪造 channelId/agreementId/productId/priceVersionId。", "forged_internal_reference", "用户尝试填写系统引用", "渠道与协议页", ["系统引用由系统自动绑定", "普通用户不能填写内部编号"], "通过今日、工作项或搜索只读跳转进入合法动作", ["channelId", "agreementId", "productId", "priceVersionId"]),
@@ -196,7 +196,9 @@ function negativeCase(id, testPlanItemZh, failureCode, attemptedActionZh, pageZh
 }
 
 async function renderAndCapture(page, item) {
-  const generatedMessageZh = failureMessageByCode.get(item.failureCode) ?? "当前渠道与企业客户规则未通过，未写入任何业务结果。";
+  const generatedMessageZh = toBusinessVisibleText(
+    failureMessageByCode.get(item.failureCode) ?? "当前渠道与企业客户规则未通过，未写入任何业务结果。",
+  );
   const displayMessageZh = sanitizeVisibleMessage(generatedMessageZh);
   const sideEffects = Object.fromEntries(noSideEffectTargets.map((target) => [target, 0]));
   const visibleText = [
@@ -293,14 +295,14 @@ function addContractAssertions() {
       runtimeRules.channelCorporateInvariantRule?.reservationInventoryOwnedByScenario5 === true &&
       runtimeRules.channelCorporateInvariantRule?.financeGateHandlesCommissionSettlementTruth === true &&
       runtimeRules.channelCorporateInvariantRule?.failureNoSideEffects === true,
-    "渠道与企业客户不变量必须要求场景包 3 价格引用、场景包 4 报价权威、场景包 5 预订/库存权威、finance-gate 财务真值和失败无副作用。",
+    "渠道与企业客户不变量必须要求场景包 3 价格引用、场景包 4 报价权威、场景包 5 预订/库存权威、财务确认流程财务真值和失败无副作用。",
     runtimeRules.channelCorporateInvariantRule);
   addAssertion(
     "contract.finance_gate_boundary",
     financeGate.consumer === "finance-gate" &&
       financeGate.commissionSettlementIntentOnly === true &&
       financeGate.businessRuntimeMayWriteLedger === false,
-    "finance-gate 只能消费佣金/结算规则意向，业务 runtime 不写账。",
+    "财务确认流程只能消费佣金/结算规则意向，业务 runtime 不写账。",
     financeGate);
 }
 
@@ -339,10 +341,15 @@ function sanitizeVisibleMessage(value) {
     .replaceAll("Refund", "退款事实")
     .replaceAll("LedgerEntry", "账务记录")
     .replaceAll("LedgerTransaction", "账务流水")
+    .replaceAll("finance-gate", "财务确认流程")
     .replaceAll("已报价", "报价待场景包 4 生成")
     .replaceAll("已预订", "预订待场景包 5 校验")
     .replaceAll("已收款", "款项状态待财务处理")
     .replaceAll("已入账", "账务状态待财务处理");
+}
+
+function toBusinessVisibleText(value) {
+  return String(value ?? "").replaceAll("finance-gate", "财务确认流程");
 }
 
 function containsAny(text, values) {

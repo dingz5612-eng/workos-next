@@ -62,6 +62,7 @@ for (const [label, file] of [
   ["Operation execution", "artifacts/oam/checks/dormitory-operation-execution-contract-result.json"],
   ["Local test environment", "artifacts/oam/checks/dormitory-local-test-environment-manager-result.json"],
   ["Project maintainability", "artifacts/oam/checks/project-maintainability-governance-result.json"],
+  ["Final frontend UX acceptance", "artifacts/oam/checks/dormitory-final-frontend-ux-acceptance-result.json"],
   ["CI hard gates", "artifacts/oam/checks/dormitory-ci-hard-gates-result.json"],
   ["Evidence Root hard gate", "artifacts/oam/checks/evidence-root-hard-gate-matrix-result.json"]
 ]) {
@@ -114,6 +115,18 @@ const searchSurface = (prelaunch?.roleTrials ?? [])
 if (!searchSurface || searchSurface.status !== "passed") fail("prelaunch search readonly surface must be passed.");
 assertScreenshot(searchSurface?.screenshot?.path, "search readonly surface");
 
+const finalFrontendUx = readJsonIfExists("artifacts/oam/checks/dormitory-final-frontend-ux-acceptance-result.json");
+if (!finalFrontendUx || finalFrontendUx.status !== "PASS") {
+  fail("final frontend UX acceptance result must be passed.");
+} else {
+  if (finalFrontendUx.currentHead !== currentHead) fail("final frontend UX acceptance result must bind current head.");
+  if (finalFrontendUx.scenarioCount !== 13) fail("final frontend UX acceptance must cover 13 scenarios.");
+  if ((finalFrontendUx.scenarioScreenshotCount ?? 0) < 300) fail("final frontend UX acceptance must cover complete scenario screenshots.");
+  if ((finalFrontendUx.unresolvedAnalysisMarkerCount ?? 0) !== 0) fail("final frontend UX acceptance unresolved analysis markers must be zero.");
+  if ((finalFrontendUx.exposedInternalTermCount ?? 0) !== 0) fail("final frontend UX acceptance exposed internal/technical terms must be zero.");
+  if ((finalFrontendUx.oldChainVisibleTermCount ?? 0) !== 0) fail("final frontend UX acceptance old-chain visible terms must be zero.");
+}
+
 const lowRiskScenarios = [1, 2, 13];
 const highRiskScenarios = [5, 7, 6, 10, 9];
 const spotcheckScenarios = [...lowRiskScenarios, ...highRiskScenarios];
@@ -163,6 +176,7 @@ const result = {
     entrySurfaces: ["home", "today", "work-items", "mine", "search-readonly"],
     lowRiskScenarios,
     highRiskScenarios,
+    finalFrontendUxResult: "artifacts/oam/checks/dormitory-final-frontend-ux-acceptance-result.json",
     spotcheckEvidence
   },
   productionConfirmAllowed: false,

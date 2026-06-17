@@ -275,7 +275,7 @@ function buildNegativeCases() {
       failureCode: "direct_payment_refund_ledger_forbidden",
       attemptedActionZh: "退房确认后直接处理款项",
       pageZh: "退房结果页",
-      visibleContextZh: ["退房结算不能直接处理款项或账务", "请交给 finance-gate"],
+      visibleContextZh: ["退房结算不能直接处理款项或账务", "请交给财务确认流程"],
       legalNextActionZh: "生成财务处理请求"
     },
     {
@@ -401,14 +401,14 @@ function addContractAssertions() {
     runtimeRules.checkoutInvariantRule?.validStayRequired === true &&
       runtimeRules.checkoutInvariantRule?.financeGateHandlesRefundTopUpLedger === true &&
       runtimeRules.checkoutInvariantRule?.resourceRecoveryViaScenario2Only === true,
-    "退房不变量必须要求有效在住、finance-gate 财务真值和场景 2 资源恢复。",
+    "退房不变量必须要求有效在住、财务确认流程财务真值和场景 2 资源恢复。",
     runtimeRules.checkoutInvariantRule);
   addAssertion(
     "contract.finance_gate_boundary",
     financeGate.consumer === "finance-gate" &&
       financeGate.settlementIntentOnly === true &&
       financeGate.businessRuntimeMayWriteLedger === false,
-    "finance-gate 只能消费结算意向。",
+    "财务确认流程只能消费结算意向。",
     financeGate);
 }
 

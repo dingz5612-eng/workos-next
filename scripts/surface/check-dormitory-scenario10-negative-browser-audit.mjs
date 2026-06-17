@@ -147,10 +147,10 @@ for (const shot of report.screenshots ?? []) {
 }
 if (!JSON.stringify(report.scenarios ?? []).includes("未写入任何业务结果") ||
   !JSON.stringify(report.scenarios ?? []).includes("搜索结果只读") ||
-  !JSON.stringify(report.scenarios ?? []).includes("finance-gate") ||
+  !JSON.stringify(report.scenarios ?? []).includes("财务确认流程") ||
   !JSON.stringify(report.scenarios ?? []).includes("转负责人复核") ||
   !JSON.stringify(report.scenarios ?? []).includes("本预订绑定资源和日期范围")) {
-  failures.push("negative report must prove no side effects, readonly search, finance-gate handoff, dispute review, and bounded inventory release.");
+  failures.push("negative report must prove no side effects, readonly search, finance confirmation handoff, dispute review, and bounded inventory release.");
 }
 if (financeGate.consumer !== "finance-gate" || financeGate.refundFeeIntentOnly !== true) failures.push("scenario10 finance-gate contract must consume refund/fee intent only.");
 
