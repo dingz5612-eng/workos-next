@@ -61,7 +61,7 @@
       {
         "id": "dormitoryCandidateAttestationPackage",
         "path": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
-        "digest": "sha256:fa8e0da994bd300e2851688891ff1497e6ccc4db1f325094538d4373fb59f230"
+        "digest": "sha256:1fc98ff34417ced62009b428787af7bedec14719434d4698aa252f2a08464aa7"
       }
     ],
     "requiredGeneratedContractDigestSet": [
@@ -91,12 +91,12 @@
         "digest": "sha256:a25559aba09d0557af80483d1d275581b4f1cd1285e2fca6fd00dac6822ab405"
       }
     ],
-    "subjectDigest": "sha256:ffddc18560100fed36958b519a5407ed76a66208e9d6d18b27b88a6709f7ab96"
+    "subjectDigest": "sha256:f56b7712614e7f6209cdfd2b752424aae35a89388abe79e821e7c33a6505a7e1"
   },
   "subjectStatusAtWrite": "READY_FOR_00_ACCEPTANCE_REVIEW",
   "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
-  "decisionRecordHead": "807af3edd960c3f9737e8ae898f690e7ca2be172",
-  "decisionWritebackBaseHead": "b690e885918c8102e031ed3ab29f74a8f035c59a",
+  "decisionRecordHead": null,
+  "decisionWritebackBaseHead": "04856e6223ec062ea4f940a2d66be51384bd48ba",
   "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
   "generatedFieldBindingClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
   "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
@@ -115,8 +115,8 @@
   "acceptanceRecord": {
     "decision": "ACCEPTED_BY_00",
     "acceptedBy": "00",
-    "acceptedAtUtc": "2026-06-17T06:37:10.814Z",
-    "acceptedSubjectDigest": "sha256:ffddc18560100fed36958b519a5407ed76a66208e9d6d18b27b88a6709f7ab96",
+    "acceptedAtUtc": "2026-06-17T06:56:49.747Z",
+    "acceptedSubjectDigest": "sha256:f56b7712614e7f6209cdfd2b752424aae35a89388abe79e821e7c33a6505a7e1",
     "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
     "currentRepositoryHead": "b690e885918c8102e031ed3ab29f74a8f035c59a",
     "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
@@ -151,8 +151,7 @@
       "production confirm is not implied",
       "release authority is not implied",
       "final GO is not implied"
-    ],
-    "decisionRecordHead": "807af3edd960c3f9737e8ae898f690e7ca2be172"
+    ]
   },
   "historicalAppendix": {
     "deprecatedAliasReferences": [
