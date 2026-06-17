@@ -39,10 +39,10 @@
   "activeAuthority": {
     "capabilityId": "Dormitory.FirstGoldenChain",
     "sourceClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
-    "generatedBundleDigest": "sha256:83a8feea15cd100b6d3e2b2895a84e57dcdec0ecc8d9ba9243c04173a02bb7ea",
-    "acceptedGeneratedBundleDigest": "sha256:83a8feea15cd100b6d3e2b2895a84e57dcdec0ecc8d9ba9243c04173a02bb7ea",
-    "runtimeConsumedBundleDigest": "sha256:83a8feea15cd100b6d3e2b2895a84e57dcdec0ecc8d9ba9243c04173a02bb7ea",
-    "runtimeAdmissionDigest": "sha256:285540144f0ac267454e67e8687753c8ecc3b26b5367a1c665f115935eed56d7",
+    "generatedBundleDigest": "sha256:d49918a64e1eaba9bc34147f880df628fbe5ca7af8e1c104609a8e3eb851437b",
+    "acceptedGeneratedBundleDigest": "sha256:d49918a64e1eaba9bc34147f880df628fbe5ca7af8e1c104609a8e3eb851437b",
+    "runtimeConsumedBundleDigest": "sha256:d49918a64e1eaba9bc34147f880df628fbe5ca7af8e1c104609a8e3eb851437b",
+    "runtimeAdmissionDigest": "sha256:bd02d40ab9dc98a12793fd811a16ac89946ca34a4b09ab2ef385d0d69ec0e6b8",
     "businessLandingDigest": null,
     "productionConfirmationDigest": null,
     "releaseAuthorityDigest": null

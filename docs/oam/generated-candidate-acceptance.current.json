@@ -231,5 +231,16 @@
   "dormitoryL2GoNoGo": "NO_GO",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
-  "finalGoNoGo": "NO_GO"
+  "finalGoNoGo": "NO_GO",
+  "currentGeneratedCandidateDivergence": {
+    "acceptedBundleRemainsImmutable": true,
+    "currentGeneratedOutputIsDifferentCandidate": true,
+    "runtimeMustNotAutoConsumeCurrentGeneratedFiles": true,
+    "acceptedSubjectDigest": "sha256:f43951ae4ddbe00475fe337749467d55ff5f8486ccd45a02e5c6c10d50a47e2c",
+    "currentSubjectDigest": "sha256:39d553124963451cd6eb26e2d1a771505cd1b9ccd3ee2e5546e5e3aa8acde6a8",
+    "acceptedGeneratedBundleDigest": "sha256:d49918a64e1eaba9bc34147f880df628fbe5ca7af8e1c104609a8e3eb851437b",
+    "currentGeneratedBundleDigest": "sha256:2becaa42b17fc2a9899f00473c74cb2d4b75c555e6981d6f46bfa42be107f527",
+    "currentGeneratedOutputDigest": "sha256:874612840c684727303890f78b50ebb3d1ac8e134f538e5f089efc7188659fca",
+    "reason": "accepted_generated_candidate_is_immutable_and_later_generated_outputs_require_new_acceptance_before_runtime_rebind"
+  }
 }

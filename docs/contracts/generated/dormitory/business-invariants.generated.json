@@ -25,19 +25,19 @@
     "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
     "docs/oam/visible-business-copy-contract.json"
   ],
-  "inputDigest": "sha256:b8158246165672b50138fc7eab0acf19ed5a5b7d626ca02da2018d5395b310b6",
+  "inputDigest": "sha256:f0a49de5ee149e7fddced67db595e3f80f5b72be7b5a9ae566f19541a4c212b2",
   "inputDigests": [
     {
       "path": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
-      "digest": "sha256:838372bdc8893595e6b731283bf5690a5948a28f03fb7d24bd70e2b1712d36c9"
+      "digest": "sha256:3cc444eb8a1af3ba6daec7091291c547b30a29e81b400375b3405bf99dbae18c"
     },
     {
       "path": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
-      "digest": "sha256:33f6d2947f5e2f3aba12e1d035fa7a9a4dcd06ba3cd096cb723148df9f295f49"
+      "digest": "sha256:edff086ad73e34d26653aedaa551af99148cbc4997840df7b41a5ea423971a2e"
     },
     {
       "path": "docs/oam/generated-candidate-acceptance.current.json",
-      "digest": "sha256:1b853ddf9317dcd5aede2b9e4a25d23aa43e0d4035b3ab1ea22e921d2e8116d8"
+      "digest": "sha256:e00b9ad920f1e38405282cb5a09cbf8dc75b45ad8045588c53ffb85b1b40ad1d"
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json",
@@ -89,7 +89,7 @@
     },
     {
       "path": "docs/oam/dormitory-runtime-admission.current.json",
-      "digest": "sha256:3fc09d3315f44b79bf602f9b88fe4cc9a0e4937d5207eccc8a21fa168a7a258e"
+      "digest": "sha256:55ee7f72ce7e0bfd00c84eb7b3c85f9a7402b4c789a80c827cc573ecd08ff9d0"
     },
     {
       "path": "docs/oam/dormitory-first-golden-chain-landing.current.json",
@@ -104,13 +104,13 @@
       "digest": "sha256:d50952557b940b66f9fe5c63ff5c6c990c77326370367c684d41d9578f2c05c4"
     }
   ],
-  "outputContentDigest": "sha256:13c32f1be86d672ad11fba8d7ba55bcc2e6feb5f20375543e62a088084ee2e61",
+  "outputContentDigest": "sha256:760af89c740ef44febeef04c74c9c772280278155adcfb56cdf94f7c932d94fe",
   "capabilityId": "Dormitory.FirstGoldenChain",
-  "acceptedGeneratedBundleDigest": "sha256:83a8feea15cd100b6d3e2b2895a84e57dcdec0ecc8d9ba9243c04173a02bb7ea",
+  "acceptedGeneratedBundleDigest": "sha256:d49918a64e1eaba9bc34147f880df628fbe5ca7af8e1c104609a8e3eb851437b",
   "currentFilesMode": "ledger_replay_projection_only",
   "capabilityLedgerReplay": {
     "status": "PASS",
-    "eventCount": 26
+    "eventCount": 29
   },
   "lifecycleState": "RUNTIME_TEST_ADMITTED",
   "runtimeAdmissionStatus": "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION",
