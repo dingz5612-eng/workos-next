@@ -237,6 +237,55 @@
         "runtime test admission is not final GO",
         "browser audit PASS is not production confirmation"
       ]
+    },
+    {
+      "eventId": "Dormitory.FirstGoldenChain:0010:GENERATED_BUNDLE_ACCEPTED_BY_00",
+      "capabilityId": "Dormitory.FirstGoldenChain",
+      "eventType": "GENERATED_BUNDLE_ACCEPTED_BY_00",
+      "previousEventDigest": "sha256:767fa06f7371745aacaeb1a2bf1dd4ede1384d01b7d2e60252ed47bad626a875",
+      "subjectDigest": "sha256:f56b7712614e7f6209cdfd2b752424aae35a89388abe79e821e7c33a6505a7e1",
+      "bundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f",
+      "inputDigests": {
+        "generatedBundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f"
+      },
+      "outputDigests": {
+        "acceptedGeneratedBundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f"
+      },
+      "decision": "ACCEPTED_BY_00_FOR_GENERATED_BUNDLE_ONLY",
+      "decidedBy": "00｜OAM 总控",
+      "decidedAtUtc": "2026-06-17T06:56:49.747Z",
+      "forbiddenInterpretations": [
+        "generated bundle acceptance is not runtime admission",
+        "generated bundle acceptance is not business landing",
+        "generated bundle acceptance is not production confirmation",
+        "generated bundle acceptance is not release authority",
+        "generated bundle acceptance is not final GO"
+      ]
+    },
+    {
+      "eventId": "Dormitory.FirstGoldenChain:0011:RUNTIME_TEST_ADMITTED",
+      "capabilityId": "Dormitory.FirstGoldenChain",
+      "eventType": "RUNTIME_TEST_ADMITTED",
+      "previousEventDigest": "sha256:8620cc4708793f2a60e7485887673beeaaeac19e60d35c829a1341dd5f209c95",
+      "subjectDigest": "sha256:a039aaadea85a4d915ff635afc98f87c52df5a97c767be7bb876910df06f995c",
+      "bundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f",
+      "inputDigests": {
+        "acceptedGeneratedBundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f"
+      },
+      "outputDigests": {
+        "runtimeConsumedBundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f",
+        "runtimeAdmissionDigest": "sha256:a039aaadea85a4d915ff635afc98f87c52df5a97c767be7bb876910df06f995c"
+      },
+      "decision": "RUNTIME_TEST_ADMITTED_ONLY_NO_BUSINESS_LANDING",
+      "decidedBy": "00｜OAM 总控",
+      "decidedAtUtc": "2026-06-17T06:57:29.081Z",
+      "forbiddenInterpretations": [
+        "runtime test admission is not business landing",
+        "runtime test admission is not production confirmation",
+        "runtime test admission is not release authority",
+        "runtime test admission is not final GO",
+        "browser audit PASS is not production confirmation"
+      ]
     }
   ]
 }
