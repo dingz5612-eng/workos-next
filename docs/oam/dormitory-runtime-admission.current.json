@@ -5,15 +5,31 @@
   "generatedCandidateAcceptedBy00": true,
   "generatedCandidateAcceptanceRef": "docs/oam/generated-candidate-acceptance.current.json",
   "generatedCandidateAcceptanceResultRef": "artifacts/oam/checks/generated-candidate-acceptance-result.json",
-  "acceptedSubjectDigest": "sha256:4356c251418849065af1b67dfa005f5fc2bfa753f76d91e027a3b83e40ed2fe9",
-  "generatedCandidateSubjectDigest": "sha256:4356c251418849065af1b67dfa005f5fc2bfa753f76d91e027a3b83e40ed2fe9",
+  "acceptedSubjectDigest": "sha256:ffddc18560100fed36958b519a5407ed76a66208e9d6d18b27b88a6709f7ab96",
+  "acceptedGeneratedBundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f",
+  "generatedCandidateSubjectDigest": "sha256:ffddc18560100fed36958b519a5407ed76a66208e9d6d18b27b88a6709f7ab96",
   "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
   "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
   "generatedFieldBindingClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
   "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
-  "executionProofDigest": "sha256:a38a670184445133842a1a331576538d5f38257f489f64cefa0b248d880fd257",
+  "executionProofDigest": "sha256:47df51323d968644660b6f22aa6a92a6d5bfe63e30ccd91fea51f8fbfdc49503",
   "runtimeAdmissionScope": "dormitory_first_golden_chain_test_only_consumption",
   "runtimeConsumptionMode": "test_only_consumption",
+  "runtimeConsumedBundleDigest": "sha256:9e3b83cb666dc4d72f7e79f3acbeb218fcf329eb5cc3ae847daccd0adbd0a27f",
+  "runtimeConsumedFilesDigestList": [
+    {
+      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "digest": "sha256:26e1e3de09db09ec07034fa9f3615618579f84b1be19fc35d4faba575f51b3e1"
+    }
+  ],
+  "acceptedRuntimeConsumableDigests": [
+    {
+      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "digest": "sha256:26e1e3de09db09ec07034fa9f3615618579f84b1be19fc35d4faba575f51b3e1"
+    }
+  ],
+  "bundleDigestMatch": true,
+  "runtimeConsumptionReadyAuthority": "runtimeConsumedBundleDigest_equals_acceptedGeneratedBundleDigest",
   "consumedGeneratedContracts": [
     "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
     "docs/contracts/generated/dormitory/fields.generated.json",
@@ -51,33 +67,6 @@
     "runtimeOwnsBusinessFacts": false
   },
   "testOnlyConsumptionProofRef": "artifacts/oam/evidence/dormitory-runtime-test-only-consumption-proof.json",
-  "explicitExclusions": [
-    "businessFeatureDevelopmentAllowed",
-    "dormitoryFirstGoldenChainLandingGoNoGo",
-    "productionConfirmAllowed",
-    "releaseAuthority",
-    "finalGoNoGo",
-    "Finance posting",
-    "Dormitory L2",
-    "test-only runtime admission is not business landing",
-    "local in-memory browser PASS is not CI/Postgres/production-like PASS"
-  ],
-  "acceptedGeneratedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
-  "runtimeConsumedBundleDigest": "sha256:8d1db539de418a889ec3e741c921fb0436ef7d7d3ce43ac6f966ebf4e1e13b8e",
-  "runtimeConsumedFilesDigestList": [
-    {
-      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
-      "digest": "sha256:cab56e48544f8bdfeaeaba8de7a2782d9574fef914314048a4a678badef80a69"
-    }
-  ],
-  "acceptedRuntimeConsumableDigests": [
-    {
-      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
-      "digest": "sha256:cab56e48544f8bdfeaeaba8de7a2782d9574fef914314048a4a678badef80a69"
-    }
-  ],
-  "bundleDigestMatch": true,
-  "runtimeConsumptionReadyAuthority": "runtimeConsumedBundleDigest_equals_acceptedGeneratedBundleDigest",
   "environmentProfileId": "local.in_memory.browser_evidence",
   "environmentProfileRef": "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
   "environmentProfile": {
@@ -101,5 +90,14 @@
       "productionConfirmationEvidence": false,
       "releaseEvidence": false
     }
-  }
+  },
+  "explicitExclusions": [
+    "businessFeatureDevelopmentAllowed",
+    "dormitoryFirstGoldenChainLandingGoNoGo",
+    "productionConfirmAllowed",
+    "releaseAuthority",
+    "finalGoNoGo",
+    "Finance posting",
+    "Dormitory L2"
+  ]
 }
