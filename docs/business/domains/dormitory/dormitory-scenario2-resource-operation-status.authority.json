@@ -424,6 +424,7 @@
       ],
       "validations": [
         "未关闭阻断原因时不得设置为可运营。",
+        "预计恢复时间仅在状态会影响运营或需要后续恢复时填写；设置为可运营时不得作为必填阻断。",
         "状态必须属于场景包 2 的运营状态枚举。",
         "不得生成价格、报价或预订事实。"
       ],
@@ -451,9 +452,7 @@
         "impactConfirmationNotes"
       ],
       "userSelectedFields": [
-        "submitImpactConfirmation",
-        "saveDraft",
-        "backToEdit"
+        "submitImpactConfirmation"
       ],
       "userUploadedOrBoundEvidence": [
         "补充影响证据"
@@ -614,20 +613,18 @@
       "recheckResult",
       "restoreNotes"
     ],
-    "userSelected": [
-      "roomOrBedScope",
-      "targetRoomOrBed",
-      "exceptionFlag",
-      "inspectionConclusion",
-      "newOperationStatus",
-      "statusReasonCode",
-      "submitImpactConfirmation",
-      "saveDraft",
-      "backToEdit",
-      "blockerStatus",
-      "followUpOwner",
-      "restoreConclusion"
-    ],
+      "userSelected": [
+        "roomOrBedScope",
+        "targetRoomOrBed",
+        "exceptionFlag",
+        "inspectionConclusion",
+        "newOperationStatus",
+        "statusReasonCode",
+        "submitImpactConfirmation",
+        "blockerStatus",
+        "followUpOwner",
+        "restoreConclusion"
+      ],
     "userUploadedOrBoundEvidence": [
       "运营检查照片",
       "维修记录",

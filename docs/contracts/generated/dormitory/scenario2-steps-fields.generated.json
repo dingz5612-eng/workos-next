@@ -9,29 +9,29 @@
     "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:d4008d770dd9616a85bd931e5714d103e030fa099f120aa34661cc660d3170b4",
+  "inputDigest": "sha256:8e62f24d9bebee90b8362245cb76f4d7662bd4d58f8adfd7f89629aeae43ded8",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
-      "digest": "sha256:0dec768856889f72889f67b4e0444674bf9da57678db5015a5219b9ac649132d"
+      "digest": "sha256:0c92771a523c3f49d834e5d113e86e90770f452240ab3969385b6c2694c1f68a"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:0dec768856889f72889f67b4e0444674bf9da57678db5015a5219b9ac649132d",
+  "sourceContentDigest": "sha256:0c92771a523c3f49d834e5d113e86e90770f452240ab3969385b6c2694c1f68a",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario2.ResourceOperationStatus",
   "scenarioPackageNo": 2,
   "scenarioId": "lodging.resource-operation-status",
-  "outputContentDigest": "sha256:9d8be7e727a04334245bff105601aba821cc897a130ad05fa7f254a63a726c95",
+  "outputContentDigest": "sha256:a2c8b25ce3e2f9362770236eecb62672821934cbceb7dd788a24203a448d7db3",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "房源运营就绪与状态维护",
   "businessGoalZh": "承接场景包 1 已完成的房间建档、床位组确认、基础就绪确认摘要，完成房间或床位的运营检查、运营状态设置、阻断维护和恢复确认。",
-  "sourceScenarioDigest": "sha256:0dec768856889f72889f67b4e0444674bf9da57678db5015a5219b9ac649132d",
+  "sourceScenarioDigest": "sha256:0c92771a523c3f49d834e5d113e86e90770f452240ab3969385b6c2694c1f68a",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "steps": [
     {
@@ -161,6 +161,7 @@
       ],
       "validations": [
         "未关闭阻断原因时不得设置为可运营。",
+        "预计恢复时间仅在状态会影响运营或需要后续恢复时填写；设置为可运营时不得作为必填阻断。",
         "状态必须属于场景包 2 的运营状态枚举。",
         "不得生成价格、报价或预订事实。"
       ],
@@ -188,9 +189,7 @@
         "impactConfirmationNotes"
       ],
       "userSelectedFields": [
-        "submitImpactConfirmation",
-        "saveDraft",
-        "backToEdit"
+        "submitImpactConfirmation"
       ],
       "userUploadedOrBoundEvidence": [
         "补充影响证据"
@@ -359,8 +358,6 @@
       "newOperationStatus",
       "statusReasonCode",
       "submitImpactConfirmation",
-      "saveDraft",
-      "backToEdit",
       "blockerStatus",
       "followUpOwner",
       "restoreConclusion"

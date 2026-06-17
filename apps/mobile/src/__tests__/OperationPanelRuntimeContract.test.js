@@ -50,8 +50,8 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(html).toContain('data-runtime-decision="work_item_confirm_ready:production_blocked"');
     expect(html).toContain('data-lifecycle-state="ready"');
     expect(html).toContain('data-surface="operation-admission"');
-    expect(text).toContain("办理状态");
-    expect(text).toContain("可以开始填写；提交前还会检查必填项、材料、权限和设备。");
+    expect(text).toContain("办理提示");
+    expect(text).toContain("可以填写并提交；提交时会再次检查必填项、材料、权限和设备。");
     expect(text).toContain("填写房间信息");
   });
 
@@ -486,6 +486,95 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(html).not.toContain("data-submit-card");
   });
 
+  it("reopens completed workspace/card routes as readonly records after the WorkItem is removed", () => {
+    const workspaceId = `${DORMITORY_MAINLINE_WORKSPACE_ID}-READONLY-RELOAD`;
+    const store = runtimeStore();
+    store.workspaces[0] = {
+      ...store.workspaces[0],
+      id: workspaceId,
+      cards: [{
+        ...store.workspaces[0].cards[0],
+        id: DORMITORY_SCENARIO1_STEPS[2].cardId,
+        status: "done",
+        title: { "zh-CN": "完成基础检查", "ru-RU": "Базовая проверка" }
+      }]
+    };
+    store.operationWorkItems = [];
+    store.workQueue = [];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      lang: "ru-RU",
+      selectedWorkItemId: "wi-removed-after-submit",
+      selectedWorkspace: workspaceId,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[2].cardId,
+      runtimeStore: store
+    });
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-surface="completed-workspace-record"');
+    expect(text).toContain("Запись только для чтения");
+    expect(text).not.toContain("Пока нельзя обработать напрямую");
+    expect(html).not.toContain('data-submit-card');
+  });
+
+  it("reopens browser-reloaded completed records from the completed read cache without a runtime workspace", () => {
+    const workspaceId = `${DORMITORY_MAINLINE_WORKSPACE_ID}-READONLY-CACHE-RELOAD`;
+    const store = runtimeStore();
+    store.workspaces = [];
+    store.operationWorkItems = [];
+    store.workQueue = [];
+    saveCompletedRecordSnapshot({
+      workspaceId,
+      cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
+      workItemId: "wi-cache-room",
+      values: { roomNo: "A301", bedCount: "4" },
+      evidenceDrafts: [{ name: "room-photo" }]
+    });
+    saveCompletedRecordSnapshot({
+      workspaceId,
+      cardId: DORMITORY_SCENARIO1_STEPS[1].cardId,
+      workItemId: "wi-cache-bed",
+      values: { bedType: "bunk_pair", bedLabels: "01, 02, 03, 04" },
+      evidenceDrafts: [{ name: "bed-photo" }]
+    });
+    saveCompletedRecordSnapshot({
+      workspaceId,
+      cardId: DORMITORY_SCENARIO1_STEPS[2].cardId,
+      workItemId: "wi-cache-readiness",
+      values: {
+        basicCheckResult: "checked_ok",
+        cleaningBasicCheckResult: "checked_ok",
+        facilityBasicCheckResult: "checked_ok",
+        safetyBasicCheckResult: "checked_ok",
+        readinessState: "passed"
+      },
+      evidenceDrafts: [{ name: "readiness-photo" }]
+    });
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      lang: "ru-RU",
+      selectedWorkItemId: "wi-cache-readiness",
+      selectedWorkspace: workspaceId,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[2].cardId,
+      runtimeStore: store
+    });
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-surface="completed-workspace-record"');
+    expect(html).toContain('data-runtime-decision="work_item_terminal:done"');
+    expect(html).not.toContain('data-submit-card');
+    expect(text).toContain("Запись только для чтения");
+    expect(text).toContain("Базовая готовность комнаты и коек завершена");
+    expect(text).toContain("A301");
+    expect(text).toContain("4 коек: 01, 02, 03, 04");
+    expect(text).toContain("Пройдено");
+    expect(text).not.toContain("Пока нельзя обработать напрямую");
+  });
+
   it("shows submitted values on the readonly completed record before offering correction", () => {
     const store = runtimeStore();
     store.workspaces[0] = {
@@ -594,6 +683,19 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(text).toContain("通过");
     expect(text).not.toContain("所属房间 未填写");
     expect(text).not.toContain("床位 未填写");
+
+    const ruText = visibleText(routeView(createSurfaceCtx({
+      view: "workspace",
+      lang: "ru-RU",
+      selectedWorkspace: workspaceId,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[2].cardId,
+      selectedWorkItemId: "",
+      runtimeStore: store
+    })));
+
+    expect(ruText).toContain("Базовая готовность комнаты и коек завершена");
+    expect(ruText).toContain("4 коек: 01, 02, 03, 04");
+    expect(ruText).not.toMatch(/房源建档|基础就绪记录|个床位/);
   });
 
   it("renders bed setup as a room-capacity batch instead of one single-bed input", () => {

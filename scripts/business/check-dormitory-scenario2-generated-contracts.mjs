@@ -46,6 +46,18 @@ const expectedStatuses = [
   "待复查",
   "已恢复"
 ];
+const expectedRuntimeStatusValues = [
+  "operable",
+  "temporarily_unavailable",
+  "partially_operable",
+  "paused",
+  "maintenance",
+  "cleaning",
+  "stopped",
+  "exception_pending",
+  "needs_recheck",
+  "restored"
+];
 
 for (const file of generatedFiles) {
   const document = readJsonIfExists(file);
@@ -109,6 +121,52 @@ if ((testPlan?.positiveBrowserTestPlan ?? []).length < 10 || (testPlan?.negative
 if (mobileMirror?.consumer !== "surface") fail("mobile mirror must declare consumer=surface.");
 if (runtimeMirror?.consumer !== "runtime") fail("runtime mirror must declare consumer=runtime.");
 assertArray(runtimeMirror?.operationStatusOptions, expectedStatuses, "runtime mirror status options");
+const runtimeExecution = runtimeMirror?.runtimeExecution;
+if (!runtimeExecution) fail("runtime mirror must include runtimeExecution for executable generated projection.");
+if (runtimeExecution?.workspaceId !== "W-DORM-RESOURCE-OPERATION-STATUS") fail("runtimeExecution workspaceId mismatch.");
+if (runtimeExecution?.sliceId !== "Dormitory.Scenario2.ResourceOperationStatus") fail("runtimeExecution sliceId mismatch.");
+if (runtimeExecution?.status !== "runtime-test-admitted") fail("runtimeExecution must remain runtime-test-admitted.");
+if ((runtimeExecution?.steps ?? []).length !== 6) fail("runtimeExecution must expose 6 executable steps.");
+if ((runtimeExecution?.definitions ?? []).length !== 6) fail("runtimeExecution must expose 6 work item definitions.");
+if (Object.keys(runtimeExecution?.startAdapterDefinitionIds ?? {}).length !== 6) fail("runtimeExecution must expose 6 start adapter definition ids.");
+if (!JSON.stringify(runtimeExecution?.searchCommands ?? []).includes("设置房间营业状态")) fail("runtimeExecution search command must use business copy.");
+if (!JSON.stringify(runtimeExecution?.searchCommands ?? []).includes("房源运营")) fail("runtimeExecution search command must include scenario 2 business search term.");
+assertArray((runtimeExecution?.optionSets?.operationStatus ?? []).map((item) => item.value), expectedRuntimeStatusValues, "runtimeExecution operationStatus stable values");
+for (const option of runtimeExecution?.optionSets?.operationStatus ?? []) {
+  for (const language of ["zh-CN", "ru-RU", "ky-KG"]) {
+    if (!option.label?.[language]) fail(`runtimeExecution operationStatus ${option.value} missing ${language} label.`);
+  }
+}
+for (const step of runtimeExecution?.steps ?? []) {
+  for (const evidence of step.evidence ?? []) {
+    for (const language of ["zh-CN", "ru-RU", "ky-KG"]) {
+      if (!evidence.label?.[language]) fail(`runtimeExecution evidence ${evidence.evidenceId} missing ${language} label.`);
+    }
+    if (evidence.label?.["ru-RU"] === evidence.label?.["zh-CN"] || evidence.label?.["ky-KG"] === evidence.label?.["zh-CN"]) {
+      fail(`runtimeExecution evidence ${evidence.evidenceId} must not fall back to Chinese outside zh-CN.`);
+    }
+  }
+  for (const field of step.fields ?? []) {
+    if (["saveDraft", "backToEdit"].includes(field.fieldId)) {
+      fail(`runtimeExecution action ${field.fieldId} must not be rendered as a business field.`);
+    }
+    if (step.cardId === "cert.setOperationStatus" && field.fieldId === "expectedRestoreAt" && field.required === true) {
+      fail("runtimeExecution expectedRestoreAt must not block operable status submission.");
+    }
+    if (field.ui?.control === "select" && (!field.ui?.optionSet || (field.ui?.options ?? []).length === 0)) {
+      fail(`runtimeExecution select field ${field.fieldId} must bind optionSet and options.`);
+    }
+    for (const language of ["zh-CN", "ru-RU", "ky-KG"]) {
+      if (!field.label?.[language]) fail(`runtimeExecution field ${field.fieldId} missing ${language} label.`);
+    }
+  }
+}
+const registry = readJsonIfExists("docs/contracts/definition/workitem-definition-registry.json");
+for (const definition of runtimeExecution?.definitions ?? []) {
+  if (!registry?.definitions?.some((item) => item.definitionId === definition.definitionId)) {
+    fail(`definition registry missing runtimeExecution definition ${definition.definitionId}.`);
+  }
+}
 
 const result = {
   version: "oam.dormitory-scenario2-generated-contracts-check.v1",
@@ -166,7 +224,7 @@ function sortValue(value) {
   if (Array.isArray(value)) return value.map(sortValue);
   if (value && typeof value === "object") {
     return Object.fromEntries(Object.entries(value)
-      .sort(([left], [right]) => left.localeCompare(right))
+      .sort(([left], [right]) => left < right ? -1 : left > right ? 1 : 0)
       .map(([key, child]) => [key, sortValue(child)]));
   }
   return value;

@@ -256,6 +256,9 @@ function checkRuntimeImplementation(failures) {
   if (searchKernel.includes("decision.ConfirmAllowed ? 25") || searchKernel.includes("visible_with_confirm_admission")) {
     failures.push("SearchKernelService.cs must not use confirmAllowed as a ranking boost or rank reason.");
   }
+  if (!/CommandTermMatches\(string keyword, string term\)\s*=>\s*TermMatches\(keyword, term\);/.test(searchKernel)) {
+    failures.push("Search command matching must use Language Kernel synonym matching in both directions.");
+  }
   if (searchKernel.includes("[\"resultType\"] = FirstNonEmpty(ReadString(projectionSource, \"resultType\"), \"workspaceCardProjection\")")) {
     failures.push("Projection source results must expose workspaceCardCompatibility, not workspaceCardProjection.");
   }

@@ -9,29 +9,29 @@
     "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:12ac720d897bd51026accb6a722096e2057a925770ad9b4e4a68803848679aca",
+  "inputDigest": "sha256:ad874f50f0c1f5d153e3e095e5605819c04d4aa4e9cbbb85f4023fd2cea70938",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
-      "digest": "sha256:455d8a4d79792756a9b6da93aa548dfa981c082737a5d5bfd397a030f64e62c4"
+      "digest": "sha256:c5e193a6707693868e592a9ce3331e84d102d00c7c591f0509c7d18408a63be8"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:455d8a4d79792756a9b6da93aa548dfa981c082737a5d5bfd397a030f64e62c4",
+  "sourceContentDigest": "sha256:c5e193a6707693868e592a9ce3331e84d102d00c7c591f0509c7d18408a63be8",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario1.ResourceBasicReadiness",
   "scenarioPackageNo": 1,
   "scenarioId": "lodging.resource-basic-readiness",
-  "outputContentDigest": "sha256:90695323d3989e06b8243b6d07edc784f7a9d9ebb51e62646502449f6df142ea",
+  "outputContentDigest": "sha256:52a275961b53c4a2acd80a7d0e8004c4369c8a026b4d7b41278d5809ba45a776",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "房源建档与基础就绪",
   "businessGoalZh": "把房间和床位组建档，完成基础资料与基础检查确认，只输出基础就绪摘要，不输出可运营、可报价或可预订。",
-  "sourceScenarioDigest": "sha256:455d8a4d79792756a9b6da93aa548dfa981c082737a5d5bfd397a030f64e62c4",
+  "sourceScenarioDigest": "sha256:c5e193a6707693868e592a9ce3331e84d102d00c7c591f0509c7d18408a63be8",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "positiveBrowserTestPlan": [
     "进入“房源建档与基础就绪”",

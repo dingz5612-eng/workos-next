@@ -30,7 +30,7 @@ describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
 
     expect(html).not.toContain('data-search-section="searchLearning"');
     expect(html).not.toContain('data-search-section="searchEvidence"');
-    expect(html).toContain("记录、材料和学习内容请到我的查看");
+    expect(html).toContain("记录、证据和学习内容请到我的查看");
   });
 
   it("keeps personal activity log in Me instead of adding a fifth bottom tab", () => {

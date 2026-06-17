@@ -53,9 +53,15 @@ public static class ProjectionSeed
     private static string BusinessLineFor(string role) =>
         role.Equals("finance", StringComparison.OrdinalIgnoreCase) ? "finance" : "stay";
 
-    private static List<WorkspaceProjection> Workspaces() => new[] { AcceptedCapabilityRuntimeProjection.Workspace() }
+    private static List<WorkspaceProjection> Workspaces() => new[]
+        {
+            AcceptedCapabilityRuntimeProjection.Workspace(),
+            DormitoryScenario2RuntimeProjection.Workspace()
+        }
         .Concat(WorkspaceSeedCatalog.All()
-            .Where(seed => !seed.Id.Equals(AcceptedCapabilityRuntimeProjection.LegacyResourceWorkspaceId, StringComparison.OrdinalIgnoreCase))
+            .Where(seed =>
+                !seed.Id.Equals(AcceptedCapabilityRuntimeProjection.LegacyResourceWorkspaceId, StringComparison.OrdinalIgnoreCase) &&
+                !seed.Id.Equals(DormitoryScenario2RuntimeProjection.WorkspaceId, StringComparison.OrdinalIgnoreCase))
             .Select(Workspace))
         .ToList();
 

@@ -123,6 +123,7 @@
       ],
       "systemFields": [
         "bedSetRef",
+        "bedLayout[01..N]",
         "bedSetVersion",
         "bedCountMatchedFlag"
       ],
@@ -155,6 +156,7 @@
       "systemFields": [
         "bedRef",
         "bedNo",
+        "bedLayout",
         "bedVersion"
       ],
       "requiredLifecycle": [
@@ -325,6 +327,7 @@
       "commandBusinessNameZh": "床位组确认",
       "userSees": [
         "系统根据床位数量生成的床位 01..N",
+        "系统根据床位数量和床铺生成方式生成的床位布局",
         "所属房间",
         "床位数量",
         "床位组完整度"
@@ -346,6 +349,7 @@
         "bedSetRef",
         "bedRef[01..N]",
         "bedNo[01..N]",
+        "bedLayout[01..N]",
         "bedSetVersion",
         "bedCountMatchedFlag"
       ],
@@ -377,18 +381,23 @@
       "userSees": [
         "房间摘要",
         "床位组摘要",
+        "基础检查结果选择",
+        "保洁检查结果选择",
+        "设施检查结果选择",
+        "安全检查结果选择",
+        "需要补充时填写检查备注",
         "证据摘要",
         "缺失项",
         "可提交/不可提交原因"
       ],
       "userFilledFields": [
+        "basicReadinessRemark"
+      ],
+      "userSelectedFields": [
         "basicCheckResult",
         "cleaningBasicCheckResult",
         "facilityBasicCheckResult",
         "safetyBasicCheckResult",
-        "basicReadinessRemark"
-      ],
-      "userSelectedFields": [
         "basicReadinessConclusion"
       ],
       "userUploadedOrBoundEvidence": [
@@ -425,15 +434,41 @@
       "conclusionOptions": [
         {
           "value": "passed",
-          "labelZh": "通过"
+          "labelZh": "通过",
+          "labelRu": "Пройдено",
+          "labelKy": "Өттү"
         },
         {
           "value": "failed",
-          "labelZh": "不通过"
+          "labelZh": "不通过",
+          "labelRu": "Не проходит",
+          "labelKy": "Өтпөйт"
         },
         {
           "value": "needs_supplement",
-          "labelZh": "需补充"
+          "labelZh": "需补充",
+          "labelRu": "Нужно дополнить",
+          "labelKy": "Толуктоо керек"
+        }
+      ],
+      "checkResultOptions": [
+        {
+          "value": "checked_ok",
+          "labelZh": "已检查无异常",
+          "labelRu": "Проверено, без замечаний",
+          "labelKy": "Текшерилди, көйгөй жок"
+        },
+        {
+          "value": "needs_supplement",
+          "labelZh": "有问题需补充",
+          "labelRu": "Есть проблема, нужно дополнить",
+          "labelKy": "Маселе бар, толуктоо керек"
+        },
+        {
+          "value": "failed",
+          "labelZh": "不通过",
+          "labelRu": "Не проходит",
+          "labelKy": "Өтпөйт"
         }
       ],
       "outputs": [
@@ -454,16 +489,16 @@
       "bedType",
       "bedRemark",
       "specialNotes",
-      "basicCheckResult",
-      "cleaningBasicCheckResult",
-      "facilityBasicCheckResult",
-      "safetyBasicCheckResult",
       "basicReadinessRemark"
     ],
     "userSelected": [
       "buildingContextRef",
       "bedEnabledStatus",
       "bedTypeBatchSetting",
+      "basicCheckResult",
+      "cleaningBasicCheckResult",
+      "facilityBasicCheckResult",
+      "safetyBasicCheckResult",
       "basicReadinessConclusion"
     ],
     "evidenceBound": [
@@ -486,6 +521,7 @@
       "bedSetRef",
       "bedRef[01..N]",
       "bedNo[01..N]",
+      "bedLayout[01..N]",
       "bedSetVersion",
       "bedCountMatchedFlag",
       "basicReadinessRef",

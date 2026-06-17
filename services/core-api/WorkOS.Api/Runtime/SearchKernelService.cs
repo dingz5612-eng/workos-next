@@ -193,6 +193,11 @@ public sealed class SearchKernelService
             ["firstCardId"] = command.FirstCardId,
             ["title"] = LocalizedByLanguage(language, command.ZhTitle, command.RuTitle, command.KyTitle),
             ["summary"] = LocalizedByLanguage(language, command.ZhSummary, command.RuSummary, command.KySummary),
+            ["nextAction"] = LocalizedByLanguage(
+                language,
+                FirstNonEmpty(command.ZhNextAction, "开始办理"),
+                FirstNonEmpty(command.RuNextAction, command.ZhNextAction, "Начать"),
+                FirstNonEmpty(command.KyNextAction, command.ZhNextAction, "Баштоо")),
             ["matchedTerms"] = matchedTerms,
             ["score"] = 120 + matchedTerms.Length * 40,
             ["target"] = new Dictionary<string, object?>
@@ -362,9 +367,7 @@ public sealed class SearchKernelService
             .Any(keyword => searchTerms.Any(term => CommandTermMatches(keyword, term)));
 
     private static bool CommandTermMatches(string keyword, string term) =>
-        !string.IsNullOrWhiteSpace(keyword) &&
-        !string.IsNullOrWhiteSpace(term) &&
-        term.Contains(keyword, StringComparison.OrdinalIgnoreCase);
+        TermMatches(keyword, term);
 
     private static bool TermMatches(string keyword, string term) =>
         !string.IsNullOrWhiteSpace(keyword) &&
@@ -374,6 +377,7 @@ public sealed class SearchKernelService
 
     private static readonly IReadOnlyList<SearchCommandDefinition> SearchCommandCatalog =
         AcceptedCapabilityRuntimeProjection.SearchCommands()
+        .Concat(DormitoryScenario2RuntimeProjection.SearchCommands())
         .Concat(new[]
         {
         new SearchCommandDefinition(
@@ -756,4 +760,7 @@ internal sealed record SearchCommandDefinition(
     string ZhSummary,
     string RuSummary,
     string KySummary,
-    IReadOnlyList<string> Keywords);
+    IReadOnlyList<string> Keywords,
+    string ZhNextAction = "",
+    string RuNextAction = "",
+    string KyNextAction = "");

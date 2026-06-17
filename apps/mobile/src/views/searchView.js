@@ -52,10 +52,11 @@ function workosSearchSections(ctx) {
   const query = String(state.query || "").trim();
   const workspaces = selectRuntimeWorkspaces(state);
   const queue = selectWorkbenchQueue(state);
+  const backendCommandResults = query ? backendCommandSearchResults(state, query) : [];
   const backendOperationResults = query ? backendOperationSearchResults(state, query) : [];
   const workspaceResults = query ? selectSearchSurfaceResults(state, query).filter((workspace) => workspaceMatchesQuery(workspace, query, ctx)) : workspaces;
   const activeWorkspaceResults = workspaceResults.filter((workspace) => !isTerminalWorkspace(workspace));
-  const commands = activeCommands(workspaces, ctx);
+  const commands = dedupeCommandItems([...backendCommandResults, ...activeCommands(workspaces, ctx)]);
   if (query && isAccommodationResourceSetupQuery(query)) {
     return [section("activeCommands", commands)];
   }
@@ -239,6 +240,46 @@ function backendOperationSearchResults(state = {}, query = "") {
       nextAction: item.nextAction || item.next_action,
       businessAnchor: item.businessAnchor || item.business_anchor || item.payload?.fieldValues || {}
     }));
+}
+
+function backendCommandSearchResults(state = {}, query = "") {
+  const results = state.runtimeStore?.searchResultsByQuery?.[normalizeQuery(query)] || [];
+  return results
+    .filter((item) => (item.resultType || item.result_type) === "command")
+    .filter((item) => item.templateWorkspaceId || item.template_workspace_id || item.target?.workspaceId)
+    .map((item) => ({
+      ...item,
+      resultType: "command",
+      commandId: item.commandId || item.command_id || "startOperationsWorkspace",
+      templateWorkspaceId: item.templateWorkspaceId || item.template_workspace_id || item.target?.workspaceId || "",
+      firstCardId: item.firstCardId || item.first_card_id || item.target?.cardId || "",
+      title: item.title,
+      subtitle: item.subtitle || item.summary || item.localizedSubtitle,
+      status: item.status || "ready",
+      nextAction: item.nextAction || item.next_action || item.localizedNextAction,
+      keywords: item.keywords || item.matchedTerms || item.matched_terms || [],
+      sourceRefs: item.sourceRefs || item.source_refs || {},
+      admission: item.admission || null,
+      gateResult: item.gateResult || item.gate_result || null
+    }));
+}
+
+function dedupeCommandItems(items = []) {
+  const seen = new Set();
+  return items.filter((item) => {
+    if ((item.resultType || item.type) === "mainlineScenario") {
+      const key = `mainlineScenario:${item.scenarioNo || item.scenarioId || item.query || item.title?.["zh-CN"] || item.title || ""}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }
+    const workspaceId = item.templateWorkspaceId || item.template_workspace_id || item.workspaceId || item.workspace_id || "";
+    const cardId = item.firstCardId || item.first_card_id || item.cardId || item.card_id || "";
+    const key = `${item.resultType || "command"}:${workspaceId}:${cardId}`;
+    if (!workspaceId || !cardId || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function dedupeSearchItems(items = []) {

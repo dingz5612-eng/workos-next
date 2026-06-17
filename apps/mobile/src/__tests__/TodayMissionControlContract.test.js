@@ -60,7 +60,7 @@ describe("SURFACE-C Today Mission Control contract", () => {
   it("does not count system-bound submit checks as missing evidence on Home", () => {
     const text = visibleText(renderSurface("home"));
 
-    expect(text).toContain("缺材料 0");
+    expect(text).toContain("缺证据 0");
     expect(text).not.toContain("有办理项缺少办理材料");
     expect(text).not.toContain("已有可办理任务等待处理");
   });

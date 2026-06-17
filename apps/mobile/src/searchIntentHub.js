@@ -85,7 +85,7 @@ function searchActionFor(item, ctx) {
     return { type: "openWorkspace", label: ctx.tr?.("searchActionViewCase") || "查看案件", view: "workspace", reason: "" };
   }
   if (item.resultType === "command" && item.templateWorkspaceId) {
-    return { type: "startOperationsWorkspace", label: ctx.tr?.("startHandling") || "开始办理", view: "operationPanel", reason: "" };
+    return { type: "startOperationsWorkspace", label: safeLocalized(item.nextAction, ctx) || ctx.tr?.("startHandling") || "开始办理", view: "operationPanel", reason: "" };
   }
   if (item.resultType === "mainlineScenario") {
     return { type: "queryOnly", label: ctx.tr?.("searchActionViewWorkItems") || "查看工作项", view: "search", reason: "" };
@@ -232,11 +232,25 @@ function genericProcessCopy(value, ctx = {}) {
 }
 
 function admissionForSearchItem(item = {}, action = {}) {
-  if (item.admission) return normalizeAdmissionState(item.admission);
+  if (item.admission) return action.type === "startOperationsWorkspace"
+    ? startCommandAdmission(normalizeAdmissionState(item.admission))
+    : normalizeAdmissionState(item.admission);
   if (["openWorkItem", "startOperationsWorkspace"].includes(action.type)) {
     return missingAdmissionState("contract_preview");
   }
   return missingAdmissionState("contract_preview");
+}
+
+function startCommandAdmission(admission = {}) {
+  if (!admission.visibleAllowed) return admission;
+  return {
+    ...admission,
+    prepareAllowed: true,
+    confirmAllowed: false,
+    productionAllowed: false,
+    mode: admission.mode || "internal_pilot_observation",
+    reason: admission.reason || "search_readonly_runtime_start"
+  };
 }
 
 function gateResultForSearchItem(item = {}, admission = {}) {

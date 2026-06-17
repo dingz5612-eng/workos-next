@@ -15,10 +15,11 @@ describe("OAM Surface business and technical layering contract", () => {
     const ctx = createSurfaceCtx({ view: "operationPanel" });
     const html = operationPanelView(ctx);
     const text = visibleText(html);
-    const technicalDetails = html.match(/<details class="operation-technical-details"[\s\S]*?<\/details>/)?.[0] || "";
+    const technicalDetails = html.match(/<(?:details|div) class="operation-technical-details"[\s\S]*?(?:<\/details>|<\/div>)/)?.[0] || "";
     const ordinaryHtml = html.replace(technicalDetails, "");
 
     expect(html).toContain('data-work-item-id="wi-dorm-room-setup"');
+    expect(technicalDetails).toContain('hidden data-surface="operation-runtime-proof"');
     expect(technicalDetails).toContain('data-case-id=');
     expect(technicalDetails).toContain('data-submission-id=');
     expect(technicalDetails).toContain('data-payload-fingerprint=');
@@ -27,6 +28,7 @@ describe("OAM Surface business and technical layering contract", () => {
     expect(ordinaryHtml).not.toContain('data-payload-fingerprint=');
     expect(html).toContain('class="operation-technical-details"');
     expect(html).not.toContain("open>");
+    expect(text).not.toContain("系统记录");
     expect(text).not.toMatch(/\b(workItemId|caseId|payloadHash|commandSubmissionId)\b/);
   });
 
@@ -54,8 +56,12 @@ describe("OAM Surface business and technical layering contract", () => {
     clearDraft(DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS[0].cardId);
     const missing = EvidenceSheet(card, {}, ctx);
 
-    expect(visibleText(missing)).toContain("系统将在提交时自动绑定");
+    expect(visibleText(missing)).toContain("材料");
+    expect(visibleText(missing)).toContain("房间基础资料证据");
     expect(visibleText(missing)).toContain("材料已就绪");
+    expect(visibleText(missing)).toContain("1/1");
+    expect(visibleText(missing)).not.toContain("系统将在提交时自动绑定");
+    expect(EvidenceStateVM(card.evidence[0], null, ctx).label).toContain("系统将在提交时自动绑定");
 
     const placeholder = EvidenceStateVM(card.evidence[0], {
       requirementId: "room-duplicate-check",
@@ -82,8 +88,13 @@ describe("OAM Surface business and technical layering contract", () => {
     expect(visibleText(html)).toContain("填写房间信息");
     expect(visibleText(html)).toContain("提交前检查");
     expect(visibleText(html)).toContain("材料核对");
-    expect(visibleText(html)).toContain("提交前确认");
-    expect(visibleText(html)).toContain("办理材料");
+    expect(visibleText(html)).toContain("提交说明");
+    expect(visibleText(html)).toContain("材料");
+    expect(visibleText(html)).not.toContain("系统记录");
+    expect(visibleText(html)).not.toContain("办理状态");
+    expect(visibleText(html)).not.toContain("当前状态:");
+    expect(visibleText(html)).not.toContain("提交处理:");
+    expect(visibleText(html)).not.toContain("本次办理影响:");
     expect(visibleText(html)).not.toContain("提交证据");
   });
 
@@ -131,6 +142,26 @@ describe("OAM Surface business and technical layering contract", () => {
     expect(technical[0].label).toBe("Готова к заселению");
   });
 
+  it("renders Scenario 1 readiness check dropdowns in the current language while submitting stable values", () => {
+    const field = {
+      id: "basicCheckResult",
+      label: { "zh-CN": "基础检查结果", "ru-RU": "Результат базовой проверки" },
+      ui: { optionSet: "basicReadinessCheckResult", options: [] }
+    };
+
+    const ru = optionsForField(field, "ru-RU");
+    const ky = optionsForField(field, "ky-KG");
+
+    expect(ru.map((entry) => entry.value)).toEqual(["checked_ok", "needs_supplement", "failed"]);
+    expect(ru.map((entry) => entry.label)).toEqual([
+      "Проверено, без замечаний",
+      "Есть проблема, нужно дополнить",
+      "Не проходит"
+    ]);
+    expect(ky.map((entry) => entry.value)).toEqual(["checked_ok", "needs_supplement", "failed"]);
+    expect(ky.map((entry) => entry.label).join(" ")).not.toMatch(/已检查无异常|有问题需补充|不通过/);
+  });
+
   it("prefills same-case context fields instead of asking operators to re-enter them", () => {
     const ctx = createSurfaceCtx({ view: "workspace", selectedCardId: DORMITORY_SCENARIO1_STEPS[1].cardId });
     clearDraft(DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS[0].cardId);
@@ -175,7 +206,7 @@ describe("OAM Surface business and technical layering contract", () => {
 
     expect(operationFieldId(workspace.cards[1].fields.business[0])).toBe("roomRef");
     expect(html).not.toContain('data-operation-field="roomId"');
-    expect(html).toContain('type="hidden" data-operation-field="roomRef" value="room-31"');
+    expect(html).toContain('type="hidden" data-operation-field="roomRef" value="room-d03-31"');
     expect(html).toContain('value="D03 / 31"');
     expect(text).not.toContain("已从本案带入");
     expect(text).toContain("系统已带入，不需要重复填写。");
@@ -321,12 +352,12 @@ describe("OAM Surface business and technical layering contract", () => {
 
     ctx.state.runtimeStore.workspaces[0].cards[0].status = "blocked";
     ctx.state.runtimeStore.workQueue[0].lifecycleState = "blocked";
-    expect(visibleText(operationPanelView(ctx))).toContain("查看不能提交原因");
+    expect(visibleText(operationPanelView(ctx))).toContain("查看暂不能提交的原因");
 
     const search = searchView(createSurfaceCtx({ view: "search", query: "证据" }));
     expect(search).not.toContain('data-learning-id="learnEvidenceFix"');
     expect(search).not.toContain('data-search-section="searchLearning"');
-    expect(visibleText(search)).toContain("记录、材料和学习内容请到我的查看");
+    expect(visibleText(search)).toContain("记录、证据和学习内容请到我的查看");
 
     const diagnostic = PermissionDiagnostic({ requiredPermission: "finance.control.view", owner: "finance" }, createSurfaceCtx());
     expect(visibleText(diagnostic)).not.toContain("finance.control.view");

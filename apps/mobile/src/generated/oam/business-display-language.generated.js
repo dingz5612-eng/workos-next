@@ -14,10 +14,6 @@ export const zhBusinessTermReplacements = [
     "房间和床位资料已保存"
   ],
   [
-    "房源建档与基础就绪",
-    "新建房间和床位"
-  ],
-  [
     "房源运营就绪与状态维护",
     "设置房间营业状态"
   ],
@@ -84,10 +80,6 @@ export const zhBusinessTermReplacements = [
   [
     "可信证据",
     "办理材料"
-  ],
-  [
-    "证据",
-    "材料"
   ]
 ];
 export const zhRiskLabelReplacements = {

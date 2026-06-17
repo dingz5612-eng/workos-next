@@ -15,7 +15,14 @@ const generatedPaths = {
   runtimeMirror: "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2ResourceOperationStatus.generated.json"
 };
 const runtimeRulesPath = "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs";
+const runtimeProjectionPath = "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2RuntimeProjection.cs";
 const operationsRuntimeServicePath = "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs";
+const projectionSeedPath = "services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs";
+const searchKernelPath = "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs";
+const definitionRegistryPath = "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs";
+const sliceCapabilityGatePath = "services/core-api/WorkOS.Api/Runtime/SliceRuntimeCapabilityGate.cs";
+const canonicalOperationsPath = "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs";
+const programPath = "services/core-api/WorkOS.Api/Program.cs";
 const runtimeTestsPath = "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs";
 const failures = [];
 const scenarioDigest = fileDigest(scenarioPath);
@@ -66,13 +73,54 @@ for (const target of ["CommandSubmission", "DomainEvent", "Outbox", "Projection"
 if (docs.runtimeMirror.runtimeConsumptionBoundary?.runtimeMayReadGeneratedOnly !== true) fail("runtime must read generated only.");
 if (docs.runtimeMirror.runtimeConsumptionBoundary?.runtimeMayHardcodeBusinessRules !== false) fail("runtime hardcoded business rules must be forbidden.");
 const runtimeRulesText = readText(runtimeRulesPath);
+const runtimeProjectionText = readText(runtimeProjectionPath);
 const operationsRuntimeText = readText(operationsRuntimeServicePath);
+const projectionSeedText = readText(projectionSeedPath);
+const searchKernelText = readText(searchKernelPath);
+const definitionRegistryText = readText(definitionRegistryPath);
+const sliceCapabilityGateText = readText(sliceCapabilityGatePath);
+const canonicalOperationsText = readText(canonicalOperationsPath);
+const programText = readText(programPath);
 const runtimeTestsText = readText(runtimeTestsPath);
 if (!runtimeRulesText.includes("DormitoryScenario2ResourceOperationStatus.generated.json")) {
   fail("runtime rules must consume DormitoryScenario2ResourceOperationStatus.generated.json.");
 }
 if (!runtimeRulesText.includes("Scenario2ResourceOperationRuntimeAdapter")) {
   fail("runtime rules must include scenario 2 generated adapter.");
+}
+if (!runtimeProjectionText.includes("DormitoryScenario2ResourceOperationStatus.generated.json") ||
+  !runtimeProjectionText.includes("runtimeExecution") ||
+  !runtimeProjectionText.includes("SearchCommands") ||
+  !runtimeProjectionText.includes("StartAdapterDefinitionIds") ||
+  !runtimeProjectionText.includes("TransitionRules")) {
+  fail("DormitoryScenario2RuntimeProjection must consume runtimeExecution for workspace/search/definition/transition.");
+}
+if (!projectionSeedText.includes("DormitoryScenario2RuntimeProjection.Workspace()")) {
+  fail("ProjectionSeed must seed scenario 2 generated workspace.");
+}
+if (!searchKernelText.includes("DormitoryScenario2RuntimeProjection.SearchCommands()")) {
+  fail("SearchKernelService must consume scenario 2 generated search commands.");
+}
+if (!searchKernelText.includes("[\"nextAction\"]") || !runtimeProjectionText.includes("GetProperty(\"nextAction\")")) {
+  fail("SearchKernelService must expose generated command nextAction from scenario 2 runtime projection.");
+}
+if (!definitionRegistryText.includes("DormitoryScenario2RuntimeProjection.StartAdapterDefinitionIds()")) {
+  fail("WorkItemDefinitionRegistryService must consume scenario 2 generated start adapter definitions.");
+}
+if (!sliceCapabilityGateText.includes("DormitoryScenario2RuntimeProjection.RuntimeCapability()") ||
+  !sliceCapabilityGateText.includes("DormitoryScenario2RuntimeProjection.SliceId")) {
+  fail("SliceRuntimeCapabilityGate must consume scenario 2 runtime capability.");
+}
+if (!canonicalOperationsText.includes("DormitoryScenario2RuntimeProjection.TransitionRules()") ||
+  !canonicalOperationsText.includes("GeneratedTransitionPolicy.CarryForwardPayload") ||
+  !canonicalOperationsText.includes("DormitoryScenario2RuntimeProjection.StartContext")) {
+  fail("CanonicalOperationsApiService must consume scenario 2 generated transitions and context carry-forward.");
+}
+if (!programText.includes("DormitoryScenario2RuntimeProjection.WorkspaceId")) {
+  fail("Operations workspace start endpoint must allow scenario 2 generated workspace id.");
+}
+if (!operationsRuntimeText.includes("DormitoryScenario2RuntimeProjection.CardFor")) {
+  fail("OperationsRuntimeService must apply scenario 2 generated card contract to work item surfaces.");
 }
 for (const commandId of commandIds) {
   if (!runtimeTestsText.includes(commandId)) fail(`runtime tests must cover ${commandId}.`);
@@ -101,7 +149,14 @@ const result = {
   generatedPaths,
   runtimeImplementationPaths: {
     generatedRules: runtimeRulesPath,
+    runtimeProjection: runtimeProjectionPath,
     operationsRuntimeService: operationsRuntimeServicePath,
+    projectionSeed: projectionSeedPath,
+    searchKernel: searchKernelPath,
+    definitionRegistry: definitionRegistryPath,
+    sliceCapabilityGate: sliceCapabilityGatePath,
+    canonicalOperations: canonicalOperationsPath,
+    program: programPath,
     runtimeTests: runtimeTestsPath
   },
   consumerBoundaries: {

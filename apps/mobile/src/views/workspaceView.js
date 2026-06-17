@@ -10,7 +10,6 @@ import { DORMITORY_SCENARIO1_STEPS, defaultBedTypeForCount, isBedSetupCardId, is
 import { activeCardForWorkspace, activeWorkspaceCard, isActionableCardStatus, isCardActionDisabled, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { checkoutServiceMobilePanel, checkoutServiceOperationAddon } from "./checkoutServiceView.js";
 import { EvidenceStateVM, OperationStepRail } from "./experienceComponents.js";
-import { userFacingBusinessText } from "../businessDisplayLanguage.js";
 import {
   currentMissingContextLabels,
   currentMissingRequiredLabels,
@@ -121,6 +120,7 @@ export function completedWorkspaceRecord(item, card, ctx) {
   const fieldsMissing = fieldRows.length > 0 && fieldRows.every((row) => !row.hasValue);
   const recordEvidence = evidenceForRecord(item, selectedStep);
   const evidenceText = recordEvidence.length ? recordEvidence.map((entry) => ctx.localTerm(entry)).join(" · ") : ctx.tr("noRequiredEvidence");
+  const recordBlockers = blockersForRecord(item, selectedStep, ctx);
   const scenario1Completed = isDormitoryScenario1WorkspaceId(item.id) &&
     DORMITORY_SCENARIO1_STEPS.every((step) =>
       isTerminalCardStatus((item.cards || []).find((candidate) => candidate.id === step.cardId)?.status));
@@ -128,7 +128,7 @@ export function completedWorkspaceRecord(item, card, ctx) {
     ? scenario1CompletionValues(item, ctx)
     : [];
   const scenario1CompletionBanner = scenario1Completed
-    ? `<section class="operation-state" data-mainline-completion="Dormitory.13ScenarioMainline" data-scenario="lodging.resource-basic-readiness"><b>${ctx.escapeHtml(userFacingBusinessText("房源建档与基础就绪完成", ctx))}</b>${scenario1BusinessValues.length ? `<p>${scenario1BusinessValues.map((value) => ctx.escapeHtml(value)).join(" / ")}</p>` : ""}<p>${ctx.escapeHtml(userFacingBusinessText("仅代表房源建档与基础就绪记录完成；不代表可运营、可报价、可预订、上线、发布或最终放行。", ctx))}</p></section>`
+    ? `<section class="operation-state" data-mainline-completion="Dormitory.13ScenarioMainline" data-scenario="lodging.resource-basic-readiness"><b>${ctx.escapeHtml(ctx.tr("scenario1CompletionTitle"))}</b>${scenario1BusinessValues.length ? `<p>${scenario1BusinessValues.map((value) => ctx.escapeHtml(value)).join(" / ")}</p>` : ""}<p>${ctx.escapeHtml(ctx.tr("scenario1CompletionBoundary"))}</p></section>`
     : "";
   return `<section class="completed-record-control" data-component="completedWorkspaceRecord" data-surface="completed-workspace-record" data-lifecycle-state="${ctx.escapeAttr(selectedStep.status)}" data-admission-decision="visible_readonly_completed" data-runtime-decision="work_item_terminal:${ctx.escapeAttr(selectedStep.status)}">
     ${OperationStepRail(item, selectedStep, ctx, {
@@ -156,7 +156,7 @@ export function completedWorkspaceRecord(item, card, ctx) {
       <b>${ctx.tr("stepDetails")}</b>
       <dl>
         ${completedFactRow(ctx.tr("requiredEvidenceCopy"), evidenceText, ctx)}
-        ${completedFactRow(ctx.tr("blockers"), blockersForRecord(item, selectedStep, ctx), ctx)}
+        ${recordBlockers ? completedFactRow(ctx.tr("blockers"), recordBlockers, ctx) : ""}
         ${completedFactRow(ctx.tr("auditSummary"), ctx.tr("completedAuditHelp"), ctx)}
       </dl>
     </section>
@@ -215,7 +215,7 @@ function scenario1CompletionValues(item, ctx) {
   const values = scenario1CompletedPayload(item, ctx);
   return [
     values.roomNo,
-    scenario1BedGroupSummary(values),
+    scenario1BedGroupSummary(values, ctx),
     readinessDisplayValue(values.readinessState || values.basicReadinessConclusion, ctx)
   ].filter(Boolean);
 }
@@ -230,11 +230,13 @@ function scenario1CompletedPayload(item, ctx) {
   return values;
 }
 
-function scenario1BedGroupSummary(values = {}) {
+function scenario1BedGroupSummary(values = {}, ctx) {
   const labels = splitBedLabels(values.bedLabels || generatedBedLabelsForCount(values.bedCount || values.capacity || ""));
-  if (!labels.length && values.bedNo) return `床位 ${values.bedNo}`;
+  if (!labels.length && values.bedNo) return ctx.tr("bedSingleSummary").replace("{bedNo}", values.bedNo);
   if (!labels.length) return "";
-  return `${values.bedCount || labels.length} 个床位 ${labels.join(", ")}`;
+  return ctx.tr("bedGroupSummary")
+    .replace("{count}", String(values.bedCount || labels.length))
+    .replace("{labels}", labels.join(", "));
 }
 
 function readinessDisplayValue(value, ctx) {
@@ -248,7 +250,7 @@ function evidenceForRecord(item, card) {
 
 function blockersForRecord(item, card, ctx) {
   const blockers = activeBlockers(item, card);
-  return blockers.length ? blockers.map((entry) => ctx.tx(entry.title || entry)).join(" · ") : ctx.tr("noCriticalBlocker");
+  return blockers.length ? blockers.map((entry) => ctx.tx(entry.title || entry)).join(" · ") : "";
 }
 
 function displayOperationValue(field, item, card, ctx) {
@@ -277,7 +279,7 @@ function completedRecordRawValue(field, item, card, ctx) {
     return payload.roomNo || payload.roomRef || payload.roomId || "";
   }
   if (isDormitoryScenario1WorkspaceId(item?.id) && fieldId === "bedId") {
-    return scenario1BedGroupSummary(payload) || payload.bedId || "";
+    return scenario1BedGroupSummary(payload, ctx) || payload.bedId || "";
   }
   return payload?.[fieldId] || payload?.[field.id] || "";
 }
@@ -647,6 +649,7 @@ function systemValidationPanel(card, item, draft, visibleBlockers, ctx) {
   const checkNames = (card.checks || []).map((entry) => businessCheckName(ctx.localTerm(entry))).filter(Boolean);
   const missingLabels = currentMissingRequiredLabels(card, item, ctx);
   const missingContextLabels = currentMissingContextLabels(card, item, ctx);
+  const listSeparator = ctx.tr("listSeparator") || "、";
   const stepCheck = stepDependencyValidationChips(card, item, ctx);
   const submitStatus = missingContextLabels.length
     ? `${ctx.tr("cannotSubmitYet")}: ${ctx.tr("upstreamContextMissing")}`
@@ -662,9 +665,9 @@ function systemValidationPanel(card, item, draft, visibleBlockers, ctx) {
     checkNames.length ? `${ctx.tr("systemRules")}: ${checkNames.slice(0, 3).join(" · ")}` : ""
   ].filter(Boolean);
   const actionChips = [
-    missingContextLabels.length ? `${ctx.tr("upstreamContextMissing")}: ${missingContextLabels.join("、")}` : "",
-    missingLabels.length ? `${ctx.tr("requiredFieldsMissing")}: ${missingLabels.join("、")}` : "",
-    visibleBlockers.length ? visibleBlockers.map((entry) => ctx.tx(entry.title)).join("、") : ""
+    missingContextLabels.length ? `${ctx.tr("upstreamContextMissing")}: ${missingContextLabels.join(listSeparator)}` : "",
+    missingLabels.length ? `${ctx.tr("requiredFieldsMissing")}: ${missingLabels.join(listSeparator)}` : "",
+    visibleBlockers.length ? visibleBlockers.map((entry) => ctx.tx(entry.title)).join(listSeparator) : ""
   ].filter(Boolean);
   const hasError = missingLabels.length || missingContextLabels.length;
   return `<section class="system-check-panel${hasError ? " has-error" : ""}" data-surface="system-validation-summary">

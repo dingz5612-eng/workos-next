@@ -22,10 +22,17 @@ export function userFacingRiskLabel(value = "", ctx = {}) {
 }
 
 function replaceZhTerms(value = "") {
-  return zhBusinessTermReplacements.reduce(
-    (current, [from, to]) => current.split(from).join(to),
-    String(value ?? "")
-  );
+  return zhBusinessTermReplacements.reduce((current, [from, to], index) => {
+    const source = String(from ?? "");
+    const target = String(to ?? "");
+    if (!source || source === target) return current;
+    if (!target.includes(source)) return current.split(source).join(target);
+    const targetMarker = `__WORKOS_VISIBLE_COPY_TARGET_${index}__`;
+    return current
+      .split(target).join(targetMarker)
+      .split(source).join(target)
+      .split(targetMarker).join(target);
+  }, String(value ?? ""));
 }
 
 function normalizeUserFacingText(value = "") {

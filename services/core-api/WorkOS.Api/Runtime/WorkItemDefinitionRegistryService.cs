@@ -7,6 +7,7 @@ public sealed class WorkItemDefinitionRegistryService
     private static readonly Lazy<WorkItemDefinitionRegistryService> Default = new(LoadDefaultRegistry);
     private static readonly IReadOnlyDictionary<string, string> StartAdapterDefinitionIds =
         AcceptedCapabilityRuntimeProjection.StartAdapterDefinitionIds()
+        .Concat(DormitoryScenario2RuntimeProjection.StartAdapterDefinitionIds())
         .Concat(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["W-DORM-MAINLINE:cert.roomSetupConfirm"] = "definition.dormitory.roomSetupConfirm.v1",
@@ -192,6 +193,7 @@ public sealed class WorkItemDefinitionRegistryService
         string.IsNullOrWhiteSpace(workspaceId)
             ? "unknown"
             : workspaceId.StartsWith("W-STAY", StringComparison.OrdinalIgnoreCase) ||
+              workspaceId.StartsWith("W-DORM", StringComparison.OrdinalIgnoreCase) ||
               workspaceId.StartsWith("PC-GOVERNANCE", StringComparison.OrdinalIgnoreCase)
                 ? "dormitory"
                 : "unknown";

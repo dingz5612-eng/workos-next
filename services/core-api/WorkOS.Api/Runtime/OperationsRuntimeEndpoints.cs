@@ -35,7 +35,9 @@ public static class OperationsRuntimeEndpoints
                 return TenantScopeForbidden("operation_work_item_tenant_mismatch");
             }
 
-            var resolved = operations.CreateWorkItem(string.IsNullOrWhiteSpace(request.TenantId) ? request with { TenantId = actor.TenantId } : request);
+            var resolved = operations.CreateWorkItem(
+                string.IsNullOrWhiteSpace(request.TenantId) ? request with { TenantId = actor.TenantId } : request,
+                actor);
             return resolved is null
                 ? Results.UnprocessableEntity(new { error = "operation_work_item_not_resolved", reason = "persisted_process_intent_or_workspace_card_required" })
                 : Results.Ok(resolved);

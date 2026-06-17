@@ -371,13 +371,37 @@ public sealed class OperationsRuntimeService
         var templateWorkspaceId = FirstNonEmpty(
             PayloadValue(workItem.Payload, "templateWorkspaceId"),
             WorkspaceSeedCatalog.FindWorkspace(workItem.WorkspaceId)?.Id);
+        if (IsAcceptedCapabilityWorkspace(templateWorkspaceId) || IsAcceptedCapabilityWorkspace(workItem.WorkspaceId))
+        {
+            var acceptedCard = AcceptedCapabilityRuntimeProjection.Workspace().Cards
+                .FirstOrDefault(item => item.Id.Equals(cardId, StringComparison.OrdinalIgnoreCase));
+            if (acceptedCard is not null)
+            {
+                return ApplyCardContract(workItem, target, acceptedCard);
+            }
+        }
+        if (DormitoryScenario2RuntimeProjection.IsWorkspace(templateWorkspaceId) ||
+            DormitoryScenario2RuntimeProjection.IsWorkspace(workItem.WorkspaceId))
+        {
+            var scenario2Card = DormitoryScenario2RuntimeProjection.CardFor(cardId);
+            if (scenario2Card is not null)
+            {
+                return ApplyCardContract(workItem, target, scenario2Card);
+            }
+        }
+
         var seed = WorkspaceSeedCatalog.FindCard(templateWorkspaceId, cardId);
         if (seed is null)
         {
             return target;
         }
 
-        var effectiveCard = CardContractFactory.Create(seed) with
+        return ApplyCardContract(workItem, target, CardContractFactory.Create(seed));
+    }
+
+    private static OperationTarget ApplyCardContract(WorkItem workItem, OperationTarget target, CardProjection card)
+    {
+        var effectiveCard = card with
         {
             Status = EffectiveCardStatusFor(workItem, target.Card.Status),
             BlockerRules = target.Card.BlockerRules
@@ -394,6 +418,11 @@ public sealed class OperationsRuntimeService
             Card = effectiveCard
         };
     }
+
+    private static bool IsAcceptedCapabilityWorkspace(string? workspaceId) =>
+        !string.IsNullOrWhiteSpace(workspaceId) &&
+        (workspaceId.Equals(AcceptedCapabilityRuntimeProjection.WorkspaceId, StringComparison.OrdinalIgnoreCase) ||
+         workspaceId.StartsWith($"{AcceptedCapabilityRuntimeProjection.WorkspaceId}-", StringComparison.OrdinalIgnoreCase));
 
     private OperationsWorkItemSurface ToSurface(WorkItem workItem)
     {

@@ -43,12 +43,24 @@ if (!experienceComponents.includes("const shouldOpen =") || !experienceComponent
 }
 const completionLabel = (visibleCopyContract?.displayTermReplacementsZh ?? [])
   .find(([source]) => source === "房源建档与基础就绪完成")?.[1] ?? "房间和床位已新建";
+const operationCopyVisibleValues = operationCopyValues(operationCopy);
 const completionIsGeneratedAtRuntime = workspaceView.includes("userFacingBusinessText")
   && workspaceView.includes("房源建档与基础就绪完成");
-if (!workspaceView.includes(completionLabel) && !completionIsGeneratedAtRuntime) {
+const completionUsesLanguageContract =
+  workspaceView.includes('ctx.tr("scenario1CompletionTitle")') &&
+  workspaceView.includes('ctx.tr("scenario1CompletionBoundary")') &&
+  workspaceView.includes('data-mainline-completion="Dormitory.13ScenarioMainline"');
+const completionTitleIsLanguageBacked = operationCopyVisibleValues.some((value) =>
+  value.includes("房源建档与基础就绪完成") || value.includes(completionLabel));
+if (!workspaceView.includes(completionLabel) &&
+  !completionIsGeneratedAtRuntime &&
+  !(completionUsesLanguageContract && completionTitleIsLanguageBacked)) {
   failures.push("completion page must expose lodging scenario 1 business completion surface.");
 }
-if (!workspaceView.includes("不代表可运营、可报价、可预订")) {
+const completionBoundaryIsLanguageBacked = operationCopyVisibleValues.some((value) =>
+  value.includes("不代表可运营、可报价、可预订"));
+if (!workspaceView.includes("不代表可运营、可报价、可预订") &&
+  !(completionUsesLanguageContract && completionBoundaryIsLanguageBacked)) {
   failures.push("completion page must not imply operation, quote, or reservation readiness.");
 }
 if (projection?.businessUi?.technicalDetailsDefaultExpanded !== false) {

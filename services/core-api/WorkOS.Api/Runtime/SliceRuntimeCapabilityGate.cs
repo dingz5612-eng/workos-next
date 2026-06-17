@@ -45,6 +45,8 @@ public sealed class SliceRuntimeCapabilityGate
     private static bool IsConfirmAllowed(SliceRuntimeCapability capability) =>
         capability.Status.Equals("production-slice", StringComparison.OrdinalIgnoreCase) ||
         (capability.SliceId.Equals(AcceptedCapabilityRuntimeProjection.CapabilityId, StringComparison.OrdinalIgnoreCase) &&
+            capability.Status.Equals("runtime-test-admitted", StringComparison.OrdinalIgnoreCase)) ||
+        (capability.SliceId.Equals(DormitoryScenario2RuntimeProjection.SliceId, StringComparison.OrdinalIgnoreCase) &&
             capability.Status.Equals("runtime-test-admitted", StringComparison.OrdinalIgnoreCase));
 
     private static IReadOnlyDictionary<string, SliceRuntimeCapability> LoadCapabilities(string? manifestPath)
@@ -64,6 +66,7 @@ public sealed class SliceRuntimeCapabilityGate
                 slice.GetProperty("status").GetString() ?? "unregistered"))
             .ToList();
         sliceCapabilities.Add(AcceptedCapabilityRuntimeProjection.RuntimeCapability());
+        sliceCapabilities.Add(DormitoryScenario2RuntimeProjection.RuntimeCapability());
         return sliceCapabilities
             .GroupBy(item => item.WorkspaceId, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);

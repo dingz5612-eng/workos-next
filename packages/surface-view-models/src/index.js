@@ -42,7 +42,7 @@ export function WorkItemDecisionVM(source = {}, ctx = {}) {
     dueAtLabel: readable(source.dueAt || source.due || "today", ctx, "今日"),
     riskLabel: riskLevel,
     evidenceStateLabel: evidenceStateLabel(evidenceState, ctx),
-    ledgerImpactLabel: source.ledgerImpact ? readable(source.ledgerImpact, ctx, "涉及账务") : "不直接产生账务影响",
+    ledgerImpactLabel: source.ledgerImpact ? readable(source.ledgerImpact, ctx, tr(ctx, "ledgerImpactPresent", "涉及账务")) : tr(ctx, "ledgerNoImpact", "不直接产生账务影响"),
     transferHint: source.transferable ? "可转交" : "需由当前责任角色处理",
     traceSummary: sourceRefs.traceRefs.length ? tr(ctx, "traceBound", "已绑定审计轨迹") : tr(ctx, "traceWillBind", "提交后绑定审计轨迹")
   };
@@ -102,7 +102,10 @@ export function TrustedConfirmVM(source = {}, ctx = {}) {
     sourceRefs: decision.sourceRefs,
     businessCommitment: {
       title: tr(ctx, "businessCommitment", "业务承诺"),
-      body: `${decision.nextAction}；影响 ${decision.businessObject}。`,
+      body: joinSentences(ctx, [
+        decision.nextAction,
+        `${tr(ctx, "trustedConfirmImpact", "本次提交将影响：")}${decision.businessObject}`
+      ]),
       ledgerImpact: decision.ledgerImpactLabel,
       irreversible: "确认后只能通过补偿、纠错或回滚指令处理。"
     },
@@ -114,7 +117,10 @@ export function TrustedConfirmVM(source = {}, ctx = {}) {
     },
     auditAndRollback: {
       title: tr(ctx, "auditAndRollback", "审计与回滚"),
-      body: `${decision.traceSummary}；${tr(ctx, "rollbackCompensationReady", "必要时只能通过补偿或回滚指令处理。")}`
+      body: joinSentences(ctx, [
+        decision.traceSummary,
+        tr(ctx, "rollbackCompensationReady", "必要时只能通过补偿或回滚指令处理。")
+      ])
     }
   };
 }
@@ -430,6 +436,18 @@ function tx(value, ctx) {
 function tr(ctx, key, fallback) {
   const value = ctx?.tr ? ctx.tr(key) : "";
   return value && value !== key ? value : fallback;
+}
+
+function joinSentences(ctx, parts = []) {
+  const separator = tr(ctx, "sentenceSeparator", "");
+  return parts.map((part) => withSentenceEnd(ctx, part)).filter(Boolean).join(separator);
+}
+
+function withSentenceEnd(ctx, value) {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  if (/[。.!?！？]$/.test(text)) return text;
+  return `${text}${tr(ctx, "sentenceEnd", "。")}`;
 }
 
 function asArray(value) {

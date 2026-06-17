@@ -18,7 +18,7 @@ import { isActionableCardStatus, isTerminalCardStatus } from "../selectors/works
 import { permissionDiagnosticCopy } from "../surfaceGuard.js";
 import { buildBusinessAnchor, businessAnchorFieldsHtml, businessAnchorHtml } from "../businessAnchorKernel.js";
 import { isBedSetupCardId } from "../capabilityProjection.js";
-import { userFacingBusinessText, userFacingRiskLabel } from "../businessDisplayLanguage.js";
+import { userFacingBusinessText } from "../businessDisplayLanguage.js";
 import { stepContextContract } from "../systemContextContract.js";
 import {
   DeviceTrustVM,
@@ -526,21 +526,10 @@ export function TrustedConfirmSheet(item, card, ctx) {
   const vm = TrustedConfirmVM({ ...item, workspace, card }, ctx);
   const commitmentBody = trustedCommitmentBody(vm.businessCommitment.body, card, ctx);
   return `<section class="trusted-confirm-sheet" data-surface="trusted-confirm">
-    <h2>${text(ctx.tr("trustedConfirm"), ctx)}</h2>
-    <article>
-      <h3>${text(vm.businessCommitment.title, ctx)}</h3>
-      <p>${text(commitmentBody, ctx)}</p>
-      <p>${text(vm.businessCommitment.ledgerImpact, ctx)}</p>
-    </article>
-    <article>
-      <h3>${text(vm.evidenceAndPermission.title, ctx)}</h3>
-      <p>${text(vm.evidenceAndPermission.body, ctx)}</p>
-      <p>${text(ctx.tr("permissionPolicyMatched"), ctx)} · ${text(ctx.tr("decisionRisk"), ctx)} ${text(userFacingRiskLabel(vm.evidenceAndPermission.risk, ctx), ctx)}</p>
-    </article>
-    <article>
-      <h3>${text(vm.auditAndRollback.title, ctx)}</h3>
-      <p>${text(vm.auditAndRollback.body, ctx)}</p>
-    </article>
+    <b>${text(ctx.tr("trustedConfirm"), ctx)}</b>
+    <p>${text(commitmentBody, ctx)}</p>
+    <p>${text(vm.businessCommitment.ledgerImpact, ctx)}</p>
+    <small>${text(vm.auditAndRollback.body, ctx)}</small>
     ${ctx.state?.debugSurface ? `<dl>
       ${field("workItemId", model.workItemId, ctx)}
       ${field("caseId", model.caseId, ctx)}
@@ -555,6 +544,9 @@ export function TrustedConfirmSheet(item, card, ctx) {
 export function TechnicalAuditDetails(details = {}, ctx) {
   const canInspect = technicalDetailsVisible(ctx);
   const shouldOpen = Boolean(ctx.state?.debugSurface);
+  if (!canInspect) {
+    return `<div class="operation-technical-details" hidden data-surface="operation-runtime-proof" data-work-item-id="${attr(details.model?.workItemId, ctx)}" data-case-id="${attr(details.model?.caseId, ctx)}" data-submission-id="${attr(details.commandSubmissionId, ctx)}" data-payload-fingerprint="${attr(details.payloadHash, ctx)}"></div>`;
+  }
   return `<details class="operation-technical-details" data-surface="operation-runtime-proof" data-work-item-id="${attr(details.model?.workItemId, ctx)}" data-case-id="${attr(details.model?.caseId, ctx)}" data-submission-id="${attr(details.commandSubmissionId, ctx)}" data-payload-fingerprint="${attr(details.payloadHash, ctx)}" ${shouldOpen ? "open" : ""}>
     <summary>${text(ctx.tr(canInspect ? "auditDetails" : "technicalDetails"), ctx)}</summary>
     ${canInspect ? `<section class="operation-panel-runtime">
@@ -628,10 +620,17 @@ export function EvidenceSheet(card, draft, ctx) {
   const states = evidence.map((field) => EvidenceStateVM(field, (draft.evidenceDrafts || []).find((item) => item.requirementId === field.id), ctx));
   const verified = states.filter((state) => ["verified", "system_ready"].includes(state.status)).length;
   const hasMissing = states.some((state) => state.status === "missing");
+  const missing = states.filter((state) => !["verified", "system_ready"].includes(state.status));
+  const listSeparator = ctx.tr?.("listSeparator") || "、";
+  const materialNames = states.map((state) => state.name).join(listSeparator);
+  const missingNames = missing.map((state) => state.name).join(listSeparator);
+  const body = evidence.length
+    ? (missing.length ? `${ctx.tr("evidenceNeedReview")}：${missingNames}` : `${materialNames} ${ctx.tr("evidenceReady")}`)
+    : ctx.tr("noRequiredEvidence");
   return `<section class="evidence-sheet" data-surface="evidence-sheet">
     <b>${text(ctx.tr("trustedEvidence"), ctx)}</b>
-    <p>${evidence.length ? states.map((state) => text(`${state.name}: ${state.label}`, ctx)).join(" · ") : text(ctx.tr("noRequiredEvidence"), ctx)}</p>
-    <small>${verified}/${evidence.length} ${text(verified >= evidence.length && evidence.length ? ctx.tr("evidenceReady") : ctx.tr("evidenceNeedReview"), ctx)}</small>
+    <p>${text(body, ctx)}</p>
+    ${evidence.length ? `<small>${verified}/${evidence.length}</small>` : ""}
     ${hasMissing ? `<p>${text(ctx.tr("evidenceMissingBlocksSubmit"), ctx)}</p>` : ""}
   </section>`;
 }

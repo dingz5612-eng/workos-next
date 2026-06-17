@@ -5,7 +5,8 @@ import {
   generatedFieldLabel,
   generatedSurfaceControlsForCard,
   isBedSetupCardId,
-  isDormitoryScenario1CardId
+  isDormitoryScenario1CardId,
+  isResourceReadinessCardId
 } from "./capabilityProjection.js";
 import { isScopedResourceFieldRequired, isScopedResourceFieldVisible } from "./controls/resourceScopeControls.js";
 import { loadCompletedRecordSnapshots, loadDraft } from "./operationDrafts.js";
@@ -92,15 +93,21 @@ export function operationFieldRequired(field, card, item, ctx) {
   if (isBedSetupCardId(card?.id) && ["bedStatus", "bedNo", "bedLabel"].includes(fieldId)) return false;
   const values = operationDraftValues(item, card);
   const contextRequired = fieldRequiresUserAction(card?.id, fieldId, Boolean(field.required));
+  if (isResourceReadinessCardId(card?.id) && fieldId === "basicReadinessRemark") {
+    return values.readinessState === "needs_supplement";
+  }
   return isScopedResourceFieldRequired(card?.id, fieldId, values, contextRequired);
 }
 
 export function operationFieldVisible(field, card, item, ctx) {
   const fieldId = operationFieldId(field);
   const values = operationDraftValues(item, card);
-  if (isDormitoryScenario1CardId(card?.id) && isCaseContextIdentityField(fieldId)) return false;
+  if (isDormitoryScenario1CardId(card?.id) && isCaseContextIdentityField(fieldId) && fieldId !== "roomRef") return false;
   if (isBedSetupCardId(card?.id) && ["bedStatus", "bedNo", "bedLabel"].includes(fieldId)) return false;
   if (!fieldVisibleByContext(card?.id, fieldId)) return false;
+  if (isResourceReadinessCardId(card?.id) && fieldId === "basicReadinessRemark") {
+    return values.readinessState === "needs_supplement" || Boolean(values.basicReadinessRemark);
+  }
   const fallbackVisible = operationFieldRequired(field, card, item, ctx) ||
     !["备注", "补充说明", "异议说明"].includes(ctx.localTerm(field, "zh-CN"));
   return isScopedResourceFieldVisible(card?.id, fieldId, values, fallbackVisible);
@@ -195,6 +202,7 @@ export function isCaseContextReadonlyField(fieldId, card) {
 export function isForcedCaseContextReadonlyField(fieldId, card) {
   if (isContextCarriedField(card?.id, fieldId)) return true;
   if (fieldContextRole(card?.id, fieldId).contract) return false;
+  if (isResourceReadinessCardId(card?.id) && fieldId === "roomRef") return true;
   return isBedSetupCardId(card?.id) && ["roomRef", "roomId", "bedCount"].includes(fieldId);
 }
 
@@ -526,11 +534,11 @@ function contextFieldLabel(field, fieldId, ctx) {
 }
 
 function isCaseContextIdentityField(fieldId) {
-  return ["roomId", "bedId", "stayId", "residentId", "reservationId", "leadId", "depositId", "depositReceiptId", "paymentId", "chargeId", "taskId", "expenseId", "periodId"].includes(fieldId);
+  return ["roomRef", "roomId", "bedId", "stayId", "residentId", "reservationId", "leadId", "depositId", "depositReceiptId", "paymentId", "chargeId", "taskId", "expenseId", "periodId"].includes(fieldId);
 }
 
 function aggregateRefForValues(values) {
-  for (const key of ["depositId", "paymentId", "stayId", "residentId", "reservationId", "leadId", "roomId", "bedId", "taskId", "expenseId", "periodId"]) {
+  for (const key of ["depositId", "paymentId", "stayId", "residentId", "reservationId", "leadId", "roomRef", "roomId", "bedId", "taskId", "expenseId", "periodId"]) {
     if (values[key]) return `${key}:${values[key]}`;
   }
   return "";

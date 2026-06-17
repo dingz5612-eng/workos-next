@@ -33,7 +33,7 @@ describe("HOTFIX-SURFACE-UX-01 mobile visible copy contract", () => {
     expect(me).toContain("材料上传");
     expect(me).toContain("提交队列");
     expect(me).toContain("当前设备");
-    expect(me).toContain("没有待上传材料");
+    expect(me).toContain("没有待上传证据");
     expect(me).toContain("没有待提交办理");
     expect(me).toContain("学习中心");
     expect(me).toContain("我的权限");

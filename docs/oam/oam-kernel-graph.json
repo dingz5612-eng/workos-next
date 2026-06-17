@@ -1061,6 +1061,240 @@
       "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。"
     },
     {
+      "nodeId": "definition.definition.dormitory.operationBlockerUpdate.v1",
+      "nodeType": "Definition",
+      "owner": "Accommodation.ResourceOperationStatus",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "OperationBlocker.Update",
+      "testBinding": [
+        "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.OperationBlockerUpdate",
+      "commandType": "OperationBlocker.Update"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.operationInspectionConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Accommodation.ResourceOperationStatus",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "OperationInspection.Confirm",
+      "testBinding": [
+        "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.OperationInspectionConfirm",
+      "commandType": "OperationInspection.Confirm"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.operationResourceSelect.v1",
+      "nodeType": "Definition",
+      "owner": "Accommodation.ResourceOperationStatus",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "OperationResource.Select",
+      "testBinding": [
+        "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.OperationResourceSelect",
+      "commandType": "OperationResource.Select"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.operationRestoreConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Accommodation.ResourceOperationStatus",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "OperationRestore.Confirm",
+      "testBinding": [
+        "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.OperationRestoreConfirm",
+      "commandType": "OperationRestore.Confirm"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.operationStatusChangeConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Accommodation.ResourceOperationStatus",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "OperationStatusChange.Confirm",
+      "testBinding": [
+        "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.OperationStatusChangeConfirm",
+      "commandType": "OperationStatusChange.Confirm"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.operationStatusDraft.v1",
+      "nodeType": "Definition",
+      "owner": "Accommodation.ResourceOperationStatus",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "OperationStatus.Draft",
+      "testBinding": [
+        "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs",
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario2-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario2-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.OperationStatusDraft",
+      "commandType": "OperationStatus.Draft"
+    },
+    {
       "runtimeBinding": "Payment.Confirm",
       "testBinding": [
         "tests/WorkOS.RuntimeIntegrationTests",
@@ -4159,6 +4393,37 @@
       ]
     },
     {
+      "nodeId": "file.apps/mobile/src/businessDisplayLanguage.js",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "apps/mobile/src/businessDisplayLanguage.js",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/check-surface-contract.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-surface-contract.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_runtime",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/check-surface-contract.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "apps/mobile/src/businessDisplayLanguage.js",
+      "absorbedBy": "apps/mobile/src/businessDisplayLanguage.js",
+      "removalProofGate": "scripts/check-surface-contract.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-surface-contract.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.apps/mobile/src/capabilityProjection.js",
       "nodeType": "File",
       "owner": "mobile-surface-owner",
@@ -4213,6 +4478,37 @@
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "replacementPath": "apps/mobile/src/coachController.js",
       "absorbedBy": "apps/mobile/src/coachController.js",
+      "removalProofGate": "scripts/check-surface-contract.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-surface-contract.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.apps/mobile/src/completedRecordReadModel.js",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "apps/mobile/src/completedRecordReadModel.js",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/check-surface-contract.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-surface-contract.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_runtime",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/check-surface-contract.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "apps/mobile/src/completedRecordReadModel.js",
+      "absorbedBy": "apps/mobile/src/completedRecordReadModel.js",
       "removalProofGate": "scripts/check-surface-contract.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
@@ -4560,6 +4856,39 @@
         "scripts/check-surface-contract.mjs",
         "docs/oam/oam-kernel-graph.json"
       ]
+    },
+    {
+      "nodeId": "file.apps/mobile/src/generated/oam/business-display-language.generated.js",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "apps/mobile/src/generated/oam/business-display-language.generated.js",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/oam/check-generated-files-not-manually-edited.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-generated-files-not-manually-edited.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.compiler",
+      "checker": "scripts/oam/check-generated-files-not-manually-edited.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "apps/mobile/src/generated/oam/business-display-language.generated.js",
+      "absorbedBy": "apps/mobile/src/generated/oam/business-display-language.generated.js",
+      "removalProofGate": "scripts/oam/check-generated-files-not-manually-edited.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-generated-files-not-manually-edited.mjs",
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "generated": true,
+      "doNotEdit": true
     },
     {
       "nodeId": "file.apps/mobile/src/generated/oam/capability-projection.generated.json",
@@ -7594,6 +7923,378 @@
       ]
     },
     {
+      "nodeId": "file.artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/01-00-login-page.png",
+      "nodeType": "File",
+      "owner": "evidence-owner",
+      "sourceFile": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/01-00-login-page.png",
+      "runtimeBinding": "kernel.evidence",
+      "testBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/01-00-login-page.png",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "evidence_snapshot",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.evidence",
+      "checker": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/01-00-login-page.png",
+      "replacementPath": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/01-00-login-page.png",
+      "absorbedBy": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/01-00-login-page.png",
+      "removalProofGate": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/02-01-home-after-login.png",
+      "nodeType": "File",
+      "owner": "evidence-owner",
+      "sourceFile": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/02-01-home-after-login.png",
+      "runtimeBinding": "kernel.evidence",
+      "testBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/02-01-home-after-login.png",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "evidence_snapshot",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.evidence",
+      "checker": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/02-01-home-after-login.png",
+      "replacementPath": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/02-01-home-after-login.png",
+      "absorbedBy": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/02-01-home-after-login.png",
+      "removalProofGate": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/03-02-workitems-list.png",
+      "nodeType": "File",
+      "owner": "evidence-owner",
+      "sourceFile": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/03-02-workitems-list.png",
+      "runtimeBinding": "kernel.evidence",
+      "testBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/03-02-workitems-list.png",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "evidence_snapshot",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.evidence",
+      "checker": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/03-02-workitems-list.png",
+      "replacementPath": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/03-02-workitems-list.png",
+      "absorbedBy": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/03-02-workitems-list.png",
+      "removalProofGate": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/04-03-search-empty.png",
+      "nodeType": "File",
+      "owner": "evidence-owner",
+      "sourceFile": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/04-03-search-empty.png",
+      "runtimeBinding": "kernel.evidence",
+      "testBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/04-03-search-empty.png",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "evidence_snapshot",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.evidence",
+      "checker": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/04-03-search-empty.png",
+      "replacementPath": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/04-03-search-empty.png",
+      "absorbedBy": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/04-03-search-empty.png",
+      "removalProofGate": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/05-04-search-resource-basic-readiness-query.png",
+      "nodeType": "File",
+      "owner": "evidence-owner",
+      "sourceFile": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/05-04-search-resource-basic-readiness-query.png",
+      "runtimeBinding": "kernel.evidence",
+      "testBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/05-04-search-resource-basic-readiness-query.png",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "evidence_snapshot",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.evidence",
+      "checker": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/05-04-search-resource-basic-readiness-query.png",
+      "replacementPath": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/05-04-search-resource-basic-readiness-query.png",
+      "absorbedBy": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/05-04-search-resource-basic-readiness-query.png",
+      "removalProofGate": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/06-05-click-start-learning-on-scenario1.png",
+      "nodeType": "File",
+      "owner": "evidence-owner",
+      "sourceFile": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/06-05-click-start-learning-on-scenario1.png",
+      "runtimeBinding": "kernel.evidence",
+      "testBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/06-05-click-start-learning-on-scenario1.png",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "evidence_snapshot",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.evidence",
+      "checker": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/06-05-click-start-learning-on-scenario1.png",
+      "replacementPath": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/06-05-click-start-learning-on-scenario1.png",
+      "absorbedBy": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/06-05-click-start-learning-on-scenario1.png",
+      "removalProofGate": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/07-06-learning-search-resource-basic-readiness.png",
+      "nodeType": "File",
+      "owner": "evidence-owner",
+      "sourceFile": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/07-06-learning-search-resource-basic-readiness.png",
+      "runtimeBinding": "kernel.evidence",
+      "testBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/07-06-learning-search-resource-basic-readiness.png",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "evidence_snapshot",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.evidence",
+      "checker": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/07-06-learning-search-resource-basic-readiness.png",
+      "replacementPath": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/07-06-learning-search-resource-basic-readiness.png",
+      "absorbedBy": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/07-06-learning-search-resource-basic-readiness.png",
+      "removalProofGate": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/08-07-back-to-search.png",
+      "nodeType": "File",
+      "owner": "evidence-owner",
+      "sourceFile": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/08-07-back-to-search.png",
+      "runtimeBinding": "kernel.evidence",
+      "testBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/08-07-back-to-search.png",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "evidence_snapshot",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.evidence",
+      "checker": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/08-07-back-to-search.png",
+      "replacementPath": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/08-07-back-to-search.png",
+      "absorbedBy": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/08-07-back-to-search.png",
+      "removalProofGate": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/09-08-search-scenario2-resource-operation.png",
+      "nodeType": "File",
+      "owner": "evidence-owner",
+      "sourceFile": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/09-08-search-scenario2-resource-operation.png",
+      "runtimeBinding": "kernel.evidence",
+      "testBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/09-08-search-scenario2-resource-operation.png",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "evidence_snapshot",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.evidence",
+      "checker": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/09-08-search-scenario2-resource-operation.png",
+      "replacementPath": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/09-08-search-scenario2-resource-operation.png",
+      "absorbedBy": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/09-08-search-scenario2-resource-operation.png",
+      "removalProofGate": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/10-09-search-scenario3-product-pricing.png",
+      "nodeType": "File",
+      "owner": "evidence-owner",
+      "sourceFile": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/10-09-search-scenario3-product-pricing.png",
+      "runtimeBinding": "kernel.evidence",
+      "testBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/10-09-search-scenario3-product-pricing.png",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "evidence_snapshot",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.evidence",
+      "checker": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/10-09-search-scenario3-product-pricing.png",
+      "replacementPath": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/10-09-search-scenario3-product-pricing.png",
+      "absorbedBy": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/10-09-search-scenario3-product-pricing.png",
+      "removalProofGate": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/11-10-search-rate-plan.png",
+      "nodeType": "File",
+      "owner": "evidence-owner",
+      "sourceFile": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/11-10-search-rate-plan.png",
+      "runtimeBinding": "kernel.evidence",
+      "testBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/11-10-search-rate-plan.png",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "evidence_snapshot",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.evidence",
+      "checker": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/11-10-search-rate-plan.png",
+      "replacementPath": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/11-10-search-rate-plan.png",
+      "absorbedBy": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/11-10-search-rate-plan.png",
+      "removalProofGate": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/12-11-direct-workbench-view.png",
+      "nodeType": "File",
+      "owner": "evidence-owner",
+      "sourceFile": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/12-11-direct-workbench-view.png",
+      "runtimeBinding": "kernel.evidence",
+      "testBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/12-11-direct-workbench-view.png",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "evidence_snapshot",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.evidence",
+      "checker": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/12-11-direct-workbench-view.png",
+      "replacementPath": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/12-11-direct-workbench-view.png",
+      "absorbedBy": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/12-11-direct-workbench-view.png",
+      "removalProofGate": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "scripts/oam/check-oam-kernel-graph.mjs"
+      ]
+    },
+    {
       "nodeId": "file.docs/business/admission/business-line-gate.yml",
       "nodeType": "File",
       "owner": "admission-owner",
@@ -8249,6 +8950,37 @@
       "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "graphBinding": "file.docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml"
+    },
+    {
+      "nodeId": "file.docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json",
+      "nodeType": "File",
+      "owner": "business-contract-owner",
+      "sourceFile": "docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-production-mainline-activation-authority.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json",
+      "absorbedBy": "docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json",
+      "removalProofGate": "scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
     },
     {
       "nodeId": "file.docs/business/domains/dormitory/dormitory-release-train.yml",
@@ -20802,6 +21534,99 @@
       "graphBinding": "file.docs/oam/domain-derived-contracts.json"
     },
     {
+      "nodeId": "file.docs/oam/dormitory-13-scenario-production-usable-closure-report.md",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/dormitory-13-scenario-production-usable-closure-report.md",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-current-oam.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-current-oam.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "human_manual",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-current-oam.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/oam/dormitory-13-scenario-production-usable-closure-report.md",
+      "absorbedBy": "docs/oam/dormitory-13-scenario-production-usable-closure-report.md",
+      "removalProofGate": "scripts/oam/check-current-oam.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-current-oam.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.docs/oam/dormitory-defect-closure-ledger.json",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/dormitory-defect-closure-ledger.json",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-current-oam.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-current-oam.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-current-oam.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/oam/dormitory-defect-closure-ledger.json",
+      "absorbedBy": "docs/oam/dormitory-defect-closure-ledger.json",
+      "removalProofGate": "scripts/oam/check-current-oam.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-current-oam.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.docs/oam/dormitory-final-frontend-ux-acceptance.md",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/dormitory-final-frontend-ux-acceptance.md",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-current-oam.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-current-oam.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "human_manual",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-current-oam.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/oam/dormitory-final-frontend-ux-acceptance.md",
+      "absorbedBy": "docs/oam/dormitory-final-frontend-ux-acceptance.md",
+      "removalProofGate": "scripts/oam/check-current-oam.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-current-oam.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.docs/oam/dormitory-first-golden-chain-landing.current.json",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -20836,6 +21661,68 @@
         "scripts/oam/check-current-oam-release-attestation.mjs",
         "scripts/oam/run-control-plane-checks.ps1",
         ".github/workflows/ci.yml"
+      ]
+    },
+    {
+      "nodeId": "file.docs/oam/dormitory-mainline-manifest.json",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/dormitory-mainline-manifest.json",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-current-oam.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-current-oam.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-current-oam.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/oam/dormitory-mainline-manifest.json",
+      "absorbedBy": "docs/oam/dormitory-mainline-manifest.json",
+      "removalProofGate": "scripts/oam/check-current-oam.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-current-oam.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.docs/oam/dormitory-operation-execution-contract.json",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/dormitory-operation-execution-contract.json",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-current-oam.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-current-oam.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-current-oam.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/oam/dormitory-operation-execution-contract.json",
+      "absorbedBy": "docs/oam/dormitory-operation-execution-contract.json",
+      "removalProofGate": "scripts/oam/check-current-oam.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-current-oam.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
     {
@@ -21482,6 +22369,68 @@
       ]
     },
     {
+      "nodeId": "file.docs/oam/legacy-retirement-ledger.json",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/legacy-retirement-ledger.json",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-current-oam.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-current-oam.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-current-oam.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/oam/legacy-retirement-ledger.json",
+      "absorbedBy": "docs/oam/legacy-retirement-ledger.json",
+      "removalProofGate": "scripts/oam/check-current-oam.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-current-oam.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.docs/oam/lodging-consumer-graph.json",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/lodging-consumer-graph.json",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-current-oam.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-current-oam.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-current-oam.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/oam/lodging-consumer-graph.json",
+      "absorbedBy": "docs/oam/lodging-consumer-graph.json",
+      "removalProofGate": "scripts/oam/check-current-oam.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-current-oam.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.docs/oam/mobile-branch-risk-ledger.json",
       "nodeType": "File",
       "owner": "finance-truth-owner",
@@ -21636,6 +22585,99 @@
         "scripts/oam/generate-current-evidence-root.mjs",
         "scripts/oam/run-control-plane-checks.ps1",
         ".github/workflows/ci.yml"
+      ]
+    },
+    {
+      "nodeId": "file.docs/oam/project-maintainability-closure-report.md",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/project-maintainability-closure-report.md",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-current-oam.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-current-oam.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "human_manual",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-current-oam.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/oam/project-maintainability-closure-report.md",
+      "absorbedBy": "docs/oam/project-maintainability-closure-report.md",
+      "removalProofGate": "scripts/oam/check-current-oam.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-current-oam.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.docs/oam/project-maintainability-governance.json",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/project-maintainability-governance.json",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-current-oam.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-current-oam.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-current-oam.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/oam/project-maintainability-governance.json",
+      "absorbedBy": "docs/oam/project-maintainability-governance.json",
+      "removalProofGate": "scripts/oam/check-current-oam.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-current-oam.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.docs/oam/project-purity-authority-seal-report.md",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/project-purity-authority-seal-report.md",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-current-oam.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-current-oam.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "human_manual",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-current-oam.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/oam/project-purity-authority-seal-report.md",
+      "absorbedBy": "docs/oam/project-purity-authority-seal-report.md",
+      "removalProofGate": "scripts/oam/check-current-oam.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-current-oam.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
     {
@@ -21985,6 +23027,37 @@
       "consumers": [
         "scripts/oam/check-system-operating-kernel.mjs",
         "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/oam/visible-business-copy-contract.json",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/visible-business-copy-contract.json",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-current-oam.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-current-oam.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-current-oam.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/oam/visible-business-copy-contract.json",
+      "absorbedBy": "docs/oam/visible-business-copy-contract.json",
+      "removalProofGate": "scripts/oam/check-current-oam.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-current-oam.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
     {
@@ -26238,6 +27311,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+      "nodeType": "File",
+      "owner": "business-contract-owner",
+      "sourceFile": "scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-production-mainline-activation-authority.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+      "absorbedBy": "scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-production-mainline-activation-authority.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/business/check-dormitory-release-train.mjs",
       "nodeType": "File",
       "owner": "oam-release-owner",
@@ -29312,6 +30416,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/dev/manage-local-test-environment.ps1",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/dev/manage-local-test-environment.ps1",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/dev/manage-local-test-environment.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/dev/manage-local-test-environment.ps1"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/dev/manage-local-test-environment.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/dev/manage-local-test-environment.ps1",
+      "absorbedBy": "scripts/dev/manage-local-test-environment.ps1",
+      "removalProofGate": "scripts/dev/manage-local-test-environment.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/dev/manage-local-test-environment.ps1",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/finance/check-finance-semantic-truth.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -30372,6 +31507,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-dormitory-active-path-gate.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-dormitory-active-path-gate.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-active-path-gate.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-active-path-gate.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-active-path-gate.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-dormitory-active-path-gate.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-active-path-gate.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-active-path-gate.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-active-path-gate.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-dormitory-bed-cardinality-authority.mjs",
       "nodeType": "File",
       "owner": "oam-release-owner",
@@ -30475,6 +31641,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-dormitory-ci-hard-gates.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-dormitory-ci-hard-gates.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-ci-hard-gates.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-ci-hard-gates.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-ci-hard-gates.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-dormitory-ci-hard-gates.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-ci-hard-gates.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-ci-hard-gates.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-ci-hard-gates.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-dormitory-command-contract-authority.mjs",
       "nodeType": "File",
       "owner": "oam-release-owner",
@@ -30507,6 +31704,37 @@
         "docs/oam/current-authority-index.json",
         "docs/oam/oam-kernel-graph.json",
         "docs/oam/current-engineering-ledger.json"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-dormitory-defect-closure-ledger.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-dormitory-defect-closure-ledger.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-defect-closure-ledger.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-defect-closure-ledger.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-defect-closure-ledger.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-dormitory-defect-closure-ledger.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-defect-closure-ledger.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-defect-closure-ledger.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-defect-closure-ledger.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
     {
@@ -30742,6 +31970,99 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-dormitory-local-test-environment-manager.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-dormitory-local-test-environment-manager.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-local-test-environment-manager.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-local-test-environment-manager.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-local-test-environment-manager.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-dormitory-local-test-environment-manager.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-local-test-environment-manager.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-local-test-environment-manager.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-local-test-environment-manager.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-dormitory-mainline-activation-transaction.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-dormitory-mainline-activation-transaction.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-mainline-activation-transaction.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-mainline-activation-transaction.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-mainline-activation-transaction.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-dormitory-mainline-activation-transaction.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-mainline-activation-transaction.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-mainline-activation-transaction.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-mainline-activation-transaction.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-dormitory-mainline-manifest.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-dormitory-mainline-manifest.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-mainline-manifest.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-mainline-manifest.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-mainline-manifest.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-dormitory-mainline-manifest.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-mainline-manifest.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-mainline-manifest.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-mainline-manifest.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-dormitory-object-graph-authority.mjs",
       "nodeType": "File",
       "owner": "oam-release-owner",
@@ -30774,6 +32095,68 @@
         "docs/oam/current-authority-index.json",
         "docs/oam/oam-kernel-graph.json",
         "docs/oam/current-engineering-ledger.json"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-dormitory-operation-execution-contract.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-dormitory-operation-execution-contract.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-operation-execution-contract.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-operation-execution-contract.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-operation-execution-contract.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-dormitory-operation-execution-contract.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-operation-execution-contract.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-operation-execution-contract.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-operation-execution-contract.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-dormitory-production-usable-closure-report.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-dormitory-production-usable-closure-report.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-production-usable-closure-report.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-production-usable-closure-report.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-production-usable-closure-report.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-dormitory-production-usable-closure-report.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-production-usable-closure-report.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-production-usable-closure-report.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-production-usable-closure-report.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
     {
@@ -30964,6 +32347,37 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
         "scripts/oam/check-evidence-projects-capability-subject-chain-only.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-evidence-root-hard-gate-matrix.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-evidence-root-hard-gate-matrix.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-evidence-root-hard-gate-matrix.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-evidence-root-hard-gate-matrix.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-evidence-root-hard-gate-matrix.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-evidence-root-hard-gate-matrix.mjs",
+      "absorbedBy": "scripts/oam/check-evidence-root-hard-gate-matrix.mjs",
+      "removalProofGate": "scripts/oam/check-evidence-root-hard-gate-matrix.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-evidence-root-hard-gate-matrix.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
@@ -31514,6 +32928,68 @@
         "scripts/oam/run-control-plane-checks.ps1",
         ".github/workflows/ci.yml",
         "scripts/oam/generate-current-evidence-root.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-legacy-retirement-ledger.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-legacy-retirement-ledger.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-legacy-retirement-ledger.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-legacy-retirement-ledger.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-legacy-retirement-ledger.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-legacy-retirement-ledger.mjs",
+      "absorbedBy": "scripts/oam/check-legacy-retirement-ledger.mjs",
+      "removalProofGate": "scripts/oam/check-legacy-retirement-ledger.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-legacy-retirement-ledger.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-lodging-consumer-graph.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-lodging-consumer-graph.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-lodging-consumer-graph.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-lodging-consumer-graph.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-lodging-consumer-graph.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-lodging-consumer-graph.mjs",
+      "absorbedBy": "scripts/oam/check-lodging-consumer-graph.mjs",
+      "removalProofGate": "scripts/oam/check-lodging-consumer-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-lodging-consumer-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
     {
@@ -32085,6 +33561,68 @@
         "scripts/oam/run-control-plane-checks.ps1",
         ".github/workflows/ci.yml",
         "scripts/oam/generate-current-evidence-root.mjs"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-project-maintainability-governance.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-project-maintainability-governance.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-project-maintainability-governance.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-project-maintainability-governance.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-project-maintainability-governance.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-project-maintainability-governance.mjs",
+      "absorbedBy": "scripts/oam/check-project-maintainability-governance.mjs",
+      "removalProofGate": "scripts/oam/check-project-maintainability-governance.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-project-maintainability-governance.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-project-purity-authority-seal.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-project-purity-authority-seal.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-project-purity-authority-seal.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-project-purity-authority-seal.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-project-purity-authority-seal.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-project-purity-authority-seal.mjs",
+      "absorbedBy": "scripts/oam/check-project-purity-authority-seal.mjs",
+      "removalProofGate": "scripts/oam/check-project-purity-authority-seal.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-project-purity-authority-seal.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
     {
@@ -32983,6 +34521,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-visible-business-copy-contract.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-visible-business-copy-contract.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-visible-business-copy-contract.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-visible-business-copy-contract.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-visible-business-copy-contract.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-visible-business-copy-contract.mjs",
+      "absorbedBy": "scripts/oam/check-visible-business-copy-contract.mjs",
+      "removalProofGate": "scripts/oam/check-visible-business-copy-contract.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-visible-business-copy-contract.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-workflow-state-registry.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -33325,6 +34894,37 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
         "scripts/oam/check-oam-kernel-graph.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/generate-dormitory-mainline-activation-transaction.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/generate-dormitory-mainline-activation-transaction.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/generate-dormitory-mainline-activation-transaction.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/generate-dormitory-mainline-activation-transaction.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/generate-dormitory-mainline-activation-transaction.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/generate-dormitory-mainline-activation-transaction.mjs",
+      "absorbedBy": "scripts/oam/generate-dormitory-mainline-activation-transaction.mjs",
+      "removalProofGate": "scripts/oam/generate-dormitory-mainline-activation-transaction.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/generate-dormitory-mainline-activation-transaction.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
@@ -33925,6 +35525,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "absorbedBy": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "removalProofGate": "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/surface/check-dormitory-first-golden-chain-negative-browser-audit.mjs",
       "nodeType": "File",
       "owner": "surface-owner",
@@ -34018,6 +35649,68 @@
       ]
     },
     {
+      "nodeId": "file.scripts/surface/check-dormitory-performance-recoverability-audit.mjs",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "scripts/surface/check-dormitory-performance-recoverability-audit.mjs",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/surface/check-dormitory-performance-recoverability-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-performance-recoverability-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/surface/check-dormitory-performance-recoverability-audit.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/surface/check-dormitory-performance-recoverability-audit.mjs",
+      "absorbedBy": "scripts/surface/check-dormitory-performance-recoverability-audit.mjs",
+      "removalProofGate": "scripts/surface/check-dormitory-performance-recoverability-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-performance-recoverability-audit.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/surface/check-dormitory-prelaunch-ops-trial.mjs",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "scripts/surface/check-dormitory-prelaunch-ops-trial.mjs",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/surface/check-dormitory-prelaunch-ops-trial.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-prelaunch-ops-trial.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/surface/check-dormitory-prelaunch-ops-trial.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/surface/check-dormitory-prelaunch-ops-trial.mjs",
+      "absorbedBy": "scripts/surface/check-dormitory-prelaunch-ops-trial.mjs",
+      "removalProofGate": "scripts/surface/check-dormitory-prelaunch-ops-trial.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-prelaunch-ops-trial.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/surface/check-dormitory-scenario-journey.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -34045,6 +35738,68 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
         "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/surface/check-dormitory-scenario1-negative-browser-audit.mjs",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "scripts/surface/check-dormitory-scenario1-negative-browser-audit.mjs",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/surface/check-dormitory-scenario1-negative-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-scenario1-negative-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/surface/check-dormitory-scenario1-negative-browser-audit.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/surface/check-dormitory-scenario1-negative-browser-audit.mjs",
+      "absorbedBy": "scripts/surface/check-dormitory-scenario1-negative-browser-audit.mjs",
+      "removalProofGate": "scripts/surface/check-dormitory-scenario1-negative-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-scenario1-negative-browser-audit.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/surface/check-dormitory-scenario1-positive-browser-audit.mjs",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "scripts/surface/check-dormitory-scenario1-positive-browser-audit.mjs",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/surface/check-dormitory-scenario1-positive-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/check-dormitory-scenario1-positive-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/surface/check-dormitory-scenario1-positive-browser-audit.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/surface/check-dormitory-scenario1-positive-browser-audit.mjs",
+      "absorbedBy": "scripts/surface/check-dormitory-scenario1-positive-browser-audit.mjs",
+      "removalProofGate": "scripts/surface/check-dormitory-scenario1-positive-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/check-dormitory-scenario1-positive-browser-audit.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
@@ -35425,6 +37180,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/surface/generate-dormitory-final-frontend-ux-acceptance.mjs",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "scripts/surface/generate-dormitory-final-frontend-ux-acceptance.mjs",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/surface/generate-dormitory-final-frontend-ux-acceptance.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/generate-dormitory-final-frontend-ux-acceptance.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/surface/generate-dormitory-final-frontend-ux-acceptance.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/surface/generate-dormitory-final-frontend-ux-acceptance.mjs",
+      "absorbedBy": "scripts/surface/generate-dormitory-final-frontend-ux-acceptance.mjs",
+      "removalProofGate": "scripts/surface/generate-dormitory-final-frontend-ux-acceptance.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/generate-dormitory-final-frontend-ux-acceptance.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/surface/lib/surface-check-lib.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -35508,6 +37294,37 @@
       "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs",
+      "absorbedBy": "scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs",
+      "removalProofGate": "scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
@@ -35636,6 +37453,99 @@
       ]
     },
     {
+      "nodeId": "file.scripts/surface/run-dormitory-performance-recoverability-audit.mjs",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "scripts/surface/run-dormitory-performance-recoverability-audit.mjs",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/surface/run-dormitory-performance-recoverability-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/run-dormitory-performance-recoverability-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/surface/run-dormitory-performance-recoverability-audit.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/surface/run-dormitory-performance-recoverability-audit.mjs",
+      "absorbedBy": "scripts/surface/run-dormitory-performance-recoverability-audit.mjs",
+      "removalProofGate": "scripts/surface/run-dormitory-performance-recoverability-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/run-dormitory-performance-recoverability-audit.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/surface/run-dormitory-prelaunch-ops-trial.mjs",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "scripts/surface/run-dormitory-prelaunch-ops-trial.mjs",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/surface/run-dormitory-prelaunch-ops-trial.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/run-dormitory-prelaunch-ops-trial.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/surface/run-dormitory-prelaunch-ops-trial.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/surface/run-dormitory-prelaunch-ops-trial.mjs",
+      "absorbedBy": "scripts/surface/run-dormitory-prelaunch-ops-trial.mjs",
+      "removalProofGate": "scripts/surface/run-dormitory-prelaunch-ops-trial.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/run-dormitory-prelaunch-ops-trial.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/surface/run-dormitory-prelaunch-ops-trial.ps1",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "scripts/surface/run-dormitory-prelaunch-ops-trial.ps1",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/surface/run-dormitory-prelaunch-ops-trial.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/run-dormitory-prelaunch-ops-trial.ps1"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/surface/run-dormitory-prelaunch-ops-trial.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/surface/run-dormitory-prelaunch-ops-trial.ps1",
+      "absorbedBy": "scripts/surface/run-dormitory-prelaunch-ops-trial.ps1",
+      "removalProofGate": "scripts/surface/run-dormitory-prelaunch-ops-trial.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/run-dormitory-prelaunch-ops-trial.ps1",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.scripts/surface/run-dormitory-real-browser-audits.ps1",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -35694,6 +37604,68 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
         "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/surface/run-dormitory-scenario1-negative-browser-audit.mjs",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "scripts/surface/run-dormitory-scenario1-negative-browser-audit.mjs",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/surface/run-dormitory-scenario1-negative-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/run-dormitory-scenario1-negative-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/surface/run-dormitory-scenario1-negative-browser-audit.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/surface/run-dormitory-scenario1-negative-browser-audit.mjs",
+      "absorbedBy": "scripts/surface/run-dormitory-scenario1-negative-browser-audit.mjs",
+      "removalProofGate": "scripts/surface/run-dormitory-scenario1-negative-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/run-dormitory-scenario1-negative-browser-audit.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/surface/run-dormitory-scenario1-positive-browser-audit.mjs",
+      "nodeType": "File",
+      "owner": "surface-owner",
+      "sourceFile": "scripts/surface/run-dormitory-scenario1-positive-browser-audit.mjs",
+      "runtimeBinding": "kernel.surface",
+      "testBinding": [
+        "scripts/surface/run-dormitory-scenario1-positive-browser-audit.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/surface/run-dormitory-scenario1-positive-browser-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.surface",
+      "checker": "scripts/surface/run-dormitory-scenario1-positive-browser-audit.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/surface/run-dormitory-scenario1-positive-browser-audit.mjs",
+      "absorbedBy": "scripts/surface/run-dormitory-scenario1-positive-browser-audit.mjs",
+      "removalProofGate": "scripts/surface/run-dormitory-scenario1-positive-browser-audit.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/surface/run-dormitory-scenario1-positive-browser-audit.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
@@ -38124,6 +40096,37 @@
       "sourceKernelVersion": "oam.dormitory-scenario2-resource-operation-status-generator.v1",
       "generated": true,
       "doNotEdit": true
+    },
+    {
+      "nodeId": "file.services/core-api/WorkOS.Api/Runtime/DormitoryScenario2RuntimeProjection.cs",
+      "nodeType": "File",
+      "owner": "runtime-owner",
+      "sourceFile": "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2RuntimeProjection.cs",
+      "runtimeBinding": "kernel.runtime",
+      "testBinding": [
+        "scripts/validate-runtime-api.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/validate-runtime-api.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_runtime",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.runtime",
+      "checker": "scripts/validate-runtime-api.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2RuntimeProjection.cs",
+      "absorbedBy": "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2RuntimeProjection.cs",
+      "removalProofGate": "scripts/validate-runtime-api.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-runtime-api.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
     },
     {
       "nodeId": "file.services/core-api/WorkOS.Api/Runtime/DormitoryScenario3ProductAndPricing.generated.json",

@@ -27,5 +27,10 @@ export const mobileViewModelCopyKeys = [
   "cannotHandleNow",
   "missingEvidenceBlocks",
   "trustedConfirmImpact",
+  "ledgerImpactPresent",
+  "ledgerNoImpact",
+  "listSeparator",
+  "sentenceSeparator",
+  "sentenceEnd",
   "rollbackCompensationReady"
 ];

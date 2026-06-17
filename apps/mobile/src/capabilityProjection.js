@@ -15,7 +15,7 @@ export const DORMITORY_SCENARIO1_STEPS = (scenarioOneMirror.steps || []).map((st
   cardId: currentRouteCardId(step.commandId),
   workItemType: step.commandId,
   definitionId: `definition.dormitory.${step.stepId}.v1`,
-  title: { "zh-CN": businessDisplayZh(step.commandBusinessNameZh || step.nameZh) }
+  title: generatedRouteStepTitle(step.commandId, step.commandBusinessNameZh || step.nameZh)
 }));
 
 export const ACCEPTED_MAINLINE_DIGEST = mainlineControl.outputContentDigest;
@@ -60,6 +60,7 @@ const generatedFieldsByCard = (scenarioOneMirror.steps || []).reduce((current, s
 function canonicalSurfaceFieldId(fieldId = "") {
   return {
     capacity: "bedCount",
+    roomId: "roomRef",
     basicReadinessConclusion: "readinessState"
   }[fieldId] || fieldId;
 }
@@ -67,6 +68,22 @@ function canonicalSurfaceFieldId(fieldId = "") {
 function currentRouteCardId(commandId = "") {
   const suffix = String(commandId || "").split(".").filter(Boolean).pop() || "";
   return suffix ? `cert.${suffix.charAt(0).toLowerCase()}${suffix.slice(1)}` : "";
+}
+
+function generatedRouteStepTitle(commandId = "", fallbackZh = "") {
+  const generatedStep = (capabilityProjection.steps || []).find((step) =>
+    step.workItemType === commandId || step.cardId === commandId);
+  const generatedTitle = generatedStep?.title || {};
+  const fallback = businessDisplayZh(fallbackZh);
+  return {
+    "zh-CN": stripStepOrdinal(generatedTitle["zh-CN"]) || fallback,
+    "ru-RU": stripStepOrdinal(generatedTitle["ru-RU"]) || stripStepOrdinal(generatedTitle["zh-CN"]) || fallback,
+    "ky-KG": stripStepOrdinal(generatedTitle["ky-KG"]) || stripStepOrdinal(generatedTitle["zh-CN"]) || fallback
+  };
+}
+
+function stripStepOrdinal(value = "") {
+  return String(value || "").replace(/^\s*\d+\s*\/\s*\d+\s+/, "").trim();
 }
 
 export function isDormitoryScenario1WorkspaceId(workspaceId = "") {

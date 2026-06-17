@@ -35,8 +35,8 @@ for (const other of [bedSetup, readiness]) {
 }
 for (const [currentStep, fieldIds] of [
   [roomSetup, ["roomId"]],
-  [bedSetup, ["roomId", "bedId"]],
-  [readiness, ["roomId", "bedId"]]
+  [bedSetup, ["roomRef", "bedId"]],
+  [readiness, ["roomRef", "bedId"]]
 ]) {
   for (const fieldId of fieldIds) {
     const currentField = field(currentStep, fieldId);
@@ -45,6 +45,9 @@ for (const [currentStep, fieldIds] of [
       fail(`${currentStep?.workItemType}.${fieldId} must be readonly and not user-submitted.`);
     }
   }
+}
+if (!capabilityProjectionSource.includes("roomId: \"roomRef\"")) {
+  fail("capabilityProjection.js must declare roomId -> roomRef canonical surface alias.");
 }
 for (const marker of [
   "capability-projection.generated.json",
@@ -56,8 +59,13 @@ for (const marker of [
   if (!capabilityProjectionSource.includes(marker)) fail(`capabilityProjection.js missing ${marker}.`);
 }
 if (!operationValidation.includes("isBedSetupCardId")) fail("operationValidation must use generated bed setup card identity.");
-if (!optionSetContract.includes("generatedOptionLabels(\"readinessState\")")) {
-  fail("optionSetContract must read readiness labels from generated projection.");
+for (const marker of [
+  "generatedLocalizedOptionLabels(\"readinessState\")",
+  "generatedLocalizedOptionLabels(\"basicReadinessCheckResult\")"
+]) {
+  if (!optionSetContract.includes(marker)) {
+    fail(`optionSetContract must read localized option labels from generated projection: ${marker}.`);
+  }
 }
 for (const value of ["roomNo", "bedNo", "readinessState"]) {
   if (!(projection?.businessUi?.completionBusinessValueFields ?? []).includes(value)) {

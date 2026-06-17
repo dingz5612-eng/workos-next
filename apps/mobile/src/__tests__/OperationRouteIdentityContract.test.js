@@ -295,6 +295,8 @@ describe("OAM Surface WorkItem route identity", () => {
     expect(html).toContain('aria-label="填写房间信息 已完成 · 有更正"');
     expect(text).toContain("已完成 · 有更正");
     expect(text).toContain("已完成");
+    expect(text).not.toContain("不能提交原因");
+    expect(text).not.toContain("当前没有新的系统阻断");
     expect(html).not.toContain('aria-label="填写房间信息 更正中"');
   });
 

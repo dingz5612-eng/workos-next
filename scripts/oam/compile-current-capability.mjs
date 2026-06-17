@@ -154,6 +154,19 @@ const scenario1ReadinessConclusionOptions = (scenario1RuntimeRules.readinessConc
       : "basic_readiness_not_passed",
   requiredFields: item.value === "needs_supplement" ? ["basicReadinessRemark"] : []
 }));
+const scenario1ReadinessStep = (scenario1StepsFields.steps ?? []).find((step) => step.stepId === "basic-readiness-confirmation") ?? {};
+const scenario1ReadinessCheckResultOptions = (scenario1ReadinessStep.checkResultOptions ?? [
+  { value: "checked_ok", labelZh: "已检查无异常" },
+  { value: "needs_supplement", labelZh: "有问题需补充" },
+  { value: "failed", labelZh: "不通过" }
+]).map((item) => ({
+  value: item.value,
+  label: {
+    "zh-CN": item.labelZh,
+    "ru-RU": item.labelRu ?? item.labelZh,
+    "ky-KG": item.labelKy ?? item.labelZh
+  }
+}));
 const optionSets = {
   bunkType: [
     { value: "bunk_pair", label: { "zh-CN": "上下铺：两上两下", "ru-RU": "Двухъярусные: две верхние и две нижние", "ky-KG": "Эки кабат: эки үстүңкү жана эки астыңкы" } },
@@ -170,6 +183,7 @@ const optionSets = {
     { value: "whole", label: { "zh-CN": "按平铺批量生成", "ru-RU": "Пакетно как обычные койки", "ky-KG": "Жалпак койка катары топтом түзүү" } },
     { value: "manual_review", label: { "zh-CN": "需要人工复核", "ru-RU": "Нужна ручная проверка", "ky-KG": "Кол менен текшерүү керек" } }
   ],
+  basicReadinessCheckResult: scenario1ReadinessCheckResultOptions,
   readinessState: scenario1ReadinessConclusionOptions
 };
 const generatedBusinessContracts = buildGeneratedBusinessContracts();
@@ -607,6 +621,8 @@ function sourceAliasReadonlyControl(control, normalized, keepNormalized) {
   const normalizedKey = `${normalized.workItemType}:${normalized.fieldId}`;
   const aliasTargetBySourceKey = {
     "Dorm.RoomSetupConfirm:capacity": "bedCount",
+    "Dorm.BedSetupConfirm:roomId": "roomRef",
+    "Dorm.ResourceReadinessConfirm:roomId": "roomRef",
     "Dorm.BedSetupConfirm:bedNo": "bedLabels"
   };
   const sourceAliasFor = aliasTargetBySourceKey[originalKey];
@@ -671,9 +687,14 @@ function userVisibleLabelToFieldId(label = "") {
     "床位数量": "bedCount",
     "床位数": "bedCount",
     "备注": "roomRemark",
+    "需要补充时填写检查备注": "basicReadinessRemark",
     "床型": "bedType",
     "床位备注": "bedRemark",
     "特殊说明": "specialNotes",
+    "基础检查结果选择": "basicCheckResult",
+    "保洁检查结果选择": "cleaningBasicCheckResult",
+    "设施检查结果选择": "facilityBasicCheckResult",
+    "安全检查结果选择": "safetyBasicCheckResult",
     "基础检查结果": "basicCheckResult",
     "保洁基础检查结果": "cleaningBasicCheckResult",
     "设施基础检查结果": "facilityBasicCheckResult",
@@ -699,6 +720,7 @@ function authorityControl(item, fieldId, classification, overrides = {}) {
 function canonicalScenario1SurfaceFieldId(fieldId) {
   const aliases = {
     capacity: "bedCount",
+    roomId: "roomRef",
     basicReadinessConclusion: "readinessState"
   };
   return aliases[fieldId] ?? fieldId;
@@ -714,7 +736,7 @@ function requiredScenario1UserField(fieldId) {
 
 function forbiddenFallbackControlsForField(fieldId, classification) {
   if (classification !== "clientSubmitted") return ["text", "textarea", "select", "combobox"];
-  if (["bedEnabledStatus", "bedTypeBatchSetting", "readinessState"].includes(fieldId)) return ["text", "textarea"];
+  if (["bedEnabledStatus", "bedTypeBatchSetting", "basicCheckResult", "cleaningBasicCheckResult", "facilityBasicCheckResult", "safetyBasicCheckResult", "readinessState"].includes(fieldId)) return ["text", "textarea"];
   return [];
 }
 
@@ -862,13 +884,14 @@ function systemDerivedSpecsForWorkItem(workItemType) {
       { fieldId: "roomId", surface: "hidden-submit-only", displayValueSource: "roomNo", submitValueSource: "derived room stable ref", source: "system-derived-from-roomNo" }
     ],
     "Dorm.BedSetupConfirm": [
-      { fieldId: "roomId", surface: "readonly-hidden-submit", displayValueSource: "room display value", submitValueSource: "accepted runtime context roomId", source: "runtime context" },
+      { fieldId: "roomRef", surface: "readonly-hidden-submit", displayValueSource: "room display value", submitValueSource: "accepted runtime context roomRef", source: "runtime context" },
       { fieldId: "bedCount", surface: "readonly-hidden-submit", displayValueSource: "room bed count", submitValueSource: "accepted runtime context bedCount", source: "runtime context" },
       { fieldId: "bedLabels", surface: "readonly-hidden-submit", displayValueSource: "generated from room.bedCount", submitValueSource: "generated bed labels", source: "system-derived-from-room-bedCount" },
+      { fieldId: "bedLayout", surface: "hidden-submit-only", displayValueSource: "generated from room.bedCount and bedType", submitValueSource: "generated bed layout", source: "system-derived-from-room-bedCount-bedType" },
       { fieldId: "bedId", surface: "hidden-submit-only", displayValueSource: "bedNo", submitValueSource: "derived bed stable ref", source: "system-derived-from-roomId-bedNo" }
     ],
     "Dorm.ResourceReadinessConfirm": [
-      { fieldId: "roomId", surface: "readonly-hidden-submit", displayValueSource: "room display value", submitValueSource: "accepted runtime context roomId", source: "runtime context" },
+      { fieldId: "roomRef", surface: "readonly-hidden-submit", displayValueSource: "room display value", submitValueSource: "accepted runtime context roomRef", source: "runtime context" },
       { fieldId: "bedId", surface: "readonly-hidden-submit", displayValueSource: "bed display value", submitValueSource: "accepted runtime context bedId", source: "runtime context" }
     ]
   };
@@ -879,16 +902,17 @@ function optionSetForField(fieldId) {
   if (fieldId === "bedType") return "bunkType";
   if (fieldId === "bedEnabledStatus") return "bedEnabledStatus";
   if (fieldId === "bedTypeBatchSetting") return "bedTypeBatchSetting";
+  if (["basicCheckResult", "cleaningBasicCheckResult", "facilityBasicCheckResult", "safetyBasicCheckResult"].includes(fieldId)) return "basicReadinessCheckResult";
   if (fieldId === "readinessState") return "readinessState";
   return "";
 }
 
 function controlTypeForField(fieldId, fallback = "") {
   if (fieldId === "bedCount") return "number";
-  if (["roomRemark", "bedRemark", "specialNotes", "basicCheckResult", "cleaningBasicCheckResult", "facilityBasicCheckResult", "safetyBasicCheckResult", "basicReadinessRemark"].includes(fieldId)) {
+  if (["roomRemark", "bedRemark", "specialNotes", "basicReadinessRemark"].includes(fieldId)) {
     return "textarea";
   }
-  if (["bedType", "bedEnabledStatus", "bedTypeBatchSetting", "readinessState"].includes(fieldId)) return "select";
+  if (["bedType", "bedEnabledStatus", "bedTypeBatchSetting", "basicCheckResult", "cleaningBasicCheckResult", "facilityBasicCheckResult", "safetyBasicCheckResult", "readinessState"].includes(fieldId)) return "select";
   if (fieldId === "buildingContextRef") return "readonly";
   if (fieldId === "bedLabels") return "readonly";
   return fallback || "text";
@@ -1002,14 +1026,14 @@ function buildCommandCatalog(currentSteps) {
     templateWorkspaceId: CAPABILITY_ID,
     firstCardId: first.cardId,
     title: {
-      "zh-CN": "新建房间和床位",
-      "ru-RU": "Добавить комнату",
-      "ky-KG": "Бөлмө кошуу"
+      "zh-CN": "房源建档与基础就绪",
+      "ru-RU": "Паспорт жилья и базовая готовность",
+      "ky-KG": "Турак жайды каттоо жана базалык даярдык"
     },
     subtitle: {
-      "zh-CN": "填写房间信息、确认床位、完成基础检查；不涉及营业、价格或预订。",
-      "ru-RU": "Три шага: комната, койка, готовность.",
-      "ky-KG": "Үч кадам: бөлмө, койка, даярдык."
+      "zh-CN": "新建房间、确认床位组并完成基础检查；不涉及营业、价格或预订。",
+      "ru-RU": "Завести комнату, подтвердить группу коек и базовую готовность.",
+      "ky-KG": "Бөлмөнү каттап, койка тобун жана базалык даярдыкты тастыктоо."
     },
     nextAction: {
       "zh-CN": "开始新建房间和床位",
@@ -1570,8 +1594,10 @@ function labelFor(fieldId) {
     roomRemark: ["房间备注", "Примечание к комнате", "Бөлмө эскертүүсү"],
     buildingContextRef: ["楼栋/区域", "Корпус/зона", "Имарат/аймак"],
     roomId: ["所属房间", "Комната", "Бөлмө"],
+    roomRef: ["所属房间", "Комната", "Бөлмө"],
     bedCountMatchedFlag: ["床位组完整度", "Полнота группы коек", "Койка тобунун толуктугу"],
     bedLabels: ["系统生成的床位", "Созданные койки", "Түзүлгөн койкалар"],
+    bedLayout: ["床位布局", "Схема коек", "Койка жайгашуусу"],
     bedNo: ["床位号", "Номер койки", "Койка номери"],
     bedType: ["床型", "Тип койки", "Койка түрү"],
     bedRemark: ["床位备注", "Примечание к койке", "Койка эскертүүсү"],

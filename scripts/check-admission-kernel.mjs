@@ -574,6 +574,14 @@ function checkMissingAdmissionFallbackImplementation(failures) {
   if (!runtimeTests.includes("operations_confirm_blocks_missing_admission_policy_before_unit_of_work")) {
     failures.push("Runtime missing admission negative test is required.");
   }
+  const canonicalOperations = read("services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs");
+  const operationsEndpoints = read("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs");
+  if (!/CreateWorkItem\(CreateWorkItemRequest request, RuntimeActorContext actor\)[\s\S]*AttachAdmission\(created, actor\)/.test(canonicalOperations)) {
+    failures.push("Operations Runtime WorkItem creation must attach Admission before returning to surfaces.");
+  }
+  if (!/operations\.CreateWorkItem\([\s\S]*actor\)/.test(operationsEndpoints)) {
+    failures.push("POST /api/operations/work-items must return actor-scoped Admission envelope.");
+  }
   if (!searchTests.includes("keeps active commands readonly when no backend Search Kernel admission exists")) {
     failures.push("Search command admission negative test must prove local command admission is ignored.");
   }

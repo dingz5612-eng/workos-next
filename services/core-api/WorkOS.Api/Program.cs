@@ -765,6 +765,7 @@ static string[] DormitoryTemplateWorkspaceIds() =>
     new[]
     {
         AcceptedCapabilityRuntimeProjection.WorkspaceId,
+        DormitoryScenario2RuntimeProjection.WorkspaceId,
         "W-STAY-LEAD-RESERVATION",
         "W-STAY-CHECKIN",
         "W-STAY-LIFECYCLE",

@@ -73,6 +73,7 @@ function materializeQueue(queue, byId, state, options = {}) {
     .filter((item) => state.debugSurface || queueItemAllowedForActor(item, state))
     .filter((item) => {
       if (state.debugSurface) return true;
+      if (options.terminal !== "only" && isReadonlyCorrectionPreview(item)) return false;
       const terminal = isTerminalQueueItem(item);
       if (options.terminal === "only") return terminal;
       return !terminal;
@@ -101,6 +102,13 @@ function isTerminalQueueItem(item = {}) {
     item.status,
     item.card?.status
   ].some((status) => terminalStatuses.has(String(status || "").trim()));
+}
+
+function isReadonlyCorrectionPreview(item = {}) {
+  const payload = item.payload || item.Payload || {};
+  const operationMode = String(payload.operationMode || payload.operation_mode || "").toLowerCase();
+  const correctionMode = String(payload.correctionMode || payload.correction_mode || "").toLowerCase();
+  return operationMode === "correction" || correctionMode === "append_only";
 }
 
 function isTerminalHomeItem(item = {}) {

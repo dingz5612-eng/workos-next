@@ -492,7 +492,9 @@ internal static class Scenario2ResourceOperationRuntimeAdapter
         RuntimeMirror.Value.RootElement.GetProperty("operationStatusOptions")
             .EnumerateArray()
             .Select(item => item.GetString() ?? string.Empty)
+            .Concat(DormitoryScenario2RuntimeProjection.StatusOptionValues())
             .Where(item => item.Length > 0)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
     private static IReadOnlyList<string> ForbiddenUserInputFields =>

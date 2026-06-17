@@ -10,7 +10,7 @@ const violations = [];
 const html = renderMobile();
 const text = visibleText(html);
 
-for (const label of ["必须做", "即将超时", "缺材料/缺证据", "等他人", "等待财务", "刚提交 / 同步中", "风险提醒", "全部工作项", "我的可办", "有阻断", "等他人处理", "可转交", "住宿资源", "入住收款", "押金", "普通收款", "服务任务", "退住", "支出", "周期复盘"]) {
+for (const label of ["必须做", "即将超时", "缺证据", "等他人", "等待财务", "刚提交 / 同步中", "风险提醒", "全部工作项", "我的可办", "有阻断", "等他人处理", "可转交", "住宿资源", "入住收款", "押金", "普通收款", "服务任务", "退住", "支出", "周期复盘"]) {
   if (!text.includes(label)) violations.push(v("mobile_work.ia_missing", `移动端 IA 缺少 ${label}`, { label }));
 }
 

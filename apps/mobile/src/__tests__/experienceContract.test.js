@@ -280,7 +280,7 @@ function ctx(actor = { role: "operator" }) {
       businessTaskCurrentFields: "本步要办",
       businessTaskPendingValue: "待确认",
       businessTaskIssue: "当前问题",
-      businessTaskMissingEvidence: "还缺材料",
+      businessTaskMissingEvidence: "还缺证据",
       bedTypeTemplateLabel: "床铺生成方式",
       bedLayoutPreviewLabel: "将生成的床位",
       noCriticalBlocker: "当前没有新的系统阻断，但关键动作仍需要人工确认。",

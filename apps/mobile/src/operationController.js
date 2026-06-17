@@ -208,6 +208,9 @@ export function collectDraftingValuesOnInput(event, ctx) {
   const item = ctx.workspace();
   const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   if (!item || !card) return;
+  const wasRequiredValidationActive =
+    (ctx.state.fieldValidation?.workspaceId === item.id && ctx.state.fieldValidation?.cardId === card.id) ||
+    (ctx.state.lastActionResult?.status === "business_blocked_422" && ctx.state.lastActionResult?.reason === "required_field_missing");
   const evidenceDrafts = loadDraft(item.id, card.id).evidenceDrafts || [];
   const fieldValues = operationSubmissionValues(item, card, collectOperationValues(), ctx);
   const draftValues = draftableOperationValues(card, fieldValues);
@@ -230,7 +233,7 @@ export function collectDraftingValuesOnInput(event, ctx) {
   const shouldRefreshValidationSurface =
     event.target.tagName === "SELECT" ||
     event.target.dataset.operationField === "resourceScope";
-  if (shouldRefreshValidationSurface) {
+  if (wasRequiredValidationActive || shouldRefreshValidationSurface) {
     ctx.render();
   }
 }
@@ -272,7 +275,7 @@ export async function submitCurrentCard(ctx) {
       missingLabels: requiredValidation.missingLabels,
       missingContextLabels: requiredValidation.missingContextLabels
     };
-    ctx.state.operationMessage = `${ctx.tr("requiredFieldMissing")} ${requiredValidation.displayLabels.join("、")}`;
+    ctx.state.operationMessage = `${ctx.tr("requiredFieldMissing")} ${requiredValidation.displayLabels.join(ctx.tr("listSeparator") || "、")}`;
     ctx.state.lastActionResult = {
       confirmed: false,
       status: "business_blocked_422",

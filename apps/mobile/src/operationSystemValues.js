@@ -50,6 +50,7 @@ const valueAliases = {
   reservedBedCount: ["reservedBedCount", "预订床位数", "预订人数"],
   reservedRoomId: ["reservedRoomId", "预留房间"],
   residentName: ["residentName", "guestName", "leadName", "住客姓名", "姓名", "线索姓名"],
+  roomRef: ["roomRef", "room_ref", "roomId", "room_id", "roomStableRef", "所属房间", "房间", "关联房间"],
   roomBed: ["roomBed", "房间床位", "预留房间/床位"],
   roomNo: ["roomNo", "房间号"],
   tariffType: ["tariffType", "计费方式"],
@@ -180,6 +181,9 @@ function firstContextValue(fieldId, payloads, scope) {
 }
 
 function generatedOperationId(fieldId, payload = {}, scope = {}) {
+  if (fieldId === "roomRef") {
+    return readValue(payload, "roomId") || generatedOperationId("roomId", payload, scope);
+  }
   if (fieldId === "roomId") {
     const building = readValue(payload, "buildingName");
     const roomNo = readValue(payload, "roomNo");

@@ -48,6 +48,12 @@ public sealed class CanonicalOperationsApiService
     public WorkItem? CreateWorkItem(CreateWorkItemRequest request) =>
         catalog.CreateWorkItem(request);
 
+    public WorkItem? CreateWorkItem(CreateWorkItemRequest request, RuntimeActorContext actor)
+    {
+        var created = catalog.CreateWorkItem(request);
+        return created is null ? null : AttachAdmission(created, actor);
+    }
+
     public OperationsWorkspaceStartResult StartWorkspaceCase(
         WorkspaceProjection workspace,
         string templateWorkspaceId,
@@ -370,6 +376,24 @@ public sealed class CanonicalOperationsApiService
         }
 
         var nextCardId = RouteCardIdForRuntime(current.WorkspaceId, nextDefinition, nextDefinition.MigrationSourceCardId);
+        var nextPayload = new Dictionary<string, string>
+        {
+            ["caseId"] = caseId,
+            ["cardId"] = nextCardId,
+            ["definitionId"] = nextDefinition.DefinitionId,
+            ["definitionMigrationRefs"] = MigrationRefsJson(nextDefinition.MigrationRefs),
+            ["generatedTransitionPolicyId"] = transition.PolicyId,
+            ["generatedTransitionSource"] = transition.Source,
+            ["operationAxis"] = "DomainEvent -> GeneratedTransitionPolicy -> WorkItem",
+            ["sourceWorkItemId"] = current.WorkItemId,
+            ["ownerRole"] = ConfirmationPolicyCatalog.OwnerRoleForCard(nextCardId),
+            ["dispatchedBy"] = "generated_transition_policy"
+        };
+        foreach (var (key, value) in GeneratedTransitionPolicy.CarryForwardPayload(current, currentDefinition, fieldValues))
+        {
+            nextPayload[key] = value;
+        }
+
         catalog.CreateWorkItem(new CreateWorkItemRequest(
             OperationsWorkItemIdFor(current.WorkspaceId, nextDefinition.DefinitionId),
             current.TenantId,
@@ -378,19 +402,7 @@ public sealed class CanonicalOperationsApiService
             current.WorkspaceId,
             nextCardId,
             ConfirmationPolicyCatalog.OwnerRoleForCard(nextCardId),
-            new Dictionary<string, string>
-            {
-                ["caseId"] = caseId,
-                ["cardId"] = nextCardId,
-                ["definitionId"] = nextDefinition.DefinitionId,
-                ["definitionMigrationRefs"] = MigrationRefsJson(nextDefinition.MigrationRefs),
-                ["generatedTransitionPolicyId"] = transition.PolicyId,
-                ["generatedTransitionSource"] = GeneratedTransitionPolicy.SourceContract,
-                ["operationAxis"] = "DomainEvent -> GeneratedTransitionPolicy -> WorkItem",
-                ["sourceWorkItemId"] = current.WorkItemId,
-                ["ownerRole"] = ConfirmationPolicyCatalog.OwnerRoleForCard(nextCardId),
-                ["dispatchedBy"] = "generated_transition_policy"
-            }));
+            nextPayload));
     }
 
     private static string OperationsWorkItemIdFor(string workspaceId, string cardId) =>
@@ -418,6 +430,10 @@ public sealed class CanonicalOperationsApiService
             ["startedByActorId"] = actor.ActorId
         };
         foreach (var (key, value) in DormitoryDirectStartContext(workspace.Id, templateWorkspaceId, cardId, actor, anchorPayload, anchorQuery))
+        {
+            payload[key] = value;
+        }
+        foreach (var (key, value) in DormitoryScenario2RuntimeProjection.StartContext(workspace.Id, templateWorkspaceId, cardId, actor))
         {
             payload[key] = value;
         }
@@ -1008,12 +1024,16 @@ internal static class GeneratedTransitionPolicy
         new GeneratedTransitionRule(
             "generated-transition.dormitory.room-setup-to-bed-setup.v1",
             "definition.dormitory.roomSetupConfirm.v1",
-            "definition.dormitory.bedSetupConfirm.v1"),
+            "definition.dormitory.bedSetupConfirm.v1",
+            SourceContract),
         new GeneratedTransitionRule(
             "generated-transition.dormitory.bed-setup-to-resource-readiness.v1",
             "definition.dormitory.bedSetupConfirm.v1",
-            "definition.dormitory.resourceReadinessConfirm.v1")
-    };
+            "definition.dormitory.resourceReadinessConfirm.v1",
+            SourceContract)
+    }
+    .Concat(DormitoryScenario2RuntimeProjection.TransitionRules())
+    .ToArray();
 
     public static GeneratedTransitionDecision? ResolveNext(
         WorkItem current,
@@ -1029,14 +1049,28 @@ internal static class GeneratedTransitionPolicy
             item.FromDefinitionId.Equals(currentDefinition.DefinitionId, StringComparison.OrdinalIgnoreCase));
         return rule is null
             ? null
-            : new GeneratedTransitionDecision(rule.PolicyId, rule.NextDefinitionId, SourceContract);
+            : new GeneratedTransitionDecision(rule.PolicyId, rule.NextDefinitionId, rule.SourceContract);
+    }
+
+    public static IReadOnlyDictionary<string, string> CarryForwardPayload(
+        WorkItem current,
+        WorkItemDefinitionResolution currentDefinition,
+        IReadOnlyDictionary<string, string>? fieldValues)
+    {
+        if (DormitoryScenario2RuntimeProjection.IsWorkspace(current.WorkspaceId))
+        {
+            return DormitoryScenario2RuntimeProjection.CarryForwardPayload(current, currentDefinition, fieldValues);
+        }
+
+        return new Dictionary<string, string>();
     }
 }
 
 internal sealed record GeneratedTransitionRule(
     string PolicyId,
     string FromDefinitionId,
-    string NextDefinitionId);
+    string NextDefinitionId,
+    string SourceContract);
 
 internal sealed record GeneratedTransitionDecision(
     string PolicyId,
