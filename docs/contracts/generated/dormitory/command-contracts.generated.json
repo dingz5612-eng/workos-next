@@ -25,7 +25,7 @@
     "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
     "docs/oam/visible-business-copy-contract.json"
   ],
-  "inputDigest": "sha256:95cfe2752b53a0fd03c6d4cc78ccb82ec25d7dfb2a8b2d984c4be17939dd55bd",
+  "inputDigest": "sha256:b8158246165672b50138fc7eab0acf19ed5a5b7d626ca02da2018d5395b310b6",
   "inputDigests": [
     {
       "path": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
@@ -65,15 +65,15 @@
     },
     {
       "path": "docs/contracts/generated/dormitory/scenario1-runtime-rules.generated.json",
-      "digest": "sha256:13ad03e75ce169f9a38320edef4942a60c4fa12bcae4982529fe3205a1971009"
+      "digest": "sha256:1cefaa9da00b1b735f7d2228d0bc8b310914fddd1f9f86512813e190ebffd300"
     },
     {
       "path": "docs/contracts/generated/dormitory/scenario1-steps-fields.generated.json",
-      "digest": "sha256:8973dbe5ba869be9ad76e56623650fdada21c8bfab40531c037dbd1c98472741"
+      "digest": "sha256:c1928730bfac743bdf6f35e436fb0a5315068b997619a047e85474f7013aa076"
     },
     {
       "path": "docs/contracts/generated/dormitory/scenario1-surface-navigation.generated.json",
-      "digest": "sha256:5d1b409fb0d4984ed59fd8e8d2b3cbeebad007586d40a302ec95dc47fd128847"
+      "digest": "sha256:6a466880df1e724dd21b4d7ea7af4e020ac31325900939bd35132cebd71d8fa4"
     },
     {
       "path": "docs/contracts/generated/dormitory/workitems.generated.json",
@@ -101,10 +101,10 @@
     },
     {
       "path": "docs/oam/visible-business-copy-contract.json",
-      "digest": "sha256:67d2e1ecb47d1330fc7ebef908d9879eaed7f1b713b05eb28c29d6f347729fd8"
+      "digest": "sha256:d50952557b940b66f9fe5c63ff5c6c990c77326370367c684d41d9578f2c05c4"
     }
   ],
-  "outputContentDigest": "sha256:c520c0a6689548a3a034c9f50e336437714910e25c6f547b86d4e51ee95e8c85",
+  "outputContentDigest": "sha256:7904d2df4d9e9a928cb9bbdc0844833216681bf89e05ff3ac21cc25ec735834c",
   "capabilityId": "Dormitory.FirstGoldenChain",
   "acceptedGeneratedBundleDigest": "sha256:83a8feea15cd100b6d3e2b2895a84e57dcdec0ecc8d9ba9243c04173a02bb7ea",
   "currentFilesMode": "ledger_replay_projection_only",

@@ -38,8 +38,10 @@ describe("Stage B TrustedConfirm business commitment", () => {
     const text = visibleText(html);
 
     expect(text).toContain("Информация перед отправкой");
-    expect(text).toContain("Подтверждение обновит");
+    expect(text).toContain("Этот шаг отправляет только данные комнаты");
     expect(text).toContain("Не создает финансовых записей напрямую");
+    expect(text).toContain("Если нужно изменить данные, откройте исправление или отмену");
     expect(text).not.toMatch(/影响|账务|提交后如需修改|；|。|、|\.\./);
+    expect(text).not.toMatch(/runtime|Runtime|Аудит|аудит|трасс|Трасс|откат|компенсац|scope/i);
   });
 });

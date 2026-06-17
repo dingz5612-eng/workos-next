@@ -131,6 +131,12 @@ async function assertGeneratedBusinessDisplayModule() {
   if (JSON.stringify(generated.zhBusinessTermReplacements ?? []) !== JSON.stringify(contract.displayTermReplacementsZh ?? [])) {
     fail("business display generated zhBusinessTermReplacements must match visible business copy contract.");
   }
+  if (JSON.stringify(generated.ruBusinessTermReplacements ?? []) !== JSON.stringify(contract.displayTermReplacementsRu ?? [])) {
+    fail("business display generated ruBusinessTermReplacements must match visible business copy contract.");
+  }
+  if (JSON.stringify(generated.kyBusinessTermReplacements ?? []) !== JSON.stringify(contract.displayTermReplacementsKy ?? [])) {
+    fail("business display generated kyBusinessTermReplacements must match visible business copy contract.");
+  }
   if (JSON.stringify(generated.zhRiskLabelReplacements ?? {}) !== JSON.stringify(contract.riskLabelReplacementsZh ?? {})) {
     fail("business display generated zhRiskLabelReplacements must match visible business copy contract.");
   }
@@ -155,6 +161,14 @@ function assertBusinessDisplayAdapterConsumesGeneratedModule() {
     fail("business display adapter must consume generated business-display-language module.");
   }
   for (const [sourceTerm] of contract.displayTermReplacementsZh ?? []) {
+    if (text.includes(sourceTerm)) {
+      fail(`business display adapter must not hardcode source term: ${sourceTerm}.`);
+    }
+  }
+  for (const [sourceTerm] of [
+    ...(contract.displayTermReplacementsRu ?? []),
+    ...(contract.displayTermReplacementsKy ?? [])
+  ]) {
     if (text.includes(sourceTerm)) {
       fail(`business display adapter must not hardcode source term: ${sourceTerm}.`);
     }

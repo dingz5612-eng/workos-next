@@ -592,12 +592,25 @@ function bedLayoutDerivedControl(field, item, card, labelClass, label, value, re
 
 function contextCarriedControl(field, fieldId, fieldState, labelClass, label, required, invalid, ctx) {
   const displayValue = fieldState.displayValue || displayFieldValue(field, fieldState.value, ctx);
+  if (isInternalContextOnlyDisplay(fieldId, displayValue, fieldState.value)) {
+    return `<input type="hidden" data-operation-field="${ctx.escapeAttr(fieldId)}" value="${ctx.escapeAttr(fieldState.value)}" ${required} />`;
+  }
   return `<label class="${labelClass}">
     <span>${label}</span>
     <input value="${ctx.escapeAttr(displayValue)}" readonly aria-readonly="true" ${invalid} />
     <input type="hidden" data-operation-field="${ctx.escapeAttr(fieldId)}" value="${ctx.escapeAttr(fieldState.value)}" ${required} />
     <small>${ctx.tr("caseContextAutoFilledHelp")}</small>
   </label>`;
+}
+
+function isInternalContextOnlyDisplay(fieldId = "", displayValue = "", rawValue = "") {
+  const field = String(fieldId || "");
+  if (!["roomRef", "roomId", "bedId"].includes(field)) return false;
+  const display = String(displayValue || "").trim();
+  const raw = String(rawValue || "").trim();
+  if (!raw) return false;
+  if (display && display !== raw) return false;
+  return /^(room|bed)-[a-z0-9-]+$/i.test(raw);
 }
 
 function operationFieldLabel(field, fieldId, card, ctx, requiredForOperation = field.required) {

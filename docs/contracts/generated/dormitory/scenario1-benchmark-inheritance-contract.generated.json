@@ -11,7 +11,7 @@
     "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:34bbf4859f9ee1ac157de0201c5828a0fd5f9a0bb0cd9b769c5d0dd16e5e9ec7",
+  "inputDigest": "sha256:f67e0b68663367bf9989e2fdbdbc0dc16cc2d8de6a510238077d0f18d70d5cf5",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
@@ -23,7 +23,7 @@
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
-      "digest": "sha256:c5e193a6707693868e592a9ce3331e84d102d00c7c591f0509c7d18408a63be8"
+      "digest": "sha256:728dfe08030b24a241f5ac008d4d30cbf43d48f66cfddb5b97911b13a39320de"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
@@ -32,7 +32,7 @@
   ],
   "sourceContentDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
   "authorityId": "Dormitory.Scenario1BenchmarkInheritanceContract",
-  "outputContentDigest": "sha256:3cb490e237496e230e888550c9e081b2eac71ed4f4868ee3cf6d328e05798cb8",
+  "outputContentDigest": "sha256:1ab890707108b7e4f67dd990032aadf7934f717078f2710ca7c183781798b64f",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
@@ -42,7 +42,7 @@
   "benchmarkImplementationRef": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
   "controlAuthorityDigest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a",
   "benchmarkContractDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
-  "scenario1SourceDigest": "sha256:c5e193a6707693868e592a9ce3331e84d102d00c7c591f0509c7d18408a63be8",
+  "scenario1SourceDigest": "sha256:728dfe08030b24a241f5ac008d4d30cbf43d48f66cfddb5b97911b13a39320de",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "scopeZh": "把场景包 1：房源建档与基础就绪沉淀为后续场景的执行方法标杆；只继承方法，不继承场景 1 的业务字段、对象、状态或证据要求。",
   "authorityHierarchy": {

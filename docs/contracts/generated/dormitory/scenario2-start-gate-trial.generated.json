@@ -11,7 +11,7 @@
     "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:34bbf4859f9ee1ac157de0201c5828a0fd5f9a0bb0cd9b769c5d0dd16e5e9ec7",
+  "inputDigest": "sha256:f67e0b68663367bf9989e2fdbdbc0dc16cc2d8de6a510238077d0f18d70d5cf5",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
@@ -23,7 +23,7 @@
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
-      "digest": "sha256:c5e193a6707693868e592a9ce3331e84d102d00c7c591f0509c7d18408a63be8"
+      "digest": "sha256:728dfe08030b24a241f5ac008d4d30cbf43d48f66cfddb5b97911b13a39320de"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
@@ -32,7 +32,7 @@
   ],
   "sourceContentDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
   "authorityId": "Dormitory.Scenario1BenchmarkInheritanceContract",
-  "outputContentDigest": "sha256:a4d8add63f2544268bc1c79ee3955ae780d3a89def590a1c1fc2f634af9f31cf",
+  "outputContentDigest": "sha256:e9fad39a9fc8308c298ff327dce9c23132a27dc00a01d418eb3981aeb06ad9fc",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
@@ -42,7 +42,7 @@
   "benchmarkImplementationRef": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
   "controlAuthorityDigest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a",
   "benchmarkContractDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
-  "scenario1SourceDigest": "sha256:c5e193a6707693868e592a9ce3331e84d102d00c7c591f0509c7d18408a63be8",
+  "scenario1SourceDigest": "sha256:728dfe08030b24a241f5ac008d4d30cbf43d48f66cfddb5b97911b13a39320de",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "scenario2ControlRow": {
     "scenarioNo": 2,

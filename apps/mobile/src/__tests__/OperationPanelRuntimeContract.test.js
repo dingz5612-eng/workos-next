@@ -698,6 +698,78 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(ruText).not.toMatch(/房源建档|基础就绪记录|个床位/);
   });
 
+  it("renders scenario 1 readiness confirmation with localized dropdowns and no empty internal context input", () => {
+    const store = runtimeStore();
+    const workspaceId = `${DORMITORY_MAINLINE_WORKSPACE_ID}-READINESS-RU-001`;
+    store.workspaces[0] = {
+      ...store.workspaces[0],
+      id: workspaceId,
+      title: { "zh-CN": "房源建档与基础就绪", "ru-RU": "Первая золотая цепочка общежития" },
+      cards: [
+        {
+          ...store.workspaces[0].cards[0],
+          id: DORMITORY_SCENARIO1_STEPS[0].cardId,
+          status: "done",
+          title: { "zh-CN": "填写房间信息", "ru-RU": "Данные комнаты" }
+        },
+        {
+          id: DORMITORY_SCENARIO1_STEPS[1].cardId,
+          status: "done",
+          title: { "zh-CN": "确认床位信息", "ru-RU": "Данные коек" },
+          fields: { business: [field("bedType", "床铺生成方式")], system: [], analytics: [] },
+          evidence: [],
+          checks: [],
+          blockerRules: [],
+          confirmation: { required: true, requiredRole: "operator" }
+        },
+        {
+          id: DORMITORY_SCENARIO1_STEPS[2].workItemType,
+          status: "ready",
+          title: { "zh-CN": "完成基础检查", "ru-RU": "Базовая проверка" },
+          fields: { business: [], system: [], analytics: [] },
+          evidence: [],
+          checks: [],
+          blockerRules: [],
+          confirmation: { required: true, requiredRole: "operator" }
+        }
+      ]
+    };
+    store.operationWorkItems = [{
+      workItemId: "wi-readiness-ru-empty-context",
+      workspaceId,
+      cardId: DORMITORY_SCENARIO1_STEPS[2].workItemType,
+      workItemType: "Dorm.ResourceReadinessConfirm",
+      lifecycleState: "ready",
+      ownerRole: "operator",
+      payload: { roomRef: "room-a655b" }
+    }];
+    store.workQueue = [...store.operationWorkItems];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      lang: "ru-RU",
+      selectedWorkItemId: "wi-readiness-ru-empty-context",
+      selectedWorkspace: workspaceId,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[2].workItemType,
+      runtimeStore: store
+    });
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-operation-field="basicCheckResult"');
+    expect(html).toContain('data-operation-field="readinessState"');
+    expect(text).toContain("Проверено, без замечаний");
+    expect(text).toContain("Есть проблема, нужно дополнить");
+    expect(text).toContain("Если нужно изменить данные, откройте исправление или отмену");
+    expect(text).toContain("Подготовка комнат и коек");
+    expect(text).not.toContain("Первая золотая цепочка общежития");
+    expect(html).toContain('type="hidden" data-operation-field="roomRef" value="room-a655b"');
+    expect(html).not.toContain('data-operation-field="bedId"');
+    expect(text).not.toContain("Комната Заполнено системой; повторно вводить не нужно.");
+    expect(text).not.toMatch(/room-[a-z0-9-]+|bedId|roomId|workItemId|stableRef|projectionVersion|digest|domainEventId/i);
+    expect(text).not.toMatch(/runtime|Runtime|Аудит|аудит|трасс|Трасс|откат|компенсац|scope/i);
+  });
+
   it("renders bed setup as a room-capacity batch instead of one single-bed input", () => {
     const store = runtimeStore();
     const bedCount = {

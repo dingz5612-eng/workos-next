@@ -481,6 +481,7 @@
   ],
   "fields": {
     "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“1 号楼 3 层 301 房间、6 个床位、床位 01”。",
+    "readonlyContextDisplayRuleZh": "上游房间、床位组和基础就绪上下文只允许以业务可读摘要展示；没有业务可读值时，不得在普通表单渲染空只读输入。roomRef、bedRef、roomId、bedId 等内部引用只能用于隐藏提交、审计详情或证据包。",
     "userFilled": [
       "floor",
       "roomNo",

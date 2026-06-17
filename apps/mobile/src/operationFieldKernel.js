@@ -609,7 +609,7 @@ const preferredFieldsByCard = {
 };
 
 export function operationFieldId(field = {}) {
-  const rawId = String(field.id || "").trim();
+  const rawId = String(field.fieldId || field.id || "").trim();
   if (operationFieldAliases[rawId]) return operationFieldAliases[rawId];
   if (rawId && !hasCjk(rawId)) return rawId;
   return operationFieldAliases[field.label?.["zh-CN"]] || rawId || "";

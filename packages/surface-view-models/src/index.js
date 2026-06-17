@@ -44,7 +44,7 @@ export function WorkItemDecisionVM(source = {}, ctx = {}) {
     evidenceStateLabel: evidenceStateLabel(evidenceState, ctx),
     ledgerImpactLabel: source.ledgerImpact ? readable(source.ledgerImpact, ctx, tr(ctx, "ledgerImpactPresent", "涉及账务")) : tr(ctx, "ledgerNoImpact", "不直接产生账务影响"),
     transferHint: source.transferable ? "可转交" : "需由当前责任角色处理",
-    traceSummary: sourceRefs.traceRefs.length ? tr(ctx, "traceBound", "已绑定审计轨迹") : tr(ctx, "traceWillBind", "提交后绑定审计轨迹")
+    traceSummary: sourceRefs.traceRefs.length ? tr(ctx, "traceBound", "已保存办理记录") : tr(ctx, "traceWillBind", "提交后生成办理记录")
   };
 }
 
@@ -60,22 +60,22 @@ export function OperationPanelVM(source = {}, ctx = {}) {
     title: decision.typeLabel,
     subtitle: `${decision.businessObject} · ${decision.nextAction}`,
     prepare: {
-      title: tr(ctx, "prepareContract", "预检合同"),
-      status: tr(ctx, "prepareContractReady", "将按运行时合同预检"),
-      body: tr(ctx, "prepareContractHelp", "系统会校验字段、证据、角色、设备和内测范围。")
+      title: tr(ctx, "prepareContract", "提交前检查"),
+      status: tr(ctx, "prepareContractReady", "将按当前业务要求检查"),
+      body: tr(ctx, "prepareContractHelp", "系统会检查字段、材料、角色、设备和当前业务状态。")
     },
     confirm: {
-      title: tr(ctx, "confirmCommit", "确认写入"),
-      status: tr(ctx, "confirmCommitReady", "只通过运行时确认"),
-      body: tr(ctx, "confirmCommitHelp", "确认后由 Operations Runtime 写入提交、事件、账务和轨迹。")
+      title: tr(ctx, "confirmCommit", "提交处理"),
+      status: tr(ctx, "confirmCommitReady", "通过后保存办理结果"),
+      body: tr(ctx, "confirmCommitHelp", "提交通过后，系统会保存办理记录并刷新相关页面。")
     },
     trace: {
-      title: tr(ctx, "trace", "轨迹"),
+      title: tr(ctx, "trace", "办理记录"),
       status: decision.traceSummary,
-      body: tr(ctx, "traceHelp", "可追到 case、WorkItem、提交、事件、证据和投影。")
+      body: tr(ctx, "traceHelp", "可追到业务记录、任务、提交、事件和材料。")
     },
     projection: {
-      title: tr(ctx, "projection", "投影"),
+      title: tr(ctx, "projection", "页面状态"),
       body: tr(ctx, "projectionPendingBody", "提交已经完成，投影同步中；这不是失败。")
     },
     localDraftFingerprintLabel: tr(ctx, "localDraftFingerprint", "本地草稿指纹已记录")
@@ -107,19 +107,19 @@ export function TrustedConfirmVM(source = {}, ctx = {}) {
         `${tr(ctx, "trustedConfirmImpact", "本次提交将影响：")}${decision.businessObject}`
       ]),
       ledgerImpact: decision.ledgerImpactLabel,
-      irreversible: "确认后只能通过补偿、纠错或回滚指令处理。"
+      irreversible: tr(ctx, "rollbackCompensationReady", "提交后如需修改，请走更正或作废流程。")
     },
     evidenceAndPermission: {
       title: tr(ctx, "evidenceAndPermission", "证据与权限"),
       body: decision.requiredEvidenceLabels.length ? decision.requiredEvidenceLabels.join(" · ") : tr(ctx, "noRequiredEvidence", "当前动作无必需证据"),
-      policyRef: source.policyRef || source.card?.policyRef || source.card?.confirmation?.policyRef || "operations-runtime-policy",
+      policyRef: source.policyRef || source.card?.policyRef || source.card?.confirmation?.policyRef || "operations-policy",
       risk: decision.riskLabel
     },
     auditAndRollback: {
-      title: tr(ctx, "auditAndRollback", "审计与回滚"),
+      title: tr(ctx, "auditAndRollback", "提交后处理"),
       body: joinSentences(ctx, [
         decision.traceSummary,
-        tr(ctx, "rollbackCompensationReady", "必要时只能通过补偿或回滚指令处理。")
+        tr(ctx, "rollbackCompensationReady", "提交后如需修改，请走更正或作废流程。")
       ])
     }
   };

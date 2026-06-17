@@ -1,4 +1,6 @@
 import {
+  kyBusinessTermReplacements,
+  ruBusinessTermReplacements,
   zhBusinessTermReplacements,
   zhRiskLabelReplacements
 } from "./generated/oam/business-display-language.generated.js";
@@ -10,7 +12,8 @@ export function businessDisplayZh(value = "") {
 export function userFacingBusinessText(value = "", ctx = {}) {
   const lang = ctx?.state?.lang || ctx?.lang || "zh-CN";
   const text = String(value ?? "");
-  if (lang !== "zh-CN") return text;
+  if (lang === "ru-RU") return normalizeUserFacingText(replaceTerms(text, ruBusinessTermReplacements));
+  if (lang === "ky-KG") return normalizeUserFacingText(replaceTerms(text, kyBusinessTermReplacements));
   return businessDisplayZh(text);
 }
 
@@ -22,7 +25,11 @@ export function userFacingRiskLabel(value = "", ctx = {}) {
 }
 
 function replaceZhTerms(value = "") {
-  return zhBusinessTermReplacements.reduce((current, [from, to], index) => {
+  return replaceTerms(value, zhBusinessTermReplacements);
+}
+
+function replaceTerms(value = "", replacements = []) {
+  return replacements.reduce((current, [from, to], index) => {
     const source = String(from ?? "");
     const target = String(to ?? "");
     if (!source || source === target) return current;

@@ -105,6 +105,7 @@ export function operationFieldVisible(field, card, item, ctx) {
   if (isDormitoryScenario1CardId(card?.id) && isCaseContextIdentityField(fieldId) && fieldId !== "roomRef") return false;
   if (isBedSetupCardId(card?.id) && ["bedStatus", "bedNo", "bedLabel"].includes(fieldId)) return false;
   if (!fieldVisibleByContext(card?.id, fieldId)) return false;
+  if (isEmptyContextReadonlyField(field, fieldId, card, item, ctx)) return false;
   if (isResourceReadinessCardId(card?.id) && fieldId === "basicReadinessRemark") {
     return values.readinessState === "needs_supplement" || Boolean(values.basicReadinessRemark);
   }
@@ -150,8 +151,8 @@ export function stepDependencyValidationChips(card, item, ctx) {
   const fieldById = new Map(fields.map((field) => [operationFieldId(field), field]));
   const inheritedMissing = summary.inherited
     .map((fieldId) => {
-      const field = fieldById.get(fieldId) || { id: fieldId, label: { "zh-CN": fieldId } };
-      return hasCarryValue(operationFieldState(field, item, card, ctx).value) ? "" : ctx.localTerm(field);
+      const field = fieldById.get(fieldId) || syntheticContextField(fieldId, ctx);
+      return hasCarryValue(operationFieldState(field, item, card, ctx).value) ? "" : contextFieldLabel(field, fieldId, ctx);
     })
     .filter(Boolean);
   const userMissing = summary.user
@@ -192,7 +193,7 @@ export function missingFieldIdsFor(card, item, ctx) {
 
 export function isCaseContextReadonlyField(fieldId, card) {
   const role = fieldContextRole(card?.id, fieldId);
-  if (role.contract) return role.kind === "inherited";
+  if (role.contract && role.entry) return role.kind === "inherited";
   if (isForcedCaseContextReadonlyField(fieldId, card)) return true;
   if (isContextCarriedField(card?.id, fieldId)) return true;
   if (isCaseContextIdentityField(fieldId)) return true;
@@ -201,9 +202,16 @@ export function isCaseContextReadonlyField(fieldId, card) {
 
 export function isForcedCaseContextReadonlyField(fieldId, card) {
   if (isContextCarriedField(card?.id, fieldId)) return true;
-  if (fieldContextRole(card?.id, fieldId).contract) return false;
+  const role = fieldContextRole(card?.id, fieldId);
+  if (role.contract && role.entry) return false;
   if (isResourceReadinessCardId(card?.id) && fieldId === "roomRef") return true;
   return isBedSetupCardId(card?.id) && ["roomRef", "roomId", "bedCount"].includes(fieldId);
+}
+
+function isEmptyContextReadonlyField(field, fieldId, card, item, ctx) {
+  if (!isCaseContextReadonlyField(fieldId, card)) return false;
+  const state = operationFieldState(field, item, card, ctx);
+  return !hasCarryValue(state.displayValue || state.value);
 }
 
 export function sameWorkspaceEvents(item, ctx) {

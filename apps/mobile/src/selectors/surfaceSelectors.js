@@ -81,6 +81,7 @@ function materializeQueue(queue, byId, state, options = {}) {
 }
 
 function isOrdinaryPilotQueueItem(item = {}) {
+  if (isLegacyDormitoryActiveWorkItem(item)) return false;
   const tokens = [
     item.workItemId,
     item.work_item_id,
@@ -93,6 +94,13 @@ function isOrdinaryPilotQueueItem(item = {}) {
     item.projectionSource
   ].join(" ");
   return !/(runtimeAudit|\brf[-_:]|engineering|diagnostic|fixture_replay|projection_guard_shadow)/i.test(tokens);
+}
+
+function isLegacyDormitoryActiveWorkItem(item = {}) {
+  const workspaceId = String(item.workspaceId || item.workspace_id || item.workspace?.id || "");
+  const cardId = String(item.cardId || item.card_id || item.card?.id || "");
+  return /^Dormitory\.FirstGoldenChain(?:-|$)/i.test(workspaceId) ||
+    (/^Dorm\./i.test(cardId) && !/^W-DORM-MAINLINE(?:-|$)/i.test(workspaceId));
 }
 
 function isTerminalQueueItem(item = {}) {

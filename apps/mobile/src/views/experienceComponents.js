@@ -821,13 +821,33 @@ function text(value, ctx) {
 }
 
 function trustedCommitmentBody(body = "", card = {}, ctx = {}) {
-  if (ctx.state?.lang !== "zh-CN") return body;
-  const byCard = {
-    "cert.roomSetupConfirm": "本次只提交房间信息；不会设置营业状态、价格或预订。",
-    "cert.bedSetupConfirm": "本次只提交床位信息；不会设置营业状态、价格或预订。",
-    "cert.resourceReadinessConfirm": "本次只提交基础检查结果；不会设置营业状态、价格或预订。"
+  const byLang = {
+    "zh-CN": {
+      "cert.roomSetupConfirm": "本次只提交房间信息；不会设置营业状态、价格或预订。",
+      "cert.bedSetupConfirm": "本次只提交床位信息；不会设置营业状态、价格或预订。",
+      "cert.resourceReadinessConfirm": "本次只提交基础检查结果；不会设置营业状态、价格或预订。",
+      "Dorm.RoomSetupConfirm": "本次只提交房间信息；不会设置营业状态、价格或预订。",
+      "Dorm.BedSetupConfirm": "本次只提交床位信息；不会设置营业状态、价格或预订。",
+      "Dorm.ResourceReadinessConfirm": "本次只提交基础检查结果；不会设置营业状态、价格或预订。"
+    },
+    "ru-RU": {
+      "cert.roomSetupConfirm": "Этот шаг отправляет только данные комнаты; он не меняет эксплуатацию, цены или бронирование.",
+      "cert.bedSetupConfirm": "Этот шаг отправляет только данные коек; он не меняет эксплуатацию, цены или бронирование.",
+      "cert.resourceReadinessConfirm": "Этот шаг отправляет только результаты базовой проверки; он не меняет эксплуатацию, цены или бронирование.",
+      "Dorm.RoomSetupConfirm": "Этот шаг отправляет только данные комнаты; он не меняет эксплуатацию, цены или бронирование.",
+      "Dorm.BedSetupConfirm": "Этот шаг отправляет только данные коек; он не меняет эксплуатацию, цены или бронирование.",
+      "Dorm.ResourceReadinessConfirm": "Этот шаг отправляет только результаты базовой проверки; он не меняет эксплуатацию, цены или бронирование."
+    },
+    "ky-KG": {
+      "cert.roomSetupConfirm": "Бул кадам бөлмө маалыматтарын гана тапшырат; иштетүү абалын, бааны же брондоону өзгөртпөйт.",
+      "cert.bedSetupConfirm": "Бул кадам койка маалыматтарын гана тапшырат; иштетүү абалын, бааны же брондоону өзгөртпөйт.",
+      "cert.resourceReadinessConfirm": "Бул кадам негизги текшерүүнүн жыйынтыгын гана тапшырат; иштетүү абалын, бааны же брондоону өзгөртпөйт.",
+      "Dorm.RoomSetupConfirm": "Бул кадам бөлмө маалыматтарын гана тапшырат; иштетүү абалын, бааны же брондоону өзгөртпөйт.",
+      "Dorm.BedSetupConfirm": "Бул кадам койка маалыматтарын гана тапшырат; иштетүү абалын, бааны же брондоону өзгөртпөйт.",
+      "Dorm.ResourceReadinessConfirm": "Бул кадам негизги текшерүүнүн жыйынтыгын гана тапшырат; иштетүү абалын, бааны же брондоону өзгөртпөйт."
+    }
   };
-  return byCard[card?.id] || userFacingBusinessText(body, ctx);
+  return byLang[ctx.state?.lang || "zh-CN"]?.[card?.id] || userFacingBusinessText(body, ctx);
 }
 
 function attr(value, ctx) {

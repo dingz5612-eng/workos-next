@@ -96,15 +96,20 @@ export function isDormitoryScenario1CardId(cardId = "") {
 }
 
 export function isRoomSetupCardId(cardId = "") {
-  return cardId === DORMITORY_SCENARIO1_STEPS[0]?.cardId;
+  return isScenario1StepCard(cardId, 0);
 }
 
 export function isBedSetupCardId(cardId = "") {
-  return cardId === DORMITORY_SCENARIO1_STEPS[1]?.cardId;
+  return isScenario1StepCard(cardId, 1);
 }
 
 export function isResourceReadinessCardId(cardId = "") {
-  return cardId === DORMITORY_SCENARIO1_STEPS[2]?.cardId;
+  return isScenario1StepCard(cardId, 2);
+}
+
+function isScenario1StepCard(cardId = "", index = -1) {
+  const step = DORMITORY_SCENARIO1_STEPS[index];
+  return step ? step.cardId === cardId || step.workItemType === cardId : false;
 }
 
 export function dormitoryScenario1StepForCard(cardId = "") {
