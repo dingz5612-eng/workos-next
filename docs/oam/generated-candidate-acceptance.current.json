@@ -8,30 +8,30 @@
     "subjectType": "generated_candidate_subject",
     "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
     "decisionRecordHead": null,
-    "currentRepositoryHead": "2b518622c1af0f138867d1e91a4f19bad6f00295",
+    "currentRepositoryHead": "4bacae00cff0c2abcd7d49f649868041d44404b1",
     "sourceCandidateHead": "fd60390e678f9d6934137f0480a183701b01de8f",
     "authorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
     "formalAuthorizationHead": "a502565ca5672335dc2ee4398a8d443ac7e3b57a",
     "generatedCompileExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
-    "generatedOutputDigest": "sha256:94e635ab7d6e930e94450ab0c99de29d1094a968a3ba38c47715fefbb8753cfe",
+    "generatedOutputDigest": "sha256:b03e7f687c6aba43496201d65113148792e656372cce8dac30efee951bb712dd",
     "generatedFieldBindingClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
     "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
     "fieldBindingContractDigest": "sha256:4dc9fcd6b5b36d93408739bafc3a988e726bbf574a747fffdff1341484b3eafa",
     "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
     "evidenceArtifactMode": "ci_artifact_authoritative",
     "localEvidenceArtifactDigest": "sha256:6b36fb9cdf1ef68e66dd94556e2eb48f1b8c4722a9b2e9cf1216140eb9b4419e",
-    "executionProofDigest": "sha256:39bd88d977a189b2cb945a7c9cbe7075725dd860f71c2354129615e13f1c323b",
+    "executionProofDigest": "sha256:7da80df6472d5768967a4b339e96fb14ab05b8a8e000eadb94e5e9fafb028231",
     "evidenceRootDigest": "sha256:bfa305859e0a92dd9f0ac72a5d6f86102c70af67003f61ca72f73949762e081d",
     "requiredEvidenceDigestSet": [
       {
         "id": "generatedCompileExecutionResult",
         "path": "artifacts/oam/checks/generated-compile-execution-result.json",
-        "digest": "sha256:299b9f7d11c96101da67777663dd31c7cdbd138e1cd587acc4d6626117da0490"
+        "digest": "sha256:9ca551172263f10e8f1b01b5a38be7d95785277df660ddb8aae3b3b393f01f12"
       },
       {
         "id": "generatedCompileExecutionProof",
         "path": "artifacts/oam/evidence/generated-compile-execution-proof.json",
-        "digest": "sha256:d9b804b3a7a69f44a379e8f0e276d8fd41184a885c1443ee684c2bb0183d40fd"
+        "digest": "sha256:2dfd4a361dc4bd1f3185fdf07503cc5a9971898bc181c13880b0fb75735080e4"
       },
       {
         "id": "generatedCompileExecutionSnapshot",
@@ -91,16 +91,16 @@
         "digest": "sha256:074df5982de95104b0d885ded0a6474de160eca5189b93f71aa8c924a96e5164"
       }
     ],
-    "subjectDigest": "sha256:cb8e53bff4e143cfafd7b8b43acb8f1675d23b3d171180ea0e3b15696e3ee6e9"
+    "subjectDigest": "sha256:dc133ddf7b103e37d35947f0868fd699fd3c06a010541e7186bf071ad86678af"
   },
   "subjectStatusAtWrite": "READY_FOR_00_ACCEPTANCE_REVIEW",
   "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
   "decisionRecordHead": null,
-  "decisionWritebackBaseHead": "2b518622c1af0f138867d1e91a4f19bad6f00295",
+  "decisionWritebackBaseHead": "4bacae00cff0c2abcd7d49f649868041d44404b1",
   "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
   "generatedFieldBindingClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
   "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
-  "executionProofDigest": "sha256:39bd88d977a189b2cb945a7c9cbe7075725dd860f71c2354129615e13f1c323b",
+  "executionProofDigest": "sha256:7da80df6472d5768967a4b339e96fb14ab05b8a8e000eadb94e5e9fafb028231",
   "evidenceRootDigest": "sha256:bfa305859e0a92dd9f0ac72a5d6f86102c70af67003f61ca72f73949762e081d",
   "blockingReasons": [],
   "explicitNegativeAuthorities": {
@@ -115,14 +115,14 @@
   "acceptanceRecord": {
     "decision": "ACCEPTED_BY_00",
     "acceptedBy": "00",
-    "acceptedAtUtc": "2026-06-17T12:15:50.474Z",
-    "acceptedSubjectDigest": "sha256:cb8e53bff4e143cfafd7b8b43acb8f1675d23b3d171180ea0e3b15696e3ee6e9",
+    "acceptedAtUtc": "2026-06-17T12:22:00.570Z",
+    "acceptedSubjectDigest": "sha256:dc133ddf7b103e37d35947f0868fd699fd3c06a010541e7186bf071ad86678af",
     "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
-    "currentRepositoryHead": "2b518622c1af0f138867d1e91a4f19bad6f00295",
+    "currentRepositoryHead": "4bacae00cff0c2abcd7d49f649868041d44404b1",
     "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
     "generatedFieldBindingClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
     "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
-    "executionProofDigest": "sha256:39bd88d977a189b2cb945a7c9cbe7075725dd860f71c2354129615e13f1c323b",
+    "executionProofDigest": "sha256:7da80df6472d5768967a4b339e96fb14ab05b8a8e000eadb94e5e9fafb028231",
     "evidenceRootDigest": "sha256:bfa305859e0a92dd9f0ac72a5d6f86102c70af67003f61ca72f73949762e081d",
     "scope": "generated_candidate_acceptance_only",
     "runtimeConsumptionGranted": false,
@@ -138,7 +138,7 @@
       "Dormitory L2 GO",
       "business production GO"
     ],
-    "acceptedGeneratedBundleDigest": "sha256:9e8391548cc3ac4f2c9ef635a542122cdb233d46adad7ff8b9730376357fd43d",
+    "acceptedGeneratedBundleDigest": "sha256:83a8feea15cd100b6d3e2b2895a84e57dcdec0ecc8d9ba9243c04173a02bb7ea",
     "acceptedRuntimeConsumableDigests": [
       {
         "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
@@ -196,7 +196,7 @@
     "release authority is not implied",
     "final GO is not implied"
   ],
-  "acceptedGeneratedBundleDigest": "sha256:9e8391548cc3ac4f2c9ef635a542122cdb233d46adad7ff8b9730376357fd43d",
+  "acceptedGeneratedBundleDigest": "sha256:83a8feea15cd100b6d3e2b2895a84e57dcdec0ecc8d9ba9243c04173a02bb7ea",
   "acceptedGeneratedFiles": [
     {
       "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
@@ -232,5 +232,14 @@
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
-  "currentGeneratedCandidateDivergence": null
+  "currentGeneratedCandidateDivergence": {
+    "acceptedBundleRemainsImmutable": true,
+    "currentGeneratedOutputIsDifferentCandidate": true,
+    "runtimeMustNotAutoConsumeCurrentGeneratedFiles": true,
+    "acceptedSubjectDigest": "sha256:dc133ddf7b103e37d35947f0868fd699fd3c06a010541e7186bf071ad86678af",
+    "currentSubjectDigest": "sha256:dc133ddf7b103e37d35947f0868fd699fd3c06a010541e7186bf071ad86678af",
+    "acceptedGeneratedBundleDigest": "sha256:83a8feea15cd100b6d3e2b2895a84e57dcdec0ecc8d9ba9243c04173a02bb7ea",
+    "currentGeneratedOutputDigest": "sha256:b03e7f687c6aba43496201d65113148792e656372cce8dac30efee951bb712dd",
+    "reason": "accepted_generated_candidate_is_immutable_and_later_generated_outputs_require_new_acceptance_before_runtime_rebind"
+  }
 }
