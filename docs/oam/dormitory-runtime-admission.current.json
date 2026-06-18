@@ -5,67 +5,67 @@
   "generatedCandidateAcceptedBy00": true,
   "generatedCandidateAcceptanceRef": "docs/oam/generated-candidate-acceptance.current.json",
   "generatedCandidateAcceptanceResultRef": "artifacts/oam/checks/generated-candidate-acceptance-result.json",
-  "acceptedSubjectDigest": "sha256:0992f5186a01171074f300ff3f650deafb7392b964e932288ad1932e92fe7d04",
-  "acceptedGeneratedBundleDigest": "sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3",
-  "generatedCandidateSubjectDigest": "sha256:0992f5186a01171074f300ff3f650deafb7392b964e932288ad1932e92fe7d04",
+  "acceptedSubjectDigest": "sha256:505070ef20627f4690e4a7e911604191a9c3f127e4922aed8668f14823dd0601",
+  "acceptedGeneratedBundleDigest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
+  "generatedCandidateSubjectDigest": "sha256:505070ef20627f4690e4a7e911604191a9c3f127e4922aed8668f14823dd0601",
   "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
   "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
   "generatedFieldBindingClosureDigest": "sha256:38de19e889f519484c11b5d38ba295c462f009ea4ef482a40fb1b45e1cee7e9f",
   "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
-  "executionProofDigest": "sha256:d93e4c938e68d1243a5253e6fbd42b5ac08c8d452ea995efca4cea7ccf390b52",
+  "executionProofDigest": "sha256:530eb8edb9f07f6eebc5e26603a5a731b5a2a18d882c682a274c6e435f0f1743",
   "runtimeAdmissionScope": "dormitory_first_golden_chain_test_only_consumption",
   "runtimeConsumptionMode": "test_only_consumption",
-  "runtimeConsumedBundleDigest": "sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3",
+  "runtimeConsumedBundleDigest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
   "runtimeConsumedFilesDigestList": [
     {
       "path": "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
-      "digest": "sha256:6e0d31d815173812bf33a2cd7429f8153042396f8ad14f8e2b7d3460dd97e10f"
+      "digest": "sha256:0b358375125b3d302b6bc2fd54157a6a35778a7cb8c580dcc635874a70b262da"
     },
     {
       "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
-      "digest": "sha256:4e96ecdfdb808816a47dc3621a8545be656fb5a5725731d9c0d9f6f8fecf431a"
+      "digest": "sha256:3122cb090e2b09b4b345f622d5e802c95187f7b92be4e2d8e7ee511faa2f33cf"
     },
     {
       "path": "docs/contracts/generated/dormitory/fields.generated.json",
-      "digest": "sha256:fa7b0c87b6291e436274289eb7d2d8e124c3f5b1064329278a2eaed12626830b"
+      "digest": "sha256:6d67668a4f3f9c51784ae83817c6a003df49b46da65551c8f26c83bcc428c7d5"
     },
     {
       "path": "docs/contracts/generated/dormitory/read-model.generated.json",
-      "digest": "sha256:721949da4ecae0a4c495d837cef7cc8a47d930bc662543291eac9388c28a7732"
+      "digest": "sha256:a08f81aca5249762b4840116e7325b7952a573c24d6389e26f5a23a6c7943656"
     },
     {
       "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
-      "digest": "sha256:73df5174291f23b880df25aec07b8c545bbae35f30a1082d4e3e972f223dbd95"
+      "digest": "sha256:2d66e8ac2696fd8032cda4e26041a3a78d5e4eb444d78b32ac7ab870e557a28d"
     },
     {
       "path": "docs/contracts/generated/dormitory/workitems.generated.json",
-      "digest": "sha256:7bdecc792bce13e6d3d4fb07b16ea5dc0f8b0bb686e3de64d40e4893d971c35b"
+      "digest": "sha256:99f25f210a29b2d038f04eaa22d73b21695eacb403683f99ffbed2577e88ebed"
     }
   ],
   "acceptedRuntimeConsumableDigests": [
     {
       "path": "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
-      "digest": "sha256:6e0d31d815173812bf33a2cd7429f8153042396f8ad14f8e2b7d3460dd97e10f"
+      "digest": "sha256:0b358375125b3d302b6bc2fd54157a6a35778a7cb8c580dcc635874a70b262da"
     },
     {
       "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
-      "digest": "sha256:4e96ecdfdb808816a47dc3621a8545be656fb5a5725731d9c0d9f6f8fecf431a"
+      "digest": "sha256:3122cb090e2b09b4b345f622d5e802c95187f7b92be4e2d8e7ee511faa2f33cf"
     },
     {
       "path": "docs/contracts/generated/dormitory/fields.generated.json",
-      "digest": "sha256:fa7b0c87b6291e436274289eb7d2d8e124c3f5b1064329278a2eaed12626830b"
+      "digest": "sha256:6d67668a4f3f9c51784ae83817c6a003df49b46da65551c8f26c83bcc428c7d5"
     },
     {
       "path": "docs/contracts/generated/dormitory/read-model.generated.json",
-      "digest": "sha256:721949da4ecae0a4c495d837cef7cc8a47d930bc662543291eac9388c28a7732"
+      "digest": "sha256:a08f81aca5249762b4840116e7325b7952a573c24d6389e26f5a23a6c7943656"
     },
     {
       "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
-      "digest": "sha256:73df5174291f23b880df25aec07b8c545bbae35f30a1082d4e3e972f223dbd95"
+      "digest": "sha256:2d66e8ac2696fd8032cda4e26041a3a78d5e4eb444d78b32ac7ab870e557a28d"
     },
     {
       "path": "docs/contracts/generated/dormitory/workitems.generated.json",
-      "digest": "sha256:7bdecc792bce13e6d3d4fb07b16ea5dc0f8b0bb686e3de64d40e4893d971c35b"
+      "digest": "sha256:99f25f210a29b2d038f04eaa22d73b21695eacb403683f99ffbed2577e88ebed"
     }
   ],
   "bundleDigestMatch": true,

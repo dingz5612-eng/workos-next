@@ -15,6 +15,7 @@ const generatedPaths = {
   mobileMirror: "apps/mobile/src/generated/oam/dormitory-scenario6-payment-deposit-and-guarantee.generated.json",
   runtimeMirror: "services/core-api/WorkOS.Api/Runtime/DormitoryScenario6PaymentDepositAndGuarantee.generated.json"
 };
+const runtimeExecutionPath = "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json";
 const runtimeImplementationPaths = {
   generatedRules: "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
   operationsRuntimeService: "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
@@ -23,6 +24,7 @@ const runtimeImplementationPaths = {
 const failures = [];
 const scenario = readJson(scenarioPath);
 const generated = Object.fromEntries(Object.entries(generatedPaths).map(([key, file]) => [key, readJsonIfExists(file)]));
+const runtimeExecution = readJsonIfExists(runtimeExecutionPath);
 const runtimeRulesText = readText(runtimeImplementationPaths.generatedRules);
 const operationsRuntimeText = readText(runtimeImplementationPaths.operationsRuntimeService);
 const runtimeTestsText = readText(runtimeImplementationPaths.runtimeTests);
@@ -80,6 +82,35 @@ if (!String(generated.handoff?.downstreamRecheckRuleZh ?? "").includes("不得�
 if ((generated.handoff?.readSideOutputs ?? []).some((item) => ["入住", "已入住", "退房", "退款", "LedgerEntry", "LedgerTransaction"].includes(item))) {
   failures.push("handoff read side outputs must not include stay/refund/ledger facts.");
 }
+const scenario6Runtime = (runtimeExecution?.scenarios ?? [])
+  .find((item) => item.workspaceId === "W-DORM-SCENARIO6-PAYMENT-DEPOSIT-AND-GUARANTEE");
+if (!scenario6Runtime) {
+  failures.push("13-scenario runtime execution must include scenario 6 generated runtime.");
+} else {
+  assertRuntimeStepFields(
+    scenario6Runtime,
+    "Dorm.PaymentDepositRequirementConfirm",
+    ["paymentItem", "splitPayment", "depositRequired", "guaranteeRequired"],
+    ["收款项目", "是否分笔", "是否需要押金", "是否需要担保"]);
+  assertRuntimeStepFields(
+    scenario6Runtime,
+    "Dorm.PaymentReceiptSubmit",
+    ["paymentItem", "receivedAmount", "paymentMethod", "paymentTime", "payerName", "paymentRemark"],
+    ["对应收款项目", "实收金额", "收款方式", "收款时间", "付款人", "备注"]);
+  assertRuntimeStepFields(
+    scenario6Runtime,
+    "Dorm.FinanceGateConfirm",
+    ["financeConfirmRemark", "financeReturnReason"],
+    ["确认", "退回补证", "部分确认", "标记异常", "确认备注", "退回原因"]);
+  assertRuntimeLegalActions(
+    scenario6Runtime,
+    "Dorm.FinanceGateConfirm",
+    ["确认", "退回补证", "部分确认", "标记异常"]);
+  assertRuntimeLegalActions(
+    scenario6Runtime,
+    "Dorm.FinanceReadySummaryOutput",
+    ["查看确认摘要", "进入入住办理准备"]);
+}
 
 const result = {
   version: "oam.dormitory-scenario6-payment-deposit-and-guarantee-consumption-boundary-check.v1",
@@ -90,6 +121,7 @@ const result = {
   scenarioDigest: digestFile(scenarioPath),
   packageIndexDigest: digestFile(packageIndexPath),
   generatedPaths,
+  runtimeExecutionPath,
   runtimeImplementationPaths,
   consumerBoundaries: {
     runtimeConsumesGenerated: runtimeRulesText.includes("DormitoryScenario6PaymentDepositAndGuarantee.generated.json"),
@@ -144,4 +176,41 @@ function writeJson(file, value) {
 
 function digestFile(file) {
   return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(path.join(root, file))).digest("hex")}`;
+}
+
+function assertRuntimeStepFields(scenarioRuntime, workItemType, expectedStableIds, forbiddenDisplayIds) {
+  const step = (scenarioRuntime.steps ?? []).find((item) => item.workItemType === workItemType);
+  if (!step) {
+    failures.push(`13-scenario runtime execution missing ${workItemType}.`);
+    return;
+  }
+  const fieldIds = (step.fields ?? []).map((field) => field.fieldId);
+  if (!arraysContainAll(fieldIds, expectedStableIds)) {
+    failures.push(`${workItemType} runtime field IDs must consume stable field keys ${expectedStableIds.join(", ")}.`);
+  }
+  for (const forbidden of forbiddenDisplayIds) {
+    if (fieldIds.includes(forbidden)) {
+      failures.push(`${workItemType} runtime field ID must not use display label ${forbidden}; label belongs in localized copy.`);
+    }
+  }
+}
+
+function assertRuntimeLegalActions(scenarioRuntime, workItemType, expectedLabels) {
+  const step = (scenarioRuntime.steps ?? []).find((item) => item.workItemType === workItemType);
+  if (!step) {
+    failures.push(`13-scenario runtime execution missing ${workItemType}.`);
+    return;
+  }
+  const labels = (step.legalActions ?? []).map((action) => action.label?.["zh-CN"]);
+  if (!arraysContainAll(labels, expectedLabels)) {
+    failures.push(`${workItemType} legalActions must include ${expectedLabels.join(", ")}.`);
+  }
+  const fieldLabels = (step.fields ?? []).map((field) => field.label?.["zh-CN"]);
+  for (const label of expectedLabels) {
+    if (fieldLabels.includes(label)) failures.push(`${workItemType} legal action ${label} must not render as field.`);
+  }
+}
+
+function arraysContainAll(actual = [], expected = []) {
+  return expected.every((item) => actual.includes(item));
 }

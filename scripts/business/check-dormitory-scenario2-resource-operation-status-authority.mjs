@@ -76,6 +76,7 @@ checkAuthorityIndexRegistration();
 checkScenarioHeader();
 checkObjectsAndStates();
 checkStepsAndFields();
+checkTransitionGuards();
 checkCrud();
 checkCommandsAndFailures();
 checkInvariantsAndEvidence();
@@ -213,6 +214,26 @@ function checkStepsAndFields() {
     for (const fieldClass of ["userFilled", "userSelected"]) {
       if ((scenario.fields?.[fieldClass] ?? []).includes(internal)) fail(`${internal} must not be ${fieldClass}.`);
     }
+  }
+}
+
+function checkTransitionGuards() {
+  const guard = (scenario.transitionGuards ?? []).find((item) =>
+    item.fromStepId === "daily-status-maintenance" &&
+    item.toStepId === "restore-operation");
+  if (!guard) {
+    fail("scenario transitionGuards must guard daily status maintenance to restore operation.");
+    return;
+  }
+  if (guard.conditionId !== "generated-transition-condition.dormitory.scenario2.blocker-closed-before-restore.v1") {
+    fail("scenario restore transition guard conditionId mismatch.");
+  }
+  if (guard.fieldId !== "blockerStatus" || guard.operator !== "equalsAny") {
+    fail("scenario restore transition guard must check blockerStatus equalsAny.");
+  }
+  assertArray(guard.values, ["closed", "已关闭"], "scenario restore transition guard values");
+  if (!String(guard.sourceAuthorityRuleZh ?? "").includes("不得派发恢复运营确认")) {
+    fail("scenario restore transition guard must explain no restore dispatch when blocker is not closed.");
   }
 }
 

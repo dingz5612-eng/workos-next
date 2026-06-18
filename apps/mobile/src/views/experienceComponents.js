@@ -545,7 +545,9 @@ export function TechnicalAuditDetails(details = {}, ctx) {
   const canInspect = technicalDetailsVisible(ctx);
   const shouldOpen = Boolean(ctx.state?.debugSurface);
   if (!canInspect) {
-    return `<div class="operation-technical-details" hidden data-surface="operation-runtime-proof" data-work-item-id="${attr(details.model?.workItemId, ctx)}" data-case-id="${attr(details.model?.caseId, ctx)}" data-submission-id="${attr(details.commandSubmissionId, ctx)}" data-payload-fingerprint="${attr(details.payloadHash, ctx)}"></div>`;
+    return `<details class="operation-technical-details" hidden data-surface="operation-runtime-proof" data-work-item-id="${attr(details.model?.workItemId, ctx)}" data-case-id="${attr(details.model?.caseId, ctx)}" data-submission-id="${attr(details.commandSubmissionId, ctx)}" data-payload-fingerprint="${attr(details.payloadHash, ctx)}">
+    <summary aria-label="${attr(ctx.tr("auditDetails"), ctx)}"></summary>
+  </details>`;
   }
   return `<details class="operation-technical-details" data-surface="operation-runtime-proof" data-work-item-id="${attr(details.model?.workItemId, ctx)}" data-case-id="${attr(details.model?.caseId, ctx)}" data-submission-id="${attr(details.commandSubmissionId, ctx)}" data-payload-fingerprint="${attr(details.payloadHash, ctx)}" ${shouldOpen ? "open" : ""}>
     <summary>${text(ctx.tr(canInspect ? "auditDetails" : "technicalDetails"), ctx)}</summary>

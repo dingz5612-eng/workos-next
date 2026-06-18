@@ -54,6 +54,12 @@ const forbiddenUserInput = [
   "digest",
   "domainEventId"
 ];
+const forbiddenActionUserInput = [
+  "saveDraft",
+  "submitReview",
+  "activatePrice",
+  "backToEdit"
+];
 const forbiddenRuntimeWrites = [
   "Quote",
   "Reservation",
@@ -210,6 +216,14 @@ function checkStepsAndFields() {
     for (const fieldClass of ["userFilled", "userSelected"]) {
       if ((scenario.fields?.[fieldClass] ?? []).includes(internal)) fail(`${internal} must not be ${fieldClass}.`);
     }
+  }
+  for (const action of forbiddenActionUserInput) {
+    for (const [stepIndex, step] of (scenario.steps ?? []).entries()) {
+      if ((step.userFilledFields ?? []).includes(action)) fail(`step ${stepIndex + 1} must not expose action ${action} as user-filled input.`);
+      if ((step.userSelectedFields ?? []).includes(action)) fail(`step ${stepIndex + 1} must not expose action ${action} as user-selected input.`);
+    }
+    if ((scenario.fields?.userFilled ?? []).includes(action)) fail(`action ${action} must not be a global user-filled field.`);
+    if ((scenario.fields?.userSelected ?? []).includes(action)) fail(`action ${action} must not be a global user-selected field.`);
   }
 }
 

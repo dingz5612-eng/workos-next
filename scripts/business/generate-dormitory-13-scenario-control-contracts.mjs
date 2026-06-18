@@ -37,6 +37,7 @@ const generated = {
     authorityId: source.authorityId,
     scopeZh: source.scopeZh,
     layerModel: source.layerModel,
+    operationExperienceContract: source.operationExperienceContract,
     entryAdmissionContract: source.entryAdmissionContract,
     runtimeConsumptionBoundary: source.runtimeConsumptionBoundary,
     finalSafety: source.finalSafety
@@ -52,6 +53,7 @@ const generated = {
       pageEntries: scenario.pageEntries,
       summaryOutputs: scenario.summaryOutputs
     })),
+    operationExperienceContract: source.operationExperienceContract,
     pageEntryPolicy: source.pageEntryPolicy,
     entryAdmissionContract: source.entryAdmissionContract,
     forbiddenUserInputFields: source.forbiddenUserInputFields,
@@ -72,6 +74,7 @@ const generated = {
     objectOwnership: source.objectOwnership,
     fieldSourceMatrix: source.fieldSourceMatrix,
     fieldAuthorityModel: source.fieldAuthorityModel,
+    operationExperienceContract: source.operationExperienceContract,
     entryAdmissionContract: source.entryAdmissionContract,
     forbiddenUserInputFields: source.forbiddenUserInputFields,
     crudPolicy: source.crudPolicy,
@@ -101,6 +104,7 @@ const generated = {
   fieldMatrix: {
     fieldSourceMatrix: source.fieldSourceMatrix,
     fieldAuthorityModel: source.fieldAuthorityModel,
+    operationExperienceContract: source.operationExperienceContract,
     forbiddenUserInputFields: source.forbiddenUserInputFields,
     displayIdRuleZh: "业务展示号可以展示和搜索，内部绑定必须由系统完成。"
   },

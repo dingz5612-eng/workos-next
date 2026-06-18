@@ -25,19 +25,19 @@
     "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
     "docs/oam/visible-business-copy-contract.json"
   ],
-  "inputDigest": "sha256:4b499bb1c41ec523a40759e13565aaa8e4d44c9ab6d41ac45691b331fbdde741",
+  "inputDigest": "sha256:883b808589e1d525d25e13b70fa9213514111d30b019f6b05489c71f8611dea3",
   "inputDigests": [
     {
       "path": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
-      "digest": "sha256:30a37c8dce36b2c1899b922739125ab0d0ec92777af92d7e3d82c589bf516b68"
+      "digest": "sha256:d1581f72ca277a28ca88fd593d7685afd5b777dabbb5adeda9cb320a1c522683"
     },
     {
       "path": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
-      "digest": "sha256:42311bd3930daaf4c1c17ed2ec4aff9dac6e130c0d5582c61cbfb1532a31234c"
+      "digest": "sha256:27471104478127fd64d8b0e5a2606b8cdd2563cb4c0729df8ef1bf9d76741358"
     },
     {
       "path": "docs/oam/generated-candidate-acceptance.current.json",
-      "digest": "sha256:1c1741a7b04121d678e312471b43ebdf2b983dc792f4c2405dfceec3475abace"
+      "digest": "sha256:a7a164cce047cf0ff9de672809a8743b5abf3be0896e48de5a6391c1246d8495"
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json",
@@ -65,31 +65,31 @@
     },
     {
       "path": "docs/contracts/generated/dormitory/scenario1-runtime-rules.generated.json",
-      "digest": "sha256:d27e1d8f0e18a2a372daa39e2b9487eafe1d69dda960c91190dd8432362b525b"
+      "digest": "sha256:a0233f7ce04f3ebf6037240a3033c79d69ba13eb14456cfacb1d5304ffe41bab"
     },
     {
       "path": "docs/contracts/generated/dormitory/scenario1-steps-fields.generated.json",
-      "digest": "sha256:dcfa392ec315b5fc6990ce32c15f8faed69ab2415a54b65fee5e488404403e50"
+      "digest": "sha256:21ac193280966e91ca138848611e062cf5741e1077c71d45c5004b4447e3284d"
     },
     {
       "path": "docs/contracts/generated/dormitory/scenario1-surface-navigation.generated.json",
-      "digest": "sha256:c623994b0a5e668a7894db0c88e53560ef28b4ecec60e6e18fe3eb59118bb79e"
+      "digest": "sha256:839e4bf1d4d0991e1cdfbc6fa694bd8d3594ed5681ce019e164e3646e42693e9"
     },
     {
       "path": "docs/contracts/generated/dormitory/workitems.generated.json",
-      "digest": "sha256:954e10be69c3e3272d37713d6f981f8a8d054add1ab915c07644d063e31e8f65"
+      "digest": "sha256:3676fbf68ff31b48b55173875eead9ec843a435bf8fc7cc0cb82aca8af397338"
     },
     {
       "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
-      "digest": "sha256:ac346725fb169a742f3ea323a1d179652d2da4507526b43d9fc077e2a309de93"
+      "digest": "sha256:6776df700885f4c5d3aad50d96b3f0583e17b00faf3a6617b5b4fea7e9853af3"
     },
     {
       "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
-      "digest": "sha256:bd4fb788335fd5458c65a9603c79a382907042960d44baa07581f22a9855f806"
+      "digest": "sha256:d37fda52e36f31b75473dc95fbdf83644bd891266334a1008c9e650bedf19d0f"
     },
     {
       "path": "docs/oam/dormitory-runtime-admission.current.json",
-      "digest": "sha256:74687385d339898c18eb9be6bcffa6b15eadb65bc3a364c535c8d3f427e72779"
+      "digest": "sha256:96429e0b08783958909ba81b2339c837b2321efca03949c76945fee2fd898d95"
     },
     {
       "path": "docs/oam/dormitory-first-golden-chain-landing.current.json",
@@ -101,16 +101,16 @@
     },
     {
       "path": "docs/oam/visible-business-copy-contract.json",
-      "digest": "sha256:c5657a3a3a2addbb8228c6a5fb0d2ac329df351e8333c2a7d2b6570e881c25db"
+      "digest": "sha256:1c304d60ac5612329f621bf5abca7c784012f6f0fd6044408c26b367cec9ab80"
     }
   ],
-  "outputContentDigest": "sha256:0ea09a7bf9bce7e0a40329d9c718731914363e5689ef5ee61ea1ddef28eaa504",
+  "outputContentDigest": "sha256:5270940d6e19344b7f0c2d5a5d46ab526c4658b9e0d0ab2350d94042a168c465",
   "capabilityId": "Dormitory.FirstGoldenChain",
-  "acceptedGeneratedBundleDigest": "sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3",
+  "acceptedGeneratedBundleDigest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
   "currentFilesMode": "ledger_replay_projection_only",
   "capabilityLedgerReplay": {
     "status": "PASS",
-    "eventCount": 53
+    "eventCount": 56
   },
   "lifecycleState": "RUNTIME_TEST_ADMITTED",
   "runtimeAdmissionStatus": "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION",

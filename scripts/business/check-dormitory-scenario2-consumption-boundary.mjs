@@ -72,6 +72,13 @@ for (const target of ["CommandSubmission", "DomainEvent", "Outbox", "Projection"
 }
 if (docs.runtimeMirror.runtimeConsumptionBoundary?.runtimeMayReadGeneratedOnly !== true) fail("runtime must read generated only.");
 if (docs.runtimeMirror.runtimeConsumptionBoundary?.runtimeMayHardcodeBusinessRules !== false) fail("runtime hardcoded business rules must be forbidden.");
+const restoreTransition = (docs.runtimeMirror.runtimeExecution?.transitions ?? []).find((item) =>
+  item.fromDefinitionId === "definition.dormitory.operationBlockerUpdate.v1" &&
+  item.toDefinitionId === "definition.dormitory.operationRestoreConfirm.v1");
+if (!restoreTransition?.condition ||
+  restoreTransition.condition.conditionId !== "generated-transition-condition.dormitory.scenario2.blocker-closed-before-restore.v1") {
+  fail("runtime mirror must carry Source Authority guard for blocker-update to restore-operation transition.");
+}
 const runtimeRulesText = readText(runtimeRulesPath);
 const runtimeProjectionText = readText(runtimeProjectionPath);
 const operationsRuntimeText = readText(operationsRuntimeServicePath);
@@ -82,6 +89,10 @@ const sliceCapabilityGateText = readText(sliceCapabilityGatePath);
 const canonicalOperationsText = readText(canonicalOperationsPath);
 const programText = readText(programPath);
 const runtimeTestsText = readText(runtimeTestsPath);
+if (JSON.stringify(docs.runtimeMirror).includes("sample-room-a-3-301") ||
+  JSON.stringify(docs.runtimeMirror).includes("A 栋 3 层 301 房间")) {
+  fail("runtime mirror must not contain hard-coded sample base-ready resource options; scenario 2 must consume runtime facts from scenario 1.");
+}
 if (!runtimeRulesText.includes("DormitoryScenario2ResourceOperationStatus.generated.json")) {
   fail("runtime rules must consume DormitoryScenario2ResourceOperationStatus.generated.json.");
 }
@@ -113,14 +124,22 @@ if (!sliceCapabilityGateText.includes("DormitoryScenario2RuntimeProjection.Runti
 }
 if (!canonicalOperationsText.includes("DormitoryScenario2RuntimeProjection.TransitionRules()") ||
   !canonicalOperationsText.includes("GeneratedTransitionPolicy.CarryForwardPayload") ||
-  !canonicalOperationsText.includes("DormitoryScenario2RuntimeProjection.StartContext")) {
-  fail("CanonicalOperationsApiService must consume scenario 2 generated transitions and context carry-forward.");
+  !canonicalOperationsText.includes("ConditionSatisfied(rule.Condition, current, fieldValues)") ||
+  !canonicalOperationsText.includes("DormitoryScenario2RuntimeProjection.StartContext") ||
+  !canonicalOperationsText.includes("catalog.ListWorkItems(actor.TenantId)")) {
+  fail("CanonicalOperationsApiService must consume scenario 2 generated transitions, transition conditions, and context carry-forward.");
+}
+if (!canonicalOperationsText.includes("GetWorkItemSurface(workItem.WorkItemId, actor)") ||
+  !canonicalOperationsText.includes("ListWorkItemSurfaces(actor, operationCase.CaseId, workspace.Id)") ||
+  !canonicalOperationsText.includes("OperationsWorkItemSurface WorkItem")) {
+  fail("Operations workspace start must return payload-aware work item surfaces so first render consumes scenario 2 runtime options.");
 }
 if (!programText.includes("DormitoryScenario2RuntimeProjection.WorkspaceId")) {
   fail("Operations workspace start endpoint must allow scenario 2 generated workspace id.");
 }
-if (!operationsRuntimeText.includes("DormitoryScenario2RuntimeProjection.CardFor")) {
-  fail("OperationsRuntimeService must apply scenario 2 generated card contract to work item surfaces.");
+if (!operationsRuntimeText.includes("DormitoryScenario2RuntimeProjection.CardFor") ||
+  !operationsRuntimeText.includes("workItem.Payload")) {
+  fail("OperationsRuntimeService must apply scenario 2 generated card contract with runtime payload to work item surfaces.");
 }
 for (const commandId of commandIds) {
   if (!runtimeTestsText.includes(commandId)) fail(`runtime tests must cover ${commandId}.`);

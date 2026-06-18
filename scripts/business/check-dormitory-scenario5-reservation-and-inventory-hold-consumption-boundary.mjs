@@ -14,7 +14,9 @@ const generatedPaths = {
   mobileMirror: "apps/mobile/src/generated/oam/dormitory-scenario5-reservation-and-inventory-hold.generated.json",
   runtimeMirror: "services/core-api/WorkOS.Api/Runtime/DormitoryScenario5ReservationAndInventoryHold.generated.json"
 };
+const runtimeExecutionPath = "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json";
 const runtimeRulesPath = "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs";
+const runtimeProjectionPath = "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeProjection.cs";
 const operationsRuntimeServicePath = "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs";
 const runtimeTestsPath = "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs";
 const commandIds = [
@@ -31,6 +33,7 @@ const failures = [];
 const scenarioDigest = fileDigest(scenarioPath);
 const packageIndexDigest = fileDigest(packageIndexPath);
 const docs = Object.fromEntries(Object.entries(generatedPaths).map(([key, file]) => [key, readJson(file)]));
+const runtimeExecution = readJson(runtimeExecutionPath);
 
 for (const [key, file] of Object.entries(generatedPaths)) {
   const document = docs[key];
@@ -77,7 +80,24 @@ if (docs.runtimeMirror.inventoryInvariantRule?.atomicResourceDateCheckRequired !
   docs.runtimeMirror.inventoryInvariantRule?.reservationNoSystemGenerated !== true) {
   fail("runtime mirror must expose inventory invariant rule.");
 }
+if (runtimeExecution.generated !== true || runtimeExecution.doNotEdit !== true) fail(`${runtimeExecutionPath} must be generated/doNotEdit.`);
+if (runtimeExecution.finalGoNoGo !== "NO_GO") fail(`${runtimeExecutionPath} must keep finalGoNoGo NO_GO.`);
+const scenario5Runtime = (runtimeExecution.scenarios ?? []).find((item) => item.scenarioPackageNo === 5);
+if (!scenario5Runtime) {
+  fail("runtime execution must expose scenario 5.");
+} else {
+  const startContext = scenario5Runtime.startContext ?? {};
+  for (const key of ["quoteRef", "quoteVersionRef", "quoteSnapshotRef", "quoteValidUntil", "checkInDate", "checkOutDate", "guestCount"]) {
+    if (!String(startContext[key] ?? "").trim()) fail(`scenario 5 start context missing upstream quote/demand field ${key}.`);
+  }
+  for (const forbidden of ["reservationNo", "reservationStatus", "reservationConfirmed", "inventoryHoldConfirmed"]) {
+    if (Object.prototype.hasOwnProperty.call(startContext, forbidden)) {
+      fail(`scenario 5 start context must not preload downstream reservation result ${forbidden}.`);
+    }
+  }
+}
 const runtimeRulesText = readText(runtimeRulesPath);
+const runtimeProjectionText = readText(runtimeProjectionPath);
 const operationsRuntimeText = readText(operationsRuntimeServicePath);
 const runtimeTestsText = readText(runtimeTestsPath);
 if (!runtimeRulesText.includes("DormitoryScenario5ReservationAndInventoryHold.generated.json")) {
@@ -85,6 +105,12 @@ if (!runtimeRulesText.includes("DormitoryScenario5ReservationAndInventoryHold.ge
 }
 if (!runtimeRulesText.includes("Scenario5ReservationInventoryRuntimeAdapter")) {
   fail("runtime rules must include scenario 5 generated adapter.");
+}
+if (!runtimeProjectionText.includes("\"inventoryHoldActive\"") ||
+  !runtimeProjectionText.includes("\"hasInventoryHold\"") ||
+  !runtimeProjectionText.includes("\"reservationDraftConfirmed\"") ||
+  !runtimeProjectionText.includes("\"reservationNo\"")) {
+  fail("13-scenario runtime projection must carry generated scenario 5 outcome facts between steps.");
 }
 for (const commandId of commandIds) {
   if (!runtimeTestsText.includes(commandId)) fail(`runtime tests must cover ${commandId}.`);
@@ -111,10 +137,11 @@ const result = {
   scenarioDigest,
   packageIndexDigest,
   generatedPaths,
-  runtimeImplementationPaths: {
-    generatedRules: runtimeRulesPath,
-    operationsRuntimeService: operationsRuntimeServicePath,
-    runtimeTests: runtimeTestsPath
+    runtimeImplementationPaths: {
+      generatedRules: runtimeRulesPath,
+      runtimeProjection: runtimeProjectionPath,
+      operationsRuntimeService: operationsRuntimeServicePath,
+      runtimeTests: runtimeTestsPath
   },
   consumerBoundaries: {
     runtimeConsumesGenerated: true,

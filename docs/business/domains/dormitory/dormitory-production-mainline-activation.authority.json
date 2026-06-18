@@ -176,10 +176,10 @@
       "domainId": "product_business",
       "nameZh": "产品与业务定义",
       "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json", "docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json"],
-      "generatedContractRefs": ["docs/contracts/generated/dormitory/scenario-index.generated.json"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory/13-scenario-index.generated.json"],
       "implementationConsumptionPoints": ["apps/mobile/src/generated/oam", "apps/mobile/src/views"],
       "checkScripts": ["node scripts/business/check-dormitory-production-mainline-activation-authority.mjs"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence/dormitory-13-scenario-entry-browser/"],
       "completionStandardZh": "业务前台名称、对象、边界、NO_GO 与旧链隔离全部可追溯。"
     },
     {
@@ -187,10 +187,10 @@
       "domainId": "scenario_handoff",
       "nameZh": "场景衔接与摘要交接",
       "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
-      "generatedContractRefs": ["docs/contracts/generated/dormitory/cross-scenario-summary.generated.json"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory/13-scenario-handoff-summaries.generated.json"],
       "implementationConsumptionPoints": ["services/core-api", "apps/mobile/src/generated/oam"],
       "checkScripts": ["node scripts/business/check-dormitory-13-scenario-generated-contracts.mjs"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence/dormitory-13-scenario-entry-browser/"],
       "completionStandardZh": "下游只读带入上游摘要，不重复填写，不越权写上游事实。"
     },
     {
@@ -198,10 +198,10 @@
       "domainId": "business_naming",
       "nameZh": "业务命名与旧词隔离",
       "authoritySourceRefs": ["docs/oam/visible-business-copy-contract.json"],
-      "generatedContractRefs": ["apps/mobile/src/generated/oam/dormitoryBusinessCopy.generated.json"],
+      "generatedContractRefs": ["apps/mobile/src/generated/oam/business-display-language.generated.js"],
       "implementationConsumptionPoints": ["apps/mobile/src"],
       "checkScripts": ["node scripts/oam/check-business-ui-copy-no-technical-leak.mjs", "node scripts/oam/check-visible-business-copy-contract.mjs"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence/dormitory-13-scenario-entry-browser/"],
       "completionStandardZh": "普通业务页面不暴露旧链词、技术词和内部 ID。"
     },
     {
@@ -209,10 +209,10 @@
       "domainId": "ui_ux",
       "nameZh": "页面体验、入口与按钮状态",
       "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
-      "generatedContractRefs": ["apps/mobile/src/generated/oam/dormitorySurfaceNavigation.generated.json", "apps/mobile/src/generated/oam/dormitoryPageEntryPolicy.generated.json"],
-      "implementationConsumptionPoints": ["apps/mobile/src/views", "apps/mobile/src/navigation"],
+      "generatedContractRefs": ["apps/mobile/src/generated/oam/dormitory-13-scenario-control.generated.json", "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json"],
+      "implementationConsumptionPoints": ["apps/mobile/src/views", "apps/mobile/src/navigationController.js"],
       "checkScripts": ["node scripts/oam/check-dormitory-active-path-gate.mjs"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/positive", "artifacts/browser/dormitory/scenario-*/negative"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence/dormitory-13-scenario-entry-browser/", "artifacts/oam/evidence/dormitory-final-frontend-ux-acceptance/"],
       "completionStandardZh": "今日、工作项、搜索、我的职责清楚；按钮随状态变化。"
     },
     {
@@ -220,10 +220,10 @@
       "domainId": "i18n_copy",
       "nameZh": "文案与国际化",
       "authoritySourceRefs": ["docs/oam/visible-business-copy-contract.json"],
-      "generatedContractRefs": ["apps/mobile/src/generated/oam/dormitoryBusinessCopy.generated.json"],
-      "implementationConsumptionPoints": ["apps/mobile/src/i18n", "apps/mobile/src/components"],
+      "generatedContractRefs": ["apps/mobile/src/generated/oam/business-display-language.generated.js"],
+      "implementationConsumptionPoints": ["apps/mobile/src/i18n", "apps/mobile/src/views/experienceComponents.js"],
       "checkScripts": ["node scripts/oam/check-business-ui-copy-no-technical-leak.mjs"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence/dormitory-13-scenario-entry-browser/"],
       "completionStandardZh": "业务文案以新 13 场景表达为准，审计详情以外不展示技术字段。"
     },
     {
@@ -253,10 +253,10 @@
       "domainId": "operations_runtime",
       "nameZh": "运行时执行与无副作用",
       "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
-      "generatedContractRefs": ["services/core-api/generated", "docs/contracts/generated/dormitory/runtime-rules.generated.json"],
+      "generatedContractRefs": ["services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json", "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeProjection.cs"],
       "implementationConsumptionPoints": ["services/core-api", "tests/WorkOS.RuntimeContractTests"],
       "checkScripts": ["dotnet test tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj --no-restore --verbosity minimal"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/negative"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence/dormitory-13-scenario-entry-browser/"],
       "completionStandardZh": "失败路径不写 CommandSubmission、DomainEvent、Projection、Search、Dashboard 或 Ledger。"
     },
     {
@@ -264,8 +264,8 @@
       "domainId": "database_master_data",
       "nameZh": "数据库、主数据与迁移归一",
       "authoritySourceRefs": ["docs/oam/legacy-retirement-ledger.json"],
-      "generatedContractRefs": ["docs/contracts/generated/dormitory/object-ownership.generated.json"],
-      "implementationConsumptionPoints": ["services/core-api", "scripts/migration"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory/13-scenario-object-ownership.generated.json"],
+      "implementationConsumptionPoints": ["services/core-api", "infra/db/migrations"],
       "checkScripts": ["node scripts/oam/check-legacy-retirement-ledger.mjs"],
       "browserEvidenceRefs": ["artifacts/oam/checks"],
       "completionStandardZh": "旧数据只读、归一或迁移，不能继续办理和写事实。"
@@ -275,21 +275,21 @@
       "domainId": "search_information_architecture",
       "nameZh": "搜索与信息架构",
       "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
-      "generatedContractRefs": ["apps/mobile/src/generated/oam/dormitoryPageEntryPolicy.generated.json"],
-      "implementationConsumptionPoints": ["apps/mobile/src/search", "services/core-api/search"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json"],
+      "implementationConsumptionPoints": ["apps/mobile/src/searchIntentHub.js", "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs"],
       "checkScripts": ["npm --prefix apps/mobile run test"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/negative"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence/dormitory-13-scenario-entry-browser/"],
       "completionStandardZh": "搜索只读跳转，不直接写业务事实。"
     },
     {
       "domainNo": 11,
       "domainId": "bi_kpi_reporting",
       "nameZh": "BI、指标与报表",
-      "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-13.authority.json"],
-      "generatedContractRefs": ["docs/contracts/generated/dormitory/read-model-report.generated.json"],
-      "implementationConsumptionPoints": ["services/core-api/reports", "apps/mobile/src/views"],
+      "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json"],
+      "generatedContractRefs": ["docs/contracts/generated/read-model/scenario13-reporting-read-model.generated.json"],
+      "implementationConsumptionPoints": ["services/core-api/WorkOS.Api/Runtime/ProductionObservabilityMetricsBuilder.cs", "apps/mobile/src/views"],
       "checkScripts": ["node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-13"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-positive-browser/", "artifacts/oam/evidence/dormitory-scenario13-reporting-audit-review-negative-browser/"],
       "completionStandardZh": "报表只读，指标带 permission、lineage、freshness。"
     },
     {
@@ -297,10 +297,10 @@
       "domainId": "finance_money_boundary",
       "nameZh": "财务与资金边界",
       "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
-      "generatedContractRefs": ["docs/contracts/generated/dormitory/finance-boundary.generated.json"],
-      "implementationConsumptionPoints": ["services/core-api/finance", "tests/WorkOS.RuntimeContractTests"],
+      "generatedContractRefs": ["docs/contracts/generated/dormitory/13-scenario-finance-boundary.generated.json"],
+      "implementationConsumptionPoints": ["services/core-api/WorkOS.Api/Runtime/FinanceTruthKernel.cs", "tests/WorkOS.RuntimeContractTests"],
       "checkScripts": ["node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-6", "artifacts/browser/dormitory/scenario-9", "artifacts/browser/dormitory/scenario-10"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence/dormitory-scenario6-payment-deposit-and-guarantee-positive-browser/", "artifacts/oam/evidence/dormitory-scenario9-checkout-settlement-positive-browser/", "artifacts/oam/evidence/dormitory-scenario10-cancel-noshow-refund-positive-browser/"],
       "completionStandardZh": "业务场景只产生 Intent、Draft、Request、Snapshot，账务真值由 finance-gate 独占。"
     },
     {
@@ -308,21 +308,21 @@
       "domainId": "permission_security",
       "nameZh": "权限、准入与安全",
       "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
-      "generatedContractRefs": ["docs/contracts/generated/dormitory/permission-admission.generated.json"],
-      "implementationConsumptionPoints": ["services/core-api/security", "apps/mobile/src/auth"],
+      "generatedContractRefs": ["docs/oam/dormitory-runtime-admission.current.json"],
+      "implementationConsumptionPoints": ["services/core-api/WorkOS.Api/Runtime/RuntimeSecurityPolicy.cs", "apps/mobile/src/authController.js"],
       "checkScripts": ["node scripts/oam/check-dormitory-active-path-gate.mjs"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*/negative"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence/dormitory-13-scenario-entry-browser/"],
       "completionStandardZh": "伪造内部 ID、越权操作、跨场景提前操作全部被阻断且无副作用。"
     },
     {
       "domainNo": 14,
       "domainId": "controlplane_release",
       "nameZh": "控制面与发布治理",
-      "authoritySourceRefs": ["docs/oam/dormitory-mainline-manifest.json", "docs/oam/evidence-root-hard-gate-matrix.json"],
+      "authoritySourceRefs": ["docs/oam/dormitory-mainline-manifest.json", "docs/oam/evidence-projection-policy.current.json"],
       "generatedContractRefs": ["artifacts/oam/mainline-activation-transaction.json"],
       "implementationConsumptionPoints": [".github/workflows/ci.yml", "scripts/oam"],
       "checkScripts": ["node scripts/oam/check-dormitory-ci-hard-gates.mjs", "node scripts/oam/check-dormitory-mainline-activation-transaction.mjs"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence"],
       "completionStandardZh": "CI 与 Evidence Root 对主链失败硬阻断，仍保持 production/final GO 独立授权。"
     },
     {
@@ -331,20 +331,20 @@
       "nameZh": "QA、回归与真实浏览器",
       "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"],
       "generatedContractRefs": ["docs/contracts/generated/dormitory/test-plan.generated.json"],
-      "implementationConsumptionPoints": ["scripts/surface", "apps/mobile/tests"],
+      "implementationConsumptionPoints": ["scripts/surface", "apps/mobile/src/__tests__"],
       "checkScripts": ["powershell -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence/dormitory-13-scenario-entry-browser"],
       "completionStandardZh": "场景 1-13 正反向浏览器证据新鲜、截图齐全、digest 匹配。"
     },
     {
       "domainNo": 16,
       "domainId": "evidence_root",
       "nameZh": "Evidence Root 与证据图",
-      "authoritySourceRefs": ["docs/oam/evidence-root-hard-gate-matrix.json"],
+      "authoritySourceRefs": ["docs/oam/evidence-projection-policy.current.json"],
       "generatedContractRefs": ["artifacts/oam/current-evidence-root.json"],
       "implementationConsumptionPoints": ["scripts/oam"],
       "checkScripts": ["node scripts/oam/check-current-evidence-root.mjs", "node scripts/oam/check-evidence-root-hard-gate-matrix.mjs"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence"],
       "completionStandardZh": "Evidence Root 吸收所有专项失败，不允许浏览器失败但总证据 PASS。"
     },
     {
@@ -355,7 +355,7 @@
       "generatedContractRefs": ["artifacts/oam/checks/dormitory-operation-execution-contract-result.json"],
       "implementationConsumptionPoints": ["services/core-api", "apps/mobile/src", "scripts/dev"],
       "checkScripts": ["node scripts/oam/check-dormitory-operation-execution-contract.mjs", "node scripts/oam/check-dormitory-local-test-environment-manager.mjs"],
-      "browserEvidenceRefs": ["artifacts/browser/dormitory/scenario-*"],
+      "browserEvidenceRefs": ["artifacts/oam/evidence/dormitory-performance-recoverability/"],
       "completionStandardZh": "新建、保存、确认、搜索、上传和摘要加载不依赖全量刷新。"
     },
     {
@@ -364,7 +364,7 @@
       "nameZh": "运营交付、培训与回滚",
       "authoritySourceRefs": ["docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json"],
       "generatedContractRefs": ["artifacts/oam/mainline-activation-transaction.json"],
-      "implementationConsumptionPoints": ["docs/operations/dormitory", "scripts/oam"],
+      "implementationConsumptionPoints": ["docs/business/dormitory/current-business-journey.md", "scripts/oam"],
       "checkScripts": ["node scripts/business/check-dormitory-production-mainline-activation-authority.mjs"],
       "browserEvidenceRefs": ["artifacts/oam/final-report"],
       "completionStandardZh": "SOP、异常处理、权限说明、财务边界、数据修复、回滚、培训和验收清单齐全。"

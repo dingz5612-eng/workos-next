@@ -9,30 +9,67 @@
     "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:678f6843c82982f49837296e763ed9dcea4523ae3fabb000376857e8fab67321",
+  "inputDigest": "sha256:dcf41b54839e673cf20fdce8624cfcdcb96b2d4e00587daf264cf1548990751c",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
-      "digest": "sha256:3b7ffa5e6624bfe0bc75ceff7e7103057d3827d835a3594c23a598a185c30676"
+      "digest": "sha256:64a4732f01f0d570eb336b2744aad0bfa475db887d30917d7c07a369b2f26de0"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:3b7ffa5e6624bfe0bc75ceff7e7103057d3827d835a3594c23a598a185c30676",
+  "sourceContentDigest": "sha256:64a4732f01f0d570eb336b2744aad0bfa475db887d30917d7c07a369b2f26de0",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario10.CancelNoShowRefund",
   "scenarioPackageNo": 10,
   "scenarioId": "lodging.cancel-noshow-refund-intake",
-  "outputContentDigest": "sha256:0720a5857cfb86733fd4ee95f86d985ba3f655a565a0debee02e08b1300f635f",
+  "outputContentDigest": "sha256:41cfc42428760e68a69d35c628ef32e78ba73362a5f60fe7b7b4f0d9286b0612",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "取消、未到店与退款处理",
   "businessGoalZh": "承接场景包 5 的预订确认摘要、场景包 6 的收款/押金/担保摘要、场景包 7 的入住状态摘要和场景包 9 的退房结算意向，处理预订取消、客户未到店、取消费/未到店费计算、退款或扣费申请、库存释放请求、客户确认和证据留存。",
-  "sourceScenarioDigest": "sha256:3b7ffa5e6624bfe0bc75ceff7e7103057d3827d835a3594c23a598a185c30676",
+  "sourceScenarioDigest": "sha256:64a4732f01f0d570eb336b2744aad0bfa475db887d30917d7c07a369b2f26de0",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario10.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "CancellationCase",
+      "NoShowCase",
+      "ReservationClosureSnapshot",
+      "CancellationPolicySnapshot",
+      "PaymentDepositSnapshot",
+      "RefundCalculationDraft",
+      "RefundRequestIntent",
+      "CancellationFeeIntent",
+      "ForfeitOrFeeIntent",
+      "InventoryReleaseRequest",
+      "CustomerConfirmationRecord",
+      "CustomerNotificationRecord",
+      "FinanceProcessingRequest",
+      "CancellationEvidence",
+      "CancellationStatusHistory"
+    ],
+    "searchReadModel": [
+      "取消、未到店与退款处理",
+      "取消/未到店关闭摘要",
+      "政策计算摘要",
+      "退款/扣费申请",
+      "库存释放请求",
+      "客户确认摘要",
+      "财务处理请求",
+      "证据摘要",
+      "只读对象引用",
+      "取消/未到店摘要"
+    ],
+    "noRefillRuleZh": "场景包 10 只能读取预订、财务、入住状态和退房结算意向摘要，不得要求用户重新填写已确认预订、收款押金或退房字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
   "steps": [
     {
       "stepNo": 1,
@@ -59,15 +96,18 @@
         "房间/床位",
         "预订状态",
         "已收款/押金/担保摘要",
-        "报价/价格快照"
+        "报价/价格快照",
+        "预订确认摘要",
+        "客户信息",
+        "日期范围",
+        "价格快照"
       ],
       "userFilledFields": [],
       "userSelectedFields": [
         "客户主动取消",
         "商家取消",
         "未到店关闭",
-        "取消草稿",
-        "返回预订"
+        "取消草稿"
       ],
       "userUploadedOrBoundEvidence": [],
       "systemGeneratedFields": [
@@ -86,6 +126,99 @@
       "outputs": [
         "取消或未到店草稿",
         "当前状态：取消草稿或未到店草稿"
+      ],
+      "primaryBusinessObject": "CancellationCase",
+      "requiredReadContext": [
+        "客户姓名",
+        "联系电话",
+        "预订号",
+        "入住/离店日期",
+        "房间/床位",
+        "预订状态",
+        "已收款/押金/担保摘要",
+        "报价/价格快照",
+        "预订确认摘要",
+        "客户信息",
+        "日期范围",
+        "价格快照",
+        "库存锁定历史",
+        "收款确认摘要"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [
+        "客户主动取消",
+        "商家取消",
+        "未到店关闭",
+        "取消草稿"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "取消/未到店退款申请",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "已收款/押金/担保摘要",
+          "报价/价格快照",
+          "价格快照"
+        ],
+        "direction": "押金/担保",
+        "stage": "进入取消/未到店处理",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "v-fd9c9b61",
+          "labelZh": "返回预订",
+          "labelKey": "scenario10.action.v-fd9c9b61.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.enter-cancel-noshow-processing.v-fd9c9b61.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "房间/床位",
+          "价格快照",
+          "库存锁定历史",
+          "预订状态",
+          "收款确认摘要",
+          "押金确认摘要"
+        ],
+        "to": [
+          "取消或未到店草稿",
+          "当前状态：取消草稿或未到店草稿",
+          "取消/未到店关闭摘要",
+          "政策计算摘要",
+          "退款/扣费申请",
+          "库存释放请求",
+          "客户确认摘要",
+          "财务处理请求",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 10 只能读取预订、财务、入住状态和退房结算意向摘要，不得要求用户重新填写已确认预订、收款押金或退房字段。"
+      },
+      "searchReadModel": [
+        "取消、未到店与退款处理",
+        "进入取消/未到店处理",
+        "发起取消/未到店处理",
+        "CancellationCase",
+        "客户姓名",
+        "联系电话",
+        "预订号",
+        "入住/离店日期",
+        "房间/床位",
+        "预订状态",
+        "已收款/押金/担保摘要",
+        "报价/价格快照",
+        "预订确认摘要",
+        "客户信息",
+        "日期范围",
+        "价格快照"
       ]
     },
     {
@@ -97,7 +230,16 @@
       "userSees": [
         "客户与预订摘要",
         "当前处理状态",
-        "缺失项"
+        "缺失项",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照",
+        "取消/未到店关闭摘要",
+        "政策计算摘要",
+        "退款/扣费申请"
       ],
       "userFilledFields": [
         "取消原因",
@@ -130,6 +272,93 @@
       "outputs": [
         "客户确认摘要",
         "当前状态：待政策计算或待负责人复核"
+      ],
+      "primaryBusinessObject": "CancellationCase",
+      "requiredReadContext": [
+        "客户与预订摘要",
+        "当前处理状态",
+        "缺失项",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照",
+        "取消/未到店关闭摘要",
+        "政策计算摘要",
+        "退款/扣费申请",
+        "库存锁定历史",
+        "预订状态"
+      ],
+      "editableInputs": [
+        "取消原因",
+        "客户沟通结果",
+        "处理备注",
+        "客户确认方式"
+      ],
+      "fixedSelections": [
+        "原因类型",
+        "是否客户确认",
+        "是否有争议",
+        "是否需负责人复核"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "取消/未到店退款申请",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格快照",
+          "退款/扣费申请"
+        ],
+        "direction": "应退/退款申请",
+        "stage": "填写处理原因与客户确认",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "房间/床位",
+          "价格快照",
+          "库存锁定历史",
+          "预订状态",
+          "收款确认摘要",
+          "押金确认摘要"
+        ],
+        "to": [
+          "客户确认摘要",
+          "当前状态：待政策计算或待负责人复核",
+          "取消/未到店关闭摘要",
+          "政策计算摘要",
+          "退款/扣费申请",
+          "库存释放请求",
+          "财务处理请求",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 10 只能读取预订、财务、入住状态和退房结算意向摘要，不得要求用户重新填写已确认预订、收款押金或退房字段。"
+      },
+      "searchReadModel": [
+        "取消、未到店与退款处理",
+        "填写处理原因与客户确认",
+        "登记原因与客户确认",
+        "CancellationCase",
+        "客户与预订摘要",
+        "当前处理状态",
+        "缺失项",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照",
+        "取消/未到店关闭摘要",
+        "政策计算摘要",
+        "退款/扣费申请"
       ]
     },
     {
@@ -146,7 +375,11 @@
         "押金金额",
         "可退金额",
         "应扣金额",
-        "应补金额"
+        "应补金额",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围"
       ],
       "userFilledFields": [
         "补充说明"
@@ -180,6 +413,95 @@
       "outputs": [
         "政策计算摘要",
         "当前状态：待库存释放或待负责人复核"
+      ],
+      "primaryBusinessObject": "CancellationCase",
+      "requiredReadContext": [
+        "免费取消截止时间",
+        "取消政策",
+        "未到店政策",
+        "已收金额",
+        "押金金额",
+        "可退金额",
+        "应扣金额",
+        "应补金额",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照"
+      ],
+      "editableInputs": [
+        "补充说明"
+      ],
+      "fixedSelections": [
+        "是否申请例外减免",
+        "是否提交负责人复核"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "取消/未到店退款申请",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "已收金额",
+          "押金金额",
+          "可退金额",
+          "应扣金额",
+          "应补金额",
+          "价格快照",
+          "退款申请金额",
+          "扣费申请金额",
+          "不可退金额"
+        ],
+        "direction": "应退/退款申请",
+        "stage": "政策与金额计算",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "房间/床位",
+          "价格快照",
+          "库存锁定历史",
+          "预订状态",
+          "收款确认摘要",
+          "押金确认摘要"
+        ],
+        "to": [
+          "政策计算摘要",
+          "当前状态：待库存释放或待负责人复核",
+          "取消/未到店关闭摘要",
+          "退款/扣费申请",
+          "库存释放请求",
+          "客户确认摘要",
+          "财务处理请求",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 10 只能读取预订、财务、入住状态和退房结算意向摘要，不得要求用户重新填写已确认预订、收款押金或退房字段。"
+      },
+      "searchReadModel": [
+        "取消、未到店与退款处理",
+        "政策与金额计算",
+        "生成政策金额计算",
+        "CancellationCase",
+        "免费取消截止时间",
+        "取消政策",
+        "未到店政策",
+        "已收金额",
+        "押金金额",
+        "可退金额",
+        "应扣金额",
+        "应补金额",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围"
       ]
     },
     {
@@ -192,12 +514,19 @@
         "将释放的房间/床位",
         "日期范围",
         "预订绑定",
-        "释放后状态"
+        "释放后状态",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "房间/床位",
+        "价格快照",
+        "取消/未到店关闭摘要",
+        "政策计算摘要",
+        "退款/扣费申请"
       ],
       "userFilledFields": [],
       "userSelectedFields": [
-        "确认库存释放请求",
-        "返回修改"
+        "确认库存释放请求"
       ],
       "userUploadedOrBoundEvidence": [
         "库存释放确认证据"
@@ -219,6 +548,85 @@
       "outputs": [
         "库存释放请求",
         "当前状态：库存释放已请求"
+      ],
+      "primaryBusinessObject": "CancellationCase",
+      "requiredReadContext": [
+        "将释放的房间/床位",
+        "日期范围",
+        "预订绑定",
+        "释放后状态",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "房间/床位",
+        "价格快照",
+        "取消/未到店关闭摘要",
+        "政策计算摘要",
+        "退款/扣费申请",
+        "库存锁定历史",
+        "预订状态"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [
+        "确认库存释放请求"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "取消/未到店退款申请",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格快照",
+          "退款/扣费申请"
+        ],
+        "direction": "应退/退款申请",
+        "stage": "库存释放确认",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "房间/床位",
+          "价格快照",
+          "库存锁定历史",
+          "预订状态",
+          "收款确认摘要",
+          "押金确认摘要"
+        ],
+        "to": [
+          "库存释放请求",
+          "当前状态：库存释放已请求",
+          "取消/未到店关闭摘要",
+          "政策计算摘要",
+          "退款/扣费申请",
+          "客户确认摘要",
+          "财务处理请求",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 10 只能读取预订、财务、入住状态和退房结算意向摘要，不得要求用户重新填写已确认预订、收款押金或退房字段。"
+      },
+      "searchReadModel": [
+        "取消、未到店与退款处理",
+        "库存释放确认",
+        "确认库存释放请求",
+        "CancellationCase",
+        "将释放的房间/床位",
+        "日期范围",
+        "预订绑定",
+        "释放后状态",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "房间/床位",
+        "价格快照",
+        "取消/未到店关闭摘要",
+        "政策计算摘要",
+        "退款/扣费申请"
       ]
     },
     {
@@ -232,14 +640,17 @@
         "扣费申请",
         "押金处理",
         "财务处理路径",
-        "证据摘要"
+        "证据摘要",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照",
+        "取消/未到店关闭摘要"
       ],
       "userFilledFields": [],
-      "userSelectedFields": [
-        "提交财务处理请求",
-        "保存草稿",
-        "转负责人复核"
-      ],
+      "userSelectedFields": [],
       "userUploadedOrBoundEvidence": [
         "财务处理请求补充证据"
       ],
@@ -270,6 +681,103 @@
         "退款/扣费申请",
         "财务处理请求",
         "当前状态：待财务处理"
+      ],
+      "primaryBusinessObject": "CancellationCase",
+      "requiredReadContext": [
+        "退款申请",
+        "扣费申请",
+        "押金处理",
+        "财务处理路径",
+        "证据摘要",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照",
+        "取消/未到店关闭摘要",
+        "库存锁定历史",
+        "预订状态"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "取消/未到店退款申请",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "退款申请",
+          "扣费申请",
+          "押金处理",
+          "财务处理路径",
+          "价格快照"
+        ],
+        "direction": "应退/退款申请",
+        "stage": "生成退款/扣费处理请求",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "v-545d7663",
+          "labelZh": "提交财务处理请求",
+          "labelKey": "scenario10.action.v-545d7663.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.finance-processing-request.v-545d7663.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-7ff0a450",
+          "labelZh": "转负责人复核",
+          "labelKey": "scenario10.action.v-7ff0a450.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.finance-processing-request.v-7ff0a450.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "房间/床位",
+          "价格快照",
+          "库存锁定历史",
+          "预订状态",
+          "收款确认摘要",
+          "押金确认摘要"
+        ],
+        "to": [
+          "退款/扣费申请",
+          "财务处理请求",
+          "当前状态：待财务处理",
+          "取消/未到店关闭摘要",
+          "政策计算摘要",
+          "库存释放请求",
+          "客户确认摘要",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 10 只能读取预订、财务、入住状态和退房结算意向摘要，不得要求用户重新填写已确认预订、收款押金或退房字段。"
+      },
+      "searchReadModel": [
+        "取消、未到店与退款处理",
+        "生成退款/扣费处理请求",
+        "提交财务处理请求",
+        "CancellationCase",
+        "退款申请",
+        "扣费申请",
+        "押金处理",
+        "财务处理路径",
+        "证据摘要",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照",
+        "取消/未到店关闭摘要"
       ]
     },
     {
@@ -289,13 +797,18 @@
         "政策计算摘要",
         "库存释放摘要",
         "财务处理请求摘要",
-        "不可提交原因"
+        "不可提交原因",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照"
       ],
       "userFilledFields": [],
       "userSelectedFields": [
         "确认取消",
         "确认未到店关闭",
-        "保存草稿",
         "转争议处理"
       ],
       "userUploadedOrBoundEvidence": [
@@ -329,6 +842,87 @@
       "outputs": [
         "取消/未到店关闭摘要",
         "取消单号或未到店关闭号"
+      ],
+      "primaryBusinessObject": "CancellationCase",
+      "requiredReadContext": [
+        "取消/未到店处理摘要",
+        "客户确认摘要",
+        "政策计算摘要",
+        "库存释放摘要",
+        "财务处理请求摘要",
+        "不可提交原因",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照",
+        "库存锁定历史",
+        "预订状态"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [
+        "确认取消",
+        "确认未到店关闭",
+        "转争议处理"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "取消/未到店退款申请",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "财务处理请求摘要",
+          "价格快照"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "确认取消或未到店关闭",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "房间/床位",
+          "价格快照",
+          "库存锁定历史",
+          "预订状态",
+          "收款确认摘要",
+          "押金确认摘要"
+        ],
+        "to": [
+          "取消/未到店关闭摘要",
+          "取消单号或未到店关闭号",
+          "政策计算摘要",
+          "退款/扣费申请",
+          "库存释放请求",
+          "客户确认摘要",
+          "财务处理请求",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 10 只能读取预订、财务、入住状态和退房结算意向摘要，不得要求用户重新填写已确认预订、收款押金或退房字段。"
+      },
+      "searchReadModel": [
+        "取消、未到店与退款处理",
+        "确认取消或未到店关闭",
+        "CancellationCase",
+        "取消/未到店处理摘要",
+        "客户确认摘要",
+        "政策计算摘要",
+        "库存释放摘要",
+        "财务处理请求摘要",
+        "不可提交原因",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照",
+        "取消/未到店关闭摘要"
       ]
     },
     {
@@ -346,18 +940,20 @@
         "释放资源摘要",
         "退款/扣费申请状态",
         "财务处理状态",
-        "客户通知状态"
+        "客户通知状态",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照",
+        "取消/未到店关闭摘要"
       ],
       "userFilledFields": [
         "后续跟进备注",
         "纠错原因"
       ],
-      "userSelectedFields": [
-        "查看财务状态",
-        "补充证据",
-        "发起纠错",
-        "导出摘要"
-      ],
+      "userSelectedFields": [],
       "userUploadedOrBoundEvidence": [
         "财务退回补证",
         "客户通知证据",
@@ -377,6 +973,121 @@
         "财务处理状态摘要",
         "客户通知摘要",
         "只读对象引用"
+      ],
+      "primaryBusinessObject": "CancellationCase",
+      "requiredReadContext": [
+        "取消/未到店关闭结果",
+        "释放资源摘要",
+        "退款/扣费申请状态",
+        "财务处理状态",
+        "客户通知状态",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照",
+        "取消/未到店关闭摘要",
+        "库存锁定历史",
+        "预订状态"
+      ],
+      "editableInputs": [
+        "后续跟进备注",
+        "纠错原因"
+      ],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "取消/未到店退款申请",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "退款/扣费申请状态",
+          "财务处理状态",
+          "价格快照"
+        ],
+        "direction": "应退/退款申请",
+        "stage": "处理结果与后续跟进",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "v-80b3ce71",
+          "labelZh": "查看财务状态",
+          "labelKey": "scenario10.action.v-80b3ce71.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.result-and-follow-up.v-80b3ce71.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-3f4291dc",
+          "labelZh": "补充证据",
+          "labelKey": "scenario10.action.v-3f4291dc.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.result-and-follow-up.v-3f4291dc.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-12afb30e",
+          "labelZh": "发起纠错",
+          "labelKey": "scenario10.action.v-12afb30e.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.result-and-follow-up.v-12afb30e.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-74007f70",
+          "labelZh": "导出摘要",
+          "labelKey": "scenario10.action.v-74007f70.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.result-and-follow-up.v-74007f70.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "房间/床位",
+          "价格快照",
+          "库存锁定历史",
+          "预订状态",
+          "收款确认摘要",
+          "押金确认摘要"
+        ],
+        "to": [
+          "财务处理状态摘要",
+          "客户通知摘要",
+          "只读对象引用",
+          "取消/未到店关闭摘要",
+          "政策计算摘要",
+          "退款/扣费申请",
+          "库存释放请求",
+          "客户确认摘要",
+          "财务处理请求",
+          "证据摘要"
+        ],
+        "noRefillRuleZh": "场景包 10 只能读取预订、财务、入住状态和退房结算意向摘要，不得要求用户重新填写已确认预订、收款押金或退房字段。"
+      },
+      "searchReadModel": [
+        "取消、未到店与退款处理",
+        "处理结果与后续跟进",
+        "记录后续跟进",
+        "CancellationCase",
+        "取消/未到店关闭结果",
+        "释放资源摘要",
+        "退款/扣费申请状态",
+        "财务处理状态",
+        "客户通知状态",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照",
+        "取消/未到店关闭摘要"
       ]
     }
   ],
@@ -410,7 +1121,6 @@
       "商家取消",
       "未到店关闭",
       "取消草稿",
-      "返回预订",
       "原因类型",
       "是否客户确认",
       "是否有争议",
@@ -418,7 +1128,6 @@
       "是否申请例外减免",
       "是否提交负责人复核",
       "确认库存释放请求",
-      "提交财务处理请求",
       "确认取消",
       "确认未到店关闭",
       "转争议处理"
@@ -514,7 +1223,928 @@
       "ledgerTransactionId",
       "checkoutCaseId",
       "stayId"
-    ]
+    ],
+    "fieldAuthority": {
+      "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#fieldAuthorityModel",
+      "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+      "businessInput": [
+        {
+          "fieldId": "v-57a4782c",
+          "labelZh": "取消原因",
+          "control": "textarea",
+          "labelKey": "scenario10.field.v-57a4782c.label",
+          "helpKey": "scenario10.field.v-57a4782c.help",
+          "errorKey": "scenario10.field.v-57a4782c.error"
+        },
+        {
+          "fieldId": "v-15f395e4",
+          "labelZh": "客户沟通结果",
+          "control": "text",
+          "labelKey": "scenario10.field.v-15f395e4.label",
+          "helpKey": "scenario10.field.v-15f395e4.help",
+          "errorKey": "scenario10.field.v-15f395e4.error"
+        },
+        {
+          "fieldId": "v-4f6c3910",
+          "labelZh": "处理备注",
+          "control": "textarea",
+          "labelKey": "scenario10.field.v-4f6c3910.label",
+          "helpKey": "scenario10.field.v-4f6c3910.help",
+          "errorKey": "scenario10.field.v-4f6c3910.error"
+        },
+        {
+          "fieldId": "v-c6787f38",
+          "labelZh": "客户确认方式",
+          "control": "text",
+          "labelKey": "scenario10.field.v-c6787f38.label",
+          "helpKey": "scenario10.field.v-c6787f38.help",
+          "errorKey": "scenario10.field.v-c6787f38.error"
+        },
+        {
+          "fieldId": "v-e0679fcd",
+          "labelZh": "补充说明",
+          "control": "textarea",
+          "labelKey": "scenario10.field.v-e0679fcd.label",
+          "helpKey": "scenario10.field.v-e0679fcd.help",
+          "errorKey": "scenario10.field.v-e0679fcd.error"
+        },
+        {
+          "fieldId": "v-235b5dc9",
+          "labelZh": "后续跟进备注",
+          "control": "textarea",
+          "labelKey": "scenario10.field.v-235b5dc9.label",
+          "helpKey": "scenario10.field.v-235b5dc9.help",
+          "errorKey": "scenario10.field.v-235b5dc9.error"
+        },
+        {
+          "fieldId": "v-cb2f4435",
+          "labelZh": "纠错原因",
+          "control": "textarea",
+          "labelKey": "scenario10.field.v-cb2f4435.label",
+          "helpKey": "scenario10.field.v-cb2f4435.help",
+          "errorKey": "scenario10.field.v-cb2f4435.error"
+        }
+      ],
+      "businessSelect": [
+        {
+          "fieldId": "v-15d7170b",
+          "labelZh": "客户主动取消",
+          "control": "searchable-select",
+          "labelKey": "scenario10.field.v-15d7170b.label",
+          "helpKey": "scenario10.field.v-15d7170b.help",
+          "errorKey": "scenario10.field.v-15d7170b.error",
+          "optionSet": "option.v-15d7170b",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-c2101e5b",
+          "labelZh": "商家取消",
+          "control": "select",
+          "labelKey": "scenario10.field.v-c2101e5b.label",
+          "helpKey": "scenario10.field.v-c2101e5b.help",
+          "errorKey": "scenario10.field.v-c2101e5b.error",
+          "optionSet": "option.v-c2101e5b",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-edc6dc8c",
+          "labelZh": "未到店关闭",
+          "control": "select",
+          "labelKey": "scenario10.field.v-edc6dc8c.label",
+          "helpKey": "scenario10.field.v-edc6dc8c.help",
+          "errorKey": "scenario10.field.v-edc6dc8c.error",
+          "optionSet": "option.v-edc6dc8c",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-b3481ca3",
+          "labelZh": "取消草稿",
+          "control": "select",
+          "labelKey": "scenario10.field.v-b3481ca3.label",
+          "helpKey": "scenario10.field.v-b3481ca3.help",
+          "errorKey": "scenario10.field.v-b3481ca3.error",
+          "optionSet": "option.v-b3481ca3",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-f087a8f8",
+          "labelZh": "原因类型",
+          "control": "select",
+          "labelKey": "scenario10.field.v-f087a8f8.label",
+          "helpKey": "scenario10.field.v-f087a8f8.help",
+          "errorKey": "scenario10.field.v-f087a8f8.error",
+          "optionSet": "option.v-f087a8f8",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-11200521",
+          "labelZh": "是否客户确认",
+          "control": "searchable-select",
+          "labelKey": "scenario10.field.v-11200521.label",
+          "helpKey": "scenario10.field.v-11200521.help",
+          "errorKey": "scenario10.field.v-11200521.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-30b7bc20",
+          "labelZh": "是否有争议",
+          "control": "select",
+          "labelKey": "scenario10.field.v-30b7bc20.label",
+          "helpKey": "scenario10.field.v-30b7bc20.help",
+          "errorKey": "scenario10.field.v-30b7bc20.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-4537ac95",
+          "labelZh": "是否需负责人复核",
+          "control": "searchable-select",
+          "labelKey": "scenario10.field.v-4537ac95.label",
+          "helpKey": "scenario10.field.v-4537ac95.help",
+          "errorKey": "scenario10.field.v-4537ac95.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-dae4600f",
+          "labelZh": "是否申请例外减免",
+          "control": "select",
+          "labelKey": "scenario10.field.v-dae4600f.label",
+          "helpKey": "scenario10.field.v-dae4600f.help",
+          "errorKey": "scenario10.field.v-dae4600f.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-e6fe60d9",
+          "labelZh": "是否提交负责人复核",
+          "control": "searchable-select",
+          "labelKey": "scenario10.field.v-e6fe60d9.label",
+          "helpKey": "scenario10.field.v-e6fe60d9.help",
+          "errorKey": "scenario10.field.v-e6fe60d9.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-393cc369",
+          "labelZh": "确认库存释放请求",
+          "control": "select",
+          "labelKey": "scenario10.field.v-393cc369.label",
+          "helpKey": "scenario10.field.v-393cc369.help",
+          "errorKey": "scenario10.field.v-393cc369.error",
+          "optionSet": "option.v-393cc369",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-458ffe69",
+          "labelZh": "确认取消",
+          "control": "select",
+          "labelKey": "scenario10.field.v-458ffe69.label",
+          "helpKey": "scenario10.field.v-458ffe69.help",
+          "errorKey": "scenario10.field.v-458ffe69.error",
+          "optionSet": "option.v-458ffe69",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-b42d092e",
+          "labelZh": "确认未到店关闭",
+          "control": "select",
+          "labelKey": "scenario10.field.v-b42d092e.label",
+          "helpKey": "scenario10.field.v-b42d092e.help",
+          "errorKey": "scenario10.field.v-b42d092e.error",
+          "optionSet": "option.v-b42d092e",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-17e46ad6",
+          "labelZh": "转争议处理",
+          "control": "select",
+          "labelKey": "scenario10.field.v-17e46ad6.label",
+          "helpKey": "scenario10.field.v-17e46ad6.help",
+          "errorKey": "scenario10.field.v-17e46ad6.error",
+          "optionSet": "option.v-17e46ad6",
+          "submitValueSource": "stableValue"
+        }
+      ],
+      "systemDerived": [
+        {
+          "fieldId": "v-76a19a3e",
+          "labelZh": "取消费",
+          "labelKey": "scenario10.field.v-76a19a3e.label",
+          "helpKey": "scenario10.field.v-76a19a3e.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-f25a95db",
+          "labelZh": "未到店费",
+          "labelKey": "scenario10.field.v-f25a95db.label",
+          "helpKey": "scenario10.field.v-f25a95db.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-8cc0bcc3",
+          "labelZh": "退款申请金额",
+          "labelKey": "scenario10.field.v-8cc0bcc3.label",
+          "helpKey": "scenario10.field.v-8cc0bcc3.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-bd149291",
+          "labelZh": "扣费申请金额",
+          "labelKey": "scenario10.field.v-bd149291.label",
+          "helpKey": "scenario10.field.v-bd149291.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-16d7c825",
+          "labelZh": "不可退金额",
+          "labelKey": "scenario10.field.v-16d7c825.label",
+          "helpKey": "scenario10.field.v-16d7c825.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-7072f704",
+          "labelZh": "可退金额",
+          "labelKey": "scenario10.field.v-7072f704.label",
+          "helpKey": "scenario10.field.v-7072f704.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-cbd5be6c",
+          "labelZh": "应补金额",
+          "labelKey": "scenario10.field.v-cbd5be6c.label",
+          "helpKey": "scenario10.field.v-cbd5be6c.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-84e7a9b8",
+          "labelZh": "财务处理方向",
+          "labelKey": "scenario10.field.v-84e7a9b8.label",
+          "helpKey": "scenario10.field.v-84e7a9b8.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        }
+      ],
+      "readOnlySummary": [
+        {
+          "fieldId": "v-90a2e716",
+          "labelZh": "客户姓名",
+          "labelKey": "scenario10.field.v-90a2e716.label",
+          "helpKey": "scenario10.field.v-90a2e716.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "contactPhone",
+          "labelZh": "联系电话",
+          "labelKey": "scenario10.field.contactPhone.label",
+          "helpKey": "scenario10.field.contactPhone.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "reservationNoDisplay",
+          "labelZh": "预订号",
+          "labelKey": "scenario10.field.reservationNoDisplay.label",
+          "helpKey": "scenario10.field.reservationNoDisplay.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "stayDateRange",
+          "labelZh": "入住/离店日期",
+          "labelKey": "scenario10.field.stayDateRange.label",
+          "helpKey": "scenario10.field.stayDateRange.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "roomOrBedSummary",
+          "labelZh": "房间/床位",
+          "labelKey": "scenario10.field.roomOrBedSummary.label",
+          "helpKey": "scenario10.field.roomOrBedSummary.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-c07ac6ca",
+          "labelZh": "预订状态",
+          "labelKey": "scenario10.field.v-c07ac6ca.label",
+          "helpKey": "scenario10.field.v-c07ac6ca.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-63ea5e51",
+          "labelZh": "库存锁定历史",
+          "labelKey": "scenario10.field.v-63ea5e51.label",
+          "helpKey": "scenario10.field.v-63ea5e51.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-8eb24daf",
+          "labelZh": "已收款/押金/担保摘要",
+          "labelKey": "scenario10.field.v-8eb24daf.label",
+          "helpKey": "scenario10.field.v-8eb24daf.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-881a8943",
+          "labelZh": "财务确认状态",
+          "labelKey": "scenario10.field.v-881a8943.label",
+          "helpKey": "scenario10.field.v-881a8943.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-e35ccb3b",
+          "labelZh": "入住状态摘要",
+          "labelKey": "scenario10.field.v-e35ccb3b.label",
+          "helpKey": "scenario10.field.v-e35ccb3b.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-171aa31a",
+          "labelZh": "退房结算意向",
+          "labelKey": "scenario10.field.v-171aa31a.label",
+          "helpKey": "scenario10.field.v-171aa31a.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-ba173817",
+          "labelZh": "报价/价格快照",
+          "labelKey": "scenario10.field.v-ba173817.label",
+          "helpKey": "scenario10.field.v-ba173817.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-b7e26a46",
+          "labelZh": "预订确认摘要",
+          "labelKey": "scenario10.field.v-b7e26a46.label",
+          "helpKey": "scenario10.field.v-b7e26a46.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "customerInfo",
+          "labelZh": "客户信息",
+          "labelKey": "scenario10.field.customerInfo.label",
+          "helpKey": "scenario10.field.customerInfo.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "stayDateRange",
+          "labelZh": "日期范围",
+          "labelKey": "scenario10.field.stayDateRange.label",
+          "helpKey": "scenario10.field.stayDateRange.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "priceSnapshot",
+          "labelZh": "价格快照",
+          "labelKey": "scenario10.field.priceSnapshot.label",
+          "helpKey": "scenario10.field.priceSnapshot.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-b4845f4c",
+          "labelZh": "收款确认摘要",
+          "labelKey": "scenario10.field.v-b4845f4c.label",
+          "helpKey": "scenario10.field.v-b4845f4c.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-9e3dcc77",
+          "labelZh": "押金确认摘要",
+          "labelKey": "scenario10.field.v-9e3dcc77.label",
+          "helpKey": "scenario10.field.v-9e3dcc77.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-1e7c1bba",
+          "labelZh": "担保确认摘要",
+          "labelKey": "scenario10.field.v-1e7c1bba.label",
+          "helpKey": "scenario10.field.v-1e7c1bba.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-33daca15",
+          "labelZh": "退房确认摘要",
+          "labelKey": "scenario10.field.v-33daca15.label",
+          "helpKey": "scenario10.field.v-33daca15.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-d0348b9d",
+          "labelZh": "应退/应补意向",
+          "labelKey": "scenario10.field.v-d0348b9d.label",
+          "helpKey": "scenario10.field.v-d0348b9d.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-1b54146f",
+          "labelZh": "财务处理请求",
+          "labelKey": "scenario10.field.v-1b54146f.label",
+          "helpKey": "scenario10.field.v-1b54146f.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-f71ae921",
+          "labelZh": "证据摘要",
+          "labelKey": "scenario10.field.v-f71ae921.label",
+          "helpKey": "scenario10.field.v-f71ae921.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-cd66b0d5",
+          "labelZh": "只读对象引用",
+          "labelKey": "scenario10.field.v-cd66b0d5.label",
+          "helpKey": "scenario10.field.v-cd66b0d5.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-3dbe671d",
+          "labelZh": "财务状态",
+          "labelKey": "scenario10.field.v-3dbe671d.label",
+          "helpKey": "scenario10.field.v-3dbe671d.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 库存锁定历史"
+        }
+      ],
+      "evidenceBinding": [
+        {
+          "fieldId": "evidence.v-b741b783",
+          "labelZh": "聊天记录",
+          "labelKey": "scenario10.evidence.evidence.v-b741b783.label",
+          "helpKey": "scenario10.evidence.evidence.v-b741b783.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-8d485a30",
+          "labelZh": "电话记录",
+          "labelKey": "scenario10.evidence.evidence.v-8d485a30.label",
+          "helpKey": "scenario10.evidence.evidence.v-8d485a30.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-de9a8f64",
+          "labelZh": "客户确认",
+          "labelKey": "scenario10.evidence.evidence.v-de9a8f64.label",
+          "helpKey": "scenario10.evidence.evidence.v-de9a8f64.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-2a2e40f1",
+          "labelZh": "内部审批证据",
+          "labelKey": "scenario10.evidence.evidence.v-2a2e40f1.label",
+          "helpKey": "scenario10.evidence.evidence.v-2a2e40f1.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-c39f704f",
+          "labelZh": "例外减免依据",
+          "labelKey": "scenario10.evidence.evidence.v-c39f704f.label",
+          "helpKey": "scenario10.evidence.evidence.v-c39f704f.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-c362c401",
+          "labelZh": "政策补充证据",
+          "labelKey": "scenario10.evidence.evidence.v-c362c401.label",
+          "helpKey": "scenario10.evidence.evidence.v-c362c401.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-330aaf63",
+          "labelZh": "库存释放确认证据",
+          "labelKey": "scenario10.evidence.evidence.v-330aaf63.label",
+          "helpKey": "scenario10.evidence.evidence.v-330aaf63.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-26920b4a",
+          "labelZh": "财务处理请求补充证据",
+          "labelKey": "scenario10.evidence.evidence.v-26920b4a.label",
+          "helpKey": "scenario10.evidence.evidence.v-26920b4a.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-52f11f44",
+          "labelZh": "关闭补充证据",
+          "labelKey": "scenario10.evidence.evidence.v-52f11f44.label",
+          "helpKey": "scenario10.evidence.evidence.v-52f11f44.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-97db8a10",
+          "labelZh": "财务退回补证",
+          "labelKey": "scenario10.evidence.evidence.v-97db8a10.label",
+          "helpKey": "scenario10.evidence.evidence.v-97db8a10.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-8734c8a8",
+          "labelZh": "客户通知证据",
+          "labelKey": "scenario10.evidence.evidence.v-8734c8a8.label",
+          "helpKey": "scenario10.evidence.evidence.v-8734c8a8.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-8d7b39c5",
+          "labelZh": "纠错证据",
+          "labelKey": "scenario10.evidence.evidence.v-8d7b39c5.label",
+          "helpKey": "scenario10.evidence.evidence.v-8d7b39c5.help",
+          "evidenceType": "businessEvidence"
+        }
+      ],
+      "legalAction": [
+        {
+          "fieldId": "v-fd9c9b61",
+          "labelZh": "返回预订",
+          "labelKey": "scenario10.action.v-fd9c9b61.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-fd9c9b61.v1"
+        },
+        {
+          "fieldId": "v-545d7663",
+          "labelZh": "提交财务处理请求",
+          "labelKey": "scenario10.action.v-545d7663.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-545d7663.v1"
+        },
+        {
+          "fieldId": "v-7ff0a450",
+          "labelZh": "转负责人复核",
+          "labelKey": "scenario10.action.v-7ff0a450.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-7ff0a450.v1"
+        },
+        {
+          "fieldId": "v-80b3ce71",
+          "labelZh": "查看财务状态",
+          "labelKey": "scenario10.action.v-80b3ce71.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-80b3ce71.v1"
+        },
+        {
+          "fieldId": "v-3f4291dc",
+          "labelZh": "补充证据",
+          "labelKey": "scenario10.action.v-3f4291dc.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-3f4291dc.v1"
+        },
+        {
+          "fieldId": "v-12afb30e",
+          "labelZh": "发起纠错",
+          "labelKey": "scenario10.action.v-12afb30e.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-12afb30e.v1"
+        },
+        {
+          "fieldId": "v-74007f70",
+          "labelZh": "导出摘要",
+          "labelKey": "scenario10.action.v-74007f70.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-74007f70.v1"
+        }
+      ],
+      "actionControl": [
+        {
+          "fieldId": "v-fd9c9b61",
+          "labelZh": "返回预订",
+          "labelKey": "scenario10.action.v-fd9c9b61.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-fd9c9b61.v1"
+        },
+        {
+          "fieldId": "v-545d7663",
+          "labelZh": "提交财务处理请求",
+          "labelKey": "scenario10.action.v-545d7663.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-545d7663.v1"
+        },
+        {
+          "fieldId": "v-7ff0a450",
+          "labelZh": "转负责人复核",
+          "labelKey": "scenario10.action.v-7ff0a450.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-7ff0a450.v1"
+        },
+        {
+          "fieldId": "v-80b3ce71",
+          "labelZh": "查看财务状态",
+          "labelKey": "scenario10.action.v-80b3ce71.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-80b3ce71.v1"
+        },
+        {
+          "fieldId": "v-3f4291dc",
+          "labelZh": "补充证据",
+          "labelKey": "scenario10.action.v-3f4291dc.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-3f4291dc.v1"
+        },
+        {
+          "fieldId": "v-12afb30e",
+          "labelZh": "发起纠错",
+          "labelKey": "scenario10.action.v-12afb30e.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-12afb30e.v1"
+        },
+        {
+          "fieldId": "v-74007f70",
+          "labelZh": "导出摘要",
+          "labelKey": "scenario10.action.v-74007f70.label",
+          "legalActionRef": "legalAction.dormitory.scenario10.v-74007f70.v1"
+        }
+      ],
+      "conditionalInput": [],
+      "auditInternal": [
+        {
+          "fieldId": "cancellationCaseRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "noShowCaseRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "paymentDepositSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "policySnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "sourceScenarioRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "customerConfirmationRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "confirmationEvidenceRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "refundCalculationDraftRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "financeSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "inventoryReleaseRequestRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "refundRequestIntentRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "cancellationFeeIntentRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "forfeitOrFeeIntentRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "financeProcessingRequestRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "customerNotificationRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "statusHistoryRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "projectionVersion",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "domainEventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "cancellationCaseId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "refundId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "paymentId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "depositId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ledgerEntryId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "digest",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ledgerTransactionId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "checkoutCaseId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stayId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        }
+      ]
+    }
   },
   "cancellationStatusOptions": [
     "取消草稿",

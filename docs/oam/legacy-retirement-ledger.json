@@ -54,8 +54,8 @@
         "docs/oam/compatibility/",
         "docs/contracts/runtime-surface-policy.json",
         "scripts/oam/lib/",
-        "scripts/oam/check-dormitory-first-golden-chain",
-        "scripts/oam/check-first-golden-chain",
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+        "scripts/oam/check-first-golden-chain-active-path-exact.mjs",
         "scripts/oam/generate-current-evidence-root.mjs"
       ],
       "writeBusinessFactsAllowed": false,

@@ -502,6 +502,7 @@ public sealed class SearchKernelService
     private static readonly IReadOnlyList<SearchCommandDefinition> SearchCommandCatalog =
         AcceptedCapabilityRuntimeProjection.SearchCommands()
         .Concat(DormitoryScenario2RuntimeProjection.SearchCommands())
+        .Concat(Dormitory13ScenarioRuntimeProjection.SearchCommands())
         .ToArray();
 
     private static bool IsTerminalStatus(string status) =>

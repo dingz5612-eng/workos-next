@@ -392,9 +392,9 @@ Invoke-Gate node scripts/oam/check-generated-candidate-acceptance.mjs --self-tes
 Invoke-Gate node scripts/oam/check-generated-bundle-content-addressed.mjs
 Invoke-Gate node scripts/oam/check-single-capability-bundle-digest.mjs
 Invoke-Gate node scripts/oam/check-generated-candidate-acceptance.mjs
+Invoke-Gate node scripts/oam/check-dormitory-runtime-admission.mjs --write-proof
 Invoke-Gate node scripts/oam/check-runtime-consumes-accepted-bundle.mjs
 Invoke-Gate node scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs
-Invoke-Gate node scripts/oam/check-dormitory-runtime-admission.mjs --write-proof
 Invoke-Gate node scripts/oam/check-environment-profile-authority.mjs
 Invoke-Gate node scripts/oam/check-runtime-stability-lane.mjs
 Invoke-Gate node scripts/oam/check-runtime-implementation-drift-policy.mjs

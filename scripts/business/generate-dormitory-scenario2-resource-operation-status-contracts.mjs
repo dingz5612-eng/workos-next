@@ -45,7 +45,8 @@ const commonBoundary = {
   nameZh: scenario.nameZh,
   businessGoalZh: scenario.businessGoalZh,
   sourceScenarioDigest: scenarioDigest,
-  packageIndexDigest
+  packageIndexDigest,
+  experienceContract: scenario.experienceContract ?? null
 };
 
 const runtimeExecution = buildRuntimeExecution();
@@ -139,6 +140,14 @@ const generated = {
       systemGeneratedFields: step.systemGeneratedFields,
       validations: step.validations,
       outputs: step.outputs,
+      primaryBusinessObject: step.primaryBusinessObject,
+      requiredReadContext: step.requiredReadContext,
+      editableInputs: step.editableInputs,
+      fixedSelections: step.fixedSelections,
+      financialContext: step.financialContext,
+      legalActions: step.legalActions,
+      handoffSummary: step.handoffSummary,
+      searchReadModel: step.searchReadModel,
       conclusionOptions: step.conclusionOptions
     })),
     fields: scenario.fields,
@@ -181,12 +190,16 @@ function buildRuntimeExecution() {
   const startAdapterDefinitionIds = Object.fromEntries(
     steps.map((step) => [`${workspaceId}:${step.cardId}`, step.definitionId])
   );
-  const transitions = steps.slice(0, -1).map((step, index) => ({
-    policyId: `generated-transition.dormitory.scenario2.${step.stepId}-to-${steps[index + 1].stepId}.v1`,
-    fromDefinitionId: step.definitionId,
-    toDefinitionId: steps[index + 1].definitionId,
-    sourceContract: outputPaths.runtimeMirror
-  }));
+  const transitions = steps.slice(0, -1).map((step, index) => {
+    const next = steps[index + 1];
+    return {
+      policyId: `generated-transition.dormitory.scenario2.${step.stepId}-to-${next.stepId}.v1`,
+      fromDefinitionId: step.definitionId,
+      toDefinitionId: next.definitionId,
+      sourceContract: outputPaths.runtimeMirror,
+      condition: transitionConditionFor(step, next)
+    };
+  });
 
   return {
     workspaceId,
@@ -227,6 +240,21 @@ function buildRuntimeExecution() {
   };
 }
 
+function transitionConditionFor(step, next) {
+  const guard = (scenario.transitionGuards ?? []).find((item) =>
+    item.fromStepId === step.stepId && item.toStepId === next.stepId);
+  return guard
+    ? {
+      conditionId: guard.conditionId,
+      fieldId: guard.fieldId,
+      operator: guard.operator,
+      values: guard.values ?? [],
+      whenNotMet: guard.whenNotMet,
+      sourceAuthorityRuleZh: guard.sourceAuthorityRuleZh
+    }
+    : null;
+}
+
 function runtimeStep(step, index) {
   const cardId = `cert.${camelFromKebab(step.stepId)}`;
   const workItemType = step.commandId;
@@ -257,6 +285,14 @@ function runtimeStep(step, index) {
       commandBusinessNameZh: step.commandBusinessNameZh,
       userSees: step.userSees,
       outputs: step.outputs,
+      primaryBusinessObject: step.primaryBusinessObject,
+      requiredReadContext: step.requiredReadContext,
+      editableInputs: step.editableInputs,
+      fixedSelections: step.fixedSelections,
+      financialContext: step.financialContext,
+      legalActions: step.legalActions,
+      handoffSummary: step.handoffSummary,
+      searchReadModel: step.searchReadModel,
       validations: step.validations
     }
   };
@@ -335,9 +371,7 @@ function localizedOptionSets() {
       option("room", "房间", "Комната", "Бөлмө"),
       option("bed", "床位", "Койка", "Койка")
     ],
-    baseReadyResource: [
-      option("sample-room-a-3-301", "A 栋 3 层 301 房间 · 4 个床位 · 基础检查已完成", "Корпус A, этаж 3, комната 301 · 4 койки · базовая проверка завершена", "A корпусу, 3-кабат, 301 бөлмө · 4 койка · негизги текшерүү бүттү")
-    ],
+    baseReadyResource: [],
     inspectionResult: [
       option("passed", "通过", "Пройдено", "Өттү"),
       option("needs_follow_up", "需要跟进", "Нужно доработать", "Көзөмөл керек"),

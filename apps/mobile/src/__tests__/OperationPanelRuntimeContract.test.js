@@ -656,7 +656,7 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     saveCompletedRecordSnapshot({
       workspaceId,
       cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
-      values: { roomNo: "A301", bedCount: "4" }
+      values: { roomNo: "A301", bedCount: "2" }
     });
     saveCompletedRecordSnapshot({
       workspaceId,
@@ -680,7 +680,7 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
 
     expect(text).toContain("房间和床位已新建");
     expect(text).toContain("A301");
-    expect(text).toContain("4 个床位 01, 02, 03, 04");
+    expect(text).toContain("2 个床位 01, 02");
     expect(text).toContain("通过");
     expect(text).not.toContain("所属房间 未填写");
     expect(text).not.toContain("床位 未填写");
@@ -695,7 +695,7 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     })));
 
     expect(ruText).toContain("Базовая готовность комнаты и коек завершена");
-    expect(ruText).toContain("4 коек: 01, 02, 03, 04");
+    expect(ruText).toContain("2 коек: 01, 02");
     expect(ruText).not.toMatch(/房源建档|基础就绪记录|个床位/);
   });
 

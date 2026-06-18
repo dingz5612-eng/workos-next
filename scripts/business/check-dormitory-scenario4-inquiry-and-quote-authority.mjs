@@ -66,6 +66,10 @@ const forbiddenUserInput = [
   "digest",
   "domainEventId"
 ];
+const forbiddenActionUserInput = [
+  "saveDraft",
+  "backToEdit"
+];
 const forbiddenRuntimeWrites = [
   "InventoryHold",
   "Reservation",
@@ -243,6 +247,7 @@ function checkStepsAndFields() {
       if ((scenario.fields?.[fieldClass] ?? []).includes(internal)) fail(`${internal} must not be ${fieldClass}.`);
     }
   }
+  assertNoActionUserInputs(scenario, "scenario 4 Source Authority");
 }
 
 function checkCrud() {
@@ -344,6 +349,18 @@ function checkNoGo() {
 function assertArray(actual = [], expected = [], label = "array") {
   if (JSON.stringify(actual ?? []) !== JSON.stringify(expected)) {
     fail(`${label} mismatch. expected=${JSON.stringify(expected)} actual=${JSON.stringify(actual ?? [])}`);
+  }
+}
+
+function assertNoActionUserInputs(document, label) {
+  for (const action of forbiddenActionUserInput) {
+    for (const [stepIndex, step] of (document?.steps ?? []).entries()) {
+      if ((step.userFilledFields ?? []).includes(action)) fail(`${label} step ${stepIndex + 1} must not expose action ${action} as user-filled input.`);
+      if ((step.userSelectedFields ?? []).includes(action)) fail(`${label} step ${stepIndex + 1} must not expose action ${action} as user-selected input.`);
+      if ((step.fields ?? []).some((field) => (field.fieldId ?? field.id) === action)) fail(`${label} step ${stepIndex + 1} must not render action ${action} as a field.`);
+    }
+    if ((document?.fields?.userFilled ?? []).includes(action)) fail(`${label} must not expose action ${action} as global user-filled input.`);
+    if ((document?.fields?.userSelected ?? []).includes(action)) fail(`${label} must not expose action ${action} as global user-selected input.`);
   }
 }
 

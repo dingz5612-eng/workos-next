@@ -339,6 +339,33 @@ public sealed class OperationsRuntimeServiceTests
     }
 
     [TestMethod]
+    public void current_persisted_work_item_reopens_not_started_projection_card_as_ready()
+    {
+        var workspace = FakeOperationsRuntime.ResourceWorkspace("W-STAY-RESOURCE-202606040006");
+        var service = Service(out _, out _, out _, workspaces: new[] { workspace });
+        var workItem = service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-current-bed-setup",
+            TenantId: "tenant-start",
+            WorkItemType: "Dorm.BedSetup",
+            WorkspaceId: workspace.Id,
+            CardId: "bedSetup",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = workspace.Id,
+                ["cardId"] = "bedSetup",
+                ["templateWorkspaceId"] = "W-STAY-RESOURCE",
+                ["definitionId"] = "definition.bedSetup.v1"
+            }));
+
+        var surface = service.GetWorkItemSurface(workItem!.WorkItemId);
+
+        Assert.AreEqual("notStarted", workspace.Cards[1].Status);
+        Assert.AreEqual("available", workItem.Status);
+        Assert.AreEqual("ready", surface!.Card!.Status);
+    }
+
+    [TestMethod]
     public void correction_confirm_does_not_dispatch_next_resource_lifecycle_work_item()
     {
         var workspace = FakeOperationsRuntime.ResourceWorkspace("W-STAY-RESOURCE-202606040005");

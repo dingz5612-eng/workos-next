@@ -445,6 +445,7 @@ export function cardOperation(card, item, ctx) {
   const statusHelp = cardStatusHelp(card, ctx);
   const draft = loadDraft(item.id, card.id);
   const fields = operationInputFields(card, ctx, item);
+  const readOnlyContext = readOnlyContextPanel(card, item, ctx);
   if (isTerminalCardStatus(card.status)) {
     return `<div class="card-operation completed-operation" data-component="operation-card-shell">
       <span>${ctx.tr("completedRecordTitle")}</span>
@@ -466,6 +467,7 @@ export function cardOperation(card, item, ctx) {
     <h3>${ctx.tx(card.title)}</h3>
     ${statusHelp ? `<section class="operation-state"><b>${ctx.tr(card.status)}</b><p>${statusHelp}</p></section>` : ""}
     <section class="operation-guidance"><b>${ctx.tr("cardAction")}</b><p>${operationActionText(card, item, ctx)}</p></section>
+    ${readOnlyContext}
     ${fields.length ? `<section class="operation-input-section" data-surface="operation-form">
       <b>${ctx.tr("cardInput")}</b>
       <div class="operation-inputs">${fields.map((field) => operationControl(field, item, card, disabled, ctx)).join("")}</div>
@@ -478,6 +480,19 @@ export function cardOperation(card, item, ctx) {
     </div>
     ${inlineOperationMessage(card, item, ctx)}
   </div>`;
+}
+
+function readOnlyContextPanel(card, item, ctx) {
+  const fields = (card.fields?.system || []).filter((field) => field?.visibleToUser !== false);
+  if (!fields.length) return "";
+  const rows = fields.slice(0, 10).map((field) => {
+    const value = displayOperationValue(field, item, card, ctx) || field.ui?.defaultValue || ctx.tr("recordValueMissing");
+    return completedFactRow(ctx.localTerm(field), value, ctx);
+  }).join("");
+  return `<section class="completed-record-facts operation-read-context" data-surface="operation-read-context">
+      <b>${ctx.tr("systemInheritedCheck")}</b>
+      <dl>${rows}</dl>
+    </section>`;
 }
 
 function inlineOperationMessage(card, item, ctx) {
@@ -508,7 +523,7 @@ export function primaryActionButton(actionState, ctx) {
   const action = actionState.primaryAction;
   const disabled = action.disabled ? "disabled" : "";
   const title = action.reasonKey ? ` title="${ctx.escapeAttr(ctx.tr(action.reasonKey))}"` : "";
-  const submit = ["ready", "readyObservation", "missingRequiredFields"].includes(actionState.status) ? "data-submit-card" : `data-action-state="${ctx.escapeAttr(actionState.status)}"`;
+  const submit = ["ready", "readyObservation", "missingRequiredFields", "missingEvidence"].includes(actionState.status) ? "data-submit-card" : `data-action-state="${ctx.escapeAttr(actionState.status)}"`;
   const label = action.label ? ctx.tx(action.label) : ctx.tr(action.labelKey);
   return `<button class="primary-action ${ctx.escapeAttr(actionState.status)}" ${submit} ${disabled}${title}>${label}</button>`;
 }
@@ -687,10 +702,16 @@ function systemValidationPanel(card, item, draft, visibleBlockers, ctx) {
   const missingContextLabels = currentMissingContextLabels(card, item, ctx);
   const listSeparator = ctx.tr("listSeparator") || "、";
   const stepCheck = stepDependencyValidationChips(card, item, ctx);
+  const missingEvidenceNames = evidenceStates
+    .filter((state) => !["verified", "system_ready"].includes(state.status))
+    .map((state) => businessCheckName(state.name))
+    .filter(Boolean);
   const submitStatus = missingContextLabels.length
     ? `${ctx.tr("cannotSubmitYet")}: ${ctx.tr("upstreamContextMissing")}`
     : missingLabels.length
     ? `${ctx.tr("cannotSubmitYet")}: ${ctx.tr("requiredFieldsMissing")}`
+    : missingEvidenceNames.length
+    ? `${ctx.tr("cannotSubmitYet")}: ${ctx.tr("systemEvidenceCheck")}`
     : visibleBlockers.length
     ? `${ctx.tr("cannotSubmitYet")}: ${visibleBlockers.map((entry) => ctx.tx(entry.title)).join(" · ")}`
     : ctx.tr("readyToSubmit");
@@ -703,9 +724,10 @@ function systemValidationPanel(card, item, draft, visibleBlockers, ctx) {
   const actionChips = [
     missingContextLabels.length ? `${ctx.tr("upstreamContextMissing")}: ${missingContextLabels.join(listSeparator)}` : "",
     missingLabels.length ? `${ctx.tr("requiredFieldsMissing")}: ${missingLabels.join(listSeparator)}` : "",
+    missingEvidenceNames.length ? `${ctx.tr("systemEvidenceCheck")}: ${missingEvidenceNames.join(listSeparator)}` : "",
     visibleBlockers.length ? visibleBlockers.map((entry) => ctx.tx(entry.title)).join(listSeparator) : ""
   ].filter(Boolean);
-  const hasError = missingLabels.length || missingContextLabels.length;
+  const hasError = missingLabels.length || missingContextLabels.length || missingEvidenceNames.length;
   return `<section class="system-check-panel${hasError ? " has-error" : ""}" data-surface="system-validation-summary">
     <b>${ctx.tr("systemValidation")}</b>
     <p>${actionChips.length ? ctx.tr("systemValidationHelp") : ctx.tr("readyToSubmit")}</p>

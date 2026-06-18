@@ -44,7 +44,8 @@ const commonBoundary = {
   nameZh: scenario.nameZh,
   businessGoalZh: scenario.businessGoalZh,
   sourceScenarioDigest: scenarioDigest,
-  packageIndexDigest
+  packageIndexDigest,
+  experienceContract: scenario.experienceContract ?? null
 };
 
 const generated = {
@@ -148,7 +149,15 @@ const generated = {
       userUploadedOrBoundEvidence: step.userUploadedOrBoundEvidence,
       systemGeneratedFields: step.systemGeneratedFields,
       validations: step.validations,
-      outputs: step.outputs
+      outputs: step.outputs,
+      primaryBusinessObject: step.primaryBusinessObject,
+      requiredReadContext: step.requiredReadContext,
+      editableInputs: step.editableInputs,
+      fixedSelections: step.fixedSelections,
+      financialContext: step.financialContext,
+      legalActions: step.legalActions,
+      handoffSummary: step.handoffSummary,
+      searchReadModel: step.searchReadModel
     })),
     fields: scenario.fields,
     workStatusOptions: scenario.workStatusOptions,

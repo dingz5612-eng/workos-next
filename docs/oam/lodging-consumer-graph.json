@@ -80,8 +80,8 @@
       "nameZh": "search",
       "layer": "read-model",
       "ownedPathPrefixes": [
-        "services/core-api/WorkOS.Api/Runtime/Search",
-        "apps/mobile/src/search"
+        "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+        "apps/mobile/src/searchIntentHub.js"
       ],
       "generatedContractRefs": [
         "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json",
@@ -100,8 +100,8 @@
       "nameZh": "今日",
       "layer": "surface",
       "ownedPathPrefixes": [
-        "apps/mobile/src/views/today",
-        "apps/mobile/src/views/workspace"
+        "apps/mobile/src/views/homeView.js",
+        "apps/mobile/src/views/workspaceView.js"
       ],
       "generatedContractRefs": [
         "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json",
@@ -120,8 +120,8 @@
       "nameZh": "工作项",
       "layer": "surface",
       "ownedPathPrefixes": [
-        "apps/mobile/src/views/workitems",
-        "apps/mobile/src/views/workspace"
+        "apps/mobile/src/views/workbenchView.js",
+        "apps/mobile/src/views/workspaceView.js"
       ],
       "generatedContractRefs": [
         "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json",
@@ -140,8 +140,8 @@
       "nameZh": "我的",
       "layer": "surface",
       "ownedPathPrefixes": [
-        "apps/mobile/src/views/mine",
-        "apps/mobile/src/views/workspace"
+        "apps/mobile/src/views/meView.js",
+        "apps/mobile/src/views/workspaceView.js"
       ],
       "generatedContractRefs": [
         "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json",

@@ -159,7 +159,7 @@ function checkIndexRegistration() {
     return;
   }
   if (entry.layer !== "source") fail("production activation authority must be registered as source layer.");
-  if (entry.currentTruthAllowed !== false) fail("production activation authority must not become business truth source.");
+  if (entry.businessFactAuthorityAllowed !== false) fail("production activation authority must not become business truth source.");
   if (entry.contractAuthorityAllowed !== true) fail("production activation authority must be allowed as governance contract source.");
   if (entry.generated !== false || entry.doNotEdit !== false || entry.manualEditAllowed !== true) {
     fail("production activation authority must be manual source, not generated.");

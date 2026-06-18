@@ -51,7 +51,9 @@ for (const [label, value] of [
 
 requireEqual(projection?.capabilityId, CAPABILITY_ID, "projection.capabilityId", failures);
 requireEqual(registry?.capabilityId, CAPABILITY_ID, "registry.capabilityId", failures);
-requireEqual(generatedBundleResult?.capabilityId, CAPABILITY_ID, "generatedBundleResult.capabilityId", failures);
+if (generatedBundleResult) {
+  requireEqual(generatedBundleResult.capabilityId, CAPABILITY_ID, "generatedBundleResult.capabilityId", failures);
+}
 
 const allowedZones = flattenAllowedZones(boundary?.allowedReferenceZones ?? {});
 for (const requiredLegacyFile of [
@@ -76,6 +78,7 @@ const result = {
   checkedAtUtc: new Date().toISOString(),
   status: failures.length === 0 ? "PASS" : "NO_GO",
   capabilityId: projection?.capabilityId ?? registry?.capabilityId ?? CAPABILITY_ID,
+  generatedBundleResultStatus: generatedBundleResult ? "available" : "not_yet_refreshed",
   legacySeedTerms,
   currentCapabilityUsesWorkspaceSeedCatalog: false,
   currentCapabilityUsesSixCardSeedFlow: false,

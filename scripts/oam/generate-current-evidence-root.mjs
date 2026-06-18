@@ -2146,10 +2146,10 @@ let artifactDigest = "";
 let artifactDigestStable = false;
 for (let attempt = 0; attempt < 10; attempt += 1) {
   refreshReleaseEvidenceObjectDigests();
-  const nextDigest = digestForDisk(requiredEvidenceFiles);
+  const nextDigest = digestForDisk(requiredEvidenceFiles, { skipMissing: true });
   applyArtifactDigest(nextDigest);
   writeAllEvidence();
-  const actualDigest = digestForDisk(requiredEvidenceFiles);
+  const actualDigest = digestForDisk(requiredEvidenceFiles, { skipMissing: true });
   if (actualDigest === nextDigest) {
     artifactDigest = nextDigest;
     artifactDigestStable = true;
@@ -2714,7 +2714,7 @@ function writeAllEvidence() {
 }
 
 function refreshReleaseEvidenceObjectDigests() {
-  const evidenceRootDigest = digestForDisk(requiredEvidenceFiles.filter((file) => file !== releaseEvidenceObjectPath));
+  const evidenceRootDigest = digestForDisk(requiredEvidenceFiles.filter((file) => file !== releaseEvidenceObjectPath), { skipMissing: true });
   const evidenceGraphHash = digestForDisk(["artifacts/oam/evidence/evidence-graph.json"]);
   const finalReportDigest = digestForDisk([finalReportPath]);
   releaseEvidenceObject.evidenceRootDigest = evidenceRootDigest;
@@ -2791,9 +2791,10 @@ function digestFor(fileMap) {
   return `sha256:${sha256(JSON.stringify(normalized))}`;
 }
 
-function digestForDisk(fileList) {
+function digestForDisk(fileList, { skipMissing = false } = {}) {
   const normalized = {};
   for (const file of [...fileList].sort((left, right) => left.localeCompare(right))) {
+    if (skipMissing && !fileExists(file)) continue;
     normalized[file] = normalizeForDigest(readEvidenceFile(file));
   }
   return `sha256:${sha256(JSON.stringify(normalized))}`;

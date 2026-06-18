@@ -10,8 +10,8 @@
     "domainKernel": "docs/oam/kernel-schemas/domain-kernel.schema.json",
     "workItem": "docs/oam/kernel-schemas/workitem.schema.json"
   },
-  "nodeCount": 1789,
-  "edgeCount": 1453,
+  "nodeCount": 1885,
+  "edgeCount": 1477,
   "nodes": [
     {
       "runtimeBinding": "current-oam",
@@ -1598,6 +1598,2780 @@
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": true,
       "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario10.cancelNoShowCaseDraftStart.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario10.CancelNoShowRefund",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario10.CancelNoShowCaseDraftStart",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CancelNoShowCaseDraftStart",
+      "commandType": "Dormitory.Scenario10.CancelNoShowCaseDraftStart",
+      "fieldContractRef": "field.dormitory.scenario10.enter-cancel-noshow-processing.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-enter-cancel-noshow-processing"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario10.cancelNoShowConfirmClosure.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario10.CancelNoShowRefund",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario10.CancelNoShowConfirmClosure",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CancelNoShowConfirmClosure",
+      "commandType": "Dormitory.Scenario10.CancelNoShowConfirmClosure",
+      "fieldContractRef": "field.dormitory.scenario10.confirm-cancellation-or-noshow-closure.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-confirm-cancellation-or-noshow-closure"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario10.cancelNoShowFinanceProcessingRequestCreate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario10.CancelNoShowRefund",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario10.CancelNoShowFinanceProcessingRequestCreate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CancelNoShowFinanceProcessingRequestCreate",
+      "commandType": "Dormitory.Scenario10.CancelNoShowFinanceProcessingRequestCreate",
+      "fieldContractRef": "field.dormitory.scenario10.finance-processing-request.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-finance-processing-request"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario10.cancelNoShowFollowUpRecord.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario10.CancelNoShowRefund",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario10.CancelNoShowFollowUpRecord",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CancelNoShowFollowUpRecord",
+      "commandType": "Dormitory.Scenario10.CancelNoShowFollowUpRecord",
+      "fieldContractRef": "field.dormitory.scenario10.result-and-follow-up.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-result-and-follow-up"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario10.cancelNoShowInventoryReleaseRequestConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario10.CancelNoShowRefund",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario10.CancelNoShowInventoryReleaseRequestConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CancelNoShowInventoryReleaseRequestConfirm",
+      "commandType": "Dormitory.Scenario10.CancelNoShowInventoryReleaseRequestConfirm",
+      "fieldContractRef": "field.dormitory.scenario10.inventory-release-confirmation.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-inventory-release-confirmation"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario10.cancelNoShowPolicyCalculationGenerate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario10.CancelNoShowRefund",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario10.CancelNoShowPolicyCalculationGenerate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CancelNoShowPolicyCalculationGenerate",
+      "commandType": "Dormitory.Scenario10.CancelNoShowPolicyCalculationGenerate",
+      "fieldContractRef": "field.dormitory.scenario10.policy-and-amount-calculation.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-policy-and-amount-calculation"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario10.cancelNoShowReasonCustomerConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario10.CancelNoShowRefund",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario10.CancelNoShowReasonCustomerConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario10-cancel-noshow-refund-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CancelNoShowReasonCustomerConfirm",
+      "commandType": "Dormitory.Scenario10.CancelNoShowReasonCustomerConfirm",
+      "fieldContractRef": "field.dormitory.scenario10.reason-and-customer-confirmation.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-reason-and-customer-confirmation"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario11.expenseIntentSubmit.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario11.ExpenseIntentSubmit",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ExpenseIntentSubmit",
+      "commandType": "Dormitory.Scenario11.ExpenseIntentSubmit",
+      "fieldContractRef": "field.dormitory.scenario11.submit-expense-intent.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-submit-expense-intent"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario11.outOfServiceOrRecoveryRecommendationCreate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario11.OutOfServiceOrRecoveryRecommendationCreate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.OutOfServiceOrRecoveryRecommendationCreate",
+      "commandType": "Dormitory.Scenario11.OutOfServiceOrRecoveryRecommendationCreate",
+      "fieldContractRef": "field.dormitory.scenario11.output-outofservice-or-recovery-recommendation.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-output-outofservice-or-recovery-recommendation"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario11.serviceWorkCaseDraftStart.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario11.ServiceWorkCaseDraftStart",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ServiceWorkCaseDraftStart",
+      "commandType": "Dormitory.Scenario11.ServiceWorkCaseDraftStart",
+      "fieldContractRef": "field.dormitory.scenario11.enter-housekeeping-maintenance-processing.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-enter-housekeeping-maintenance-processing"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario11.workAssignmentDispatch.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario11.WorkAssignmentDispatch",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.WorkAssignmentDispatch",
+      "commandType": "Dormitory.Scenario11.WorkAssignmentDispatch",
+      "fieldContractRef": "field.dormitory.scenario11.dispatch-work-assignment.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-dispatch-work-assignment"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario11.workCompletionSubmit.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario11.WorkCompletionSubmit",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.WorkCompletionSubmit",
+      "commandType": "Dormitory.Scenario11.WorkCompletionSubmit",
+      "fieldContractRef": "field.dormitory.scenario11.submit-work-completion.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-submit-work-completion"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario11.workProgressUpdate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario11.WorkProgressUpdate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.WorkProgressUpdate",
+      "commandType": "Dormitory.Scenario11.WorkProgressUpdate",
+      "fieldContractRef": "field.dormitory.scenario11.update-work-progress.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-update-work-progress"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario11.workVerificationConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario11.WorkVerificationConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.WorkVerificationConfirm",
+      "commandType": "Dormitory.Scenario11.WorkVerificationConfirm",
+      "fieldContractRef": "field.dormitory.scenario11.verify-work-result.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-verify-work-result"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario12.channelCorporateAuditDecision.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario12.ChannelCorporateAuditDecision",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ChannelCorporateAuditDecision",
+      "commandType": "Dormitory.Scenario12.ChannelCorporateAuditDecision",
+      "fieldContractRef": "field.dormitory.scenario12.audit-enable.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-audit-enable"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario12.channelCorporateDailyMaintenance.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario12.ChannelCorporateDailyMaintenance",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ChannelCorporateDailyMaintenance",
+      "commandType": "Dormitory.Scenario12.ChannelCorporateDailyMaintenance",
+      "fieldContractRef": "field.dormitory.scenario12.daily-maintenance.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-daily-maintenance"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario12.channelCorporateProfileDraftStart.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario12.ChannelCorporateProfileDraftStart",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ChannelCorporateProfileDraftStart",
+      "commandType": "Dormitory.Scenario12.ChannelCorporateProfileDraftStart",
+      "fieldContractRef": "field.dormitory.scenario12.create-channel-or-corporate-profile.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-create-channel-or-corporate-profile"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario12.channelProductEligibilityBind.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario12.ChannelProductEligibilityBind",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ChannelProductEligibilityBind",
+      "commandType": "Dormitory.Scenario12.ChannelProductEligibilityBind",
+      "fieldContractRef": "field.dormitory.scenario12.bind-product-and-eligibility.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-bind-product-and-eligibility"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario12.channelPublicationRuleConfigure.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario12.ChannelPublicationRuleConfigure",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ChannelPublicationRuleConfigure",
+      "commandType": "Dormitory.Scenario12.ChannelPublicationRuleConfigure",
+      "fieldContractRef": "field.dormitory.scenario12.configure-channel-publication-rule.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-configure-channel-publication-rule"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario12.commissionSettlementIntentSubmit.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario12.CommissionSettlementIntentSubmit",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CommissionSettlementIntentSubmit",
+      "commandType": "Dormitory.Scenario12.CommissionSettlementIntentSubmit",
+      "fieldContractRef": "field.dormitory.scenario12.configure-commission-settlement-intent.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-configure-commission-settlement-intent"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario12.corporateAgreementDraftSubmit.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario12.CorporateAgreementDraftSubmit",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario12-channel-corporate-customer-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CorporateAgreementDraftSubmit",
+      "commandType": "Dormitory.Scenario12.CorporateAgreementDraftSubmit",
+      "fieldContractRef": "field.dormitory.scenario12.maintain-cooperation-agreement.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-maintain-cooperation-agreement"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario13.auditFindingCreate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario13.ReportingAuditReview",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario13.AuditFindingCreate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.AuditFindingCreate",
+      "commandType": "Dormitory.Scenario13.AuditFindingCreate",
+      "fieldContractRef": "field.dormitory.scenario13.audit-finding-and-location.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-audit-finding-and-location"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario13.businessReportSnapshotGenerate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario13.ReportingAuditReview",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario13.BusinessReportSnapshotGenerate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.BusinessReportSnapshotGenerate",
+      "commandType": "Dormitory.Scenario13.BusinessReportSnapshotGenerate",
+      "fieldContractRef": "field.dormitory.scenario13.generate-business-report-snapshot.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-generate-business-report-snapshot"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario13.financeReviewSnapshotGenerate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario13.ReportingAuditReview",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario13.FinanceReviewSnapshotGenerate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.FinanceReviewSnapshotGenerate",
+      "commandType": "Dormitory.Scenario13.FinanceReviewSnapshotGenerate",
+      "fieldContractRef": "field.dormitory.scenario13.generate-finance-review-view.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-generate-finance-review-view"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario13.reportDataQualityCheck.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario13.ReportingAuditReview",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario13.ReportDataQualityCheck",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ReportDataQualityCheck",
+      "commandType": "Dormitory.Scenario13.ReportDataQualityCheck",
+      "fieldContractRef": "field.dormitory.scenario13.data-completeness-check.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-data-completeness-check"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario13.reportPublish.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario13.ReportingAuditReview",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario13.ReportPublish",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ReportPublish",
+      "commandType": "Dormitory.Scenario13.ReportPublish",
+      "fieldContractRef": "field.dormitory.scenario13.publish-export-timeline.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-publish-export-timeline"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario13.reportScopeSelect.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario13.ReportingAuditReview",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario13.ReportScopeSelect",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ReportScopeSelect",
+      "commandType": "Dormitory.Scenario13.ReportScopeSelect",
+      "fieldContractRef": "field.dormitory.scenario13.select-report-scope.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-select-report-scope"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario13.reviewConclusionActionPlanCreate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario13.ReportingAuditReview",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario13.ReviewConclusionActionPlanCreate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario13-reporting-audit-review-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ReviewConclusionActionPlanCreate",
+      "commandType": "Dormitory.Scenario13.ReviewConclusionActionPlanCreate",
+      "fieldContractRef": "field.dormitory.scenario13.review-conclusion-action-plan.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-review-conclusion-action-plan"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario3.accommodationProductConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario3.ProductAndPricing",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario3.AccommodationProductConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.AccommodationProductConfirm",
+      "commandType": "Dormitory.Scenario3.AccommodationProductConfirm",
+      "fieldContractRef": "field.dormitory.scenario3.define-accommodation-product.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario3-define-accommodation-product"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario3.priceCalendarDraft.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario3.ProductAndPricing",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario3.PriceCalendarDraft",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.PriceCalendarDraft",
+      "commandType": "Dormitory.Scenario3.PriceCalendarDraft",
+      "fieldContractRef": "field.dormitory.scenario3.configure-price-calendar.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario3-configure-price-calendar"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario3.priceMaintenance.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario3.ProductAndPricing",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario3.PriceMaintenance",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.PriceMaintenance",
+      "commandType": "Dormitory.Scenario3.PriceMaintenance",
+      "fieldContractRef": "field.dormitory.scenario3.price-maintenance.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario3-price-maintenance"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario3.priceResourceSelect.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario3.ProductAndPricing",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario3.PriceResourceSelect",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.PriceResourceSelect",
+      "commandType": "Dormitory.Scenario3.PriceResourceSelect",
+      "fieldContractRef": "field.dormitory.scenario3.select-operable-resource.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario3-select-operable-resource"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario3.priceVersionActivate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario3.ProductAndPricing",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario3.PriceVersionActivate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.PriceVersionActivate",
+      "commandType": "Dormitory.Scenario3.PriceVersionActivate",
+      "fieldContractRef": "field.dormitory.scenario3.review-and-activate-price.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario3-review-and-activate-price"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario3.ratePlanDefinitionConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario3.ProductAndPricing",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario3.RatePlanDefinitionConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario3-product-and-pricing-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.RatePlanDefinitionConfirm",
+      "commandType": "Dormitory.Scenario3.RatePlanDefinitionConfirm",
+      "fieldContractRef": "field.dormitory.scenario3.configure-rate-plan.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario3-configure-rate-plan"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario4.inquiryRegister.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario4.InquiryAndQuote",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario4.InquiryRegister",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.InquiryRegister",
+      "commandType": "Dormitory.Scenario4.InquiryRegister",
+      "fieldContractRef": "field.dormitory.scenario4.register-customer-inquiry.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario4-register-customer-inquiry"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario4.quoteDraftGenerate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario4.InquiryAndQuote",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario4.QuoteDraftGenerate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.QuoteDraftGenerate",
+      "commandType": "Dormitory.Scenario4.QuoteDraftGenerate",
+      "fieldContractRef": "field.dormitory.scenario4.generate-quote-draft.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario4-generate-quote-draft"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario4.quoteOptionSelect.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario4.InquiryAndQuote",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario4.QuoteOptionSelect",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.QuoteOptionSelect",
+      "commandType": "Dormitory.Scenario4.QuoteOptionSelect",
+      "fieldContractRef": "field.dormitory.scenario4.select-quotable-product.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario4-select-quotable-product"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario4.quoteSend.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario4.InquiryAndQuote",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario4.QuoteSend",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.QuoteSend",
+      "commandType": "Dormitory.Scenario4.QuoteSend",
+      "fieldContractRef": "field.dormitory.scenario4.issue-and-send-quote.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario4-issue-and-send-quote"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario4.reservationPreparationStart.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario4.InquiryAndQuote",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario4.ReservationPreparationStart",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ReservationPreparationStart",
+      "commandType": "Dormitory.Scenario4.ReservationPreparationStart",
+      "fieldContractRef": "field.dormitory.scenario4.quote-follow-up-and-reservation-prep.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario4-quote-follow-up-and-reservation-prep"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario4.stayDemandConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario4.InquiryAndQuote",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario4.StayDemandConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario4-inquiry-and-quote-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.StayDemandConfirm",
+      "commandType": "Dormitory.Scenario4.StayDemandConfirm",
+      "fieldContractRef": "field.dormitory.scenario4.confirm-stay-demand.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario4-confirm-stay-demand"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario5.availabilityRecheck.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario5.AvailabilityRecheck",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.AvailabilityRecheck",
+      "commandType": "Dormitory.Scenario5.AvailabilityRecheck",
+      "fieldContractRef": "field.dormitory.scenario5.review-available-resource.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario5-review-available-resource"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario5.bookingPreparationStart.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario5.BookingPreparationStart",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.BookingPreparationStart",
+      "commandType": "Dormitory.Scenario5.BookingPreparationStart",
+      "fieldContractRef": "field.dormitory.scenario5.enter-reservation-preparation.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario5-enter-reservation-preparation"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario5.inventoryHoldCreate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario5.InventoryHoldCreate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.InventoryHoldCreate",
+      "commandType": "Dormitory.Scenario5.InventoryHoldCreate",
+      "fieldContractRef": "field.dormitory.scenario5.create-inventory-hold.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario5-create-inventory-hold"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario5.reservationConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario5.ReservationConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ReservationConfirm",
+      "commandType": "Dormitory.Scenario5.ReservationConfirm",
+      "fieldContractRef": "field.dormitory.scenario5.confirm-reservation.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario5-confirm-reservation"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario5.reservationDraftConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario5.ReservationDraftConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ReservationDraftConfirm",
+      "commandType": "Dormitory.Scenario5.ReservationDraftConfirm",
+      "fieldContractRef": "field.dormitory.scenario5.confirm-reservation-information.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario5-confirm-reservation-information"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario5.reservationSummaryOutput.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario5.ReservationSummaryOutput",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ReservationSummaryOutput",
+      "commandType": "Dormitory.Scenario5.ReservationSummaryOutput",
+      "fieldContractRef": "field.dormitory.scenario5.reservation-result-and-checkin-preparation.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario5-reservation-result-and-checkin-preparation"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario6.depositGuaranteeSubmit.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario6.DepositGuaranteeSubmit",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.DepositGuaranteeSubmit",
+      "commandType": "Dormitory.Scenario6.DepositGuaranteeSubmit",
+      "fieldContractRef": "field.dormitory.scenario6.submit-deposit-or-guarantee.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario6-submit-deposit-or-guarantee"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario6.financeGateConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario6.FinanceGateConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.FinanceGateConfirm",
+      "commandType": "Dormitory.Scenario6.FinanceGateConfirm",
+      "fieldContractRef": "field.dormitory.scenario6.finance-gate-confirmation.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario6-finance-gate-confirmation"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario6.financeReadySummaryOutput.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario6.FinanceReadySummaryOutput",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.FinanceReadySummaryOutput",
+      "commandType": "Dormitory.Scenario6.FinanceReadySummaryOutput",
+      "fieldContractRef": "field.dormitory.scenario6.output-finance-ready-summary.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario6-output-finance-ready-summary"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario6.paymentDepositCaseStart.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario6.PaymentDepositCaseStart",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.PaymentDepositCaseStart",
+      "commandType": "Dormitory.Scenario6.PaymentDepositCaseStart",
+      "fieldContractRef": "field.dormitory.scenario6.enter-payment-deposit-processing.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario6-enter-payment-deposit-processing"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario6.paymentDepositRequirementConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario6.PaymentDepositRequirementConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.PaymentDepositRequirementConfirm",
+      "commandType": "Dormitory.Scenario6.PaymentDepositRequirementConfirm",
+      "fieldContractRef": "field.dormitory.scenario6.confirm-payment-and-deposit-requirements.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario6-confirm-payment-and-deposit-requirements"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario6.paymentReceiptSubmit.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario6.PaymentReceiptSubmit",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.PaymentReceiptSubmit",
+      "commandType": "Dormitory.Scenario6.PaymentReceiptSubmit",
+      "fieldContractRef": "field.dormitory.scenario6.submit-payment-receipt-evidence.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario6-submit-payment-receipt-evidence"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario7.checkInAgreementFinanceReview.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario7.CheckInProcessing",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario7.CheckInAgreementFinanceReview",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario7-check-in-processing-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CheckInAgreementFinanceReview",
+      "commandType": "Dormitory.Scenario7.CheckInAgreementFinanceReview",
+      "fieldContractRef": "field.dormitory.scenario7.finance-and-agreement-review.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario7-finance-and-agreement-review"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario7.checkInDraftStart.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario7.CheckInProcessing",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario7.CheckInDraftStart",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario7-check-in-processing-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CheckInDraftStart",
+      "commandType": "Dormitory.Scenario7.CheckInDraftStart",
+      "fieldContractRef": "field.dormitory.scenario7.enter-check-in-processing.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario7-enter-check-in-processing"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario7.guestIdentityVerify.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario7.CheckInProcessing",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario7.GuestIdentityVerify",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario7-check-in-processing-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.GuestIdentityVerify",
+      "commandType": "Dormitory.Scenario7.GuestIdentityVerify",
+      "fieldContractRef": "field.dormitory.scenario7.arrival-and-identity-verification.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario7-arrival-and-identity-verification"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario7.roomBedHandoverRecheck.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario7.CheckInProcessing",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario7.RoomBedHandoverRecheck",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario7-check-in-processing-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.RoomBedHandoverRecheck",
+      "commandType": "Dormitory.Scenario7.RoomBedHandoverRecheck",
+      "fieldContractRef": "field.dormitory.scenario7.room-bed-handover-recheck.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario7-room-bed-handover-recheck"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario7.stayConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario7.CheckInProcessing",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario7.StayConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario7-check-in-processing-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.StayConfirm",
+      "commandType": "Dormitory.Scenario7.StayConfirm",
+      "fieldContractRef": "field.dormitory.scenario7.confirm-check-in.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario7-confirm-check-in"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario7.stayCredentialIssue.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario7.CheckInProcessing",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario7.StayCredentialIssue",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario7-check-in-processing-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.StayCredentialIssue",
+      "commandType": "Dormitory.Scenario7.StayCredentialIssue",
+      "fieldContractRef": "field.dormitory.scenario7.issue-access-credential.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario7-issue-access-credential"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario8.accessCredentialStatusChange.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario8.InStayManagement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario8.AccessCredentialStatusChange",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario8-in-stay-management-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.AccessCredentialStatusChange",
+      "commandType": "Dormitory.Scenario8.AccessCredentialStatusChange",
+      "fieldContractRef": "field.dormitory.scenario8.access-credential-management.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-access-credential-management"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario8.bedTransferRequestSubmit.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario8.InStayManagement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario8.BedTransferRequestSubmit",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario8-in-stay-management-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.BedTransferRequestSubmit",
+      "commandType": "Dormitory.Scenario8.BedTransferRequestSubmit",
+      "fieldContractRef": "field.dormitory.scenario8.bed-transfer-request.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-bed-transfer-request"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario8.checkoutPreparationSnapshotCreate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario8.InStayManagement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario8.CheckoutPreparationSnapshotCreate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario8-in-stay-management-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CheckoutPreparationSnapshotCreate",
+      "commandType": "Dormitory.Scenario8.CheckoutPreparationSnapshotCreate",
+      "fieldContractRef": "field.dormitory.scenario8.checkout-preparation.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-checkout-preparation"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario8.residentIncidentRegister.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario8.InStayManagement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario8.ResidentIncidentRegister",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario8-in-stay-management-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ResidentIncidentRegister",
+      "commandType": "Dormitory.Scenario8.ResidentIncidentRegister",
+      "fieldContractRef": "field.dormitory.scenario8.resident-incident-record.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-resident-incident-record"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario8.residentServiceRequestRegister.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario8.InStayManagement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario8.ResidentServiceRequestRegister",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario8-in-stay-management-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.ResidentServiceRequestRegister",
+      "commandType": "Dormitory.Scenario8.ResidentServiceRequestRegister",
+      "fieldContractRef": "field.dormitory.scenario8.resident-service-request.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-resident-service-request"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario8.stayExtensionRequestSubmit.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario8.InStayManagement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario8.StayExtensionRequestSubmit",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario8-in-stay-management-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.StayExtensionRequestSubmit",
+      "commandType": "Dormitory.Scenario8.StayExtensionRequestSubmit",
+      "fieldContractRef": "field.dormitory.scenario8.stay-extension-request.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-stay-extension-request"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario8.stayManagementContextView.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario8.InStayManagement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario8.StayManagementContextView",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario8-in-stay-management-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.StayManagementContextView",
+      "commandType": "Dormitory.Scenario8.StayManagementContextView",
+      "fieldContractRef": "field.dormitory.scenario8.enter-in-stay-management.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-enter-in-stay-management"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario8.stayStatusChange.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario8.InStayManagement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario8.StayStatusChange",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario8-in-stay-management-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.StayStatusChange",
+      "commandType": "Dormitory.Scenario8.StayStatusChange",
+      "fieldContractRef": "field.dormitory.scenario8.maintain-stay-status.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-maintain-stay-status"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario9.checkoutCaseDraftStart.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario9.CheckoutSettlement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario9.CheckoutCaseDraftStart",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CheckoutCaseDraftStart",
+      "commandType": "Dormitory.Scenario9.CheckoutCaseDraftStart",
+      "fieldContractRef": "field.dormitory.scenario9.enter-checkout-processing.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-enter-checkout-processing"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario9.checkoutConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario9.CheckoutSettlement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario9.CheckoutConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CheckoutConfirm",
+      "commandType": "Dormitory.Scenario9.CheckoutConfirm",
+      "fieldContractRef": "field.dormitory.scenario9.checkout-confirmation.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-checkout-confirmation"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario9.checkoutFeeCalculationGenerate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario9.CheckoutSettlement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario9.CheckoutFeeCalculationGenerate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CheckoutFeeCalculationGenerate",
+      "commandType": "Dormitory.Scenario9.CheckoutFeeCalculationGenerate",
+      "fieldContractRef": "field.dormitory.scenario9.fee-settlement-calculation.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-fee-settlement-calculation"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario9.checkoutFinanceRequestCreate.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario9.CheckoutSettlement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario9.CheckoutFinanceRequestCreate",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CheckoutFinanceRequestCreate",
+      "commandType": "Dormitory.Scenario9.CheckoutFinanceRequestCreate",
+      "fieldContractRef": "field.dormitory.scenario9.finance-resource-handoff.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-finance-resource-handoff"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario9.checkoutHandoverConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario9.CheckoutSettlement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario9.CheckoutHandoverConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CheckoutHandoverConfirm",
+      "commandType": "Dormitory.Scenario9.CheckoutHandoverConfirm",
+      "fieldContractRef": "field.dormitory.scenario9.confirm-actual-checkout-handover.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-confirm-actual-checkout-handover"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario9.checkoutInspectionConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario9.CheckoutSettlement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario9.CheckoutInspectionConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CheckoutInspectionConfirm",
+      "commandType": "Dormitory.Scenario9.CheckoutInspectionConfirm",
+      "fieldContractRef": "field.dormitory.scenario9.room-bed-inspection.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-room-bed-inspection"
+    },
+    {
+      "nodeId": "definition.definition.dormitory.scenario9.customerSettlementConfirm.v1",
+      "nodeType": "Definition",
+      "owner": "Dormitory.Scenario9.CheckoutSettlement",
+      "sourceFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeBinding": "Dormitory.Scenario9.CustomerSettlementConfirm",
+      "testBinding": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "checker": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
+      "removalProofGate": "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs",
+        "scripts/business/check-dormitory-scenario9-checkout-settlement-consumption-boundary.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "workItemType": "Dorm.CustomerSettlementConfirm",
+      "commandType": "Dormitory.Scenario9.CustomerSettlementConfirm",
+      "fieldContractRef": "field.dormitory.scenario9.customer-settlement-confirmation.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-customer-settlement-confirmation"
     },
     {
       "nodeId": "definition.definition.dormitory.serviceTaskAssign.v1",
@@ -4978,7 +7752,13 @@
         "scripts/oam/check-oam-kernel-graph.mjs"
       ],
       "generated": true,
-      "doNotEdit": true
+      "doNotEdit": true,
+      "derivedFrom": [
+        "docs/oam/visible-business-copy-contract.json"
+      ],
+      "generatedBy": "scripts/oam/compile-current-capability.mjs",
+      "sourceKernelVersion": "oam.capability-compiler.v1",
+      "graphBinding": "file.apps/mobile/src/generated/oam/business-display-language.generated.js"
     },
     {
       "nodeId": "file.apps/mobile/src/generated/oam/capability-projection.generated.json",
@@ -8028,7 +10808,7 @@
       "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/01-00-login-page.png",
       "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "evidence_snapshot",
+      "lifecycleState": "active_evidence",
       "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "kernel.evidence",
@@ -8059,7 +10839,7 @@
       "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/02-01-home-after-login.png",
       "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "evidence_snapshot",
+      "lifecycleState": "active_evidence",
       "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "kernel.evidence",
@@ -8090,7 +10870,7 @@
       "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/03-02-workitems-list.png",
       "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "evidence_snapshot",
+      "lifecycleState": "active_evidence",
       "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "kernel.evidence",
@@ -8121,7 +10901,7 @@
       "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/04-03-search-empty.png",
       "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "evidence_snapshot",
+      "lifecycleState": "active_evidence",
       "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "kernel.evidence",
@@ -8152,7 +10932,7 @@
       "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/05-04-search-resource-basic-readiness-query.png",
       "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "evidence_snapshot",
+      "lifecycleState": "active_evidence",
       "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "kernel.evidence",
@@ -8183,7 +10963,7 @@
       "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/06-05-click-start-learning-on-scenario1.png",
       "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "evidence_snapshot",
+      "lifecycleState": "active_evidence",
       "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "kernel.evidence",
@@ -8214,7 +10994,7 @@
       "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/07-06-learning-search-resource-basic-readiness.png",
       "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "evidence_snapshot",
+      "lifecycleState": "active_evidence",
       "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "kernel.evidence",
@@ -8245,7 +11025,7 @@
       "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/08-07-back-to-search.png",
       "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "evidence_snapshot",
+      "lifecycleState": "active_evidence",
       "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "kernel.evidence",
@@ -8276,7 +11056,7 @@
       "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/09-08-search-scenario2-resource-operation.png",
       "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "evidence_snapshot",
+      "lifecycleState": "active_evidence",
       "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "kernel.evidence",
@@ -8307,7 +11087,7 @@
       "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/10-09-search-scenario3-product-pricing.png",
       "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "evidence_snapshot",
+      "lifecycleState": "active_evidence",
       "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "kernel.evidence",
@@ -8338,7 +11118,7 @@
       "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/11-10-search-rate-plan.png",
       "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "evidence_snapshot",
+      "lifecycleState": "active_evidence",
       "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "kernel.evidence",
@@ -8369,7 +11149,7 @@
       "evidenceBinding": "artifacts/oam/manual-browser/dormitory-scenarios-1-3-2026-06-16T12-36-19-432Z/12-11-direct-workbench-view.png",
       "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "evidence_snapshot",
+      "lifecycleState": "active_evidence",
       "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "kernel.evidence",
@@ -29314,6 +32094,39 @@
       "graphBinding": "docs/oam/oam-kernel-graph.json"
     },
     {
+      "nodeId": "file.scripts/business/generate-dormitory-13-scenario-runtime-execution.mjs",
+      "nodeType": "File",
+      "owner": "domain-owner",
+      "sourceFile": "scripts/business/generate-dormitory-13-scenario-runtime-execution.mjs",
+      "runtimeBinding": "dormitory.13-scenario-runtime-execution-tooling",
+      "testBinding": [
+        "scripts/business/check-dormitory-field-authority-model.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-field-authority-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "checker": "scripts/business/check-dormitory-field-authority-model.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/business/generate-dormitory-13-scenario-runtime-execution.mjs",
+      "absorbedBy": "scripts/business/generate-dormitory-13-scenario-runtime-execution.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-field-authority-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-field-authority-model.mjs",
+        "scripts/oam/check-generated-compile-execution.mjs",
+        "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json"
+      ],
+      "graphBinding": "docs/oam/oam-kernel-graph.json"
+    },
+    {
       "nodeId": "file.scripts/business/generate-dormitory-derived-contracts.mjs",
       "nodeType": "File",
       "owner": "oam-release-owner",
@@ -32292,6 +35105,37 @@
         "scripts/oam/check-dormitory-first-golden-chain-no-side-effects-proof.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-dormitory-four-priority-chain-issue-ledger.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/check-dormitory-four-priority-chain-issue-ledger.mjs",
+      "runtimeBinding": "oam.dormitory-four-priority-chain-issue-ledger",
+      "testBinding": [
+        "scripts/oam/check-dormitory-four-priority-chain-issue-ledger.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-four-priority-chain-issue-ledger.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/oam/current-authority-index.json",
+      "checker": "scripts/oam/check-dormitory-four-priority-chain-issue-ledger.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/check-dormitory-four-priority-chain-issue-ledger.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-four-priority-chain-issue-ledger.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-four-priority-chain-issue-ledger.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "graphBinding": "docs/oam/oam-kernel-graph.json"
     },
     {
       "nodeId": "file.scripts/oam/check-dormitory-golden-chain-source-package.mjs",
@@ -35348,6 +38192,37 @@
         "scripts/oam/check-oam-kernel-graph.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ]
+    },
+    {
+      "nodeId": "file.scripts/oam/generate-dormitory-four-priority-chain-issue-ledger.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/generate-dormitory-four-priority-chain-issue-ledger.mjs",
+      "runtimeBinding": "oam.dormitory-four-priority-chain-issue-ledger-generator",
+      "testBinding": [
+        "scripts/oam/check-dormitory-four-priority-chain-issue-ledger.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-four-priority-chain-issue-ledger.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/oam/current-authority-index.json",
+      "checker": "scripts/oam/check-dormitory-four-priority-chain-issue-ledger.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/oam/generate-dormitory-four-priority-chain-issue-ledger.mjs",
+      "absorbedBy": "scripts/oam/generate-dormitory-four-priority-chain-issue-ledger.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-four-priority-chain-issue-ledger.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-four-priority-chain-issue-ledger.mjs"
+      ],
+      "graphBinding": "docs/oam/oam-kernel-graph.json"
     },
     {
       "nodeId": "file.scripts/oam/generate-dormitory-mainline-activation-transaction.mjs",
@@ -40313,6 +43188,77 @@
       "derivedFrom": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
       "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
       "sourceKernelVersion": "oam.dormitory-13-scenario-control-generator.v1"
+    },
+    {
+      "nodeId": "file.services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json",
+      "nodeType": "File",
+      "owner": "runtime-kernel-owner",
+      "sourceFile": "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json",
+      "runtimeBinding": "runtime.generated-dormitory-13-scenario-execution",
+      "testBinding": [
+        "scripts/business/check-dormitory-field-authority-model.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-field-authority-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "checker": "scripts/business/check-dormitory-field-authority-model.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json",
+      "absorbedBy": "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json",
+      "removalProofGate": "scripts/oam/check-generated-files-not-manually-edited.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-field-authority-model.mjs",
+        "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeProjection.cs",
+        "scripts/oam/check-generated-files-not-manually-edited.mjs"
+      ],
+      "graphBinding": "docs/oam/oam-kernel-graph.json",
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "generatedBy": "scripts/business/generate-dormitory-13-scenario-runtime-execution.mjs",
+      "sourceKernelVersion": "oam.dormitory-13-scenario-runtime-execution-generator.v1",
+      "generated": true,
+      "doNotEdit": true
+    },
+    {
+      "nodeId": "file.services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeProjection.cs",
+      "nodeType": "File",
+      "owner": "runtime-kernel-owner",
+      "sourceFile": "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeProjection.cs",
+      "runtimeBinding": "runtime.dormitory-13-scenario-runtime-projection",
+      "testBinding": [
+        "scripts/business/check-dormitory-field-authority-model.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/business/check-dormitory-field-authority-model.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_runtime",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "checker": "scripts/business/check-dormitory-field-authority-model.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeProjection.cs",
+      "absorbedBy": "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeProjection.cs",
+      "removalProofGate": "scripts/business/check-dormitory-field-authority-model.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json",
+        "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+        "apps/mobile/src/views/workspaceView.js"
+      ],
+      "graphBinding": "docs/oam/oam-kernel-graph.json"
     },
     {
       "nodeId": "file.services/core-api/WorkOS.Api/Runtime/DormitoryScenario10CancelNoShowRefund.generated.json",
@@ -50316,7 +53262,7 @@
     {
       "nodeId": "object.Resident",
       "nodeType": "BusinessObject",
-      "owner": "identity",
+      "owner": "accommodation",
       "sourceFile": "docs/contracts/business/oam-business-object-field-registry.json",
       "runtimeBinding": "business-object-field-registry",
       "testBinding": [

@@ -176,6 +176,14 @@ const aliases = [
 ];
 
 const byType = new Map(workItems.map((item) => [item.workItemType, item]));
+const patchFieldRegistryOnly = process.argv.includes("--patch-field-registry-only");
+
+if (patchFieldRegistryOnly) {
+  patchFieldRegistry();
+  patchLanguageCatalog();
+  console.log("Dormitory business object field registry synchronized from definition registry.");
+  process.exit(0);
+}
 
 writeJson(kernelPath, buildKernel());
 writeJson("docs/business/domains/dormitory/domain-pack.yml", buildDomainPack());
@@ -1088,7 +1096,8 @@ function patchFieldRegistry() {
   const registry = readJson(file);
   registry.generatedBy = generatedBy;
   const objects = new Map((registry.objects ?? []).map((item) => [item.objectId, item]));
-  for (const [objectId, fields] of Object.entries(objectFields)) {
+  const objectIds = new Set([...Object.keys(objectFields), ...definitionFactsForFieldRegistry()]);
+  for (const objectId of objectIds) {
     const existing = objects.get(objectId) ?? {
       objectId,
       module: moduleForObject(objectId),
@@ -1096,8 +1105,15 @@ function patchFieldRegistry() {
       truthOwnerRef: objectId,
       fields: []
     };
-    existing.module = moduleForObject(objectId);
-    existing.ownerCapability = ownerCapabilityForObject(objectId);
+    const fields = fieldIdsForBusinessObject(objectId, existing);
+    if (Object.prototype.hasOwnProperty.call(objectFields, objectId)) {
+      existing.module = moduleForObject(objectId);
+      existing.ownerCapability = ownerCapabilityForObject(objectId);
+    } else {
+      existing.module ??= moduleForObject(objectId);
+      existing.ownerCapability ??= ownerCapabilityForObject(objectId);
+      existing.truthOwnerRef ??= objectId;
+    }
     const fieldMap = new Map((existing.fields ?? []).map((field) => [field.fieldId, field]));
     for (const fieldId of fields) {
       const current = fieldMap.get(fieldId) ?? {};
@@ -1134,22 +1150,44 @@ function patchFieldRegistry() {
   writeJson(file, registry);
 }
 
+function definitionFactsForFieldRegistry() {
+  const registry = readJson("docs/contracts/definition/workitem-definition-registry.json");
+  const facts = new Set();
+  for (const definition of registry.definitions ?? []) {
+    for (const fact of definition.allowedFacts ?? []) {
+      if (fact) facts.add(String(fact));
+    }
+    for (const fact of definition.forbiddenFacts ?? []) {
+      if (fact) facts.add(String(fact));
+    }
+  }
+  return [...facts].sort((a, b) => a.localeCompare(b));
+}
+
+function fieldIdsForBusinessObject(objectId, existing) {
+  return objectFields[objectId] ?? ((existing.fields ?? []).length ? [] : ["note"]);
+}
+
 function patchLanguageCatalog() {
   const file = "docs/contracts/language/field-label-catalog.json";
   const catalog = readJson(file);
   const fields = new Map((catalog.fields ?? []).map((item) => [item.fieldId, item]));
+  const fieldIdsForLanguage = new Set(["note"]);
   for (const fieldIds of Object.values(objectFields)) {
     for (const fieldId of fieldIds) {
-      if (!fields.has(fieldId)) {
-        fields.set(fieldId, {
-          fieldId,
-          label: {
-            "zh-CN": nameZhForField(fieldId),
-            "ru-RU": fieldId,
-            "ky-KG": fieldId
-          }
-        });
-      }
+      fieldIdsForLanguage.add(fieldId);
+    }
+  }
+  for (const fieldId of fieldIdsForLanguage) {
+    if (!fields.has(fieldId)) {
+      fields.set(fieldId, {
+        fieldId,
+        label: {
+          "zh-CN": nameZhForField(fieldId),
+          "ru-RU": fieldId,
+          "ky-KG": fieldId
+        }
+      });
     }
   }
   catalog.fields = [...fields.values()].sort((a, b) => a.fieldId.localeCompare(b.fieldId));
@@ -1878,9 +1916,9 @@ function ledgerImpactFor(policy) {
 }
 
 function ownerForObject(objectId) {
-  if (["Payment", "DepositAccount", "Expense", "ExpenseLink", "MoneyBasis"].includes(objectId)) return "finance-gate";
-  if (objectId === "Resident") return "identity";
-  if (objectId === "ServiceTask") return "maintenance";
+  if (isFinanceObject(objectId)) return "finance-gate";
+  if (isIdentityObject(objectId)) return "identity";
+  if (isMaintenanceObject(objectId)) return "maintenance";
   return "accommodation";
 }
 
@@ -1888,8 +1926,11 @@ function ownerCapabilityForObject(objectId) {
   if (objectId === "Payment") return "finance.payment";
   if (objectId === "DepositAccount") return "finance.deposit";
   if (["Expense", "ExpenseLink", "MoneyBasis"].includes(objectId)) return "finance.expense";
-  if (objectId === "Resident") return "identity.account-actor";
-  if (objectId === "ServiceTask") return "accommodation.service-task";
+  if (isDepositOrRefundObject(objectId)) return "finance.deposit";
+  if (isExpenseObject(objectId)) return "finance.expense";
+  if (isFinanceObject(objectId)) return "finance.reconciliation";
+  if (isIdentityObject(objectId)) return "identity.account-actor";
+  if (isMaintenanceObject(objectId)) return "accommodation.service-task";
   if (["CheckoutCase", "RoomInspection"].includes(objectId)) return "accommodation.checkout";
   if (["Lead", "Reservation"].includes(objectId)) return "accommodation.lead-reservation";
   if (["Stay", "PeriodSnapshot", "ActionPlan", "ExceptionCase"].includes(objectId)) return "accommodation.lifecycle";
@@ -1897,10 +1938,30 @@ function ownerCapabilityForObject(objectId) {
 }
 
 function moduleForObject(objectId) {
-  if (["Payment", "DepositAccount", "Expense", "ExpenseLink", "MoneyBasis"].includes(objectId)) return "finance-gate";
-  if (objectId === "Resident") return "identity";
-  if (objectId === "ServiceTask") return "maintenance";
+  if (isFinanceObject(objectId)) return "finance-gate";
+  if (isIdentityObject(objectId)) return "identity";
+  if (isMaintenanceObject(objectId)) return "maintenance";
   return "accommodation";
+}
+
+function isFinanceObject(objectId) {
+  return /Payment|Deposit|Expense|Ledger|Refund|Finance|Fee|Settlement|Charge|TopUp|Receipt|Commission|Amount|Money/i.test(objectId);
+}
+
+function isDepositOrRefundObject(objectId) {
+  return /Deposit|Refund|Settlement/i.test(objectId);
+}
+
+function isExpenseObject(objectId) {
+  return /Expense|Commission/i.test(objectId);
+}
+
+function isIdentityObject(objectId) {
+  return /Identity|AccessCredential|Credential|ResidentProfile|ContactPerson|CustomerContact|CustomerNotificationRecord|CustomerConfirmationRecord|ArrivingGuest|ReservationGuest/i.test(objectId);
+}
+
+function isMaintenanceObject(objectId) {
+  return /ServiceWork|ServiceTask|WorkAssignee|WorkAssignment|WorkCompletion|WorkSchedule|WorkVerification|TaskEvidence|IssueTrackingItem|OutOfService|ResourceRecovery|Operation|StatusHistory/i.test(objectId);
 }
 
 function admissionFor(workItemType, financeOwned, ownerRole) {

@@ -122,6 +122,11 @@ export async function materializeEvidenceObjects({ workspace, card, actor, submi
   if (!drafts.length) return [];
   const actorToken = actor?.token || "";
   return Promise.all(drafts.map(async (draft) => {
+    if (isMaterializedRuntimeEvidenceId(draft.evidenceId) &&
+      draft.submissionId === submissionProtocol.submissionId &&
+      draft.cardInstanceId === submissionProtocol.cardInstanceId) {
+      return draft.evidenceId;
+    }
     const evidence = await createEvidenceDraft({
       workspaceId: workspace.id,
       cardId: card.id,
@@ -137,8 +142,15 @@ export async function materializeEvidenceObjects({ workspace, card, actor, submi
       sizeBytes: draft.sizeBytes || 1
     }, actorToken);
     draft.evidenceId = attached.evidenceId;
+    draft.submissionId = submissionProtocol.submissionId;
+    draft.cardInstanceId = submissionProtocol.cardInstanceId;
+    draft.status = "verified";
     return attached.evidenceId;
   }));
+}
+
+function isMaterializedRuntimeEvidenceId(value = "") {
+  return /^ev-/i.test(String(value || ""));
 }
 
 export async function refreshDefaultAccommodationLenses(onLens) {

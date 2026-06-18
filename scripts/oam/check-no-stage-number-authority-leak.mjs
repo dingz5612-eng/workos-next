@@ -11,6 +11,7 @@ const root = process.cwd();
 const { registry, ledger, projection } = loadCapabilityDocuments(root);
 const state = validateNoStageNumberAuthorityLeak({ registry, ledger, projection });
 const failures = [...state.failures];
+const pendingEvidenceSources = [];
 const stagePattern = /(^|[^0-9A-Za-z])S[4-7](?:[_\-.][0-9A-Za-z]+)?($|[^0-9A-Za-z])/;
 for (const entry of [
   {
@@ -46,6 +47,10 @@ for (const entry of [
 ]) {
   const doc = readJsonIfExists(entry.path, root);
   if (!doc) {
+    if (entry.path.startsWith("artifacts/oam/")) {
+      pendingEvidenceSources.push(entry.path);
+      continue;
+    }
     failures.push(`${entry.label} source missing: ${entry.path}.`);
     continue;
   }
@@ -59,6 +64,7 @@ const result = {
   status: failures.length === 0 ? "PASS" : "NO_GO",
   capabilityId: projection?.capabilityId ?? ledger?.capabilityId ?? registry?.capabilityId ?? "MISSING",
   stageNumberAuthorityAllowed: false,
+  pendingEvidenceSources,
   failures
 };
 

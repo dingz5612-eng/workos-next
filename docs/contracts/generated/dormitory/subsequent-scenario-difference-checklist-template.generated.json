@@ -11,7 +11,7 @@
     "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:473c2d29cf8684530f423dd4fc12b3fdd5ba3239853c77e84a680095c8d952db",
+  "inputDigest": "sha256:a4be5229d3c249017f22f49d1356e0e4ee7e181203c2963c1d694f3116b18218",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
@@ -19,11 +19,11 @@
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
-      "digest": "sha256:4e25c7fabf8aee0983ecde729d378f0451115c5bd50ea0cca40f14d0a1175abf"
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
-      "digest": "sha256:679ea4c4b65d843e49ed10b8ce554a56d9cae48792bf63db7de4a4583d70315c"
+      "digest": "sha256:480980f4c45e3e1cacc8a40876eb8d2b54c1a735b3849a5ad7996fdd88747d3b"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
@@ -32,7 +32,7 @@
   ],
   "sourceContentDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
   "authorityId": "Dormitory.Scenario1BenchmarkInheritanceContract",
-  "outputContentDigest": "sha256:3186f2fea59aa5f8aa4949c380293adae705a1e791ff14e974ebe85d6126acde",
+  "outputContentDigest": "sha256:25a3ac01be056fdf5e187e862de541be7a7e309a83ac626a36fc67e325e4a6fa",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
@@ -40,9 +40,9 @@
   "highestBusinessAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
   "highestBusinessAuthorityId": "Dormitory.Operating13ScenarioControl",
   "benchmarkImplementationRef": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
-  "controlAuthorityDigest": "sha256:4e25c7fabf8aee0983ecde729d378f0451115c5bd50ea0cca40f14d0a1175abf",
+  "controlAuthorityDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
   "benchmarkContractDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
-  "scenario1SourceDigest": "sha256:679ea4c4b65d843e49ed10b8ce554a56d9cae48792bf63db7de4a4583d70315c",
+  "scenario1SourceDigest": "sha256:480980f4c45e3e1cacc8a40876eb8d2b54c1a735b3849a5ad7996fdd88747d3b",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "template": {
     "requiredSections": [

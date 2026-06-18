@@ -47,6 +47,9 @@ public sealed class SliceRuntimeCapabilityGate
         (capability.SliceId.Equals(AcceptedCapabilityRuntimeProjection.CapabilityId, StringComparison.OrdinalIgnoreCase) &&
             capability.Status.Equals("runtime-test-admitted", StringComparison.OrdinalIgnoreCase)) ||
         (capability.SliceId.Equals(DormitoryScenario2RuntimeProjection.SliceId, StringComparison.OrdinalIgnoreCase) &&
+            capability.Status.Equals("runtime-test-admitted", StringComparison.OrdinalIgnoreCase)) ||
+        (Dormitory13ScenarioRuntimeProjection.RuntimeCapabilities()
+            .Any(item => item.SliceId.Equals(capability.SliceId, StringComparison.OrdinalIgnoreCase)) &&
             capability.Status.Equals("runtime-test-admitted", StringComparison.OrdinalIgnoreCase));
 
     private static IReadOnlyDictionary<string, SliceRuntimeCapability> LoadCapabilities(string? manifestPath)
@@ -67,6 +70,7 @@ public sealed class SliceRuntimeCapabilityGate
             .ToList();
         sliceCapabilities.Add(AcceptedCapabilityRuntimeProjection.RuntimeCapability());
         sliceCapabilities.Add(DormitoryScenario2RuntimeProjection.RuntimeCapability());
+        sliceCapabilities.AddRange(Dormitory13ScenarioRuntimeProjection.RuntimeCapabilities());
         return sliceCapabilities
             .GroupBy(item => item.WorkspaceId, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);

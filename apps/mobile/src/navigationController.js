@@ -1,4 +1,4 @@
-import { fetchSearchResults, recordMobileClientEvent, startOperationsWorkspace } from "./apiClient.js";
+import { fetchOperationWorkItem, fetchSearchResults, recordMobileClientEvent, startOperationsWorkspace } from "./apiClient.js";
 import { searchPreferenceKey } from "./appState.js";
 import { applyRuntimeSearchResults, applyRuntimeSurfacePayloads, normalizeQuery } from "./runtime/runtimeStore.js";
 import { selectWorkspaceById } from "./selectors/surfaceSelectors.js";
@@ -114,6 +114,7 @@ export function openOperationPanel(workItemId, ctx, fallback = {}) {
   ctx.state.selectedCardId = selected.cardId || fallback.cardId || ctx.state.selectedCardId || "";
   ctx.state.selectedCardIndex = -1;
   setView("operationPanel", ctx);
+  void hydrateSelectedOperationWorkItemDetail(ctx, selected.workItemId);
   return target;
 }
 
@@ -308,6 +309,38 @@ function handleStartWorkspaceError(error, ctx) {
     return;
   }
   ctx.state.operationMessage = ctx.tr("apiOffline");
+}
+
+async function hydrateSelectedOperationWorkItemDetail(ctx, workItemId = "") {
+  if (!workItemId || !ctx.state.currentActor) return;
+  const selected = selectedOperationWorkItemForDetail(ctx.state, workItemId);
+  if (!operationWorkItemNeedsDetail(selected)) return;
+  try {
+    const detail = await fetchOperationWorkItem(workItemId);
+    if ((ctx.state.selectedWorkItemId || "") !== workItemId) return;
+    applyRuntimeSurfacePayloads(ctx.state, { operationWorkItems: [detail] });
+    ctx.render(true);
+  } catch {
+    // Opening the operation panel remains possible from the lightweight item;
+    // submit-time runtime checks still protect the business boundary.
+  }
+}
+
+function selectedOperationWorkItemForDetail(state = {}, workItemId = "") {
+  const items = [
+    ...(state.runtimeStore?.operationWorkItems || []),
+    ...(state.runtimeStore?.workQueue || [])
+  ];
+  return items.find((item) => (item.workItemId || item.work_item_id || "") === workItemId) || null;
+}
+
+function operationWorkItemNeedsDetail(item = null) {
+  if (!item) return true;
+  const card = item.card || null;
+  const cardEvidence = Array.isArray(card?.evidence) ? card.evidence : [];
+  const workspaceCard = item.workspace?.cards?.find((candidate) => candidate.id === (item.cardId || item.card_id || item.payload?.cardId));
+  const workspaceEvidence = Array.isArray(workspaceCard?.evidence) ? workspaceCard.evidence : [];
+  return !card || (cardEvidence.length === 0 && workspaceEvidence.length === 0);
 }
 
 function latestStartedWorkspaceId(projection = {}, templateWorkspaceId = DORMITORY_MAINLINE_WORKSPACE_ID) {

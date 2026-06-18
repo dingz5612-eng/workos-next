@@ -2576,6 +2576,8 @@ internal static class Scenario7CheckInProcessingRuntimeAdapter
         var status = FirstNonEmpty(Value(fields, "financeStatus"), Value(fields, "financeConfirmationStatus"));
         return IsTrue(Value(fields, "financeReady")) ||
             status.Equals("财务已确认", StringComparison.OrdinalIgnoreCase) ||
+            status.Equals("已确认", StringComparison.OrdinalIgnoreCase) ||
+            status.Equals("confirmed", StringComparison.OrdinalIgnoreCase) ||
             status.Equals("finance-confirmed", StringComparison.OrdinalIgnoreCase);
     }
 
@@ -2623,10 +2625,18 @@ internal static class Scenario7CheckInProcessingRuntimeAdapter
 
     private static bool HasResourceAvailableForCheckIn(IReadOnlyDictionary<string, string> fields)
     {
-        var availability = FirstNonEmpty(Value(fields, "resourceAvailability"), Value(fields, "roomBedAvailability"));
+        var availability = FirstNonEmpty(
+            Value(fields, "resourceAvailability"),
+            Value(fields, "roomBedAvailability"),
+            Value(fields, "operationStatus"),
+            Value(fields, "resourceStatus"));
         return IsTrue(Value(fields, "resourceAvailableForCheckIn")) ||
             IsTrue(Value(fields, "resourceAvailable")) ||
+            IsTrue(Value(fields, "roomBedReady")) ||
             availability.Equals("可入住", StringComparison.OrdinalIgnoreCase) ||
+            availability.Equals("可运营", StringComparison.OrdinalIgnoreCase) ||
+            availability.Equals("ready", StringComparison.OrdinalIgnoreCase) ||
+            availability.Equals("available", StringComparison.OrdinalIgnoreCase) ||
             availability.Equals("available-for-checkin", StringComparison.OrdinalIgnoreCase);
     }
 
@@ -2653,10 +2663,19 @@ internal static class Scenario7CheckInProcessingRuntimeAdapter
 
     private static bool HasConfirmedStay(IReadOnlyDictionary<string, string> fields)
     {
-        var status = FirstNonEmpty(Value(fields, "stayStatus"), Value(fields, "checkInStatus"));
+        var statuses = new[]
+        {
+            Value(fields, "stayStatus"),
+            Value(fields, "checkInStatus"),
+            Value(fields, "occupancyStatus")
+        };
         return IsTrue(Value(fields, "stayConfirmed")) ||
-            status.Equals("已入住", StringComparison.OrdinalIgnoreCase) ||
-            status.Equals("checked-in", StringComparison.OrdinalIgnoreCase);
+            statuses.Any(status =>
+                status.Equals("已入住", StringComparison.OrdinalIgnoreCase) ||
+                status.Equals("在住", StringComparison.OrdinalIgnoreCase) ||
+                status.Equals("入住中", StringComparison.OrdinalIgnoreCase) ||
+                status.Equals("checked-in", StringComparison.OrdinalIgnoreCase) ||
+                status.Equals("in-stay", StringComparison.OrdinalIgnoreCase));
     }
 
     private static bool HasConfirmedCheckInInlineEdit(IReadOnlyDictionary<string, string> fields) =>

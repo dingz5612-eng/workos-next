@@ -48,6 +48,7 @@ const allGeneratedFiles = [
   "docs/contracts/generated/dormitory/13-scenario-control.generated.json",
   "apps/mobile/src/generated/oam/dormitory-13-scenario-control.generated.json",
   "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioControl.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json",
   "docs/contracts/generated/dormitory/13-scenario-index.generated.json",
   "docs/contracts/generated/dormitory/13-scenario-state-ladder.generated.json",
   "docs/contracts/generated/dormitory/13-scenario-object-ownership.generated.json",
@@ -296,6 +297,11 @@ try {
   execFileSync(process.execPath, ["scripts/business/generate-dormitory-scenario13-reporting-audit-review-contracts.mjs"], {
     cwd: root,
     env: { ...process.env, WORKOS_DORMITORY_SCENARIO13_OUTPUT_ROOT: tempRoot },
+    stdio: "pipe"
+  });
+  execFileSync(process.execPath, ["scripts/business/generate-dormitory-13-scenario-runtime-execution.mjs"], {
+    cwd: root,
+    env: { ...process.env, WORKOS_DORMITORY_13_RUNTIME_EXECUTION_OUTPUT_ROOT: tempRoot },
     stdio: "pipe"
   });
   execFileSync(process.execPath, ["scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs"], {

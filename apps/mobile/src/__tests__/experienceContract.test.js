@@ -310,7 +310,7 @@ function ctx(actor = { role: "operator" }) {
       projectionPendingBody: "提交已经完成，投影同步中；这不是失败。",
       failedSync: "同步需要支持",
       failedSyncBody: "提交已经记录，但读侧同步需要支持人员跟进。",
-      trustedEvidence: "办理材料",
+      trustedEvidence: "可信证据",
       evidenceMissing: "缺少证据",
       evidenceTrustedDraft: "已选择，待可信校验",
       noRequiredEvidence: "无需补材料",

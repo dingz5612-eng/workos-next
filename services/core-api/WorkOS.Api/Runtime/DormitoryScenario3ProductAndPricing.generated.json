@@ -9,30 +9,60 @@
     "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:85b38109c8d72046b87f14b3a642e018a3b5ff7ec851ae9ae29b7e6fdc8bf751",
+  "inputDigest": "sha256:60372bae88f8c69027805c9a2225b4939e2108913d66b25e962e445b68fcf5e1",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
-      "digest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841"
+      "digest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841",
+  "sourceContentDigest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario3.ProductAndPricing",
   "scenarioPackageNo": 3,
   "scenarioId": "lodging.product-and-rate",
-  "outputContentDigest": "sha256:8aa505053d2e545b79d9a8c7cdf86464f0140a400ed09deec092761e42a929d1",
+  "outputContentDigest": "sha256:3ef3dcb0f409581cf2be64a962d906400e56b88d76e11e936b761f4810e2fc56",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "住宿商品与价格",
   "businessGoalZh": "承接场景包 1 的房源摘要和场景包 2 已确认可运营且未阻断的运营状态摘要，配置住宿商品、售卖单位、商品资源绑定、价格方案、适用日期、价格版本及价格生效/停用记录。",
-  "sourceScenarioDigest": "sha256:670182a96427b3904cfc0ffab5ca4d008528c149f95aa6d8a43eca906e633841",
+  "sourceScenarioDigest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario3.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "AccommodationProduct",
+      "SellableUnit",
+      "ProductResourceBinding",
+      "RatePlan",
+      "RateRule",
+      "PriceCalendar",
+      "PriceVersion",
+      "PriceEvidence",
+      "PriceStatusHistory"
+    ],
+    "searchReadModel": [
+      "住宿商品与价格",
+      "商品摘要",
+      "价格方案摘要",
+      "价格日历摘要",
+      "价格版本历史",
+      "可否进入询价报价",
+      "证据摘要",
+      "只读对象引用",
+      "价格版本和价格日历摘要"
+    ],
+    "noRefillRuleZh": "场景包 3 只能读取场景包 1 和场景包 2 的只读摘要，不得要求用户重新填写房间、床位组、基础就绪或运营状态字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
   "consumer": "runtime",
   "objects": [
     {
@@ -442,16 +472,7 @@
       "weekdayWeekendRule",
       "holidayRule",
       "longTermEffective",
-      "specificDateRange",
-      "saveDraft",
-      "submitReview",
-      "activatePrice",
-      "backToEdit",
-      "createNewPriceVersion",
-      "disablePrice",
-      "voidDraft",
-      "supplementEvidence",
-      "correctionRequest"
+      "specificDateRange"
     ],
     "userUploadedOrBoundEvidence": [
       "商品定义证据",
@@ -531,7 +552,934 @@
       "projectionVersion",
       "digest",
       "domainEventId"
-    ]
+    ],
+    "fieldAuthority": {
+      "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#fieldAuthorityModel",
+      "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+      "businessInput": [
+        {
+          "fieldId": "productName",
+          "labelZh": "productName",
+          "control": "text",
+          "labelKey": "scenario3.field.productName.label",
+          "helpKey": "scenario3.field.productName.help",
+          "errorKey": "scenario3.field.productName.error"
+        },
+        {
+          "fieldId": "productDescription",
+          "labelZh": "productDescription",
+          "control": "textarea",
+          "labelKey": "scenario3.field.productDescription.label",
+          "helpKey": "scenario3.field.productDescription.help",
+          "errorKey": "scenario3.field.productDescription.error"
+        },
+        {
+          "fieldId": "targetGuestType",
+          "labelZh": "targetGuestType",
+          "control": "text",
+          "labelKey": "scenario3.field.targetGuestType.label",
+          "helpKey": "scenario3.field.targetGuestType.help",
+          "errorKey": "scenario3.field.targetGuestType.error"
+        },
+        {
+          "fieldId": "stayRuleSummary",
+          "labelZh": "stayRuleSummary",
+          "control": "text",
+          "labelKey": "scenario3.field.stayRuleSummary.label",
+          "helpKey": "scenario3.field.stayRuleSummary.help",
+          "errorKey": "scenario3.field.stayRuleSummary.error"
+        },
+        {
+          "fieldId": "productNotes",
+          "labelZh": "productNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.productNotes.label",
+          "helpKey": "scenario3.field.productNotes.help",
+          "errorKey": "scenario3.field.productNotes.error"
+        },
+        {
+          "fieldId": "ratePlanName",
+          "labelZh": "ratePlanName",
+          "control": "text",
+          "labelKey": "scenario3.field.ratePlanName.label",
+          "helpKey": "scenario3.field.ratePlanName.help",
+          "errorKey": "scenario3.field.ratePlanName.error"
+        },
+        {
+          "fieldId": "basePrice",
+          "labelZh": "basePrice",
+          "control": "number",
+          "labelKey": "scenario3.field.basePrice.label",
+          "helpKey": "scenario3.field.basePrice.help",
+          "errorKey": "scenario3.field.basePrice.error"
+        },
+        {
+          "fieldId": "currency",
+          "labelZh": "currency",
+          "control": "text",
+          "labelKey": "scenario3.field.currency.label",
+          "helpKey": "scenario3.field.currency.help",
+          "errorKey": "scenario3.field.currency.error"
+        },
+        {
+          "fieldId": "pricingPeriod",
+          "labelZh": "pricingPeriod",
+          "control": "text",
+          "labelKey": "scenario3.field.pricingPeriod.label",
+          "helpKey": "scenario3.field.pricingPeriod.help",
+          "errorKey": "scenario3.field.pricingPeriod.error"
+        },
+        {
+          "fieldId": "minimumStayPeriod",
+          "labelZh": "minimumStayPeriod",
+          "control": "text",
+          "labelKey": "scenario3.field.minimumStayPeriod.label",
+          "helpKey": "scenario3.field.minimumStayPeriod.help",
+          "errorKey": "scenario3.field.minimumStayPeriod.error"
+        },
+        {
+          "fieldId": "ratePlanNotes",
+          "labelZh": "ratePlanNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.ratePlanNotes.label",
+          "helpKey": "scenario3.field.ratePlanNotes.help",
+          "errorKey": "scenario3.field.ratePlanNotes.error"
+        },
+        {
+          "fieldId": "effectiveDate",
+          "labelZh": "effectiveDate",
+          "control": "text",
+          "labelKey": "scenario3.field.effectiveDate.label",
+          "helpKey": "scenario3.field.effectiveDate.help",
+          "errorKey": "scenario3.field.effectiveDate.error"
+        },
+        {
+          "fieldId": "expiryDate",
+          "labelZh": "expiryDate",
+          "control": "text",
+          "labelKey": "scenario3.field.expiryDate.label",
+          "helpKey": "scenario3.field.expiryDate.help",
+          "errorKey": "scenario3.field.expiryDate.error"
+        },
+        {
+          "fieldId": "specialDatePrice",
+          "labelZh": "specialDatePrice",
+          "control": "number",
+          "labelKey": "scenario3.field.specialDatePrice.label",
+          "helpKey": "scenario3.field.specialDatePrice.help",
+          "errorKey": "scenario3.field.specialDatePrice.error"
+        },
+        {
+          "fieldId": "disableReason",
+          "labelZh": "disableReason",
+          "control": "textarea",
+          "labelKey": "scenario3.field.disableReason.label",
+          "helpKey": "scenario3.field.disableReason.help",
+          "errorKey": "scenario3.field.disableReason.error"
+        },
+        {
+          "fieldId": "approvalNotes",
+          "labelZh": "approvalNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.approvalNotes.label",
+          "helpKey": "scenario3.field.approvalNotes.help",
+          "errorKey": "scenario3.field.approvalNotes.error"
+        },
+        {
+          "fieldId": "adjustmentReason",
+          "labelZh": "adjustmentReason",
+          "control": "textarea",
+          "labelKey": "scenario3.field.adjustmentReason.label",
+          "helpKey": "scenario3.field.adjustmentReason.help",
+          "errorKey": "scenario3.field.adjustmentReason.error"
+        },
+        {
+          "fieldId": "newBasePrice",
+          "labelZh": "newBasePrice",
+          "control": "number",
+          "labelKey": "scenario3.field.newBasePrice.label",
+          "helpKey": "scenario3.field.newBasePrice.help",
+          "errorKey": "scenario3.field.newBasePrice.error"
+        },
+        {
+          "fieldId": "voidReason",
+          "labelZh": "voidReason",
+          "control": "textarea",
+          "labelKey": "scenario3.field.voidReason.label",
+          "helpKey": "scenario3.field.voidReason.help",
+          "errorKey": "scenario3.field.voidReason.error"
+        },
+        {
+          "fieldId": "supplementEvidenceNotes",
+          "labelZh": "supplementEvidenceNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.supplementEvidenceNotes.label",
+          "helpKey": "scenario3.field.supplementEvidenceNotes.help",
+          "errorKey": "scenario3.field.supplementEvidenceNotes.error"
+        }
+      ],
+      "businessSelect": [
+        {
+          "fieldId": "resourceScope",
+          "labelZh": "resourceScope",
+          "control": "searchable-select",
+          "labelKey": "scenario3.field.resourceScope.label",
+          "helpKey": "scenario3.field.resourceScope.help",
+          "errorKey": "scenario3.field.resourceScope.error",
+          "optionSet": "option.resourceScope",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "targetRoomOrBed",
+          "labelZh": "targetRoomOrBed",
+          "control": "searchable-select",
+          "labelKey": "scenario3.field.targetRoomOrBed.label",
+          "helpKey": "scenario3.field.targetRoomOrBed.help",
+          "errorKey": "scenario3.field.targetRoomOrBed.error",
+          "optionSet": "option.targetRoomOrBed",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "sellableResourceSelection",
+          "labelZh": "sellableResourceSelection",
+          "control": "searchable-select",
+          "labelKey": "scenario3.field.sellableResourceSelection.label",
+          "helpKey": "scenario3.field.sellableResourceSelection.help",
+          "errorKey": "scenario3.field.sellableResourceSelection.error",
+          "optionSet": "option.sellableResourceSelection",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "sellableUnit",
+          "labelZh": "sellableUnit",
+          "control": "select",
+          "labelKey": "scenario3.field.sellableUnit.label",
+          "helpKey": "scenario3.field.sellableUnit.help",
+          "errorKey": "scenario3.field.sellableUnit.error",
+          "optionSet": "option.sellableUnit",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "resourceBindingSelection",
+          "labelZh": "resourceBindingSelection",
+          "control": "searchable-select",
+          "labelKey": "scenario3.field.resourceBindingSelection.label",
+          "helpKey": "scenario3.field.resourceBindingSelection.help",
+          "errorKey": "scenario3.field.resourceBindingSelection.error",
+          "optionSet": "option.resourceBindingSelection",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "productEnabled",
+          "labelZh": "productEnabled",
+          "control": "select",
+          "labelKey": "scenario3.field.productEnabled.label",
+          "helpKey": "scenario3.field.productEnabled.help",
+          "errorKey": "scenario3.field.productEnabled.error",
+          "optionSet": "option.productEnabled",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "pricingPeriodOption",
+          "labelZh": "pricingPeriodOption",
+          "control": "select",
+          "labelKey": "scenario3.field.pricingPeriodOption.label",
+          "helpKey": "scenario3.field.pricingPeriodOption.help",
+          "errorKey": "scenario3.field.pricingPeriodOption.error",
+          "optionSet": "option.pricingPeriodOption",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "pricingBasis",
+          "labelZh": "pricingBasis",
+          "control": "select",
+          "labelKey": "scenario3.field.pricingBasis.label",
+          "helpKey": "scenario3.field.pricingBasis.help",
+          "errorKey": "scenario3.field.pricingBasis.error",
+          "optionSet": "option.pricingBasis",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "customerType",
+          "labelZh": "customerType",
+          "control": "select",
+          "labelKey": "scenario3.field.customerType.label",
+          "helpKey": "scenario3.field.customerType.help",
+          "errorKey": "scenario3.field.customerType.error",
+          "optionSet": "option.customerType",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "salesChannel",
+          "labelZh": "salesChannel",
+          "control": "select",
+          "labelKey": "scenario3.field.salesChannel.label",
+          "helpKey": "scenario3.field.salesChannel.help",
+          "errorKey": "scenario3.field.salesChannel.error",
+          "optionSet": "option.salesChannel",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "weekdayWeekendRule",
+          "labelZh": "weekdayWeekendRule",
+          "control": "select",
+          "labelKey": "scenario3.field.weekdayWeekendRule.label",
+          "helpKey": "scenario3.field.weekdayWeekendRule.help",
+          "errorKey": "scenario3.field.weekdayWeekendRule.error",
+          "optionSet": "option.weekdayWeekendRule",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "holidayRule",
+          "labelZh": "holidayRule",
+          "control": "select",
+          "labelKey": "scenario3.field.holidayRule.label",
+          "helpKey": "scenario3.field.holidayRule.help",
+          "errorKey": "scenario3.field.holidayRule.error",
+          "optionSet": "option.holidayRule",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "longTermEffective",
+          "labelZh": "longTermEffective",
+          "control": "select",
+          "labelKey": "scenario3.field.longTermEffective.label",
+          "helpKey": "scenario3.field.longTermEffective.help",
+          "errorKey": "scenario3.field.longTermEffective.error",
+          "optionSet": "option.longTermEffective",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "specificDateRange",
+          "labelZh": "specificDateRange",
+          "control": "select",
+          "labelKey": "scenario3.field.specificDateRange.label",
+          "helpKey": "scenario3.field.specificDateRange.help",
+          "errorKey": "scenario3.field.specificDateRange.error",
+          "optionSet": "option.specificDateRange",
+          "submitValueSource": "stableValue"
+        }
+      ],
+      "systemDerived": [
+        {
+          "fieldId": "dateRangeConflict",
+          "labelZh": "dateRangeConflict",
+          "labelKey": "scenario3.field.dateRangeConflict.label",
+          "helpKey": "scenario3.field.dateRangeConflict.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "priceCalendar",
+          "labelZh": "priceCalendar",
+          "labelKey": "scenario3.field.priceCalendar.label",
+          "helpKey": "scenario3.field.priceCalendar.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "overridesExistingPrice",
+          "labelZh": "overridesExistingPrice",
+          "labelKey": "scenario3.field.overridesExistingPrice.label",
+          "helpKey": "scenario3.field.overridesExistingPrice.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "cannotSubmitReasons",
+          "labelZh": "cannotSubmitReasons",
+          "labelKey": "scenario3.field.cannotSubmitReasons.label",
+          "helpKey": "scenario3.field.cannotSubmitReasons.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "legalNextActions",
+          "labelZh": "legalNextActions",
+          "labelKey": "scenario3.field.legalNextActions.label",
+          "helpKey": "scenario3.field.legalNextActions.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "canEnterInquiryQuote",
+          "labelZh": "canEnterInquiryQuote",
+          "labelKey": "scenario3.field.canEnterInquiryQuote.label",
+          "helpKey": "scenario3.field.canEnterInquiryQuote.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        }
+      ],
+      "readOnlySummary": [
+        {
+          "fieldId": "buildingArea",
+          "labelZh": "buildingArea",
+          "labelKey": "scenario3.field.buildingArea.label",
+          "helpKey": "scenario3.field.buildingArea.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "roomNo",
+          "labelZh": "roomNo",
+          "labelKey": "scenario3.field.roomNo.label",
+          "helpKey": "scenario3.field.roomNo.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "bedList",
+          "labelZh": "bedList",
+          "labelKey": "scenario3.field.bedList.label",
+          "helpKey": "scenario3.field.bedList.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "operationStatus",
+          "labelZh": "operationStatus",
+          "labelKey": "scenario3.field.operationStatus.label",
+          "helpKey": "scenario3.field.operationStatus.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "canEnterPriceMaintenance",
+          "labelZh": "canEnterPriceMaintenance",
+          "labelKey": "scenario3.field.canEnterPriceMaintenance.label",
+          "helpKey": "scenario3.field.canEnterPriceMaintenance.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "operationBlockerReason",
+          "labelZh": "operationBlockerReason",
+          "labelKey": "scenario3.field.operationBlockerReason.label",
+          "helpKey": "scenario3.field.operationBlockerReason.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "operationEvidenceSummary",
+          "labelZh": "operationEvidenceSummary",
+          "labelKey": "scenario3.field.operationEvidenceSummary.label",
+          "helpKey": "scenario3.field.operationEvidenceSummary.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "operationStatusHistory",
+          "labelZh": "operationStatusHistory",
+          "labelKey": "scenario3.field.operationStatusHistory.label",
+          "helpKey": "scenario3.field.operationStatusHistory.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-9a992a59",
+          "labelZh": "房间摘要",
+          "labelKey": "scenario3.field.v-9a992a59.label",
+          "helpKey": "scenario3.field.v-9a992a59.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-108420f7",
+          "labelZh": "床位组摘要",
+          "labelKey": "scenario3.field.v-108420f7.label",
+          "helpKey": "scenario3.field.v-108420f7.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-5ac95c4f",
+          "labelZh": "房间/床位运营状态摘要",
+          "labelKey": "scenario3.field.v-5ac95c4f.label",
+          "helpKey": "scenario3.field.v-5ac95c4f.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-88a6893a",
+          "labelZh": "阻断原因",
+          "labelKey": "scenario3.field.v-88a6893a.label",
+          "helpKey": "scenario3.field.v-88a6893a.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-8bc84cbf",
+          "labelZh": "可否进入价格维护",
+          "labelKey": "scenario3.field.v-8bc84cbf.label",
+          "helpKey": "scenario3.field.v-8bc84cbf.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-f71ae921",
+          "labelZh": "证据摘要",
+          "labelKey": "scenario3.field.v-f71ae921.label",
+          "helpKey": "scenario3.field.v-f71ae921.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-fe5f4dd8",
+          "labelZh": "状态历史",
+          "labelKey": "scenario3.field.v-fe5f4dd8.label",
+          "helpKey": "scenario3.field.v-fe5f4dd8.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-cd66b0d5",
+          "labelZh": "只读对象引用",
+          "labelKey": "scenario3.field.v-cd66b0d5.label",
+          "helpKey": "scenario3.field.v-cd66b0d5.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-6acf9a48",
+          "labelZh": "运营状态摘要",
+          "labelKey": "scenario3.field.v-6acf9a48.label",
+          "helpKey": "scenario3.field.v-6acf9a48.help",
+          "sourceScenario": "运营状态摘要"
+        }
+      ],
+      "evidenceBinding": [
+        {
+          "fieldId": "evidence.v-a76e4fde",
+          "labelZh": "商品定义证据",
+          "labelKey": "scenario3.evidence.evidence.v-a76e4fde.label",
+          "helpKey": "scenario3.evidence.evidence.v-a76e4fde.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-fde40cb1",
+          "labelZh": "资源绑定证据",
+          "labelKey": "scenario3.evidence.evidence.v-fde40cb1.label",
+          "helpKey": "scenario3.evidence.evidence.v-fde40cb1.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-7f1c5156",
+          "labelZh": "价格依据证据",
+          "labelKey": "scenario3.evidence.evidence.v-7f1c5156.label",
+          "helpKey": "scenario3.evidence.evidence.v-7f1c5156.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-875ca47c",
+          "labelZh": "审批材料",
+          "labelKey": "scenario3.evidence.evidence.v-875ca47c.label",
+          "helpKey": "scenario3.evidence.evidence.v-875ca47c.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-ec455b41",
+          "labelZh": "日期规则证据",
+          "labelKey": "scenario3.evidence.evidence.v-ec455b41.label",
+          "helpKey": "scenario3.evidence.evidence.v-ec455b41.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-f4deba5a",
+          "labelZh": "特殊价格证据",
+          "labelKey": "scenario3.evidence.evidence.v-f4deba5a.label",
+          "helpKey": "scenario3.evidence.evidence.v-f4deba5a.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-4a6a558b",
+          "labelZh": "审核证据",
+          "labelKey": "scenario3.evidence.evidence.v-4a6a558b.label",
+          "helpKey": "scenario3.evidence.evidence.v-4a6a558b.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-9f87f64f",
+          "labelZh": "生效确认记录",
+          "labelKey": "scenario3.evidence.evidence.v-9f87f64f.label",
+          "helpKey": "scenario3.evidence.evidence.v-9f87f64f.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-3665a5fc",
+          "labelZh": "调价证据",
+          "labelKey": "scenario3.evidence.evidence.v-3665a5fc.label",
+          "helpKey": "scenario3.evidence.evidence.v-3665a5fc.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-05933c02",
+          "labelZh": "停用证据",
+          "labelKey": "scenario3.evidence.evidence.v-05933c02.label",
+          "helpKey": "scenario3.evidence.evidence.v-05933c02.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-8c0bc09b",
+          "labelZh": "作废证据",
+          "labelKey": "scenario3.evidence.evidence.v-8c0bc09b.label",
+          "helpKey": "scenario3.evidence.evidence.v-8c0bc09b.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-3f4291dc",
+          "labelZh": "补充证据",
+          "labelKey": "scenario3.evidence.evidence.v-3f4291dc.label",
+          "helpKey": "scenario3.evidence.evidence.v-3f4291dc.help",
+          "evidenceType": "businessEvidence"
+        }
+      ],
+      "legalAction": [
+        {
+          "fieldId": "createNewPriceVersion",
+          "labelZh": "createNewPriceVersion",
+          "labelKey": "scenario3.action.createNewPriceVersion.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.createNewPriceVersion.v1"
+        },
+        {
+          "fieldId": "disablePrice",
+          "labelZh": "disablePrice",
+          "labelKey": "scenario3.action.disablePrice.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.disablePrice.v1"
+        },
+        {
+          "fieldId": "voidDraft",
+          "labelZh": "voidDraft",
+          "labelKey": "scenario3.action.voidDraft.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.voidDraft.v1"
+        },
+        {
+          "fieldId": "supplementEvidence",
+          "labelZh": "supplementEvidence",
+          "labelKey": "scenario3.action.supplementEvidence.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.supplementEvidence.v1"
+        },
+        {
+          "fieldId": "correctionRequest",
+          "labelZh": "correctionRequest",
+          "labelKey": "scenario3.action.correctionRequest.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.correctionRequest.v1"
+        }
+      ],
+      "actionControl": [
+        {
+          "fieldId": "createNewPriceVersion",
+          "labelZh": "createNewPriceVersion",
+          "labelKey": "scenario3.action.createNewPriceVersion.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.createNewPriceVersion.v1"
+        },
+        {
+          "fieldId": "disablePrice",
+          "labelZh": "disablePrice",
+          "labelKey": "scenario3.action.disablePrice.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.disablePrice.v1"
+        },
+        {
+          "fieldId": "voidDraft",
+          "labelZh": "voidDraft",
+          "labelKey": "scenario3.action.voidDraft.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.voidDraft.v1"
+        },
+        {
+          "fieldId": "supplementEvidence",
+          "labelZh": "supplementEvidence",
+          "labelKey": "scenario3.action.supplementEvidence.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.supplementEvidence.v1"
+        },
+        {
+          "fieldId": "correctionRequest",
+          "labelZh": "correctionRequest",
+          "labelKey": "scenario3.action.correctionRequest.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.correctionRequest.v1"
+        }
+      ],
+      "conditionalInput": [
+        {
+          "fieldId": "productDescription",
+          "labelZh": "productDescription",
+          "control": "textarea",
+          "labelKey": "scenario3.field.productDescription.label",
+          "helpKey": "scenario3.field.productDescription.help",
+          "errorKey": "scenario3.field.productDescription.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        },
+        {
+          "fieldId": "productNotes",
+          "labelZh": "productNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.productNotes.label",
+          "helpKey": "scenario3.field.productNotes.help",
+          "errorKey": "scenario3.field.productNotes.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        },
+        {
+          "fieldId": "ratePlanNotes",
+          "labelZh": "ratePlanNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.ratePlanNotes.label",
+          "helpKey": "scenario3.field.ratePlanNotes.help",
+          "errorKey": "scenario3.field.ratePlanNotes.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        },
+        {
+          "fieldId": "disableReason",
+          "labelZh": "disableReason",
+          "control": "textarea",
+          "labelKey": "scenario3.field.disableReason.label",
+          "helpKey": "scenario3.field.disableReason.help",
+          "errorKey": "scenario3.field.disableReason.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        },
+        {
+          "fieldId": "approvalNotes",
+          "labelZh": "approvalNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.approvalNotes.label",
+          "helpKey": "scenario3.field.approvalNotes.help",
+          "errorKey": "scenario3.field.approvalNotes.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        },
+        {
+          "fieldId": "adjustmentReason",
+          "labelZh": "adjustmentReason",
+          "control": "textarea",
+          "labelKey": "scenario3.field.adjustmentReason.label",
+          "helpKey": "scenario3.field.adjustmentReason.help",
+          "errorKey": "scenario3.field.adjustmentReason.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        }
+      ],
+      "auditInternal": [
+        {
+          "fieldId": "productRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ratePlanRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceVersionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "resourceRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "operationStatusSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "evidenceBindingRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "commandSubmissionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "domainEventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "projectionVersion",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "digest",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "sourceScenarioRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceCalendarRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "productConfirmedRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ratePlanConfirmedRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceVersionActivatedRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "newPriceVersionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "previousPriceVersionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceDisableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceVoidRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceStatusHistoryRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "productId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ratePlanId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceVersionId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        }
+      ]
+    }
   },
   "runtimeConsumptionBoundary": {
     "runtimeMayReadGeneratedOnly": true,

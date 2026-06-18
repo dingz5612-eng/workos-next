@@ -123,12 +123,31 @@ if (runtimeMirror?.consumer !== "runtime") fail("runtime mirror must declare con
 assertArray(runtimeMirror?.operationStatusOptions, expectedStatuses, "runtime mirror status options");
 const runtimeExecution = runtimeMirror?.runtimeExecution;
 if (!runtimeExecution) fail("runtime mirror must include runtimeExecution for executable generated projection.");
+if (JSON.stringify(runtimeExecution ?? {}).includes("sample-room-a-3-301") ||
+  JSON.stringify(runtimeExecution ?? {}).includes("A 栋 3 层 301 房间")) {
+  fail("runtimeExecution must not keep hard-coded sample base-ready resource options; scenario 2 resources are runtime fact driven.");
+}
 if (runtimeExecution?.workspaceId !== "W-DORM-RESOURCE-OPERATION-STATUS") fail("runtimeExecution workspaceId mismatch.");
 if (runtimeExecution?.sliceId !== "Dormitory.Scenario2.ResourceOperationStatus") fail("runtimeExecution sliceId mismatch.");
 if (runtimeExecution?.status !== "runtime-test-admitted") fail("runtimeExecution must remain runtime-test-admitted.");
 if ((runtimeExecution?.steps ?? []).length !== 6) fail("runtimeExecution must expose 6 executable steps.");
 if ((runtimeExecution?.definitions ?? []).length !== 6) fail("runtimeExecution must expose 6 work item definitions.");
 if (Object.keys(runtimeExecution?.startAdapterDefinitionIds ?? {}).length !== 6) fail("runtimeExecution must expose 6 start adapter definition ids.");
+const restoreTransition = (runtimeExecution?.transitions ?? []).find((item) =>
+  item.fromDefinitionId === "definition.dormitory.operationBlockerUpdate.v1" &&
+  item.toDefinitionId === "definition.dormitory.operationRestoreConfirm.v1");
+if (!restoreTransition) {
+  fail("runtimeExecution must include blocker-update to restore-operation transition.");
+} else {
+  const condition = restoreTransition.condition ?? {};
+  if (condition.conditionId !== "generated-transition-condition.dormitory.scenario2.blocker-closed-before-restore.v1") {
+    fail("runtimeExecution restore transition must carry Source Authority guard conditionId.");
+  }
+  if (condition.fieldId !== "blockerStatus" || condition.operator !== "equalsAny") {
+    fail("runtimeExecution restore transition must guard by blockerStatus equalsAny.");
+  }
+  assertArray(condition.values, ["closed", "已关闭"], "runtimeExecution restore transition guard values");
+}
 if (!JSON.stringify(runtimeExecution?.searchCommands ?? []).includes("设置房间营业状态")) fail("runtimeExecution search command must use business copy.");
 if (!JSON.stringify(runtimeExecution?.searchCommands ?? []).includes("房源运营")) fail("runtimeExecution search command must include scenario 2 business search term.");
 assertArray((runtimeExecution?.optionSets?.operationStatus ?? []).map((item) => item.value), expectedRuntimeStatusValues, "runtimeExecution operationStatus stable values");
@@ -153,7 +172,9 @@ for (const step of runtimeExecution?.steps ?? []) {
     if (step.cardId === "cert.setOperationStatus" && field.fieldId === "expectedRestoreAt" && field.required === true) {
       fail("runtimeExecution expectedRestoreAt must not block operable status submission.");
     }
-    if (field.ui?.control === "select" && (!field.ui?.optionSet || (field.ui?.options ?? []).length === 0)) {
+    if (field.ui?.control === "select" &&
+      field.ui?.optionSet !== "baseReadyResource" &&
+      (!field.ui?.optionSet || (field.ui?.options ?? []).length === 0)) {
       fail(`runtimeExecution select field ${field.fieldId} must bind optionSet and options.`);
     }
     for (const language of ["zh-CN", "ru-RU", "ky-KG"]) {

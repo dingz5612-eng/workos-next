@@ -8,6 +8,7 @@ public sealed class WorkItemDefinitionRegistryService
     private static readonly IReadOnlyDictionary<string, string> StartAdapterDefinitionIds =
         AcceptedCapabilityRuntimeProjection.StartAdapterDefinitionIds()
         .Concat(DormitoryScenario2RuntimeProjection.StartAdapterDefinitionIds())
+        .Concat(Dormitory13ScenarioRuntimeProjection.StartAdapterDefinitionIds())
         .Concat(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["W-DORM-MAINLINE:cert.roomSetupConfirm"] = "definition.dormitory.roomSetupConfirm.v1",
@@ -208,6 +209,19 @@ public sealed class WorkItemDefinitionRegistryService
         if (DormitoryScenario2RuntimeProjection.IsWorkspace(value))
         {
             return DormitoryScenario2RuntimeProjection.WorkspaceId;
+        }
+
+        if (Dormitory13ScenarioRuntimeProjection.IsWorkspace(value))
+        {
+            var matching = Dormitory13ScenarioRuntimeProjection.StartAdapterDefinitionIds().Keys
+                .Select(item => item.Split(':', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? string.Empty)
+                .FirstOrDefault(item =>
+                    value.Equals(item, StringComparison.OrdinalIgnoreCase) ||
+                    value.StartsWith($"{item}-", StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(matching))
+            {
+                return matching;
+            }
         }
 
         return value;

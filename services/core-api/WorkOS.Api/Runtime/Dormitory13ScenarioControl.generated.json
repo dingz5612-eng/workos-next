@@ -8,16 +8,16 @@
   "generatedFrom": [
     "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
   ],
-  "inputDigest": "sha256:fb7644757be3231aaaaaf1e5e2490556a1fc7876e4783edb488e1093a7d56d45",
+  "inputDigest": "sha256:206a7609fdae45bdae06d121cf337ad49e02575acc296d975af6fecc12ccdd21",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
-      "digest": "sha256:4e25c7fabf8aee0983ecde729d378f0451115c5bd50ea0cca40f14d0a1175abf"
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
     }
   ],
-  "sourceContentDigest": "sha256:4e25c7fabf8aee0983ecde729d378f0451115c5bd50ea0cca40f14d0a1175abf",
+  "sourceContentDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
   "authorityId": "Dormitory.Operating13ScenarioControl",
-  "outputContentDigest": "sha256:8a7c430c273f0f3d0fd53d8becb2cbd7215495ce736b1b509790ec18f6b20590",
+  "outputContentDigest": "sha256:1c51cdbbee28a9b0305df43eff1aa496f01b11526d2145dd6c8ddf7eb571897f",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
@@ -655,7 +655,8 @@
         "mustDeclare": [
           "labelKey",
           "legalActionRef"
-        ]
+        ],
+        "compatibilityNoteZh": "历史 actionControl 只作为兼容镜像；当前主链使用 legalAction。"
       },
       {
         "classId": "conditionalInput",
@@ -668,6 +669,15 @@
           "control",
           "displayCondition",
           "requiredCondition"
+        ]
+      },
+      {
+        "classId": "legalAction",
+        "meaningZh": "页面按钮、菜单、流程跳转、提交确认、退回、关闭、发布、导出等合法动作。",
+        "formRule": "永不进入字段表单；只能由 LegalAction、Admission、Runtime 状态产生按钮或菜单。",
+        "mustDeclare": [
+          "labelKey",
+          "legalActionRef"
         ]
       },
       {
@@ -686,7 +696,12 @@
       "systemDerivedReadonlyOnly": true,
       "conditionalInputRequiresDisplayAndRequiredConditions": true,
       "businessSelectRequiresOptionSet": true,
-      "visibleCopyMustUseLanguageContract": true
+      "visibleCopyMustUseLanguageContract": true,
+      "legalActionNeverInForm": true,
+      "readOnlySummaryMaterializedInRuntime": true,
+      "workSurfaceContractRequiredForEveryStep": true,
+      "amountRequiresCurrencyBusinessObjectDirectionAndStage": true,
+      "searchReadModelMustUseBusinessLanguage": true
     },
     "regressionGuards": {
       "scenario1": [
@@ -701,7 +716,75 @@
         "预计恢复时间必须是 conditionalInput，只有暂不可运营、部分不可运营、暂停开放、维修中、保洁中、停售、异常待处理或待复查时才显示/必填。",
         "保存草稿、返回修改、继续填写不得作为业务字段提交。",
         "场景 1 输出只能 readOnlySummary 复用，不得重复填写房间号、床位号或基础就绪信息。"
+      ],
+      "allScenarios": [
+        "场景 1-13 必须都有 fields.fieldAuthority 和 operation experience step contract。",
+        "legalAction/actionControl 不得出现在 userFilledFields、userSelectedFields 或 runtime form fields。",
+        "readOnlySummary 必须进入 generated runtime execution，并以只读上下文展示，不得成为用户输入。",
+        "金额页面必须展示币种、业务对象、方向和阶段语义。",
+        "搜索、阅读、列表、详情必须消费 searchReadModel 的业务语言。"
       ]
+    }
+  },
+  "operationExperienceContract": {
+    "version": "oam.dormitory.operation-experience-contract.v1",
+    "sourceAuthorityRole": "business-work-surface-contract",
+    "appliesToScenarioNos": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "purposeZh": "每个住宿场景步骤都必须声明当前业务对象、页面只读上下文、真正可编辑字段、固定选择、金额语义、合法动作、上下游承接和搜索阅读模型。",
+    "requiredStepFields": [
+      "primaryBusinessObject",
+      "requiredReadContext",
+      "editableInputs",
+      "fixedSelections",
+      "financialContext",
+      "legalActions",
+      "handoffSummary",
+      "searchReadModel"
+    ],
+    "rules": {
+      "readContextMustNotBeUserInput": true,
+      "legalActionsMustNotEnterFormFields": true,
+      "fixedSelectionsRequireOptionSet": true,
+      "amountRequiresCurrencyBusinessObjectDirectionAndStage": true,
+      "searchReadModelUsesBusinessLanguage": true,
+      "handoffMustDeclareNoRefillForUpstreamReadonly": true,
+      "labelsAndSubmittedValuesSeparatedForThreeLanguages": true,
+      "auditInternalForbiddenOnBusinessSurface": true
+    },
+    "paymentBaselineZh": [
+      "客户信息",
+      "联系电话",
+      "预订号",
+      "入住日期",
+      "离店日期",
+      "人数",
+      "房间/床位",
+      "价格快照",
+      "应收项目",
+      "已收金额",
+      "本次金额",
+      "剩余待收",
+      "币种",
+      "凭证要求"
+    ],
+    "finalSafety": {
+      "productionConfirmAllowed": false,
+      "releaseAuthority": false,
+      "finalGoNoGo": "NO_GO"
     }
   },
   "entryAdmissionContract": {

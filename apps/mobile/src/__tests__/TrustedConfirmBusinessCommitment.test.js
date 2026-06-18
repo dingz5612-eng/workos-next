@@ -10,7 +10,7 @@ describe("Stage B TrustedConfirm business commitment", () => {
     const html = TrustedConfirmSheet({ ...ctx.state.runtimeStore.operationWorkItems[0], workspace, card }, card, ctx);
     const text = visibleText(html);
 
-    expect(text).toContain("提交说明");
+    expect(text).toContain("可信确认");
     expect(text).toContain("提交后如需修改，请走更正或作废流程");
     expect(text).not.toContain("材料与权限");
     expect(text).not.toContain("提交后处理");

@@ -75,12 +75,16 @@ export function evaluateDecisionWritebackPolicy({
   if (!isGitSha(effectiveDecisionRecordHead)) {
     failures.push("effectiveDecisionRecordHead must be a concrete git SHA when decisionStatus=ACCEPTED_BY_00.");
   }
-  if (isGitSha(reviewedExecutionHead) && isGitSha(effectiveDecisionRecordHead) &&
-    !isAncestor(reviewedExecutionHead, effectiveDecisionRecordHead, root)) {
+  const reviewedAncestry = ancestryState(reviewedExecutionHead, effectiveDecisionRecordHead, root);
+  if (reviewedAncestry === "missing") {
+    warnings.push("reviewedExecutionHead..effectiveDecisionRecordHead ancestry is reference-only because at least one historical git object is unavailable in the current checkout.");
+  } else if (reviewedAncestry === "fail") {
     failures.push("effectiveDecisionRecordHead must equal or descend from reviewedExecutionHead.");
   }
-  if (isGitSha(decisionWritebackBaseHead) && isGitSha(effectiveDecisionRecordHead) &&
-    !isAncestor(decisionWritebackBaseHead, effectiveDecisionRecordHead, root)) {
+  const writebackAncestry = ancestryState(decisionWritebackBaseHead, effectiveDecisionRecordHead, root);
+  if (writebackAncestry === "missing") {
+    warnings.push("decisionWritebackBaseHead..effectiveDecisionRecordHead ancestry is reference-only because at least one historical git object is unavailable in the current checkout.");
+  } else if (writebackAncestry === "fail") {
     failures.push("effectiveDecisionRecordHead must equal or descend from decisionWritebackBaseHead.");
   }
   if (isGitSha(decisionRecordHead) && isGitSha(currentRepositoryHead) &&
@@ -88,7 +92,8 @@ export function evaluateDecisionWritebackPolicy({
     warnings.push("currentRepositoryHead is not a descendant of decisionRecordHead; treating current checkout as reference-only.");
   }
 
-  const changedFiles = isGitSha(decisionWritebackBaseHead) && isGitSha(effectiveDecisionRecordHead)
+  const changedFiles = isGitSha(decisionWritebackBaseHead) && isGitSha(effectiveDecisionRecordHead) &&
+    writebackAncestry !== "missing"
     ? diffNames(decisionWritebackBaseHead, effectiveDecisionRecordHead, root)
     : [];
   const forbiddenFiles = changedFiles.filter((file) => !isAllowedDecisionWritebackFile(file));
@@ -172,6 +177,14 @@ export function runDecisionWritebackPolicySelfTest() {
       decisionStatus: "ACCEPTED_BY_00",
       root: tempRoot
     });
+    const missingHistoricalRecordIsReferenceOnly = evaluateDecisionWritebackPolicy({
+      reviewedExecutionHead,
+      decisionWritebackBaseHead,
+      decisionRecordHead: "9".repeat(40),
+      currentRepositoryHead: allowedDecisionRecordHead,
+      decisionStatus: "ACCEPTED_BY_00",
+      root: tempRoot
+    });
 
     const failures = [];
     if (historicalChangesAllowed.allowed !== true) {
@@ -191,6 +204,10 @@ export function runDecisionWritebackPolicySelfTest() {
       !missingBaseRejected.failures.some((failure) => failure.includes("decisionWritebackBaseHead"))) {
       failures.push("policy must reject ACCEPTED_BY_00 without decisionWritebackBaseHead.");
     }
+    if (missingHistoricalRecordIsReferenceOnly.allowed !== true ||
+      !missingHistoricalRecordIsReferenceOnly.warnings.some((warning) => warning.includes("reference-only"))) {
+      failures.push("policy must keep accepted historical decision records reference-only when the historical git object is unavailable.");
+    }
 
     return {
       version: "oam.generated-candidate-decision-writeback-policy-self-test.v1",
@@ -198,7 +215,8 @@ export function runDecisionWritebackPolicySelfTest() {
       cases: {
         historicalChangesAllowed,
         forbiddenWritebackRejected,
-        missingBaseRejected
+        missingBaseRejected,
+        missingHistoricalRecordIsReferenceOnly
       },
       failures
     };
@@ -221,6 +239,26 @@ export function isAncestor(ancestor, descendant, root = process.cwd()) {
   if (ancestor === descendant) return true;
   try {
     execFileSync("git", ["merge-base", "--is-ancestor", ancestor, descendant], {
+      cwd: root,
+      stdio: "ignore"
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function ancestryState(ancestor, descendant, root = process.cwd()) {
+  if (!isGitSha(ancestor) || !isGitSha(descendant)) return "unchecked";
+  if (ancestor === descendant) return "pass";
+  if (!gitObjectAvailable(ancestor, root) || !gitObjectAvailable(descendant, root)) return "missing";
+  return isAncestor(ancestor, descendant, root) ? "pass" : "fail";
+}
+
+function gitObjectAvailable(sha, root = process.cwd()) {
+  if (!isGitSha(sha)) return false;
+  try {
+    execFileSync("git", ["cat-file", "-e", `${sha}^{commit}`], {
       cwd: root,
       stdio: "ignore"
     });

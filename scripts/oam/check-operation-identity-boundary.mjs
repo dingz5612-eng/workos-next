@@ -11,6 +11,7 @@ const canonicalMap = readJson("docs/business/dormitory/canonical-scenario-map.js
 const decisionTable = readJson("docs/business/dormitory/workitem-decision-table.json");
 const definitionRegistry = readJson("docs/contracts/definition/workitem-definition-registry.json");
 const workflowRegistry = readJson("docs/contracts/business/oam-workflow-state-registry.json");
+const dormitory13RuntimeExecution = readJson("services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json");
 
 const resolveMethod = methodBody(registrySource, "Resolve");
 const resolveStartAdapterMethod = methodBody(registrySource, "ResolveStartAdapter");
@@ -20,8 +21,18 @@ const currentDecisionTypes = new Set(
     .filter((item) => item.definitionRequired)
     .map((item) => item.workItemType)
 );
+const generatedRuntimeDefinitionIds = new Set(
+  (dormitory13RuntimeExecution.scenarios ?? [])
+    .flatMap((scenario) => scenario.definitions ?? [])
+    .map((definition) => definition.definitionId)
+);
+const generatedRuntimeStartAdapters = new Map(
+  (dormitory13RuntimeExecution.scenarios ?? [])
+    .flatMap((scenario) => Object.entries(scenario.startAdapterDefinitionIds ?? {}))
+);
+const generatedRuntimeStartDefinitionIds = new Set(generatedRuntimeStartAdapters.values());
 const currentDefinitions = (definitionRegistry.definitions ?? [])
-  .filter((item) => currentDecisionTypes.has(item.workItemType));
+  .filter((item) => currentDecisionTypes.has(item.workItemType) || generatedRuntimeDefinitionIds.has(item.definitionId));
 const workflowsByDefinition = new Map((workflowRegistry.workflows ?? []).map((item) => [item.definitionId, item]));
 
 if (!resolveMethod.includes("FindByDefinitionId(payloadDefinitionId)") ||
@@ -121,12 +132,14 @@ for (const definition of currentDefinitions) {
   }
   requireMigrationRefs(definition, `definition ${definition.definitionId}`);
   const workflow = workflowsByDefinition.get(definition.definitionId);
-  if (!workflow) {
+  if (!workflow && !generatedRuntimeDefinitionIds.has(definition.definitionId)) {
     fail("current_definition_workflow_missing", `${definition.definitionId} is not bound by workflow registry.`);
-  } else {
+  } else if (workflow) {
     if (workflow.workItemType !== definition.workItemType || workflow.commandType !== definition.commandType) {
       fail("current_definition_workflow_identity_mismatch", `${definition.definitionId} workflow must bind the same workItemType and commandType.`);
     }
+  } else if (!generatedRuntimeStartDefinitionIds.has(definition.definitionId)) {
+    fail("generated_runtime_start_adapter_missing", `${definition.definitionId} must be bound by Dormitory13ScenarioRuntimeExecution startAdapterDefinitionIds.`);
   }
 }
 
@@ -134,7 +147,7 @@ for (const definition of definitionRegistry.definitions ?? []) {
   if ("sourceCardId" in definition) {
     fail("definition_top_level_source_card_id_present", `${definition.definitionId} must preserve sourceCardId only as read-only migrationRefs.`);
   }
-  if (currentDecisionTypes.has(definition.workItemType)) continue;
+  if (workflowsByDefinition.has(definition.definitionId) || generatedRuntimeDefinitionIds.has(definition.definitionId)) continue;
   if (definition.definitionMode !== "surface-input-adapter") {
     fail("non_current_definition_mode_invalid", `${definition.definitionId} is not a current execution identity and must be surface-input-adapter.`);
   }
@@ -180,6 +193,9 @@ function fail(id, message) {
 
 function validateStartAdapterMaps() {
   const startMap = parseCSharpStringMap(registrySource, "StartAdapterDefinitionIds");
+  for (const [key, definitionId] of generatedRuntimeStartAdapters) {
+    startMap.set(key, definitionId);
+  }
   const routeMap = parseCSharpStringMap(registrySource, "StartUiRouteDefinitionKeys");
   const definitionsById = new Map((definitionRegistry.definitions ?? []).map((item) => [item.definitionId, item]));
   if (startMap.size === 0) {

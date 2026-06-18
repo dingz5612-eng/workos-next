@@ -610,6 +610,63 @@ public sealed class CanonicalOperationsApiServiceTests
     }
 
     [TestMethod]
+    public void dormitory13_scenario6_transition_marks_finance_gate_without_user_identity_fields()
+    {
+        var workspace = Dormitory13ScenarioRuntimeProjection.Workspaces()
+            .Single(item => item.Id == "W-DORM-SCENARIO6-PAYMENT-DEPOSIT-AND-GUARANTEE");
+        var service = Service(out _, out _, workspaces: new[] { workspace });
+        var payload = new Dictionary<string, string>(Scenario6ReadyPayload(), StringComparer.Ordinal)
+        {
+            ["caseId"] = "case-scenario6-transition-to-finance-gate",
+            ["cardId"] = "cert.submitDepositOrGuarantee",
+            ["definitionId"] = "definition.dormitory.scenario6.depositGuaranteeSubmit.v1"
+        };
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-scenario6-transition-to-finance-gate",
+            TenantId: "tenant-s3",
+            WorkItemType: "Dorm.DepositGuaranteeSubmit",
+            WorkspaceId: workspace.Id,
+            CardId: "cert.submitDepositOrGuarantee",
+            OwnerRole: "operator",
+            Payload: payload));
+
+        var result = service.ConfirmWorkItem(
+            "wi-scenario6-transition-to-finance-gate",
+            Scenario6Request("idem-scenario6-transition-to-finance-gate", "cert.submitDepositOrGuarantee") with
+            {
+                WorkspaceId = workspace.Id,
+                EvidenceIds = new[] { "ev-scenario6-transition-to-finance-gate" }
+            },
+            OperatorActor(),
+            "req-scenario6-transition-to-finance-gate");
+        var next = service.ListWorkItems("tenant-s3")
+            .SingleOrDefault(item => item.WorkspaceId == workspace.Id && item.WorkItemType == "Dorm.FinanceGateConfirm");
+
+        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode, result.Error);
+        Assert.IsNotNull(next);
+        Assert.AreEqual("finance", next!.OwnerRole);
+        Assert.AreEqual("cert.financeGateConfirmation", next.Payload["cardId"]);
+        Assert.AreEqual("true", next.Payload["viaFinanceGate"]);
+        Assert.AreEqual("true", next.Payload["financeGateTask"]);
+        Assert.IsFalse(next.Payload.ContainsKey("actorRole"));
+        Assert.IsFalse(next.Payload.ContainsKey("actorId"));
+    }
+
+    [TestMethod]
+    public void dormitory13_runtime_projection_uses_owner_role_policy_for_finance_cards()
+    {
+        var scenario6 = Dormitory13ScenarioRuntimeProjection.Workspaces()
+            .Single(item => item.Id == "W-DORM-SCENARIO6-PAYMENT-DEPOSIT-AND-GUARANTEE");
+        var financeGate = scenario6.Cards.Single(card => card.Id == "cert.financeGateConfirmation");
+        var scenario7 = Dormitory13ScenarioRuntimeProjection.Workspaces()
+            .Single(item => item.Id == "W-DORM-SCENARIO7-CHECK-IN-PROCESSING");
+        var financeAgreement = scenario7.Cards.Single(card => card.Id == "cert.financeAndAgreementReview");
+
+        Assert.AreEqual("finance", financeGate.Confirmation.RequiredRole);
+        Assert.AreEqual("finance", financeAgreement.Confirmation.RequiredRole);
+    }
+
+    [TestMethod]
     public void accepted_capability_duplicate_room_is_rejected_by_generated_rules_before_unit_of_work()
     {
         var service = Service(out _, out var store, workspaces: new[] { AcceptedCapabilityRuntimeProjection.Workspace() });
@@ -794,7 +851,7 @@ public sealed class CanonicalOperationsApiServiceTests
             OperatorActor(),
             "req-scenario2-inspection");
 
-        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode, $"{result.Error}:{result.Reason}:{result.UserMessage}");
         Assert.IsTrue(result.Confirmed);
         Assert.AreEqual("operations_unit_of_work", result.Source);
         Assert.HasCount(1, store.Submissions);
@@ -1976,7 +2033,11 @@ public sealed class CanonicalOperationsApiServiceTests
                 Scenario6Definition("Dorm.FinanceReadySummaryOutput")));
         service.CreateWorkItem(Scenario6WorkItem("wi-scenario6-requirement-confirm", "Dorm.PaymentDepositRequirementConfirm", Scenario6ReadyPayload()));
         service.CreateWorkItem(Scenario6WorkItem("wi-scenario6-review-request", "Dorm.FinanceReviewRequest", Scenario6ReadyPayload()));
-        service.CreateWorkItem(Scenario6WorkItem("wi-scenario6-gate-return", "Dorm.FinanceGateReturn", Scenario6ReadyPayload()));
+        service.CreateWorkItem(Scenario6FinanceWorkItem("wi-scenario6-gate-return", "Dorm.FinanceGateReturn", Scenario6ReadyPayload(new Dictionary<string, string>
+        {
+            ["viaFinanceGate"] = "true",
+            ["financeGateTask"] = "true"
+        })));
         service.CreateWorkItem(Scenario6WorkItem("wi-scenario6-evidence-supplement", "Dorm.FinanceEvidenceSupplement", Scenario6ReadyPayload()));
         service.CreateWorkItem(Scenario6WorkItem("wi-scenario6-ready-summary", "Dorm.FinanceReadySummaryOutput", Scenario6ReadyPayload()));
 
@@ -1995,12 +2056,8 @@ public sealed class CanonicalOperationsApiServiceTests
             "req-scenario6-review-request");
         var returned = service.ConfirmWorkItem(
             "wi-scenario6-gate-return",
-            Scenario6Request("idem-scenario6-gate-return", "Dorm.FinanceGateReturn", new Dictionary<string, string>
-            {
-                ["viaFinanceGate"] = "true",
-                ["actorRole"] = "finance"
-            }),
-            OperatorActor(),
+            Scenario6Request("idem-scenario6-gate-return", "Dorm.FinanceGateReturn"),
+            FinanceActor(),
             "req-scenario6-gate-return");
         var supplement = service.ConfirmWorkItem(
             "wi-scenario6-evidence-supplement",
@@ -2172,8 +2229,16 @@ public sealed class CanonicalOperationsApiServiceTests
         service.CreateWorkItem(Scenario6WorkItem("wi-scenario6-checkin", "Dorm.PaymentReceiptSubmit", Scenario6ReadyPayload()));
         service.CreateWorkItem(Scenario6WorkItem("wi-scenario6-gate-route", "Dorm.FinanceGateConfirm", Scenario6ReadyPayload()));
         service.CreateWorkItem(Scenario6WorkItem("wi-scenario6-gate-role", "Dorm.FinanceGateConfirm", Scenario6ReadyPayload()));
-        service.CreateWorkItem(Scenario6WorkItem("wi-scenario6-gate-evidence", "Dorm.FinanceGateConfirm", Scenario6ReadyPayload()));
-        service.CreateWorkItem(Scenario6WorkItem("wi-scenario6-confirmed-edit", "Dorm.FinanceGateConfirm", Scenario6ReadyPayload()));
+        service.CreateWorkItem(Scenario6FinanceWorkItem("wi-scenario6-gate-evidence", "Dorm.FinanceGateConfirm", Scenario6ReadyPayload(new Dictionary<string, string>
+        {
+            ["viaFinanceGate"] = "true",
+            ["financeGateTask"] = "true"
+        })));
+        service.CreateWorkItem(Scenario6FinanceWorkItem("wi-scenario6-confirmed-edit", "Dorm.FinanceGateConfirm", Scenario6ReadyPayload(new Dictionary<string, string>
+        {
+            ["viaFinanceGate"] = "true",
+            ["financeGateTask"] = "true"
+        })));
 
         var forged = service.ConfirmWorkItem(
             "wi-scenario6-forged-ref",
@@ -2251,23 +2316,17 @@ public sealed class CanonicalOperationsApiServiceTests
             "req-scenario6-gate-role");
         var gateEvidence = service.ConfirmWorkItem(
             "wi-scenario6-gate-evidence",
-            Scenario6Request("idem-scenario6-gate-evidence", "Dorm.FinanceGateConfirm", new Dictionary<string, string>
-            {
-                ["viaFinanceGate"] = "true",
-                ["actorRole"] = "finance"
-            }),
-            OperatorActor(),
+            Scenario6Request("idem-scenario6-gate-evidence", "Dorm.FinanceGateConfirm"),
+            FinanceActor(),
             "req-scenario6-gate-evidence");
         var confirmedEdit = service.ConfirmWorkItem(
             "wi-scenario6-confirmed-edit",
             Scenario6Request("idem-scenario6-confirmed-edit", "Dorm.FinanceGateConfirm", new Dictionary<string, string>
             {
-                ["viaFinanceGate"] = "true",
-                ["actorRole"] = "finance",
                 ["financeStatus"] = "财务已确认",
                 ["inlineEditAttempt"] = "true"
             }) with { EvidenceIds = new[] { "ev-scenario6-confirmed-edit" } },
-            OperatorActor(),
+            FinanceActor(),
             "req-scenario6-confirmed-edit");
 
         Assert.AreEqual("forged_internal_reference", forged.Error);
@@ -2392,6 +2451,92 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.AreEqual(StatusCodes.Status200OK, correction.StatusCode);
         Assert.HasCount(7, store.Submissions);
         Assert.HasCount(7, store.DomainEvents);
+        Assert.IsEmpty(store.LedgerEntries);
+        Assert.IsEmpty(store.LedgerTransactions);
+    }
+
+    [TestMethod]
+    public void scenario7_finance_review_accepts_generated_confirmed_finance_status()
+    {
+        var service = Service(
+            out _,
+            out var store,
+            workspaces: new[] { Scenario7Workspace() },
+            definitions: RegistryWith(Scenario7Definition("Dorm.CheckInAgreementFinanceReview")));
+        service.CreateWorkItem(Scenario7WorkItem("wi-scenario7-finance-confirmed-status", "Dorm.CheckInAgreementFinanceReview", Scenario7ReadyPayload(new Dictionary<string, string>
+        {
+            ["financeReady"] = "false",
+            ["financeStatus"] = "confirmed"
+        })));
+
+        var result = service.ConfirmWorkItem(
+            "wi-scenario7-finance-confirmed-status",
+            Scenario7Request("idem-scenario7-finance-confirmed-status", "Dorm.CheckInAgreementFinanceReview") with { EvidenceIds = new[] { "ev-scenario7-finance-confirmed-status" } },
+            OperatorActor(),
+            "req-scenario7-finance-confirmed-status");
+
+        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+        Assert.HasCount(1, store.Submissions);
+        Assert.HasCount(1, store.DomainEvents);
+        Assert.IsEmpty(store.LedgerEntries);
+        Assert.IsEmpty(store.LedgerTransactions);
+    }
+
+    [TestMethod]
+    public void scenario7_room_bed_handover_accepts_generated_room_bed_ready_context()
+    {
+        var service = Service(
+            out _,
+            out var store,
+            workspaces: new[] { Scenario7Workspace() },
+            definitions: RegistryWith(Scenario7Definition("Dorm.RoomBedHandoverRecheck")));
+        service.CreateWorkItem(Scenario7WorkItem("wi-scenario7-room-bed-ready-context", "Dorm.RoomBedHandoverRecheck", Scenario7ReadyPayload(new Dictionary<string, string>
+        {
+            ["resourceAvailableForCheckIn"] = string.Empty,
+            ["resourceAvailability"] = string.Empty,
+            ["roomBedAvailability"] = string.Empty,
+            ["roomBedReady"] = "true",
+            ["operationStatus"] = "可运营"
+        })));
+
+        var result = service.ConfirmWorkItem(
+            "wi-scenario7-room-bed-ready-context",
+            Scenario7Request("idem-scenario7-room-bed-ready-context", "Dorm.RoomBedHandoverRecheck") with { EvidenceIds = new[] { "ev-scenario7-room-bed-ready-context" } },
+            OperatorActor(),
+            "req-scenario7-room-bed-ready-context");
+
+        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+        Assert.HasCount(1, store.Submissions);
+        Assert.HasCount(1, store.DomainEvents);
+        Assert.IsEmpty(store.LedgerEntries);
+        Assert.IsEmpty(store.LedgerTransactions);
+    }
+
+    [TestMethod]
+    public void scenario7_credential_issue_accepts_generated_in_stay_status_context()
+    {
+        var service = Service(
+            out _,
+            out var store,
+            workspaces: new[] { Scenario7Workspace() },
+            definitions: RegistryWith(Scenario7Definition("Dorm.StayCredentialIssue")));
+        service.CreateWorkItem(Scenario7WorkItem("wi-scenario7-credential-in-stay-status", "Dorm.StayCredentialIssue", Scenario7ReadyPayload(new Dictionary<string, string>
+        {
+            ["stayConfirmed"] = string.Empty,
+            ["stayStatus"] = "在住",
+            ["checkInStatus"] = "checked-in",
+            ["occupancyStatus"] = "in-stay"
+        })));
+
+        var result = service.ConfirmWorkItem(
+            "wi-scenario7-credential-in-stay-status",
+            Scenario7Request("idem-scenario7-credential-in-stay-status", "Dorm.StayCredentialIssue") with { EvidenceIds = new[] { "ev-scenario7-credential-in-stay-status" } },
+            OperatorActor(),
+            "req-scenario7-credential-in-stay-status");
+
+        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+        Assert.HasCount(1, store.Submissions);
+        Assert.HasCount(1, store.DomainEvents);
         Assert.IsEmpty(store.LedgerEntries);
         Assert.IsEmpty(store.LedgerTransactions);
     }
@@ -2919,7 +3064,7 @@ public sealed class CanonicalOperationsApiServiceTests
             "wi-scenario8-unauthorized",
             Scenario8Request("idem-scenario8-unauthorized", "Dorm.StayStatusChange", new Dictionary<string, string>
             {
-                ["actorRole"] = "guest"
+                ["unauthorizedAction"] = "true"
             }) with { EvidenceIds = new[] { "ev-scenario8-unauthorized" } },
             OperatorActor(),
             "req-scenario8-unauthorized");
@@ -3129,6 +3274,68 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.HasCount(8, store.DomainEvents);
         Assert.IsEmpty(store.LedgerEntries);
         Assert.IsEmpty(store.LedgerTransactions);
+    }
+
+    [TestMethod]
+    public void scenario9_generated_runtime_field_ids_are_canonicalized_before_rules()
+    {
+        const string workspaceId = "W-DORM-SCENARIO9-CHECKOUT-SETTLEMENT";
+        const string cardId = "cert.confirmActualCheckoutHandover";
+        var card = Dormitory13ScenarioRuntimeProjection.CardFor(workspaceId, cardId)
+            ?? throw new InvalidOperationException("scenario9 generated handover card missing");
+        string FieldId(string label) => card.Fields.Business
+            .Single(field => field.Label.TryGetValue("zh-CN", out var zh) && zh == label)
+            .Id;
+
+        var service = Service(
+            out _,
+            out var store,
+            workspaces: Dormitory13ScenarioRuntimeProjection.Workspaces(),
+            definitions: RegistryWith(Scenario9Definition("Dorm.CheckoutHandoverConfirm") with
+            {
+                WorkspaceId = workspaceId,
+                SliceId = "Dormitory.Scenario9.CheckoutSettlement",
+                OwnerSlice = "Dormitory.Scenario9.CheckoutSettlement"
+            }));
+        var payload = new Dictionary<string, string>(Scenario9ReadyPayload(new Dictionary<string, string>
+        {
+            ["actualCheckoutAt"] = "",
+            ["handoverType"] = "",
+            ["handoverNote"] = "",
+            ["handoverEvidenceBound"] = "false",
+            ["cardId"] = cardId
+        }), StringComparer.Ordinal);
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            "wi-scenario9-generated-handover",
+            "tenant-s9",
+            "Dorm.CheckoutHandoverConfirm",
+            workspaceId,
+            workspaceId,
+            cardId,
+            "operator",
+            payload));
+
+        var result = service.ConfirmWorkItem(
+            "wi-scenario9-generated-handover",
+            Scenario9Request("idem-scenario9-generated-handover", cardId, new Dictionary<string, string>
+            {
+                [FieldId("本人办理")] = "confirmed",
+                [FieldId("代办")] = "not_applicable",
+                [FieldId("异常离店")] = "not_applicable",
+                [FieldId("实际离店时间")] = "2026-06-18 10:00",
+                [FieldId("交接备注")] = "本人办理，交接正常",
+                [FieldId("客户确认方式")] = "现场签字确认"
+            }) with { WorkspaceId = workspaceId },
+            OperatorActor(),
+            "req-scenario9-generated-handover");
+
+        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode, $"{result.Error}:{result.Reason}:{result.UserMessage}");
+        Assert.IsTrue(result.Confirmed);
+        Assert.HasCount(1, store.Submissions);
+        var fields = (IReadOnlyDictionary<string, object>)store.Submissions.Single().Envelope.Payload["fieldValues"];
+        Assert.AreEqual("2026-06-18 10:00", fields["actualCheckoutAt"]);
+        Assert.AreEqual("本人办理", fields["handoverType"]);
+        Assert.AreEqual("本人办理，交接正常", fields["handoverNote"]);
     }
 
     [TestMethod]
@@ -5271,6 +5478,15 @@ public sealed class CanonicalOperationsApiServiceTests
             OwnerRole: "operator",
             Payload: values);
     }
+
+    private static CreateWorkItemRequest Scenario6FinanceWorkItem(
+        string workItemId,
+        string workItemType,
+        IReadOnlyDictionary<string, string>? payload = null) =>
+        Scenario6WorkItem(workItemId, workItemType, payload) with
+        {
+            OwnerRole = "finance"
+        };
 
     private static IReadOnlyDictionary<string, string> Scenario6ReadyPayload(IReadOnlyDictionary<string, string>? extra = null)
     {

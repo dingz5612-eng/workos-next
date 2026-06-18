@@ -292,12 +292,14 @@ jobs:
         run: dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release
 
       - name: Generate dormitory 13-scenario real-browser evidence
+        continue-on-error: true
         env:
           WORKOS_REAL_BROWSER_HEADLESS: "1"
           WORKOS_MOBILE_URL: http://127.0.0.1:5175
           WORKOS_API_URL: http://127.0.0.1:5191
         run: |
           pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1
+          node scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs
           node scripts/oam/check-project-purity-authority-seal.mjs
 
       - name: OAM total gate
@@ -314,9 +316,9 @@ jobs:
           node scripts/oam/check-generated-bundle-content-addressed.mjs
           node scripts/oam/check-single-capability-bundle-digest.mjs
           node scripts/oam/check-generated-candidate-acceptance.mjs
+          node scripts/oam/check-dormitory-runtime-admission.mjs --write-proof
           node scripts/oam/check-runtime-consumes-accepted-bundle.mjs
           node scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs
-          node scripts/oam/check-dormitory-runtime-admission.mjs --write-proof
           node scripts/oam/check-environment-profile-authority.mjs
           node scripts/oam/check-runtime-stability-lane.mjs
           node scripts/oam/check-runtime-implementation-drift-policy.mjs

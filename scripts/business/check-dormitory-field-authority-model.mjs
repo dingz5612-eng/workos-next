@@ -5,102 +5,47 @@ import path from "node:path";
 const root = process.cwd();
 const resultPath = "artifacts/oam/checks/dormitory-field-authority-model-result.json";
 const controlPath = "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json";
-const scenario1Path = "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json";
-const scenario2Path = "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json";
-const generatedRefs = [
-  "docs/contracts/generated/dormitory/13-scenario-field-source-matrix.generated.json",
-  "docs/contracts/generated/dormitory/scenario1-steps-fields.generated.json",
-  "docs/contracts/generated/dormitory/scenario2-steps-fields.generated.json",
-  "apps/mobile/src/generated/oam/dormitory-scenario1-resource-basic-readiness.generated.json",
-  "apps/mobile/src/generated/oam/dormitory-scenario2-resource-operation-status.generated.json",
-  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario1ResourceBasicReadiness.generated.json",
-  "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2ResourceOperationStatus.generated.json"
-];
+const runtimeExecutionPath = "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json";
+const languageContractRef = "docs/oam/visible-business-copy-contract.json";
 const requiredClasses = [
   "businessInput",
   "businessSelect",
   "systemDerived",
   "readOnlySummary",
   "evidenceBinding",
-  "actionControl",
-  "conditionalInput",
+  "legalAction",
   "auditInternal"
 ];
-const actionFields = ["saveDraft", "backToEdit", "continueEdit", "submit"];
-const internalFieldPattern = /(^|[.[_-])(roomId|bedId|workItemId|stableRef|projectionVersion|digest|domainEventId)(\]|$|[._-])/i;
 const failures = [];
 
 const control = readJson(controlPath);
-const scenario1 = readJson(scenario1Path);
-const scenario2 = readJson(scenario2Path);
+const scenarioFiles = fs.readdirSync(path.join(root, "docs/business/domains/dormitory"))
+  .filter((file) => /^dormitory-scenario\d+-.+\.authority\.json$/.test(file) && !file.includes("benchmark"))
+  .sort((left, right) => scenarioNo(left) - scenarioNo(right));
 
 checkControlModel();
-checkScenarioFieldAuthority("scenario1", scenario1, {
-  path: scenario1Path,
-  selectMustContain: [
-    "buildingContextRef",
-    "bedType",
-    "bedEnabledStatus",
-    "bedTypeBatchSetting",
-    "basicCheckResult",
-    "cleaningBasicCheckResult",
-    "facilityBasicCheckResult",
-    "safetyBasicCheckResult",
-    "basicReadinessConclusion"
-  ],
-  conditionalMustContain: ["bedRemark", "specialNotes", "basicReadinessRemark"],
-  specialChecks: checkScenario1Regression
-});
-checkScenarioFieldAuthority("scenario2", scenario2, {
-  path: scenario2Path,
-  selectMustContain: [
-    "roomOrBedScope",
-    "targetRoomOrBed",
-    "cleaningInspectionResult",
-    "maintenanceInspectionResult",
-    "safetyInspectionResult",
-    "facilityInspectionResult",
-    "exceptionFlag",
-    "inspectionConclusion",
-    "newOperationStatus",
-    "statusReasonCode",
-    "impactScope",
-    "statusOwner",
-    "submitImpactConfirmation",
-    "blockerStatus",
-    "followUpOwner",
-    "recheckResult",
-    "restoreConclusion"
-  ],
-  conditionalMustContain: [
-    "exceptionDescription",
-    "operationInspectionNotes",
-    "expectedRestoreAt",
-    "operationStatusNotes",
-    "impactConfirmationNotes",
-    "blockerNotes",
-    "restoreNotes"
-  ],
-  specialChecks: checkScenario2Regression
-});
+for (const file of scenarioFiles) checkScenarioSource(file);
 checkGeneratedProjection();
+checkRuntimeExecution();
 
 const result = {
-  version: "oam.dormitory-field-authority-model-check.v1",
+  version: "oam.dormitory-field-authority-model-check.v2",
   checkedAtUtc: new Date().toISOString(),
   status: failures.length === 0 ? "PASS" : "NO_GO",
   sourceAuthorities: [
     { path: controlPath, digest: digestFile(controlPath) },
-    { path: scenario1Path, digest: digestFile(scenario1Path) },
-    { path: scenario2Path, digest: digestFile(scenario2Path) }
+    ...scenarioFiles.map((file) => {
+      const sourcePath = `docs/business/domains/dormitory/${file}`;
+      return { path: sourcePath, digest: digestFile(sourcePath) };
+    })
   ],
-  generatedRefs,
-  requiredClasses,
+  runtimeExecutionPath,
   productionConfirmAllowed: false,
   releaseAuthority: false,
   finalGoNoGo: "NO_GO",
   failures
 };
+
 writeJson(resultPath, result);
 
 if (result.status !== "PASS") {
@@ -109,151 +54,245 @@ if (result.status !== "PASS") {
   process.exit(1);
 }
 
-console.log("Dormitory field authority model check: PASS");
+console.log(`Dormitory field authority model check: PASS (${scenarioFiles.length} scenarios)`);
 
 function checkControlModel() {
   const model = control.fieldAuthorityModel ?? {};
   requireEqual(model.version, "oam.dormitory.field-authority-model.v1", "control.fieldAuthorityModel.version");
-  requireEqual(model.languageContractRef, "docs/oam/visible-business-copy-contract.json", "control.fieldAuthorityModel.languageContractRef");
-  const classIds = (model.classes ?? []).map((item) => item.classId);
-  assertArrayContainsAll(classIds, requiredClasses, "control.fieldAuthorityModel.classes");
+  requireEqual(model.languageContractRef, languageContractRef, "control.fieldAuthorityModel.languageContractRef");
+  const classIds = new Set((model.classes ?? []).map((item) => item.classId));
+  for (const classId of requiredClasses) {
+    if (!classIds.has(classId)) fail(`control.fieldAuthorityModel.classes missing ${classId}.`);
+  }
+  const enforcement = model.generatorEnforcement ?? {};
   for (const key of [
-    "actionControlNeverInForm",
-    "auditInternalNeverOnBusinessPage",
-    "systemDerivedReadonlyOnly",
-    "conditionalInputRequiresDisplayAndRequiredConditions",
-    "businessSelectRequiresOptionSet",
+    "legalActionNeverInForm",
+    "readOnlySummaryMaterializedInRuntime",
+    "workSurfaceContractRequiredForEveryStep",
+    "amountRequiresCurrencyBusinessObjectDirectionAndStage",
     "visibleCopyMustUseLanguageContract"
   ]) {
-    if (model.generatorEnforcement?.[key] !== true) fail(`control.fieldAuthorityModel.generatorEnforcement.${key} must be true.`);
+    if (enforcement[key] !== true) fail(`control.fieldAuthorityModel.generatorEnforcement.${key} must be true.`);
   }
-  if (!JSON.stringify(model.regressionGuards ?? {}).includes("预计恢复时间")) {
-    fail("control.fieldAuthorityModel.regressionGuards must include scenario2 expected restore time guard.");
-  }
-  if (!JSON.stringify(model.regressionGuards ?? {}).includes("材料名称中英俄")) {
-    fail("control.fieldAuthorityModel.regressionGuards must include multilingual evidence guard.");
+  const experience = control.operationExperienceContract ?? {};
+  requireEqual(experience.version, "oam.dormitory.operation-experience-contract.v1", "control.operationExperienceContract.version");
+  for (const field of [
+    "primaryBusinessObject",
+    "requiredReadContext",
+    "editableInputs",
+    "fixedSelections",
+    "financialContext",
+    "legalActions",
+    "handoffSummary",
+    "searchReadModel"
+  ]) {
+    if (!(experience.requiredStepFields ?? []).includes(field)) {
+      fail(`control.operationExperienceContract.requiredStepFields missing ${field}.`);
+    }
   }
 }
 
-function checkScenarioFieldAuthority(label, source, spec) {
+function checkScenarioSource(file) {
+  const no = scenarioNo(file);
+  const sourcePath = `docs/business/domains/dormitory/${file}`;
+  const source = readJson(sourcePath);
   const authority = source.fields?.fieldAuthority ?? {};
-  requireEqual(authority.modelRef, `${controlPath}#fieldAuthorityModel`, `${label}.fields.fieldAuthority.modelRef`);
-  requireEqual(authority.languageContractRef, "docs/oam/visible-business-copy-contract.json", `${label}.fields.fieldAuthority.languageContractRef`);
+  requireEqual(authority.modelRef, `${controlPath}#fieldAuthorityModel`, `scenario${no}.fields.fieldAuthority.modelRef`);
+  requireEqual(authority.languageContractRef, languageContractRef, `scenario${no}.fields.fieldAuthority.languageContractRef`);
+  requireEqual(source.experienceContract?.modelRef, `${controlPath}#operationExperienceContract`, `scenario${no}.experienceContract.modelRef`);
+
   for (const classId of requiredClasses) {
     if (!Array.isArray(authority[classId]) || authority[classId].length === 0) {
-      fail(`${label}.fields.fieldAuthority.${classId} must be a non-empty array.`);
+      fail(`scenario${no}.fields.fieldAuthority.${classId} must be a non-empty array.`);
     }
   }
 
-  const userFilled = new Set(source.fields?.userFilled ?? []);
-  const userSelected = new Set(source.fields?.userSelected ?? []);
-  const formFields = new Set([...userFilled, ...userSelected, ...stepsFields(source)]);
-  const selectIds = new Set((authority.businessSelect ?? []).map((item) => item.fieldId));
-  const conditionalIds = new Set((authority.conditionalInput ?? []).map((item) => item.fieldId));
-  const businessInputIds = new Set((authority.businessInput ?? []).map((item) => item.fieldId));
+  const businessInputs = authorityTokens(authority.businessInput);
+  const businessSelects = authorityTokens(authority.businessSelect);
+  const conditionalInputs = authorityTokens(authority.conditionalInput);
+  const legalActions = new Set([
+    ...Array.from(authorityTokens(authority.legalAction)),
+    ...Array.from(authorityTokens(authority.actionControl))
+  ]);
+  const readOnlySummaries = authorityTokens(authority.readOnlySummary);
+  const auditInternal = authorityTokens(authority.auditInternal);
 
-  for (const field of spec.selectMustContain) {
-    if (!selectIds.has(field)) fail(`${label}.${field} must be businessSelect.`);
-    if (userFilled.has(field)) fail(`${label}.${field} must not be userFilled.`);
-  }
-  for (const field of spec.conditionalMustContain) {
-    if (!conditionalIds.has(field)) fail(`${label}.${field} must be conditionalInput.`);
-  }
-  for (const field of userSelected) {
-    if (!selectIds.has(field)) fail(`${label}.${field} is userSelected but missing businessSelect authority.`);
-  }
-  for (const field of userFilled) {
-    if (!businessInputIds.has(field) && !conditionalIds.has(field)) {
-      fail(`${label}.${field} is userFilled but is neither businessInput nor conditionalInput.`);
+  for (const field of source.fields?.userFilled ?? []) {
+    if (!businessInputs.has(field) && !conditionalInputs.has(field)) {
+      fail(`scenario${no}.${field} is userFilled but missing businessInput/conditionalInput authority.`);
     }
+    if (legalActions.has(field) || isLegalActionLike(field)) fail(`scenario${no}.${field} legal action must not be userFilled.`);
+    if (auditInternal.has(field) || isInternalField(field)) fail(`scenario${no}.${field} internal/audit field must not be userFilled.`);
   }
-
+  for (const field of source.fields?.userSelected ?? []) {
+    if (!businessSelects.has(field)) fail(`scenario${no}.${field} is userSelected but missing businessSelect authority.`);
+    if (legalActions.has(field) || isLegalActionLike(field)) fail(`scenario${no}.${field} legal action must not be userSelected.`);
+    if (auditInternal.has(field) || isInternalField(field)) fail(`scenario${no}.${field} internal/audit field must not be userSelected.`);
+  }
   for (const item of authority.businessSelect ?? []) {
-    requireFieldKeys(item, `${label}.businessSelect.${item.fieldId}`, ["labelKey", "helpKey", "errorKey", "control", "optionSet"]);
-    if (!String(item.control ?? "").includes("select")) fail(`${label}.${item.fieldId} businessSelect control must be select/searchable-select.`);
-  }
-  for (const item of authority.conditionalInput ?? []) {
-    requireFieldKeys(item, `${label}.conditionalInput.${item.fieldId}`, ["labelKey", "helpKey", "errorKey", "control", "displayCondition", "requiredCondition"]);
-  }
-  for (const item of authority.systemDerived ?? []) {
-    requireFieldKeys(item, `${label}.systemDerived.${item.fieldId}`, ["labelKey", "helpKey", "derivedFrom"]);
-    if (item.readonly !== true) fail(`${label}.${item.fieldId} systemDerived must be readonly.`);
-    if (formFields.has(item.fieldId)) fail(`${label}.${item.fieldId} systemDerived must not be a user form field.`);
+    requireFieldKeys(item, `scenario${no}.businessSelect.${item.fieldId}`, ["labelKey", "helpKey", "errorKey", "control", "optionSet"]);
+    if (!String(item.control ?? "").includes("select")) fail(`scenario${no}.${item.fieldId} businessSelect must use select/searchable-select.`);
+    if (isLegalActionLike(item.fieldId)) fail(`scenario${no}.${item.fieldId} legal action must not be businessSelect.`);
   }
   for (const item of authority.readOnlySummary ?? []) {
-    requireFieldKeys(item, `${label}.readOnlySummary.${item.fieldId}`, ["labelKey", "helpKey", "sourceScenario"]);
-    if (formFields.has(item.fieldId)) fail(`${label}.${item.fieldId} readOnlySummary must not be a user form field.`);
+    requireFieldKeys(item, `scenario${no}.readOnlySummary.${item.fieldId}`, ["labelKey", "helpKey", "sourceScenario"]);
   }
-  for (const item of authority.evidenceBinding ?? []) {
-    requireFieldKeys(item, `${label}.evidenceBinding.${item.fieldId}`, ["labelKey", "helpKey", "evidenceType"]);
-    if (String(item.fieldId).toLowerCase().includes("digest")) fail(`${label}.${item.fieldId} evidenceBinding must not expose digest.`);
-  }
-  for (const item of authority.actionControl ?? []) {
-    requireFieldKeys(item, `${label}.actionControl.${item.fieldId}`, ["labelKey", "legalActionRef"]);
-    if (formFields.has(item.fieldId)) fail(`${label}.${item.fieldId} actionControl must not enter the form.`);
+  for (const item of authority.legalAction ?? []) {
+    requireFieldKeys(item, `scenario${no}.legalAction.${item.fieldId}`, ["labelKey", "legalActionRef"]);
   }
   for (const item of authority.auditInternal ?? []) {
-    if (item.internalOnly !== true) fail(`${label}.${item.fieldId} auditInternal must set internalOnly=true.`);
-    if (formFields.has(item.fieldId)) fail(`${label}.${item.fieldId} auditInternal must not enter the form.`);
+    if (item.internalOnly !== true) fail(`scenario${no}.${item.fieldId} auditInternal must set internalOnly=true.`);
   }
-  for (const action of actionFields) {
-    if (formFields.has(action)) fail(`${label}.${action} must be an actionControl only, not a generated field.`);
-  }
-  for (const field of formFields) {
-    if (internalFieldPattern.test(field)) fail(`${label}.${field} looks internal and must not be a business page field.`);
-  }
-  spec.specialChecks(source, authority, label);
-}
 
-function checkScenario1Regression(source, authority, label) {
-  const step3 = (source.steps ?? []).find((step) => step.stepId === "basic-readiness-confirmation") ?? {};
-  for (const field of ["basicCheckResult", "cleaningBasicCheckResult", "facilityBasicCheckResult", "safetyBasicCheckResult", "basicReadinessConclusion"]) {
-    if (!(step3.userSelectedFields ?? []).includes(field)) fail(`${label}.${field} must be selected in step 3.`);
-    if ((step3.userFilledFields ?? []).includes(field)) fail(`${label}.${field} must not be handwritten in step 3.`);
-  }
-  if (!new Set(authority.businessSelect.map((item) => item.fieldId)).has("bedType")) {
-    fail(`${label}.bedType must be selectable so users do not handwrite bed types.`);
-  }
-}
-
-function checkScenario2Regression(source, authority, label) {
-  const expectedRestoreAt = (authority.conditionalInput ?? []).find((item) => item.fieldId === "expectedRestoreAt");
-  if (!expectedRestoreAt) {
-    fail(`${label}.expectedRestoreAt conditionalInput missing.`);
-  } else {
-    if (/\boperable\b/.test(expectedRestoreAt.requiredCondition ?? "")) {
-      fail(`${label}.expectedRestoreAt must not be required when the new status is operable.`);
+  for (const step of source.steps ?? []) {
+    const stepLabel = `scenario${no}.${step.stepId}`;
+    if (!Array.isArray(step.userSees) || step.userSees.length === 0) fail(`${stepLabel}.userSees is required.`);
+    if (!step.primaryBusinessObject) fail(`${stepLabel}.primaryBusinessObject is required.`);
+    if (!Array.isArray(step.requiredReadContext) || step.requiredReadContext.length === 0) fail(`${stepLabel}.requiredReadContext is required.`);
+    if (!Array.isArray(step.editableInputs)) fail(`${stepLabel}.editableInputs must be an array.`);
+    if (!Array.isArray(step.fixedSelections)) fail(`${stepLabel}.fixedSelections must be an array.`);
+    if (!Array.isArray(step.legalActions)) fail(`${stepLabel}.legalActions must be an array.`);
+    if (!step.handoffSummary?.noRefillRuleZh) fail(`${stepLabel}.handoffSummary.noRefillRuleZh is required.`);
+    if (!Array.isArray(step.searchReadModel) || step.searchReadModel.length === 0) fail(`${stepLabel}.searchReadModel is required.`);
+    for (const field of [...(step.userFilledFields ?? []), ...(step.userSelectedFields ?? [])]) {
+      if (isLegalActionLike(field)) fail(`${stepLabel}.${field} legal action must not remain in form fields.`);
+      if (readOnlySummaries.has(field)) fail(`${stepLabel}.${field} readOnlySummary must not be a user form field.`);
+      if (auditInternal.has(field) || isInternalField(field)) fail(`${stepLabel}.${field} audit/internal must not be a user form field.`);
     }
-    if (!String(expectedRestoreAt.displayCondition ?? "").includes("maintenance")) {
-      fail(`${label}.expectedRestoreAt displayCondition must cover maintenance-like blocking statuses.`);
+    const moneyLike = stepHasMoney(step);
+    if (moneyLike) {
+      if (step.financialContext?.applies !== true) fail(`${stepLabel}.financialContext.applies must be true for money page.`);
+      for (const key of ["businessObject", "currency", "direction", "stage"]) {
+        if (!String(step.financialContext?.[key] ?? "").trim()) fail(`${stepLabel}.financialContext.${key} is required.`);
+      }
+      if (!Array.isArray(step.financialContext?.amountFields) || step.financialContext.amountFields.length === 0) {
+        fail(`${stepLabel}.financialContext.amountFields is required.`);
+      }
     }
   }
-  for (const field of ["buildingArea", "roomNo", "bedList", "basicReadinessConfirmedAt", "scenario1EvidenceSummary"]) {
-    const item = (authority.readOnlySummary ?? []).find((summary) => summary.fieldId === field);
-    if (item?.sourceScenario !== "lodging.resource-basic-readiness") {
-      fail(`${label}.${field} must reuse scenario 1 as readOnlySummary.`);
+
+  const paymentStep = no === 6
+    ? (source.steps ?? []).find((step) => step.stepId === "submit-payment-receipt-evidence")
+    : null;
+  if (paymentStep) {
+    for (const required of ["客户信息", "联系电话", "预订号", "入住日期", "离店日期", "人数", "房间/床位", "价格快照", "应收项目", "已收金额", "本次金额", "剩余待收", "币种", "凭证要求"]) {
+      if (!(paymentStep.requiredReadContext ?? []).includes(required)) {
+        fail(`scenario6 submit-payment-receipt-evidence missing payment read context ${required}.`);
+      }
     }
   }
 }
 
 function checkGeneratedProjection() {
-  const generatedControl = readJsonIfExists(generatedRefs[0]);
-  if (!generatedControl?.fieldAuthorityModel) fail(`${generatedRefs[0]} must contain fieldAuthorityModel from Source.`);
-  for (const file of generatedRefs.slice(1)) {
-    const document = readJsonIfExists(file);
-    if (!document) {
-      fail(`${file} missing.`);
-      continue;
+  for (const file of scenarioFiles) {
+    const no = scenarioNo(file);
+    const slug = file.replace(/^dormitory-scenario\d+-/, "").replace(/\.authority\.json$/, "");
+    const generatedCandidates = [
+      `docs/contracts/generated/dormitory/scenario${no}-steps-fields.generated.json`,
+      `apps/mobile/src/generated/oam/dormitory-scenario${no}-${slug}.generated.json`,
+      runtimeMirrorPath(no, slug)
+    ];
+    for (const generatedPath of generatedCandidates) {
+      const document = readJsonIfExists(generatedPath);
+      if (!document) {
+        fail(`${generatedPath} missing.`);
+        continue;
+      }
+      if (!document.fields?.fieldAuthority) fail(`${generatedPath} must project fields.fieldAuthority.`);
+      if (!document.experienceContract) fail(`${generatedPath} must project experienceContract.`);
+      const stepWithoutContract = (document.steps ?? []).find((step) => !step.requiredReadContext || !step.searchReadModel);
+      if (stepWithoutContract) fail(`${generatedPath}.${stepWithoutContract.stepId} missing generated step experience contract.`);
     }
-    if (!document.fields?.fieldAuthority) fail(`${file} must project fields.fieldAuthority.`);
   }
 }
 
-function stepsFields(source) {
-  return new Set((source.steps ?? []).flatMap((step) => [
-    ...(step.userFilledFields ?? []),
-    ...(step.userSelectedFields ?? [])
-  ]));
+function checkRuntimeExecution() {
+  const document = readJsonIfExists(runtimeExecutionPath);
+  if (!document) {
+    fail(`${runtimeExecutionPath} missing.`);
+    return;
+  }
+  if ((document.scenarios ?? []).length !== 11) fail("runtime execution must cover executable scenarios 3-13.");
+  for (const scenario of document.scenarios ?? []) {
+    for (const step of scenario.steps ?? []) {
+      const label = `runtime.scenario${scenario.scenarioPackageNo}.${step.stepId}`;
+      if (!Array.isArray(step.readOnlySummary) || step.readOnlySummary.length === 0) fail(`${label}.readOnlySummary is required.`);
+      if (!Array.isArray(step.legalActions)) fail(`${label}.legalActions must be an array.`);
+      if (!step.primaryBusinessObject) fail(`${label}.primaryBusinessObject is required.`);
+      if (!Array.isArray(step.requiredReadContext) || step.requiredReadContext.length === 0) fail(`${label}.requiredReadContext is required.`);
+      for (const field of step.readOnlySummary ?? []) {
+        if (field.ui?.readonly !== true || field.userSubmitted === true) fail(`${label}.${field.fieldId} readOnlySummary must be readonly and not user submitted.`);
+      }
+      for (const field of step.fields ?? []) {
+        const fieldId = field.fieldId ?? field.id ?? "";
+        const zh = field.label?.["zh-CN"] ?? "";
+        if (isLegalActionLike(fieldId) || isLegalActionLike(zh)) fail(`${label}.${fieldId} legal action must not render as field.`);
+        if (field.ui?.readonly === true || field.source === "readOnlySummary") fail(`${label}.${fieldId} readOnlySummary must not render in business fields.`);
+        if (!zh || zh === fieldId || /^[a-z][A-Za-z0-9_.-]*$/.test(zh)) fail(`${label}.${fieldId} must have business zh label, actual ${JSON.stringify(zh)}.`);
+      }
+      if (scenario.scenarioPackageNo === 6 && step.stepId === "submit-payment-receipt-evidence") {
+        const labels = new Set((step.readOnlySummary ?? []).map((field) => field.label?.["zh-CN"]));
+        for (const required of ["客户信息", "联系电话", "预订号", "入住日期", "离店日期", "人数", "房间/床位", "价格快照", "应收项目", "已收金额", "本次金额", "剩余待收", "币种", "凭证要求"]) {
+          if (!labels.has(required)) fail(`${label}.readOnlySummary missing ${required}.`);
+        }
+      }
+    }
+  }
+}
+
+function runtimeMirrorPath(no, slug) {
+  const names = {
+    1: "DormitoryScenario1ResourceBasicReadiness.generated.json",
+    2: "DormitoryScenario2ResourceOperationStatus.generated.json",
+    3: "DormitoryScenario3ProductAndPricing.generated.json",
+    4: "DormitoryScenario4InquiryAndQuote.generated.json",
+    5: "DormitoryScenario5ReservationAndInventoryHold.generated.json",
+    6: "DormitoryScenario6PaymentDepositAndGuarantee.generated.json",
+    7: "DormitoryScenario7CheckInProcessing.generated.json",
+    8: "DormitoryScenario8InStayManagement.generated.json",
+    9: "DormitoryScenario9CheckoutSettlement.generated.json",
+    10: "DormitoryScenario10CancelNoShowRefund.generated.json",
+    11: "DormitoryScenario11HousekeepingMaintenanceOutOfService.generated.json",
+    12: "DormitoryScenario12ChannelCorporateCustomer.generated.json",
+    13: "DormitoryScenario13ReportingAuditReview.generated.json"
+  };
+  return `services/core-api/WorkOS.Api/Runtime/${names[no] ?? slug}`;
+}
+
+function stepHasMoney(step) {
+  const material = {
+    nameZh: step.nameZh,
+    commandBusinessNameZh: step.commandBusinessNameZh,
+    userSees: step.userSees,
+    userFilledFields: step.userFilledFields,
+    userSelectedFields: step.userSelectedFields,
+    systemCalculatedFields: step.systemCalculatedFields,
+    outputs: step.outputs,
+    requiredReadContext: step.requiredReadContext
+  };
+  return /金额|价格|应收|已收|待收|押金|担保|退款|扣费|应退|应补|费用|佣金|结算|收款|财务|price|amount|currency|deposit|refund|payment|fee|commission/i
+    .test(JSON.stringify(material));
+}
+
+function isLegalActionLike(value = "") {
+  const text = String(value || "").trim();
+  if (!text) return false;
+  if (/^(是否|有无|客户确认方式|确认方式|负责人例外审批说明|确认备注|退回原因)/.test(text)) return false;
+  if (/(方式|类型|结果|状态|范围|原因|说明|备注|时间|日期|时长|金额|数量|额度|币种|人|客户|负责人|渠道|商品|房间|床位)$/.test(text) &&
+    !/^(查看|进入|返回|提交|发布|导出|创建|办理|确认退房|确认取消|确认未到店|确认入住|确认交付|关闭任务)/.test(text)) {
+    return false;
+  }
+  if (/^(确认|退回补证|部分确认|标记异常|转人工复核|转负责人复核|补充证据|发起纠错|导出摘要)$/.test(text)) return true;
+  if (/^(办理|进入|查看|返回|继续|保存|提交|发送|发布|导出|关闭|作废|停用|启用|锁定|释放|创建|登记|申请|标记|生成|输出|同步|审核通过|归档|发起)/.test(text)) return true;
+  return /^(confirm|submit|send|save|back|return|continue|view|start|enter|create|release|lock|publish|export|mark|activate|disable|void|close|record|supplement|correction)/i.test(text) &&
+    !/(Method|Status|Type|Reason|Date|Time|Amount|Name|Remark|Notes|Option|Scope|Owner|Channel|Preference|Confirmation)$/i.test(text);
+}
+
+function isInternalField(value = "") {
+  const text = String(value || "");
+  if (/ContextRef$/i.test(text)) return false;
+  return /(^|[._-])(roomId|bedId|ratePlanId|quoteId|reservationId|stayId|paymentId|depositId|refundId|ledgerEntryId|ledgerTransactionId|stableRef|digest|projectionVersion|domainEventId|commandSubmissionRef)$/i.test(text) ||
+    /内部|哈希/.test(text);
 }
 
 function requireFieldKeys(item, label, keys) {
@@ -262,19 +301,19 @@ function requireFieldKeys(item, label, keys) {
   }
 }
 
-function assertArrayContainsAll(actual, expected, label) {
-  const values = new Set(actual ?? []);
-  for (const item of expected) {
-    if (!values.has(item)) fail(`${label} missing ${item}.`);
-  }
+function authorityTokens(items = []) {
+  return new Set((items ?? []).flatMap((item) => [
+    item.fieldId,
+    item.labelZh
+  ]).filter(Boolean));
 }
 
 function requireEqual(actual, expected, label) {
   if (actual !== expected) fail(`${label} must be ${JSON.stringify(expected)}, actual ${JSON.stringify(actual)}.`);
 }
 
-function fail(message) {
-  failures.push(message);
+function scenarioNo(file) {
+  return Number(file.match(/scenario(\d+)/)?.[1] ?? 0);
 }
 
 function readJson(file) {
@@ -294,4 +333,8 @@ function writeJson(file, value) {
 
 function digestFile(file) {
   return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(path.join(root, file))).digest("hex")}`;
+}
+
+function fail(message) {
+  failures.push(message);
 }

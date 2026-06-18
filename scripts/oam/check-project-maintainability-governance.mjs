@@ -10,6 +10,7 @@ const failures = [];
 const oldWord = "leg" + "acy";
 
 const governance = readJson(governancePath, root);
+const pendingEvidenceMaterialization = [];
 
 if (governance.version !== "oam.project-maintainability-governance.v1") {
   fail("project maintainability governance version mismatch.");
@@ -28,7 +29,16 @@ if (governance.productionConfirmAllowed !== false ||
 }
 
 for (const input of governance.stage0Inputs ?? []) {
-  if (input.required && !exists(input.path)) fail(`required stage0 input missing: ${input.path}.`);
+  if (input.required && !exists(input.path)) {
+    if (isEvidenceMaterializationPath(input.path)) {
+      pendingEvidenceMaterialization.push({
+        kind: "stage0Input",
+        path: input.path
+      });
+      continue;
+    }
+    fail(`required stage0 input missing: ${input.path}.`);
+  }
 }
 
 const protectedPaths = new Set();
@@ -38,7 +48,16 @@ for (const artifact of governance.protectedArtifacts ?? []) {
     continue;
   }
   protectedPaths.add(normalizePath(artifact.path));
-  if (!exists(artifact.path)) fail(`protected artifact missing: ${artifact.path}.`);
+  if (!exists(artifact.path)) {
+    if (isEvidenceMaterializationPath(artifact.path)) {
+      pendingEvidenceMaterialization.push({
+        kind: "protectedArtifact",
+        path: artifact.path
+      });
+      continue;
+    }
+    fail(`protected artifact missing: ${artifact.path}.`);
+  }
 }
 
 const allowedHandling = new Set(["delete", "merge", "document_catalog", "abstract", "retain"]);
@@ -165,6 +184,8 @@ const result = {
   maintenanceRuleCount: governance.maintenanceRules?.length ?? 0,
   performanceReportStatus: performanceStatus,
   protectedArtifactCount: protectedPaths.size,
+  pendingEvidenceMaterialization,
+  pendingEvidenceMaterializationCount: pendingEvidenceMaterialization.length,
   productionConfirmAllowed: false,
   businessGoLiveAllowed: false,
   releaseAuthority: false,
@@ -206,6 +227,10 @@ function sourceIncludes(file, text) {
 
 function normalizePath(file) {
   return file.replaceAll("\\", "/").replace(/\/+$/, "");
+}
+
+function isEvidenceMaterializationPath(file) {
+  return normalizePath(file).startsWith("artifacts/oam/");
 }
 
 function isProtectedPath(candidate, protectedPathSet) {

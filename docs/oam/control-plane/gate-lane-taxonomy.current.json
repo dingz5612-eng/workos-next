@@ -44,9 +44,9 @@
       "node scripts/oam/check-generated-candidate-acceptance.mjs"
     ],
     "runtime-test-hard": [
+      "node scripts/oam/check-dormitory-runtime-admission.mjs",
       "node scripts/oam/check-runtime-consumes-accepted-bundle.mjs",
       "node scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs",
-      "node scripts/oam/check-dormitory-runtime-admission.mjs",
       "node scripts/oam/check-environment-profile-authority.mjs"
     ],
     "business-landing-hard": [

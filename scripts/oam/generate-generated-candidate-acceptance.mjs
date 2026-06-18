@@ -1,6 +1,7 @@
 import { execFileSync } from "node:child_process";
 import {
   GENERATED_CANDIDATE_ACCEPTANCE_PATH,
+  buildGeneratedCandidateSubject,
   buildInitialGeneratedCandidateAcceptance,
   readJsonIfExists,
   validateGeneratedCandidateAcceptanceAuthority,
@@ -18,8 +19,9 @@ const acceptCurrentBy00 = process.argv.includes("--accept-current-by-00") ||
   process.env.OAM_ACCEPT_CURRENT_GENERATED_CANDIDATE_BY_00 === "1";
 
 if (existingAcceptance?.decisionStatus === "ACCEPTED_BY_00" && !acceptCurrentBy00) {
+  const refreshedAcceptance = refreshAcceptedDecisionDivergence(existingAcceptance);
   const validation = validateGeneratedCandidateAcceptanceAuthority({
-    acceptance: existingAcceptance,
+    acceptance: refreshedAcceptance,
     root,
     currentHead
   });
@@ -28,8 +30,11 @@ if (existingAcceptance?.decisionStatus === "ACCEPTED_BY_00" && !acceptCurrentBy0
     for (const failure of validation.failures) console.error(`- ${failure}`);
     process.exit(1);
   }
+  if (stableStringify(refreshedAcceptance) !== stableStringify(existingAcceptance)) {
+    writeJson(GENERATED_CANDIDATE_ACCEPTANCE_PATH, refreshedAcceptance, root);
+  }
   console.log(
-    `Generated candidate acceptance authority preserved: ${GENERATED_CANDIDATE_ACCEPTANCE_PATH} (${existingAcceptance.decisionStatus}, generatedCandidateAcceptedBy00=${existingAcceptance.generatedCandidateAcceptedBy00}, subjectStatus=${validation.subjectStatus})`
+    `Generated candidate acceptance authority preserved: ${GENERATED_CANDIDATE_ACCEPTANCE_PATH} (${refreshedAcceptance.decisionStatus}, generatedCandidateAcceptedBy00=${refreshedAcceptance.generatedCandidateAcceptedBy00}, subjectStatus=${validation.subjectStatus})`
   );
   process.exit(0);
 }
@@ -217,6 +222,55 @@ function buildAcceptedCurrentDecision(fresh, existing) {
     releaseAuthority: false,
     finalGoNoGo: "NO_GO"
   };
+}
+
+function refreshAcceptedDecisionDivergence(existing) {
+  const currentSubjectState = buildGeneratedCandidateSubject({ root, currentHead });
+  const acceptedSubject = existing.generatedCandidateSubject;
+  const acceptedBundle = buildGeneratedContractBundle({
+    root,
+    subject: acceptedSubject,
+    bundleRole: "accepted_generated_contract_bundle"
+  });
+  const currentBundle = buildGeneratedContractBundle({
+    root,
+    subject: currentSubjectState.subject,
+    bundleRole: "current_generated_contract_bundle"
+  });
+  const currentIsDifferent =
+    currentSubjectState.subject.subjectDigest !== acceptedSubject?.subjectDigest ||
+    currentBundle.generatedBundleDigest !== acceptedBundle.generatedBundleDigest;
+  const decisionRecordHead = existing.decisionRecordHead ??
+    existing.acceptanceRecord?.currentRepositoryHead ??
+    existing.decisionWritebackBaseHead ??
+    null;
+  return {
+    ...existing,
+    decisionRecordHead,
+    currentGeneratedCandidateDivergence: {
+      ...(existing.currentGeneratedCandidateDivergence ?? {}),
+      acceptedBundleRemainsImmutable: true,
+      currentGeneratedOutputIsDifferentCandidate: currentIsDifferent,
+      runtimeMustNotAutoConsumeCurrentGeneratedFiles: true,
+      acceptedSubjectDigest: acceptedSubject?.subjectDigest ?? null,
+      currentSubjectDigest: currentSubjectState.subject.subjectDigest,
+      acceptedGeneratedBundleDigest: acceptedBundle.generatedBundleDigest,
+      currentGeneratedBundleDigest: currentBundle.generatedBundleDigest,
+      acceptedGeneratedOutputDigest: acceptedSubject?.generatedOutputDigest ?? null,
+      currentGeneratedOutputDigest: currentSubjectState.subject.generatedOutputDigest,
+      reason: currentIsDifferent
+        ? "accepted_generated_contract_bundle_is_immutable_runtime_consumption_identity; current_generated_contract_bundle_requires_explicit_00_acceptance_before_runtime_rebind"
+        : "accepted_generated_candidate_subject_is_current_at_write"
+    }
+  };
+}
+
+function stableStringify(value) {
+  if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
+  if (value && typeof value === "object") {
+    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableStringify(value[key])}`).join(",")}}`;
+  }
+  return JSON.stringify(value);
 }
 
 function gitHead() {

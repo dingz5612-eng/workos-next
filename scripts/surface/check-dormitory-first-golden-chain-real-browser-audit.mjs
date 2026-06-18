@@ -64,6 +64,7 @@ if (!scenario1CompletionVisibleLabels().some((label) => JSON.stringify(report).i
 for (const requiredAssertion of [
   "search.object_query_d01_no_command",
   "search.object_query_101_room_no_command",
+  "validation.required_missing_field_prepared",
   "validation.required_missing_blocks_submit",
   "validation.required_missing_no_confirm",
   "draft.current_step_user_fields_only",

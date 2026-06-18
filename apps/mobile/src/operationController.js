@@ -10,6 +10,7 @@ import { normalizeOperationLifecycleState } from "./operationStatus.js";
 import { operationFieldId } from "./operationFieldKernel.js";
 import { generatedContextValue, withSystemGeneratedOperationValues } from "./operationSystemValues.js";
 import { draftableCapabilityFieldIds, isDormitoryScenario1CardId } from "./capabilityProjection.js";
+import { resolveOperationPanelTarget } from "./operationRouteResolver.js";
 import { activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "./selectors/workspaceSelectors.js";
 import { applyRuntimeProjection, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
 import { validateRequiredFields } from "./operationValidation.js";
@@ -65,21 +66,42 @@ export function systemEvidenceDraftsFor(card = {}, currentDrafts = []) {
   for (const field of card.evidence || []) {
     if (!field?.id) continue;
     const current = existing.get(field.id);
-    existing.set(field.id, {
+    const materialized = isMaterializedRuntimeEvidenceId(current?.evidenceId);
+    const next = {
       requirementId: field.id,
-      evidenceId: (current?.source === "system" || current?.evidenceId?.startsWith("evd-")) && current.evidenceId
+      evidenceId: (current?.source === "system" || materialized || current?.evidenceId?.startsWith("evd-")) && current.evidenceId
         ? current.evidenceId
         : `evidence-${field.id}-${randomDraftId()}`,
       source: "system",
-      status: current?.evidenceId?.startsWith("evd-") ? "verified" : current?.status
-    });
+      status: materialized ? "verified" : current?.evidenceId?.startsWith("evd-") ? "verified" : current?.status
+    };
+    if (current?.submissionId) next.submissionId = current.submissionId;
+    if (current?.cardInstanceId) next.cardInstanceId = current.cardInstanceId;
+    existing.set(field.id, next);
   }
   return Array.from(existing.values());
 }
 
+function isMaterializedRuntimeEvidenceId(value = "") {
+  return /^ev-/i.test(String(value || ""));
+}
+
+function mergeEvidenceDrafts(...draftSets) {
+  const byRequirement = new Map();
+  for (const drafts of draftSets) {
+    for (const draft of drafts || []) {
+      if (!draft?.requirementId) continue;
+      const current = byRequirement.get(draft.requirementId);
+      if (!current || isMaterializedRuntimeEvidenceId(draft.evidenceId)) {
+        byRequirement.set(draft.requirementId, draft);
+      }
+    }
+  }
+  return Array.from(byRequirement.values());
+}
+
 export function toggleEvidenceSelection(event, ctx) {
-  const item = ctx.workspace();
-  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
+  const { item, card } = currentOperationContext(ctx);
   if (!item || !card) return;
   const node = event.target;
   node.classList.toggle("selected");
@@ -93,14 +115,16 @@ export function toggleEvidenceSelection(event, ctx) {
 }
 
 export function saveCurrentDraft(ctx) {
-  const item = ctx.workspace();
-  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
+  const { item, card } = currentOperationContext(ctx);
   if (!item || !card) return;
   const fieldValues = operationSubmissionValues(item, card, collectOperationValues(), ctx);
   const evidenceDrafts = collectEvidenceDrafts();
   const draftValues = draftableOperationValues(card, fieldValues);
   saveDraft(item.id, card.id, draftValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts, draftValues));
   ctx.state.fieldValidation = null;
+  if (isRecoverableCurrentBusinessBlocker(ctx.state.lastActionResult, item, card)) {
+    ctx.state.lastActionResult = null;
+  }
   ctx.state.operationMessage = ctx.tr("draftSaved");
   if (!showDraftSavedFeedback(ctx)) ctx.render();
 }
@@ -124,8 +148,7 @@ function showDraftSavedFeedback(ctx) {
 }
 
 export function updateDerivedFields(ctx) {
-  const item = ctx.workspace();
-  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
+  const { item, card } = currentOperationContext(ctx);
   const roomTypeField = card?.fields?.business?.find((field) => field.ui?.optionSet === "roomType");
   const capacityField = card?.fields?.business?.find((field) => field.ui?.derivedFrom === "roomType");
   const roomType = roomTypeField ? document.querySelector(`[data-operation-field="${operationFieldId(roomTypeField)}"]`)?.value : "";
@@ -202,15 +225,50 @@ function decimalValue(fieldId) {
   return Number.isFinite(value) ? value : 0;
 }
 
+function currentOperationContext(ctx) {
+  const state = ctx.state || {};
+  if (state.view === "operationPanel") {
+    const target = resolveOperationPanelTarget({
+      workItemId: state.selectedWorkItemId,
+      workspaceId: state.selectedWorkspace,
+      cardId: state.selectedCardId
+    }, state);
+    if (target.canOpen && target.workItem?.workspace && target.workItem?.card) {
+      return {
+        item: target.workItem.workspace,
+        card: target.workItem.card,
+        workItem: target.workItem
+      };
+    }
+  }
+  const item = ctx.workspace();
+  return {
+    item,
+    card: operationActiveCard(item, state.selectedCardIndex, state.selectedCardId),
+    workItem: null
+  };
+}
+
+function isCurrentCardActionResult(result, item, card) {
+  if (!result || !item || !card) return false;
+  if (result.workspaceId && result.workspaceId !== item.id) return false;
+  if (result.cardId && result.cardId !== card.id) return false;
+  return true;
+}
+
+function isRecoverableCurrentBusinessBlocker(result, item, card) {
+  return result?.status === "business_blocked_422" && isCurrentCardActionResult(result, item, card);
+}
+
 export function collectDraftingValuesOnInput(event, ctx) {
   if (!event.target.matches("[data-operation-field], [data-operation-field-start], [data-operation-field-end]")) return;
   updateDerivedFields(ctx);
-  const item = ctx.workspace();
-  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
+  const { item, card } = currentOperationContext(ctx);
   if (!item || !card) return;
+  const hasRecoverableCurrentBusinessBlocker = isRecoverableCurrentBusinessBlocker(ctx.state.lastActionResult, item, card);
   const wasRequiredValidationActive =
     (ctx.state.fieldValidation?.workspaceId === item.id && ctx.state.fieldValidation?.cardId === card.id) ||
-    (ctx.state.lastActionResult?.status === "business_blocked_422" && ctx.state.lastActionResult?.reason === "required_field_missing");
+    hasRecoverableCurrentBusinessBlocker;
   const evidenceDrafts = loadDraft(item.id, card.id).evidenceDrafts || [];
   const fieldValues = operationSubmissionValues(item, card, collectOperationValues(), ctx);
   const draftValues = draftableOperationValues(card, fieldValues);
@@ -226,7 +284,7 @@ export function collectDraftingValuesOnInput(event, ctx) {
         missingContextLabels: requiredValidation.missingContextLabels
       }
     : null;
-  if (!hasMissing && ctx.state.lastActionResult?.status === "business_blocked_422" && ctx.state.lastActionResult?.reason === "required_field_missing") {
+  if (hasRecoverableCurrentBusinessBlocker) {
     ctx.state.lastActionResult = null;
     ctx.state.operationMessage = "";
   }
@@ -254,8 +312,7 @@ export function setSegmentedOperationField(source, ctx) {
 
 export async function submitCurrentCard(ctx) {
   if (ctx.state.operationSubmitting) return;
-  const item = ctx.workspace();
-  const card = operationActiveCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
+  const { item, card } = currentOperationContext(ctx);
   if (!item || !card || isCardActionDisabled(card)) return;
   if (!ctx.state.currentActor) {
     ctx.state.loginMessage = ctx.tr("loginRequired");
@@ -296,7 +353,8 @@ export async function submitCurrentCard(ctx) {
       return;
     }
   }
-  const evidenceDrafts = systemEvidenceDraftsFor(card, collectEvidenceDrafts());
+  const savedDraft = loadDraft(item.id, card.id);
+  const evidenceDrafts = systemEvidenceDraftsFor(card, mergeEvidenceDrafts(savedDraft.evidenceDrafts || [], collectEvidenceDrafts()));
   const draftValues = draftableOperationValues(card, fieldValues);
   const submissionProtocol = draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts, draftValues);
   saveDraft(item.id, card.id, draftValues, evidenceDrafts, submissionProtocol);
@@ -313,11 +371,12 @@ export async function submitCurrentCard(ctx) {
       evidenceDrafts
     });
     for (const draft of evidenceDrafts) {
-      if (draft.evidenceId?.startsWith("evd-")) {
+      if (isMaterializedRuntimeEvidenceId(draft.evidenceId) || draft.evidenceId?.startsWith("evd-")) {
         draft.source = "system";
         draft.status = "verified";
       }
     }
+    submissionProtocol.payloadFingerprint = submissionPayloadFingerprint(fieldValues, evidenceDrafts);
     saveDraft(item.id, card.id, draftValues, evidenceDrafts, submissionProtocol);
     const result = await submitWorkItemOperation({
       workspace: item,
@@ -536,24 +595,43 @@ function randomDraftId() {
 }
 
 function draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts, draftValues = fieldValues) {
+  const payloadFingerprint = submissionPayloadFingerprint(fieldValues, evidenceDrafts);
   const protocol = loadDraft(item.id, card.id).submissionProtocol;
-  if (isCompleteSubmissionProtocol(protocol, fieldValues)) {
+  if (isCompleteSubmissionProtocol(protocol, fieldValues, payloadFingerprint)) {
     return protocol;
   }
 
-  const created = createSubmissionProtocol(item, card, fieldValues);
+  const created = {
+    ...createSubmissionProtocol(item, card, fieldValues),
+    payloadFingerprint
+  };
   saveDraft(item.id, card.id, draftValues, evidenceDrafts, created);
   return created;
 }
 
-function isCompleteSubmissionProtocol(protocol, fieldValues = {}) {
+function isCompleteSubmissionProtocol(protocol, fieldValues = {}, payloadFingerprint = "") {
   const aggregateRef = Object.entries(fieldValues || {}).find(([key, value]) =>
     ["roomId", "bedId", "stayId", "depositId", "depositReceiptId", "paymentId", "paymentReceiptId", "leadId", "reservationId", "serviceTaskId", "expenseId", "periodId", "settlementId"].includes(key) && value);
   const expectedAggregateRef = aggregateRef ? `${aggregateRef[0]}:${aggregateRef[1]}` : null;
   return !!protocol?.idempotencyKey &&
     !!protocol?.submissionId &&
     !!protocol?.cardInstanceId &&
-    (protocol.aggregateRef || null) === expectedAggregateRef;
+    (protocol.aggregateRef || null) === expectedAggregateRef &&
+    protocol.payloadFingerprint === payloadFingerprint;
+}
+
+function submissionPayloadFingerprint(fieldValues = {}, evidenceDrafts = []) {
+  const values = Object.fromEntries(Object.entries(fieldValues || {}).sort(([left], [right]) => left.localeCompare(right)));
+  const evidence = (evidenceDrafts || [])
+    .filter((draft) => draft?.requirementId)
+    .map((draft) => ({
+      requirementId: draft.requirementId,
+      evidenceId: draft.evidenceId || "",
+      status: draft.status || "",
+      source: draft.source || ""
+    }))
+    .sort((left, right) => left.requirementId.localeCompare(right.requirementId));
+  return JSON.stringify({ values, evidence });
 }
 
 function applyProjectionPayload(payload, ctx) {
@@ -620,6 +698,8 @@ function actionResultFromError(error, message) {
   return {
     status: byStatus[error?.status] || "network_unknown",
     message,
+    reason: error?.reason || error?.code || "",
+    code: error?.code || "",
     permissionDiagnostic: error?.status === 403 ? {
       reason: safeReasonCode(error.reason || error.code || "permission_blocked_403"),
       owner: "manager",

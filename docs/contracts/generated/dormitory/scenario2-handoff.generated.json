@@ -9,30 +9,60 @@
     "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:75cc9188bab7ab6e4ef4a62f4ad94875c252f3cf21bd83243a74f1c3f08e32b6",
+  "inputDigest": "sha256:cddb492e94853f3a2fa63dfb38fdad290ecd2b2d2f0f6df9e83cf3de8adaa166",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
-      "digest": "sha256:889073946d661f8d32f344373ccb2d554f78602102815f569eb78b0f771ad720"
+      "digest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:889073946d661f8d32f344373ccb2d554f78602102815f569eb78b0f771ad720",
+  "sourceContentDigest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario2.ResourceOperationStatus",
   "scenarioPackageNo": 2,
   "scenarioId": "lodging.resource-operation-status",
-  "outputContentDigest": "sha256:ecf4fe854205abc510aa66fcfe4f36c9163679711b8d9226a1e8cf62d509b74a",
+  "outputContentDigest": "sha256:47ec82b0eb94f804ccff5f95c350bcf885bbefd79e38b3665c57ae8e90118ab9",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "房源运营就绪与状态维护",
   "businessGoalZh": "承接场景包 1 已完成的房间建档、床位组确认、基础就绪确认摘要，完成房间或床位的运营检查、运营状态设置、阻断维护和恢复确认。",
-  "sourceScenarioDigest": "sha256:889073946d661f8d32f344373ccb2d554f78602102815f569eb78b0f771ad720",
+  "sourceScenarioDigest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario2.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "OperationResource",
+      "RoomOperationStatus",
+      "BedOperationStatus",
+      "OperationInspection",
+      "OperationBlocker",
+      "OperationStatusChange",
+      "OperationRestore",
+      "OperationEvidence",
+      "StatusHistory"
+    ],
+    "searchReadModel": [
+      "房源运营就绪与状态维护",
+      "房间/床位运营状态摘要",
+      "阻断原因",
+      "预计恢复时间",
+      "可否进入价格维护",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用",
+      "运营状态摘要"
+    ],
+    "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
   "upstream": {
     "allowedSourcePackageNo": 1,
     "allowedSourcePackageNameZh": "房源建档与基础就绪",

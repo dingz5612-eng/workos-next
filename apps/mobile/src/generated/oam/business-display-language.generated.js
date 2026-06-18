@@ -76,10 +76,6 @@ export const zhBusinessTermReplacements = [
   [
     "证据已就绪",
     "材料已就绪"
-  ],
-  [
-    "可信证据",
-    "办理材料"
   ]
 ];
 export const ruBusinessTermReplacements = [

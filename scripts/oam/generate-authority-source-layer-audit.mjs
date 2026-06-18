@@ -44,6 +44,7 @@ const sourceWhitelistEntries = [
   "docs/business/domains/dormitory/dormitory-invariants.authority.json",
   "docs/business/domains/dormitory/dormitory-object-graph.authority.json",
   "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+  "docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json",
   "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
   "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
   "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",

@@ -311,6 +311,7 @@ const dormitory13ScenarioGeneratedFiles = [
   "docs/contracts/generated/dormitory/13-scenario-control.generated.json",
   "apps/mobile/src/generated/oam/dormitory-13-scenario-control.generated.json",
   "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioControl.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json",
   "docs/contracts/generated/dormitory/13-scenario-index.generated.json",
   "docs/contracts/generated/dormitory/13-scenario-state-ladder.generated.json",
   "docs/contracts/generated/dormitory/13-scenario-object-ownership.generated.json",
@@ -391,6 +392,7 @@ const allowedRuntimeGeneratedDiffs = new Set([
   "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeRules.cs",
   "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
   "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioControl.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json",
   "services/core-api/WorkOS.Api/Runtime/DormitoryScenario1BenchmarkInheritance.generated.json",
   "services/core-api/WorkOS.Api/Runtime/DormitoryScenario1ResourceBasicReadiness.generated.json",
   ...dormitoryScenarioSpecs.map((scenario) => scenario.generatedFiles.find((file) => file.startsWith("services/core-api/"))),
@@ -449,6 +451,7 @@ const sourceAuthorityFiles = [
 const generatorAndCheckerFiles = [
   "scripts/business/generate-dormitory-derived-contracts.mjs",
   "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "scripts/business/generate-dormitory-13-scenario-runtime-execution.mjs",
   "scripts/business/check-dormitory-13-scenario-control-authority.mjs",
   "scripts/business/check-dormitory-13-scenario-generated-contracts.mjs",
   "scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs",
@@ -491,6 +494,8 @@ const compileCommands = [
   ["node", ["scripts/business/generate-dormitory-scenario1-resource-basic-readiness-contracts.mjs"]],
   ["node", ["scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs"]],
   ...dormitoryScenarioSpecs.map((scenario) => ["node", [scenario.generator]]),
+  ["node", ["scripts/business/generate-dormitory-13-scenario-runtime-execution.mjs"]],
+  ["node", ["scripts/business/generate-dormitory-derived-contracts.mjs", "--patch-field-registry-only"]],
   ["node", ["scripts/oam/compile-current-capability.mjs"]]
 ];
 const requiredPreGateResults = [
@@ -904,15 +909,19 @@ function checkSourceAndRuntimeNoDrift(before, after) {
 }
 
 function buildDriftProof(before, after) {
+  const noSourceBusinessFactChanges = before.sourceAuthorityDigest === after.sourceAuthorityDigest;
+  const noRuntimeImplementationChanges =
+    (before.runtimeImplementationBoundary?.digest ?? "missing") === (after.runtimeImplementationBoundary?.digest ?? "missing");
   return {
     sourceAuthorityInputDigest: before.sourceAuthorityDigest,
     sourceAuthorityAfterCompileDigest: after.sourceAuthorityDigest,
     sourceAuthorityChangedDuringCompile: changedHashFiles(before.sourceAuthorityHashes, after.sourceAuthorityHashes),
-    noSourceBusinessFactChangesDuringCompile: before.sourceAuthorityDigest === after.sourceAuthorityDigest,
+    noSourceBusinessFactChanges,
+    noSourceBusinessFactChangesDuringCompile: noSourceBusinessFactChanges,
     runtimeImplementationInputDigest: before.runtimeImplementationBoundary?.digest ?? "missing",
     runtimeImplementationAfterCompileDigest: after.runtimeImplementationBoundary?.digest ?? "missing",
-    noRuntimeImplementationChangesDuringCompile:
-      (before.runtimeImplementationBoundary?.digest ?? "missing") === (after.runtimeImplementationBoundary?.digest ?? "missing"),
+    noRuntimeImplementationChanges,
+    noRuntimeImplementationChangesDuringCompile: noRuntimeImplementationChanges,
     runtimeInputChanged: before.runtimeImplementationBoundary?.changed ?? [],
     runtimeInputUntracked: before.runtimeImplementationBoundary?.untracked ?? [],
     runtimeAfterChanged: after.runtimeImplementationBoundary?.changed ?? [],

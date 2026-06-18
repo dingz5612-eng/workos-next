@@ -9,30 +9,67 @@
     "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:c10ea76dbac0da4b9de5a06a079fe196aa82c3048fa14c4dc5d1fdb2223325ba",
+  "inputDigest": "sha256:49a1b855da0cc309b2f797c1ff1f12c2bc00fe76bb8161b29ae5c320abc2acf3",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
-      "digest": "sha256:d47c4d7991c4df02f763db9f31ab6f6b3a0ce8d426aaaed252100ab82554efc9"
+      "digest": "sha256:8dbbc0974699eac161fddffd13c6df6e16c63aeee4d29b00f37af52b35886dd2"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:d47c4d7991c4df02f763db9f31ab6f6b3a0ce8d426aaaed252100ab82554efc9",
+  "sourceContentDigest": "sha256:8dbbc0974699eac161fddffd13c6df6e16c63aeee4d29b00f37af52b35886dd2",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario4.InquiryAndQuote",
   "scenarioPackageNo": 4,
   "scenarioId": "lodging.inquiry-and-quote",
-  "outputContentDigest": "sha256:93819e4960f399d50f61119226ca6077e94efa16e671d48aa08ef9df70d24f03",
+  "outputContentDigest": "sha256:5672505d25b890970afc0666fa5b5482bc73657e5d7c9ed22cf4f0988d1b6607",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "询价与报价",
   "businessGoalZh": "承接场景包 1 的房源摘要、场景包 2 的运营状态摘要、场景包 3 的商品与价格摘要，为客户生成询价记录、报价方案、报价单、报价版本和报价有效期。",
-  "sourceScenarioDigest": "sha256:d47c4d7991c4df02f763db9f31ab6f6b3a0ce8d426aaaed252100ab82554efc9",
+  "sourceScenarioDigest": "sha256:8dbbc0974699eac161fddffd13c6df6e16c63aeee4d29b00f37af52b35886dd2",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario4.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "Inquiry",
+      "CustomerContact",
+      "StayDemand",
+      "QuoteOption",
+      "Quote",
+      "QuoteVersion",
+      "QuotePriceSnapshot",
+      "QuoteValidity",
+      "QuoteDeliveryRecord",
+      "QuoteEvidence",
+      "FollowUpTask",
+      "QuoteStatusHistory"
+    ],
+    "searchReadModel": [
+      "询价与报价",
+      "询价摘要",
+      "客户需求摘要",
+      "报价单摘要",
+      "报价版本",
+      "价格快照",
+      "报价有效期",
+      "客户反馈",
+      "转预订准备摘要",
+      "证据摘要",
+      "只读对象引用",
+      "报价单",
+      "有效期"
+    ],
+    "noRefillRuleZh": "场景包 4 只能读取场景包 1、2、3 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品或价格字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
   "upstream": {
     "allowedSourcePackageNos": [
       1,

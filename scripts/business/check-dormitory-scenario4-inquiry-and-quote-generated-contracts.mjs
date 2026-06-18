@@ -33,6 +33,10 @@ const commandIds = [
   "Dorm.ReservationPreparationStart"
 ];
 const forbiddenInternal = ["inquiryId", "customerId", "quoteId", "quoteVersionId", "productId", "ratePlanId", "roomId", "bedId", "stableRef", "projectionVersion", "digest", "domainEventId"];
+const forbiddenActionUserInput = [
+  "saveDraft",
+  "backToEdit"
+];
 const forbiddenRuntimeWrites = ["InventoryHold", "Reservation", "Stay", "Payment", "Deposit", "Refund", "LedgerEntry", "LedgerTransaction"];
 
 for (const [file, document] of docs) {
@@ -81,6 +85,7 @@ if ((stepsFields?.steps ?? []).length !== 6) fail("steps fields must contain six
 for (const stepName of ["客户询价登记", "填写入住需求", "查看可报价商品", "生成报价草稿", "确认并发送报价", "报价跟进与转预订准备"]) {
   if (!(stepsFields?.steps ?? []).some((step) => step.nameZh === stepName)) fail(`steps fields missing ${stepName}.`);
 }
+assertNoActionUserInputs(stepsFields, "steps-fields generated contract");
 for (const internal of forbiddenInternal) {
   if (!(stepsFields?.fields?.forbiddenUserInputFields ?? []).includes(internal)) fail(`steps fields missing forbidden internal ${internal}.`);
   if ((stepsFields?.fields?.userFilled ?? []).includes(internal) || (stepsFields?.fields?.userSelected ?? []).includes(internal)) {
@@ -123,6 +128,8 @@ for (const forbidden of ["已锁定", "已预订", "已入住", "已收款", "fi
 }
 if (mobileMirror?.consumer !== "surface") fail("mobile mirror must declare consumer=surface.");
 if (runtimeMirror?.consumer !== "runtime") fail("runtime mirror must declare consumer=runtime.");
+assertNoActionUserInputs(mobileMirror, "mobile mirror");
+assertNoActionUserInputs(runtimeMirror, "runtime mirror");
 if (JSON.stringify((runtimeMirror?.commands ?? []).map((item) => item.commandId)) !== JSON.stringify(commandIds)) fail("runtime mirror command list mismatch.");
 if (runtimeMirror?.priceSnapshotRule?.mustUseScenario3EffectivePriceVersion !== true) fail("runtime mirror must expose price snapshot rule.");
 
@@ -198,6 +205,18 @@ function stableStringify(value) {
     return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableStringify(value[key])}`).join(",")}}`;
   }
   return JSON.stringify(value);
+}
+
+function assertNoActionUserInputs(document, label) {
+  for (const action of forbiddenActionUserInput) {
+    for (const [stepIndex, step] of (document?.steps ?? []).entries()) {
+      if ((step.userFilledFields ?? []).includes(action)) fail(`${label} step ${stepIndex + 1} must not expose action ${action} as user-filled input.`);
+      if ((step.userSelectedFields ?? []).includes(action)) fail(`${label} step ${stepIndex + 1} must not expose action ${action} as user-selected input.`);
+      if ((step.fields ?? []).some((field) => (field.fieldId ?? field.id) === action)) fail(`${label} step ${stepIndex + 1} must not render action ${action} as a field.`);
+    }
+    if ((document?.fields?.userFilled ?? []).includes(action)) fail(`${label} must not expose action ${action} as global user-filled input.`);
+    if ((document?.fields?.userSelected ?? []).includes(action)) fail(`${label} must not expose action ${action} as global user-selected input.`);
+  }
 }
 
 function fail(message) {

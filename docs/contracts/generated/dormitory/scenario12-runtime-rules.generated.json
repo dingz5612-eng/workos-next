@@ -9,30 +9,72 @@
     "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:d504bad001d84d42799afcfcddb383376b494f5dbc5ee6787b025d90409d4b15",
+  "inputDigest": "sha256:8509552e372fda3a473c97c7ded7142f445c75caf8bab6af715500b37ad3f19e",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
-      "digest": "sha256:ab296f3dcf35e86acff50f22118336d4a36607c232d31e2fd712cf94cc36bfde"
+      "digest": "sha256:84dbed278bccc4a0da3a590157249a3dc02a7266af0d862a8690ca5adb07d196"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:ab296f3dcf35e86acff50f22118336d4a36607c232d31e2fd712cf94cc36bfde",
+  "sourceContentDigest": "sha256:84dbed278bccc4a0da3a590157249a3dc02a7266af0d862a8690ca5adb07d196",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario12.ChannelCorporateCustomer",
   "scenarioPackageNo": 12,
   "scenarioId": "lodging.channel-corporate-customer",
-  "outputContentDigest": "sha256:6f2391f3637e5f6b4b9b4aa145ef47339ddfbe28a53881a51cf557daa092cab3",
+  "outputContentDigest": "sha256:e0c2cded58f2f41890dad9f751b5ca31c6084892ce72408a99d9657576310e42",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "渠道与企业客户",
   "businessGoalZh": "维护外部渠道、企业客户、协议客户、渠道发布规则、企业协议资格、渠道对接状态、佣金/结算规则意向和证据，并向场景包 3、4、5、finance-gate 和看板提供只读条件。",
-  "sourceScenarioDigest": "sha256:ab296f3dcf35e86acff50f22118336d4a36607c232d31e2fd712cf94cc36bfde",
+  "sourceScenarioDigest": "sha256:84dbed278bccc4a0da3a590157249a3dc02a7266af0d862a8690ca5adb07d196",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario12.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "ChannelPartner",
+      "ChannelAccount",
+      "CorporateAccount",
+      "CorporateCustomer",
+      "CorporateAgreement",
+      "AgreementEligibility",
+      "ChannelEligibility",
+      "CorporateEligibility",
+      "ChannelProductMapping",
+      "ChannelPublicationRule",
+      "ChannelPublicationStatus",
+      "CommissionRuleIntent",
+      "SettlementRuleIntent",
+      "ChannelContact",
+      "CorporateContact",
+      "ContactPerson",
+      "ContractEvidence",
+      "StatusHistory",
+      "ChannelStatusHistory"
+    ],
+    "searchReadModel": [
+      "渠道与企业客户",
+      "渠道摘要",
+      "企业客户摘要",
+      "协议摘要",
+      "适用商品/价格资格摘要",
+      "渠道发布规则摘要",
+      "佣金/结算规则意向",
+      "证据摘要",
+      "只读对象引用",
+      "协议资格",
+      "发布规则"
+    ],
+    "noRefillRuleZh": "场景包 12 只能读取场景包 2 的运营阻断摘要和场景包 3 的商品/价格摘要，不得要求用户重新填写上游已确认字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
   "commands": [
     {
       "commandId": "Dorm.ChannelCorporateProfileDraftStart",

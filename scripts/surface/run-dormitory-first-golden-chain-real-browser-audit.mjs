@@ -157,11 +157,26 @@ try {
       await capture(page, `${String(index + 4).padStart(2, "0")}-${expected.title}-ready`, `${expected.step} ${expected.title} ready`);
 
       if (index === 0) {
+        const forcedMissing = await prepareMissingRequiredField(page, expected);
+        addAssertion(
+          "validation.required_missing_field_prepared",
+          Boolean(forcedMissing?.id),
+          "失败路径必须确认当前步存在可验证的缺失必填字段，不能依赖旧的固定初始状态。",
+          forcedMissing
+        );
         const beforeConfirmCount = countConfirmWrites();
+        const beforeMissing = await readDomState(page);
         await click(page, "[data-submit-card]");
         await waitForHydrated(page);
         const missing = await readDomState(page);
-        addAssertion("validation.required_missing_blocks_submit", missing.text.includes("请先补齐必填项") || missing.text.includes("还需填写"), "字段缺失时必须显示失败态，且不得提交。", missing);
+        addAssertion(
+          "validation.required_missing_blocks_submit",
+          Boolean(forcedMissing?.id) &&
+            routeCardId(missing.cardId) === routeCardId(beforeMissing.cardId) &&
+            (missing.text.includes("请先补齐必填项") || missing.text.includes("还需填写")),
+          "字段缺失时必须停留当前步骤、显示失败态，且不得提交。",
+          { forcedMissing, beforeMissing, missing }
+        );
         addAssertion("validation.required_missing_no_confirm", countConfirmWrites() === beforeConfirmCount, "字段缺失失败态不得产生 Operations Confirm。", { beforeConfirmCount, afterConfirmCount: countConfirmWrites() });
         await capture(page, "04-required-missing-failure-state", "字段缺失失败态");
       }
@@ -315,6 +330,102 @@ async function fillRequiredOperationFields(page, step) {
     await waitForHydrated(page);
     if (changed === 0) break;
   }
+}
+
+async function prepareMissingRequiredField(page, step) {
+  const requiredFieldIds = requiredEditableFieldIds(step);
+  for (const fieldId of requiredFieldIds) {
+    const prepared = await prepareMissingRequiredFieldById(page, fieldId, step);
+    if (prepared?.id) return prepared;
+  }
+  return null;
+}
+
+function requiredEditableFieldIds(step) {
+  if (step?.workItemType === "Dorm.RoomSetupConfirm") {
+    return ["capacity", "bedCount", "floor", "roomNo"];
+  }
+  return [];
+}
+
+async function prepareMissingRequiredFieldById(page, fieldId, step) {
+  const aliases = fieldMissingAliases(fieldId);
+  const metadata = await page.evaluate((ids) => {
+    const idSet = new Set(ids);
+    const nodes = Array.from(document.querySelectorAll("[data-operation-field]"))
+      .filter((node) => idSet.has(node.dataset.operationField || ""));
+    const editable = nodes.find((node) => {
+      const tag = node.tagName.toLowerCase();
+      const type = (node.getAttribute("type") || "").toLowerCase();
+      const editableTextLike = (tag === "input" && !["checkbox", "radio", "hidden"].includes(type)) || tag === "textarea";
+      const visible = !!(node.offsetWidth || node.offsetHeight || node.getClientRects().length);
+      const readonly = node.hasAttribute("readonly") || node.getAttribute("aria-readonly") === "true";
+      return editableTextLike && visible && !readonly;
+    });
+    if (!editable) return null;
+    return {
+      id: editable.dataset.operationField || "",
+      tag: editable.tagName.toLowerCase(),
+      type: (editable.getAttribute("type") || "").toLowerCase(),
+      nodeCount: nodes.length
+    };
+  }, aliases);
+  if (!metadata?.id) return null;
+
+  const beforeCollected = await collectedOperationValuesFor(page, aliases);
+  if (!Object.values(beforeCollected).some((value) => String(value || "").trim())) {
+    await setFieldValue(page, metadata.id, valueForField({ id: metadata.id }, step));
+    await page.waitForTimeout(120);
+  }
+  const previousCollected = await collectedOperationValuesFor(page, aliases);
+  await setFieldValue(page, metadata.id, "");
+  await clearOperationFieldValues(page, aliases);
+  await page.waitForTimeout(180);
+  const afterCollected = await collectedOperationValuesFor(page, aliases);
+  const cleared = aliases.every((id) => !String(afterCollected[id] || "").trim());
+  if (!cleared) {
+    return null;
+  }
+  return {
+    id: metadata.id,
+    aliases,
+    previousCollected,
+    afterCollected,
+    mode: "cleared_current_business_value",
+    tag: metadata.tag,
+    type: metadata.type,
+    nodeCount: metadata.nodeCount
+  };
+}
+
+function fieldMissingAliases(fieldId) {
+  if (fieldId === "capacity" || fieldId === "bedCount") {
+    return ["capacity", "bedCount"];
+  }
+  return [fieldId];
+}
+
+async function collectedOperationValuesFor(page, fieldIds) {
+  return page.evaluate((ids) => {
+    const values = Object.fromEntries(ids.map((id) => [id, ""]));
+    for (const node of Array.from(document.querySelectorAll("[data-operation-field]"))) {
+      const id = node.dataset.operationField || "";
+      if (!ids.includes(id)) continue;
+      values[id] = node.value || "";
+    }
+    return values;
+  }, fieldIds);
+}
+
+async function clearOperationFieldValues(page, fieldIds) {
+  await page.evaluate((ids) => {
+    for (const node of Array.from(document.querySelectorAll("[data-operation-field]"))) {
+      if (!ids.includes(node.dataset.operationField || "")) continue;
+      node.value = "";
+      node.dispatchEvent(new Event("input", { bubbles: true }));
+      node.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+  }, fieldIds);
 }
 
 async function ensureScenario1StepValues(page, index, step) {

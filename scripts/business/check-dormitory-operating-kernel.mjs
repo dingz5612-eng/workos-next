@@ -86,11 +86,11 @@ const kernel = readJson(kernelPath);
 const registry = readJson(definitionPath);
 const fields = readJson(fieldPath);
 const states = readJson(statePath);
-const definitionsByType = new Map((registry.definitions ?? []).map((item) => [item.workItemType, item]));
 const fieldsByObject = new Map((fields.objects ?? []).map((item) => [item.objectId, item]));
 const workflowsByType = new Map((states.workflows ?? []).map((item) => [item.workItemType, item]));
 const workItems = kernel.workItems ?? [];
 const workItemsByType = new Map(workItems.map((item) => [item.workItemType, item]));
+const definitionsByType = canonicalDefinitionsByType(registry.definitions ?? [], workItemsByType);
 
 requireValue(kernel.version === "oam.domain-operating-kernel.dormitory.v2", "kernel.version", "宿舍内核必须升级为 v2。");
 requireValue(kernel.status === "authoritative", "kernel.status", "宿舍内核必须是 authoritative。");
@@ -198,6 +198,18 @@ function requireValue(condition, id, message, extra = {}) {
 
 function hasValue(value) {
   return value !== undefined && value !== null && value !== "" && (!Array.isArray(value) || value.length > 0);
+}
+
+function canonicalDefinitionsByType(definitions, kernelWorkItemsByType) {
+  const byType = new Map();
+  for (const definition of definitions) {
+    const kernelWorkItem = kernelWorkItemsByType.get(definition.workItemType);
+    const current = byType.get(definition.workItemType);
+    if (!current || definition.definitionId === kernelWorkItem?.definitionId) {
+      byType.set(definition.workItemType, definition);
+    }
+  }
+  return byType;
 }
 
 function requireMigrationRefs(item, label) {

@@ -12,8 +12,8 @@ describe("Stage B Operation Panel deep link contract", () => {
     expect(text).not.toMatch(/\b(OperationPanelView|TrustedConfirmSheet|ActionResult|workItemId|caseId|payloadHash|commandSubmissionId|operationsPrepare|operationsConfirm)\b/);
     expect(html).toContain('data-surface="system-validation-summary"');
     expect(text).toContain("提交前检查");
-    expect(text).toContain("提交说明");
-    expect(text).toContain("材料");
+    expect(text).toContain("可信确认");
+    expect(text).toContain("可信证据");
     expect(text).not.toContain("系统记录");
     expect(text).not.toContain("提交证据");
   });

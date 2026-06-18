@@ -58,6 +58,7 @@ public static class ProjectionSeed
             AcceptedCapabilityRuntimeProjection.Workspace(),
             DormitoryScenario2RuntimeProjection.Workspace()
         }
+        .Concat(Dormitory13ScenarioRuntimeProjection.Workspaces())
         .ToList();
 
     private static WorkspaceProjection Workspace(WorkspaceSeed seed)

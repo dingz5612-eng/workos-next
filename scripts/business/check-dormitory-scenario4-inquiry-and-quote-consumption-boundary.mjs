@@ -31,6 +31,10 @@ const commandIds = [
   "Dorm.RequoteCreate",
   "Dorm.ReservationPreparationStart"
 ];
+const forbiddenActionUserInput = [
+  "saveDraft",
+  "backToEdit"
+];
 
 for (const [key, file] of Object.entries(generatedPaths)) {
   const document = docs[key];
@@ -47,6 +51,8 @@ if (docs.runtimeMirror.consumer !== "runtime") fail("runtime mirror must declare
 if (JSON.stringify(docs.mobileMirror.fields?.forbiddenUserInputFields ?? []) !== JSON.stringify(docs.runtimeMirror.fields?.forbiddenUserInputFields ?? [])) {
   fail("surface and runtime mirrors must consume same forbidden internal fields.");
 }
+assertNoActionUserInputs(docs.mobileMirror, "mobile mirror");
+assertNoActionUserInputs(docs.runtimeMirror, "runtime mirror");
 for (const internal of ["inquiryId", "customerId", "quoteId", "quoteVersionId", "productId", "ratePlanId", "roomId", "bedId", "stableRef", "projectionVersion", "digest", "domainEventId"]) {
   if (!(docs.mobileMirror.fields?.forbiddenUserInputFields ?? []).includes(internal)) fail(`mobile mirror missing forbidden field ${internal}.`);
   if ((docs.mobileMirror.fields?.userFilled ?? []).includes(internal) || (docs.mobileMirror.fields?.userSelected ?? []).includes(internal)) {
@@ -157,6 +163,18 @@ function readText(file) {
 
 function fileDigest(file) {
   return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(path.join(root, file))).digest("hex")}`;
+}
+
+function assertNoActionUserInputs(document, label) {
+  for (const action of forbiddenActionUserInput) {
+    for (const [stepIndex, step] of (document?.steps ?? []).entries()) {
+      if ((step.userFilledFields ?? []).includes(action)) fail(`${label} step ${stepIndex + 1} must not expose action ${action} as user-filled input.`);
+      if ((step.userSelectedFields ?? []).includes(action)) fail(`${label} step ${stepIndex + 1} must not expose action ${action} as user-selected input.`);
+      if ((step.fields ?? []).some((field) => (field.fieldId ?? field.id) === action)) fail(`${label} step ${stepIndex + 1} must not render action ${action} as a field.`);
+    }
+    if ((document?.fields?.userFilled ?? []).includes(action)) fail(`${label} must not expose action ${action} as global user-filled input.`);
+    if ((document?.fields?.userSelected ?? []).includes(action)) fail(`${label} must not expose action ${action} as global user-selected input.`);
+  }
 }
 
 function fail(message) {

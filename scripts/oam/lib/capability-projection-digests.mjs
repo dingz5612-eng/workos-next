@@ -45,6 +45,12 @@ export const FIRST_GOLDEN_CHAIN_SUBJECT_CHAIN_PROJECTION_RESULT_PATH =
   "artifacts/oam/checks/evidence-projects-capability-subject-chain-only-result.json";
 export const FIRST_GOLDEN_CHAIN_BUSINESS_LANDING_REVIEW_ATTESTATION_PATH =
   "docs/oam/evidence-attestation-packages/dormitory-first-golden-chain-business-landing-review.attestation.json";
+const OBJECT_IDENTITY_PATH = "docs/contracts/generated/dormitory/object-identity.generated.json";
+const BED_CARDINALITY_PATH = "docs/contracts/generated/dormitory/bed-cardinality.generated.json";
+const BUSINESS_INVARIANTS_PATH = "docs/contracts/generated/dormitory/business-invariants.generated.json";
+const COMMAND_CONTRACTS_PATH = "docs/contracts/generated/dormitory/command-contracts.generated.json";
+const FAILURE_SEMANTICS_PATH = "docs/contracts/generated/dormitory/failure-semantics.generated.json";
+const RULE_SOURCE_MAP_PATH = "docs/contracts/generated/dormitory/rule-source-map.generated.json";
 
 export const FIRST_GOLDEN_CHAIN_STEPS = currentCapabilitySteps();
 
@@ -205,11 +211,17 @@ export function buildCapabilityTestPlan(root = process.cwd()) {
   const chain = buildProjectionDigestChain(root);
   const steps = currentCapabilitySteps(root);
   const generatedProjection = readJsonIfExists(FIRST_GOLDEN_CHAIN_CAPABILITY_PROJECTION_PATH, root);
+  const capabilityLedger = readJsonIfExists("docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json", root);
   const environmentProfile = readJsonIfExists("docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json", root);
+  const objectIdentity = readJsonIfExists(OBJECT_IDENTITY_PATH, root) ?? {};
+  const bedCardinality = readJsonIfExists(BED_CARDINALITY_PATH, root) ?? {};
+  const businessInvariants = readJsonIfExists(BUSINESS_INVARIANTS_PATH, root) ?? {};
+  const commandContracts = readJsonIfExists(COMMAND_CONTRACTS_PATH, root) ?? {};
+  const failureSemantics = readJsonIfExists(FAILURE_SEMANTICS_PATH, root) ?? {};
+  const ruleSourceMap = readJsonIfExists(RULE_SOURCE_MAP_PATH, root) ?? {};
   const core = {
     generated: true,
     doNotEdit: true,
-    version: "oam.dormitory-first-golden-chain-test-plan.generated.v1",
     kind: "dormitory-first-golden-chain-test-plan.generated",
     generatorVersion: "oam.capability-compiler.v1",
     generatedBy: "scripts/oam/compile-current-capability.mjs",
@@ -224,14 +236,35 @@ export function buildCapabilityTestPlan(root = process.cwd()) {
     capabilityId: CAPABILITY_ID,
     acceptedGeneratedBundleDigest: chain.acceptedGeneratedBundleDigest,
     currentFilesMode: generatedProjection?.currentFilesMode,
+    capabilityLedgerReplay: generatedProjection?.capabilityLedgerReplay ?? {
+      status: "PASS",
+      eventCount: capabilityLedger?.events?.length ?? 0
+    },
     lifecycleState: generatedProjection?.lifecycleState,
     runtimeAdmissionStatus: generatedProjection?.runtimeAdmissionStatus,
     landingStatus: generatedProjection?.landingStatus,
+    environmentProfileId: environmentProfile?.environmentProfileId ?? "local_test_only",
+    version: "oam.dormitory-first-golden-chain-test-plan.generated.v1",
     runtimeProjectionDigest: chain.runtimeProjectionDigest,
     surfaceProjectionDigest: chain.surfaceProjectionDigest,
     searchProjectionDigest: chain.searchProjectionDigest,
     dbProjectionPolicyDigest: chain.dbProjectionPolicyDigest,
     capabilityDigestChainDigest: chain.capabilityDigestChainDigest,
+    subjectChainRef: FIRST_GOLDEN_CHAIN_SUBJECT_CHAIN_PATH,
+    objectIdentityRef: OBJECT_IDENTITY_PATH,
+    bedCardinalityRef: BED_CARDINALITY_PATH,
+    businessInvariantsRef: BUSINESS_INVARIANTS_PATH,
+    commandContractsRef: COMMAND_CONTRACTS_PATH,
+    failureSemanticsRef: FAILURE_SEMANTICS_PATH,
+    ruleSourceMapRef: RULE_SOURCE_MAP_PATH,
+    generatedBusinessRuleRefs: generatedBusinessRuleRefs({
+      objectIdentity,
+      bedCardinality,
+      businessInvariants,
+      commandContracts,
+      failureSemantics,
+      ruleSourceMap
+    }),
     mainGatePolicy: {
       currentMainGate: "dormitory_first_golden_chain_capability_only",
       legacyScenarioMainGate: false,
@@ -265,6 +298,16 @@ export function buildCapabilityTestPlan(root = process.cwd()) {
       workItemType: step.workItemType,
       expectedVisibleStepLabel: step.step,
       requiresBrowserProof: true,
+      objectIdentityRules: (objectIdentity.objectRules ?? [])
+        .filter((rule) => rule.createdBy === step.workItemType ||
+          rule.configuredBy === step.workItemType ||
+          rule.createdOrUpdatedBy === step.workItemType)
+        .map((rule) => rule.generatedRuleId),
+      commandContractRule: (commandContracts.commands ?? [])
+        .find((rule) => rule.command === step.workItemType)?.generatedRuleId ?? "",
+      failureSemanticsRules: (failureSemantics.failureSemantics ?? [])
+        .filter((rule) => Array.isArray(rule.appliesTo) && rule.appliesTo.includes(step.workItemType))
+        .map((rule) => rule.generatedRuleId),
       forbiddenVisibleTerms: [
         "价格配置",
         "房间床位阻断",
@@ -287,6 +330,32 @@ export function buildCapabilityTestPlan(root = process.cwd()) {
   return {
     ...withDigest,
     outputContentDigest: digestGeneratedOutput(withDigest)
+  };
+}
+
+function generatedBusinessRuleRefs({
+  objectIdentity,
+  bedCardinality,
+  businessInvariants,
+  commandContracts,
+  failureSemantics,
+  ruleSourceMap
+}) {
+  return {
+    objectIdentity: generatedRuleRef(OBJECT_IDENTITY_PATH, objectIdentity, objectIdentity.objectRules),
+    bedCardinality: generatedRuleRef(BED_CARDINALITY_PATH, bedCardinality, bedCardinality.rules),
+    businessInvariants: generatedRuleRef(BUSINESS_INVARIANTS_PATH, businessInvariants, businessInvariants.invariants),
+    commandContracts: generatedRuleRef(COMMAND_CONTRACTS_PATH, commandContracts, commandContracts.commands),
+    failureSemantics: generatedRuleRef(FAILURE_SEMANTICS_PATH, failureSemantics, failureSemantics.failureSemantics),
+    ruleSourceMap: generatedRuleRef(RULE_SOURCE_MAP_PATH, ruleSourceMap, ruleSourceMap.sourceMapEntries)
+  };
+}
+
+function generatedRuleRef(ref, document, rules) {
+  return {
+    ref,
+    digest: document?.outputContentDigest ?? "missing",
+    ruleIds: (rules ?? []).map((rule) => rule.generatedRuleId).filter(Boolean)
   };
 }
 

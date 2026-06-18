@@ -326,14 +326,14 @@
         "人数",
         "报价单号",
         "报价有效期",
-        "客户选择意向"
+        "客户选择意向",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要"
       ],
       "userFilledFields": [],
-      "userSelectedFields": [
-        "continueReservation",
-        "returnToRequote",
-        "closeReservationPreparation"
-      ],
+      "userSelectedFields": [],
       "userUploadedOrBoundEvidence": [
         "报价确认证据",
         "客户意向证据"
@@ -353,6 +353,109 @@
         "BookingRequest",
         "ReservationEvidence",
         "ReservationStatusHistory"
+      ],
+      "primaryBusinessObject": "BookingRequest",
+      "requiredReadContext": [
+        "客户姓名",
+        "联系方式",
+        "入住日期",
+        "离店日期",
+        "人数",
+        "报价单号",
+        "报价有效期",
+        "客户选择意向",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本历史"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "预订/库存锁定",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格方案摘要",
+          "价格版本历史"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "进入预订确认",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "continueReservation",
+          "labelZh": "continueReservation",
+          "labelKey": "scenario5.action.continueReservation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.enter-reservation-preparation.continueReservation.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "returnToRequote",
+          "labelZh": "returnToRequote",
+          "labelKey": "scenario5.action.returnToRequote.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.enter-reservation-preparation.returnToRequote.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "closeReservationPreparation",
+          "labelZh": "closeReservationPreparation",
+          "labelKey": "scenario5.action.closeReservationPreparation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.enter-reservation-preparation.closeReservationPreparation.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "房间/床位运营状态摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格版本历史",
+          "询价摘要",
+          "客户需求摘要",
+          "报价单摘要",
+          "报价版本"
+        ],
+        "to": [
+          "BookingRequest",
+          "ReservationEvidence",
+          "ReservationStatusHistory",
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照"
+        ],
+        "noRefillRuleZh": "场景包 5 只能读取场景包 1、2、3、4 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品、价格或报价字段。"
+      },
+      "searchReadModel": [
+        "预订与库存锁定",
+        "进入预订确认",
+        "发起预订准备",
+        "BookingRequest",
+        "客户姓名",
+        "联系方式",
+        "入住日期",
+        "离店日期",
+        "人数",
+        "报价单号",
+        "报价有效期",
+        "客户选择意向",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要"
       ]
     },
     {
@@ -365,7 +468,15 @@
         "可订房间/床位",
         "运营状态",
         "价格快照",
-        "不可订原因"
+        "不可订原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本历史",
+        "预订确认摘要",
+        "预订号"
       ],
       "userFilledFields": [],
       "userSelectedFields": [
@@ -394,6 +505,88 @@
       "outputs": [
         "AvailabilityCheck",
         "AvailabilitySnapshot"
+      ],
+      "primaryBusinessObject": "BookingRequest",
+      "requiredReadContext": [
+        "可订房间/床位",
+        "运营状态",
+        "价格快照",
+        "不可订原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本历史",
+        "预订确认摘要",
+        "预订号",
+        "询价摘要",
+        "客户需求摘要"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [
+        "resourceChoice",
+        "roomOrBedChoice"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "预订/库存锁定",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格快照",
+          "价格方案摘要",
+          "价格版本历史"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "复核可订资源",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "房间/床位运营状态摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格版本历史",
+          "询价摘要",
+          "客户需求摘要",
+          "报价单摘要",
+          "报价版本"
+        ],
+        "to": [
+          "AvailabilityCheck",
+          "AvailabilitySnapshot",
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "库存锁定历史"
+        ],
+        "noRefillRuleZh": "场景包 5 只能读取场景包 1、2、3、4 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品、价格或报价字段。"
+      },
+      "searchReadModel": [
+        "预订与库存锁定",
+        "复核可订资源",
+        "可订资源复核",
+        "BookingRequest",
+        "可订房间/床位",
+        "运营状态",
+        "价格快照",
+        "不可订原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本历史",
+        "预订确认摘要",
+        "预订号"
       ]
     },
     {
@@ -406,12 +599,19 @@
         "资源摘要",
         "日期范围",
         "当前可锁定状态",
-        "不可提交原因"
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本历史",
+        "预订确认摘要",
+        "预订号"
       ],
       "userFilledFields": [],
       "userSelectedFields": [
-        "holdDurationOption",
-        "lockInventory"
+        "holdDurationOption"
       ],
       "userUploadedOrBoundEvidence": [
         "库存锁定证据"
@@ -437,6 +637,95 @@
         "InventoryHold",
         "ReservationEvidence",
         "ReservationStatusHistory"
+      ],
+      "primaryBusinessObject": "BookingRequest",
+      "requiredReadContext": [
+        "资源摘要",
+        "日期范围",
+        "当前可锁定状态",
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本历史",
+        "预订确认摘要",
+        "预订号",
+        "询价摘要",
+        "客户需求摘要"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [
+        "holdDurationOption"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "预订/库存锁定",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格方案摘要",
+          "价格版本历史"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "锁定库存",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "lockInventory",
+          "labelZh": "lockInventory",
+          "labelKey": "scenario5.action.lockInventory.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.create-inventory-hold.lockInventory.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "房间/床位运营状态摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格版本历史",
+          "询价摘要",
+          "客户需求摘要",
+          "报价单摘要",
+          "报价版本"
+        ],
+        "to": [
+          "InventoryHold",
+          "ReservationEvidence",
+          "ReservationStatusHistory",
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照"
+        ],
+        "noRefillRuleZh": "场景包 5 只能读取场景包 1、2、3、4 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品、价格或报价字段。"
+      },
+      "searchReadModel": [
+        "预订与库存锁定",
+        "锁定库存",
+        "创建库存锁定",
+        "BookingRequest",
+        "资源摘要",
+        "日期范围",
+        "当前可锁定状态",
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本历史",
+        "预订确认摘要",
+        "预订号"
       ]
     },
     {
@@ -453,18 +742,18 @@
         "价格明细",
         "报价来源",
         "锁定截止时间",
-        "预订规则摘要"
+        "预订规则摘要",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要"
       ],
       "userFilledFields": [
         "reservationNotes",
         "customerConfirmationMethod",
         "specialRequestsSupplement"
       ],
-      "userSelectedFields": [
-        "confirmReservation",
-        "backToEdit",
-        "releaseHold"
-      ],
+      "userSelectedFields": [],
       "userUploadedOrBoundEvidence": [
         "客户确认证据",
         "预订规则证据"
@@ -481,6 +770,106 @@
         "ReservationPolicySnapshot",
         "ReservationPriceSnapshot",
         "ReservationEvidence"
+      ],
+      "primaryBusinessObject": "BookingRequest",
+      "requiredReadContext": [
+        "客户信息",
+        "入住/离店日期",
+        "人数",
+        "房间/床位",
+        "价格明细",
+        "报价来源",
+        "锁定截止时间",
+        "预订规则摘要",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本历史"
+      ],
+      "editableInputs": [
+        "reservationNotes",
+        "customerConfirmationMethod",
+        "specialRequestsSupplement"
+      ],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "预订/库存锁定",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格明细",
+          "价格方案摘要",
+          "价格版本历史"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "确认预订信息",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "confirmReservation",
+          "labelZh": "confirmReservation",
+          "labelKey": "scenario5.action.confirmReservation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.confirm-reservation-information.confirmReservation.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "releaseHold",
+          "labelZh": "releaseHold",
+          "labelKey": "scenario5.action.releaseHold.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.confirm-reservation-information.releaseHold.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "房间/床位运营状态摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格版本历史",
+          "询价摘要",
+          "客户需求摘要",
+          "报价单摘要",
+          "报价版本"
+        ],
+        "to": [
+          "ReservationPolicySnapshot",
+          "ReservationPriceSnapshot",
+          "ReservationEvidence",
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照"
+        ],
+        "noRefillRuleZh": "场景包 5 只能读取场景包 1、2、3、4 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品、价格或报价字段。"
+      },
+      "searchReadModel": [
+        "预订与库存锁定",
+        "确认预订信息",
+        "BookingRequest",
+        "客户信息",
+        "入住/离店日期",
+        "人数",
+        "房间/床位",
+        "价格明细",
+        "报价来源",
+        "锁定截止时间",
+        "预订规则摘要",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "ReservationPolicySnapshot"
       ]
     },
     {
@@ -494,12 +883,17 @@
         "资源摘要",
         "价格快照",
         "锁定截止时间",
-        "不可提交原因"
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本历史",
+        "预订确认摘要"
       ],
       "userFilledFields": [],
-      "userSelectedFields": [
-        "confirmReservation"
-      ],
+      "userSelectedFields": [],
       "userUploadedOrBoundEvidence": [
         "预订确认证据"
       ],
@@ -534,6 +928,94 @@
         "ReservationResourceBinding",
         "ReservationPriceSnapshot",
         "ReservationConfirmation"
+      ],
+      "primaryBusinessObject": "BookingRequest",
+      "requiredReadContext": [
+        "客户信息",
+        "资源摘要",
+        "价格快照",
+        "锁定截止时间",
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本历史",
+        "预订确认摘要",
+        "询价摘要",
+        "客户需求摘要"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "预订/库存锁定",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格快照",
+          "价格方案摘要",
+          "价格版本历史"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "生成预订",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "confirmReservation",
+          "labelZh": "confirmReservation",
+          "labelKey": "scenario5.action.confirmReservation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.confirm-reservation.confirmReservation.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "房间/床位运营状态摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格版本历史",
+          "询价摘要",
+          "客户需求摘要",
+          "报价单摘要",
+          "报价版本"
+        ],
+        "to": [
+          "Reservation",
+          "ReservationGuest",
+          "ReservationResourceBinding",
+          "ReservationPriceSnapshot",
+          "ReservationConfirmation",
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数"
+        ],
+        "noRefillRuleZh": "场景包 5 只能读取场景包 1、2、3、4 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品、价格或报价字段。"
+      },
+      "searchReadModel": [
+        "预订与库存锁定",
+        "生成预订",
+        "确认预订",
+        "BookingRequest",
+        "客户信息",
+        "资源摘要",
+        "价格快照",
+        "锁定截止时间",
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本历史",
+        "预订确认摘要"
       ]
     },
     {
@@ -549,13 +1031,15 @@
         "房间/床位",
         "价格摘要",
         "预订状态",
-        "下一步进入入住办理准备"
+        "下一步进入入住办理准备",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要"
       ],
       "userFilledFields": [],
-      "userSelectedFields": [
-        "viewReservation",
-        "startCheckInPreparation"
-      ],
+      "userSelectedFields": [],
       "userUploadedOrBoundEvidence": [
         "预订结果证据"
       ],
@@ -572,6 +1056,102 @@
         "预订确认摘要",
         "预订号",
         "只读对象引用"
+      ],
+      "primaryBusinessObject": "BookingRequest",
+      "requiredReadContext": [
+        "预订号",
+        "客户",
+        "日期",
+        "房间/床位",
+        "价格摘要",
+        "预订状态",
+        "下一步进入入住办理准备",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本历史",
+        "询价摘要"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "预订/库存锁定",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格摘要",
+          "价格方案摘要",
+          "价格版本历史"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "预订结果与下游准备",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "viewReservation",
+          "labelZh": "viewReservation",
+          "labelKey": "scenario5.action.viewReservation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.reservation-result-and-checkin-preparation.viewReservation.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "startCheckInPreparation",
+          "labelZh": "startCheckInPreparation",
+          "labelKey": "scenario5.action.startCheckInPreparation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.reservation-result-and-checkin-preparation.startCheckInPreparation.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "房间/床位运营状态摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格版本历史",
+          "询价摘要",
+          "客户需求摘要",
+          "报价单摘要",
+          "报价版本"
+        ],
+        "to": [
+          "预订确认摘要",
+          "预订号",
+          "只读对象引用",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "库存锁定历史",
+          "预订状态"
+        ],
+        "noRefillRuleZh": "场景包 5 只能读取场景包 1、2、3、4 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品、价格或报价字段。"
+      },
+      "searchReadModel": [
+        "预订与库存锁定",
+        "预订结果与下游准备",
+        "预订摘要输出",
+        "BookingRequest",
+        "预订号",
+        "客户",
+        "日期",
+        "房间/床位",
+        "价格摘要",
+        "预订状态",
+        "下一步进入入住办理准备",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要"
       ]
     }
   ],
@@ -600,18 +1180,9 @@
       "specialRequestsSupplement"
     ],
     "userSelected": [
-      "continueReservation",
-      "returnToRequote",
-      "closeReservationPreparation",
       "resourceChoice",
       "roomOrBedChoice",
-      "holdDurationOption",
-      "lockInventory",
-      "confirmReservation",
-      "backToEdit",
-      "releaseHold",
-      "viewReservation",
-      "startCheckInPreparation"
+      "holdDurationOption"
     ],
     "userUploadedOrBoundEvidence": [
       "报价确认证据",
@@ -704,7 +1275,848 @@
       "projectionVersion",
       "digest",
       "domainEventId"
-    ]
+    ],
+    "fieldAuthority": {
+      "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#fieldAuthorityModel",
+      "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+      "businessInput": [
+        {
+          "fieldId": "reservationNotes",
+          "labelZh": "reservationNotes",
+          "control": "textarea",
+          "labelKey": "scenario5.field.reservationNotes.label",
+          "helpKey": "scenario5.field.reservationNotes.help",
+          "errorKey": "scenario5.field.reservationNotes.error"
+        },
+        {
+          "fieldId": "customerConfirmationMethod",
+          "labelZh": "customerConfirmationMethod",
+          "control": "text",
+          "labelKey": "scenario5.field.customerConfirmationMethod.label",
+          "helpKey": "scenario5.field.customerConfirmationMethod.help",
+          "errorKey": "scenario5.field.customerConfirmationMethod.error"
+        },
+        {
+          "fieldId": "specialRequestsSupplement",
+          "labelZh": "specialRequestsSupplement",
+          "control": "text",
+          "labelKey": "scenario5.field.specialRequestsSupplement.label",
+          "helpKey": "scenario5.field.specialRequestsSupplement.help",
+          "errorKey": "scenario5.field.specialRequestsSupplement.error"
+        }
+      ],
+      "businessSelect": [
+        {
+          "fieldId": "resourceChoice",
+          "labelZh": "resourceChoice",
+          "control": "searchable-select",
+          "labelKey": "scenario5.field.resourceChoice.label",
+          "helpKey": "scenario5.field.resourceChoice.help",
+          "errorKey": "scenario5.field.resourceChoice.error",
+          "optionSet": "option.resourceChoice",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "roomOrBedChoice",
+          "labelZh": "roomOrBedChoice",
+          "control": "searchable-select",
+          "labelKey": "scenario5.field.roomOrBedChoice.label",
+          "helpKey": "scenario5.field.roomOrBedChoice.help",
+          "errorKey": "scenario5.field.roomOrBedChoice.error",
+          "optionSet": "option.roomOrBedChoice",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "holdDurationOption",
+          "labelZh": "holdDurationOption",
+          "control": "select",
+          "labelKey": "scenario5.field.holdDurationOption.label",
+          "helpKey": "scenario5.field.holdDurationOption.help",
+          "errorKey": "scenario5.field.holdDurationOption.error",
+          "optionSet": "option.holdDurationOption",
+          "submitValueSource": "stableValue"
+        }
+      ],
+      "systemDerived": [
+        {
+          "fieldId": "dateRangeValid",
+          "labelZh": "dateRangeValid",
+          "labelKey": "scenario5.field.dateRangeValid.label",
+          "helpKey": "scenario5.field.dateRangeValid.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "guestCountValid",
+          "labelZh": "guestCountValid",
+          "labelKey": "scenario5.field.guestCountValid.label",
+          "helpKey": "scenario5.field.guestCountValid.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "quoteStillValid",
+          "labelZh": "quoteStillValid",
+          "labelKey": "scenario5.field.quoteStillValid.label",
+          "helpKey": "scenario5.field.quoteStillValid.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "priceSnapshotMatched",
+          "labelZh": "priceSnapshotMatched",
+          "labelKey": "scenario5.field.priceSnapshotMatched.label",
+          "helpKey": "scenario5.field.priceSnapshotMatched.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "resourceAvailableFlag",
+          "labelZh": "resourceAvailableFlag",
+          "labelKey": "scenario5.field.resourceAvailableFlag.label",
+          "helpKey": "scenario5.field.resourceAvailableFlag.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "holdExpiredFlag",
+          "labelZh": "holdExpiredFlag",
+          "labelKey": "scenario5.field.holdExpiredFlag.label",
+          "helpKey": "scenario5.field.holdExpiredFlag.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "holdRemainingMinutes",
+          "labelZh": "holdRemainingMinutes",
+          "labelKey": "scenario5.field.holdRemainingMinutes.label",
+          "helpKey": "scenario5.field.holdRemainingMinutes.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "cannotSubmitReasons",
+          "labelZh": "cannotSubmitReasons",
+          "labelKey": "scenario5.field.cannotSubmitReasons.label",
+          "helpKey": "scenario5.field.cannotSubmitReasons.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "legalNextActions",
+          "labelZh": "legalNextActions",
+          "labelKey": "scenario5.field.legalNextActions.label",
+          "helpKey": "scenario5.field.legalNextActions.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        }
+      ],
+      "readOnlySummary": [
+        {
+          "fieldId": "customerName",
+          "labelZh": "客户姓名",
+          "labelKey": "scenario5.field.customerName.label",
+          "helpKey": "scenario5.field.customerName.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "contactPhone",
+          "labelZh": "联系电话",
+          "labelKey": "scenario5.field.contactPhone.label",
+          "helpKey": "scenario5.field.contactPhone.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "checkInDate",
+          "labelZh": "入住日期",
+          "labelKey": "scenario5.field.checkInDate.label",
+          "helpKey": "scenario5.field.checkInDate.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "checkOutDate",
+          "labelZh": "离店日期",
+          "labelKey": "scenario5.field.checkOutDate.label",
+          "helpKey": "scenario5.field.checkOutDate.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "guestCount",
+          "labelZh": "人数",
+          "labelKey": "scenario5.field.guestCount.label",
+          "helpKey": "scenario5.field.guestCount.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "quoteNo",
+          "labelZh": "报价单号",
+          "labelKey": "scenario5.field.quoteNo.label",
+          "helpKey": "scenario5.field.quoteNo.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "quoteValidity",
+          "labelZh": "quoteValidity",
+          "labelKey": "scenario5.field.quoteValidity.label",
+          "helpKey": "scenario5.field.quoteValidity.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "customerIntent",
+          "labelZh": "customerIntent",
+          "labelKey": "scenario5.field.customerIntent.label",
+          "helpKey": "scenario5.field.customerIntent.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "roomSummary",
+          "labelZh": "roomSummary",
+          "labelKey": "scenario5.field.roomSummary.label",
+          "helpKey": "scenario5.field.roomSummary.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "bedSetSummary",
+          "labelZh": "bedSetSummary",
+          "labelKey": "scenario5.field.bedSetSummary.label",
+          "helpKey": "scenario5.field.bedSetSummary.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "operationStatus",
+          "labelZh": "operationStatus",
+          "labelKey": "scenario5.field.operationStatus.label",
+          "helpKey": "scenario5.field.operationStatus.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "productSummary",
+          "labelZh": "productSummary",
+          "labelKey": "scenario5.field.productSummary.label",
+          "helpKey": "scenario5.field.productSummary.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "priceVersionHistory",
+          "labelZh": "priceVersionHistory",
+          "labelKey": "scenario5.field.priceVersionHistory.label",
+          "helpKey": "scenario5.field.priceVersionHistory.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "quotePriceSnapshot",
+          "labelZh": "quotePriceSnapshot",
+          "labelKey": "scenario5.field.quotePriceSnapshot.label",
+          "helpKey": "scenario5.field.quotePriceSnapshot.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "evidenceSummary",
+          "labelZh": "证据摘要",
+          "labelKey": "scenario5.field.evidenceSummary.label",
+          "helpKey": "scenario5.field.evidenceSummary.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-9a992a59",
+          "labelZh": "房间摘要",
+          "labelKey": "scenario5.field.v-9a992a59.label",
+          "helpKey": "scenario5.field.v-9a992a59.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-108420f7",
+          "labelZh": "床位组摘要",
+          "labelKey": "scenario5.field.v-108420f7.label",
+          "helpKey": "scenario5.field.v-108420f7.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-5ac95c4f",
+          "labelZh": "房间/床位运营状态摘要",
+          "labelKey": "scenario5.field.v-5ac95c4f.label",
+          "helpKey": "scenario5.field.v-5ac95c4f.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-b39788c3",
+          "labelZh": "商品摘要",
+          "labelKey": "scenario5.field.v-b39788c3.label",
+          "helpKey": "scenario5.field.v-b39788c3.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-63d001f4",
+          "labelZh": "价格方案摘要",
+          "labelKey": "scenario5.field.v-63d001f4.label",
+          "helpKey": "scenario5.field.v-63d001f4.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-79def182",
+          "labelZh": "价格版本历史",
+          "labelKey": "scenario5.field.v-79def182.label",
+          "helpKey": "scenario5.field.v-79def182.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-67b6cf51",
+          "labelZh": "询价摘要",
+          "labelKey": "scenario5.field.v-67b6cf51.label",
+          "helpKey": "scenario5.field.v-67b6cf51.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-86c2c50b",
+          "labelZh": "客户需求摘要",
+          "labelKey": "scenario5.field.v-86c2c50b.label",
+          "helpKey": "scenario5.field.v-86c2c50b.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-09c43e0b",
+          "labelZh": "报价单摘要",
+          "labelKey": "scenario5.field.v-09c43e0b.label",
+          "helpKey": "scenario5.field.v-09c43e0b.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-070dd6b1",
+          "labelZh": "报价版本",
+          "labelKey": "scenario5.field.v-070dd6b1.label",
+          "helpKey": "scenario5.field.v-070dd6b1.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "priceSnapshot",
+          "labelZh": "价格快照",
+          "labelKey": "scenario5.field.priceSnapshot.label",
+          "helpKey": "scenario5.field.priceSnapshot.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-39d21ab1",
+          "labelZh": "报价有效期",
+          "labelKey": "scenario5.field.v-39d21ab1.label",
+          "helpKey": "scenario5.field.v-39d21ab1.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-40d7a4d8",
+          "labelZh": "客户选择意向",
+          "labelKey": "scenario5.field.v-40d7a4d8.label",
+          "helpKey": "scenario5.field.v-40d7a4d8.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-f71ae921",
+          "labelZh": "证据摘要",
+          "labelKey": "scenario5.field.v-f71ae921.label",
+          "helpKey": "scenario5.field.v-f71ae921.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-fe5f4dd8",
+          "labelZh": "状态历史",
+          "labelKey": "scenario5.field.v-fe5f4dd8.label",
+          "helpKey": "scenario5.field.v-fe5f4dd8.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-cd66b0d5",
+          "labelZh": "只读对象引用",
+          "labelKey": "scenario5.field.v-cd66b0d5.label",
+          "helpKey": "scenario5.field.v-cd66b0d5.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-4e136b60",
+          "labelZh": "报价单",
+          "labelKey": "scenario5.field.v-4e136b60.label",
+          "helpKey": "scenario5.field.v-4e136b60.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        },
+        {
+          "fieldId": "v-3dfc2781",
+          "labelZh": "有效期",
+          "labelKey": "scenario5.field.v-3dfc2781.label",
+          "helpKey": "scenario5.field.v-3dfc2781.help",
+          "sourceScenario": "报价单 / 报价版本 / 价格快照 / 有效期"
+        }
+      ],
+      "evidenceBinding": [
+        {
+          "fieldId": "evidence.v-695f695c",
+          "labelZh": "报价确认证据",
+          "labelKey": "scenario5.evidence.evidence.v-695f695c.label",
+          "helpKey": "scenario5.evidence.evidence.v-695f695c.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-dcfbd539",
+          "labelZh": "客户意向证据",
+          "labelKey": "scenario5.evidence.evidence.v-dcfbd539.label",
+          "helpKey": "scenario5.evidence.evidence.v-dcfbd539.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-83f9e832",
+          "labelZh": "可订复核证据",
+          "labelKey": "scenario5.evidence.evidence.v-83f9e832.label",
+          "helpKey": "scenario5.evidence.evidence.v-83f9e832.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-6d55a506",
+          "labelZh": "库存锁定证据",
+          "labelKey": "scenario5.evidence.evidence.v-6d55a506.label",
+          "helpKey": "scenario5.evidence.evidence.v-6d55a506.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-4c758d03",
+          "labelZh": "客户确认证据",
+          "labelKey": "scenario5.evidence.evidence.v-4c758d03.label",
+          "helpKey": "scenario5.evidence.evidence.v-4c758d03.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-61801853",
+          "labelZh": "预订规则证据",
+          "labelKey": "scenario5.evidence.evidence.v-61801853.label",
+          "helpKey": "scenario5.evidence.evidence.v-61801853.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-29bc7a62",
+          "labelZh": "预订确认证据",
+          "labelKey": "scenario5.evidence.evidence.v-29bc7a62.label",
+          "helpKey": "scenario5.evidence.evidence.v-29bc7a62.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-adf65d03",
+          "labelZh": "预订结果证据",
+          "labelKey": "scenario5.evidence.evidence.v-adf65d03.label",
+          "helpKey": "scenario5.evidence.evidence.v-adf65d03.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-c2fca565",
+          "labelZh": "锁定释放证据",
+          "labelKey": "scenario5.evidence.evidence.v-c2fca565.label",
+          "helpKey": "scenario5.evidence.evidence.v-c2fca565.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-8e61f4e7",
+          "labelZh": "锁定过期证据",
+          "labelKey": "scenario5.evidence.evidence.v-8e61f4e7.label",
+          "helpKey": "scenario5.evidence.evidence.v-8e61f4e7.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-8d7b39c5",
+          "labelZh": "纠错证据",
+          "labelKey": "scenario5.evidence.evidence.v-8d7b39c5.label",
+          "helpKey": "scenario5.evidence.evidence.v-8d7b39c5.help",
+          "evidenceType": "businessEvidence"
+        }
+      ],
+      "legalAction": [
+        {
+          "fieldId": "continueReservation",
+          "labelZh": "continueReservation",
+          "labelKey": "scenario5.action.continueReservation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.continueReservation.v1"
+        },
+        {
+          "fieldId": "returnToRequote",
+          "labelZh": "returnToRequote",
+          "labelKey": "scenario5.action.returnToRequote.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.returnToRequote.v1"
+        },
+        {
+          "fieldId": "closeReservationPreparation",
+          "labelZh": "closeReservationPreparation",
+          "labelKey": "scenario5.action.closeReservationPreparation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.closeReservationPreparation.v1"
+        },
+        {
+          "fieldId": "lockInventory",
+          "labelZh": "lockInventory",
+          "labelKey": "scenario5.action.lockInventory.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.lockInventory.v1"
+        },
+        {
+          "fieldId": "confirmReservation",
+          "labelZh": "confirmReservation",
+          "labelKey": "scenario5.action.confirmReservation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.confirmReservation.v1"
+        },
+        {
+          "fieldId": "releaseHold",
+          "labelZh": "releaseHold",
+          "labelKey": "scenario5.action.releaseHold.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.releaseHold.v1"
+        },
+        {
+          "fieldId": "viewReservation",
+          "labelZh": "viewReservation",
+          "labelKey": "scenario5.action.viewReservation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.viewReservation.v1"
+        },
+        {
+          "fieldId": "startCheckInPreparation",
+          "labelZh": "startCheckInPreparation",
+          "labelKey": "scenario5.action.startCheckInPreparation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.startCheckInPreparation.v1"
+        }
+      ],
+      "actionControl": [
+        {
+          "fieldId": "continueReservation",
+          "labelZh": "continueReservation",
+          "labelKey": "scenario5.action.continueReservation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.continueReservation.v1"
+        },
+        {
+          "fieldId": "returnToRequote",
+          "labelZh": "returnToRequote",
+          "labelKey": "scenario5.action.returnToRequote.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.returnToRequote.v1"
+        },
+        {
+          "fieldId": "closeReservationPreparation",
+          "labelZh": "closeReservationPreparation",
+          "labelKey": "scenario5.action.closeReservationPreparation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.closeReservationPreparation.v1"
+        },
+        {
+          "fieldId": "lockInventory",
+          "labelZh": "lockInventory",
+          "labelKey": "scenario5.action.lockInventory.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.lockInventory.v1"
+        },
+        {
+          "fieldId": "confirmReservation",
+          "labelZh": "confirmReservation",
+          "labelKey": "scenario5.action.confirmReservation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.confirmReservation.v1"
+        },
+        {
+          "fieldId": "releaseHold",
+          "labelZh": "releaseHold",
+          "labelKey": "scenario5.action.releaseHold.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.releaseHold.v1"
+        },
+        {
+          "fieldId": "viewReservation",
+          "labelZh": "viewReservation",
+          "labelKey": "scenario5.action.viewReservation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.viewReservation.v1"
+        },
+        {
+          "fieldId": "startCheckInPreparation",
+          "labelZh": "startCheckInPreparation",
+          "labelKey": "scenario5.action.startCheckInPreparation.label",
+          "legalActionRef": "legalAction.dormitory.scenario5.startCheckInPreparation.v1"
+        }
+      ],
+      "conditionalInput": [
+        {
+          "fieldId": "reservationNotes",
+          "labelZh": "reservationNotes",
+          "control": "textarea",
+          "labelKey": "scenario5.field.reservationNotes.label",
+          "helpKey": "scenario5.field.reservationNotes.help",
+          "errorKey": "scenario5.field.reservationNotes.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        }
+      ],
+      "auditInternal": [
+        {
+          "fieldId": "bookingRequestRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "quoteRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "quoteVersionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "quoteSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "availabilitySnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "resourceRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "inventoryHoldRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationPolicySnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationPriceSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "projectionVersion",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "digest",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "domainEventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "commandSubmissionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "sourceScenarioRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "dateRangeRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationDraftRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationSummaryRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "checkInPreparationRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationStatusHistoryRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "bookingRequestId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "inventoryHoldId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "holdId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationNo",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "quoteId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "productId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ratePlanId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        }
+      ]
+    }
   },
   "crudRules": {
     "createZh": "新增不是普通新增按钮，而是“发起预订准备 / 创建库存锁定 / 确认预订”。",
@@ -1228,5 +2640,41 @@
     "releaseAuthority": false,
     "finalGoNoGo": "NO_GO",
     "reasonZh": "本 Source 只完成场景包 5 精准落地闭环，不授予生产发布、业务上线或 final GO。"
+  },
+  "experienceContract": {
+    "version": "oam.dormitory.scenario5.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "BookingRequest",
+      "AvailabilityCheck",
+      "AvailabilitySnapshot",
+      "InventoryHold",
+      "Reservation",
+      "ReservationGuest",
+      "ReservationResourceBinding",
+      "ReservationPriceSnapshot",
+      "ReservationPolicySnapshot",
+      "ReservationConfirmation",
+      "ReservationEvidence",
+      "ReservationStatusHistory"
+    ],
+    "searchReadModel": [
+      "预订与库存锁定",
+      "预订确认摘要",
+      "预订号",
+      "客户信息",
+      "日期范围",
+      "人数",
+      "房间/床位",
+      "价格快照",
+      "库存锁定历史",
+      "预订状态",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "noRefillRuleZh": "场景包 5 只能读取场景包 1、2、3、4 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品、价格或报价字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
   }
 }

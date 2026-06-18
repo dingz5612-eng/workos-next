@@ -366,8 +366,8 @@ app.MapGet("/api/evidence", (string? evidenceId, HttpRequest httpRequest) =>
 });
 app.MapPost("/api/evidence/drafts", (EvidenceDraftRequest request, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
-    return Results.Ok(runtime.CreateEvidenceDraft(request, actorId));
+    var actor = httpRequest.HttpContext.RequireActor();
+    return Results.Ok(runtime.CreateEvidenceDraft(request with { TenantId = actor.TenantId }, actor.ActorId));
 });
 app.MapPost("/api/evidence/{evidenceId}/attachments", (string evidenceId, EvidenceAttachmentRequest request, HttpRequest httpRequest) =>
 {
@@ -766,7 +766,9 @@ static string[] DormitoryTemplateWorkspaceIds() =>
     {
         AcceptedCapabilityRuntimeProjection.WorkspaceId,
         DormitoryScenario2RuntimeProjection.WorkspaceId
-    };
+    }
+    .Concat(Dormitory13ScenarioRuntimeProjection.Workspaces().Select(item => item.Id))
+    .ToArray();
 
 static string[] AllowedWorkspaceStartRoles(string templateWorkspaceId) =>
     new[] { "operator", "manager", "admin" };

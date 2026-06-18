@@ -176,7 +176,8 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await page.locator('[data-surface="operation-pre-submit-details"] summary').click();
   await expect(page.locator('[data-surface="trusted-confirm"]')).toBeVisible();
   await expect(page.locator('[data-surface="evidence-sheet"]')).toBeVisible();
-  await expect(page.locator("body")).toContainText("提交说明");
+  await expect(page.locator("body")).toContainText("可信确认");
+  await expect(page.locator("body")).toContainText("可信证据");
   await expect(page.locator("body")).toContainText("材料");
   await expect(page.locator("body")).toContainText("填写房间信息");
   await expect(page.getByRole("button", { name: /^提交房间信息$/u })).toBeVisible();

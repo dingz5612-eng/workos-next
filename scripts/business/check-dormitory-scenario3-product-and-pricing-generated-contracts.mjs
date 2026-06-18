@@ -39,6 +39,12 @@ const expectedStatuses = [
   "已作废",
   "需补充证据"
 ];
+const forbiddenActionUserInput = [
+  "saveDraft",
+  "submitReview",
+  "activatePrice",
+  "backToEdit"
+];
 const failures = [];
 const scenarioDigest = fileDigest(scenarioPath);
 const packageIndexDigest = fileDigest(packageIndexPath);
@@ -86,6 +92,7 @@ if ((stepsFields?.steps ?? []).length !== 6) fail("steps-fields generated contra
 for (const step of ["选择可运营房源", "定义住宿商品", "配置价格方案", "配置适用日期和规则", "审核与生效确认", "价格维护"]) {
   if (!JSON.stringify(stepsFields?.steps ?? []).includes(step)) fail(`steps-fields missing ${step}.`);
 }
+assertNoActionUserInputs(stepsFields, "steps-fields generated contract");
 for (const internal of ["productId", "ratePlanId", "priceVersionId", "roomId", "bedId", "stableRef", "projectionVersion", "digest", "domainEventId"]) {
   if (!(stepsFields?.fields?.forbiddenUserInputFields ?? []).includes(internal)) fail(`steps-fields forbidden fields missing ${internal}.`);
 }
@@ -107,6 +114,8 @@ assertArray(handoff?.readSideOutputs, ["商品摘要", "价格方案摘要", "�
 if ((testPlan?.positiveBrowserTestPlan ?? []).length < 10 || (testPlan?.negativeBrowserTestPlan ?? []).length < 13) fail("test plan must include required positive and negative cases.");
 if (mobileMirror?.consumer !== "surface") fail("mobile mirror must declare consumer=surface.");
 if (runtimeMirror?.consumer !== "runtime") fail("runtime mirror must declare consumer=runtime.");
+assertNoActionUserInputs(mobileMirror, "mobile mirror");
+assertNoActionUserInputs(runtimeMirror, "runtime mirror");
 assertArray(runtimeMirror?.priceStatusOptions, expectedStatuses, "runtime mirror price status options");
 
 const result = {
@@ -169,6 +178,18 @@ function assertArray(actual, expected, label) {
   const left = JSON.stringify([...(actual ?? [])].sort());
   const right = JSON.stringify([...expected].sort());
   if (left !== right) fail(`${label} mismatch: expected ${JSON.stringify(expected)}, actual ${JSON.stringify(actual ?? [])}.`);
+}
+
+function assertNoActionUserInputs(document, label) {
+  for (const action of forbiddenActionUserInput) {
+    for (const [stepIndex, step] of (document?.steps ?? []).entries()) {
+      if ((step.userFilledFields ?? []).includes(action)) fail(`${label} step ${stepIndex + 1} must not expose action ${action} as user-filled input.`);
+      if ((step.userSelectedFields ?? []).includes(action)) fail(`${label} step ${stepIndex + 1} must not expose action ${action} as user-selected input.`);
+      if ((step.fields ?? []).some((field) => (field.fieldId ?? field.id) === action)) fail(`${label} step ${stepIndex + 1} must not render action ${action} as a field.`);
+    }
+    if ((document?.fields?.userFilled ?? []).includes(action)) fail(`${label} must not expose action ${action} as global user-filled input.`);
+    if ((document?.fields?.userSelected ?? []).includes(action)) fail(`${label} must not expose action ${action} as global user-selected input.`);
+  }
 }
 
 function fail(message) {

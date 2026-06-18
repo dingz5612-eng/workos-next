@@ -9,30 +9,60 @@
     "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:75cc9188bab7ab6e4ef4a62f4ad94875c252f3cf21bd83243a74f1c3f08e32b6",
+  "inputDigest": "sha256:cddb492e94853f3a2fa63dfb38fdad290ecd2b2d2f0f6df9e83cf3de8adaa166",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
-      "digest": "sha256:889073946d661f8d32f344373ccb2d554f78602102815f569eb78b0f771ad720"
+      "digest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:889073946d661f8d32f344373ccb2d554f78602102815f569eb78b0f771ad720",
+  "sourceContentDigest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario2.ResourceOperationStatus",
   "scenarioPackageNo": 2,
   "scenarioId": "lodging.resource-operation-status",
-  "outputContentDigest": "sha256:0831da5b03334ceef9fe4608ae37a69bf532be08326a132128d52647805b82ec",
+  "outputContentDigest": "sha256:f0aa5935203ec6c9137e7ca7fd7c70e631688d4af99d654e52c468d28676b92d",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "房源运营就绪与状态维护",
   "businessGoalZh": "承接场景包 1 已完成的房间建档、床位组确认、基础就绪确认摘要，完成房间或床位的运营检查、运营状态设置、阻断维护和恢复确认。",
-  "sourceScenarioDigest": "sha256:889073946d661f8d32f344373ccb2d554f78602102815f569eb78b0f771ad720",
+  "sourceScenarioDigest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario2.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "OperationResource",
+      "RoomOperationStatus",
+      "BedOperationStatus",
+      "OperationInspection",
+      "OperationBlocker",
+      "OperationStatusChange",
+      "OperationRestore",
+      "OperationEvidence",
+      "StatusHistory"
+    ],
+    "searchReadModel": [
+      "房源运营就绪与状态维护",
+      "房间/床位运营状态摘要",
+      "阻断原因",
+      "预计恢复时间",
+      "可否进入价格维护",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用",
+      "运营状态摘要"
+    ],
+    "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
   "steps": [
     {
       "stepNo": 1,
@@ -47,7 +77,12 @@
         "床位数量",
         "床位列表",
         "基础就绪时间",
-        "场景包 1 证据摘要"
+        "场景包 1 证据摘要",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "状态历史"
       ],
       "userFilledFields": [],
       "userSelectedFields": [
@@ -70,6 +105,72 @@
       ],
       "outputs": [
         "运营维护草稿"
+      ],
+      "primaryBusinessObject": "OperationResource",
+      "requiredReadContext": [
+        "楼栋/区域",
+        "楼层",
+        "房间号",
+        "床位数量",
+        "床位列表",
+        "基础就绪时间",
+        "场景包 1 证据摘要",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "状态历史",
+        "只读对象引用",
+        "buildingArea"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [
+        "roomOrBedScope",
+        "targetRoomOrBed"
+      ],
+      "financialContext": {
+        "applies": false,
+        "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "基础就绪摘要",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "to": [
+          "运营维护草稿",
+          "房间/床位运营状态摘要",
+          "阻断原因",
+          "预计恢复时间",
+          "可否进入价格维护",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。"
+      },
+      "searchReadModel": [
+        "房源运营就绪与状态维护",
+        "选择已基础就绪房源",
+        "OperationResource",
+        "楼栋/区域",
+        "楼层",
+        "房间号",
+        "床位数量",
+        "床位列表",
+        "基础就绪时间",
+        "场景包 1 证据摘要",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "状态历史",
+        "运营维护草稿"
       ]
     },
     {
@@ -83,7 +184,14 @@
         "床位组摘要",
         "基础就绪摘要",
         "证据摘要",
-        "当前运营状态"
+        "当前运营状态",
+        "状态历史",
+        "只读对象引用",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "可否进入价格维护",
+        "运营检查摘要"
       ],
       "userFilledFields": [
         "exceptionDescription",
@@ -118,6 +226,88 @@
       "outputs": [
         "运营检查摘要",
         "可进入状态设置的检查结果"
+      ],
+      "primaryBusinessObject": "OperationResource",
+      "requiredReadContext": [
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "当前运营状态",
+        "状态历史",
+        "只读对象引用",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "可否进入价格维护",
+        "运营检查摘要",
+        "buildingArea",
+        "floor"
+      ],
+      "editableInputs": [
+        "exceptionDescription",
+        "operationInspectionNotes"
+      ],
+      "fixedSelections": [
+        "cleaningInspectionResult",
+        "maintenanceInspectionResult",
+        "safetyInspectionResult",
+        "facilityInspectionResult",
+        "exceptionFlag",
+        "inspectionConclusion"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "房源运营就绪与状态维护",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "可否进入价格维护"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "运营检查",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "基础就绪摘要",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "to": [
+          "运营检查摘要",
+          "可进入状态设置的检查结果",
+          "房间/床位运营状态摘要",
+          "阻断原因",
+          "预计恢复时间",
+          "可否进入价格维护",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。"
+      },
+      "searchReadModel": [
+        "房源运营就绪与状态维护",
+        "运营检查",
+        "运营检查确认",
+        "OperationResource",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "当前运营状态",
+        "状态历史",
+        "只读对象引用",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "可否进入价格维护",
+        "运营检查摘要"
       ]
     },
     {
@@ -130,7 +320,15 @@
         "运营检查摘要",
         "当前状态",
         "合法下一步动作",
-        "不可提交原因"
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "状态历史",
+        "只读对象引用",
+        "房间/床位运营状态摘要",
+        "阻断原因"
       ],
       "userFilledFields": [
         "statusReason",
@@ -168,6 +366,79 @@
       "outputs": [
         "运营状态变更草稿",
         "阻断原因草稿"
+      ],
+      "primaryBusinessObject": "OperationResource",
+      "requiredReadContext": [
+        "运营检查摘要",
+        "当前状态",
+        "合法下一步动作",
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "状态历史",
+        "只读对象引用",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "buildingArea",
+        "floor"
+      ],
+      "editableInputs": [
+        "statusReason",
+        "expectedRestoreAt",
+        "operationStatusNotes"
+      ],
+      "fixedSelections": [
+        "newOperationStatus",
+        "statusReasonCode",
+        "impactScope",
+        "statusOwner"
+      ],
+      "financialContext": {
+        "applies": false,
+        "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "基础就绪摘要",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "to": [
+          "运营状态变更草稿",
+          "阻断原因草稿",
+          "房间/床位运营状态摘要",
+          "阻断原因",
+          "预计恢复时间",
+          "可否进入价格维护",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。"
+      },
+      "searchReadModel": [
+        "房源运营就绪与状态维护",
+        "设置运营状态",
+        "运营状态草稿",
+        "OperationResource",
+        "运营检查摘要",
+        "当前状态",
+        "合法下一步动作",
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "状态历史",
+        "只读对象引用",
+        "房间/床位运营状态摘要",
+        "阻断原因"
       ]
     },
     {
@@ -183,14 +454,17 @@
         "阻断原因",
         "预计恢复时间",
         "下游影响",
-        "证据摘要"
+        "证据摘要",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "状态历史",
+        "只读对象引用"
       ],
       "userFilledFields": [
         "impactConfirmationNotes"
       ],
-      "userSelectedFields": [
-        "submitImpactConfirmation"
-      ],
+      "userSelectedFields": [],
       "userUploadedOrBoundEvidence": [
         "补充影响证据"
       ],
@@ -212,6 +486,82 @@
         "CommandSubmission",
         "EvidenceBinding",
         "Projection update"
+      ],
+      "primaryBusinessObject": "OperationResource",
+      "requiredReadContext": [
+        "变更前状态",
+        "变更后状态",
+        "影响房间/床位",
+        "阻断原因",
+        "预计恢复时间",
+        "下游影响",
+        "证据摘要",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "状态历史",
+        "只读对象引用",
+        "buildingArea",
+        "floor"
+      ],
+      "editableInputs": [
+        "impactConfirmationNotes"
+      ],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": false,
+        "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+      },
+      "legalActions": [
+        {
+          "actionId": "submitImpactConfirmation",
+          "labelZh": "submitImpactConfirmation",
+          "labelKey": "scenario2.action.submitImpactConfirmation.label",
+          "legalActionRef": "legalAction.dormitory.scenario2.impact-confirmation.submitImpactConfirmation.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "基础就绪摘要",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "to": [
+          "OperationStatusChange",
+          "DomainEvent",
+          "CommandSubmission",
+          "EvidenceBinding",
+          "Projection update",
+          "房间/床位运营状态摘要",
+          "阻断原因",
+          "预计恢复时间",
+          "可否进入价格维护",
+          "证据摘要"
+        ],
+        "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。"
+      },
+      "searchReadModel": [
+        "房源运营就绪与状态维护",
+        "影响确认",
+        "运营状态变更确认",
+        "OperationResource",
+        "变更前状态",
+        "变更后状态",
+        "影响房间/床位",
+        "阻断原因",
+        "预计恢复时间",
+        "下游影响",
+        "证据摘要",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "状态历史",
+        "只读对象引用"
       ]
     },
     {
@@ -227,7 +577,12 @@
         "搜索结果",
         "当前状态",
         "阻断原因",
-        "合法下一步动作"
+        "合法下一步动作",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "状态历史"
       ],
       "userFilledFields": [
         "progressUpdate",
@@ -257,6 +612,76 @@
       "outputs": [
         "阻断进度摘要",
         "状态历史"
+      ],
+      "primaryBusinessObject": "OperationResource",
+      "requiredReadContext": [
+        "今日待处理",
+        "工作项",
+        "详情",
+        "搜索结果",
+        "当前状态",
+        "阻断原因",
+        "合法下一步动作",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "状态历史",
+        "只读对象引用",
+        "buildingArea"
+      ],
+      "editableInputs": [
+        "progressUpdate",
+        "expectedRestoreAt",
+        "blockerNotes"
+      ],
+      "fixedSelections": [
+        "blockerStatus",
+        "followUpOwner"
+      ],
+      "financialContext": {
+        "applies": false,
+        "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "基础就绪摘要",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "to": [
+          "阻断进度摘要",
+          "状态历史",
+          "房间/床位运营状态摘要",
+          "阻断原因",
+          "预计恢复时间",
+          "可否进入价格维护",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。"
+      },
+      "searchReadModel": [
+        "房源运营就绪与状态维护",
+        "日常状态维护",
+        "阻断原因更新",
+        "OperationResource",
+        "今日待处理",
+        "工作项",
+        "详情",
+        "搜索结果",
+        "当前状态",
+        "阻断原因",
+        "合法下一步动作",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "状态历史"
       ]
     },
     {
@@ -269,7 +694,15 @@
         "当前阻断原因",
         "复查要求",
         "证据摘要",
-        "可提交/不可提交原因"
+        "可提交/不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "状态历史",
+        "只读对象引用",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "预计恢复时间"
       ],
       "userFilledFields": [
         "restoreReason",
@@ -316,6 +749,83 @@
           "labelZh": "仍需复查",
           "value": "needs_recheck"
         }
+      ],
+      "primaryBusinessObject": "OperationResource",
+      "requiredReadContext": [
+        "当前阻断原因",
+        "复查要求",
+        "证据摘要",
+        "可提交/不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "状态历史",
+        "只读对象引用",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "buildingArea",
+        "floor"
+      ],
+      "editableInputs": [
+        "restoreReason",
+        "restoreNotes"
+      ],
+      "fixedSelections": [
+        "recheckResult",
+        "restoreConclusion"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "房源运营就绪与状态维护",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "金额与币种业务摘要"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "恢复运营",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "基础就绪摘要",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "to": [
+          "恢复运营摘要",
+          "房间/床位运营状态摘要",
+          "可否进入价格维护",
+          "阻断原因",
+          "预计恢复时间",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。"
+      },
+      "searchReadModel": [
+        "房源运营就绪与状态维护",
+        "恢复运营",
+        "恢复运营确认",
+        "OperationResource",
+        "当前阻断原因",
+        "复查要求",
+        "证据摘要",
+        "可提交/不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "状态历史",
+        "只读对象引用",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "预计恢复时间"
       ]
     }
   ],
@@ -356,7 +866,6 @@
       "statusReasonCode",
       "impactScope",
       "statusOwner",
-      "submitImpactConfirmation",
       "blockerStatus",
       "followUpOwner",
       "recheckResult",
@@ -560,14 +1069,6 @@
           "labelKey": "scenario2.field.statusOwner.label",
           "helpKey": "scenario2.field.statusOwner.help",
           "errorKey": "scenario2.field.statusOwner.error"
-        },
-        {
-          "fieldId": "submitImpactConfirmation",
-          "control": "select",
-          "optionSet": "submitDecision",
-          "labelKey": "scenario2.field.submitImpactConfirmation.label",
-          "helpKey": "scenario2.field.submitImpactConfirmation.help",
-          "errorKey": "scenario2.field.submitImpactConfirmation.error"
         },
         {
           "fieldId": "blockerStatus",
@@ -786,6 +1287,11 @@
           "fieldId": "submit",
           "labelKey": "primarySubmit",
           "legalActionRef": "runtime.submit"
+        },
+        {
+          "fieldId": "submitImpactConfirmation",
+          "labelKey": "scenario2.field.submitImpactConfirmation.label",
+          "legalActionRef": "legalAction.dormitory.scenario2.submitImpactConfirmation.v1"
         }
       ],
       "conditionalInput": [
@@ -982,6 +1488,33 @@
             "迁移报告",
             "开发证据包"
           ]
+        }
+      ],
+      "legalAction": [
+        {
+          "fieldId": "saveDraft",
+          "labelKey": "saveDraft",
+          "legalActionRef": "draft.save"
+        },
+        {
+          "fieldId": "continueEdit",
+          "labelKey": "startObservation",
+          "legalActionRef": "draft.continue"
+        },
+        {
+          "fieldId": "backToEdit",
+          "labelKey": "searchActionObservation",
+          "legalActionRef": "draft.backToEdit"
+        },
+        {
+          "fieldId": "submit",
+          "labelKey": "primarySubmit",
+          "legalActionRef": "runtime.submit"
+        },
+        {
+          "fieldId": "submitImpactConfirmation",
+          "labelKey": "scenario2.field.submitImpactConfirmation.label",
+          "legalActionRef": "legalAction.dormitory.scenario2.submitImpactConfirmation.v1"
         }
       ]
     }

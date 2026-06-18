@@ -90,6 +90,7 @@ public sealed class CanonicalOperationsApiService
                 definition.MigrationRefs,
                 operationCase.CaseId,
                 actor,
+                catalog.ListWorkItems(actor.TenantId),
                 anchorPayload,
                 anchorQuery))) ??
             throw new InvalidOperationException("operation_workspace_start_work_item_not_resolved");
@@ -98,12 +99,14 @@ public sealed class CanonicalOperationsApiService
             Admission = admissionDecision.ToContract(),
             AdmissionDecisionRef = admissionDecision.AdmissionDecisionRef
         }, actor);
+        var workItemSurface = GetWorkItemSurface(workItem.WorkItemId, actor)
+            ?? throw new InvalidOperationException("operation_workspace_start_work_item_surface_not_resolved");
 
         return new OperationsWorkspaceStartResult(
             workspace,
             operationCase,
-            workItem,
-            ListWorkItems(actor.TenantId, operationCase.CaseId, workspace.Id).Select(item => AttachAdmission(item, actor)).ToArray());
+            workItemSurface,
+            ListWorkItemSurfaces(actor, operationCase.CaseId, workspace.Id));
     }
 
     public IReadOnlyList<WorkItem> ListWorkItems(string? tenantId = null, string? caseId = null, string? workspaceId = null, bool activeOnly = false) =>
@@ -447,7 +450,11 @@ public sealed class CanonicalOperationsApiService
                 definition);
         }
 
-        var generatedRuleValidation = GeneratedCapabilityRuntimeRulePipeline.Validate(workItem, normalized, definition);
+        var runtimeContextRequest = normalized with
+        {
+            FieldValues = FieldValuesWithRuntimeContext(normalized.FieldValues, workItem, actor)
+        };
+        var generatedRuleValidation = GeneratedCapabilityRuntimeRulePipeline.Validate(workItem, runtimeContextRequest, definition);
         if (!generatedRuleValidation.Allowed)
         {
             return ConfirmWorkItemResult.GeneratedRuleRejected(
@@ -460,7 +467,7 @@ public sealed class CanonicalOperationsApiService
 
         var validated = normalized with
         {
-            FieldValues = generatedRuleValidation.FieldValues
+            FieldValues = FieldValuesWithoutRuntimeContext(generatedRuleValidation.FieldValues)
         };
 
         var command = new OperationsCommandRequest(
@@ -492,7 +499,7 @@ public sealed class CanonicalOperationsApiService
             DispatchNextOperationWorkItem(
                 workItem,
                 definition,
-                normalized.FieldValues,
+                validated.FieldValues,
                 actor,
                 caseId);
         }
@@ -542,6 +549,7 @@ public sealed class CanonicalOperationsApiService
         {
             nextPayload[key] = value;
         }
+        ApplyGeneratedTransitionRuntimeContext(nextPayload, nextDefinition);
 
         catalog.CreateWorkItem(new CreateWorkItemRequest(
             OperationsWorkItemIdFor(current.WorkspaceId, nextDefinition.DefinitionId),
@@ -552,6 +560,56 @@ public sealed class CanonicalOperationsApiService
             nextCardId,
             ConfirmationPolicyCatalog.OwnerRoleForCard(nextCardId),
             nextPayload));
+    }
+
+    private static IReadOnlyDictionary<string, string> FieldValuesWithRuntimeContext(
+        IReadOnlyDictionary<string, string>? fieldValues,
+        WorkItem workItem,
+        RuntimeActorContext actor)
+    {
+        var values = new Dictionary<string, string>(
+            Dormitory13ScenarioRuntimeProjection.CanonicalizeSubmittedFieldValues(workItem, fieldValues),
+            StringComparer.Ordinal);
+        values["actorRole"] = actor.Role;
+        values["role"] = actor.Role;
+        values["actorId"] = actor.ActorId;
+        values["actorTenantId"] = actor.TenantId;
+        values["ownerRole"] = workItem.OwnerRole;
+        return values;
+    }
+
+    private static void ApplyGeneratedTransitionRuntimeContext(
+        IDictionary<string, string> payload,
+        WorkItemDefinition? nextDefinition)
+    {
+        if (nextDefinition is null)
+        {
+            return;
+        }
+
+        if (!IsFinanceGateDefinition(nextDefinition))
+        {
+            return;
+        }
+
+        payload["viaFinanceGate"] = "true";
+        payload["financeGateTask"] = "true";
+    }
+
+    private static bool IsFinanceGateDefinition(WorkItemDefinition definition) =>
+        new[] { "Dorm.FinanceGateConfirm", "Dorm.FinanceGateReturn" }
+            .Contains(definition.WorkItemType, StringComparer.OrdinalIgnoreCase) ||
+        definition.DefinitionId.Contains("financeGate", StringComparison.OrdinalIgnoreCase);
+
+    private static IReadOnlyDictionary<string, string> FieldValuesWithoutRuntimeContext(
+        IReadOnlyDictionary<string, string> fieldValues)
+    {
+        var values = new Dictionary<string, string>(fieldValues, StringComparer.Ordinal);
+        foreach (var key in new[] { "actorRole", "role", "actorId", "actorTenantId", "ownerRole" })
+        {
+            values.Remove(key);
+        }
+        return values;
     }
 
     private static string OperationsWorkItemIdFor(string workspaceId, string cardId) =>
@@ -565,6 +623,7 @@ public sealed class CanonicalOperationsApiService
         IReadOnlyList<DefinitionMigrationRef> migrationRefs,
         string caseId,
         RuntimeActorContext actor,
+        IReadOnlyList<WorkItem> workItems,
         IReadOnlyDictionary<string, string>? anchorPayload = null,
         string? anchorQuery = null)
     {
@@ -582,7 +641,11 @@ public sealed class CanonicalOperationsApiService
         {
             payload[key] = value;
         }
-        foreach (var (key, value) in DormitoryScenario2RuntimeProjection.StartContext(workspace.Id, templateWorkspaceId, cardId, actor))
+        foreach (var (key, value) in DormitoryScenario2RuntimeProjection.StartContext(workspace.Id, templateWorkspaceId, cardId, actor, workItems, anchorPayload, anchorQuery))
+        {
+            payload[key] = value;
+        }
+        foreach (var (key, value) in Dormitory13ScenarioRuntimeProjection.StartContext(workspace.Id, templateWorkspaceId, cardId, actor, workItems, anchorPayload, anchorQuery))
         {
             payload[key] = value;
         }
@@ -1194,8 +1257,8 @@ public sealed class CanonicalOperationsApiService
 public sealed record OperationsWorkspaceStartResult(
     WorkspaceProjection Workspace,
     OperationCase OperationCase,
-    WorkItem WorkItem,
-    IReadOnlyList<WorkItem> OperationWorkItems);
+    OperationsWorkItemSurface WorkItem,
+    IReadOnlyList<OperationsWorkItemSurface> OperationWorkItems);
 
 internal static class GeneratedTransitionPolicy
 {
@@ -1207,14 +1270,17 @@ internal static class GeneratedTransitionPolicy
             "generated-transition.dormitory.room-setup-to-bed-setup.v1",
             "definition.dormitory.roomSetupConfirm.v1",
             "definition.dormitory.bedSetupConfirm.v1",
-            SourceContract),
+            SourceContract,
+            null),
         new GeneratedTransitionRule(
             "generated-transition.dormitory.bed-setup-to-resource-readiness.v1",
             "definition.dormitory.bedSetupConfirm.v1",
             "definition.dormitory.resourceReadinessConfirm.v1",
-            SourceContract)
+            SourceContract,
+            null)
     }
     .Concat(DormitoryScenario2RuntimeProjection.TransitionRules())
+    .Concat(Dormitory13ScenarioRuntimeProjection.TransitionRules())
     .ToArray();
 
     public static GeneratedTransitionDecision? ResolveNext(
@@ -1229,9 +1295,12 @@ internal static class GeneratedTransitionPolicy
 
         var rule = Rules.FirstOrDefault(item =>
             item.FromDefinitionId.Equals(currentDefinition.DefinitionId, StringComparison.OrdinalIgnoreCase));
-        return rule is null
-            ? null
-            : new GeneratedTransitionDecision(rule.PolicyId, rule.NextDefinitionId, rule.SourceContract);
+        if (rule is null || !ConditionSatisfied(rule.Condition, current, fieldValues))
+        {
+            return null;
+        }
+
+        return new GeneratedTransitionDecision(rule.PolicyId, rule.NextDefinitionId, rule.SourceContract);
     }
 
     public static IReadOnlyDictionary<string, string> CarryForwardPayload(
@@ -1239,12 +1308,158 @@ internal static class GeneratedTransitionPolicy
         WorkItemDefinitionResolution currentDefinition,
         IReadOnlyDictionary<string, string>? fieldValues)
     {
+        var scenario1Payload = DormitoryScenario1CarryForwardPayload(current, currentDefinition, fieldValues);
+        if (scenario1Payload.Count > 0)
+        {
+            return scenario1Payload;
+        }
+
         if (DormitoryScenario2RuntimeProjection.IsWorkspace(current.WorkspaceId))
         {
             return DormitoryScenario2RuntimeProjection.CarryForwardPayload(current, currentDefinition, fieldValues);
         }
 
+        if (Dormitory13ScenarioRuntimeProjection.IsWorkspace(current.WorkspaceId))
+        {
+            return Dormitory13ScenarioRuntimeProjection.CarryForwardPayload(current, currentDefinition, fieldValues);
+        }
+
         return new Dictionary<string, string>();
+    }
+
+    private static IReadOnlyDictionary<string, string> DormitoryScenario1CarryForwardPayload(
+        WorkItem current,
+        WorkItemDefinitionResolution currentDefinition,
+        IReadOnlyDictionary<string, string>? fieldValues)
+    {
+        var definitionId = currentDefinition.DefinitionId;
+        if (!definitionId.Equals("definition.dormitory.roomSetupConfirm.v1", StringComparison.OrdinalIgnoreCase) &&
+            !definitionId.Equals("definition.dormitory.bedSetupConfirm.v1", StringComparison.OrdinalIgnoreCase))
+        {
+            return new Dictionary<string, string>();
+        }
+
+        var carriedKeys = new[]
+        {
+            "buildingContextRef",
+            "floor",
+            "roomNo",
+            "normalizedRoomNo",
+            "roomStableRef",
+            "room.bedCount",
+            "bedCount",
+            "capacity",
+            "createdBedCount",
+            "bedSetVersion",
+            "bedSetStableRef",
+            "bedLabels",
+            "bedRemark",
+            "specialNotes",
+            "bedType",
+            "bedEnabledStatus",
+            "bedTypeBatchSetting",
+            "roomRef",
+            "roomReadinessStableRef",
+            "basicReadinessRef",
+            "basicReadinessStableRef",
+            "readinessSnapshotVersion"
+        };
+        var payload = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var key in carriedKeys)
+        {
+            PutIfPresent(payload, key, FirstNonEmpty(FieldValue(fieldValues, key), PayloadValue(current.Payload, key)));
+        }
+
+        var roomNo = FirstNonEmpty(Value(payload, "roomNo"), FieldValue(fieldValues, "roomRef"), PayloadValue(current.Payload, "roomRef"));
+        var bedCount = FirstNonEmpty(Value(payload, "bedCount"), Value(payload, "room.bedCount"), Value(payload, "capacity"), Value(payload, "createdBedCount"));
+        if (!string.IsNullOrWhiteSpace(roomNo))
+        {
+            payload["roomNo"] = roomNo;
+            PutIfPresent(payload, "normalizedRoomNo", NormalizeToken(roomNo));
+        }
+
+        if (!string.IsNullOrWhiteSpace(bedCount))
+        {
+            payload["bedCount"] = bedCount;
+            payload["room.bedCount"] = bedCount;
+            PutIfPresent(payload, "createdBedCount", bedCount);
+            PutIfPresent(payload, "bedLabels", BedLabels(bedCount));
+        }
+
+        var buildingContextRef = FirstNonEmpty(Value(payload, "buildingContextRef"), $"building:{NormalizeToken(current.TenantId)}:default");
+        PutIfPresent(payload, "buildingContextRef", buildingContextRef);
+        var roomStableRef = FirstNonEmpty(Value(payload, "roomStableRef"), StableRef("room", buildingContextRef, NormalizeToken(roomNo)));
+        PutIfPresent(payload, "roomStableRef", roomStableRef);
+        PutIfPresent(payload, "bedSetVersion", FirstNonEmpty(Value(payload, "bedSetVersion"), "1"));
+        PutIfPresent(payload, "bedSetStableRef", FirstNonEmpty(Value(payload, "bedSetStableRef"), StableRef("bed-set", roomStableRef, Value(payload, "bedSetVersion"))));
+        PutIfPresent(payload, "readinessSnapshotVersion", FirstNonEmpty(Value(payload, "readinessSnapshotVersion"), "1"));
+        var readinessRef = FirstNonEmpty(
+            Value(payload, "basicReadinessStableRef"),
+            Value(payload, "basicReadinessRef"),
+            Value(payload, "roomReadinessStableRef"),
+            StableRef("basic-readiness", roomStableRef, Value(payload, "readinessSnapshotVersion")));
+        PutIfPresent(payload, "basicReadinessRef", readinessRef);
+        PutIfPresent(payload, "basicReadinessStableRef", readinessRef);
+        PutIfPresent(payload, "roomReadinessStableRef", readinessRef);
+        PutIfPresent(payload, "baseReadySnapshotRef", readinessRef);
+
+        return payload;
+    }
+
+    private static void PutIfPresent(IDictionary<string, string> payload, string key, string value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            payload[key] = value;
+        }
+    }
+
+    private static string FieldValue(IReadOnlyDictionary<string, string>? fields, string key) =>
+        fields is not null && fields.TryGetValue(key, out var value) ? value : string.Empty;
+
+    private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key) =>
+        payload.TryGetValue(key, out var value) ? value : string.Empty;
+
+    private static string Value(IReadOnlyDictionary<string, string> payload, string key) =>
+        payload.TryGetValue(key, out var value) ? value : string.Empty;
+
+    private static string FirstNonEmpty(params string?[] values) =>
+        values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
+
+    private static bool ConditionSatisfied(
+        GeneratedTransitionCondition? condition,
+        WorkItem current,
+        IReadOnlyDictionary<string, string>? fieldValues)
+    {
+        if (condition is null || string.IsNullOrWhiteSpace(condition.FieldId))
+        {
+            return true;
+        }
+
+        var value = FirstNonEmpty(
+            FieldValue(fieldValues, condition.FieldId),
+            PayloadValue(current.Payload, condition.FieldId));
+        if (condition.Operator.Equals("equalsAny", StringComparison.OrdinalIgnoreCase))
+        {
+            return condition.Values.Any(item => item.Equals(value, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return false;
+    }
+
+    private static string StableRef(params string[] parts) =>
+        string.Join(":", parts.Where(item => !string.IsNullOrWhiteSpace(item)));
+
+    private static string NormalizeToken(string value) =>
+        string.IsNullOrWhiteSpace(value)
+            ? string.Empty
+            : new string(value.Trim().ToLowerInvariant().Select(ch => char.IsLetterOrDigit(ch) ? ch : '-').ToArray()).Trim('-');
+
+    private static string BedLabels(string bedCount)
+    {
+        return int.TryParse(bedCount, out var count) && count > 0
+            ? string.Join(", ", Enumerable.Range(1, count).Select(item => item.ToString("00")))
+            : string.Empty;
     }
 }
 
@@ -1252,7 +1467,16 @@ internal sealed record GeneratedTransitionRule(
     string PolicyId,
     string FromDefinitionId,
     string NextDefinitionId,
-    string SourceContract);
+    string SourceContract,
+    GeneratedTransitionCondition? Condition);
+
+internal sealed record GeneratedTransitionCondition(
+    string ConditionId,
+    string FieldId,
+    string Operator,
+    IReadOnlyList<string> Values,
+    string WhenNotMet,
+    string SourceAuthorityRuleZh);
 
 internal sealed record GeneratedTransitionDecision(
     string PolicyId,

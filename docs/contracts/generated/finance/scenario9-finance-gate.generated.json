@@ -9,30 +9,67 @@
     "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:0db36d42c6e9e934445859f20484a834eda044de8aa099b7653f85fcb6da384d",
+  "inputDigest": "sha256:2a8a0365c783206e0a870f20e7a4938488eec7eaa8f3822dd142bc8892529e21",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
-      "digest": "sha256:aba702e140c0bc08826219e7ff57f592d29b1d24225e0621758c9b582699dec6"
+      "digest": "sha256:87e69a9634931a45d6ade3d2e8afc9ddd3135ecfdc3e17ea84efd3c9eb892baa"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:aba702e140c0bc08826219e7ff57f592d29b1d24225e0621758c9b582699dec6",
+  "sourceContentDigest": "sha256:87e69a9634931a45d6ade3d2e8afc9ddd3135ecfdc3e17ea84efd3c9eb892baa",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario9.CheckoutSettlement",
   "scenarioPackageNo": 9,
   "scenarioId": "lodging.checkout-and-settlement",
-  "outputContentDigest": "sha256:d639eeaa3912d5aba32eec4c3306ede682bfeeebdc5fd80e5d642a259a8b90ca",
+  "outputContentDigest": "sha256:fd79fd744bbc974a174bd993e6b72a2547024428dc14c3f09366fd180ed10aeb",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "退房结算",
   "businessGoalZh": "承接场景包 7 的入住事实和场景包 8 的在住管理/退房准备摘要，办理实际退房、交接、验房、费用核算、押金抵扣、应退/应补结算意向、退房确认、凭证回收、财务处理请求和资源待恢复请求。",
-  "sourceScenarioDigest": "sha256:aba702e140c0bc08826219e7ff57f592d29b1d24225e0621758c9b582699dec6",
+  "sourceScenarioDigest": "sha256:87e69a9634931a45d6ade3d2e8afc9ddd3135ecfdc3e17ea84efd3c9eb892baa",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario9.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "CheckoutCase",
+      "CurrentStaySnapshot",
+      "CheckoutInspection",
+      "RoomBedHandover",
+      "DamageAssessment",
+      "FeeSettlementDraft",
+      "DepositSettlementDraft",
+      "RefundRequestIntent",
+      "TopUpRequestIntent",
+      "CredentialReturnRecord",
+      "CheckoutConfirmation",
+      "ResourceRecoveryRequest",
+      "CheckoutEvidence",
+      "CheckoutStatusHistory"
+    ],
+    "searchReadModel": [
+      "退房结算",
+      "退房确认摘要",
+      "费用核算摘要",
+      "押金抵扣摘要",
+      "应退/应补意向",
+      "客户确认摘要",
+      "财务处理请求",
+      "资源待恢复请求",
+      "证据摘要",
+      "只读对象引用",
+      "结算意向"
+    ],
+    "noRefillRuleZh": "场景包 9 只能读取入住、在住、占用、收款、押金、财务、服务、异常、凭证、退房准备和证据摘要，不得要求用户重新填写已确认入住字段或财务确认字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
   "consumer": "finance-gate",
   "allowedInputs": [
     "结算意向",

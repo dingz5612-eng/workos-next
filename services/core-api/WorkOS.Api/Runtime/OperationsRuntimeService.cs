@@ -383,10 +383,22 @@ public sealed class OperationsRuntimeService
         if (DormitoryScenario2RuntimeProjection.IsWorkspace(templateWorkspaceId) ||
             DormitoryScenario2RuntimeProjection.IsWorkspace(workItem.WorkspaceId))
         {
-            var scenario2Card = DormitoryScenario2RuntimeProjection.CardFor(cardId);
+            var scenario2Card = DormitoryScenario2RuntimeProjection.CardFor(cardId, workItem.Payload);
             if (scenario2Card is not null)
             {
                 return ApplyCardContract(workItem, target, scenario2Card);
+            }
+        }
+        if (Dormitory13ScenarioRuntimeProjection.IsWorkspace(templateWorkspaceId) ||
+            Dormitory13ScenarioRuntimeProjection.IsWorkspace(workItem.WorkspaceId))
+        {
+            var scenarioCard = Dormitory13ScenarioRuntimeProjection.CardFor(
+                FirstNonEmpty(templateWorkspaceId, workItem.WorkspaceId),
+                cardId,
+                workItem.Payload);
+            if (scenarioCard is not null)
+            {
+                return ApplyCardContract(workItem, target, scenarioCard);
             }
         }
 
@@ -467,7 +479,7 @@ public sealed class OperationsRuntimeService
 
     private static string EffectiveCardStatusFor(WorkItem workItem, string projectedStatus)
     {
-        if (IsCorrectionWorkItem(workItem) && !IsTerminalStatus(workItem.Status))
+        if (!IsTerminalStatus(workItem.Status))
         {
             return WorkItemStatusForCard(workItem.Status);
         }

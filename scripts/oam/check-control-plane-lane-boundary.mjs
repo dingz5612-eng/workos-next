@@ -75,7 +75,7 @@ if (!controlPlaneText.includes("Invoke-Gate node scripts/surface/check-dormitory
 if (!ciText.includes("node scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs")) {
   failures.push("CI must check current first golden chain browser audit evidence.");
 }
-if (!/Generate dormitory real-browser evidence[\s\S]*continue-on-error:\s*true/.test(ciText)) {
+if (!/Generate dormitory(?: 13-scenario)? real-browser evidence[\s\S]*continue-on-error:\s*true/.test(ciText)) {
   failures.push("CI Browser Hardening Lane must be continue-on-error advisory.");
 }
 if (!ciText.includes("node scripts/oam/check-dormitory-runtime-admission.mjs --write-proof")) {

@@ -5,6 +5,7 @@ vi.mock("../apiClient.js", () => ({
   confirmOperationWorkItem: vi.fn(),
   createEvidenceDraft: vi.fn(),
   fetchAccommodationLens: vi.fn(),
+  fetchOperationWorkItem: vi.fn(),
   fetchOperationWorkItems: vi.fn(),
   fetchSearchResults: vi.fn(),
   prepareOperationWorkItem: vi.fn(),
@@ -18,6 +19,7 @@ import {
   confirmOperationWorkItem,
   createEvidenceDraft,
   fetchAccommodationLens,
+  fetchOperationWorkItem,
   fetchOperationWorkItems,
   fetchSearchResults,
   prepareOperationWorkItem,
@@ -177,6 +179,33 @@ describe("OAM hardening operation runtime matrix", () => {
       contentSha256: "sha",
       sizeBytes: 9
     }), "");
+
+    createEvidenceDraft.mockClear();
+    attachEvidence.mockClear();
+    expect(await materializeEvidenceObjects({
+      workspace: { id: "W-STAY-RESOURCE" },
+      card: { id: "roomSetup" },
+      actor: {},
+      submissionProtocol: { submissionId: "sub-1", cardInstanceId: "ci-1" },
+      evidenceDrafts: [{ requirementId: "restore-photo", evidenceId: "ev-existing", submissionId: "sub-1", cardInstanceId: "ci-1" }]
+    })).toEqual(["ev-existing"]);
+    expect(createEvidenceDraft).not.toHaveBeenCalled();
+    expect(attachEvidence).not.toHaveBeenCalled();
+
+    createEvidenceDraft.mockResolvedValue({ evidenceId: "ev-new" });
+    attachEvidence.mockResolvedValue({ evidenceId: "ev-new" });
+    expect(await materializeEvidenceObjects({
+      workspace: { id: "W-STAY-RESOURCE" },
+      card: { id: "roomSetup" },
+      actor: {},
+      submissionProtocol: { submissionId: "sub-2", cardInstanceId: "ci-2" },
+      evidenceDrafts: [{ requirementId: "restore-photo", evidenceId: "ev-existing", submissionId: "sub-1", cardInstanceId: "ci-1" }]
+    })).toEqual(["ev-new"]);
+    expect(createEvidenceDraft).toHaveBeenCalledWith(expect.objectContaining({
+      evidenceId: null,
+      submissionId: "sub-2",
+      cardInstanceId: "ci-2"
+    }), "");
   });
 
   it("deduplicates accommodation lens refresh and exposes an empty no-op branch", async () => {
@@ -286,6 +315,36 @@ describe("OAM hardening surface and navigation matrix", () => {
     setView("me", operation);
     expect(operation.state.fieldValidation).toBeNull();
     expect(operation.state.operationRouteIssue).toBeNull();
+  });
+
+  it("hydrates full operation work item detail when opening a lightweight work item", async () => {
+    const ctx = createSurfaceCtx();
+    ctx.render = vi.fn();
+    const lightItem = {
+      workItemId: "wi-light-evidence",
+      workspaceId: "W-STAY-RESOURCE",
+      cardId: "roomSetup",
+      lifecycleState: "ready",
+      ownerRole: "operator"
+    };
+    ctx.state.runtimeStore.operationWorkItems = [lightItem];
+    ctx.state.runtimeStore.workQueue = [lightItem];
+    fetchOperationWorkItem.mockResolvedValueOnce({
+      ...lightItem,
+      card: {
+        id: "roomSetup",
+        evidence: [{ id: "quote-proof", label: { "zh-CN": "报价确认证据" }, required: true }]
+      }
+    });
+
+    const opened = openOperationPanel("wi-light-evidence", ctx);
+    expect(opened.canOpen).toBe(true);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(fetchOperationWorkItem).toHaveBeenCalledWith("wi-light-evidence");
+    const hydrated = ctx.state.runtimeStore.operationWorkItems.find((item) => item.workItemId === "wi-light-evidence");
+    expect(hydrated.card.evidence[0].id).toBe("quote-proof");
+    expect(ctx.render).toHaveBeenCalled();
   });
 
   it("keeps Search read side resilient to request races, offline fallback, and start command failures", async () => {

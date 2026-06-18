@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildOperationActionState } from "../operationActionState.js";
 import { routeView } from "../appRouter.js";
+import { saveDraft } from "../operationDrafts.js";
 import { primaryActionButton } from "../views/workspaceView.js";
 import { createSurfaceCtx, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
 
@@ -218,5 +219,65 @@ describe("OAM Surface primary action state machine", () => {
 
     expect(visibleText(html)).toContain("补齐必填项");
     expect((html.match(/data-submit-card/g) || []).length).toBe(1);
+  });
+
+  it("keeps evidence recovery bound to Operations Runtime evidence materialization", () => {
+    const store = runtimeStore();
+    store.workspaces[0].cards[0].evidence = [{ id: "room-photo", label: { "zh-CN": "房间照片" } }];
+    const ctx = createSurfaceCtx({
+      view: "workspace",
+      runtimeStore: store,
+      lastActionResult: {
+        status: "business_blocked_422",
+        reason: "missing_required_evidence"
+      }
+    });
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(text).toContain("补齐证据");
+    expect((html.match(/data-submit-card/g) || []).length).toBe(1);
+    expect(html).not.toContain('data-action-state="missingEvidence"');
+  });
+
+  it("counts missing evidence in the pre-submit check summary", () => {
+    const store = runtimeStore();
+    const evidenceOnlyCard = {
+      ...store.workspaces[0].cards[0],
+      id: "custom.evidenceOnly",
+      workItemId: "wi-evidence-only",
+      fields: { business: [], system: [], analytics: [] },
+      evidence: [{ id: "room-photo", label: { "zh-CN": "房间照片" } }]
+    };
+    store.workspaces[0].cards[0] = evidenceOnlyCard;
+    store.operationWorkItems[0] = {
+      ...store.operationWorkItems[0],
+      workItemId: "wi-evidence-only",
+      cardId: evidenceOnlyCard.id,
+      card: evidenceOnlyCard
+    };
+    store.workQueue[0] = {
+      ...store.workQueue[0],
+      workItemId: "wi-evidence-only",
+      cardId: evidenceOnlyCard.id
+    };
+    saveDraft(store.workspaces[0].id, evidenceOnlyCard.id, {}, [{
+      requirementId: "room-photo",
+      evidenceId: "evidence-room-photo-draft",
+      source: "system"
+    }]);
+    const ctx = createSurfaceCtx({
+      view: "workspace",
+      runtimeStore: store,
+      selectedWorkItemId: "wi-evidence-only",
+      selectedCardId: evidenceOnlyCard.id
+    });
+
+    const text = visibleText(routeView(ctx));
+
+    expect(text).toContain("材料核对: 房间照片");
+    expect(text).toContain("提交状态: 暂不能提交: 材料核对");
+    expect(text).not.toContain("提交状态: 可以提交");
   });
 });

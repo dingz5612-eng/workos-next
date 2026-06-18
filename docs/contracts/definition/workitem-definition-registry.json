@@ -1,6 +1,6 @@
 {
   "version": "oam.definition-registry.v1",
-  "generatedBy": "scripts/business/generate-dormitory-scenario2-resource-operation-status-contracts.mjs",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-runtime-execution.mjs",
   "status": "current-oam",
   "axis": "Definition -> OperationCase -> WorkItem -> CommandSubmission -> SliceCommandHandler -> DomainEvent / LedgerEntry -> ProcessManager -> Projection / Lens -> Surface",
   "companyKernelScope": {
@@ -1648,6 +1648,19 @@
       "workItemType": "Dorm.ReservationConfirm",
       "commandType": "Reservation.Confirm",
       "ownerSlice": "Accommodation.Reservation",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reservationConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "allowedFacts": [
         "Reservation",
         "EvidenceObject",
@@ -1675,21 +1688,8 @@
       "admissionPolicyRef": "payment_confirmation",
       "surfacePolicyRef": "surface.mobile.work.dorm-reservation-confirm",
       "productionConfirmAllowed": false,
-      "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
       "definitionMode": "oam-certification-current",
-      "migrationRefs": [
-        {
-          "type": "sourceCardId",
-          "value": "cert.reservationConfirm",
-          "readOnly": true,
-          "executable": false,
-          "affectsAdmission": false,
-          "affectsRuntimeConfirm": false,
-          "affectsBusinessIdentity": false,
-          "affectsLedger": false,
-          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
-        }
-      ]
+      "removalImpact": "Current OAM dormitory operating kernel canonical definition."
     },
     {
       "definitionId": "definition.dormitory.reservationNoShowClose.v1",
@@ -1926,6 +1926,3624 @@
           "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
         }
       ]
+    },
+    {
+      "definitionId": "definition.dormitory.scenario10.cancelNoShowCaseDraftStart.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario10.CancelNoShowRefund",
+      "workspaceId": "W-DORM-SCENARIO10-CANCEL-NOSHOW-REFUND",
+      "workItemType": "Dorm.CancelNoShowCaseDraftStart",
+      "commandType": "Dormitory.Scenario10.CancelNoShowCaseDraftStart",
+      "ownerSlice": "Dormitory.Scenario10.CancelNoShowRefund",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.enterCancelNoshowProcessing",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "CancellationCase",
+        "NoShowCase",
+        "CancellationEvidence",
+        "CancellationStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario10.enter-cancel-noshow-processing.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario10.enter-cancel-noshow-processing.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-enter-cancel-noshow-processing",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 10 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario10.cancelNoShowConfirmClosure.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario10.CancelNoShowRefund",
+      "workspaceId": "W-DORM-SCENARIO10-CANCEL-NOSHOW-REFUND",
+      "workItemType": "Dorm.CancelNoShowConfirmClosure",
+      "commandType": "Dormitory.Scenario10.CancelNoShowConfirmClosure",
+      "ownerSlice": "Dormitory.Scenario10.CancelNoShowRefund",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.confirmCancellationOrNoshowClosure",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "CancellationCase",
+        "NoShowCase",
+        "InventoryReleaseRequest",
+        "FinanceProcessingRequest",
+        "CancellationEvidence",
+        "CancellationStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario10.confirm-cancellation-or-noshow-closure.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario10.confirm-cancellation-or-noshow-closure.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-confirm-cancellation-or-noshow-closure",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 10 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario10.cancelNoShowFinanceProcessingRequestCreate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario10.CancelNoShowRefund",
+      "workspaceId": "W-DORM-SCENARIO10-CANCEL-NOSHOW-REFUND",
+      "workItemType": "Dorm.CancelNoShowFinanceProcessingRequestCreate",
+      "commandType": "Dormitory.Scenario10.CancelNoShowFinanceProcessingRequestCreate",
+      "ownerSlice": "Dormitory.Scenario10.CancelNoShowRefund",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.financeProcessingRequest",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "RefundRequestIntent",
+        "CancellationFeeIntent",
+        "ForfeitOrFeeIntent",
+        "FinanceProcessingRequest",
+        "CancellationEvidence",
+        "CancellationStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario10.finance-processing-request.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario10.finance-processing-request.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-finance-processing-request",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 10 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario10.cancelNoShowFollowUpRecord.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario10.CancelNoShowRefund",
+      "workspaceId": "W-DORM-SCENARIO10-CANCEL-NOSHOW-REFUND",
+      "workItemType": "Dorm.CancelNoShowFollowUpRecord",
+      "commandType": "Dormitory.Scenario10.CancelNoShowFollowUpRecord",
+      "ownerSlice": "Dormitory.Scenario10.CancelNoShowRefund",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.resultAndFollowUp",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "CustomerNotificationRecord",
+        "CancellationEvidence",
+        "CancellationStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario10.result-and-follow-up.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario10.result-and-follow-up.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-result-and-follow-up",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 10 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario10.cancelNoShowInventoryReleaseRequestConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario10.CancelNoShowRefund",
+      "workspaceId": "W-DORM-SCENARIO10-CANCEL-NOSHOW-REFUND",
+      "workItemType": "Dorm.CancelNoShowInventoryReleaseRequestConfirm",
+      "commandType": "Dormitory.Scenario10.CancelNoShowInventoryReleaseRequestConfirm",
+      "ownerSlice": "Dormitory.Scenario10.CancelNoShowRefund",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.inventoryReleaseConfirmation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "InventoryReleaseRequest",
+        "CancellationEvidence",
+        "CancellationStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario10.inventory-release-confirmation.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario10.inventory-release-confirmation.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-inventory-release-confirmation",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 10 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario10.cancelNoShowPolicyCalculationGenerate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario10.CancelNoShowRefund",
+      "workspaceId": "W-DORM-SCENARIO10-CANCEL-NOSHOW-REFUND",
+      "workItemType": "Dorm.CancelNoShowPolicyCalculationGenerate",
+      "commandType": "Dormitory.Scenario10.CancelNoShowPolicyCalculationGenerate",
+      "ownerSlice": "Dormitory.Scenario10.CancelNoShowRefund",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.policyAndAmountCalculation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "CancellationPolicySnapshot",
+        "RefundCalculationDraft",
+        "CancellationEvidence",
+        "CancellationStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario10.policy-and-amount-calculation.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario10.policy-and-amount-calculation.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-policy-and-amount-calculation",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 10 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario10.cancelNoShowReasonCustomerConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario10.CancelNoShowRefund",
+      "workspaceId": "W-DORM-SCENARIO10-CANCEL-NOSHOW-REFUND",
+      "workItemType": "Dorm.CancelNoShowReasonCustomerConfirm",
+      "commandType": "Dormitory.Scenario10.CancelNoShowReasonCustomerConfirm",
+      "ownerSlice": "Dormitory.Scenario10.CancelNoShowRefund",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reasonAndCustomerConfirmation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "CustomerConfirmationRecord",
+        "CancellationEvidence",
+        "CancellationStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario10.reason-and-customer-confirmation.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario10.reason-and-customer-confirmation.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario10-reason-and-customer-confirmation",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 10 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario11.expenseIntentSubmit.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "workspaceId": "W-DORM-SCENARIO11-HOUSEKEEPING-MAINTENANCE-OUTOFSERVICE",
+      "workItemType": "Dorm.ExpenseIntentSubmit",
+      "commandType": "Dormitory.Scenario11.ExpenseIntentSubmit",
+      "ownerSlice": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.submitExpenseIntent",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ExpenseIntent",
+        "TaskEvidence",
+        "WorkStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario11.submit-expense-intent.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario11.submit-expense-intent.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-submit-expense-intent",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 11 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario11.outOfServiceOrRecoveryRecommendationCreate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "workspaceId": "W-DORM-SCENARIO11-HOUSEKEEPING-MAINTENANCE-OUTOFSERVICE",
+      "workItemType": "Dorm.OutOfServiceOrRecoveryRecommendationCreate",
+      "commandType": "Dormitory.Scenario11.OutOfServiceOrRecoveryRecommendationCreate",
+      "ownerSlice": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.outputOutofserviceOrRecoveryRecommendation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "OutOfServiceRequest",
+        "RecoveryRecommendation",
+        "TaskEvidence",
+        "WorkStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario11.output-outofservice-or-recovery-recommendation.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario11.output-outofservice-or-recovery-recommendation.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-output-outofservice-or-recovery-recommendation",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 11 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario11.serviceWorkCaseDraftStart.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "workspaceId": "W-DORM-SCENARIO11-HOUSEKEEPING-MAINTENANCE-OUTOFSERVICE",
+      "workItemType": "Dorm.ServiceWorkCaseDraftStart",
+      "commandType": "Dormitory.Scenario11.ServiceWorkCaseDraftStart",
+      "ownerSlice": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.enterHousekeepingMaintenanceProcessing",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ServiceWorkCase",
+        "TaskEvidence",
+        "WorkStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario11.enter-housekeeping-maintenance-processing.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario11.enter-housekeeping-maintenance-processing.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-enter-housekeeping-maintenance-processing",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 11 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario11.workAssignmentDispatch.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "workspaceId": "W-DORM-SCENARIO11-HOUSEKEEPING-MAINTENANCE-OUTOFSERVICE",
+      "workItemType": "Dorm.WorkAssignmentDispatch",
+      "commandType": "Dormitory.Scenario11.WorkAssignmentDispatch",
+      "ownerSlice": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.dispatchWorkAssignment",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "WorkAssignment",
+        "WorkAssignee",
+        "WorkSchedule",
+        "WorkStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario11.dispatch-work-assignment.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario11.dispatch-work-assignment.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-dispatch-work-assignment",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 11 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario11.workCompletionSubmit.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "workspaceId": "W-DORM-SCENARIO11-HOUSEKEEPING-MAINTENANCE-OUTOFSERVICE",
+      "workItemType": "Dorm.WorkCompletionSubmit",
+      "commandType": "Dormitory.Scenario11.WorkCompletionSubmit",
+      "ownerSlice": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.submitWorkCompletion",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "WorkCompletion",
+        "WorkCompletionEvidence",
+        "TaskEvidence",
+        "WorkStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario11.submit-work-completion.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario11.submit-work-completion.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-submit-work-completion",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 11 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario11.workProgressUpdate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "workspaceId": "W-DORM-SCENARIO11-HOUSEKEEPING-MAINTENANCE-OUTOFSERVICE",
+      "workItemType": "Dorm.WorkProgressUpdate",
+      "commandType": "Dormitory.Scenario11.WorkProgressUpdate",
+      "ownerSlice": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.updateWorkProgress",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "WorkSchedule",
+        "TaskEvidence",
+        "WorkStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario11.update-work-progress.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario11.update-work-progress.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-update-work-progress",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 11 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario11.workVerificationConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "workspaceId": "W-DORM-SCENARIO11-HOUSEKEEPING-MAINTENANCE-OUTOFSERVICE",
+      "workItemType": "Dorm.WorkVerificationConfirm",
+      "commandType": "Dormitory.Scenario11.WorkVerificationConfirm",
+      "ownerSlice": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.verifyWorkResult",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "WorkVerification",
+        "WorkVerificationResult",
+        "TaskEvidence",
+        "WorkStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario11.verify-work-result.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario11.verify-work-result.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario11-verify-work-result",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 11 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario12.channelCorporateAuditDecision.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "workspaceId": "W-DORM-SCENARIO12-CHANNEL-CORPORATE-CUSTOMER",
+      "workItemType": "Dorm.ChannelCorporateAuditDecision",
+      "commandType": "Dormitory.Scenario12.ChannelCorporateAuditDecision",
+      "ownerSlice": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.auditEnable",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ChannelPartner",
+        "CorporateAgreement",
+        "ChannelPublicationStatus",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario12.audit-enable.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario12.audit-enable.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-audit-enable",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 12 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario12.channelCorporateDailyMaintenance.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "workspaceId": "W-DORM-SCENARIO12-CHANNEL-CORPORATE-CUSTOMER",
+      "workItemType": "Dorm.ChannelCorporateDailyMaintenance",
+      "commandType": "Dormitory.Scenario12.ChannelCorporateDailyMaintenance",
+      "ownerSlice": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.dailyMaintenance",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ChannelPartner",
+        "CorporateAccount",
+        "CorporateAgreement",
+        "ContractEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario12.daily-maintenance.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario12.daily-maintenance.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-daily-maintenance",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 12 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario12.channelCorporateProfileDraftStart.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "workspaceId": "W-DORM-SCENARIO12-CHANNEL-CORPORATE-CUSTOMER",
+      "workItemType": "Dorm.ChannelCorporateProfileDraftStart",
+      "commandType": "Dormitory.Scenario12.ChannelCorporateProfileDraftStart",
+      "ownerSlice": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.createChannelOrCorporateProfile",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ChannelPartner",
+        "CorporateAccount",
+        "ContactPerson",
+        "ContractEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario12.create-channel-or-corporate-profile.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario12.create-channel-or-corporate-profile.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-create-channel-or-corporate-profile",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 12 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario12.channelProductEligibilityBind.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "workspaceId": "W-DORM-SCENARIO12-CHANNEL-CORPORATE-CUSTOMER",
+      "workItemType": "Dorm.ChannelProductEligibilityBind",
+      "commandType": "Dormitory.Scenario12.ChannelProductEligibilityBind",
+      "ownerSlice": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.bindProductAndEligibility",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ChannelEligibility",
+        "CorporateEligibility",
+        "ChannelProductMapping",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario12.bind-product-and-eligibility.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario12.bind-product-and-eligibility.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-bind-product-and-eligibility",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 12 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario12.channelPublicationRuleConfigure.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "workspaceId": "W-DORM-SCENARIO12-CHANNEL-CORPORATE-CUSTOMER",
+      "workItemType": "Dorm.ChannelPublicationRuleConfigure",
+      "commandType": "Dormitory.Scenario12.ChannelPublicationRuleConfigure",
+      "ownerSlice": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.configureChannelPublicationRule",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ChannelPublicationRule",
+        "ChannelProductMapping",
+        "ContractEvidence",
+        "ChannelStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario12.configure-channel-publication-rule.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario12.configure-channel-publication-rule.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-configure-channel-publication-rule",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 12 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario12.commissionSettlementIntentSubmit.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "workspaceId": "W-DORM-SCENARIO12-CHANNEL-CORPORATE-CUSTOMER",
+      "workItemType": "Dorm.CommissionSettlementIntentSubmit",
+      "commandType": "Dormitory.Scenario12.CommissionSettlementIntentSubmit",
+      "ownerSlice": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.configureCommissionSettlementIntent",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "CommissionRuleIntent",
+        "SettlementRuleIntent",
+        "ContractEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario12.configure-commission-settlement-intent.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario12.configure-commission-settlement-intent.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-configure-commission-settlement-intent",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 12 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario12.corporateAgreementDraftSubmit.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "workspaceId": "W-DORM-SCENARIO12-CHANNEL-CORPORATE-CUSTOMER",
+      "workItemType": "Dorm.CorporateAgreementDraftSubmit",
+      "commandType": "Dormitory.Scenario12.CorporateAgreementDraftSubmit",
+      "ownerSlice": "Dormitory.Scenario12.ChannelCorporateCustomer",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.maintainCooperationAgreement",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "CorporateAgreement",
+        "AgreementEligibility",
+        "ContractEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario12.maintain-cooperation-agreement.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario12.maintain-cooperation-agreement.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario12-maintain-cooperation-agreement",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 12 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario13.auditFindingCreate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario13.ReportingAuditReview",
+      "workspaceId": "W-DORM-SCENARIO13-REPORTING-AUDIT-REVIEW",
+      "workItemType": "Dorm.AuditFindingCreate",
+      "commandType": "Dormitory.Scenario13.AuditFindingCreate",
+      "ownerSlice": "Dormitory.Scenario13.ReportingAuditReview",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.auditFindingAndLocation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "AuditFinding",
+        "EvidenceReviewRecord",
+        "StatusTimeline",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario13.audit-finding-and-location.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario13.audit-finding-and-location.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-audit-finding-and-location",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 13 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario13.businessReportSnapshotGenerate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario13.ReportingAuditReview",
+      "workspaceId": "W-DORM-SCENARIO13-REPORTING-AUDIT-REVIEW",
+      "workItemType": "Dorm.BusinessReportSnapshotGenerate",
+      "commandType": "Dormitory.Scenario13.BusinessReportSnapshotGenerate",
+      "ownerSlice": "Dormitory.Scenario13.ReportingAuditReview",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.generateBusinessReportSnapshot",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ReportSnapshot",
+        "MetricSnapshot",
+        "ReportStatusTimeline",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario13.generate-business-report-snapshot.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario13.generate-business-report-snapshot.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-generate-business-report-snapshot",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 13 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario13.financeReviewSnapshotGenerate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario13.ReportingAuditReview",
+      "workspaceId": "W-DORM-SCENARIO13-REPORTING-AUDIT-REVIEW",
+      "workItemType": "Dorm.FinanceReviewSnapshotGenerate",
+      "commandType": "Dormitory.Scenario13.FinanceReviewSnapshotGenerate",
+      "ownerSlice": "Dormitory.Scenario13.ReportingAuditReview",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.generateFinanceReviewView",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ReportSnapshot",
+        "MetricSnapshot",
+        "EvidenceReviewRecord",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario13.generate-finance-review-view.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario13.generate-finance-review-view.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-generate-finance-review-view",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 13 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario13.reportDataQualityCheck.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario13.ReportingAuditReview",
+      "workspaceId": "W-DORM-SCENARIO13-REPORTING-AUDIT-REVIEW",
+      "workItemType": "Dorm.ReportDataQualityCheck",
+      "commandType": "Dormitory.Scenario13.ReportDataQualityCheck",
+      "ownerSlice": "Dormitory.Scenario13.ReportingAuditReview",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.dataCompletenessCheck",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "EvidenceReviewRecord",
+        "StatusTimeline",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario13.data-completeness-check.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario13.data-completeness-check.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-data-completeness-check",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 13 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario13.reportPublish.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario13.ReportingAuditReview",
+      "workspaceId": "W-DORM-SCENARIO13-REPORTING-AUDIT-REVIEW",
+      "workItemType": "Dorm.ReportPublish",
+      "commandType": "Dormitory.Scenario13.ReportPublish",
+      "ownerSlice": "Dormitory.Scenario13.ReportingAuditReview",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.publishExportTimeline",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ReportSnapshot",
+        "ReportStatusTimeline",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario13.publish-export-timeline.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario13.publish-export-timeline.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-publish-export-timeline",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 13 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario13.reportScopeSelect.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario13.ReportingAuditReview",
+      "workspaceId": "W-DORM-SCENARIO13-REPORTING-AUDIT-REVIEW",
+      "workItemType": "Dorm.ReportScopeSelect",
+      "commandType": "Dormitory.Scenario13.ReportScopeSelect",
+      "ownerSlice": "Dormitory.Scenario13.ReportingAuditReview",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.selectReportScope",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ReportScope",
+        "ReportPeriod",
+        "StatusTimeline",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario13.select-report-scope.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario13.select-report-scope.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-select-report-scope",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 13 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario13.reviewConclusionActionPlanCreate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario13.ReportingAuditReview",
+      "workspaceId": "W-DORM-SCENARIO13-REPORTING-AUDIT-REVIEW",
+      "workItemType": "Dorm.ReviewConclusionActionPlanCreate",
+      "commandType": "Dormitory.Scenario13.ReviewConclusionActionPlanCreate",
+      "ownerSlice": "Dormitory.Scenario13.ReportingAuditReview",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reviewConclusionActionPlan",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ReviewConclusion",
+        "ReviewMeetingRecord",
+        "ActionPlan",
+        "IssueTrackingItem",
+        "StatusTimeline",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario13.review-conclusion-action-plan.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario13.review-conclusion-action-plan.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario13-review-conclusion-action-plan",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 13 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario3.accommodationProductConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario3.ProductAndPricing",
+      "workspaceId": "W-DORM-SCENARIO3-PRODUCT-AND-PRICING",
+      "workItemType": "Dorm.AccommodationProductConfirm",
+      "commandType": "Dormitory.Scenario3.AccommodationProductConfirm",
+      "ownerSlice": "Dormitory.Scenario3.ProductAndPricing",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.defineAccommodationProduct",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "AccommodationProduct",
+        "SellableUnit",
+        "ProductResourceBinding",
+        "PriceEvidence",
+        "PriceStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario3.define-accommodation-product.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario3.define-accommodation-product.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario3-define-accommodation-product",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 3 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario3.priceCalendarDraft.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario3.ProductAndPricing",
+      "workspaceId": "W-DORM-SCENARIO3-PRODUCT-AND-PRICING",
+      "workItemType": "Dorm.PriceCalendarDraft",
+      "commandType": "Dormitory.Scenario3.PriceCalendarDraft",
+      "ownerSlice": "Dormitory.Scenario3.ProductAndPricing",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.configurePriceCalendar",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "PriceCalendar",
+        "PriceVersion draft",
+        "CommandSubmission",
+        "DomainEvent",
+        "EvidenceObject"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario3.configure-price-calendar.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario3.configure-price-calendar.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario3-configure-price-calendar",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 3 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario3.priceMaintenance.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario3.ProductAndPricing",
+      "workspaceId": "W-DORM-SCENARIO3-PRODUCT-AND-PRICING",
+      "workItemType": "Dorm.PriceMaintenance",
+      "commandType": "Dormitory.Scenario3.PriceMaintenance",
+      "ownerSlice": "Dormitory.Scenario3.ProductAndPricing",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.priceMaintenance",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "价格版本历史",
+        "价格状态历史",
+        "证据摘要",
+        "CommandSubmission",
+        "DomainEvent",
+        "EvidenceObject"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario3.price-maintenance.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario3.price-maintenance.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario3-price-maintenance",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 3 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario3.priceResourceSelect.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario3.ProductAndPricing",
+      "workspaceId": "W-DORM-SCENARIO3-PRODUCT-AND-PRICING",
+      "workItemType": "Dorm.PriceResourceSelect",
+      "commandType": "Dormitory.Scenario3.PriceResourceSelect",
+      "ownerSlice": "Dormitory.Scenario3.ProductAndPricing",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.selectOperableResource",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "商品资源选择草稿",
+        "CommandSubmission",
+        "DomainEvent",
+        "EvidenceObject"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario3.select-operable-resource.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario3.select-operable-resource.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario3-select-operable-resource",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 3 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario3.priceVersionActivate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario3.ProductAndPricing",
+      "workspaceId": "W-DORM-SCENARIO3-PRODUCT-AND-PRICING",
+      "workItemType": "Dorm.PriceVersionActivate",
+      "commandType": "Dormitory.Scenario3.PriceVersionActivate",
+      "ownerSlice": "Dormitory.Scenario3.ProductAndPricing",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reviewAndActivatePrice",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "AccommodationProduct",
+        "RatePlan",
+        "PriceCalendar",
+        "PriceVersion",
+        "PriceEvidence",
+        "PriceStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario3.review-and-activate-price.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario3.review-and-activate-price.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario3-review-and-activate-price",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 3 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario3.ratePlanDefinitionConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario3.ProductAndPricing",
+      "workspaceId": "W-DORM-SCENARIO3-PRODUCT-AND-PRICING",
+      "workItemType": "Dorm.RatePlanDefinitionConfirm",
+      "commandType": "Dormitory.Scenario3.RatePlanDefinitionConfirm",
+      "ownerSlice": "Dormitory.Scenario3.ProductAndPricing",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.configureRatePlan",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "RatePlan",
+        "RateRule",
+        "PriceEvidence",
+        "PriceStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario3.configure-rate-plan.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario3.configure-rate-plan.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario3-configure-rate-plan",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 3 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario4.inquiryRegister.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario4.InquiryAndQuote",
+      "workspaceId": "W-DORM-SCENARIO4-INQUIRY-AND-QUOTE",
+      "workItemType": "Dorm.InquiryRegister",
+      "commandType": "Dormitory.Scenario4.InquiryRegister",
+      "ownerSlice": "Dormitory.Scenario4.InquiryAndQuote",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.registerCustomerInquiry",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "Inquiry",
+        "CustomerContact",
+        "QuoteEvidence",
+        "QuoteStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario4.register-customer-inquiry.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario4.register-customer-inquiry.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario4-register-customer-inquiry",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 4 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario4.quoteDraftGenerate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario4.InquiryAndQuote",
+      "workspaceId": "W-DORM-SCENARIO4-INQUIRY-AND-QUOTE",
+      "workItemType": "Dorm.QuoteDraftGenerate",
+      "commandType": "Dormitory.Scenario4.QuoteDraftGenerate",
+      "ownerSlice": "Dormitory.Scenario4.InquiryAndQuote",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.generateQuoteDraft",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "Quote",
+        "QuoteOption",
+        "QuoteVersion",
+        "QuotePriceSnapshot",
+        "QuoteValidity",
+        "QuoteEvidence",
+        "QuoteStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario4.generate-quote-draft.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario4.generate-quote-draft.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario4-generate-quote-draft",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 4 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario4.quoteOptionSelect.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario4.InquiryAndQuote",
+      "workspaceId": "W-DORM-SCENARIO4-INQUIRY-AND-QUOTE",
+      "workItemType": "Dorm.QuoteOptionSelect",
+      "commandType": "Dormitory.Scenario4.QuoteOptionSelect",
+      "ownerSlice": "Dormitory.Scenario4.InquiryAndQuote",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.selectQuotableProduct",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "QuoteOption",
+        "CommandSubmission",
+        "DomainEvent",
+        "EvidenceObject"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario4.select-quotable-product.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario4.select-quotable-product.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario4-select-quotable-product",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 4 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario4.quoteSend.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario4.InquiryAndQuote",
+      "workspaceId": "W-DORM-SCENARIO4-INQUIRY-AND-QUOTE",
+      "workItemType": "Dorm.QuoteSend",
+      "commandType": "Dormitory.Scenario4.QuoteSend",
+      "ownerSlice": "Dormitory.Scenario4.InquiryAndQuote",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.issueAndSendQuote",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "Quote",
+        "QuoteVersion",
+        "QuoteDeliveryRecord",
+        "QuoteEvidence",
+        "QuoteStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario4.issue-and-send-quote.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario4.issue-and-send-quote.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario4-issue-and-send-quote",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 4 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario4.reservationPreparationStart.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario4.InquiryAndQuote",
+      "workspaceId": "W-DORM-SCENARIO4-INQUIRY-AND-QUOTE",
+      "workItemType": "Dorm.ReservationPreparationStart",
+      "commandType": "Dormitory.Scenario4.ReservationPreparationStart",
+      "ownerSlice": "Dormitory.Scenario4.InquiryAndQuote",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.quoteFollowUpAndReservationPrep",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "FollowUpTask",
+        "QuoteStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario4.quote-follow-up-and-reservation-prep.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario4.quote-follow-up-and-reservation-prep.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario4-quote-follow-up-and-reservation-prep",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 4 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario4.stayDemandConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario4.InquiryAndQuote",
+      "workspaceId": "W-DORM-SCENARIO4-INQUIRY-AND-QUOTE",
+      "workItemType": "Dorm.StayDemandConfirm",
+      "commandType": "Dormitory.Scenario4.StayDemandConfirm",
+      "ownerSlice": "Dormitory.Scenario4.InquiryAndQuote",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.confirmStayDemand",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "StayDemand",
+        "QuoteEvidence",
+        "QuoteStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario4.confirm-stay-demand.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario4.confirm-stay-demand.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario4-confirm-stay-demand",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 4 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario5.availabilityRecheck.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "workspaceId": "W-DORM-SCENARIO5-RESERVATION-AND-INVENTORY-HOLD",
+      "workItemType": "Dorm.AvailabilityRecheck",
+      "commandType": "Dormitory.Scenario5.AvailabilityRecheck",
+      "ownerSlice": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reviewAvailableResource",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "AvailabilityCheck",
+        "AvailabilitySnapshot",
+        "ReservationEvidence",
+        "ReservationStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario5.review-available-resource.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario5.review-available-resource.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario5-review-available-resource",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 5 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario5.bookingPreparationStart.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "workspaceId": "W-DORM-SCENARIO5-RESERVATION-AND-INVENTORY-HOLD",
+      "workItemType": "Dorm.BookingPreparationStart",
+      "commandType": "Dormitory.Scenario5.BookingPreparationStart",
+      "ownerSlice": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.enterReservationPreparation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "BookingRequest",
+        "ReservationEvidence",
+        "ReservationStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario5.enter-reservation-preparation.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario5.enter-reservation-preparation.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario5-enter-reservation-preparation",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 5 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario5.inventoryHoldCreate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "workspaceId": "W-DORM-SCENARIO5-RESERVATION-AND-INVENTORY-HOLD",
+      "workItemType": "Dorm.InventoryHoldCreate",
+      "commandType": "Dormitory.Scenario5.InventoryHoldCreate",
+      "ownerSlice": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.createInventoryHold",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "InventoryHold",
+        "ReservationEvidence",
+        "ReservationStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario5.create-inventory-hold.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario5.create-inventory-hold.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario5-create-inventory-hold",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 5 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario5.reservationConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "workspaceId": "W-DORM-SCENARIO5-RESERVATION-AND-INVENTORY-HOLD",
+      "workItemType": "Dorm.ReservationConfirm",
+      "commandType": "Dormitory.Scenario5.ReservationConfirm",
+      "ownerSlice": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.confirmReservation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "Reservation",
+        "ReservationGuest",
+        "ReservationResourceBinding",
+        "ReservationPriceSnapshot",
+        "ReservationPolicySnapshot",
+        "ReservationConfirmation",
+        "ReservationEvidence",
+        "ReservationStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario5.confirm-reservation.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario5.confirm-reservation.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario5-confirm-reservation",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 5 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario5.reservationDraftConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "workspaceId": "W-DORM-SCENARIO5-RESERVATION-AND-INVENTORY-HOLD",
+      "workItemType": "Dorm.ReservationDraftConfirm",
+      "commandType": "Dormitory.Scenario5.ReservationDraftConfirm",
+      "ownerSlice": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.confirmReservationInformation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ReservationPolicySnapshot",
+        "ReservationPriceSnapshot",
+        "ReservationEvidence",
+        "ReservationStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario5.confirm-reservation-information.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario5.confirm-reservation-information.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario5-confirm-reservation-information",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 5 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario5.reservationSummaryOutput.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "workspaceId": "W-DORM-SCENARIO5-RESERVATION-AND-INVENTORY-HOLD",
+      "workItemType": "Dorm.ReservationSummaryOutput",
+      "commandType": "Dormitory.Scenario5.ReservationSummaryOutput",
+      "ownerSlice": "Dormitory.Scenario5.ReservationAndInventoryHold",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reservationResultAndCheckinPreparation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ReservationStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario5.reservation-result-and-checkin-preparation.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario5.reservation-result-and-checkin-preparation.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario5-reservation-result-and-checkin-preparation",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 5 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario6.depositGuaranteeSubmit.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "workspaceId": "W-DORM-SCENARIO6-PAYMENT-DEPOSIT-AND-GUARANTEE",
+      "workItemType": "Dorm.DepositGuaranteeSubmit",
+      "commandType": "Dormitory.Scenario6.DepositGuaranteeSubmit",
+      "ownerSlice": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.submitDepositOrGuarantee",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "DepositIntent",
+        "DepositGuarantee",
+        "DepositStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario6.submit-deposit-or-guarantee.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario6.submit-deposit-or-guarantee.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario6-submit-deposit-or-guarantee",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 6 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario6.financeGateConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "workspaceId": "W-DORM-SCENARIO6-PAYMENT-DEPOSIT-AND-GUARANTEE",
+      "workItemType": "Dorm.FinanceGateConfirm",
+      "commandType": "Dormitory.Scenario6.FinanceGateConfirm",
+      "ownerSlice": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.financeGateConfirmation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "FinanceConfirmationSnapshot",
+        "PaymentStatusHistory",
+        "DepositStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario6.finance-gate-confirmation.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario6.finance-gate-confirmation.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario6-finance-gate-confirmation",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 6 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario6.financeReadySummaryOutput.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "workspaceId": "W-DORM-SCENARIO6-PAYMENT-DEPOSIT-AND-GUARANTEE",
+      "workItemType": "Dorm.FinanceReadySummaryOutput",
+      "commandType": "Dormitory.Scenario6.FinanceReadySummaryOutput",
+      "ownerSlice": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.outputFinanceReadySummary",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "PaymentStatusHistory",
+        "DepositStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario6.output-finance-ready-summary.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario6.output-finance-ready-summary.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario6-output-finance-ready-summary",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 6 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario6.paymentDepositCaseStart.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "workspaceId": "W-DORM-SCENARIO6-PAYMENT-DEPOSIT-AND-GUARANTEE",
+      "workItemType": "Dorm.PaymentDepositCaseStart",
+      "commandType": "Dormitory.Scenario6.PaymentDepositCaseStart",
+      "ownerSlice": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.enterPaymentDepositProcessing",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "PaymentStatusHistory",
+        "DepositStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario6.enter-payment-deposit-processing.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario6.enter-payment-deposit-processing.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario6-enter-payment-deposit-processing",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 6 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario6.paymentDepositRequirementConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "workspaceId": "W-DORM-SCENARIO6-PAYMENT-DEPOSIT-AND-GUARANTEE",
+      "workItemType": "Dorm.PaymentDepositRequirementConfirm",
+      "commandType": "Dormitory.Scenario6.PaymentDepositRequirementConfirm",
+      "ownerSlice": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.confirmPaymentAndDepositRequirements",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "PaymentRequirement",
+        "DepositRequirement",
+        "PaymentStatusHistory",
+        "DepositStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario6.confirm-payment-and-deposit-requirements.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario6.confirm-payment-and-deposit-requirements.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario6-confirm-payment-and-deposit-requirements",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 6 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario6.paymentReceiptSubmit.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "workspaceId": "W-DORM-SCENARIO6-PAYMENT-DEPOSIT-AND-GUARANTEE",
+      "workItemType": "Dorm.PaymentReceiptSubmit",
+      "commandType": "Dormitory.Scenario6.PaymentReceiptSubmit",
+      "ownerSlice": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.submitPaymentReceiptEvidence",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "PaymentIntent",
+        "PaymentReceiptEvidence",
+        "PaymentStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario6.submit-payment-receipt-evidence.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario6.submit-payment-receipt-evidence.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario6-submit-payment-receipt-evidence",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 6 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario7.checkInAgreementFinanceReview.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario7.CheckInProcessing",
+      "workspaceId": "W-DORM-SCENARIO7-CHECK-IN-PROCESSING",
+      "workItemType": "Dorm.CheckInAgreementFinanceReview",
+      "commandType": "Dormitory.Scenario7.CheckInAgreementFinanceReview",
+      "ownerSlice": "Dormitory.Scenario7.CheckInProcessing",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.financeAndAgreementReview",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "CheckInAgreement",
+        "CheckInEvidence",
+        "CheckInStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario7.finance-and-agreement-review.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario7.finance-and-agreement-review.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario7-finance-and-agreement-review",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 7 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario7.checkInDraftStart.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario7.CheckInProcessing",
+      "workspaceId": "W-DORM-SCENARIO7-CHECK-IN-PROCESSING",
+      "workItemType": "Dorm.CheckInDraftStart",
+      "commandType": "Dormitory.Scenario7.CheckInDraftStart",
+      "ownerSlice": "Dormitory.Scenario7.CheckInProcessing",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.enterCheckInProcessing",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "CheckInCase",
+        "CheckInStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario7.enter-check-in-processing.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario7.enter-check-in-processing.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario7-enter-check-in-processing",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 7 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario7.guestIdentityVerify.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario7.CheckInProcessing",
+      "workspaceId": "W-DORM-SCENARIO7-CHECK-IN-PROCESSING",
+      "workItemType": "Dorm.GuestIdentityVerify",
+      "commandType": "Dormitory.Scenario7.GuestIdentityVerify",
+      "ownerSlice": "Dormitory.Scenario7.CheckInProcessing",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.arrivalAndIdentityVerification",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ArrivingGuest",
+        "ResidentProfile",
+        "IdentityVerification",
+        "CheckInEvidence",
+        "CheckInStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario7.arrival-and-identity-verification.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario7.arrival-and-identity-verification.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario7-arrival-and-identity-verification",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 7 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario7.roomBedHandoverRecheck.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario7.CheckInProcessing",
+      "workspaceId": "W-DORM-SCENARIO7-CHECK-IN-PROCESSING",
+      "workItemType": "Dorm.RoomBedHandoverRecheck",
+      "commandType": "Dormitory.Scenario7.RoomBedHandoverRecheck",
+      "ownerSlice": "Dormitory.Scenario7.CheckInProcessing",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.roomBedHandoverRecheck",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "RoomBedOccupancy",
+        "CheckInEvidence",
+        "CheckInStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario7.room-bed-handover-recheck.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario7.room-bed-handover-recheck.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario7-room-bed-handover-recheck",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 7 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario7.stayConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario7.CheckInProcessing",
+      "workspaceId": "W-DORM-SCENARIO7-CHECK-IN-PROCESSING",
+      "workItemType": "Dorm.StayConfirm",
+      "commandType": "Dormitory.Scenario7.StayConfirm",
+      "ownerSlice": "Dormitory.Scenario7.CheckInProcessing",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.confirmCheckIn",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "Stay",
+        "RoomBedOccupancy",
+        "CheckInSnapshot",
+        "CheckInEvidence",
+        "CheckInStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario7.confirm-check-in.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario7.confirm-check-in.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario7-confirm-check-in",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 7 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario7.stayCredentialIssue.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario7.CheckInProcessing",
+      "workspaceId": "W-DORM-SCENARIO7-CHECK-IN-PROCESSING",
+      "workItemType": "Dorm.StayCredentialIssue",
+      "commandType": "Dormitory.Scenario7.StayCredentialIssue",
+      "ownerSlice": "Dormitory.Scenario7.CheckInProcessing",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.issueAccessCredential",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "AccessCredential",
+        "CheckInEvidence",
+        "CheckInStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario7.issue-access-credential.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario7.issue-access-credential.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario7-issue-access-credential",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 7 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario8.accessCredentialStatusChange.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario8.InStayManagement",
+      "workspaceId": "W-DORM-SCENARIO8-IN-STAY-MANAGEMENT",
+      "workItemType": "Dorm.AccessCredentialStatusChange",
+      "commandType": "Dormitory.Scenario8.AccessCredentialStatusChange",
+      "ownerSlice": "Dormitory.Scenario8.InStayManagement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.accessCredentialManagement",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "AccessCredentialStatus",
+        "StayEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario8.access-credential-management.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario8.access-credential-management.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-access-credential-management",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 8 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario8.bedTransferRequestSubmit.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario8.InStayManagement",
+      "workspaceId": "W-DORM-SCENARIO8-IN-STAY-MANAGEMENT",
+      "workItemType": "Dorm.BedTransferRequestSubmit",
+      "commandType": "Dormitory.Scenario8.BedTransferRequestSubmit",
+      "ownerSlice": "Dormitory.Scenario8.InStayManagement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.bedTransferRequest",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "BedTransferRequest",
+        "StayChangeRequest",
+        "StayEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario8.bed-transfer-request.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario8.bed-transfer-request.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-bed-transfer-request",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 8 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario8.checkoutPreparationSnapshotCreate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario8.InStayManagement",
+      "workspaceId": "W-DORM-SCENARIO8-IN-STAY-MANAGEMENT",
+      "workItemType": "Dorm.CheckoutPreparationSnapshotCreate",
+      "commandType": "Dormitory.Scenario8.CheckoutPreparationSnapshotCreate",
+      "ownerSlice": "Dormitory.Scenario8.InStayManagement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.checkoutPreparation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "StayChangeRequest",
+        "StayEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario8.checkout-preparation.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario8.checkout-preparation.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-checkout-preparation",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 8 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario8.residentIncidentRegister.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario8.InStayManagement",
+      "workspaceId": "W-DORM-SCENARIO8-IN-STAY-MANAGEMENT",
+      "workItemType": "Dorm.ResidentIncidentRegister",
+      "commandType": "Dormitory.Scenario8.ResidentIncidentRegister",
+      "ownerSlice": "Dormitory.Scenario8.InStayManagement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.residentIncidentRecord",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ResidentIncident",
+        "StayEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario8.resident-incident-record.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario8.resident-incident-record.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-resident-incident-record",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 8 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario8.residentServiceRequestRegister.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario8.InStayManagement",
+      "workspaceId": "W-DORM-SCENARIO8-IN-STAY-MANAGEMENT",
+      "workItemType": "Dorm.ResidentServiceRequestRegister",
+      "commandType": "Dormitory.Scenario8.ResidentServiceRequestRegister",
+      "ownerSlice": "Dormitory.Scenario8.InStayManagement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.residentServiceRequest",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "ResidentServiceRequest",
+        "StayEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario8.resident-service-request.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario8.resident-service-request.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-resident-service-request",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 8 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario8.stayExtensionRequestSubmit.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario8.InStayManagement",
+      "workspaceId": "W-DORM-SCENARIO8-IN-STAY-MANAGEMENT",
+      "workItemType": "Dorm.StayExtensionRequestSubmit",
+      "commandType": "Dormitory.Scenario8.StayExtensionRequestSubmit",
+      "ownerSlice": "Dormitory.Scenario8.InStayManagement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.stayExtensionRequest",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "StayExtensionRequest",
+        "StayChangeRequest",
+        "StayEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario8.stay-extension-request.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario8.stay-extension-request.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-stay-extension-request",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 8 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario8.stayManagementContextView.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario8.InStayManagement",
+      "workspaceId": "W-DORM-SCENARIO8-IN-STAY-MANAGEMENT",
+      "workItemType": "Dorm.StayManagementContextView",
+      "commandType": "Dormitory.Scenario8.StayManagementContextView",
+      "ownerSlice": "Dormitory.Scenario8.InStayManagement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.enterInStayManagement",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario8.enter-in-stay-management.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario8.enter-in-stay-management.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-enter-in-stay-management",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 8 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario8.stayStatusChange.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario8.InStayManagement",
+      "workspaceId": "W-DORM-SCENARIO8-IN-STAY-MANAGEMENT",
+      "workItemType": "Dorm.StayStatusChange",
+      "commandType": "Dormitory.Scenario8.StayStatusChange",
+      "ownerSlice": "Dormitory.Scenario8.InStayManagement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.maintainStayStatus",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "StayStatus",
+        "StayEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario8.maintain-stay-status.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario8.maintain-stay-status.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario8-maintain-stay-status",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 8 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario9.checkoutCaseDraftStart.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario9.CheckoutSettlement",
+      "workspaceId": "W-DORM-SCENARIO9-CHECKOUT-SETTLEMENT",
+      "workItemType": "Dorm.CheckoutCaseDraftStart",
+      "commandType": "Dormitory.Scenario9.CheckoutCaseDraftStart",
+      "ownerSlice": "Dormitory.Scenario9.CheckoutSettlement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.enterCheckoutProcessing",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "CheckoutCase",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario9.enter-checkout-processing.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario9.enter-checkout-processing.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-enter-checkout-processing",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 9 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario9.checkoutConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario9.CheckoutSettlement",
+      "workspaceId": "W-DORM-SCENARIO9-CHECKOUT-SETTLEMENT",
+      "workItemType": "Dorm.CheckoutConfirm",
+      "commandType": "Dormitory.Scenario9.CheckoutConfirm",
+      "ownerSlice": "Dormitory.Scenario9.CheckoutSettlement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.checkoutConfirmation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "CheckoutConfirmation",
+        "CredentialReturnRecord",
+        "ResourceRecoveryRequest",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario9.checkout-confirmation.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario9.checkout-confirmation.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-checkout-confirmation",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 9 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario9.checkoutFeeCalculationGenerate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario9.CheckoutSettlement",
+      "workspaceId": "W-DORM-SCENARIO9-CHECKOUT-SETTLEMENT",
+      "workItemType": "Dorm.CheckoutFeeCalculationGenerate",
+      "commandType": "Dormitory.Scenario9.CheckoutFeeCalculationGenerate",
+      "ownerSlice": "Dormitory.Scenario9.CheckoutSettlement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.feeSettlementCalculation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "FeeSettlementDraft",
+        "DepositSettlementDraft",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario9.fee-settlement-calculation.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario9.fee-settlement-calculation.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-fee-settlement-calculation",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 9 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario9.checkoutFinanceRequestCreate.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario9.CheckoutSettlement",
+      "workspaceId": "W-DORM-SCENARIO9-CHECKOUT-SETTLEMENT",
+      "workItemType": "Dorm.CheckoutFinanceRequestCreate",
+      "commandType": "Dormitory.Scenario9.CheckoutFinanceRequestCreate",
+      "ownerSlice": "Dormitory.Scenario9.CheckoutSettlement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.financeResourceHandoff",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "RefundRequestIntent",
+        "TopUpRequestIntent",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario9.finance-resource-handoff.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario9.finance-resource-handoff.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-finance-resource-handoff",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 9 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario9.checkoutHandoverConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario9.CheckoutSettlement",
+      "workspaceId": "W-DORM-SCENARIO9-CHECKOUT-SETTLEMENT",
+      "workItemType": "Dorm.CheckoutHandoverConfirm",
+      "commandType": "Dormitory.Scenario9.CheckoutHandoverConfirm",
+      "ownerSlice": "Dormitory.Scenario9.CheckoutSettlement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.confirmActualCheckoutHandover",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "RoomBedHandover",
+        "CredentialReturnRecord",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario9.confirm-actual-checkout-handover.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario9.confirm-actual-checkout-handover.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-confirm-actual-checkout-handover",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 9 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario9.checkoutInspectionConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario9.CheckoutSettlement",
+      "workspaceId": "W-DORM-SCENARIO9-CHECKOUT-SETTLEMENT",
+      "workItemType": "Dorm.CheckoutInspectionConfirm",
+      "commandType": "Dormitory.Scenario9.CheckoutInspectionConfirm",
+      "ownerSlice": "Dormitory.Scenario9.CheckoutSettlement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.roomBedInspection",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "CheckoutInspection",
+        "DamageAssessment",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario9.room-bed-inspection.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario9.room-bed-inspection.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-room-bed-inspection",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 9 Source Authority; no production confirm."
+    },
+    {
+      "definitionId": "definition.dormitory.scenario9.customerSettlementConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Dormitory.Scenario9.CheckoutSettlement",
+      "workspaceId": "W-DORM-SCENARIO9-CHECKOUT-SETTLEMENT",
+      "workItemType": "Dorm.CustomerSettlementConfirm",
+      "commandType": "Dormitory.Scenario9.CustomerSettlementConfirm",
+      "ownerSlice": "Dormitory.Scenario9.CheckoutSettlement",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.customerSettlementConfirmation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "allowedFacts": [
+        "FeeSettlementDraft",
+        "DepositSettlementDraft",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "DepositEntry",
+        "FinanceTruth",
+        "ProductionGo",
+        "ReleaseAuthority",
+        "FinalGo"
+      ],
+      "fieldContractRef": "field.dormitory.scenario9.customer-settlement-confirmation.v1",
+      "evidencePolicyRef": "evidence.dormitory.scenario9.customer-settlement-confirmation.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario9-customer-settlement-confirmation",
+      "productionConfirmAllowed": false,
+      "definitionMode": "oam-certification-current",
+      "removalImpact": "Generated from Dormitory Scenario 9 Source Authority; no production confirm."
     },
     {
       "definitionId": "definition.dormitory.serviceTaskAssign.v1",
@@ -3019,5 +6637,6 @@
       ]
     }
   ],
-  "scenario2RuntimeExecutionRef": "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2ResourceOperationStatus.generated.json"
+  "scenario2RuntimeExecutionRef": "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2ResourceOperationStatus.generated.json",
+  "dormitory13ScenarioRuntimeExecutionRef": "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioRuntimeExecution.generated.json"
 }

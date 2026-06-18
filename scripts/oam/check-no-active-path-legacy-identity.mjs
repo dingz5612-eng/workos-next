@@ -53,7 +53,7 @@ for (const file of scannedFiles) {
       continue;
     }
     if (file === ".github/workflows/ci.yml" && /ten-scenario|all-steps/.test(term)) {
-      if (!/Generate dormitory real-browser evidence[\s\S]*continue-on-error:\s*true/.test(text)) {
+      if (!/Generate dormitory(?: 13-scenario)? real-browser evidence[\s\S]*continue-on-error:\s*true/.test(text)) {
         failures.push(`CI legacy browser audit reference ${term} must remain advisory/continue-on-error.`);
       }
     }

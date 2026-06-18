@@ -80,10 +80,24 @@ function Get-PortFromUrl {
 function Stop-TestPortProcesses {
   param([int[]] $Ports)
 
-  $connections = Get-NetTCPConnection -LocalPort $Ports -ErrorAction SilentlyContinue
-  $processIds = $connections | Select-Object -ExpandProperty OwningProcess -Unique
-  foreach ($processId in $processIds) {
-    if ($processId -and $processId -ne $PID) {
+  $processIds = @()
+  if (Get-Command Get-NetTCPConnection -ErrorAction SilentlyContinue) {
+    $connections = Get-NetTCPConnection -LocalPort $Ports -ErrorAction SilentlyContinue
+    $processIds += $connections | Select-Object -ExpandProperty OwningProcess -Unique
+  } else {
+    foreach ($port in $Ports) {
+      if (Get-Command lsof -ErrorAction SilentlyContinue) {
+        $output = & lsof "-tiTCP:$port" "-sTCP:LISTEN" 2>$null
+        $processIds += (($output -join " ") -split "\s+")
+      } elseif (Get-Command fuser -ErrorAction SilentlyContinue) {
+        $output = & fuser -n tcp $port 2>$null
+        $processIds += (($output -join " ") -split "\s+")
+      }
+    }
+  }
+
+  foreach ($processId in ($processIds | Where-Object { $_ -match "^\d+$" } | ForEach-Object { [int]$_ } | Sort-Object -Unique)) {
+    if ($processId -ne $PID) {
       Stop-Process -Id $processId -Force -ErrorAction SilentlyContinue
     }
   }

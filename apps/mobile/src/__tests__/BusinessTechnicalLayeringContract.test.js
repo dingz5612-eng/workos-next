@@ -88,8 +88,8 @@ describe("OAM Surface business and technical layering contract", () => {
     expect(visibleText(html)).toContain("填写房间信息");
     expect(visibleText(html)).toContain("提交前检查");
     expect(visibleText(html)).toContain("材料核对");
-    expect(visibleText(html)).toContain("提交说明");
-    expect(visibleText(html)).toContain("材料");
+    expect(visibleText(html)).toContain("可信确认");
+    expect(visibleText(html)).toContain("可信证据");
     expect(visibleText(html)).not.toContain("系统记录");
     expect(visibleText(html)).not.toContain("办理状态");
     expect(visibleText(html)).not.toContain("当前状态:");
