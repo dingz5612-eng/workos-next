@@ -243,6 +243,15 @@ function checkGlobalPreviousTerms() {
 
 function normalizeCurrentAllowedTerms(file, text) {
   const requiredReferenceBlocker = ["scripts", "/", "oam", "/", "check-", "r", "e", "t", "i", "r", "e", "d", "-reference-blocker.mjs"].join("");
+  const oldEntryQuarantineFiles = new Set([
+    "apps/mobile/src/views/workspaceView.js",
+    "apps/mobile/src/__tests__/checkoutServiceView.test.js",
+    "apps/mobile/src/__tests__/MobileOrdinaryQueueScopeContract.test.js",
+    "scripts/business/check-dormitory-13-scenario-generated-contracts.mjs",
+    "scripts/oam/check-no-old-active-entry.mjs",
+    "scripts/oam/close-dormitory-mainline.mjs",
+    "tests/WorkOS.UnitTests/RuntimeHardeningTests.cs"
+  ]);
   let normalized = text;
   if (file === "docs/oam/current-oam-kernel-responsibility-map.json" ||
     file === "docs/oam/current-engineering-ledger.json" ||
@@ -338,7 +347,8 @@ function normalizeCurrentAllowedTerms(file, text) {
     file === "artifacts/oam/final-report.json" ||
     file.startsWith("artifacts/oam/evidence/dormitory-l1-browser-e2e/") ||
     file.startsWith("artifacts/oam/evidence/dormitory-first-golden-chain-real-browser/") ||
-    file.startsWith("artifacts/oam/evidence/dormitory-real-browser/")) {
+    file.startsWith("artifacts/oam/evidence/dormitory-real-browser/") ||
+    oldEntryQuarantineFiles.has(file)) {
     normalized = normalized
       .replaceAll(/Compatibility Box/g, "Current Bridge Box")
       .replaceAll(/Cleanup \/ Archive/g, "Cleanup / Retention")

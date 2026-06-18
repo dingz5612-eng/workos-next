@@ -48,6 +48,40 @@ const workItem = {
   }
 };
 
+const searchCommandAdmission = {
+  visibleAllowed: true,
+  prepareAllowed: true,
+  confirmAllowed: false,
+  productionAllowed: false,
+  mode: "internal_pilot_observation",
+  reason: "search_readonly_runtime_start",
+  admissionDecisionRef: "admission:scenario1-negative:search"
+};
+
+const searchCommandResult = {
+  resultType: "command",
+  templateWorkspaceId: "W-DORM-MAINLINE",
+  firstCardId: "cert.roomSetupConfirm",
+  title: { "zh-CN": "房源建档与基础就绪" },
+  summary: { "zh-CN": "新建房间、确认床位组并完成基础检查。" },
+  nextAction: { "zh-CN": "开始新建房间和床位" },
+  matchedTerms: ["房源建档与基础就绪", "房源建档", "新增房间"],
+  admission: searchCommandAdmission,
+  sourceRefs: {
+    source: "SearchKernelService",
+    sourceType: "operationsCommandAdmission",
+    admissionDecisionRef: searchCommandAdmission.admissionDecisionRef
+  },
+  gateResult: {
+    status: "visible_readonly",
+    source: "SearchKernelService",
+    sourceType: "operationsCommandAdmission",
+    admissionDecisionRef: searchCommandAdmission.admissionDecisionRef,
+    writeThroughSearchAllowed: false,
+    writeBusinessFactAllowed: false
+  }
+};
+
 const projection = {
   workspaces: [{
     id: "W-DORM-MAINLINE",
@@ -168,7 +202,7 @@ try {
     await openSearch(page, "房源建档与基础就绪");
     await page.locator('[data-start-operations-workspace="W-DORM-MAINLINE"]').waitFor();
     text = await page.locator("body").innerText();
-    addScenario("current_capability_entry_available_for_negative_audit", text.includes("房源建档与基础就绪") && text.includes("开始办理"), "负向审计必须从当前房源建档与基础就绪入口进入。", { textSample: text.slice(0, 800) });
+    addScenario("current_capability_entry_available_for_negative_audit", text.includes("房源建档与基础就绪") && text.includes("开始新建房间和床位"), "负向审计必须从当前房源建档与基础就绪入口进入。", { textSample: text.slice(0, 800) });
     await capture(page, "02-current-capability-entry", {
       "失败是否业务可理解": "明确业务动作词能进入当前场景 1 办理入口。",
       "是否证明无副作用": "入口展示本身不写事实。",
@@ -261,7 +295,10 @@ async function routeApis(page) {
     if (url.pathname === "/api/lenses/home-surface") return route.fulfill({ json: [] });
     if (url.pathname === "/api/lenses/learning-catalog") return route.fulfill({ json: [] });
     if (url.pathname.startsWith("/api/lenses/accommodation/")) return route.fulfill({ json: {} });
-    if (url.pathname === "/api/lenses/search") return route.fulfill({ json: [] });
+    if (url.pathname === "/api/lenses/search") {
+      const query = String(url.searchParams.get("q") || "").trim();
+      return route.fulfill({ json: query === "房源建档与基础就绪" ? [searchCommandResult] : [] });
+    }
     if (url.pathname === "/api/operations/workspaces/start" && method === "POST") return route.fulfill({ json: { workspace: projection.workspaces[0], workItem, operationWorkItems: [workItem], projection } });
     if (url.pathname.endsWith("/prepare") && method === "POST") return route.fulfill({ json: { prepared: true, workItemId: workItem.workItemId } });
     if (url.pathname.endsWith("/confirm") && method === "POST") return route.fulfill({ status: 422, json: { status: "business_blocked_422", reason: "required_fields_missing" } });

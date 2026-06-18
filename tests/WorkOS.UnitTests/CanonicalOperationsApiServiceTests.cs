@@ -708,8 +708,7 @@ public sealed class CanonicalOperationsApiServiceTests
             "wi-generated-forged-bed-id",
             Request("idem-generated-forged-bed-id", cardId: "cert.bedSetupConfirm", fieldValues: new Dictionary<string, string>
             {
-                ["bedId"] = "forged-bed-id",
-                ["bedNo"] = "01"
+                ["bedId"] = "forged-bed-id"
             }) with
             {
                 WorkspaceId = AcceptedCapabilityRuntimeProjection.WorkspaceId,
@@ -4276,11 +4275,11 @@ public sealed class CanonicalOperationsApiServiceTests
     }
 
     [TestMethod]
-    public void lead_reservation_create_does_not_dispatch_from_business_action_without_generated_policy()
+    public void lead_reservation_create_is_rejected_without_generated_policy()
     {
         var service = Service(
             out _,
-            out _,
+            out var store,
             ProjectionSeed.Create().Workspaces,
             definitions: RegistryWith(Definition("reservationCreate", "reservationCreate", "W-STAY-LEAD-RESERVATION")));
         service.CreateWorkItem(new CreateWorkItemRequest(
@@ -4319,9 +4318,15 @@ public sealed class CanonicalOperationsApiServiceTests
         var convert = service.ListWorkItems("tenant-s3")
             .SingleOrDefault(item => item.WorkspaceId == "W-STAY-LEAD-RESERVATION" && item.Payload.TryGetValue("cardId", out var cardId) && cardId == "reservationConvert");
 
-        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+        Assert.AreEqual(StatusCodes.Status400BadRequest, result.StatusCode);
+        Assert.AreEqual("unknown_field_key", result.Error);
+        Assert.AreEqual("field_contract_not_resolved", result.Reason);
         Assert.IsNull(cancel);
         Assert.IsNull(convert);
+        Assert.IsEmpty(store.Submissions);
+        Assert.IsEmpty(store.DomainEvents);
+        Assert.IsEmpty(store.WorkItemEvents);
+        Assert.IsEmpty(store.OutboxMessages);
     }
 
     [TestMethod]

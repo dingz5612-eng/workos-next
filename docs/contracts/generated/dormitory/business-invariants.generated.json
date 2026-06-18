@@ -25,19 +25,19 @@
     "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
     "docs/oam/visible-business-copy-contract.json"
   ],
-  "inputDigest": "sha256:2cdfab44d9cf14b642644b3104119e97f67dc92235ef92a26893708e5443f50a",
+  "inputDigest": "sha256:4b499bb1c41ec523a40759e13565aaa8e4d44c9ab6d41ac45691b331fbdde741",
   "inputDigests": [
     {
       "path": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
-      "digest": "sha256:d928362cb5ad281768ed0233db91e077d78fdff1878e1d32d1f6677698f995b3"
+      "digest": "sha256:30a37c8dce36b2c1899b922739125ab0d0ec92777af92d7e3d82c589bf516b68"
     },
     {
       "path": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
-      "digest": "sha256:6405ffd2e98956ca3ba1ce396e1825e4f3cb18b2a07ec3f64f3d7fdf80189962"
+      "digest": "sha256:42311bd3930daaf4c1c17ed2ec4aff9dac6e130c0d5582c61cbfb1532a31234c"
     },
     {
       "path": "docs/oam/generated-candidate-acceptance.current.json",
-      "digest": "sha256:161a6d6e0df210f14782d6c6de21e657ed49e0f4c60d535a840ffed1fef227ec"
+      "digest": "sha256:1c1741a7b04121d678e312471b43ebdf2b983dc792f4c2405dfceec3475abace"
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json",
@@ -77,19 +77,19 @@
     },
     {
       "path": "docs/contracts/generated/dormitory/workitems.generated.json",
-      "digest": "sha256:fa5a366c4cef4fbab08390e68243b97ac60aa210170f6ce2306ce4a7845651ac"
+      "digest": "sha256:954e10be69c3e3272d37713d6f981f8a8d054add1ab915c07644d063e31e8f65"
     },
     {
       "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
-      "digest": "sha256:e132bacc2e83184643440d357aa09021428b6ebd3b35731edbc9f7f381bb308d"
+      "digest": "sha256:ac346725fb169a742f3ea323a1d179652d2da4507526b43d9fc077e2a309de93"
     },
     {
       "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
-      "digest": "sha256:7e4003a34c82f2cfa0d472cb475b6a5dae0ab3ea8d894adab2290334fa0c1009"
+      "digest": "sha256:bd4fb788335fd5458c65a9603c79a382907042960d44baa07581f22a9855f806"
     },
     {
       "path": "docs/oam/dormitory-runtime-admission.current.json",
-      "digest": "sha256:e62b76710451e74a81b4c07e4142c02227929a2f8f584bc8313043864b0d0e04"
+      "digest": "sha256:74687385d339898c18eb9be6bcffa6b15eadb65bc3a364c535c8d3f427e72779"
     },
     {
       "path": "docs/oam/dormitory-first-golden-chain-landing.current.json",
@@ -104,13 +104,13 @@
       "digest": "sha256:c5657a3a3a2addbb8228c6a5fb0d2ac329df351e8333c2a7d2b6570e881c25db"
     }
   ],
-  "outputContentDigest": "sha256:f2548173741f70ffcc0c50986cdb5830bbfa0577c3c28bc88d4a3652b50d1b2c",
+  "outputContentDigest": "sha256:e52418753e9673310c35a0210a7e8cc225feb4d53125e076e18bbef349a4da50",
   "capabilityId": "Dormitory.FirstGoldenChain",
-  "acceptedGeneratedBundleDigest": "sha256:63f625febd94c09227b5824c90be509fea4b798b505516de141b600721caccfc",
+  "acceptedGeneratedBundleDigest": "sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3",
   "currentFilesMode": "ledger_replay_projection_only",
   "capabilityLedgerReplay": {
     "status": "PASS",
-    "eventCount": 50
+    "eventCount": 53
   },
   "lifecycleState": "RUNTIME_TEST_ADMITTED",
   "runtimeAdmissionStatus": "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION",

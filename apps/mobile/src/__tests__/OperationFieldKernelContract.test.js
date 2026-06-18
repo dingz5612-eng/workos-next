@@ -81,14 +81,15 @@ describe("Operation field kernel contract", () => {
     expect(preferredTaskFieldIds("cert.bedSetupConfirm")).toEqual([
       "bedCount",
       "bedLabels",
-      "bedType",
       "bedRemark",
       "specialNotes",
+      "bedType",
       "bedEnabledStatus",
       "bedTypeBatchSetting",
       "bedSetRef",
       "bedRef[01..N]",
       "bedNo[01..N]",
+      "bedLayout[01..N]",
       "bedSetVersion",
       "bedCountMatchedFlag"
     ]);

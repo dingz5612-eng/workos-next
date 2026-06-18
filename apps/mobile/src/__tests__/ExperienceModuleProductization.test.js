@@ -7,10 +7,11 @@ describe("OAM Surface experience module productization", () => {
     const ctx = createSurfaceCtx({ view: "operationPanel", selectedWorkItemId: "T-ROOM-CREATE" });
     const html = routeView(ctx);
     const text = visibleText(html);
-    const technicalDetails = html.match(/<details class="operation-technical-details"[\s\S]*?<\/details>/)?.[0] || "";
+    const technicalDetails = html.match(/<(?:details|div) class="operation-technical-details"[\s\S]*?(?:<\/details>|<\/div>)/)?.[0] || "";
     const ordinaryHtml = html.replace(technicalDetails, "");
 
     expect(html).toContain('data-work-item-id="wi-dorm-room-setup"');
+    expect(technicalDetails).toContain('hidden data-surface="operation-runtime-proof"');
     expect(technicalDetails).toContain("data-case-id");
     expect(technicalDetails).toContain("data-submission-id");
     expect(technicalDetails).toContain("data-payload-fingerprint");

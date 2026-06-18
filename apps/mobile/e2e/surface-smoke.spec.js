@@ -167,17 +167,19 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await bottomNav.getByRole("button", { name: "工作项", exact: true }).click();
   await page.locator('[data-work-item-id="wi-e2e-room-setup"]').click();
   await expect(page.locator('[data-surface="operation-panel-route"]')).toBeVisible();
+  await expect(page.locator('[data-surface="operation-admission"]')).toBeVisible();
+  await expect(page.locator("body")).toContainText("办理提示");
+  await expect(page.locator("body")).toContainText("提交前检查");
+  await expect(page.locator("body")).toContainText("还需填写");
+  await expect(page.locator("body")).toContainText("查看检查详情");
+  await expect(page.locator('[data-surface="trusted-confirm"]')).toBeHidden();
+  await page.locator('[data-surface="operation-pre-submit-details"] summary').click();
   await expect(page.locator('[data-surface="trusted-confirm"]')).toBeVisible();
   await expect(page.locator('[data-surface="evidence-sheet"]')).toBeVisible();
-  await expect(page.locator('[data-surface="operation-admission"]')).toBeVisible();
-  await expect(page.locator("body")).toContainText("准入状态");
-  await expect(page.locator("body")).toContainText("可信确认");
-  await expect(page.locator("body")).toContainText("可信证据");
-  await expect(page.locator("body")).toContainText("提交前检查");
-  await expect(page.locator("body")).toContainText("可以提交");
-  await expect(page.locator("body")).toContainText("查看检查详情");
-  await expect(page.locator("body")).toContainText("房间建档确认");
-  await expect(page.getByRole("button", { name: /^房间建档确认$/u })).toBeVisible();
+  await expect(page.locator("body")).toContainText("提交说明");
+  await expect(page.locator("body")).toContainText("材料");
+  await expect(page.locator("body")).toContainText("填写房间信息");
+  await expect(page.getByRole("button", { name: /^提交房间信息$/u })).toBeVisible();
   await expect(page.locator("body")).not.toContainText("提交观察记录");
   await expect(page.locator("body")).not.toContainText("payloadHash");
   await expect(page.locator("body")).not.toContainText("commandSubmissionId");
@@ -187,6 +189,7 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await expect(page.locator('[data-surface="operation-panel-route"]')).toHaveAttribute("data-admission-decision", "confirm_allowed_production_blocked");
   await expect(page.locator('[data-surface="operation-panel-route"]')).toHaveAttribute("data-runtime-decision", "work_item_confirm_ready:production_blocked");
 
+  runtimeSearchResults = [mainlineCommandSearchResult("房源建档与基础就绪")];
   await bottomNav.getByRole("button", { name: "搜索", exact: true }).click();
   await page.locator("#query").fill("房源建档与基础就绪");
   await page.locator("#searchNow").click();
@@ -205,6 +208,40 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await expect(page.locator("body")).not.toContainText("Governance Center");
   await expect(page.locator("body")).not.toContainText("Release Flight Deck");
 });
+
+function mainlineCommandSearchResult(query) {
+  const admissionDecisionRef = "admission:e2e:search-kernel";
+  return {
+    resultType: "command",
+    commandId: "startOperationsWorkspace",
+    templateWorkspaceId: "W-DORM-MAINLINE",
+    firstCardId: "cert.roomSetupConfirm",
+    title: { "zh-CN": "房源建档与基础就绪" },
+    subtitle: { "zh-CN": "完成房间建档、床位组确认和基础就绪确认。" },
+    status: "ready",
+    nextAction: { "zh-CN": "开始办理" },
+    matchedTerms: [query, "房源建档", "新增房间"],
+    sourceRefs: {
+      source: "SearchKernelService",
+      admissionDecisionRef
+    },
+    gateResult: {
+      source: "SearchKernelService",
+      admissionDecisionRef,
+      writeThroughSearchAllowed: false,
+      writeBusinessFactAllowed: false
+    },
+    admission: {
+      visibleAllowed: true,
+      prepareAllowed: true,
+      confirmAllowed: false,
+      productionAllowed: false,
+      mode: "internal_pilot_observation",
+      reason: "search_readonly_runtime_start",
+      admissionDecisionRef
+    }
+  };
+}
 
 test("mobile finance session stays on home and direct PC route shows diagnostic", async ({ page }) => {
   await seedActor(page, "finance");

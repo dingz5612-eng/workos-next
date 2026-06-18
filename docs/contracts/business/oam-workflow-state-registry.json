@@ -315,7 +315,9 @@
             "admission_decision_ref_present"
           ],
           "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
-          "evidenceRequired": [],
+          "evidenceRequired": [
+            "base-ready-resource-selection-proof"
+          ],
           "visibleRoles": [
             "宿舍经办人",
             "宿舍负责人"

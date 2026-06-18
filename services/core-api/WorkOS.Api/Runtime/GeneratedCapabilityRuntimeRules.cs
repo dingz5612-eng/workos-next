@@ -5301,6 +5301,22 @@ internal static class GeneratedRuleSourceMapRuntimeAdapter
             .EnumerateArray()
             .FirstOrDefault(item => (item.GetProperty("command").GetString() ?? string.Empty).Equals(workItemType, StringComparison.OrdinalIgnoreCase));
 
+    public static IReadOnlyList<string> CommandFieldKeys(string workItemType)
+    {
+        var command = CommandContract(workItemType);
+        if (command.ValueKind is not JsonValueKind.Object)
+        {
+            return Array.Empty<string>();
+        }
+
+        var keys = new HashSet<string>(StringComparer.Ordinal);
+        AddKeys(command, "requiredInputs", keys);
+        AddKeys(command, "derivedInputs", keys);
+        AddKeys(command, "readonlyInputs", keys);
+        AddKeys(command, "normalizedInputs", keys);
+        return keys.ToArray();
+    }
+
     public static int HttpStatusForFailureCode(string code, string workItemType)
     {
         foreach (var item in FailureSemantics.Value.RootElement.GetProperty("failureSemantics").EnumerateArray())
@@ -5328,6 +5344,23 @@ internal static class GeneratedRuleSourceMapRuntimeAdapter
                 (item.GetProperty("sourceRuleId").GetString() ?? string.Empty).Equals(sourceRuleId, StringComparison.OrdinalIgnoreCase))
             .GetProperty("generatedRuleId")
             .GetString() ?? string.Empty;
+
+    private static void AddKeys(JsonElement command, string property, ISet<string> keys)
+    {
+        if (!command.TryGetProperty(property, out var values) || values.ValueKind is not JsonValueKind.Array)
+        {
+            return;
+        }
+
+        foreach (var item in values.EnumerateArray())
+        {
+            var key = item.GetString() ?? string.Empty;
+            if (key.Length > 0)
+            {
+                keys.Add(key);
+            }
+        }
+    }
 
     private static JsonDocument ReadJson(string file) =>
         JsonDocument.Parse(File.ReadAllText(Locate(file)));

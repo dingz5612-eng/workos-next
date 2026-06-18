@@ -69,6 +69,16 @@
       "retention": "finance"
     },
     {
+      "requirementId": "base-ready-resource-selection-proof",
+      "requirementNameZh": "base-ready-resource-selection-proof",
+      "scope": "workItem",
+      "evidenceType": "base-ready-resource-selection-proof",
+      "workItemTypes": [
+        "Dorm.OperationResourceSelect"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
       "requirementId": "bed-availability-proof",
       "workItemTypes": [
         "Dorm.CheckinConfirm",

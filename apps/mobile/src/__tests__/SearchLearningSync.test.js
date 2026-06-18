@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { i18n } from "../i18n.js";
 import { searchView } from "../views/searchView.js";
 import { meView } from "../views/meView.js";
+import { DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS } from "../capabilityProjection.js";
 
 describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
   it("keeps Search focused on active business entry instead of personal activity log", () => {
@@ -20,9 +21,12 @@ describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
     expect(html).not.toContain("Release Control");
     expect(html).not.toContain("Finance admin");
 
-    const mainlineEntry = searchView(ctx({ view: "search", query: "新增房间" }));
+    const mainlineEntry = searchView(ctx({ view: "search", query: "房源建档与基础就绪" }));
     expect(mainlineEntry).toContain("新建房间和床位");
+    expect(mainlineEntry).toContain(`data-start-operations-workspace="${DORMITORY_MAINLINE_WORKSPACE_ID}"`);
     expect(mainlineEntry).not.toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
+    expect(mainlineEntry).not.toContain('data-start-operations-workspace="W-STAY-DEPOSIT-LEDGER"');
+    expect(mainlineEntry).not.toContain('data-start-operations-workspace="W-STAY-PAYMENT-LEDGER"');
   });
 
   it("keeps learning and evidence libraries in Me instead of Search results", () => {
@@ -79,7 +83,10 @@ function ctx(overrides = {}) {
       operationWorkItems: [],
       homeSurface: [],
       learningCatalog: [],
-      searchResultsByQuery: {}
+      searchResultsByQuery: {
+        "新增房间": [mainlineCommandSearchResult("新增房间")],
+        "房源建档与基础就绪": [mainlineCommandSearchResult("房源建档与基础就绪")]
+      }
     },
     ...overrides
   };
@@ -113,6 +120,41 @@ function workspace() {
       blockerRules: [],
       confirmation: { required: true, requiredRole: "operator" }
     }]
+  };
+}
+
+function mainlineCommandSearchResult(query) {
+  const firstStep = DORMITORY_SCENARIO1_STEPS[0];
+  const admissionDecisionRef = "admission:dormitory-mainline:scenario1:start";
+  return {
+    resultType: "command",
+    commandId: "startOperationsWorkspace",
+    templateWorkspaceId: DORMITORY_MAINLINE_WORKSPACE_ID,
+    firstCardId: firstStep.cardId,
+    title: { "zh-CN": "新建房间和床位" },
+    subtitle: { "zh-CN": "房间建档、确认床位信息和完成基础检查" },
+    status: "ready",
+    nextAction: { "zh-CN": "开始新建房间和床位" },
+    matchedTerms: [query, "房源建档", "新增房间"],
+    sourceRefs: {
+      source: "SearchKernelService",
+      admissionDecisionRef
+    },
+    gateResult: {
+      source: "SearchKernelService",
+      admissionDecisionRef,
+      writeThroughSearchAllowed: false,
+      writeBusinessFactAllowed: false
+    },
+    admission: {
+      visibleAllowed: true,
+      prepareAllowed: true,
+      confirmAllowed: false,
+      productionAllowed: false,
+      mode: "internal_pilot_observation",
+      reason: "search_readonly_runtime_start",
+      admissionDecisionRef
+    }
   };
 }
 

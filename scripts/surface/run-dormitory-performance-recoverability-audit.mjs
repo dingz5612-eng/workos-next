@@ -142,7 +142,7 @@ try {
     });
 
     await measure("confirmMs", async () => {
-      await page.getByRole("button", { name: /^房间建档确认$/u }).click();
+      await page.locator("[data-submit-card]").first().click();
       await page.locator('[data-surface="projection-pending"], [data-surface="action-result"]').first().waitFor({ timeout: 800 }).catch(() => {});
     });
     await capture(page, "confirm-feedback");

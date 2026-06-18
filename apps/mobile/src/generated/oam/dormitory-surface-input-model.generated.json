@@ -2,7 +2,7 @@
   "generated": true,
   "doNotEdit": true,
   "kind": "dormitory-surface-input-model.generated",
-  "kernelGraphHash": "sha256:b8aa6ef8b42289869daa55bcc3fcbeaff85485b7c3669d7dd77b32b322ba8d00",
+  "kernelGraphHash": "sha256:15d07559d10c4b5986cab0ccaf2f6f6bef73a0f34c3ac562fbcdee8330982ee0",
   "sourceNodeRefs": [
     "dormitory.workItem.Dorm.RoomSetupConfirm",
     "dormitory.workItem.Dorm.BedSetupConfirm",
@@ -13,10 +13,10 @@
     "dormitory.workItem.Dorm.BedSetupConfirm",
     "dormitory.workItem.Dorm.ResourceReadinessConfirm"
   ],
-  "sourceHash": "sha256:e31c7259b700636a9f8046bdf05ce36bd7f523220db83174f32395443e8f5ce7",
-  "sourceContentDigest": "sha256:e0ba7b1f49f159c4246b347dc37463f303315354f2ad629ba351cb0e974088ad",
-  "compilerInputDigest": "sha256:0a512fe73d2a193cdaf6d0c49a3e53509139580e5c3c9dc770c642ca42e02fe6",
-  "outputContentDigest": "sha256:678d819eb47a51b2aff9f8ed8d2c3e1f153c89c67f8c45178ae8a4bbcb3c9ff2",
+  "sourceHash": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+  "sourceContentDigest": "sha256:11fc4c7d828c15bcc7fdff6aa6ca480986bbd56d5ee17821a10a7979b30455c0",
+  "compilerInputDigest": "sha256:66911c8440ad6b47be58b4d7e2afd0973a366e76da667183762c642a5b479636",
+  "outputContentDigest": "sha256:b6eb8fe1841cc90867d1884d016e07fdce131298e486366215c287739cec98d4",
   "deterministicSort": true,
   "generatorVersion": "oam.capability-compiler.v1",
   "generatedFrom": [
@@ -1402,19 +1402,19 @@
     }
   ],
   "generatedBy": "scripts/oam/compile-current-capability.mjs",
-  "inputDigest": "sha256:2cdfab44d9cf14b642644b3104119e97f67dc92235ef92a26893708e5443f50a",
+  "inputDigest": "sha256:4b499bb1c41ec523a40759e13565aaa8e4d44c9ab6d41ac45691b331fbdde741",
   "inputDigests": [
     {
       "path": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
-      "digest": "sha256:d928362cb5ad281768ed0233db91e077d78fdff1878e1d32d1f6677698f995b3"
+      "digest": "sha256:30a37c8dce36b2c1899b922739125ab0d0ec92777af92d7e3d82c589bf516b68"
     },
     {
       "path": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
-      "digest": "sha256:6405ffd2e98956ca3ba1ce396e1825e4f3cb18b2a07ec3f64f3d7fdf80189962"
+      "digest": "sha256:42311bd3930daaf4c1c17ed2ec4aff9dac6e130c0d5582c61cbfb1532a31234c"
     },
     {
       "path": "docs/oam/generated-candidate-acceptance.current.json",
-      "digest": "sha256:161a6d6e0df210f14782d6c6de21e657ed49e0f4c60d535a840ffed1fef227ec"
+      "digest": "sha256:1c1741a7b04121d678e312471b43ebdf2b983dc792f4c2405dfceec3475abace"
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json",
@@ -1454,19 +1454,19 @@
     },
     {
       "path": "docs/contracts/generated/dormitory/workitems.generated.json",
-      "digest": "sha256:fa5a366c4cef4fbab08390e68243b97ac60aa210170f6ce2306ce4a7845651ac"
+      "digest": "sha256:954e10be69c3e3272d37713d6f981f8a8d054add1ab915c07644d063e31e8f65"
     },
     {
       "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
-      "digest": "sha256:e132bacc2e83184643440d357aa09021428b6ebd3b35731edbc9f7f381bb308d"
+      "digest": "sha256:ac346725fb169a742f3ea323a1d179652d2da4507526b43d9fc077e2a309de93"
     },
     {
       "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
-      "digest": "sha256:7e4003a34c82f2cfa0d472cb475b6a5dae0ab3ea8d894adab2290334fa0c1009"
+      "digest": "sha256:bd4fb788335fd5458c65a9603c79a382907042960d44baa07581f22a9855f806"
     },
     {
       "path": "docs/oam/dormitory-runtime-admission.current.json",
-      "digest": "sha256:e62b76710451e74a81b4c07e4142c02227929a2f8f584bc8313043864b0d0e04"
+      "digest": "sha256:74687385d339898c18eb9be6bcffa6b15eadb65bc3a364c535c8d3f427e72779"
     },
     {
       "path": "docs/oam/dormitory-first-golden-chain-landing.current.json",
@@ -1482,11 +1482,11 @@
     }
   ],
   "capabilityId": "Dormitory.FirstGoldenChain",
-  "acceptedGeneratedBundleDigest": "sha256:63f625febd94c09227b5824c90be509fea4b798b505516de141b600721caccfc",
+  "acceptedGeneratedBundleDigest": "sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3",
   "currentFilesMode": "ledger_replay_projection_only",
   "capabilityLedgerReplay": {
     "status": "PASS",
-    "eventCount": 50
+    "eventCount": 53
   },
   "lifecycleState": "RUNTIME_TEST_ADMITTED",
   "runtimeAdmissionStatus": "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION",
@@ -2046,7 +2046,7 @@
   "generatedBusinessRuleRefs": {
     "objectIdentity": {
       "ref": "docs/contracts/generated/dormitory/object-identity.generated.json",
-      "digest": "sha256:6bbe67ee1af9b914cfd8cc7e5bf3391db61456a7b3471cbc193157ea32b70f19",
+      "digest": "sha256:0ea09a7bf9bce7e0a40329d9c718731914363e5689ef5ee61ea1ddef28eaa504",
       "ruleIds": [
         "dormitory.object_identity.dormitory_buildingcontext",
         "dormitory.object_identity.dormitory_room",
@@ -2057,7 +2057,7 @@
     },
     "bedCardinality": {
       "ref": "docs/contracts/generated/dormitory/bed-cardinality.generated.json",
-      "digest": "sha256:38e74246a65e75053b6303be9ae9214301b69afa052100ae723f83b7cc6f24eb",
+      "digest": "sha256:8cfdfced0a7d2619b18aea3bc4d3760a94840d12627ffa9502a50082b74fd4fa",
       "ruleIds": [
         "dormitory.bed_cardinality.capacity_1_exactly_bed_01",
         "dormitory.bed_cardinality.capacity_n_exactly_bed_01_to_n",
@@ -2069,7 +2069,7 @@
     },
     "businessInvariants": {
       "ref": "docs/contracts/generated/dormitory/business-invariants.generated.json",
-      "digest": "sha256:f2548173741f70ffcc0c50986cdb5830bbfa0577c3c28bc88d4a3652b50d1b2c",
+      "digest": "sha256:e52418753e9673310c35a0210a7e8cc225feb4d53125e076e18bbef349a4da50",
       "ruleIds": [
         "dormitory.business_invariant.room_unique_within_building_context",
         "dormitory.business_invariant.bed_unique_within_room",
@@ -2085,7 +2085,7 @@
     },
     "commandContracts": {
       "ref": "docs/contracts/generated/dormitory/command-contracts.generated.json",
-      "digest": "sha256:44e9758ab2cf4132561fdd4326b25655a9f4a79006452e506bb81f6472fbcb34",
+      "digest": "sha256:f18cd9a788517e7143a5a835234cd8174a26c651ebf6b55350cb9eb4d3fe3e03",
       "ruleIds": [
         "dormitory.command_contract.dorm_roomsetupconfirm",
         "dormitory.command_contract.dorm_bedsetupconfirm",
@@ -2094,7 +2094,7 @@
     },
     "failureSemantics": {
       "ref": "docs/contracts/generated/dormitory/failure-semantics.generated.json",
-      "digest": "sha256:87b75545dd15d08f2d162be24eee634f94fa3d519abd8a90d28ac1caf0cb7056",
+      "digest": "sha256:e8048d927eca4b664702307bb3fdf057c40b9d31f1db5eaca3abd8a6cfb163f4",
       "ruleIds": [
         "dormitory.failure_semantics.duplicate_room",
         "dormitory.failure_semantics.duplicate_bed",
@@ -2108,7 +2108,7 @@
     },
     "ruleSourceMap": {
       "ref": "docs/contracts/generated/dormitory/rule-source-map.generated.json",
-      "digest": "sha256:29379d9dd5ad7057447e95da7f2242c1ffc347110571e62e9e968e6b9e5f97a8",
+      "digest": "sha256:c72dfd6185042e2e3cd26f678e7aa66e0650da46b058d0cc797e5f10fe3d5867",
       "ruleIds": [
         "dormitory.object_identity.dormitory_buildingcontext",
         "dormitory.object_identity.dormitory_room",

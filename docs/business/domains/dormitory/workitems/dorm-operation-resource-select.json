@@ -41,7 +41,9 @@
     "roomOrBedScope",
     "targetRoomOrBed"
   ],
-  "evidenceRequired": [],
+  "evidenceRequired": [
+    "base-ready-resource-selection-proof"
+  ],
   "submittedEvent": "OperationResourceSelectSubmitted",
   "ledgerImpact": "无账务影响",
   "lensUpdates": [

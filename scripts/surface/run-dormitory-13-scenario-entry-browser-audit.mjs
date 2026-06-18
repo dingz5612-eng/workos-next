@@ -3,6 +3,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { execSync } from "node:child_process";
 import { createRequire } from "node:module";
+import { businessDisplayZh } from "../../apps/mobile/src/businessDisplayLanguage.js";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("../../apps/mobile/node_modules/playwright");
@@ -147,11 +148,11 @@ try {
 
     await captureSurface(page, "home", "首页/今日入口", ["今天", "工作项", "搜索", "我的"]);
     await page.getByRole("navigation", { name: "移动端主导航" }).getByRole("button", { name: "今天", exact: true }).click();
-    await captureSurface(page, "today", "今日入口", ["今日", "房源建档与基础就绪"]);
+    await captureSurface(page, "today", "今日入口", displayTerms(["今日", "房源建档与基础就绪"]));
     await page.getByRole("navigation", { name: "移动端主导航" }).getByRole("button", { name: "工作项", exact: true }).click();
-    await captureSurface(page, "work-items", "工作项入口", ["房源建档与基础就绪", "房间建档确认"]);
+    await captureSurface(page, "work-items", "工作项入口", displayTerms(["房源建档与基础就绪", "房间建档确认"]));
     await page.locator('[data-work-item-id="wi-entry-mainline-room-filing"]').click();
-    await captureSurface(page, "operation-panel", "当前办理入口", ["房源建档与基础就绪", "房间建档确认", "保存草稿"]);
+    await captureSurface(page, "operation-panel", "当前办理入口", displayTerms(["房源建档与基础就绪", "房间建档确认", "保存草稿"]));
     await page.getByRole("navigation", { name: "移动端主导航" }).getByRole("button", { name: "我的", exact: true }).click();
     await captureSurface(page, "mine", "我的入口", ["学习中心", "我的权限", "当前设备"]);
 
@@ -162,13 +163,14 @@ try {
       await page.waitForTimeout(120);
       const text = await visibleText(page);
       const screenshot = await capture(page, `scenario-${String(scenario.scenarioNo).padStart(2, "0")}`);
-      const expectedButton = scenario.scenarioNo === 1 ? "开始办理" : "查看详情";
+      const displayNameZh = businessDisplayZh(scenario.nameZh);
+      const expectedButton = "查看详情";
       const hasExpectedButton = text.includes(expectedButton);
-      const hasName = text.includes(scenario.nameZh);
+      const hasName = text.includes(displayNameZh);
       const hasLearningMisroute = text.includes("开始学习");
       const hasForbidden = containsAny(text, forbiddenVisibleTerms);
       const analysis = {
-        "用户是否看得懂": hasName ? `能看到 ${scenario.nameZh}` : "未看到场景名称",
+        "用户是否看得懂": hasName ? `能看到 ${displayNameZh}` : "未看到场景名称",
         "按钮是否顺": hasExpectedButton ? `按钮为 ${expectedButton}` : `未看到 ${expectedButton}`,
         "是否误入学习中心": hasLearningMisroute ? "误入学习中心" : "未误入学习中心",
         "是否暴露旧身份或内部 ID": hasForbidden ? "存在风险" : "未发现",
@@ -178,8 +180,10 @@ try {
         scenarioNo: scenario.scenarioNo,
         scenarioId: scenario.scenarioId,
         nameZh: scenario.nameZh,
+        displayNameZh,
         expectedButton,
         status: hasName && hasExpectedButton && !hasLearningMisroute && !hasForbidden ? "passed" : "failed",
+        hasForbidden,
         visibleTextDigest: digestText(text),
         screenshot,
         analysis
@@ -203,7 +207,7 @@ try {
   addAssertion("entry.scenario_count", report.scenarios.length === 13, "必须覆盖 13 个场景入口。");
   addAssertion("entry.all_scenarios_passed", report.scenarios.every((item) => item.status === "passed"), "13 场景入口必须全部通过。");
   addAssertion("entry.surfaces_passed", report.entrySurfaces.every((item) => item.status === "passed"), "首页、今日、工作项、搜索、我的必须可用。");
-  addAssertion("entry.no_forbidden_visible_terms", [...report.entrySurfaces, ...report.scenarios].every((item) => item.status === "passed"), "入口不得暴露旧身份或内部 ID。");
+  addAssertion("entry.no_forbidden_visible_terms", [...report.entrySurfaces, ...report.scenarios].every((item) => item.hasForbidden !== true), "入口不得暴露旧身份或内部 ID。");
   addAssertion("entry.no_go_closed", report.productionConfirmAllowed === false && report.releaseAuthority === false && report.finalGoNoGo === "NO_GO", "入口验收不代表生产发布或 final GO。");
 
   report.status = report.findings.length || report.assertions.some((item) => item.status !== "passed")
@@ -293,6 +297,7 @@ async function captureSurface(page, id, nameZh, expectedTexts) {
     expectedButtons,
     missing,
     missingButtons,
+    hasForbidden,
     visibleTextDigest: digestText(text),
     screenshot,
     analysis: {
@@ -319,6 +324,10 @@ function buttonTermsForSurface(id) {
   if (id === "work-items") return ["开始办理", "继续办理", "查看详情"];
   if (id === "operation-panel") return ["保存草稿", "提交处理", "提交办理记录", "查看不能提交原因"];
   return [];
+}
+
+function displayTerms(terms = []) {
+  return terms.map((term) => businessDisplayZh(term));
 }
 
 async function capture(page, id) {

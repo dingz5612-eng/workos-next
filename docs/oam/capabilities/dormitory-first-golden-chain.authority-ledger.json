@@ -1222,6 +1222,78 @@
         "runtime test admission is not final GO",
         "browser audit PASS is not production confirmation"
       ]
+    },
+    {
+      "eventId": "Dormitory.FirstGoldenChain:0051:GENERATED_BUNDLE_BUILT",
+      "capabilityId": "Dormitory.FirstGoldenChain",
+      "previousEventDigest": "sha256:39a506d156f414f21fb8129654271ce154a9024737e79af79a91983e44a2b5f7",
+      "decidedBy": "00｜OAM 总控",
+      "eventType": "GENERATED_BUNDLE_BUILT",
+      "bundleDigest": "sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3",
+      "inputDigests": {
+        "sourceClosureDigest": "sha256:38de19e889f519484c11b5d38ba295c462f009ea4ef482a40fb1b45e1cee7e9f"
+      },
+      "outputDigests": {
+        "generatedBundleDigest": "sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3"
+      },
+      "decision": "GENERATED_BUNDLE_REBUILT_AS_IMMUTABLE_DIGEST_ONLY",
+      "decidedAtUtc": "2026-06-18T06:09:32.460Z",
+      "forbiddenInterpretations": [
+        "generated bundle rebuild is not generated bundle acceptance",
+        "generated bundle rebuild is not runtime admission",
+        "generated bundle rebuild is not business landing",
+        "generated bundle rebuild is not production confirmation",
+        "generated bundle rebuild is not release authority"
+      ]
+    },
+    {
+      "eventId": "Dormitory.FirstGoldenChain:0052:GENERATED_BUNDLE_ACCEPTED_BY_00",
+      "capabilityId": "Dormitory.FirstGoldenChain",
+      "previousEventDigest": "sha256:b9b398831d9dbfa355019527b275c2ccc21cdbef4389c0986012f95faf2d3b3e",
+      "decidedBy": "00｜OAM 总控",
+      "eventType": "GENERATED_BUNDLE_ACCEPTED_BY_00",
+      "subjectDigest": "sha256:01571d0d1a70edd021b12251cb28327dfff8302ab551fb5f79578a289d108092",
+      "bundleDigest": "sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3",
+      "inputDigests": {
+        "generatedBundleDigest": "sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3"
+      },
+      "outputDigests": {
+        "acceptedGeneratedBundleDigest": "sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3"
+      },
+      "decision": "ACCEPTED_BY_00_FOR_GENERATED_BUNDLE_ONLY",
+      "decidedAtUtc": "2026-06-18T06:09:32.460Z",
+      "forbiddenInterpretations": [
+        "generated bundle acceptance is not runtime admission",
+        "generated bundle acceptance is not business landing",
+        "generated bundle acceptance is not production confirmation",
+        "generated bundle acceptance is not release authority",
+        "generated bundle acceptance is not final GO"
+      ]
+    },
+    {
+      "eventId": "Dormitory.FirstGoldenChain:0053:RUNTIME_TEST_ADMITTED",
+      "capabilityId": "Dormitory.FirstGoldenChain",
+      "previousEventDigest": "sha256:2d6ebd50d3f20e83679d265f5f1ad5f021e5e76158a94a15a9f62086148923c1",
+      "decidedBy": "00｜OAM 总控",
+      "eventType": "RUNTIME_TEST_ADMITTED",
+      "subjectDigest": "sha256:32189ec64fdf640a9d53c3b9a0756732fbfac862c7b3561533cf4588e17b7156",
+      "bundleDigest": "sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3",
+      "inputDigests": {
+        "acceptedGeneratedBundleDigest": "sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3"
+      },
+      "outputDigests": {
+        "runtimeConsumedBundleDigest": "sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3",
+        "runtimeAdmissionDigest": "sha256:32189ec64fdf640a9d53c3b9a0756732fbfac862c7b3561533cf4588e17b7156"
+      },
+      "decision": "RUNTIME_TEST_ADMITTED_ONLY_NO_BUSINESS_LANDING",
+      "decidedAtUtc": "2026-06-18T06:09:32.460Z",
+      "forbiddenInterpretations": [
+        "runtime test admission is not business landing",
+        "runtime test admission is not production confirmation",
+        "runtime test admission is not release authority",
+        "runtime test admission is not final GO",
+        "browser audit PASS is not production confirmation"
+      ]
     }
   ]
 }

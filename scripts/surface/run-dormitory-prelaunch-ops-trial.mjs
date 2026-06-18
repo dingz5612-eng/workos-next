@@ -3,6 +3,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { execSync } from "node:child_process";
 import { createRequire } from "node:module";
+import { businessDisplayZh } from "../../apps/mobile/src/businessDisplayLanguage.js";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("../../apps/mobile/node_modules/playwright");
@@ -251,24 +252,24 @@ async function runRoleTrials() {
       if (role.id === "operator") {
         surfaces.push(await captureRoleSurface(page, role, "operator-home", ["今日工作", "今天", "工作项", "搜索", "我的"]));
         await page.getByRole("navigation", { name: "移动端主导航" }).getByRole("button", { name: "工作项", exact: true }).click();
-        surfaces.push(await captureRoleSurface(page, role, "operator-work-items", ["房源建档与基础就绪", "房间建档确认"]));
+        surfaces.push(await captureRoleSurface(page, role, "operator-work-items", displayTerms(["房源建档与基础就绪", "房间建档确认"])));
         await page.locator('[data-work-item-id="wi-prelaunch-room-setup"]').click();
-        surfaces.push(await captureRoleSurface(page, role, "operator-operation", ["房源建档与基础就绪", "房间建档确认", "保存草稿"]));
+        surfaces.push(await captureRoleSurface(page, role, "operator-operation", displayTerms(["房源建档与基础就绪", "房间建档确认", "保存草稿"])));
         if (await page.getByRole("button", { name: "保存草稿" }).count()) {
           await page.getByRole("button", { name: "保存草稿" }).click();
           await page.waitForTimeout(80);
         }
-        surfaces.push(await captureRoleSurface(page, role, "operator-draft-saved", ["房间建档确认"]));
-        if (await page.getByRole("button", { name: /^房间建档确认$/u }).count()) {
-          await page.getByRole("button", { name: /^房间建档确认$/u }).click();
+        surfaces.push(await captureRoleSurface(page, role, "operator-draft-saved", displayTerms(["房间建档确认"])));
+        if (await page.locator("[data-submit-card]").count()) {
+          await page.locator("[data-submit-card]").first().click();
           await page.waitForTimeout(160);
         }
-        surfaces.push(await captureRoleSurface(page, role, "operator-confirmed", ["房间建档确认"]));
+        surfaces.push(await captureRoleSurface(page, role, "operator-confirmed", displayTerms(["房间建档确认"])));
         await page.getByRole("navigation", { name: "移动端主导航" }).getByRole("button", { name: "搜索", exact: true }).click();
         await page.locator("#query").fill("房源建档与基础就绪");
         await page.locator("#searchNow").click();
         await page.waitForTimeout(120);
-        surfaces.push(await captureRoleSurface(page, role, "operator-search-readonly", ["房源建档与基础就绪", "开始办理"]));
+        surfaces.push(await captureRoleSurface(page, role, "operator-search-readonly", displayTerms(["房源建档与基础就绪", "查看详情"])));
         await page.getByRole("navigation", { name: "移动端主导航" }).getByRole("button", { name: "我的", exact: true }).click();
         surfaces.push(await captureRoleSurface(page, role, "operator-me", ["学习中心", "我的权限", "当前设备"]));
       } else if (role.id === "admin") {
@@ -343,6 +344,10 @@ function trialCoversObjective(role, objective, surfaces) {
   if (role.id === "finance" && ["价格", "收款", "押金", "退款", "结算", "账务边界"].includes(objective)) return true;
   if (role.id === "admin" && ["组织", "角色", "权限", "设备", "Admission", "发布控制"].includes(objective)) return true;
   return text.includes(objective);
+}
+
+function displayTerms(terms = []) {
+  return terms.map((term) => businessDisplayZh(term));
 }
 
 function verifyScenarioTrials() {

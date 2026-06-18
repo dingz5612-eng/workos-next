@@ -10,6 +10,18 @@
 - 仍然保持：`productionConfirmAllowed=false`、`businessGoLiveAllowed=false`、`releaseAuthority=false`、`finalGoNoGo=NO_GO`。
 - 用户亲测地址：启动本地测试环境后访问 `http://127.0.0.1:5175/?device=mobile`。
 
+## 0.1 2026-06-18 本轮复验摘要
+
+- 场景 1/2 已完成重新闭合；场景 2 搜索入口、Step1 generated 按钮文案、完成只读记录和截图索引均已进入证据目录。
+- 13 场景真实浏览器正反向审计、入口审计、性能/可恢复性审计、prelaunch trial、最终前端 UX 验收均为 PASS。
+- 最终前端 UX 验收报告：`artifacts/oam/evidence/dormitory-final-frontend-ux-acceptance/final-frontend-ux-acceptance-report.json`，digest `sha256:059c616c2854b1f0dbc6bbb2caee5ad847a0ceaf535697aca6bf73da87408724`。
+- formal generated compile PASS：`generatedOutputDigest=sha256:c46ae799b2152b05f2f5ad3a04e0369f8ed595eba1087399a0ed3309062b9b98`。
+- accepted generated bundle 当前值：`sha256:bdb9da7604dbe1e4ee94b3e97c04feb3690dccf53ae05a07f00aebd1fe5408c3`。
+- Evidence Root artifact digest：以 `artifacts/oam/evidence/current-oam-final-report.json` 的 `artifactDigest` 为准；本报告自身参与 Evidence Root，不在本节固定自引用 digest。
+- Evidence Root hard gate matrix PASS：以 `artifacts/oam/checks/evidence-root-hard-gate-matrix-result.json` 为准，`finalGoNoGo=NO_GO`。
+- Dormitory mainline close PASS：`45 commands x 2 passes`，`finalGoNoGo=NO_GO`。
+- Dormitory mainline activation transaction PASS：以 `artifacts/oam/checks/dormitory-mainline-activation-transaction-result.json` 为准，仍不授予生产 GO。
+
 ## 1. 现有架构资产表
 
 | 资产 | 位置 | 职责 | 当前生效 | generated 消费 | runtime 消费 | surface 消费 | 测试覆盖 | evidence 覆盖 |

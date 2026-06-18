@@ -263,7 +263,11 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     expect(operationPanel).toContain("submissionRecord");
     expect(operationPanel).not.toContain("ctx.workspace()");
     expect(apiProgram).toContain("AllowedWorkspaceStartRoles");
-    expect(apiProgram).toContain('"W-STAY-DEPOSIT-LEDGER" or "W-STAY-PAYMENT-LEDGER"');
+    expect(apiProgram).toContain("AcceptedCapabilityRuntimeProjection.WorkspaceId");
+    expect(apiProgram).toContain("DormitoryScenario2RuntimeProjection.WorkspaceId");
+    const startTemplateBlock = apiProgram.match(/static string\[\] DormitoryTemplateWorkspaceIds\(\) =>[\s\S]*?;/)?.[0] || "";
+    expect(startTemplateBlock).not.toContain("W-STAY-DEPOSIT-LEDGER");
+    expect(startTemplateBlock).not.toContain("W-STAY-PAYMENT-LEDGER");
   });
 });
 

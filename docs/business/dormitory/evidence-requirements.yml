@@ -75,6 +75,21 @@
       ]
     },
     {
+      "requirementId": "base-ready-resource-selection-proof",
+      "nameZh": "base-ready-resource-selection-proof",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
       "requirementId": "bed-availability-proof",
       "requiredFields": [
         "tenantId",

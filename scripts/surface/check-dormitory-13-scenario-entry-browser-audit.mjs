@@ -22,8 +22,7 @@ if (!report) {
   if ((report.findings ?? []).length !== 0) fail("entry browser report findings must be empty.");
   for (const scenario of report.scenarios ?? []) {
     if (scenario.status !== "passed") fail(`scenario ${scenario.scenarioNo} entry status must be passed.`);
-    if (scenario.scenarioNo === 1 && scenario.expectedButton !== "开始办理") fail("scenario 1 expected button must be 开始办理.");
-    if (scenario.scenarioNo !== 1 && scenario.expectedButton !== "查看详情") fail(`scenario ${scenario.scenarioNo} expected button must be 查看详情.`);
+    if (scenario.expectedButton !== "查看详情") fail(`scenario ${scenario.scenarioNo} expected button must be 查看详情.`);
     if (!scenario.screenshot?.path || !fs.existsSync(path.join(root, scenario.screenshot.path))) {
       fail(`scenario ${scenario.scenarioNo} screenshot missing.`);
     }

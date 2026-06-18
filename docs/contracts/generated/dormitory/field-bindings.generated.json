@@ -2,7 +2,7 @@
   "generated": true,
   "doNotEdit": true,
   "kind": "field-bindings.generated",
-  "kernelGraphHash": "sha256:b8aa6ef8b42289869daa55bcc3fcbeaff85485b7c3669d7dd77b32b322ba8d00",
+  "kernelGraphHash": "sha256:15d07559d10c4b5986cab0ccaf2f6f6bef73a0f34c3ac562fbcdee8330982ee0",
   "sourceNodeRefs": [
     "dormitory.workItem.Dorm.RoomSetupConfirm",
     "dormitory.workItem.Dorm.BedSetupConfirm",
@@ -13,16 +13,16 @@
     "dormitory.workItem.Dorm.BedSetupConfirm",
     "dormitory.workItem.Dorm.ResourceReadinessConfirm"
   ],
-  "sourceHash": "sha256:e31c7259b700636a9f8046bdf05ce36bd7f523220db83174f32395443e8f5ce7",
-  "sourceContentDigest": "sha256:e31c7259b700636a9f8046bdf05ce36bd7f523220db83174f32395443e8f5ce7",
-  "compilerInputDigest": "sha256:04dc4f57f8f7464bf2ccaf540ffaa84f1ed033466db876e87f5eedc92aa9e5b7",
-  "outputContentDigest": "sha256:2c63ca346abe0f2ade4f7876f78c448c9666eeb1405b4ca4312f40072919f884",
+  "sourceHash": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+  "sourceContentDigest": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+  "compilerInputDigest": "sha256:a96a4fdc7db338c1b635fef5b026e590992b4f59cdd31f3c2c57f3c9fe079561",
+  "outputContentDigest": "sha256:ba009d162b14a01ad68c6465cfd4259cd12bce53d32eea559832280e34ab75e6",
   "deterministicSort": true,
   "generatorVersion": "current-oam-kernel-compiler.v1",
   "generatedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
   "canonicalClosureVersion": "oam.dormitory-source-semantic-closure.v1",
   "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
-  "generatedFieldBindingClosureDigest": "sha256:cbd49f853bd558de4e43c163084584a17927f3d69f3c251c1745c734b57dccce",
+  "generatedFieldBindingClosureDigest": "sha256:38de19e889f519484c11b5d38ba295c462f009ea4ef482a40fb1b45e1cee7e9f",
   "sourceSemanticRefs": [
     {
       "id": "dormitorySourceScenario",
@@ -34,7 +34,7 @@
       "id": "dormitoryOperatingKernel",
       "path": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
       "tracked": true,
-      "semanticDigest": "sha256:8acf8e0a48a0c3c80516adac861e9deec1eaf2a41b8625ce16f68f38573b3899"
+      "semanticDigest": "sha256:e5e8df356e8ddc00d7942e0b28aa752b8b2bc151bfa67e20fab3dc97c4b55ef6"
     },
     {
       "id": "generatedCompileApproval",

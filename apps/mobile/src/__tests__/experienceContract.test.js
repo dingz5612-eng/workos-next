@@ -54,12 +54,13 @@ describe("OAM Experience Contract", () => {
 
   it("renders the shell before runtime hydration finishes", () => {
     const main = source("../main.js");
-    const initialRender = main.lastIndexOf("render();");
-    const initialHydration = main.lastIndexOf("hydrateProjectionFromApi().finally");
+    const bootstrapSequence = main.indexOf("render();\nhydrateProjectionFromApi()");
+    const initialHydration = main.indexOf("hydrateProjectionFromApi()", bootstrapSequence);
 
     expect(main).toContain("state.runtimeHydrating = true");
-    expect(initialRender).toBeGreaterThan(0);
-    expect(initialHydration).toBeGreaterThan(initialRender);
+    expect(bootstrapSequence).toBeGreaterThan(0);
+    expect(initialHydration).toBeGreaterThan(bootstrapSequence);
+    expect(main).toContain(".finally(() => runSearchFromCurrentUrlIfNeeded(ctx).catch(() => false))");
   });
 
   it("stops protected hydration after auth expiry instead of batch-fetching protected surfaces", () => {

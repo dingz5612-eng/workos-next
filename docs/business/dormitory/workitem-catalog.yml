@@ -131,7 +131,9 @@
       "backupOwner": "宿舍负责人",
       "escalationOwner": "宿舍负责人",
       "SLA": "1h",
-      "requiredEvidence": [],
+      "requiredEvidence": [
+        "base-ready-resource-selection-proof"
+      ],
       "affectedFacts": [
         "CommandSubmission",
         "DomainEvent",

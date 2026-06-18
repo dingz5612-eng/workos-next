@@ -395,7 +395,7 @@ public sealed class CanonicalOperationsApiService
         var effectiveCardId = FirstNonEmpty(request.CardId, PayloadValue(workItem.Payload, "cardId"), workItem.WorkItemType);
         var normalized = request.Normalize(workItemId, workItem.WorkspaceId, effectiveCardId);
         var caseId = FirstNonEmpty(workItem.CaseId, $"case-{workItem.TenantId}");
-        var fieldKeyFailure = ValidateFieldKeys(workItem.WorkItemId, normalized);
+        var fieldKeyFailure = ValidateFieldKeys(workItem, normalized);
         if (!string.IsNullOrWhiteSpace(fieldKeyFailure))
         {
             return ConfirmWorkItemResult.Rejected(
@@ -1011,7 +1011,7 @@ public sealed class CanonicalOperationsApiService
         PayloadValue(workItem.Payload, "correctionMode").Equals("append_only", StringComparison.OrdinalIgnoreCase) ||
         PayloadValue(workItem.Payload, "operationMode").Equals("correction", StringComparison.OrdinalIgnoreCase);
 
-    private string? ValidateFieldKeys(string workItemId, ConfirmWorkItemRequest request)
+    private string? ValidateFieldKeys(WorkItem workItem, ConfirmWorkItemRequest request)
     {
         var values = request.FieldValues ?? new Dictionary<string, string>();
         if (values.Count == 0)
@@ -1019,7 +1019,7 @@ public sealed class CanonicalOperationsApiService
             return null;
         }
 
-        var prepared = catalog.PrepareWorkItem(workItemId, new PrepareWorkItemRequest(
+        var prepared = catalog.PrepareWorkItem(workItem.WorkItemId, new PrepareWorkItemRequest(
             request.WorkspaceId,
             request.CardId,
             request.SubmissionId,
@@ -1043,6 +1043,10 @@ public sealed class CanonicalOperationsApiService
         {
             allowed.Add(key);
         }
+        foreach (var key in AcceptedCapabilityCommandFieldKeys(request.WorkspaceId, workItem.WorkItemType))
+        {
+            allowed.Add(key);
+        }
         var unknown = values.Keys.FirstOrDefault(key => !allowed.Contains(key));
         return string.IsNullOrWhiteSpace(unknown) ? null : $"unknown_field_key:{unknown}";
     }
@@ -1058,6 +1062,16 @@ public sealed class CanonicalOperationsApiService
             .Concat(GeneratedRuleSourceMapRuntimeAdapter.ReadonlyStableRefKeys)
             .Distinct(StringComparer.Ordinal)
             .ToArray();
+    }
+
+    private static IReadOnlyList<string> AcceptedCapabilityCommandFieldKeys(string? workspaceId, string workItemType)
+    {
+        if (!IsAcceptedCapabilityWorkspace(workspaceId ?? string.Empty))
+        {
+            return Array.Empty<string>();
+        }
+
+        return GeneratedRuleSourceMapRuntimeAdapter.CommandFieldKeys(workItemType);
     }
 
     private static readonly string[] ReservedControlFieldKeys =

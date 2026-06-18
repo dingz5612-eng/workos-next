@@ -787,7 +787,9 @@
         "financeKernelEffectType": null
       },
       "generatedBlockedReason": null,
-      "requiredEvidence": [],
+      "requiredEvidence": [
+        "base-ready-resource-selection-proof"
+      ],
       "ledgerImpact": "无账务影响",
       "lensOutputs": [
         "OperationDraft"
@@ -5861,7 +5863,9 @@
         "roomOrBedScope",
         "targetRoomOrBed"
       ],
-      "evidenceRequired": [],
+      "evidenceRequired": [
+        "base-ready-resource-selection-proof"
+      ],
       "submittedEvent": "OperationResourceSelectSubmitted",
       "ledgerImpact": "无账务影响",
       "lensUpdates": [
@@ -7740,6 +7744,7 @@
       "rate-policy",
       "completion-photo",
       "verification-check",
+      "base-ready-resource-selection-proof",
       "operation-inspection-photo",
       "maintenance-record",
       "safety-inspection-record",

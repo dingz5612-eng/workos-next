@@ -73,6 +73,7 @@
         "rate-policy",
         "completion-photo",
         "verification-check",
+        "base-ready-resource-selection-proof",
         "operation-inspection-photo",
         "maintenance-record",
         "safety-inspection-record",

@@ -493,6 +493,13 @@ describe("OAM hardening queue and Search readonly matrix", () => {
       ownerRole: "operator",
       commandSubmissionId: "cmd-done",
       reason: "已完成"
+    }, {
+      workItemId: "wi-dorm-scenario2-draft",
+      workspaceId: "W-DORM-RESOURCE-OPERATION-STATUS",
+      cardId: "cert.selectBaseReadyResource",
+      lifecycleState: "ready",
+      ownerRole: "operator",
+      nextAction: { "zh-CN": "继续填写房源运营状态", "ru-RU": "Вернуться в работу" }
     });
     const ctx = createSurfaceCtx({
       runtimeStore: store,
@@ -528,6 +535,8 @@ describe("OAM hardening queue and Search readonly matrix", () => {
     expect(permissions).toContain("经办人");
     expect(deviceTrust).toContain("设备已验证");
     expect(businessRecords).toContain("新建房间和床位");
+    expect(businessRecords).toContain("继续填写房源运营状态");
+    expect(businessRecords).not.toContain("[object Object]");
     expect(completedRecords).toContain("已完成记录");
     expect(evidenceLibrary).toContain("room-photo.txt");
     expect(visibleText(confirmPageView(ctx))).toContain("填写房间信息");

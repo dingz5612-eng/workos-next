@@ -10,8 +10,8 @@
     "domainKernel": "docs/oam/kernel-schemas/domain-kernel.schema.json",
     "workItem": "docs/oam/kernel-schemas/workitem.schema.json"
   },
-  "nodeCount": 1790,
-  "edgeCount": 1454,
+  "nodeCount": 1789,
+  "edgeCount": 1453,
   "nodes": [
     {
       "runtimeBinding": "current-oam",
@@ -33720,7 +33720,22 @@
       ],
       "evidenceBinding": "artifacts/oam/checks/no-old-active-entry-result.json",
       "currentTruthAllowed": false,
-      "deletionCondition": "当旧链退役完成且封口器不再引用本门禁时，必须先删除 close/mainline/compile 引用并保留历史证据。"
+      "deletionCondition": "当旧链退役完成且封口器不再引用本门禁时，必须先删除 close/mainline/compile 引用并保留历史证据。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "legacy.no-old-active-entry",
+      "checker": "scripts/oam/check-no-old-active-entry.mjs",
+      "evidence": "artifacts/oam/checks/no-old-active-entry-result.json",
+      "replacementPath": "scripts/oam/check-no-old-active-entry.mjs",
+      "absorbedBy": "scripts/oam/check-no-old-active-entry.mjs",
+      "removalProofGate": "scripts/oam/check-no-old-active-entry.mjs",
+      "deletionConditionZh": "当旧链退役完成且封口器不再引用本门禁时，必须先删除 close/mainline/compile 引用并保留历史证据。",
+      "consumers": [
+        "scripts/oam/close-dormitory-mainline.mjs",
+        "scripts/oam/check-current-oam.mjs",
+        "scripts/oam/check-generated-compile-execution.mjs"
+      ]
     },
     {
       "nodeId": "file.scripts/oam/check-no-stage-number-active-authority.mjs",
@@ -37826,37 +37841,6 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
         "scripts/surface/run-dormitory-13-scenario-entry-browser-audit.mjs",
-        "scripts/oam/run-control-plane-checks.ps1"
-      ]
-    },
-    {
-      "nodeId": "file.scripts/surface/run-dormitory-all-steps-real-browser-audit.mjs",
-      "nodeType": "File",
-      "owner": "release-control-owner",
-      "sourceFile": "scripts/surface/run-dormitory-all-steps-real-browser-audit.mjs",
-      "runtimeBinding": "kernel.release-control",
-      "testBinding": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
-        "scripts/oam/run-control-plane-checks.ps1"
-      ],
-      "gateBinding": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
-      ],
-      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": false,
-      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_validation",
-      "manualEditAllowed": true,
-      "ciReferenceAllowed": true,
-      "sourceKernel": "kernel.release-control",
-      "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
-      "evidence": "artifacts/oam/evidence/evidence-graph.json",
-      "replacementPath": "scripts/surface/run-dormitory-all-steps-real-browser-audit.mjs",
-      "absorbedBy": "scripts/surface/run-dormitory-all-steps-real-browser-audit.mjs",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
-      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "consumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ]
     },
@@ -61770,15 +61754,6 @@
       "edgeType": "owns",
       "allowedDirection": "kernel.release-control -> file.scripts/surface/run-bed-setup-real-browser-audit.mjs",
       "forbiddenDirection": "file.scripts/surface/run-bed-setup-real-browser-audit.mjs 不得反向覆盖 kernel.release-control",
-      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
-      "evidence": "artifacts/oam/evidence/evidence-graph.json"
-    },
-    {
-      "from": "kernel.release-control",
-      "to": "file.scripts/surface/run-dormitory-all-steps-real-browser-audit.mjs",
-      "edgeType": "owns",
-      "allowedDirection": "kernel.release-control -> file.scripts/surface/run-dormitory-all-steps-real-browser-audit.mjs",
-      "forbiddenDirection": "file.scripts/surface/run-dormitory-all-steps-real-browser-audit.mjs 不得反向覆盖 kernel.release-control",
       "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json"
     },

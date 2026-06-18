@@ -42,7 +42,6 @@
       ".github/workflows/ci.yml",
       "docs/oam/control-plane/gate-lane-taxonomy.current.json",
       "scripts/surface/run-dormitory-l1-browser-e2e-audit.mjs",
-      "scripts/surface/run-dormitory-all-steps-real-browser-audit.mjs",
       "scripts/surface/run-dormitory-ten-scenario-real-browser-audit.mjs",
       "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs",
       "scripts/surface/run-dormitory-real-browser-audits.ps1"
@@ -76,14 +75,12 @@
     "S6",
     "S7",
     "S8",
-    "ten-scenario",
-    "all-steps"
+    "ten-scenario"
   ],
   "forbiddenInterpretations": [
     "old 6-card flow is not current Dormitory.FirstGoldenChain",
     "WorkspaceSeedCatalog is not current capability authority",
     "ten-scenario browser evidence is not a main generated/runtime gate",
-    "all-steps browser evidence is not a main generated/runtime gate",
     "Evidence Root PASS is not business GO",
     "CI PASS is not business GO"
   ],

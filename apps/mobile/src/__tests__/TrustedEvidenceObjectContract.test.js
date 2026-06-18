@@ -10,7 +10,8 @@ describe("Stage B trusted evidence object contract", () => {
     const html = `${EvidenceTile(card.evidence[0], draft, "", ctx)}${EvidenceSheet(card, draft, ctx)}`;
     const text = visibleText(html);
 
-    expect(text).toContain("办理材料");
+    expect(text).toContain("房间基础资料证据");
+    expect(text).toContain("材料");
     expect(text).toContain("系统将在提交时自动绑定");
     expect(text).toContain("材料已就绪");
     expect(text).not.toContain("EvidenceSheet");
