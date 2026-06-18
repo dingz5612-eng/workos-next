@@ -70,8 +70,24 @@ export function PrimaryActionVM(status, extra = {}) {
   const cardId = extra.card?.id || "";
   if (["ready", "readyObservation"].includes(status) && isDormitoryScenario1CardId(cardId)) {
     entry.labelKey = capabilitySubmitLabelKey(cardId, "business-landing");
+  } else if (["ready", "readyObservation"].includes(status)) {
+    const confirmationLabel = generatedConfirmationLabel(extra.card);
+    if (confirmationLabel) entry.label = confirmationLabel;
   }
   return { status, ...entry, disabled: Boolean(extra.disabled || table[status]?.disabled) };
+}
+
+function generatedConfirmationLabel(card = {}) {
+  const label = card.confirmation?.label ||
+    card.Confirmation?.label ||
+    card.confirmationLabel ||
+    card.ConfirmationLabel ||
+    null;
+  if (typeof label === "string") return label.trim() ? label : null;
+  if (label && typeof label === "object" && Object.values(label).some((value) => String(value || "").trim())) {
+    return label;
+  }
+  return null;
 }
 
 export function SubmissionResultVM(result = null) {

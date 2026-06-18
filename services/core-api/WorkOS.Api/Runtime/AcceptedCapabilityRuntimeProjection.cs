@@ -66,6 +66,32 @@ internal static class AcceptedCapabilityRuntimeProjection
             ? commands.EnumerateArray().Select(Command).ToArray()
             : Array.Empty<SearchCommandDefinition>();
 
+    public static bool IsObjectSearchQuery(string? query)
+    {
+        if (!SearchProjectionBool("objectQueriesStartCommand", true))
+        {
+            var normalized = NormalizeSearchObjectQuery(query);
+            if (string.IsNullOrWhiteSpace(normalized))
+            {
+                return false;
+            }
+
+            if (SearchProjectionStrings("objectQueryExamples")
+                .Select(NormalizeSearchObjectQuery)
+                .Any(example => example.Equals(normalized, StringComparison.OrdinalIgnoreCase)))
+            {
+                return true;
+            }
+
+            if (!SearchProjectionBool("ordinaryRoomQueryStartsCommand", true) && LooksLikeRoomObjectQuery(normalized))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static SliceRuntimeCapability RuntimeCapability() =>
         new(CapabilityId, WorkspaceId, SliceRuntimeStatus);
 
@@ -200,6 +226,31 @@ internal static class AcceptedCapabilityRuntimeProjection
 
     private static string Optional(JsonElement element, string propertyName) =>
         element.TryGetProperty(propertyName, out var value) ? value.GetString() ?? string.Empty : string.Empty;
+
+    private static bool SearchProjectionBool(string propertyName, bool fallback) =>
+        Root.TryGetProperty("searchProjection", out var searchProjection) &&
+        searchProjection.TryGetProperty(propertyName, out var value) &&
+        value.ValueKind is JsonValueKind.True or JsonValueKind.False
+            ? value.GetBoolean()
+            : fallback;
+
+    private static IReadOnlyList<string> SearchProjectionStrings(string propertyName) =>
+        Root.TryGetProperty("searchProjection", out var searchProjection) &&
+        searchProjection.TryGetProperty(propertyName, out var values) &&
+        values.ValueKind == JsonValueKind.Array
+            ? values.EnumerateArray().Select(item => item.GetString() ?? string.Empty).Where(item => item.Length > 0).ToArray()
+            : Array.Empty<string>();
+
+    private static string NormalizeSearchObjectQuery(string? value) =>
+        new((value ?? string.Empty)
+            .Trim()
+            .ToLowerInvariant()
+            .Where(character => !char.IsWhiteSpace(character) && !"，。；、,.!?！？:：;；/\\|()[]{}\"'`~".Contains(character))
+            .ToArray());
+
+    private static bool LooksLikeRoomObjectQuery(string value) =>
+        (value.Length >= 2 && value.All(char.IsLetterOrDigit) && value.Any(char.IsDigit)) ||
+        (value.EndsWith("房间", StringComparison.OrdinalIgnoreCase) && value.Any(char.IsDigit));
 
     private static JsonElement Root => ProjectionDocument.Value.RootElement;
 

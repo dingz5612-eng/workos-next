@@ -16,6 +16,7 @@ import {
 const root = process.cwd();
 const report = readJsonIfExists(FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_REPORT_PATH) ?? {};
 const testPlan = readJsonIfExists(FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH) ?? {};
+const visibleCopyContract = readJsonIfExists("docs/oam/visible-business-copy-contract.json") ?? {};
 const chain = buildProjectionDigestChain(root);
 const failures = [];
 const currentHead = command("git rev-parse HEAD");
@@ -57,8 +58,8 @@ for (const expected of FIRST_GOLDEN_CHAIN_STEPS) {
   if (!stepIds.map(routeCardId).includes(routeCardId(expected.cardId))) failures.push(`browser report missing step ${routeCardId(expected.cardId)}.`);
   if (!JSON.stringify(report).includes(expected.step)) failures.push(`browser report missing visible step label ${expected.step}.`);
 }
-if (!JSON.stringify(report).includes("房源建档与基础就绪完成")) {
-  failures.push("browser report must prove 房源建档与基础就绪完成 is visible.");
+if (!scenario1CompletionVisibleLabels().some((label) => JSON.stringify(report).includes(label))) {
+  failures.push(`browser report must prove scenario 1 completion is visible: ${scenario1CompletionVisibleLabels().join(" / ")}.`);
 }
 for (const requiredAssertion of [
   "search.object_query_d01_no_command",
@@ -164,4 +165,11 @@ function safeName(value) {
 
 function routeCardId(cardId) {
   return currentRouteCardIds[cardId] || cardId;
+}
+
+function scenario1CompletionVisibleLabels() {
+  const source = "房源建档与基础就绪完成";
+  const replacement = (visibleCopyContract.displayTermReplacementsZh ?? [])
+    .find(([from]) => from === source)?.[1];
+  return Array.from(new Set([source, replacement].filter(Boolean)));
 }

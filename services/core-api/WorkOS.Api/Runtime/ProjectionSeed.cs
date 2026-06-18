@@ -58,11 +58,6 @@ public static class ProjectionSeed
             AcceptedCapabilityRuntimeProjection.Workspace(),
             DormitoryScenario2RuntimeProjection.Workspace()
         }
-        .Concat(WorkspaceSeedCatalog.All()
-            .Where(seed =>
-                !seed.Id.Equals(AcceptedCapabilityRuntimeProjection.LegacyResourceWorkspaceId, StringComparison.OrdinalIgnoreCase) &&
-                !seed.Id.Equals(DormitoryScenario2RuntimeProjection.WorkspaceId, StringComparison.OrdinalIgnoreCase))
-            .Select(Workspace))
         .ToList();
 
     private static WorkspaceProjection Workspace(WorkspaceSeed seed)

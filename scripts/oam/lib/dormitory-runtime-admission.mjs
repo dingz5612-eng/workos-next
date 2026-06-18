@@ -41,8 +41,7 @@ export const generatedRuntimeContractRefs = [
   "docs/contracts/generated/dormitory/field-bindings.generated.json",
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
-  "docs/contracts/generated/dormitory/read-model.generated.json",
-  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+  "docs/contracts/generated/dormitory/read-model.generated.json"
 ];
 
 const negativeAuthorityExpectations = {

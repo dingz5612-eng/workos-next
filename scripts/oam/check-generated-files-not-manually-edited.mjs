@@ -6,7 +6,26 @@ import path from "node:path";
 const root = process.cwd();
 const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "workos-generated-check-"));
 const reportPath = "artifacts/oam/checks/generated-files-not-manually-edited-result.json";
-const generatedFiles = [
+const scope = process.env.OAM_GENERATED_MANUAL_EDIT_SCOPE === "generated_contract_candidate_only"
+  ? "generated_contract_candidate_only"
+  : "full_runtime_consumption_generated";
+const runtimeConsumptionGeneratedFiles = new Set([
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "apps/mobile/src/generated/oam/capability-projection.generated.json",
+  "apps/mobile/src/generated/oam/business-display-language.generated.js",
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
+  "docs/contracts/generated/dormitory/object-identity.generated.json",
+  "docs/contracts/generated/dormitory/bed-cardinality.generated.json",
+  "docs/contracts/generated/dormitory/business-invariants.generated.json",
+  "docs/contracts/generated/dormitory/command-contracts.generated.json",
+  "docs/contracts/generated/dormitory/failure-semantics.generated.json",
+  "docs/contracts/generated/dormitory/rule-source-map.generated.json",
+  "docs/contracts/generated/dormitory/db-projection-policy.generated.json",
+  "docs/contracts/generated/dormitory/test-plan.generated.json",
+  "artifacts/oam/evidence/capability-evidence-subject-chain.json",
+  "artifacts/oam/evidence/capability-digest-chain.json"
+]);
+const allGeneratedFiles = [
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
@@ -191,6 +210,9 @@ const generatedFiles = [
   "artifacts/oam/evidence/capability-evidence-subject-chain.json",
   "artifacts/oam/evidence/capability-digest-chain.json"
 ];
+const generatedFiles = scope === "generated_contract_candidate_only"
+  ? allGeneratedFiles.filter((file) => !runtimeConsumptionGeneratedFiles.has(file))
+  : allGeneratedFiles;
 const failures = [];
 
 try {
@@ -199,11 +221,13 @@ try {
     env: { ...process.env, WORKOS_KERNEL_COMPILE_OUTPUT_ROOT: tempRoot },
     stdio: "pipe"
   });
-  execFileSync(process.execPath, ["scripts/oam/compile-current-capability.mjs"], {
-    cwd: root,
-    env: { ...process.env, WORKOS_CAPABILITY_COMPILE_OUTPUT_ROOT: tempRoot },
-    stdio: "pipe"
-  });
+  if (scope !== "generated_contract_candidate_only") {
+    execFileSync(process.execPath, ["scripts/oam/compile-current-capability.mjs"], {
+      cwd: root,
+      env: { ...process.env, WORKOS_CAPABILITY_COMPILE_OUTPUT_ROOT: tempRoot },
+      stdio: "pipe"
+    });
+  }
   execFileSync(process.execPath, ["scripts/business/generate-dormitory-13-scenario-control-contracts.mjs"], {
     cwd: root,
     env: { ...process.env, WORKOS_DORMITORY_13_CONTROL_OUTPUT_ROOT: tempRoot },
@@ -316,6 +340,8 @@ function writeReport() {
     version: "oam.generated-files-not-manually-edited-result.v1",
     checkedAtUtc: new Date().toISOString(),
     status: failures.length === 0 ? "passed" : "failed",
+    scope,
+    runtimeConsumptionGeneratedFilesExcluded: scope === "generated_contract_candidate_only",
     generatedFileCount: generatedFiles.length,
     failures,
     generatedFiles: generatedFiles.map((file) => ({

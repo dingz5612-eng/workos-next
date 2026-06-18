@@ -9,29 +9,29 @@
     "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:8e62f24d9bebee90b8362245cb76f4d7662bd4d58f8adfd7f89629aeae43ded8",
+  "inputDigest": "sha256:75cc9188bab7ab6e4ef4a62f4ad94875c252f3cf21bd83243a74f1c3f08e32b6",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
-      "digest": "sha256:0c92771a523c3f49d834e5d113e86e90770f452240ab3969385b6c2694c1f68a"
+      "digest": "sha256:889073946d661f8d32f344373ccb2d554f78602102815f569eb78b0f771ad720"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:0c92771a523c3f49d834e5d113e86e90770f452240ab3969385b6c2694c1f68a",
+  "sourceContentDigest": "sha256:889073946d661f8d32f344373ccb2d554f78602102815f569eb78b0f771ad720",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario2.ResourceOperationStatus",
   "scenarioPackageNo": 2,
   "scenarioId": "lodging.resource-operation-status",
-  "outputContentDigest": "sha256:cf6ccde75c4dc966dad8464d0c198aa8e0e0d4397c6644b675a928a8958a0b6d",
+  "outputContentDigest": "sha256:260e151d090eba618a9e0725e25d10b39b2bc4cc3b87fc518fb4fcdf68d76cb7",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "房源运营就绪与状态维护",
   "businessGoalZh": "承接场景包 1 已完成的房间建档、床位组确认、基础就绪确认摘要，完成房间或床位的运营检查、运营状态设置、阻断维护和恢复确认。",
-  "sourceScenarioDigest": "sha256:0c92771a523c3f49d834e5d113e86e90770f452240ab3969385b6c2694c1f68a",
+  "sourceScenarioDigest": "sha256:889073946d661f8d32f344373ccb2d554f78602102815f569eb78b0f771ad720",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "consumer": "surface",
   "surfaceNavigation": {
@@ -161,14 +161,14 @@
         "当前运营状态"
       ],
       "userFilledFields": [
-        "cleaningInspectionResult",
-        "maintenanceInspectionResult",
-        "safetyInspectionResult",
-        "facilityInspectionResult",
         "exceptionDescription",
         "operationInspectionNotes"
       ],
       "userSelectedFields": [
+        "cleaningInspectionResult",
+        "maintenanceInspectionResult",
+        "safetyInspectionResult",
+        "facilityInspectionResult",
         "exceptionFlag",
         "inspectionConclusion"
       ],
@@ -209,14 +209,14 @@
       ],
       "userFilledFields": [
         "statusReason",
-        "impactScope",
         "expectedRestoreAt",
-        "statusOwner",
         "operationStatusNotes"
       ],
       "userSelectedFields": [
         "newOperationStatus",
-        "statusReasonCode"
+        "statusReasonCode",
+        "impactScope",
+        "statusOwner"
       ],
       "userUploadedOrBoundEvidence": [
         "状态原因证据",
@@ -348,10 +348,10 @@
       ],
       "userFilledFields": [
         "restoreReason",
-        "recheckResult",
         "restoreNotes"
       ],
       "userSelectedFields": [
+        "recheckResult",
         "restoreConclusion"
       ],
       "userUploadedOrBoundEvidence": [
@@ -407,34 +407,34 @@
       "scenario1StatusHistory"
     ],
     "userFilled": [
-      "cleaningInspectionResult",
-      "maintenanceInspectionResult",
-      "safetyInspectionResult",
-      "facilityInspectionResult",
       "exceptionDescription",
       "operationInspectionNotes",
       "statusReason",
-      "impactScope",
       "expectedRestoreAt",
-      "statusOwner",
       "operationStatusNotes",
       "impactConfirmationNotes",
       "progressUpdate",
       "blockerNotes",
       "restoreReason",
-      "recheckResult",
       "restoreNotes"
     ],
     "userSelected": [
       "roomOrBedScope",
       "targetRoomOrBed",
+      "cleaningInspectionResult",
+      "maintenanceInspectionResult",
+      "safetyInspectionResult",
+      "facilityInspectionResult",
       "exceptionFlag",
       "inspectionConclusion",
       "newOperationStatus",
       "statusReasonCode",
+      "impactScope",
+      "statusOwner",
       "submitImpactConfirmation",
       "blockerStatus",
       "followUpOwner",
+      "recheckResult",
       "restoreConclusion"
     ],
     "userUploadedOrBoundEvidence": [
@@ -511,7 +511,555 @@
       "domainEventId",
       "projectionVersion",
       "digest"
-    ]
+    ],
+    "fieldAuthority": {
+      "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#fieldAuthorityModel",
+      "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+      "businessInput": [
+        {
+          "fieldId": "statusReason",
+          "control": "textarea",
+          "labelKey": "scenario2.field.statusReason.label",
+          "helpKey": "scenario2.field.statusReason.help",
+          "errorKey": "scenario2.field.statusReason.error"
+        },
+        {
+          "fieldId": "progressUpdate",
+          "control": "textarea",
+          "labelKey": "scenario2.field.progressUpdate.label",
+          "helpKey": "scenario2.field.progressUpdate.help",
+          "errorKey": "scenario2.field.progressUpdate.error"
+        },
+        {
+          "fieldId": "restoreReason",
+          "control": "textarea",
+          "labelKey": "scenario2.field.restoreReason.label",
+          "helpKey": "scenario2.field.restoreReason.help",
+          "errorKey": "scenario2.field.restoreReason.error"
+        }
+      ],
+      "businessSelect": [
+        {
+          "fieldId": "roomOrBedScope",
+          "control": "select",
+          "optionSet": "resourceScope",
+          "labelKey": "scenario2.field.roomOrBedScope.label",
+          "helpKey": "scenario2.field.roomOrBedScope.help",
+          "errorKey": "scenario2.field.roomOrBedScope.error"
+        },
+        {
+          "fieldId": "targetRoomOrBed",
+          "control": "searchable-select",
+          "optionSet": "baseReadyResource",
+          "labelKey": "scenario2.field.targetRoomOrBed.label",
+          "helpKey": "scenario2.field.targetRoomOrBed.help",
+          "errorKey": "scenario2.field.targetRoomOrBed.error",
+          "submitValueSource": "selectedStableRef"
+        },
+        {
+          "fieldId": "cleaningInspectionResult",
+          "control": "select",
+          "optionSet": "inspectionResult",
+          "labelKey": "scenario2.field.cleaningInspectionResult.label",
+          "helpKey": "scenario2.field.cleaningInspectionResult.help",
+          "errorKey": "scenario2.field.cleaningInspectionResult.error"
+        },
+        {
+          "fieldId": "maintenanceInspectionResult",
+          "control": "select",
+          "optionSet": "inspectionResult",
+          "labelKey": "scenario2.field.maintenanceInspectionResult.label",
+          "helpKey": "scenario2.field.maintenanceInspectionResult.help",
+          "errorKey": "scenario2.field.maintenanceInspectionResult.error"
+        },
+        {
+          "fieldId": "safetyInspectionResult",
+          "control": "select",
+          "optionSet": "inspectionResult",
+          "labelKey": "scenario2.field.safetyInspectionResult.label",
+          "helpKey": "scenario2.field.safetyInspectionResult.help",
+          "errorKey": "scenario2.field.safetyInspectionResult.error"
+        },
+        {
+          "fieldId": "facilityInspectionResult",
+          "control": "select",
+          "optionSet": "inspectionResult",
+          "labelKey": "scenario2.field.facilityInspectionResult.label",
+          "helpKey": "scenario2.field.facilityInspectionResult.help",
+          "errorKey": "scenario2.field.facilityInspectionResult.error"
+        },
+        {
+          "fieldId": "exceptionFlag",
+          "control": "select",
+          "optionSet": "yesNo",
+          "labelKey": "scenario2.field.exceptionFlag.label",
+          "helpKey": "scenario2.field.exceptionFlag.help",
+          "errorKey": "scenario2.field.exceptionFlag.error"
+        },
+        {
+          "fieldId": "inspectionConclusion",
+          "control": "select",
+          "optionSet": "inspectionConclusion",
+          "labelKey": "scenario2.field.inspectionConclusion.label",
+          "helpKey": "scenario2.field.inspectionConclusion.help",
+          "errorKey": "scenario2.field.inspectionConclusion.error"
+        },
+        {
+          "fieldId": "newOperationStatus",
+          "control": "select",
+          "optionSet": "operationStatus",
+          "labelKey": "scenario2.field.newOperationStatus.label",
+          "helpKey": "scenario2.field.newOperationStatus.help",
+          "errorKey": "scenario2.field.newOperationStatus.error"
+        },
+        {
+          "fieldId": "statusReasonCode",
+          "control": "select",
+          "optionSet": "statusReasonCode",
+          "labelKey": "scenario2.field.statusReasonCode.label",
+          "helpKey": "scenario2.field.statusReasonCode.help",
+          "errorKey": "scenario2.field.statusReasonCode.error"
+        },
+        {
+          "fieldId": "impactScope",
+          "control": "select",
+          "optionSet": "impactScope",
+          "labelKey": "scenario2.field.impactScope.label",
+          "helpKey": "scenario2.field.impactScope.help",
+          "errorKey": "scenario2.field.impactScope.error"
+        },
+        {
+          "fieldId": "statusOwner",
+          "control": "select",
+          "optionSet": "ownerRole",
+          "labelKey": "scenario2.field.statusOwner.label",
+          "helpKey": "scenario2.field.statusOwner.help",
+          "errorKey": "scenario2.field.statusOwner.error"
+        },
+        {
+          "fieldId": "submitImpactConfirmation",
+          "control": "select",
+          "optionSet": "submitDecision",
+          "labelKey": "scenario2.field.submitImpactConfirmation.label",
+          "helpKey": "scenario2.field.submitImpactConfirmation.help",
+          "errorKey": "scenario2.field.submitImpactConfirmation.error"
+        },
+        {
+          "fieldId": "blockerStatus",
+          "control": "select",
+          "optionSet": "blockerStatus",
+          "labelKey": "scenario2.field.blockerStatus.label",
+          "helpKey": "scenario2.field.blockerStatus.help",
+          "errorKey": "scenario2.field.blockerStatus.error"
+        },
+        {
+          "fieldId": "followUpOwner",
+          "control": "select",
+          "optionSet": "ownerRole",
+          "labelKey": "scenario2.field.followUpOwner.label",
+          "helpKey": "scenario2.field.followUpOwner.help",
+          "errorKey": "scenario2.field.followUpOwner.error"
+        },
+        {
+          "fieldId": "recheckResult",
+          "control": "select",
+          "optionSet": "recheckResult",
+          "labelKey": "scenario2.field.recheckResult.label",
+          "helpKey": "scenario2.field.recheckResult.help",
+          "errorKey": "scenario2.field.recheckResult.error"
+        },
+        {
+          "fieldId": "restoreConclusion",
+          "control": "select",
+          "optionSet": "restoreConclusion",
+          "labelKey": "scenario2.field.restoreConclusion.label",
+          "helpKey": "scenario2.field.restoreConclusion.help",
+          "errorKey": "scenario2.field.restoreConclusion.error"
+        }
+      ],
+      "systemDerived": [
+        {
+          "fieldId": "previousStatus",
+          "derivedFrom": "current operation status",
+          "readonly": true,
+          "labelKey": "scenario2.field.previousStatus.label",
+          "helpKey": "scenario2.field.previousStatus.help"
+        },
+        {
+          "fieldId": "newStatus",
+          "derivedFrom": "newOperationStatus",
+          "readonly": true,
+          "labelKey": "scenario2.field.newStatus.label",
+          "helpKey": "scenario2.field.newStatus.help"
+        },
+        {
+          "fieldId": "blocksPriceFlag",
+          "derivedFrom": "newOperationStatus + scopeImpactRules",
+          "readonly": true,
+          "labelKey": "scenario2.field.blocksPriceFlag.label",
+          "helpKey": "scenario2.field.blocksPriceFlag.help"
+        },
+        {
+          "fieldId": "blocksQuoteFlag",
+          "derivedFrom": "newOperationStatus + scopeImpactRules",
+          "readonly": true,
+          "labelKey": "scenario2.field.blocksQuoteFlag.label",
+          "helpKey": "scenario2.field.blocksQuoteFlag.help"
+        },
+        {
+          "fieldId": "blocksReservationFlag",
+          "derivedFrom": "newOperationStatus + scopeImpactRules",
+          "readonly": true,
+          "labelKey": "scenario2.field.blocksReservationFlag.label",
+          "helpKey": "scenario2.field.blocksReservationFlag.help"
+        },
+        {
+          "fieldId": "canEnterPriceMaintenance",
+          "derivedFrom": "operation status and blockers",
+          "readonly": true,
+          "labelKey": "scenario2.field.canEnterPriceMaintenance.label",
+          "helpKey": "scenario2.field.canEnterPriceMaintenance.help"
+        },
+        {
+          "fieldId": "cannotSubmitReasons",
+          "derivedFrom": "runtime admission and validation",
+          "readonly": true,
+          "labelKey": "scenario2.field.cannotSubmitReasons.label",
+          "helpKey": "scenario2.field.cannotSubmitReasons.help"
+        },
+        {
+          "fieldId": "legalNextActions",
+          "derivedFrom": "LegalAction Resolver",
+          "readonly": true,
+          "labelKey": "scenario2.field.legalNextActions.label",
+          "helpKey": "scenario2.field.legalNextActions.help"
+        }
+      ],
+      "readOnlySummary": [
+        {
+          "fieldId": "buildingArea",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.buildingArea.label",
+          "helpKey": "scenario2.summary.buildingArea.help"
+        },
+        {
+          "fieldId": "floor",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.floor.label",
+          "helpKey": "scenario2.summary.floor.help"
+        },
+        {
+          "fieldId": "roomNo",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.roomNo.label",
+          "helpKey": "scenario2.summary.roomNo.help"
+        },
+        {
+          "fieldId": "bedCount",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.bedCount.label",
+          "helpKey": "scenario2.summary.bedCount.help"
+        },
+        {
+          "fieldId": "bedList",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.bedList.label",
+          "helpKey": "scenario2.summary.bedList.help"
+        },
+        {
+          "fieldId": "basicReadinessConfirmedAt",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.basicReadinessConfirmedAt.label",
+          "helpKey": "scenario2.summary.basicReadinessConfirmedAt.help"
+        },
+        {
+          "fieldId": "scenario1EvidenceSummary",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.scenario1EvidenceSummary.label",
+          "helpKey": "scenario2.summary.scenario1EvidenceSummary.help"
+        },
+        {
+          "fieldId": "scenario1StatusHistory",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.scenario1StatusHistory.label",
+          "helpKey": "scenario2.summary.scenario1StatusHistory.help"
+        }
+      ],
+      "evidenceBinding": [
+        {
+          "fieldId": "operationInspectionPhoto",
+          "evidenceType": "operation-inspection-photo",
+          "labelKey": "scenario2.evidence.operation-inspection-photo.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "maintenanceRecord",
+          "evidenceType": "maintenance-record",
+          "labelKey": "scenario2.evidence.maintenance-record.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "safetyInspectionRecord",
+          "evidenceType": "safety-inspection-record",
+          "labelKey": "scenario2.evidence.safety-inspection-record.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "facilityInspectionRecord",
+          "evidenceType": "facility-inspection-record",
+          "labelKey": "scenario2.evidence.facility-inspection-record.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "statusReasonProof",
+          "evidenceType": "status-reason-proof",
+          "labelKey": "scenario2.evidence.status-reason-proof.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "blockerReasonProof",
+          "evidenceType": "blocker-reason-proof",
+          "labelKey": "scenario2.evidence.blocker-reason-proof.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "progressPhoto",
+          "evidenceType": "progress-photo",
+          "labelKey": "scenario2.evidence.progress-photo.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "recheckRecord",
+          "evidenceType": "recheck-record",
+          "labelKey": "scenario2.evidence.recheck-record.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "restorePhoto",
+          "evidenceType": "restore-photo",
+          "labelKey": "scenario2.evidence.restore-photo.label",
+          "helpKey": "scenario2.evidence.help"
+        }
+      ],
+      "actionControl": [
+        {
+          "fieldId": "saveDraft",
+          "labelKey": "saveDraft",
+          "legalActionRef": "draft.save"
+        },
+        {
+          "fieldId": "continueEdit",
+          "labelKey": "startObservation",
+          "legalActionRef": "draft.continue"
+        },
+        {
+          "fieldId": "backToEdit",
+          "labelKey": "searchActionObservation",
+          "legalActionRef": "draft.backToEdit"
+        },
+        {
+          "fieldId": "submit",
+          "labelKey": "primarySubmit",
+          "legalActionRef": "runtime.submit"
+        }
+      ],
+      "conditionalInput": [
+        {
+          "fieldId": "exceptionDescription",
+          "control": "textarea",
+          "labelKey": "scenario2.field.exceptionDescription.label",
+          "helpKey": "scenario2.field.exceptionDescription.help",
+          "errorKey": "scenario2.field.exceptionDescription.error",
+          "displayCondition": "exceptionFlag == yes or any inspectionResult in [needs_follow_up, failed]",
+          "requiredCondition": "exceptionFlag == yes"
+        },
+        {
+          "fieldId": "operationInspectionNotes",
+          "control": "textarea",
+          "labelKey": "scenario2.field.operationInspectionNotes.label",
+          "helpKey": "scenario2.field.operationInspectionNotes.help",
+          "errorKey": "scenario2.field.operationInspectionNotes.error",
+          "displayCondition": "inspectionConclusion == needs_supplement or operator chooses addNotes",
+          "requiredCondition": "false"
+        },
+        {
+          "fieldId": "expectedRestoreAt",
+          "control": "dateTime",
+          "labelKey": "scenario2.field.expectedRestoreAt.label",
+          "helpKey": "scenario2.field.expectedRestoreAt.help",
+          "errorKey": "scenario2.field.expectedRestoreAt.error",
+          "displayCondition": "newOperationStatus in [temporarily_unavailable, partially_operable, paused, maintenance, cleaning, stopped, exception_pending, needs_recheck]",
+          "requiredCondition": "newOperationStatus in [temporarily_unavailable, partially_operable, paused, maintenance, cleaning, stopped, exception_pending, needs_recheck]"
+        },
+        {
+          "fieldId": "operationStatusNotes",
+          "control": "textarea",
+          "labelKey": "scenario2.field.operationStatusNotes.label",
+          "helpKey": "scenario2.field.operationStatusNotes.help",
+          "errorKey": "scenario2.field.operationStatusNotes.error",
+          "displayCondition": "operator chooses addNotes",
+          "requiredCondition": "false"
+        },
+        {
+          "fieldId": "impactConfirmationNotes",
+          "control": "textarea",
+          "labelKey": "scenario2.field.impactConfirmationNotes.label",
+          "helpKey": "scenario2.field.impactConfirmationNotes.help",
+          "errorKey": "scenario2.field.impactConfirmationNotes.error",
+          "displayCondition": "submitImpactConfirmation == return_to_edit or operator chooses addNotes",
+          "requiredCondition": "submitImpactConfirmation == return_to_edit"
+        },
+        {
+          "fieldId": "blockerNotes",
+          "control": "textarea",
+          "labelKey": "scenario2.field.blockerNotes.label",
+          "helpKey": "scenario2.field.blockerNotes.help",
+          "errorKey": "scenario2.field.blockerNotes.error",
+          "displayCondition": "blockerStatus == closed or operator chooses addNotes",
+          "requiredCondition": "blockerStatus == closed"
+        },
+        {
+          "fieldId": "restoreNotes",
+          "control": "textarea",
+          "labelKey": "scenario2.field.restoreNotes.label",
+          "helpKey": "scenario2.field.restoreNotes.help",
+          "errorKey": "scenario2.field.restoreNotes.error",
+          "displayCondition": "restoreConclusion != operable or operator chooses addNotes",
+          "requiredCondition": "restoreConclusion == needs_recheck"
+        }
+      ],
+      "auditInternal": [
+        {
+          "fieldId": "operationStatusId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "inspectionId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "workItemId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "stableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "roomStableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "operationResourceRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "operationStatusRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "inspectionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "evidenceEnvelopeRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "commandSubmissionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "domainEventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "projectionVersion",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "digest",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        }
+      ]
+    }
   },
   "operationStatusOptions": [
     "可运营",

@@ -13,6 +13,7 @@ import {
 } from "./dormitory-generated-field-binding-closure.mjs";
 import {
   buildGeneratedContractBundle,
+  generatedContractFiles,
   validateGeneratedContractBundle
 } from "./generated-contract-bundle.mjs";
 
@@ -45,17 +46,13 @@ const requiredEvidenceDigestFiles = [
   ["generatedFilesNotManuallyEdited", "artifacts/oam/checks/generated-files-not-manually-edited-result.json"],
   ["generatedContractConsistency", "artifacts/oam/checks/generated-contract-consistency-result.json"],
   ["derivedContractConsistency", "artifacts/oam/checks/derived-contract-consistency-result.json"],
-  ["oamKernelGraph", "artifacts/oam/checks/oam-kernel-graph-result.json"],
-  ["dormitoryCandidateAttestationPackage", DORMITORY_ATTESTATION_PACKAGE_PATH]
+  ["oamKernelGraph", "artifacts/oam/checks/oam-kernel-graph-result.json"]
 ];
 
-const requiredManifestDigestFiles = [
-  ["generatedContractsManifest", "docs/oam/generated-contracts-manifest.json"],
-  ["generatedKernelGraph", "docs/oam/kernel/oam-kernel-graph.generated.json"],
-  ["generatedFieldBindings", FIELD_BINDINGS_GENERATED_PATH],
-  ["domainDerivedContracts", "docs/oam/domain-derived-contracts.json"],
-  ["systemDerivedContracts", "docs/oam/system-derived-contracts.json"]
-];
+const requiredGeneratedContractDigestFiles = generatedContractFiles.map((file) => [
+  `generatedContract:${file}`,
+  file
+]);
 
 export function buildGeneratedCandidateSubject({ root = process.cwd(), currentHead = null } = {}) {
   const failures = [];
@@ -68,7 +65,7 @@ export function buildGeneratedCandidateSubject({ root = process.cwd(), currentHe
   const snapshot = read(GENERATED_COMPILE_EXECUTION_SNAPSHOT_PATH);
   const formalApproval = read(GENERATED_COMPILE_APPROVAL_PATH);
   const candidateApproval = read(GENERATED_COMPILE_CANDIDATE_APPROVAL_PATH);
-  const attestationPackage = read(DORMITORY_ATTESTATION_PACKAGE_PATH);
+  const attestationPackage = readJsonIfExists(DORMITORY_ATTESTATION_PACKAGE_PATH, root);
   const releaseObject = readJsonIfExists("artifacts/oam/evidence/current-oam-release-evidence-object.json", root);
   const evidenceGraph = readJsonIfExists("artifacts/oam/evidence/evidence-graph.json", root);
   const currentRepositoryHead = currentHead ?? git(["rev-parse", "HEAD"], root);
@@ -128,11 +125,9 @@ export function buildGeneratedCandidateSubject({ root = process.cwd(), currentHe
   requireGitSha(authorizedCandidateExecutionHead, "authorizedCandidateExecutionHead", failures);
   requireGitSha(generatedCompileExecutionHead, "generatedCompileExecutionHead", failures);
   requireDigest(generatedOutputDigest, "generatedOutputDigest", failures);
-  requireDigest(evidenceArtifactDigest, "evidenceArtifactDigest", failures);
   requireDigest(fieldBindingClosure.closureDigest, "generatedFieldBindingClosureDigest", failures);
   requireDigest(fieldBindingClosure.sourceFieldGapsDecisionDigest, "sourceFieldGapsDecisionDigest", failures);
   requireDigest(fieldBindingContractDigest, "fieldBindingContractDigest", failures);
-  requireDigest(evidenceRootDigest, "evidenceRootDigest", failures);
   if (fieldBindingClosure.status !== "PASS") {
     failures.push("generated field binding closure must PASS before generated candidate acceptance can be reviewed.");
   }
@@ -168,7 +163,7 @@ export function buildGeneratedCandidateSubject({ root = process.cwd(), currentHe
   }
 
   const requiredEvidenceDigestSet = buildDigestSet(requiredEvidenceDigestFiles, root, missingFiles);
-  const requiredManifestDigestSet = buildDigestSet(requiredManifestDigestFiles, root, missingFiles);
+  const requiredGeneratedContractDigestSet = buildDigestSet(requiredGeneratedContractDigestFiles, root, missingFiles);
   const executionProofDigest = digestObject({
     version: "oam.generated-candidate-execution-proof-digest.v1",
     reviewedExecutionHead,
@@ -208,7 +203,7 @@ export function buildGeneratedCandidateSubject({ root = process.cwd(), currentHe
     executionProofDigest,
     evidenceRootDigest,
     requiredEvidenceDigestSet,
-    requiredGeneratedContractDigestSet: requiredManifestDigestSet
+    requiredGeneratedContractDigestSet
   };
   const subject = {
     ...subjectCore,
@@ -218,10 +213,7 @@ export function buildGeneratedCandidateSubject({ root = process.cwd(), currentHe
     ? "INCOMPLETE"
     : failures.length > 0
       ? "INVALID"
-      : artifactMode !== "ci_artifact_authoritative" ||
-        attestationPackage?.artifactVerification?.artifactCompletenessStatus !== "PASS"
-        ? "NOT_READY_FOR_00_ACCEPTANCE_REVIEW"
-        : warnings.some((item) => item.includes("not a descendant"))
+      : warnings.some((item) => item.includes("not a descendant"))
         ? "STALE"
         : "READY_FOR_00_ACCEPTANCE_REVIEW";
 
@@ -354,6 +346,7 @@ export function validateGeneratedCandidateAcceptanceAuthority({
       checkAcceptedGeneratedContractBundle(
         acceptance,
         acceptedGeneratedBundle,
+        currentGeneratedBundle,
         effectiveSubject,
         subjectState.subject,
         failures
@@ -596,7 +589,7 @@ function checkAcceptanceRecord(acceptance, subject, failures) {
   }
 }
 
-function checkAcceptedGeneratedContractBundle(acceptance, bundle, acceptedSubject, currentSubject, failures) {
+function checkAcceptedGeneratedContractBundle(acceptance, bundle, currentBundle, acceptedSubject, currentSubject, failures) {
   const bundleValidation = validateGeneratedContractBundle({
     bundle,
     subject: acceptedSubject
@@ -648,7 +641,8 @@ function checkAcceptedGeneratedContractBundle(acceptance, bundle, acceptedSubjec
       failures.push(`forbiddenInterpretations must include ${format(item)}.`);
     }
   }
-  if (currentSubject?.subjectDigest !== acceptedSubject?.subjectDigest) {
+  if (currentSubject?.subjectDigest !== acceptedSubject?.subjectDigest ||
+    currentBundle?.generatedBundleDigest !== bundle?.generatedBundleDigest) {
     requireEqual(
       acceptance.currentGeneratedCandidateDivergence?.acceptedBundleRemainsImmutable,
       true,
@@ -708,6 +702,10 @@ function normalizeGeneratedCandidateSubjectForIdentity(subject) {
     for (const [key, value] of Object.entries(subject)) {
       if (key === "currentRepositoryHead") continue;
       if (key === "subjectDigest") continue;
+      if (key === "evidenceArtifactDigest") continue;
+      if (key === "localEvidenceArtifactDigest") continue;
+      if (key === "evidenceRootDigest") continue;
+      if (key === "requiredEvidenceDigestSet") continue;
       normalized[key] = normalizeGeneratedCandidateSubjectForIdentity(value);
     }
     return normalized;

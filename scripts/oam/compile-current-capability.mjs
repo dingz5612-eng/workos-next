@@ -1659,29 +1659,147 @@ function fileDigest(file) {
       acceptance: normalizeAcceptanceForCapabilityInput(readJson(file))
     });
   }
-  return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(full)).digest("hex")}`;
+  if (file === runtimeAdmissionPath) {
+    return digestObject({
+      version: "oam.dormitory-runtime-admission-semantic-input.v1",
+      runtimeAdmission: normalizeRuntimeAdmissionForCapabilityInput(readJson(file))
+    });
+  }
+  if (file === CAPABILITY_PROJECTION_PATH) {
+    return digestObject({
+      version: "oam.capability-projection-semantic-input.v1",
+      projection: normalizeCapabilityProjectionForCapabilityInput(readJson(file))
+    });
+  }
+  if (file === CAPABILITY_LEDGER_PATH) {
+    return digestObject({
+      version: "oam.capability-ledger-semantic-input.v1",
+      ledger: normalizeCapabilityLedgerForCapabilityInput(readJson(file))
+    });
+  }
+  return rawFileDigest(file);
 }
 
 function normalizeAcceptanceForCapabilityInput(value) {
-  if (Array.isArray(value)) return value.map(normalizeAcceptanceForCapabilityInput);
-  if (value && typeof value === "object") {
-    const normalized = {};
-    for (const [key, child] of Object.entries(value)) {
-      if ([
-        "decisionWritebackBaseHead",
-        "decisionRecordHead",
-        "currentGeneratedCandidateDivergence"
-      ].includes(key)) continue;
-      if (key === "acceptanceRecord" && child && typeof child === "object" && !Array.isArray(child)) {
-        const { acceptedAtUtc, currentRepositoryHead, ...semanticRecord } = child;
-        normalized[key] = normalizeAcceptanceForCapabilityInput(semanticRecord);
-        continue;
-      }
-      normalized[key] = normalizeAcceptanceForCapabilityInput(child);
-    }
-    return normalized;
+  return {
+    version: value?.version ?? null,
+    decisionType: value?.decisionType ?? null,
+    decisionStatus: value?.decisionStatus ?? null,
+    generatedCandidateAcceptedBy00: value?.generatedCandidateAcceptedBy00 === true,
+    acceptedGeneratedBundleDigest: value?.acceptedGeneratedBundleDigest ?? null,
+    acceptedGeneratedFiles: value?.acceptedGeneratedFiles ?? [],
+    acceptedRuntimeConsumableDigests: value?.acceptedRuntimeConsumableDigests ?? [],
+    acceptanceScope: value?.acceptanceRecord?.scope ?? null,
+    runtimeConsumptionGranted: value?.acceptanceRecord?.runtimeConsumptionGranted ?? null,
+    businessGoGranted: value?.acceptanceRecord?.businessGoGranted ?? null,
+    releaseGranted: value?.acceptanceRecord?.releaseGranted ?? null,
+    finalGoNoGoGranted: value?.acceptanceRecord?.finalGoNoGoGranted ?? null,
+    explicitNegativeAuthorities: value?.explicitNegativeAuthorities ?? {},
+    runtimeConsumptionReady: value?.runtimeConsumptionReady ?? null,
+    businessFeatureDevelopmentAllowed: value?.businessFeatureDevelopmentAllowed ?? null,
+    businessProductionGoNoGo: value?.businessProductionGoNoGo ?? null,
+    dormitoryL2GoNoGo: value?.dormitoryL2GoNoGo ?? null,
+    productionConfirmAllowed: value?.productionConfirmAllowed ?? null,
+    releaseAuthority: value?.releaseAuthority ?? null,
+    finalGoNoGo: value?.finalGoNoGo ?? null
+  };
+}
+
+function normalizeRuntimeAdmissionForCapabilityInput(value) {
+  return {
+    version: value?.version ?? null,
+    authorityType: value?.authorityType ?? null,
+    runtimeAdmissionStatus: value?.runtimeAdmissionStatus ?? null,
+    generatedCandidateAcceptedBy00: value?.generatedCandidateAcceptedBy00 === true,
+    acceptedGeneratedBundleDigest: value?.acceptedGeneratedBundleDigest ?? null,
+    runtimeConsumedBundleDigest: value?.runtimeConsumedBundleDigest ?? null,
+    runtimeConsumedFilesDigestList: value?.runtimeConsumedFilesDigestList ?? [],
+    acceptedRuntimeConsumableDigests: value?.acceptedRuntimeConsumableDigests ?? [],
+    bundleDigestMatch: value?.bundleDigestMatch === true,
+    runtimeConsumptionReadyAuthority: value?.runtimeConsumptionReadyAuthority ?? null,
+    consumedGeneratedContracts: value?.consumedGeneratedContracts ?? [],
+    allowedOperationCases: value?.allowedOperationCases ?? [],
+    runtimeConsumptionReady: value?.runtimeConsumptionReady === true,
+    businessFeatureDevelopmentAllowed: value?.businessFeatureDevelopmentAllowed ?? null,
+    dormitoryFirstGoldenChainLandingGoNoGo: value?.dormitoryFirstGoldenChainLandingGoNoGo ?? null,
+    businessProductionGoNoGo: value?.businessProductionGoNoGo ?? null,
+    productionConfirmAllowed: value?.productionConfirmAllowed ?? null,
+    releaseAuthority: value?.releaseAuthority ?? null,
+    finalGoNoGo: value?.finalGoNoGo ?? null,
+    financePostingAllowed: value?.financePostingAllowed ?? null,
+    dormitoryL2Allowed: value?.dormitoryL2Allowed ?? null,
+    writeThroughSearchAllowed: value?.writeThroughSearchAllowed ?? null,
+    sourceTruthWriteAllowed: value?.sourceTruthWriteAllowed ?? null,
+    sourceTruthOwnershipAllowed: value?.sourceTruthOwnershipAllowed ?? null,
+    runtimeOwnsBusinessFacts: value?.runtimeOwnsBusinessFacts ?? null,
+    readSurfaceSearchProjectionMode: value?.readSurfaceSearchProjectionMode ?? null,
+    runtimeBoundary: value?.runtimeBoundary ?? {},
+    environmentProfileId: value?.environmentProfileId ?? null,
+    explicitExclusions: value?.explicitExclusions ?? []
+  };
+}
+
+function normalizeCapabilityProjectionForCapabilityInput(value) {
+  return {
+    version: value?.version ?? null,
+    capabilityId: value?.capabilityId ?? null,
+    currentFilesMode: value?.currentFilesMode ?? null,
+    activeAuthority: {
+      sourceClosureDigest: value?.activeAuthority?.sourceClosureDigest ?? null,
+      generatedBundleDigest: value?.activeAuthority?.generatedBundleDigest ?? null,
+      acceptedGeneratedBundleDigest: value?.activeAuthority?.acceptedGeneratedBundleDigest ?? null,
+      runtimeConsumedBundleDigest: value?.activeAuthority?.runtimeConsumedBundleDigest ?? null,
+      businessLandingDigest: value?.activeAuthority?.businessLandingDigest ?? null,
+      productionConfirmationDigest: value?.activeAuthority?.productionConfirmationDigest ?? null,
+      releaseAuthorityDigest: value?.activeAuthority?.releaseAuthorityDigest ?? null
+    },
+    generatedBundle: value?.generatedBundle ?? null,
+    lifecycleAchieved: value?.lifecycleAchieved ?? [],
+    lifecycleNotAdmitted: value?.lifecycleNotAdmitted ?? [],
+    runtimeTestConsumptionAdmitted: value?.runtimeTestConsumptionAdmitted ?? null,
+    runtimeConsumptionReady: value?.runtimeConsumptionReady ?? null,
+    runtimeGoNoGo: value?.runtimeGoNoGo ?? null,
+    businessFeatureDevelopmentAllowed: value?.businessFeatureDevelopmentAllowed ?? null,
+    businessLandingGoNoGo: value?.businessLandingGoNoGo ?? null,
+    productionConfirmAllowed: value?.productionConfirmAllowed ?? null,
+    productionGoNoGo: value?.productionGoNoGo ?? null,
+    releaseAuthority: value?.releaseAuthority ?? null,
+    finalGoNoGo: value?.finalGoNoGo ?? null,
+    legacyCurrentFilesAreAuthority: value?.legacyCurrentFilesAreAuthority ?? null
+  };
+}
+
+function normalizeCapabilityLedgerForCapabilityInput(value) {
+  const events = value?.events ?? [];
+  const lastBuilt = lastEvent(events, "GENERATED_BUNDLE_BUILT");
+  const lastAccepted = lastEvent(events, "GENERATED_BUNDLE_ACCEPTED_BY_00");
+  const lastRuntime = lastEvent(events, "RUNTIME_TEST_ADMITTED");
+  const lastBusinessLanding = lastEvent(events, "BUSINESS_LANDING_ADMITTED");
+  const lastProduction = lastEvent(events, "PRODUCTION_CONFIRMED");
+  const lastRelease = lastEvent(events, "RELEASE_AUTHORIZED");
+  return {
+    version: value?.version ?? null,
+    capabilityId: value?.capabilityId ?? null,
+    eventTypes: events.map((event) => event.eventType),
+    generatedBundleDigest: lastBuilt?.bundleDigest ?? null,
+    acceptedGeneratedBundleDigest: lastAccepted?.bundleDigest ?? null,
+    runtimeConsumedBundleDigest: lastRuntime?.outputDigests?.runtimeConsumedBundleDigest ?? null,
+    businessLandingDigest: lastBusinessLanding?.bundleDigest ?? null,
+    productionConfirmationDigest: lastProduction?.bundleDigest ?? null,
+    releaseAuthorityDigest: lastRelease?.bundleDigest ?? null
+  };
+}
+
+function lastEvent(events, eventType) {
+  for (let index = events.length - 1; index >= 0; index -= 1) {
+    if (events[index]?.eventType === eventType) return events[index];
   }
-  return value;
+  return null;
+}
+
+function rawFileDigest(file) {
+  const full = path.join(root, file);
+  return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(full)).digest("hex")}`;
 }
 
 function digestObject(value) {

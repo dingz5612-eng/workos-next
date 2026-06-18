@@ -192,12 +192,20 @@ function checkStepsAndFields() {
   }
   const inspectionStep = scenario.steps?.[1] ?? {};
   for (const field of ["cleaningInspectionResult", "maintenanceInspectionResult", "safetyInspectionResult", "facilityInspectionResult"]) {
-    if (!(inspectionStep.userFilledFields ?? []).includes(field)) fail(`inspection step missing user-filled field ${field}.`);
+    if (!(inspectionStep.userSelectedFields ?? []).includes(field)) fail(`inspection step must select ${field}.`);
+    if ((inspectionStep.userFilledFields ?? []).includes(field)) fail(`inspection step must not make ${field} a long-text user-filled field.`);
   }
   const statusStep = scenario.steps?.[2] ?? {};
   if (!(statusStep.userSelectedFields ?? []).includes("newOperationStatus")) fail("status step must select newOperationStatus.");
+  for (const field of ["impactScope", "statusOwner"]) {
+    if (!(statusStep.userSelectedFields ?? []).includes(field)) fail(`status step must select ${field}.`);
+    if ((statusStep.userFilledFields ?? []).includes(field)) fail(`status step must not make ${field} user-filled.`);
+  }
   if (!(statusStep.systemGeneratedFields ?? []).includes("blocksPriceFlag")) fail("status step must calculate blocksPriceFlag.");
+  if (!(statusStep.userFilledFields ?? []).includes("expectedRestoreAt")) fail("status step must keep expectedRestoreAt as conditional input.");
   const restoreStep = scenario.steps?.[5] ?? {};
+  if (!(restoreStep.userSelectedFields ?? []).includes("recheckResult")) fail("restore step must select recheckResult.");
+  if ((restoreStep.userFilledFields ?? []).includes("recheckResult")) fail("restore step must not make recheckResult user-filled.");
   const labels = restoreStep.conclusionOptions?.map((item) => item.labelZh) ?? [];
   if (JSON.stringify(labels) !== JSON.stringify(["恢复为可运营", "恢复为部分可运营", "仍需复查"])) fail("restore conclusion labels invalid.");
   for (const internal of forbiddenUserInput) {

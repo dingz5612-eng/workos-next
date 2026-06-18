@@ -13,6 +13,12 @@ const requiredWorkItems = [
   "Dorm.BedSetupConfirm",
   "Dorm.RatePlanConfirm",
   "Dorm.ResourceReadinessConfirm",
+  "Dorm.OperationResourceSelect",
+  "Dorm.OperationInspectionConfirm",
+  "Dorm.OperationStatusDraft",
+  "Dorm.OperationStatusChangeConfirm",
+  "Dorm.OperationBlockerUpdate",
+  "Dorm.OperationRestoreConfirm",
   "Dorm.LeadCapture",
   "Dorm.ReservationConfirm",
   "Dorm.CheckinConfirm",
@@ -109,7 +115,10 @@ for (const workItemType of requiredWorkItems) {
   requireValue(Boolean(item), "kernel.workitem_missing", `宿舍内核缺少 ${workItemType}。`, { workItemType });
   if (!item) continue;
   for (const field of ["definitionId", "commandType", "ownerRole", "canonicalOwner", "allowedFacts", "forbiddenFacts", "requiredEvidence", "ledgerPolicyRef", "admissionPolicyRef", "downstreamWorkItems", "operationZh", "migrationRefs"]) {
-    requireValue(hasValue(item[field]), "kernel.workitem_field_missing", `${workItemType} 缺少 ${field}。`, { workItemType, field });
+    const present = field === "requiredEvidence"
+      ? Array.isArray(item[field])
+      : hasValue(item[field]);
+    requireValue(present, "kernel.workitem_field_missing", `${workItemType} 缺少 ${field}。`, { workItemType, field });
   }
   requireValue(!("sourceCardId" in item), "kernel.source_card_current_identity", `${workItemType} 不得把 sourceCardId 作为当前 Source 身份字段。`, { workItemType });
   requireMigrationRefs(item, `${workItemType}`);

@@ -8,36 +8,60 @@
   "activeAuthority": {
     "capabilityId": "Dormitory.FirstGoldenChain",
     "sourceClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
-    "generatedBundleDigest": "sha256:d49918a64e1eaba9bc34147f880df628fbe5ca7af8e1c104609a8e3eb851437b",
-    "acceptedGeneratedBundleDigest": "sha256:d49918a64e1eaba9bc34147f880df628fbe5ca7af8e1c104609a8e3eb851437b",
-    "runtimeConsumedBundleDigest": "sha256:d49918a64e1eaba9bc34147f880df628fbe5ca7af8e1c104609a8e3eb851437b",
-    "runtimeAdmissionDigest": "sha256:bd02d40ab9dc98a12793fd811a16ac89946ca34a4b09ab2ef385d0d69ec0e6b8",
+    "generatedBundleDigest": "sha256:63f625febd94c09227b5824c90be509fea4b798b505516de141b600721caccfc",
+    "acceptedGeneratedBundleDigest": "sha256:63f625febd94c09227b5824c90be509fea4b798b505516de141b600721caccfc",
+    "runtimeConsumedBundleDigest": "sha256:63f625febd94c09227b5824c90be509fea4b798b505516de141b600721caccfc",
+    "runtimeAdmissionDigest": "sha256:2548ed0e16f126e0c388633b30eab8bd7f6d7aac2f3a315b4ab6d4668dee7c99",
     "businessLandingDigest": null,
     "productionConfirmationDigest": null,
     "releaseAuthorityDigest": null
   },
   "generatedBundle": {
-    "digest": "sha256:d49918a64e1eaba9bc34147f880df628fbe5ca7af8e1c104609a8e3eb851437b",
+    "digest": "sha256:63f625febd94c09227b5824c90be509fea4b798b505516de141b600721caccfc",
     "files": [
       {
+        "path": "docs/contracts/admission/admission-contract.json",
+        "digest": "sha256:79ccab291a05a5867b5e359d54fba55241751c2f6741a0c27d3a78d054c3eabf"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+        "digest": "sha256:0d03a38227e387bec821edd1c4bfa5194d712d96a2c68cd1a89f6aedae35ea98"
+      },
+      {
         "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
-        "digest": "sha256:4dc9fcd6b5b36d93408739bafc3a988e726bbf574a747fffdff1341484b3eafa"
+        "digest": "sha256:816fc8c4e961cd208bc65c930656d40a6ec877599c3118e00e66028db6c36cfd"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/fields.generated.json",
+        "digest": "sha256:38ecbfbf43251a9492aaf34b246ea12dd44ae5c7e9cb5c99ce84413d6a8e9b96"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/read-model.generated.json",
+        "digest": "sha256:dd3a47ba669544889d12a55e00c1bb1a5cd23cd7da4fe11ec9fd28c579e66a17"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+        "digest": "sha256:a2084c6cb7c7af5d1a6d91a42b1e2ed0f6d064956fdf77780387623e5311aeba"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/workitems.generated.json",
+        "digest": "sha256:45f0352e4c6fb75ab0bbdd30a1b83286323bf08c532960ba0b6ce98291394eb9"
       },
       {
         "path": "docs/oam/domain-derived-contracts.json",
-        "digest": "sha256:3d1857cfcace99c5144e9dd57a70884f322825e0a7857a8aa9beb22f9a2bb832"
+        "digest": "sha256:cd095e5dc877fb86d47e51cdf907dfab4b7636564a356b05d3eb6ab45ff57f5d"
       },
       {
         "path": "docs/oam/generated-contracts-manifest.json",
-        "digest": "sha256:61fb2ac177056d26829801502b779eea4bf4ee36025ea86064ee7f54e259e35f"
+        "digest": "sha256:c885a7b5a98bb37999ead8e3d96cde6682c44248a1eadc033612b0fa0bd9c94b"
       },
       {
         "path": "docs/oam/kernel/oam-kernel-graph.generated.json",
-        "digest": "sha256:2e25ff65743953c52469ffe0a5279c5da14e7b35672a7d1d3fb66e2752c56f7f"
+        "digest": "sha256:308cab16f3b36c4af309caedfb92afbbe05dc78b26d3923acf32624a18d63ab0"
       },
       {
         "path": "docs/oam/system-derived-contracts.json",
-        "digest": "sha256:074df5982de95104b0d885ded0a6474de160eca5189b93f71aa8c924a96e5164"
+        "digest": "sha256:039a58f6b177af42ae807fdabfc6ea7379a8e0e8de82a90bfdab65e5ff2ff860"
       }
     ]
   },

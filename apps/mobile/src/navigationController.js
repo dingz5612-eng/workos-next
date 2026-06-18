@@ -1,6 +1,6 @@
 import { fetchSearchResults, recordMobileClientEvent, startOperationsWorkspace } from "./apiClient.js";
 import { searchPreferenceKey } from "./appState.js";
-import { applyRuntimeSearchResults, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
+import { applyRuntimeSearchResults, applyRuntimeSurfacePayloads, normalizeQuery } from "./runtime/runtimeStore.js";
 import { selectWorkspaceById } from "./selectors/surfaceSelectors.js";
 import { evaluateSurfaceAccess } from "./surfaceGuard.js";
 import { safeConfirmErrorKey, safeReasonCode } from "./admissionSurface.js";
@@ -8,6 +8,16 @@ import { defaultHomeForCurrentSurface as resolveDefaultHomeForCurrentSurface } f
 import { resolveOperationPanelTarget } from "./operationRouteResolver.js";
 import { resolveSearchIntentId } from "./searchIntentRegistry.js";
 import { DORMITORY_MAINLINE_WORKSPACE_ID } from "./capabilityProjection.js";
+
+const relocalizedOperationMessageKeys = [
+  "draftSaved",
+  "apiOffline",
+  "apiOfflineSubmit",
+  "submitting",
+  "submitDone",
+  "submitProjectionPending",
+  "submitProjectionFailed"
+];
 
 export function setView(view, ctx) {
   if (!ctx.state.currentActor && view !== "login") {
@@ -32,8 +42,10 @@ export function setView(view, ctx) {
 }
 
 export function setLang(lang, ctx) {
+  const transientMessageKey = transientOperationMessageKey(ctx);
   ctx.state.lang = lang;
   localStorage.setItem("workosnext.lang", lang);
+  if (transientMessageKey) ctx.state.operationMessage = ctx.tr(transientMessageKey);
   syncUrlFromState(ctx);
   ctx.render();
 }
@@ -129,7 +141,7 @@ export async function runSearch(ctx, explicitQuery = null) {
   if (ctx.state.apiStatus === "online") {
     try {
       const query = ctx.state.query;
-      const results = await fetchSearchResults(query);
+      const results = await fetchSearchResults(query, ctx.state.lang);
       if (ctx.state.searchRequestId !== requestId) return;
       applyRuntimeSearchResults(ctx.state, query, results);
       const operationItems = operationWorkItemsFromSearchResults(results);
@@ -144,6 +156,19 @@ export async function runSearch(ctx, explicitQuery = null) {
   ctx.state.view = "search";
   syncUrlFromState(ctx);
   ctx.render(true);
+}
+
+export async function runSearchFromCurrentUrlIfNeeded(ctx) {
+  if (!shouldAutoRunSearchFromUrl(ctx?.state)) return false;
+  await runSearch(ctx, ctx.state.query);
+  return true;
+}
+
+export function shouldAutoRunSearchFromUrl(state = {}) {
+  const query = String(state.query || "").trim();
+  if (!state.currentActor || state.view !== "search" || !query) return false;
+  const cache = state.runtimeStore?.searchResultsByQuery || {};
+  return !Object.prototype.hasOwnProperty.call(cache, normalizeQuery(query));
 }
 
 function rememberSearch(ctx, query) {
@@ -386,6 +411,12 @@ function clearTransientOperationMessage(ctx) {
   if (transient.includes(message) || offlineCopy.test(message)) {
     ctx.state.operationMessage = "";
   }
+}
+
+function transientOperationMessageKey(ctx) {
+  const message = String(ctx.state.operationMessage || "");
+  if (!message) return "";
+  return relocalizedOperationMessageKeys.find((key) => message === ctx.tr(key)) || "";
 }
 
 function clearOperationStateOutsideRuntimeSurface(ctx, view) {

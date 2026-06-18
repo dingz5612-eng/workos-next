@@ -22,7 +22,9 @@ internal static class ProjectionStateMigrator
                 : seed).ToList();
 
         var currentIds = new HashSet<string>(current.Select(item => item.Id), StringComparer.OrdinalIgnoreCase);
-        merged.AddRange(persisted.Where(item => !currentIds.Contains(item.Id)));
+        merged.AddRange(persisted.Where(item =>
+            !currentIds.Contains(item.Id) &&
+            !RuntimeActiveWorkspacePolicy.IsRetiredUserEntryWorkspaceId(item.Id)));
         return merged;
     }
 

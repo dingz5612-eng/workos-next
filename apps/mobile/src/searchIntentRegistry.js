@@ -1,4 +1,4 @@
-import { capabilityCommandCatalog } from "./capabilityProjection.js";
+import { capabilityCommandCatalog, isGeneratedObjectSearchQuery } from "./capabilityProjection.js";
 
 const [dormitoryScenario1Command] = capabilityCommandCatalog();
 
@@ -39,6 +39,7 @@ export function resolveSearchIntentId(query = "") {
 }
 
 export function isAccommodationResourceSetupQuery(query = "") {
+  if (isGeneratedObjectSearchQuery(query)) return false;
   return matchesSearchIntent("accommodationResourceSetup", query);
 }
 

@@ -117,13 +117,13 @@ describe("OAM Surface business and technical layering contract", () => {
     const html = workspaceView(ctx);
     expect(html).toContain('data-required-field="true"');
     expect(visibleText(html)).toContain("必填");
-    expect(visibleText(html)).toContain("还需填写: 楼栋/区域、楼层、房间号、床位数");
+    expect(visibleText(html)).toContain("还需填写: 楼层、房间号、床位数");
 
     await submitCurrentCard(ctx);
 
     expect(ctx.state.lastActionResult?.status).toBe("business_blocked_422");
-    expect(ctx.state.operationMessage).toContain("楼栋/区域");
-    expect(ctx.state.fieldValidation?.missingFieldIds).toContain("buildingContextRef");
+    expect(ctx.state.operationMessage).toContain("楼层");
+    expect(ctx.state.fieldValidation?.missingFieldIds).not.toContain("buildingContextRef");
     expect(ctx.render).toHaveBeenCalled();
     vi.unstubAllGlobals();
   });
@@ -160,6 +160,26 @@ describe("OAM Surface business and technical layering contract", () => {
     ]);
     expect(ky.map((entry) => entry.value)).toEqual(["checked_ok", "needs_supplement", "failed"]);
     expect(ky.map((entry) => entry.label).join(" ")).not.toMatch(/已检查无异常|有问题需补充|不通过/);
+  });
+
+  it("renders Scenario 1 bed setup dropdowns in the current language while submitting stable values", () => {
+    const fields = [
+      { id: "bedType", ui: { optionSet: "bunkType", options: [] } },
+      { id: "bedEnabledStatus", ui: { optionSet: "bedEnabledStatus", options: [] } },
+      { id: "bedTypeBatchSetting", ui: { optionSet: "bedTypeBatchSetting", options: [] } }
+    ];
+
+    const ruLabels = fields.flatMap((field) => optionsForField(field, "ru-RU").map((entry) => entry.label));
+    const kyLabels = fields.flatMap((field) => optionsForField(field, "ky-KG").map((entry) => entry.label));
+    const ruValues = optionsForField(fields[0], "ru-RU").map((entry) => entry.value);
+
+    expect(ruValues).toEqual(["bunk_pair", "upper", "lower", "whole"]);
+    expect(ruLabels.join(" ")).toContain("Двухъярусные");
+    expect(ruLabels.join(" ")).toContain("Включено");
+    expect(ruLabels.join(" ")).toContain("Пакетно как двухъярусные");
+    expect(ruLabels.join(" ")).not.toMatch(/上下铺|全部上铺|启用|停用|按上下铺|需要人工复核/);
+    expect(kyLabels.join(" ")).toContain("Эки кабат");
+    expect(kyLabels.join(" ")).not.toMatch(/上下铺|全部上铺|启用|停用|按上下铺|需要人工复核/);
   });
 
   it("prefills same-case context fields instead of asking operators to re-enter them", () => {

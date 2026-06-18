@@ -154,12 +154,12 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
 
     const text = visibleText(routeView(ctx));
 
-    expect(text).toContain("还需填写: 楼栋/区域、楼层、房间号、床位数");
+    expect(text).toContain("还需填写: 楼层、房间号、床位数");
     expect(text).toContain("提交状态: 暂不能提交: 还需填写");
     expect(text).not.toContain("提交状态: 可以提交");
   });
 
-  it("does not treat a required building context selector as filled just because the control exists", () => {
+  it("does not render building context as a hand-filled selector", () => {
     const store = runtimeStore();
     store.workspaces[0].cards[0] = {
       ...store.workspaces[0].cards[0],
@@ -191,8 +191,9 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     const html = routeView(ctx);
     const text = visibleText(html);
 
-    expect(html).toContain('list="buildingContextRefOptions"');
-    expect(text).toContain("还需填写: 楼栋/区域、楼层、房间号、床位数");
+    expect(html).not.toContain('list="buildingContextRefOptions"');
+    expect(html).not.toContain('data-operation-field="buildingContextRef" list=');
+    expect(text).toContain("还需填写: 楼层、房间号、床位数");
     expect(text).toContain("提交状态: 暂不能提交: 还需填写");
     expect(text).not.toContain("提交状态: 可以提交");
   });

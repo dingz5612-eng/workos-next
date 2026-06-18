@@ -45,6 +45,7 @@ import {
   openReadonlyWorkspaceRecord,
   openWorkspace,
   runSearch,
+  runSearchFromCurrentUrlIfNeeded,
   setLang,
   setView,
   startOperationsWorkspaceCommand
@@ -251,9 +252,12 @@ describe("OAM hardening surface and navigation matrix", () => {
     ctx.render = vi.fn();
 
     expect(defaultHomeForCurrentSurface(ctx)).toBe("home");
+    ctx.state.operationMessage = ctx.tr("draftSaved");
     setLang("ru-RU", ctx);
     expect(ctx.state.lang).toBe("ru-RU");
     expect(localStorage.getItem("workosnext.lang")).toBe("ru-RU");
+    expect(ctx.state.operationMessage).toBe(ctx.tr("draftSaved"));
+    expect(ctx.state.operationMessage).not.toContain("草稿已保存");
 
     onboard(ctx);
     expect(localStorage.getItem("workosnext.onboarded")).toBe("1");
@@ -296,6 +300,7 @@ describe("OAM hardening surface and navigation matrix", () => {
     await runSearch(ctx, "快请求");
     await slow;
 
+    expect(fetchSearchResults).toHaveBeenCalledWith("快请求", "zh-CN");
     expect(ctx.state.view).toBe("search");
     expect(ctx.state.runtimeStore.operationWorkItems.some((item) => item.workItemId === "wi-fast")).toBe(true);
     expect(ctx.state.runtimeStore.operationWorkItems.some((item) => item.workItemId === "wi-slow")).toBe(false);
@@ -303,6 +308,23 @@ describe("OAM hardening surface and navigation matrix", () => {
     fetchSearchResults.mockRejectedValueOnce(new Error("offline"));
     await runSearch(ctx, "离线");
     expect(ctx.state.view).toBe("search");
+
+    fetchSearchResults.mockClear();
+    fetchSearchResults.mockResolvedValueOnce([{
+      resultType: "workItem",
+      workItemId: "wi-url-search",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm"
+    }]);
+    const urlSearch = createSurfaceCtx({ view: "search", query: "A24126", lang: "ru-RU" });
+    urlSearch.render = vi.fn();
+    await expect(runSearchFromCurrentUrlIfNeeded(urlSearch)).resolves.toBe(true);
+    expect(fetchSearchResults).toHaveBeenCalledWith("A24126", "ru-RU");
+    expect(urlSearch.state.runtimeStore.searchResultsByQuery.a24126[0].workItemId).toBe("wi-url-search");
+
+    fetchSearchResults.mockClear();
+    await expect(runSearchFromCurrentUrlIfNeeded(urlSearch)).resolves.toBe(false);
+    expect(fetchSearchResults).not.toHaveBeenCalled();
 
     const startCtx = createSurfaceCtx();
     startCtx.render = vi.fn();

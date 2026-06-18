@@ -93,11 +93,11 @@ public sealed class CanonicalOperationsApiService
                 anchorPayload,
                 anchorQuery))) ??
             throw new InvalidOperationException("operation_workspace_start_work_item_not_resolved");
-        var workItem = createdWorkItem with
+        var workItem = AttachAdmission(createdWorkItem with
         {
             Admission = admissionDecision.ToContract(),
             AdmissionDecisionRef = admissionDecision.AdmissionDecisionRef
-        };
+        }, actor);
 
         return new OperationsWorkspaceStartResult(
             workspace,
@@ -131,27 +131,27 @@ public sealed class CanonicalOperationsApiService
 
     private WorkItem AttachAdmission(WorkItem workItem, RuntimeActorContext actor)
     {
-        if (workItem.Admission is not null)
-        {
-            return workItem;
-        }
-
         var definition = definitions.Resolve(workItem);
         var decision = StartAdmissionDecision(definition, actor, workItem.OwnerRole);
+        var surface = catalog.GetWorkItemSurface(workItem.WorkItemId);
+        var entry = EntryAdmissionFor(workItem, surface, definition, decision);
         return workItem with
         {
-            Admission = decision.ToContract(),
-            AdmissionDecisionRef = decision.AdmissionDecisionRef
+            Admission = workItem.Admission ?? decision.ToContract(),
+            AdmissionDecisionRef = FirstNonEmpty(workItem.AdmissionDecisionRef, decision.AdmissionDecisionRef),
+            BusinessTitle = entry.BusinessTitle,
+            BusinessSummary = entry.BusinessSummary,
+            LegalActions = entry.LegalActions,
+            AdmissionDecision = entry.AdmissionDecision,
+            NextAction = entry.NextAction,
+            CannotSubmitReason = entry.CannotSubmitReason,
+            ReadonlyReason = entry.ReadonlyReason,
+            SourceScenario = entry.SourceScenario
         };
     }
 
     private OperationsWorkItemSurface AttachAdmission(OperationsWorkItemSurface surface, RuntimeActorContext actor)
     {
-        if (surface.Admission is not null)
-        {
-            return surface;
-        }
-
         var workItem = new WorkItem(
             surface.WorkItemId,
             surface.WorkItemType,
@@ -173,13 +173,81 @@ public sealed class CanonicalOperationsApiService
             surface.BackupOwnerId,
             surface.EscalationOwnerRole,
             surface.RequiredEvidenceRefs,
-            surface.AffectedFactRefs);
+            surface.AffectedFactRefs,
+            surface.Admission,
+            surface.AdmissionDecisionRef,
+            surface.BusinessTitle,
+            surface.BusinessSummary,
+            surface.LegalActions,
+            surface.AdmissionDecision,
+            surface.NextAction,
+            surface.CannotSubmitReason,
+            surface.ReadonlyReason,
+            surface.SourceScenario);
         var admitted = AttachAdmission(workItem, actor);
         return surface with
         {
             Admission = admitted.Admission,
-            AdmissionDecisionRef = admitted.AdmissionDecisionRef
+            AdmissionDecisionRef = admitted.AdmissionDecisionRef,
+            BusinessTitle = admitted.BusinessTitle,
+            BusinessSummary = admitted.BusinessSummary,
+            LegalActions = admitted.LegalActions,
+            AdmissionDecision = admitted.AdmissionDecision,
+            NextAction = admitted.NextAction,
+            CannotSubmitReason = admitted.CannotSubmitReason,
+            ReadonlyReason = admitted.ReadonlyReason,
+            SourceScenario = admitted.SourceScenario
         };
+    }
+
+    private static EntryAdmissionFields EntryAdmissionFor(
+        WorkItem workItem,
+        OperationsWorkItemSurface? surface,
+        WorkItemDefinitionResolution definition,
+        AdmissionKernelDecision decision)
+    {
+        var title = surface?.Card?.Title ?? surface?.Workspace?.Title ?? Text(
+            FirstNonEmpty(workItem.WorkItemType, "住宿办理"),
+            FirstNonEmpty(workItem.WorkItemType, "Операция размещения"),
+            FirstNonEmpty(workItem.WorkItemType, "Жайгаштыруу иши"));
+        var summary = surface?.Workspace?.Summary ?? Text(
+            "从工作项进入办理；提交前由系统检查材料、权限和设备。",
+            "Откройте задачу; перед отправкой система проверит материалы, права и устройство.",
+            "Иш тапшырмасынан ачыңыз; жөнөтүүдөн мурун система материалдарды, укукту жана түзмөктү текшерет.");
+        var admissionDecision = AdmissionDecisionCode(decision);
+        var cannotSubmitReason = decision.ConfirmAllowed ? string.Empty : decision.Reason;
+        return new EntryAdmissionFields(
+            title,
+            summary,
+            new[]
+            {
+                new EntryLegalAction(
+                    "openWorkItem",
+                    Text("继续办理", "Продолжить", "Улантуу"),
+                    "operationPanel",
+                    decision.VisibleAllowed && decision.PrepareAllowed,
+                    false,
+                    admissionDecision,
+                    string.Empty),
+                new EntryLegalAction(
+                    "submitWorkItem",
+                    Text("提交办理", "Отправить", "Жөнөтүү"),
+                    "operationPanel",
+                    decision.VisibleAllowed && decision.ConfirmAllowed,
+                    true,
+                    admissionDecision,
+                    cannotSubmitReason)
+            },
+            admissionDecision,
+            decision.ConfirmAllowed
+                ? Text("继续填写并提交", "Заполнить и отправить", "Толтуруп жөнөтүү")
+                : Text("查看不能提交的原因", "Показать причину запрета отправки", "Жөнөтүүгө болбой турган себебин көрүү"),
+            cannotSubmitReason,
+            Text(
+                "入口只显示可做的下一步；提交必须通过办理页。",
+                "Вход показывает только допустимый следующий шаг; отправка выполняется на странице задачи.",
+                "Кирүү мыйзамдуу кийинки кадамды гана көрсөтөт; жөнөтүү иш барагында аткарылат."),
+            SourceScenarioFor(definition, workItem.WorkspaceId, PayloadValue(workItem.Payload, "cardId"), workItem.WorkItemType));
     }
 
     private AdmissionKernelDecision StartAdmissionDecision(
@@ -200,6 +268,87 @@ public sealed class CanonicalOperationsApiService
             null,
             Array.Empty<string>(),
             false);
+    }
+
+    private static string AdmissionDecisionCode(AdmissionKernelDecision decision)
+    {
+        if (!decision.VisibleAllowed)
+        {
+            return "visible_blocked";
+        }
+
+        if (!decision.PrepareAllowed)
+        {
+            return "visible_only";
+        }
+
+        if (!decision.ConfirmAllowed)
+        {
+            return "prepare_only_confirm_denied";
+        }
+
+        return decision.ProductionAllowed
+            ? "confirm_allowed_production_allowed"
+            : "confirm_allowed_production_blocked";
+    }
+
+    private static string SourceScenarioFor(
+        WorkItemDefinitionResolution definition,
+        string workspaceId,
+        string cardId,
+        string workItemType)
+    {
+        var text = string.Join(" ", definition.DefinitionId, definition.Definition?.SliceId, workspaceId, cardId, workItemType);
+        if (text.Contains("ResourceOperationStatus", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("operation", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.resource-operation-status";
+        }
+
+        if (text.Contains("ResourceSetup", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("ResourceReadiness", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("roomSetup", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("bedSetup", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.resource-basic-readiness";
+        }
+
+        if (text.Contains("RatePlan", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.product-and-rate";
+        }
+
+        if (text.Contains("Lead", StringComparison.OrdinalIgnoreCase) || text.Contains("Quote", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.inquiry-and-quote";
+        }
+
+        if (text.Contains("Reservation", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.reservation-and-inventory-hold";
+        }
+
+        if (text.Contains("Deposit", StringComparison.OrdinalIgnoreCase) || text.Contains("Payment", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.payment-deposit-and-guarantee";
+        }
+
+        if (text.Contains("CheckIn", StringComparison.OrdinalIgnoreCase) || text.Contains("Checkin", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.check-in-processing";
+        }
+
+        if (text.Contains("Stay", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.in-stay-management";
+        }
+
+        if (text.Contains("Checkout", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.checkout-and-settlement";
+        }
+
+        return "lodging.unknown-entry";
     }
 
     public PrepareWorkItemResult? PrepareWorkItem(string workItemId, PrepareWorkItemRequest request) =>
@@ -467,6 +616,7 @@ public sealed class CanonicalOperationsApiService
             ["residentName"] = anchor.ResidentName,
             ["phone"] = anchor.Phone,
             ["buildingName"] = anchor.BuildingName,
+            ["buildingContextRef"] = $"building:{Slug(actor.TenantId)}:{Slug(anchor.BuildingName)}",
             ["roomNo"] = anchor.RoomNo,
             ["roomId"] = $"room-d02-22-{suffix}",
             ["bedNo"] = anchor.BedNo,
@@ -1005,8 +1155,26 @@ public sealed class CanonicalOperationsApiService
             string.IsNullOrWhiteSpace(result.SubmissionId) ? null : $"/api/operations/trace/submissions/{Uri.EscapeDataString(result.SubmissionId)}");
     }
 
+    private static IReadOnlyDictionary<string, string> Text(string zh, string ru, string ky) =>
+        new Dictionary<string, string>
+        {
+            ["zh-CN"] = zh,
+            ["ru-RU"] = ru,
+            ["ky-KG"] = ky
+        };
+
     private static string FirstNonEmpty(params string?[] values) =>
         values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
+
+    private sealed record EntryAdmissionFields(
+        object BusinessTitle,
+        object BusinessSummary,
+        IReadOnlyList<EntryLegalAction> LegalActions,
+        string AdmissionDecision,
+        object NextAction,
+        string CannotSubmitReason,
+        object ReadonlyReason,
+        string SourceScenario);
 }
 
 public sealed record OperationsWorkspaceStartResult(

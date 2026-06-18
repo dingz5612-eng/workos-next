@@ -19,6 +19,7 @@ if (contract.productionConfirmAllowed !== false || contract.releaseAuthority !==
 }
 await assertGeneratedBusinessDisplayModule();
 assertBusinessDisplayAdapterConsumesGeneratedModule();
+assertLanguageSwitchTransientPolicy();
 
 const copyValues = [];
 for (const file of contract.ordinaryBusinessCopyFiles ?? []) {
@@ -172,5 +173,26 @@ function assertBusinessDisplayAdapterConsumesGeneratedModule() {
     if (text.includes(sourceTerm)) {
       fail(`business display adapter must not hardcode source term: ${sourceTerm}.`);
     }
+  }
+}
+
+function assertLanguageSwitchTransientPolicy() {
+  const policy = contract.languageSwitchTransientMessagePolicy;
+  if (!policy?.runtimeOwner) {
+    fail("languageSwitchTransientMessagePolicy.runtimeOwner must be declared.");
+    return;
+  }
+  const keys = policy.messageKeys ?? [];
+  for (const key of ["draftSaved", "apiOffline", "apiOfflineSubmit", "submitting"]) {
+    if (!keys.includes(key)) fail(`languageSwitchTransientMessagePolicy.messageKeys missing ${key}.`);
+  }
+  const runtimeOwner = path.join(root, policy.runtimeOwner);
+  if (!fs.existsSync(runtimeOwner)) {
+    fail(`languageSwitchTransientMessagePolicy.runtimeOwner missing: ${policy.runtimeOwner}.`);
+    return;
+  }
+  const source = fs.readFileSync(runtimeOwner, "utf8");
+  if (!source.includes("relocalizedOperationMessageKeys") || !source.includes("transientOperationMessageKey")) {
+    fail("navigationController must relocalize transient operation messages on language switch.");
   }
 }

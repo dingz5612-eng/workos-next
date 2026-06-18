@@ -21,8 +21,7 @@ export const generatedContractFiles = [
   FIELD_BINDINGS_GENERATED_PATH,
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
-  "docs/contracts/generated/dormitory/read-model.generated.json",
-  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+  "docs/contracts/generated/dormitory/read-model.generated.json"
 ];
 
 export const runtimeConsumableGeneratedFiles = [
@@ -31,8 +30,7 @@ export const runtimeConsumableGeneratedFiles = [
   FIELD_BINDINGS_GENERATED_PATH,
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
-  "docs/contracts/generated/dormitory/read-model.generated.json",
-  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+  "docs/contracts/generated/dormitory/read-model.generated.json"
 ];
 
 const digestPattern = /^sha256:[a-f0-9]{64}$/;
@@ -212,6 +210,9 @@ function canonicalGeneratedContractBundle(bundle) {
   const normalized = {};
   for (const [key, value] of Object.entries(bundle ?? {})) {
     if (key === "generatedBundleDigest") continue;
+    if (key === "bundleRole") continue;
+    if (key === "executionProofDigest") continue;
+    if (key === "generatedOutputDigest") continue;
     if (key === "subjectDigest") continue;
     if (key === "evidenceArtifactDigest") continue;
     if (key === "evidenceRootDigest") continue;

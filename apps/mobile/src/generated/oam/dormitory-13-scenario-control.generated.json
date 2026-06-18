@@ -8,16 +8,16 @@
   "generatedFrom": [
     "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
   ],
-  "inputDigest": "sha256:d2d2ae59e3c738b48f595b1203dd288fb25b6d0ba691ce0033777f8b91c192ab",
+  "inputDigest": "sha256:fb7644757be3231aaaaaf1e5e2490556a1fc7876e4783edb488e1093a7d56d45",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
-      "digest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a"
+      "digest": "sha256:4e25c7fabf8aee0983ecde729d378f0451115c5bd50ea0cca40f14d0a1175abf"
     }
   ],
-  "sourceContentDigest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a",
+  "sourceContentDigest": "sha256:4e25c7fabf8aee0983ecde729d378f0451115c5bd50ea0cca40f14d0a1175abf",
   "authorityId": "Dormitory.Operating13ScenarioControl",
-  "outputContentDigest": "sha256:a4c1e44883da35c0cef022a28dbf0a921fff2340fadab124e078c0fcabbfef08",
+  "outputContentDigest": "sha256:68f3b6b981c760c0ca0b8d7394ad2c32ab0461bcc19dcbf9de0b87c2d0120ae2",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
@@ -262,6 +262,60 @@
       "完成摘要"
     ],
     "buttonRuleZh": "所有按钮按状态出现，不得固定一个大提交按钮。"
+  },
+  "entryAdmissionContract": {
+    "version": "oam.dormitory.entry-admission-contract.v1",
+    "objects": [
+      "EntryResult",
+      "SearchResult",
+      "WorkItem"
+    ],
+    "requiredFields": [
+      "businessTitle",
+      "businessSummary",
+      "legalActions",
+      "admissionDecision",
+      "nextAction",
+      "cannotSubmitReason",
+      "readonlyReason",
+      "sourceScenario"
+    ],
+    "entryPages": [
+      "today",
+      "workItems",
+      "search",
+      "mine",
+      "detail",
+      "correction"
+    ],
+    "resolverChain": [
+      "LegalAction Resolver",
+      "Admission Attach",
+      "Runtime Prepare",
+      "WorkItem"
+    ],
+    "rules": {
+      "frontendButtonJudgementForbidden": true,
+      "searchReadonlyOnly": true,
+      "searchLearningOnlyForbidden": true,
+      "correctionRequiresAdmission": true,
+      "oldWStayCurrentEntryForbidden": true,
+      "writeFactsOnlyThroughOperationsRuntime": true
+    },
+    "legalActionFields": [
+      "action",
+      "label",
+      "view",
+      "allowed",
+      "writeBusinessFact",
+      "admissionDecision"
+    ],
+    "decisionCopy": {
+      "cannotSubmitReasonZh": "当前不能提交时，必须显示业务可懂原因。",
+      "readonlyReasonZh": "只读入口必须说明只能查看或只能跳转合法动作。",
+      "nextActionZh": "下一步必须是业务动作，不得显示内部编号或技术状态。"
+    },
+    "sourceScenarioRuleZh": "入口必须声明来自哪个 13 场景；搜索、今日、工作项、我的和更正入口不得把旧 W-STAY 包当当前主链。"
   },
   "forbiddenUserInputFields": [
     "roomId",

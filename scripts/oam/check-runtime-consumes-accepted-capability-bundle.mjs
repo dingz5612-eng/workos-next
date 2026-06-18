@@ -15,6 +15,7 @@ const generatedRuntimeProjection = readJsonIfExists(generatedRuntimeProjectionPa
 const projectionSource = read("services/core-api/WorkOS.Api/Runtime/AcceptedCapabilityRuntimeProjection.cs");
 const projectionSeed = read("services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs");
 const projectionRuntime = read("services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs");
+const workspaceSeedCatalog = read("services/core-api/WorkOS.Api/Runtime/WorkspaceSeedCatalog.cs");
 const failures = [];
 const acceptedDigest = acceptance?.acceptedGeneratedBundleDigest;
 const requiredCards = [
@@ -63,9 +64,13 @@ if (projectionSource.includes(acceptedDigest)) {
 if (!projectionSeed.includes("AcceptedCapabilityRuntimeProjection.Workspace()")) {
   failures.push("ProjectionSeed must seed AcceptedCapabilityRuntimeProjection.Workspace().");
 }
-if (!projectionSeed.includes("WorkspaceSeedCatalog.All()") ||
-  !projectionSeed.includes("AcceptedCapabilityRuntimeProjection.LegacyResourceWorkspaceId")) {
-  failures.push("ProjectionSeed must keep WorkspaceSeedCatalog as legacy source and exclude the legacy resource workspace from current first golden chain.");
+if (projectionSeed.includes("WorkspaceSeedCatalog.All()") ||
+  projectionSeed.includes("AcceptedCapabilityRuntimeProjection.LegacyResourceWorkspaceId") ||
+  /W-STAY-/i.test(projectionSeed)) {
+  failures.push("ProjectionSeed must not publish legacy WorkspaceSeedCatalog or W-STAY workspaces to current runtime surfaces.");
+}
+if (!workspaceSeedCatalog.includes("W-STAY-RESOURCE")) {
+  failures.push("WorkspaceSeedCatalog must remain available only as legacy/catalog compatibility source for audit and migration.");
 }
 if (!projectionRuntime.includes("StartWorkspace(AcceptedCapabilityRuntimeProjection.WorkspaceId)")) {
   failures.push("ProjectionRuntime.StartResourceSetup must start the accepted capability workspace.");
@@ -82,6 +87,7 @@ const result = {
   runtimeProjectionDigestMatchesAcceptedGeneratedBundleDigest: failures.length === 0,
   activeRuntimeCardIds: requiredCards,
   workspaceSeedCatalogDrivesCurrentFirstGoldenChain: false,
+  legacyWorkspaceSeedCatalogPublishedByProjectionSeed: false,
   productionConfirmAllowed: false,
   releaseAuthority: false,
   finalGoNoGo: "NO_GO",

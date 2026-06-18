@@ -104,12 +104,19 @@ function renderOperationPanelForItem(item, workspace, activeCard, ctx) {
       policyRef: activeCard.policyRef || activeCard.confirmation?.policyRef || "operations-runtime-policy"
     }, ctx)}
     ${admissionStatusPanel(actionState, ctx)}
-    ${TrustedConfirmSheet(operationContext, activeCard, ctx)}
-    ${EvidenceSheet(activeCard, draft, ctx)}
     ${operationBody}
+    ${preSubmitDetails(operationContext, activeCard, draft, ctx)}
     ${ActionResult(currentActionResult || {}, ctx)}
     <div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>
   `);
+}
+
+function preSubmitDetails(operationContext, activeCard, draft, ctx) {
+  return `<details class="operation-pre-submit-details" data-surface="operation-pre-submit-details">
+    <summary>${ctx.tr("systemCheckDetails")}</summary>
+    ${TrustedConfirmSheet(operationContext, activeCard, ctx)}
+    ${EvidenceSheet(activeCard, draft, ctx)}
+  </details>`;
 }
 
 function actionResultForActiveCard(result = null, workspace = {}, activeCard = {}) {

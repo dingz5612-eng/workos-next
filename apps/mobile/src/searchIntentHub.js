@@ -1,8 +1,9 @@
 import { resolveOperationPanelTarget } from "./operationRouteResolver.js";
 import { operationStatusTranslationKey } from "./operationStatus.js";
 import { isAccommodationResourceSetupQuery } from "./searchIntentRegistry.js";
-import { DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS } from "./capabilityProjection.js";
+import { DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS, MAINLINE_ENTRY_ADMISSION_CONTRACT } from "./capabilityProjection.js";
 import { admissionCopy, missingAdmissionState, normalizeAdmissionState } from "./admissionSurface.js";
+import { userFacingBusinessText } from "./businessDisplayLanguage.js";
 
 export function buildSearchResultVM(item = {}, ctx = {}) {
   const resultType = item.resultType || item.type || item.kind || "object";
@@ -21,17 +22,36 @@ export function buildSearchResultVM(item = {}, ctx = {}) {
   const admission = admissionForSearchItem(item, action);
   const gateResult = gateResultForSearchItem(item, admission);
   const admissionSurface = admissionCopy(admission, ctx, "search");
-  const actionLabel = admissionActionLabel(action, admission, ctx);
-  const explicitNextAction = safeLocalized(item.localizedNextAction ?? item.nextActionLabel ?? item.nextAction, ctx);
+  const admissionLabel = searchReadonlyOpenLabel(action, admission, admissionSurface);
+  const actionLabel = displayBusinessText(admissionActionLabel(action, admission, ctx), ctx);
+  const explicitNextAction = displayBusinessText(safeLocalized(item.localizedNextAction ?? item.nextActionLabel ?? item.nextAction, ctx), ctx);
+  const entryAdmission = entryAdmissionForSearchItem(item, {
+    action,
+    actionLabel,
+    admission,
+    admissionSurface,
+    ctx,
+    explicitNextAction,
+    workspaceId,
+    cardId,
+    resultType
+  });
   return {
     kind: "SearchResultVM",
     resultType,
-    title: safeLocalized(item.localizedTitle ?? item.title, ctx) || titleForType(resultType, ctx),
-    subtitle: safeLocalized(item.localizedSubtitle ?? item.subtitle, ctx) || ctx.tr?.("workosSearchSubtitle") || "",
-    statusLabel: localizedStatus(item.localizedStatus ?? item.statusLabel ?? item.status ?? item.lifecycleState, ctx),
+    title: displayBusinessText(safeLocalized(item.localizedTitle ?? item.businessTitle ?? item.title, ctx), ctx) || titleForType(resultType, ctx),
+    subtitle: displayBusinessText(safeLocalized(item.localizedSubtitle ?? item.businessSummary ?? item.subtitle, ctx), ctx) || ctx.tr?.("workosSearchSubtitle") || "",
+    statusLabel: displayBusinessText(localizedStatus(item.localizedStatus ?? item.statusLabel ?? item.status ?? item.lifecycleState, ctx), ctx),
     nextActionLabel: genericProcessCopy(explicitNextAction, ctx) ? actionLabel : explicitNextAction || actionLabel,
     actionType: action.type,
     actionLabel,
+    businessTitle: entryAdmission.businessTitle,
+    businessSummary: entryAdmission.businessSummary,
+    legalActions: entryAdmission.legalActions,
+    nextAction: entryAdmission.nextAction,
+    cannotSubmitReason: entryAdmission.cannotSubmitReason,
+    readonlyReason: entryAdmission.readonlyReason,
+    sourceScenario: entryAdmission.sourceScenario,
     workItemId,
     workspaceId,
     cardId,
@@ -49,15 +69,24 @@ export function buildSearchResultVM(item = {}, ctx = {}) {
     confirmAllowed: admission.confirmAllowed,
     productionAllowed: admission.productionAllowed,
     admissionReason: admission.reason,
-    admissionLabel: admissionSurface.label,
+    admissionLabel: admissionLabel || admissionSurface.label,
     admissionReasonLabel: admissionSurface.reason,
     admissionLabelKey: admissionSurface.labelKey,
     admissionReasonKey: admissionSurface.reasonKey,
-    admissionDecision: admissionSurface.decision,
+    admissionDecision: entryAdmission.admissionDecision,
     view: action.view,
-    reasonIfNoAction: action.reason,
+    reasonIfNoAction: displayBusinessText(action.reason, ctx),
     sourceRefs: sourceRefs(item, { workspaceId, cardId, workItemId, caseId, evidenceId, traceId, learningId })
   };
+}
+
+function searchReadonlyOpenLabel(action = {}, admission = {}, admissionSurface = {}) {
+  const readonlyOpenActions = new Set(["openObject", "openWorkspace", "startOperationsWorkspace"]);
+  if (!readonlyOpenActions.has(action.type)) return "";
+  if (admission.visibleAllowed && admission.prepareAllowed && !admission.confirmAllowed) {
+    return admissionSurface.reason;
+  }
+  return "";
 }
 
 export function rankSearchResults(items = [], query = "") {
@@ -90,8 +119,14 @@ function searchActionFor(item, ctx) {
   if (item.resultType === "mainlineScenario") {
     return { type: "queryOnly", label: ctx.tr?.("searchActionViewWorkItems") || "查看工作项", view: "search", reason: "" };
   }
-  if (item.resultType === "workItem" && item.workItemId && resolveOperationPanelTarget(item, ctx.state || {}).canOpen) {
-    return { type: "openWorkItem", label: safeLocalized(item.actionLabel, ctx) || ctx.tr?.("searchActionProcess") || "处理", view: "operationPanel", reason: "" };
+  if (item.resultType === "workItem" && item.workItemId) {
+    const target = resolveOperationPanelTarget(item, ctx.state || {});
+    return {
+      type: "openWorkItem",
+      label: safeLocalized(item.actionLabel, ctx) || ctx.tr?.(target.canOpen ? "searchActionProcess" : "viewOnly") || (target.canOpen ? "处理" : "查看记录"),
+      view: "operationPanel",
+      reason: ""
+    };
   }
   if (["room", "bed", "stay", "object", "workspaceCardCompatibility"].includes(item.resultType) && item.workspaceId) {
     return { type: "openObject", label: ctx.tr?.("searchActionOpenObject") || "打开对象", view: "workspace", reason: "" };
@@ -129,7 +164,6 @@ function rankFor(item, query) {
   const text = [
     item.resultType,
     item.type,
-    item.workItemType,
     item.title,
     item.localizedTitle,
     item.subtitle,
@@ -140,18 +174,10 @@ function rankFor(item, query) {
     item.object_label,
     item.objectName,
     item.object_name,
-    item.objectId,
-    item.object_id,
     item.roomNo,
     item.room_no,
-    item.roomId,
-    item.room_id,
     item.bedNo,
     item.bed_no,
-    item.stayId,
-    item.stay_id,
-    item.aggregateRef,
-    item.aggregate_ref,
     item.reason,
     item.nextAction,
     item.actionLabel,
@@ -159,28 +185,19 @@ function rankFor(item, query) {
     item.anchorLabel,
     item.anchor,
     item.scenarioAnchor,
-    item.workspaceId,
-    item.cardId,
-    item.caseId,
-    item.evidenceId,
-    item.traceId,
-    item.card?.id,
     item.card?.title,
-    item.card?.status,
-    item.workspace?.id,
     item.workspace?.title,
     item.workspace?.summary,
     item.workspace?.next,
     item.fieldValues,
     item.field_values,
-    item.values,
-    item.payload,
-    item.draft
+    item.values
   ].map((value) => safeText(value).toLocaleLowerCase()).join(" ");
   const roomSetupIntent = isAccommodationResourceSetupQuery(query);
   const comparableText = normalizeRoomSearchToken(text);
   const comparableQuery = normalizeRoomSearchToken(query);
-  const matched = text.includes(query)
+  const matched = item._searchKernelMatchedQuery === query
+    || text.includes(query)
     || comparableText.includes(comparableQuery)
     || query.split(/\s+/).filter(Boolean).some((part) => text.includes(part))
     || (roomSetupIntent && text.includes("房间"));
@@ -231,6 +248,92 @@ function genericProcessCopy(value, ctx = {}) {
   ].includes(text);
 }
 
+function entryAdmissionForSearchItem(item = {}, options = {}) {
+  const {
+    action = {},
+    actionLabel = "",
+    admission = {},
+    admissionSurface = {},
+    ctx = {},
+    explicitNextAction = "",
+    workspaceId = "",
+    cardId = "",
+    resultType = ""
+  } = options;
+  const admissionDecision = item.admissionDecision || item.admission_decision || admissionSurface.decision;
+  const cannotSubmitReason = item.cannotSubmitReason || item.cannot_submit_reason || (admission.confirmAllowed ? "" : admission.reason || "");
+  const nextAction = displayBusinessText(
+    safeLocalized(item.nextAction ?? item.next_action ?? explicitNextAction, ctx),
+    ctx) || actionLabel;
+  const fallbackReadonlyReason = ctx.tr?.("searchReadonlyReason") || "搜索结果只读，只能跳转合法动作。";
+  const entry = {
+    businessTitle: displayBusinessText(safeLocalized(item.businessTitle ?? item.business_title ?? item.localizedTitle ?? item.title, ctx), ctx) || titleForType(resultType, ctx),
+    businessSummary: displayBusinessText(safeLocalized(item.businessSummary ?? item.business_summary ?? item.localizedSubtitle ?? item.subtitle ?? item.summary, ctx), ctx) || "",
+    legalActions: normalizeEntryLegalActions(item.legalActions || item.legal_actions, {
+      action,
+      actionLabel,
+      admission,
+      admissionDecision,
+      cannotSubmitReason,
+      ctx
+    }),
+    admissionDecision,
+    nextAction,
+    cannotSubmitReason,
+    readonlyReason: displayBusinessText(safeLocalized(item.readonlyReason ?? item.readonly_reason, ctx), ctx) || fallbackReadonlyReason,
+    sourceScenario: item.sourceScenario || item.source_scenario || sourceScenarioFallback(workspaceId, cardId, resultType)
+  };
+  for (const field of MAINLINE_ENTRY_ADMISSION_CONTRACT.requiredFields || []) {
+    if (field === "legalActions" && !entry.legalActions.length) {
+      entry.legalActions = normalizeEntryLegalActions([], { action, actionLabel, admission, admissionDecision, cannotSubmitReason, ctx });
+    } else if (entry[field] === undefined || entry[field] === null) {
+      entry[field] = "";
+    }
+  }
+  return entry;
+}
+
+function normalizeEntryLegalActions(actions = [], options = {}) {
+  if (Array.isArray(actions) && actions.length) {
+    return actions.map((entry) => ({
+      action: entry.action || "",
+      label: displayBusinessText(safeLocalized(entry.label, options.ctx), options.ctx),
+      view: entry.view || "",
+      allowed: entry.allowed === true,
+      writeBusinessFact: entry.writeBusinessFact === true || entry.write_business_fact === true,
+      admissionDecision: entry.admissionDecision || entry.admission_decision || options.admissionDecision || "",
+      cannotSubmitReason: entry.cannotSubmitReason || entry.cannot_submit_reason || ""
+    }));
+  }
+  if (!options.action?.type || options.action.type === "noAction") {
+    return [{
+      action: "readonly",
+      label: options.ctx?.tr?.("viewOnly") || "查看",
+      view: "",
+      allowed: false,
+      writeBusinessFact: false,
+      admissionDecision: options.admissionDecision || "",
+      cannotSubmitReason: options.cannotSubmitReason || ""
+    }];
+  }
+  return [{
+    action: options.action.type,
+    label: options.actionLabel,
+    view: options.action.view || "",
+    allowed: Boolean(options.admission?.visibleAllowed && options.admission?.prepareAllowed),
+    writeBusinessFact: false,
+    admissionDecision: options.admissionDecision || "",
+    cannotSubmitReason: options.cannotSubmitReason || ""
+  }];
+}
+
+function sourceScenarioFallback(workspaceId = "", cardId = "", resultType = "") {
+  const text = `${workspaceId} ${cardId} ${resultType}`;
+  if (/resourceOperationStatus|operation-status|operation/i.test(text)) return "lodging.resource-operation-status";
+  if (/W-DORM-MAINLINE|cert\.roomSetup|cert\.bedSetup|cert\.resourceReadiness|resource-basic-readiness/i.test(text)) return "lodging.resource-basic-readiness";
+  return "lodging.unknown-entry";
+}
+
 function admissionForSearchItem(item = {}, action = {}) {
   if (item.admission) return action.type === "startOperationsWorkspace"
     ? startCommandAdmission(normalizeAdmissionState(item.admission))
@@ -273,6 +376,10 @@ function safeLocalized(value, ctx) {
   if (Array.isArray(value)) return value.map((entry) => safeLocalized(entry, ctx)).filter(Boolean).join(" · ");
   if (ctx.tx) return ctx.tx(value);
   return value["zh-CN"] || value["ru-RU"] || value.title || value.label || "";
+}
+
+function displayBusinessText(value = "", ctx = {}) {
+  return userFacingBusinessText(value, ctx);
 }
 
 function localizedStatus(value, ctx) {

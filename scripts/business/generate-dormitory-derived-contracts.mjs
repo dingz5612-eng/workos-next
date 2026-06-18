@@ -50,6 +50,53 @@ const fieldClassificationEnum = [
   "derived",
   "forbidden"
 ];
+const scenario2WorkspaceId = "W-DORM-RESOURCE-OPERATION-STATUS";
+const scenario2OwnerSlice = "Accommodation.ResourceOperationStatus";
+const scenario2RemovalImpact = "Generated from Dormitory Scenario 2 Source Authority; no production confirm.";
+const scenario2ForbiddenFacts = [
+  "RatePlan",
+  "Quote",
+  "Reservation",
+  "Stay",
+  "Payment",
+  "Deposit",
+  "DepositAccount",
+  "Refund",
+  "LedgerEntry",
+  "LedgerTransaction",
+  "PaymentAllocation",
+  "AmountBasis",
+  "MoneyBasis",
+  "FinancialFact",
+  "FinanceReceipt",
+  "DepositEntry"
+];
+
+function scenario2Options(stepId, sourceCardId, allowedFacts) {
+  return {
+    workspaceId: scenario2WorkspaceId,
+    sourceCardId,
+    surfaceId: `mobile.work.dormitory-scenario2-${stepId}`,
+    surfacePolicyRef: `surface.mobile.work.dormitory-scenario2-${stepId}`,
+    fieldContractRef: `field.dormitory.scenario2.${scenario2FieldSuffix(sourceCardId)}.v1`,
+    evidencePolicyRef: `evidence.dormitory.scenario2.${stepId}.v1`,
+    allowedFacts,
+    forbiddenFacts: scenario2ForbiddenFacts,
+    removalImpact: scenario2RemovalImpact
+  };
+}
+
+function scenario2FieldSuffix(sourceCardId) {
+  const suffixByCard = {
+    "cert.selectBaseReadyResource": "operationResourceSelect",
+    "cert.operationInspection": "operationInspectionConfirm",
+    "cert.setOperationStatus": "operationStatusDraft",
+    "cert.impactConfirmation": "operationStatusChangeConfirm",
+    "cert.dailyStatusMaintenance": "operationBlockerUpdate",
+    "cert.restoreOperation": "operationRestoreConfirm"
+  };
+  return suffixByCard[sourceCardId] ?? sourceCardId.replace(/^cert\./, "");
+}
 
 const objectFields = {
   Room: ["roomId", "roomNo", "floor", "readinessState", "capacity", "availableBedCount"],
@@ -87,6 +134,12 @@ const workItems = [
   wi("Dorm.BedSetupConfirm", "床位建档确认", "train-1-business-mainline", "宿舍经办人", "Accommodation.ResourceSetup", "BedSetup.Confirm", "Bed", ["roomId", "bedNo", "bedType"], ["bed-photo", "room-link-proof"], "ledger.none.v1", ["Dorm.ResourceReadinessConfirm"], ["DormAvailabilityLens"]),
   wi("Dorm.RatePlanConfirm", "价格方案确认", "train-1-business-mainline", "宿舍负责人", "Accommodation.RatePlan", "RatePlan.Confirm", "RatePlan", ["ratePlanId", "amount", "billingCycle"], ["rate-policy"], "ledger.none.v1", ["Dorm.ResourceReadinessConfirm"], ["RatePlanLens"]),
   wi("Dorm.ResourceReadinessConfirm", "资源可售确认", "train-1-business-mainline", "宿舍经办人", "Accommodation.ResourceReadiness", "ResourceReadiness.Confirm", "Room", ["roomId", "bedId", "readinessState"], ["completion-photo", "verification-check"], "ledger.none.v1", ["Dorm.LeadCapture"], ["DormAvailabilityLens", "RoomReadinessLens"]),
+  wi("Dorm.OperationResourceSelect", "选择已基础就绪房源", "train-1-business-mainline", "宿舍经办人", scenario2OwnerSlice, "OperationResource.Select", "OperationResource", ["roomOrBedScope", "targetRoomOrBed"], [], "ledger.none.v1", ["Dorm.OperationInspectionConfirm"], ["OperationDraft"], scenario2Options("select-base-ready-resource", "cert.selectBaseReadyResource", ["CommandSubmission", "DomainEvent", "EvidenceObject"])),
+  wi("Dorm.OperationInspectionConfirm", "运营检查确认", "train-1-business-mainline", "宿舍经办人", scenario2OwnerSlice, "OperationInspection.Confirm", "OperationInspection", ["cleaningInspectionResult", "maintenanceInspectionResult", "safetyInspectionResult", "facilityInspectionResult", "exceptionFlag", "inspectionConclusion", "exceptionDescription", "operationInspectionNotes"], ["operation-inspection-photo", "maintenance-record", "safety-inspection-record", "facility-inspection-record"], "ledger.none.v1", ["Dorm.OperationStatusDraft"], ["OperationInspection", "OperationEvidence", "StatusHistory"], scenario2Options("operation-inspection", "cert.operationInspection", ["OperationInspection", "OperationEvidence", "StatusHistory", "EvidenceObject", "DomainEvent", "CommandSubmission"])),
+  wi("Dorm.OperationStatusDraft", "运营状态草稿", "train-1-business-mainline", "宿舍经办人", scenario2OwnerSlice, "OperationStatus.Draft", "OperationStatusChange", ["newOperationStatus", "statusReasonCode", "impactScope", "statusOwner", "statusReason", "expectedRestoreAt", "operationStatusNotes"], ["status-reason-proof", "blocker-reason-proof"], "ledger.none.v1", ["Dorm.OperationStatusChangeConfirm"], ["OperationStatusDraft", "OperationBlockerDraft"], scenario2Options("set-operation-status", "cert.setOperationStatus", ["CommandSubmission", "DomainEvent", "EvidenceObject"])),
+  wi("Dorm.OperationStatusChangeConfirm", "运营状态变更确认", "train-1-business-mainline", "宿舍经办人", scenario2OwnerSlice, "OperationStatusChange.Confirm", "OperationStatusChange", ["submitImpactConfirmation", "impactConfirmationNotes"], ["impact-proof"], "ledger.none.v1", ["Dorm.OperationBlockerUpdate"], ["RoomOperationStatus", "BedOperationStatus", "OperationBlocker", "StatusHistory"], scenario2Options("impact-confirmation", "cert.impactConfirmation", ["RoomOperationStatus", "BedOperationStatus", "OperationBlocker", "OperationStatusChange", "OperationEvidence", "StatusHistory", "EvidenceObject", "DomainEvent", "CommandSubmission"])),
+  wi("Dorm.OperationBlockerUpdate", "日常状态维护", "train-1-business-mainline", "宿舍经办人", scenario2OwnerSlice, "OperationBlocker.Update", "OperationBlocker", ["blockerStatus", "followUpOwner", "progressUpdate", "expectedRestoreAt", "blockerNotes"], ["progress-photo", "maintenance-progress-record", "supplement-proof"], "ledger.none.v1", ["Dorm.OperationRestoreConfirm"], ["OperationBlocker", "OperationEvidence", "StatusHistory"], scenario2Options("daily-status-maintenance", "cert.dailyStatusMaintenance", ["OperationBlocker", "OperationEvidence", "StatusHistory", "EvidenceObject", "DomainEvent", "CommandSubmission"])),
+  wi("Dorm.OperationRestoreConfirm", "恢复运营确认", "train-1-business-mainline", "宿舍经办人", scenario2OwnerSlice, "OperationRestore.Confirm", "OperationRestore", ["recheckResult", "restoreConclusion", "restoreReason", "restoreNotes"], ["restore-photo", "recheck-record", "blocker-close-proof"], "ledger.none.v1", ["Dorm.RatePlanConfirm"], ["OperationRestore", "RoomOperationStatus", "BedOperationStatus", "StatusHistory"], scenario2Options("restore-operation", "cert.restoreOperation", ["OperationRestore", "RoomOperationStatus", "BedOperationStatus", "OperationEvidence", "StatusHistory", "EvidenceObject", "DomainEvent", "CommandSubmission"])),
   wi("Dorm.LeadCapture", "线索录入", "train-1-business-mainline", "宿舍经办人", "Accommodation.Lead", "Lead.Capture", "Lead", ["name", "phone", "sourceChannel"], ["lead-consent"], "ledger.none.v1", ["Dorm.ReservationConfirm"], ["LeadFunnelLens"]),
   wi("Dorm.ReservationConfirm", "预订确认", "train-1-business-mainline", "宿舍负责人", "Accommodation.Reservation", "Reservation.Confirm", "Reservation", ["leadId", "roomId", "bedId", "ratePlanId"], ["reservation-acknowledgement", "bed-availability-proof"], "ledger.none.v1", ["Dorm.CheckinConfirm"], ["ReservationLens"]),
   wi("Dorm.CheckinConfirm", "入住确认", "train-1-business-mainline", "宿舍经办人", "Accommodation.CheckIn", "Checkin.Confirm", "Stay", ["residentId", "stayId", "roomId", "bedId"], ["identity-document", "checkin-confirmation", "reservation-acknowledgement", "bed-availability-proof"], "ledger.none.v1", ["Dorm.PaymentConfirm", "Dorm.DepositConfirm", "Dorm.AccessCredentialIssue"], ["StayOnboardingLens", "DormAvailabilityLens"]),
@@ -146,12 +199,12 @@ patchGraph();
 console.log(`Dormitory derived contracts generated from ${kernelPath}`);
 console.log(`workItems=${workItems.length}`);
 
-function wi(workItemType, nameZh, trainId, ownerRole, systemOwner, commandType, objectId, editableFields, evidenceRefs, ledgerPolicyRef, downstreamWorkItems, lensOutputs) {
+function wi(workItemType, nameZh, trainId, ownerRole, systemOwner, commandType, objectId, editableFields, evidenceRefs, ledgerPolicyRef, downstreamWorkItems, lensOutputs, options = {}) {
   const local = workItemType.split(".").slice(1).join(".");
   const camel = local.charAt(0).toLowerCase() + local.slice(1).replace(/\.([A-Z])/g, (_, c) => c);
   const definitionId = `definition.${workItemType.startsWith("Finance.") ? "finance" : "dormitory"}.${camel}.v1`;
-  const sourceCardId = `cert.${camel}`;
-  const surfaceId = `mobile.work.${slug(workItemType)}`;
+  const sourceCardId = options.sourceCardId ?? `cert.${camel}`;
+  const surfaceId = options.surfaceId ?? `mobile.work.${slug(workItemType)}`;
   const financeOwned = systemOwner === "finance-gate";
   const p0GeneratedCandidate = p0GeneratedCandidateTypes.has(workItemType);
   const generatedStage = p0GeneratedCandidate
@@ -168,17 +221,19 @@ function wi(workItemType, nameZh, trainId, ownerRole, systemOwner, commandType, 
     definitionId,
     commandType,
     migrationRefs: migrationRefsFor(sourceCardId),
-    workspaceId: workspaceFor(trainId),
+    workspaceId: options.workspaceId ?? workspaceFor(trainId),
     surfaceId,
     objectId,
     ownerSlice: systemOwner,
-    allowedFacts: allowedFactsFor(objectId, financeOwned),
-    forbiddenFacts: forbiddenFactsFor(financeOwned, ledgerPolicyRef),
+    allowedFacts: options.allowedFacts ?? allowedFactsFor(objectId, financeOwned),
+    forbiddenFacts: options.forbiddenFacts ?? forbiddenFactsFor(financeOwned, ledgerPolicyRef),
     admissionPolicyRef: admissionFor(workItemType, financeOwned, ownerRole),
-    evidencePolicyRef: `evidence.${slug(workItemType)}.v1`,
+    evidencePolicyRef: options.evidencePolicyRef ?? `evidence.${slug(workItemType)}.v1`,
     ledgerPolicyRef,
     riskPolicyRef: financeOwned ? "risk.finance.high.v1" : "risk.dormitory.standard.v1",
-    surfacePolicyRef: `surface.${surfaceId}`,
+    surfacePolicyRef: options.surfacePolicyRef ?? `surface.${surfaceId}`,
+    fieldContractRef: options.fieldContractRef ?? `field.${slug(workItemType)}.v1`,
+    removalImpact: options.removalImpact,
     dbTableGroups: dbGroupsFor(systemOwner, ledgerPolicyRef),
     upstreamLockedFields: commonLockedFields,
     currentEditableFields: editableFields,
@@ -981,14 +1036,14 @@ function patchRegistries() {
       ownerSlice: item.ownerSlice,
       allowedFacts: item.allowedFacts,
       forbiddenFacts: item.forbiddenFacts,
-      fieldContractRef: `field.${slug(item.workItemType)}.v1`,
+      fieldContractRef: item.fieldContractRef,
       evidencePolicyRef: item.evidencePolicyRef,
       riskPolicyRef: item.riskPolicyRef,
       ledgerPolicyRef: item.ledgerPolicyRef,
       admissionPolicyRef: item.admissionPolicyRef,
       surfacePolicyRef: item.surfacePolicyRef,
       productionConfirmAllowed: false,
-      removalImpact: "Current OAM dormitory operating kernel canonical definition.",
+      removalImpact: item.removalImpact || "Current OAM dormitory operating kernel canonical definition.",
       definitionMode: "oam-certification-current"
     });
   }

@@ -780,6 +780,245 @@
       ]
     },
     {
+      "businessAction": "Dorm.OperationResourceSelect",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.operationResourceSelect.v1",
+      "commandType": "OperationResource.Select",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "OperationResourceSelectSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "OperationDraft"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.OperationInspectionConfirm",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.operationInspectionConfirm.v1",
+      "commandType": "OperationInspection.Confirm",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "OperationInspectionConfirmSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "OperationInspection",
+          "OperationEvidence",
+          "StatusHistory"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.OperationStatusDraft",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.operationStatusDraft.v1",
+      "commandType": "OperationStatus.Draft",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "OperationStatusDraftSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "OperationStatusDraft",
+          "OperationBlockerDraft"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.OperationStatusChangeConfirm",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.operationStatusChangeConfirm.v1",
+      "commandType": "OperationStatusChange.Confirm",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "OperationStatusChangeConfirmSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "RoomOperationStatus",
+          "BedOperationStatus",
+          "OperationBlocker",
+          "StatusHistory"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.OperationBlockerUpdate",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.operationBlockerUpdate.v1",
+      "commandType": "OperationBlocker.Update",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "OperationBlockerUpdateSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "OperationBlocker",
+          "OperationEvidence",
+          "StatusHistory"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.OperationRestoreConfirm",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.operationRestoreConfirm.v1",
+      "commandType": "OperationRestore.Confirm",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "OperationRestoreConfirmSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "OperationRestore",
+          "RoomOperationStatus",
+          "BedOperationStatus",
+          "StatusHistory"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
       "businessAction": "Dorm.LeadCapture",
       "decision": "currentExecutableWorkItem",
       "definitionId": "definition.dormitory.leadCapture.v1",

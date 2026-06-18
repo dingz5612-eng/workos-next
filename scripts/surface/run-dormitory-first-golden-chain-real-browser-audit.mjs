@@ -33,6 +33,7 @@ const screenshotIndexPath = path.join(root, FIRST_GOLDEN_CHAIN_BROWSER_AUDIT_SCR
 const account = { username: "dormOperator", password: "dev" };
 const projectionChain = buildProjectionDigestChain(root);
 const testPlan = readJson(FIRST_GOLDEN_CHAIN_TEST_PLAN_PATH);
+const visibleCopyContract = readJson("docs/oam/visible-business-copy-contract.json");
 const forbiddenVisibleTerms = [
   "价格配置",
   "房间床位阻断",
@@ -193,7 +194,13 @@ try {
     }
 
     const completed = await readDomState(page);
-    addAssertion("completion.scenario1_visible", completed.text.includes("房源建档与基础就绪完成"), "完成后必须显示房源建档与基础就绪完成。", completed);
+    const completionLabels = scenario1CompletionVisibleLabels();
+    addAssertion(
+      "completion.scenario1_visible",
+      completionLabels.some((label) => completed.text.includes(label)),
+      `完成后必须显示${completionLabels.join(" / ")}。`,
+      completed
+    );
     addAssertion("completion.business_values_visible", /A[0-9a-f]{4}/i.test(completed.text) && /01/.test(completed.text) && completed.text.includes("通过"), "完成页必须显示房间、床位组、基础就绪结论等业务值。", completed);
     addAssertion("completion.no_raw_stable_id", !/\b(room|bed)-[a-f0-9]{8}\b/i.test(completed.text), "完成页不得显示 raw roomId/bedId。", completed);
     addAssertion("completion.technical_details_collapsed", completed.technicalDetailsOpen === false, "完成页技术详情默认必须折叠。", completed);
@@ -708,6 +715,13 @@ async function requireHealthy(url, label) {
 
 function readJson(file) {
   return JSON.parse(fs.readFileSync(path.join(root, file), "utf8").replace(/^\uFEFF/, ""));
+}
+
+function scenario1CompletionVisibleLabels() {
+  const source = "房源建档与基础就绪完成";
+  const replacement = (visibleCopyContract.displayTermReplacementsZh ?? [])
+    .find(([from]) => from === source)?.[1];
+  return Array.from(new Set([source, replacement].filter(Boolean)));
 }
 
 function safePath(url) {

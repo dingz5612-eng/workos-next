@@ -184,9 +184,33 @@ public sealed class WorkItemDefinitionRegistryService
     private static string StartAdapterCurrentKey(string? workspaceId, string? cardId)
     {
         var requestedKey = $"{workspaceId ?? string.Empty}:{cardId ?? string.Empty}";
-        return StartUiRouteDefinitionKeys.TryGetValue(requestedKey, out var currentKey)
+        if (StartUiRouteDefinitionKeys.TryGetValue(requestedKey, out var currentKey))
+        {
+            return currentKey;
+        }
+
+        var normalizedWorkspaceId = NormalizeStartAdapterWorkspaceId(workspaceId);
+        var normalizedKey = $"{normalizedWorkspaceId}:{cardId ?? string.Empty}";
+        return StartUiRouteDefinitionKeys.TryGetValue(normalizedKey, out currentKey)
             ? currentKey
-            : requestedKey;
+            : normalizedKey;
+    }
+
+    private static string NormalizeStartAdapterWorkspaceId(string? workspaceId)
+    {
+        var value = workspaceId ?? string.Empty;
+        if (value.Equals(AcceptedCapabilityRuntimeProjection.WorkspaceId, StringComparison.OrdinalIgnoreCase) ||
+            value.StartsWith($"{AcceptedCapabilityRuntimeProjection.WorkspaceId}-", StringComparison.OrdinalIgnoreCase))
+        {
+            return AcceptedCapabilityRuntimeProjection.WorkspaceId;
+        }
+
+        if (DormitoryScenario2RuntimeProjection.IsWorkspace(value))
+        {
+            return DormitoryScenario2RuntimeProjection.WorkspaceId;
+        }
+
+        return value;
     }
 
     private static string GuessBusinessLine(string? workspaceId) =>

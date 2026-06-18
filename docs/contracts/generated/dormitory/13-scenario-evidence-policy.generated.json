@@ -8,16 +8,16 @@
   "generatedFrom": [
     "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
   ],
-  "inputDigest": "sha256:d2d2ae59e3c738b48f595b1203dd288fb25b6d0ba691ce0033777f8b91c192ab",
+  "inputDigest": "sha256:fb7644757be3231aaaaaf1e5e2490556a1fc7876e4783edb488e1093a7d56d45",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
-      "digest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a"
+      "digest": "sha256:4e25c7fabf8aee0983ecde729d378f0451115c5bd50ea0cca40f14d0a1175abf"
     }
   ],
-  "sourceContentDigest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a",
+  "sourceContentDigest": "sha256:4e25c7fabf8aee0983ecde729d378f0451115c5bd50ea0cca40f14d0a1175abf",
   "authorityId": "Dormitory.Operating13ScenarioControl",
-  "outputContentDigest": "sha256:8d55ba65cfd27a6a71f06be170fc4f774597eee686c8f10f5860a732e78a4993",
+  "outputContentDigest": "sha256:6094c3d56ee2f5ca2755787e8ee2c46ab4a3abc2ae8316c5a94a5ef9f3a86aef",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",

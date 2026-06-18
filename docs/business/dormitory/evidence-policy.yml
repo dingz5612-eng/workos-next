@@ -89,6 +89,26 @@
       "blocksConfirmWhenMissing": true
     },
     {
+      "requirementId": "blocker-close-proof",
+      "requirementNameZh": "blocker-close-proof",
+      "scope": "workItem",
+      "evidenceType": "blocker-close-proof",
+      "workItemTypes": [
+        "Dorm.OperationRestoreConfirm"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "blocker-reason-proof",
+      "requirementNameZh": "blocker-reason-proof",
+      "scope": "workItem",
+      "evidenceType": "blocker-reason-proof",
+      "workItemTypes": [
+        "Dorm.OperationStatusDraft"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
       "requirementId": "cancel-request",
       "requirementNameZh": "cancel-request",
       "scope": "workItem",
@@ -250,6 +270,16 @@
       "blocksConfirmWhenMissing": true
     },
     {
+      "requirementId": "facility-inspection-record",
+      "requirementNameZh": "facility-inspection-record",
+      "scope": "workItem",
+      "evidenceType": "facility-inspection-record",
+      "workItemTypes": [
+        "Dorm.OperationInspectionConfirm"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
       "requirementId": "identity-document",
       "workItemTypes": [
         "Dorm.CheckinConfirm",
@@ -257,6 +287,16 @@
       ],
       "trustLevel": "verified",
       "retention": "regulated"
+    },
+    {
+      "requirementId": "impact-proof",
+      "requirementNameZh": "impact-proof",
+      "scope": "workItem",
+      "evidenceType": "impact-proof",
+      "workItemTypes": [
+        "Dorm.OperationStatusChangeConfirm"
+      ],
+      "blocksConfirmWhenMissing": true
     },
     {
       "requirementId": "incident-evidence",
@@ -279,12 +319,42 @@
       "blocksConfirmWhenMissing": true
     },
     {
+      "requirementId": "maintenance-progress-record",
+      "requirementNameZh": "maintenance-progress-record",
+      "scope": "workItem",
+      "evidenceType": "maintenance-progress-record",
+      "workItemTypes": [
+        "Dorm.OperationBlockerUpdate"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "maintenance-record",
+      "requirementNameZh": "maintenance-record",
+      "scope": "workItem",
+      "evidenceType": "maintenance-record",
+      "workItemTypes": [
+        "Dorm.OperationInspectionConfirm"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
       "requirementId": "no-show-record",
       "requirementNameZh": "no-show-record",
       "scope": "workItem",
       "evidenceType": "no-show-record",
       "workItemTypes": [
         "Dorm.ReservationNoShowClose"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "operation-inspection-photo",
+      "requirementNameZh": "operation-inspection-photo",
+      "scope": "workItem",
+      "evidenceType": "operation-inspection-photo",
+      "workItemTypes": [
+        "Dorm.OperationInspectionConfirm"
       ],
       "blocksConfirmWhenMissing": true
     },
@@ -305,6 +375,16 @@
       "retention": "operations"
     },
     {
+      "requirementId": "progress-photo",
+      "requirementNameZh": "progress-photo",
+      "scope": "workItem",
+      "evidenceType": "progress-photo",
+      "workItemTypes": [
+        "Dorm.OperationBlockerUpdate"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
       "requirementId": "rate-policy",
       "requirementNameZh": "rate-policy",
       "scope": "workItem",
@@ -322,6 +402,16 @@
       ],
       "trustLevel": "verified",
       "retention": "finance"
+    },
+    {
+      "requirementId": "recheck-record",
+      "requirementNameZh": "recheck-record",
+      "scope": "workItem",
+      "evidenceType": "recheck-record",
+      "workItemTypes": [
+        "Dorm.OperationRestoreConfirm"
+      ],
+      "blocksConfirmWhenMissing": true
     },
     {
       "requirementId": "refund-approval",
@@ -347,6 +437,16 @@
       "evidenceType": "resolution-evidence",
       "workItemTypes": [
         "Dorm.ExceptionResolve"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "restore-photo",
+      "requirementNameZh": "restore-photo",
+      "scope": "workItem",
+      "evidenceType": "restore-photo",
+      "workItemTypes": [
+        "Dorm.OperationRestoreConfirm"
       ],
       "blocksConfirmWhenMissing": true
     },
@@ -398,6 +498,16 @@
       "blocksConfirmWhenMissing": true
     },
     {
+      "requirementId": "safety-inspection-record",
+      "requirementNameZh": "safety-inspection-record",
+      "scope": "workItem",
+      "evidenceType": "safety-inspection-record",
+      "workItemTypes": [
+        "Dorm.OperationInspectionConfirm"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
       "requirementId": "service-request",
       "requirementNameZh": "service-request",
       "scope": "workItem",
@@ -422,6 +532,26 @@
       ],
       "trustLevel": "machine-generated",
       "retention": "release"
+    },
+    {
+      "requirementId": "status-reason-proof",
+      "requirementNameZh": "status-reason-proof",
+      "scope": "workItem",
+      "evidenceType": "status-reason-proof",
+      "workItemTypes": [
+        "Dorm.OperationStatusDraft"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "supplement-proof",
+      "requirementNameZh": "supplement-proof",
+      "scope": "workItem",
+      "evidenceType": "supplement-proof",
+      "workItemTypes": [
+        "Dorm.OperationBlockerUpdate"
+      ],
+      "blocksConfirmWhenMissing": true
     },
     {
       "requirementId": "transfer-application",

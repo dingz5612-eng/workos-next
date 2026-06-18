@@ -8,16 +8,16 @@
   "generatedFrom": [
     "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
   ],
-  "inputDigest": "sha256:d2d2ae59e3c738b48f595b1203dd288fb25b6d0ba691ce0033777f8b91c192ab",
+  "inputDigest": "sha256:fb7644757be3231aaaaaf1e5e2490556a1fc7876e4783edb488e1093a7d56d45",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
-      "digest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a"
+      "digest": "sha256:4e25c7fabf8aee0983ecde729d378f0451115c5bd50ea0cca40f14d0a1175abf"
     }
   ],
-  "sourceContentDigest": "sha256:10baec4df02370d13bb1d7a6af6cfab997131ab5d5ba96477b12a169bbdb7e4a",
+  "sourceContentDigest": "sha256:4e25c7fabf8aee0983ecde729d378f0451115c5bd50ea0cca40f14d0a1175abf",
   "authorityId": "Dormitory.Operating13ScenarioControl",
-  "outputContentDigest": "sha256:4aae5a3b1fafdf81a9feecb38e111a285f4c1627fd4c102ec049aafb1278f0fe",
+  "outputContentDigest": "sha256:8a7c430c273f0f3d0fd53d8becb2cbd7215495ce736b1b509790ec18f6b20590",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
@@ -589,6 +589,174 @@
       "digest",
       "ledgerEntryId"
     ]
+  },
+  "fieldAuthorityModel": {
+    "version": "oam.dormitory.field-authority-model.v1",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "classes": [
+      {
+        "classId": "businessInput",
+        "meaningZh": "确实需要一线用户录入的短文本、数字、日期或备注。",
+        "formRule": "可进入表单；长文本只能用于说明、备注、异常描述，且不得替代枚举选择。",
+        "mustDeclare": [
+          "labelKey",
+          "helpKey",
+          "errorKey",
+          "control"
+        ]
+      },
+      {
+        "classId": "businessSelect",
+        "meaningZh": "用户从业务对象、状态、原因、结论、负责人等候选项中选择。",
+        "formRule": "必须使用 select/searchable-select 等选择控件；必须声明 optionSet；提交值不得直接使用中文展示文本。",
+        "mustDeclare": [
+          "labelKey",
+          "helpKey",
+          "errorKey",
+          "control",
+          "optionSet"
+        ]
+      },
+      {
+        "classId": "systemDerived",
+        "meaningZh": "系统由上游、规则、当前状态或提交结果计算/带出的字段。",
+        "formRule": "只能只读展示或隐藏提交，不允许用户编辑；不得因空值渲染空白输入框。",
+        "mustDeclare": [
+          "labelKey",
+          "helpKey",
+          "derivedFrom",
+          "readonly"
+        ]
+      },
+      {
+        "classId": "readOnlySummary",
+        "meaningZh": "下游复用上游已确认摘要，用户只读查看，不重复填写。",
+        "formRule": "只能以业务摘要展示；不得要求用户记 roomId、bedId、workItemId、stableRef 等内部编号。",
+        "mustDeclare": [
+          "labelKey",
+          "helpKey",
+          "sourceScenario"
+        ]
+      },
+      {
+        "classId": "evidenceBinding",
+        "meaningZh": "材料、照片、凭证、检查记录等证据绑定。",
+        "formRule": "展示材料名称和状态；中英俄材料名必须来自语言合同或生成器本地化表；不得展示 digest。",
+        "mustDeclare": [
+          "labelKey",
+          "helpKey",
+          "evidenceType"
+        ]
+      },
+      {
+        "classId": "actionControl",
+        "meaningZh": "保存草稿、继续填写、返回修改、提交、作废、更正等动作。",
+        "formRule": "永不进入字段表单；只能由 LegalAction/Admission/Runtime 状态产生按钮或菜单。",
+        "mustDeclare": [
+          "labelKey",
+          "legalActionRef"
+        ]
+      },
+      {
+        "classId": "conditionalInput",
+        "meaningZh": "只有在特定选择、状态或异常下才显示或必填的输入。",
+        "formRule": "必须同时声明 displayCondition 和 requiredCondition；不得默认常驻必填。",
+        "mustDeclare": [
+          "labelKey",
+          "helpKey",
+          "errorKey",
+          "control",
+          "displayCondition",
+          "requiredCondition"
+        ]
+      },
+      {
+        "classId": "auditInternal",
+        "meaningZh": "审计、版本、内部引用、摘要哈希、事件号等内部字段。",
+        "formRule": "永不出现在普通业务页面；只允许审计详情、迁移证据或开发证据包使用。",
+        "mustDeclare": [
+          "internalOnly",
+          "allowedContexts"
+        ]
+      }
+    ],
+    "generatorEnforcement": {
+      "actionControlNeverInForm": true,
+      "auditInternalNeverOnBusinessPage": true,
+      "systemDerivedReadonlyOnly": true,
+      "conditionalInputRequiresDisplayAndRequiredConditions": true,
+      "businessSelectRequiresOptionSet": true,
+      "visibleCopyMustUseLanguageContract": true
+    },
+    "regressionGuards": {
+      "scenario1": [
+        "saveDraft/backToEdit/continueEdit 只能作为动作，不得生成字段。",
+        "基础检查、保洁检查、设施检查、安全检查和基础就绪结论必须是 businessSelect。",
+        "所属房间只能来自上游或系统带出，不得要求重复手填，不得渲染空白只读输入。",
+        "Dorm.RoomSetupConfirm、Dorm.BedSetupConfirm、Dorm.ResourceReadinessConfirm 和内部 ID 不得显示给普通用户。",
+        "材料名称中英俄不得回退为中文提交值或技术字段。"
+      ],
+      "scenario2": [
+        "检查项不得让一线写长文本；保洁、维修、安全、设施检查结果必须是 businessSelect。",
+        "预计恢复时间必须是 conditionalInput，只有暂不可运营、部分不可运营、暂停开放、维修中、保洁中、停售、异常待处理或待复查时才显示/必填。",
+        "保存草稿、返回修改、继续填写不得作为业务字段提交。",
+        "场景 1 输出只能 readOnlySummary 复用，不得重复填写房间号、床位号或基础就绪信息。"
+      ]
+    }
+  },
+  "entryAdmissionContract": {
+    "version": "oam.dormitory.entry-admission-contract.v1",
+    "objects": [
+      "EntryResult",
+      "SearchResult",
+      "WorkItem"
+    ],
+    "requiredFields": [
+      "businessTitle",
+      "businessSummary",
+      "legalActions",
+      "admissionDecision",
+      "nextAction",
+      "cannotSubmitReason",
+      "readonlyReason",
+      "sourceScenario"
+    ],
+    "entryPages": [
+      "today",
+      "workItems",
+      "search",
+      "mine",
+      "detail",
+      "correction"
+    ],
+    "resolverChain": [
+      "LegalAction Resolver",
+      "Admission Attach",
+      "Runtime Prepare",
+      "WorkItem"
+    ],
+    "rules": {
+      "frontendButtonJudgementForbidden": true,
+      "searchReadonlyOnly": true,
+      "searchLearningOnlyForbidden": true,
+      "correctionRequiresAdmission": true,
+      "oldWStayCurrentEntryForbidden": true,
+      "writeFactsOnlyThroughOperationsRuntime": true
+    },
+    "legalActionFields": [
+      "action",
+      "label",
+      "view",
+      "allowed",
+      "writeBusinessFact",
+      "admissionDecision"
+    ],
+    "decisionCopy": {
+      "cannotSubmitReasonZh": "当前不能提交时，必须显示业务可懂原因。",
+      "readonlyReasonZh": "只读入口必须说明只能查看或只能跳转合法动作。",
+      "nextActionZh": "下一步必须是业务动作，不得显示内部编号或技术状态。"
+    },
+    "sourceScenarioRuleZh": "入口必须声明来自哪个 13 场景；搜索、今日、工作项、我的和更正入口不得把旧 W-STAY 包当当前主链。"
   },
   "forbiddenUserInputFields": [
     "roomId",

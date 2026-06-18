@@ -187,9 +187,10 @@ export async function fetchCaseTrace(caseId) {
   return response.json();
 }
 
-export async function fetchSearchResults(q = "") {
+export async function fetchSearchResults(q = "", language = "") {
   const url = new URL(`${apiBaseUrl()}${runtimeApiPaths.lensSearch}`);
   if (q) url.searchParams.set("q", q);
+  if (language) url.searchParams.set("language", language);
   const response = await runtimeFetch(url, { timeoutMs: 6000 });
   if (!response.ok) throw await apiError("search_failed", response);
   return response.json();

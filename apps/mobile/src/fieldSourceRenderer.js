@@ -271,17 +271,6 @@ function displayControlForSurface(control, card) {
       label: { "zh-CN": "所属房间", "ru-RU": "Комната", "ky-KG": "Бөлмө" }
     };
   }
-  if (control.fieldId === "buildingContextRef") {
-    return {
-      ...control,
-      classification: "selectedStableRef",
-      controlType: "searchSelect",
-      readonly: false,
-      required: true,
-      optionSet: "",
-      defaultValue: ""
-    };
-  }
   return control;
 }
 

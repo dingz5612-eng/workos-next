@@ -1,8 +1,5 @@
 import capabilityProjection from "../generated/oam/capability-projection.generated.json" with { type: "json" };
 
-const generatedOptionLabels = (optionSet) => Object.fromEntries(
-  (capabilityProjection.optionSets?.[optionSet] || []).map((item) => [item.value, item.label?.["zh-CN"] || item.value])
-);
 const generatedLocalizedOptionLabels = (optionSet) => Object.fromEntries(
   (capabilityProjection.optionSets?.[optionSet] || []).map((item) => [item.value, item.label || { "zh-CN": item.value }])
 );
@@ -31,9 +28,9 @@ const optionValueLabels = {
     not_ready: "未准备",
     repair_required: "需维修"
   },
-  bunkType: generatedOptionLabels("bunkType"),
-  bedEnabledStatus: generatedOptionLabels("bedEnabledStatus"),
-  bedTypeBatchSetting: generatedOptionLabels("bedTypeBatchSetting"),
+  bunkType: generatedLocalizedOptionLabels("bunkType"),
+  bedEnabledStatus: generatedLocalizedOptionLabels("bedEnabledStatus"),
+  bedTypeBatchSetting: generatedLocalizedOptionLabels("bedTypeBatchSetting"),
   basicReadinessCheckResult: generatedLocalizedOptionLabels("basicReadinessCheckResult"),
   readinessState: generatedLocalizedOptionLabels("readinessState"),
   messenger: {

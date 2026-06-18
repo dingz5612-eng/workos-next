@@ -601,7 +601,15 @@ public sealed record WorkItem(
     IReadOnlyList<string>? RequiredEvidenceRefs = null,
     IReadOnlyList<string>? AffectedFactRefs = null,
     IReadOnlyDictionary<string, object>? Admission = null,
-    string? AdmissionDecisionRef = null);
+    string? AdmissionDecisionRef = null,
+    object? BusinessTitle = null,
+    object? BusinessSummary = null,
+    IReadOnlyList<EntryLegalAction>? LegalActions = null,
+    string? AdmissionDecision = null,
+    object? NextAction = null,
+    string? CannotSubmitReason = null,
+    object? ReadonlyReason = null,
+    string? SourceScenario = null);
 
 public sealed record OperationsWorkItemSurface(
     string WorkItemId,
@@ -629,7 +637,15 @@ public sealed record OperationsWorkItemSurface(
     WorkspaceProjection? Workspace,
     CardProjection? Card,
     IReadOnlyDictionary<string, object>? Admission = null,
-    string? AdmissionDecisionRef = null)
+    string? AdmissionDecisionRef = null,
+    object? BusinessTitle = null,
+    object? BusinessSummary = null,
+    IReadOnlyList<EntryLegalAction>? LegalActions = null,
+    string? AdmissionDecision = null,
+    object? NextAction = null,
+    string? CannotSubmitReason = null,
+    object? ReadonlyReason = null,
+    string? SourceScenario = null)
 {
     public static OperationsWorkItemSurface From(
         WorkItem workItem,
@@ -662,8 +678,25 @@ public sealed record OperationsWorkItemSurface(
             workspace,
             card,
             workItem.Admission,
-            workItem.AdmissionDecisionRef);
+            workItem.AdmissionDecisionRef,
+            workItem.BusinessTitle,
+            workItem.BusinessSummary,
+            workItem.LegalActions,
+            workItem.AdmissionDecision,
+            workItem.NextAction,
+            workItem.CannotSubmitReason,
+            workItem.ReadonlyReason,
+            workItem.SourceScenario);
 }
+
+public sealed record EntryLegalAction(
+    string Action,
+    object Label,
+    string View,
+    bool Allowed,
+    bool WriteBusinessFact,
+    string AdmissionDecision,
+    string CannotSubmitReason = "");
 
 public sealed record PrepareWorkItemRequest(
     string? WorkspaceId = null,

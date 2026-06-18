@@ -146,6 +146,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-room-setup-confirm",
+      "fieldContractRef": "field.dorm-room-setup-confirm.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -288,6 +289,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-bed-setup-confirm",
+      "fieldContractRef": "field.dorm-bed-setup-confirm.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -431,6 +433,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-rate-plan-confirm",
+      "fieldContractRef": "field.dorm-rate-plan-confirm.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -573,6 +576,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-resource-readiness-confirm",
+      "fieldContractRef": "field.dorm-resource-readiness-confirm.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -663,6 +667,936 @@
       "operationZh": "宿舍经办人只补本环节缺失字段，系统自动带入并锁定上游确认字段；提交后写入 CommandSubmission、DomainEvent、Evidence/FactTrace，并刷新 Lens/Search。"
     },
     {
+      "workItemType": "Dorm.OperationResourceSelect",
+      "nameZh": "选择已基础就绪房源",
+      "trainId": "train-1-business-mainline",
+      "canonicalOwner": "dormitory",
+      "ownerRole": "宿舍经办人",
+      "allowedHumanRoles": [
+        "宿舍经办人",
+        "宿舍负责人"
+      ],
+      "systemOwner": "Accommodation.ResourceOperationStatus",
+      "definitionId": "definition.dormitory.operationResourceSelect.v1",
+      "commandType": "OperationResource.Select",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.selectBaseReadyResource",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+      "surfaceId": "mobile.work.dormitory-scenario2-select-base-ready-resource",
+      "objectId": "OperationResource",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "allowedFacts": [
+        "CommandSubmission",
+        "DomainEvent",
+        "EvidenceObject"
+      ],
+      "forbiddenFacts": [
+        "RatePlan",
+        "Quote",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "DepositAccount",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
+      ],
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "evidencePolicyRef": "evidence.dormitory.scenario2.select-base-ready-resource.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario2-select-base-ready-resource",
+      "fieldContractRef": "field.dormitory.scenario2.operationResourceSelect.v1",
+      "removalImpact": "Generated from Dormitory Scenario 2 Source Authority; no production confirm.",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "upstreamLockedFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion"
+      ],
+      "currentEditableFields": [
+        "roomOrBedScope",
+        "targetRoomOrBed"
+      ],
+      "readonlyFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion",
+        "createdAt",
+        "confirmedAt",
+        "ledgerEntryId",
+        "domainEventId"
+      ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "roomOrBedScope",
+          "targetRoomOrBed"
+        ],
+        "selectedStableRef": [],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
+      "requiredEvidence": [],
+      "ledgerImpact": "无账务影响",
+      "lensOutputs": [
+        "OperationDraft"
+      ],
+      "downstreamWorkItems": [
+        "Dorm.OperationInspectionConfirm"
+      ],
+      "failureRoutes": [
+        "Dorm.ExceptionResolve",
+        "append_only_correction_work_item",
+        "blocked_with_missing_fields"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "goNoGo": "definition_resolved_and_admission_confirm_allowed",
+      "operationZh": "宿舍经办人只补本环节缺失字段，系统自动带入并锁定上游确认字段；提交后写入 CommandSubmission、DomainEvent、Evidence/FactTrace，并刷新 Lens/Search。"
+    },
+    {
+      "workItemType": "Dorm.OperationInspectionConfirm",
+      "nameZh": "运营检查确认",
+      "trainId": "train-1-business-mainline",
+      "canonicalOwner": "dormitory",
+      "ownerRole": "宿舍经办人",
+      "allowedHumanRoles": [
+        "宿舍经办人",
+        "宿舍负责人"
+      ],
+      "systemOwner": "Accommodation.ResourceOperationStatus",
+      "definitionId": "definition.dormitory.operationInspectionConfirm.v1",
+      "commandType": "OperationInspection.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.operationInspection",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+      "surfaceId": "mobile.work.dormitory-scenario2-operation-inspection",
+      "objectId": "OperationInspection",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "allowedFacts": [
+        "OperationInspection",
+        "OperationEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "RatePlan",
+        "Quote",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "DepositAccount",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
+      ],
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "evidencePolicyRef": "evidence.dormitory.scenario2.operation-inspection.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario2-operation-inspection",
+      "fieldContractRef": "field.dormitory.scenario2.operationInspectionConfirm.v1",
+      "removalImpact": "Generated from Dormitory Scenario 2 Source Authority; no production confirm.",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "upstreamLockedFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion"
+      ],
+      "currentEditableFields": [
+        "cleaningInspectionResult",
+        "maintenanceInspectionResult",
+        "safetyInspectionResult",
+        "facilityInspectionResult",
+        "exceptionFlag",
+        "inspectionConclusion",
+        "exceptionDescription",
+        "operationInspectionNotes"
+      ],
+      "readonlyFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion",
+        "createdAt",
+        "confirmedAt",
+        "ledgerEntryId",
+        "domainEventId"
+      ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "cleaningInspectionResult",
+          "maintenanceInspectionResult",
+          "safetyInspectionResult",
+          "facilityInspectionResult",
+          "exceptionFlag",
+          "inspectionConclusion",
+          "exceptionDescription",
+          "operationInspectionNotes"
+        ],
+        "selectedStableRef": [],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
+      "requiredEvidence": [
+        "operation-inspection-photo",
+        "maintenance-record",
+        "safety-inspection-record",
+        "facility-inspection-record"
+      ],
+      "ledgerImpact": "无账务影响",
+      "lensOutputs": [
+        "OperationInspection",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "downstreamWorkItems": [
+        "Dorm.OperationStatusDraft"
+      ],
+      "failureRoutes": [
+        "Dorm.ExceptionResolve",
+        "append_only_correction_work_item",
+        "blocked_with_missing_fields"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "goNoGo": "definition_resolved_and_admission_confirm_allowed",
+      "operationZh": "宿舍经办人只补本环节缺失字段，系统自动带入并锁定上游确认字段；提交后写入 CommandSubmission、DomainEvent、Evidence/FactTrace，并刷新 Lens/Search。"
+    },
+    {
+      "workItemType": "Dorm.OperationStatusDraft",
+      "nameZh": "运营状态草稿",
+      "trainId": "train-1-business-mainline",
+      "canonicalOwner": "dormitory",
+      "ownerRole": "宿舍经办人",
+      "allowedHumanRoles": [
+        "宿舍经办人",
+        "宿舍负责人"
+      ],
+      "systemOwner": "Accommodation.ResourceOperationStatus",
+      "definitionId": "definition.dormitory.operationStatusDraft.v1",
+      "commandType": "OperationStatus.Draft",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.setOperationStatus",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+      "surfaceId": "mobile.work.dormitory-scenario2-set-operation-status",
+      "objectId": "OperationStatusChange",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "allowedFacts": [
+        "CommandSubmission",
+        "DomainEvent",
+        "EvidenceObject"
+      ],
+      "forbiddenFacts": [
+        "RatePlan",
+        "Quote",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "DepositAccount",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
+      ],
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "evidencePolicyRef": "evidence.dormitory.scenario2.set-operation-status.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario2-set-operation-status",
+      "fieldContractRef": "field.dormitory.scenario2.operationStatusDraft.v1",
+      "removalImpact": "Generated from Dormitory Scenario 2 Source Authority; no production confirm.",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "upstreamLockedFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion"
+      ],
+      "currentEditableFields": [
+        "newOperationStatus",
+        "statusReasonCode",
+        "impactScope",
+        "statusOwner",
+        "statusReason",
+        "expectedRestoreAt",
+        "operationStatusNotes"
+      ],
+      "readonlyFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion",
+        "createdAt",
+        "confirmedAt",
+        "ledgerEntryId",
+        "domainEventId"
+      ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "newOperationStatus",
+          "statusReasonCode",
+          "impactScope",
+          "statusOwner",
+          "statusReason",
+          "expectedRestoreAt",
+          "operationStatusNotes"
+        ],
+        "selectedStableRef": [],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
+      "requiredEvidence": [
+        "status-reason-proof",
+        "blocker-reason-proof"
+      ],
+      "ledgerImpact": "无账务影响",
+      "lensOutputs": [
+        "OperationStatusDraft",
+        "OperationBlockerDraft"
+      ],
+      "downstreamWorkItems": [
+        "Dorm.OperationStatusChangeConfirm"
+      ],
+      "failureRoutes": [
+        "Dorm.ExceptionResolve",
+        "append_only_correction_work_item",
+        "blocked_with_missing_fields"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "goNoGo": "definition_resolved_and_admission_confirm_allowed",
+      "operationZh": "宿舍经办人只补本环节缺失字段，系统自动带入并锁定上游确认字段；提交后写入 CommandSubmission、DomainEvent、Evidence/FactTrace，并刷新 Lens/Search。"
+    },
+    {
+      "workItemType": "Dorm.OperationStatusChangeConfirm",
+      "nameZh": "运营状态变更确认",
+      "trainId": "train-1-business-mainline",
+      "canonicalOwner": "dormitory",
+      "ownerRole": "宿舍经办人",
+      "allowedHumanRoles": [
+        "宿舍经办人",
+        "宿舍负责人"
+      ],
+      "systemOwner": "Accommodation.ResourceOperationStatus",
+      "definitionId": "definition.dormitory.operationStatusChangeConfirm.v1",
+      "commandType": "OperationStatusChange.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.impactConfirmation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+      "surfaceId": "mobile.work.dormitory-scenario2-impact-confirmation",
+      "objectId": "OperationStatusChange",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "allowedFacts": [
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "OperationBlocker",
+        "OperationStatusChange",
+        "OperationEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "RatePlan",
+        "Quote",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "DepositAccount",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
+      ],
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "evidencePolicyRef": "evidence.dormitory.scenario2.impact-confirmation.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario2-impact-confirmation",
+      "fieldContractRef": "field.dormitory.scenario2.operationStatusChangeConfirm.v1",
+      "removalImpact": "Generated from Dormitory Scenario 2 Source Authority; no production confirm.",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "upstreamLockedFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion"
+      ],
+      "currentEditableFields": [
+        "submitImpactConfirmation",
+        "impactConfirmationNotes"
+      ],
+      "readonlyFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion",
+        "createdAt",
+        "confirmedAt",
+        "ledgerEntryId",
+        "domainEventId"
+      ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "submitImpactConfirmation",
+          "impactConfirmationNotes"
+        ],
+        "selectedStableRef": [],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
+      "requiredEvidence": [
+        "impact-proof"
+      ],
+      "ledgerImpact": "无账务影响",
+      "lensOutputs": [
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "OperationBlocker",
+        "StatusHistory"
+      ],
+      "downstreamWorkItems": [
+        "Dorm.OperationBlockerUpdate"
+      ],
+      "failureRoutes": [
+        "Dorm.ExceptionResolve",
+        "append_only_correction_work_item",
+        "blocked_with_missing_fields"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "goNoGo": "definition_resolved_and_admission_confirm_allowed",
+      "operationZh": "宿舍经办人只补本环节缺失字段，系统自动带入并锁定上游确认字段；提交后写入 CommandSubmission、DomainEvent、Evidence/FactTrace，并刷新 Lens/Search。"
+    },
+    {
+      "workItemType": "Dorm.OperationBlockerUpdate",
+      "nameZh": "日常状态维护",
+      "trainId": "train-1-business-mainline",
+      "canonicalOwner": "dormitory",
+      "ownerRole": "宿舍经办人",
+      "allowedHumanRoles": [
+        "宿舍经办人",
+        "宿舍负责人"
+      ],
+      "systemOwner": "Accommodation.ResourceOperationStatus",
+      "definitionId": "definition.dormitory.operationBlockerUpdate.v1",
+      "commandType": "OperationBlocker.Update",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.dailyStatusMaintenance",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+      "surfaceId": "mobile.work.dormitory-scenario2-daily-status-maintenance",
+      "objectId": "OperationBlocker",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "allowedFacts": [
+        "OperationBlocker",
+        "OperationEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "RatePlan",
+        "Quote",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "DepositAccount",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
+      ],
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "evidencePolicyRef": "evidence.dormitory.scenario2.daily-status-maintenance.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario2-daily-status-maintenance",
+      "fieldContractRef": "field.dormitory.scenario2.operationBlockerUpdate.v1",
+      "removalImpact": "Generated from Dormitory Scenario 2 Source Authority; no production confirm.",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "upstreamLockedFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion"
+      ],
+      "currentEditableFields": [
+        "blockerStatus",
+        "followUpOwner",
+        "progressUpdate",
+        "expectedRestoreAt",
+        "blockerNotes"
+      ],
+      "readonlyFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion",
+        "createdAt",
+        "confirmedAt",
+        "ledgerEntryId",
+        "domainEventId"
+      ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "blockerStatus",
+          "followUpOwner",
+          "progressUpdate",
+          "expectedRestoreAt",
+          "blockerNotes"
+        ],
+        "selectedStableRef": [],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
+      "requiredEvidence": [
+        "progress-photo",
+        "maintenance-progress-record",
+        "supplement-proof"
+      ],
+      "ledgerImpact": "无账务影响",
+      "lensOutputs": [
+        "OperationBlocker",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "downstreamWorkItems": [
+        "Dorm.OperationRestoreConfirm"
+      ],
+      "failureRoutes": [
+        "Dorm.ExceptionResolve",
+        "append_only_correction_work_item",
+        "blocked_with_missing_fields"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "goNoGo": "definition_resolved_and_admission_confirm_allowed",
+      "operationZh": "宿舍经办人只补本环节缺失字段，系统自动带入并锁定上游确认字段；提交后写入 CommandSubmission、DomainEvent、Evidence/FactTrace，并刷新 Lens/Search。"
+    },
+    {
+      "workItemType": "Dorm.OperationRestoreConfirm",
+      "nameZh": "恢复运营确认",
+      "trainId": "train-1-business-mainline",
+      "canonicalOwner": "dormitory",
+      "ownerRole": "宿舍经办人",
+      "allowedHumanRoles": [
+        "宿舍经办人",
+        "宿舍负责人"
+      ],
+      "systemOwner": "Accommodation.ResourceOperationStatus",
+      "definitionId": "definition.dormitory.operationRestoreConfirm.v1",
+      "commandType": "OperationRestore.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.restoreOperation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+      "surfaceId": "mobile.work.dormitory-scenario2-restore-operation",
+      "objectId": "OperationRestore",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "allowedFacts": [
+        "OperationRestore",
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "OperationEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "RatePlan",
+        "Quote",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "DepositAccount",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction",
+        "PaymentAllocation",
+        "AmountBasis",
+        "MoneyBasis",
+        "FinancialFact",
+        "FinanceReceipt",
+        "DepositEntry"
+      ],
+      "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+      "evidencePolicyRef": "evidence.dormitory.scenario2.restore-operation.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "riskPolicyRef": "risk.dormitory.standard.v1",
+      "surfacePolicyRef": "surface.mobile.work.dormitory-scenario2-restore-operation",
+      "fieldContractRef": "field.dormitory.scenario2.operationRestoreConfirm.v1",
+      "removalImpact": "Generated from Dormitory Scenario 2 Source Authority; no production confirm.",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "upstreamLockedFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion"
+      ],
+      "currentEditableFields": [
+        "recheckResult",
+        "restoreConclusion",
+        "restoreReason",
+        "restoreNotes"
+      ],
+      "readonlyFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion",
+        "createdAt",
+        "confirmedAt",
+        "ledgerEntryId",
+        "domainEventId"
+      ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "recheckResult",
+          "restoreConclusion",
+          "restoreReason",
+          "restoreNotes"
+        ],
+        "selectedStableRef": [],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
+      "requiredEvidence": [
+        "restore-photo",
+        "recheck-record",
+        "blocker-close-proof"
+      ],
+      "ledgerImpact": "无账务影响",
+      "lensOutputs": [
+        "OperationRestore",
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "StatusHistory"
+      ],
+      "downstreamWorkItems": [
+        "Dorm.RatePlanConfirm"
+      ],
+      "failureRoutes": [
+        "Dorm.ExceptionResolve",
+        "append_only_correction_work_item",
+        "blocked_with_missing_fields"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "goNoGo": "definition_resolved_and_admission_confirm_allowed",
+      "operationZh": "宿舍经办人只补本环节缺失字段，系统自动带入并锁定上游确认字段；提交后写入 CommandSubmission、DomainEvent、Evidence/FactTrace，并刷新 Lens/Search。"
+    },
+    {
       "workItemType": "Dorm.LeadCapture",
       "nameZh": "线索录入",
       "trainId": "train-1-business-mainline",
@@ -717,6 +1651,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-lead-capture",
+      "fieldContractRef": "field.dorm-lead-capture.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -858,6 +1793,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-reservation-confirm",
+      "fieldContractRef": "field.dorm-reservation-confirm.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -1002,6 +1938,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-checkin-confirm",
+      "fieldContractRef": "field.dorm-checkin-confirm.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -1146,6 +2083,7 @@
       "ledgerPolicyRef": "ledger.payment.balanced_allocation.v1",
       "riskPolicyRef": "risk.finance.high.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-payment-confirm",
+      "fieldContractRef": "field.dorm-payment-confirm.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -1287,6 +2225,7 @@
       "ledgerPolicyRef": "ledger.deposit.liability.v1",
       "riskPolicyRef": "risk.finance.high.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-deposit-confirm",
+      "fieldContractRef": "field.dorm-deposit-confirm.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -1432,6 +2371,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-service-task-create",
+      "fieldContractRef": "field.dorm-service-task-create.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -1575,6 +2515,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-service-task-assign",
+      "fieldContractRef": "field.dorm-service-task-assign.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -1718,6 +2659,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-service-task-complete",
+      "fieldContractRef": "field.dorm-service-task-complete.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -1861,6 +2803,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-service-task-verify",
+      "fieldContractRef": "field.dorm-service-task-verify.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -1998,6 +2941,7 @@
       "ledgerPolicyRef": "ledger.expense.pending_basis.v1",
       "riskPolicyRef": "risk.finance.high.v1",
       "surfacePolicyRef": "surface.mobile.work.finance-expense-record",
+      "fieldContractRef": "field.finance-expense-record.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -2138,6 +3082,7 @@
       "ledgerPolicyRef": "ledger.expense.approved_cost.v1",
       "riskPolicyRef": "risk.finance.high.v1",
       "surfacePolicyRef": "surface.mobile.work.finance-expense-approve",
+      "fieldContractRef": "field.finance-expense-approve.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -2275,6 +3220,7 @@
       "ledgerPolicyRef": "ledger.expense.linked_cost.v1",
       "riskPolicyRef": "risk.finance.high.v1",
       "surfacePolicyRef": "surface.mobile.work.finance-expense-link",
+      "fieldContractRef": "field.finance-expense-link.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -2418,6 +3364,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-room-inspection-confirm",
+      "fieldContractRef": "field.dorm-room-inspection-confirm.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -2558,6 +3505,7 @@
       "ledgerPolicyRef": "ledger.checkout.settlement.v1",
       "riskPolicyRef": "risk.finance.high.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-checkout-settlement-approve",
+      "fieldContractRef": "field.dorm-checkout-settlement-approve.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -2706,6 +3654,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-stay-extend-approve",
+      "fieldContractRef": "field.dorm-stay-extend-approve.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -2849,6 +3798,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-bed-transfer-approve",
+      "fieldContractRef": "field.dorm-bed-transfer-approve.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -2991,6 +3941,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-reservation-cancel-close",
+      "fieldContractRef": "field.dorm-reservation-cancel-close.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -3131,6 +4082,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-reservation-no-show-close",
+      "fieldContractRef": "field.dorm-reservation-no-show-close.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -3266,6 +4218,7 @@
       "ledgerPolicyRef": "ledger.charge.adjustment.v1",
       "riskPolicyRef": "risk.finance.high.v1",
       "surfacePolicyRef": "surface.mobile.work.finance-charge-adjustment-approve",
+      "fieldContractRef": "field.finance-charge-adjustment-approve.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -3404,6 +4357,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.finance.high.v1",
       "surfacePolicyRef": "surface.mobile.work.finance-debt-follow-up",
+      "fieldContractRef": "field.finance-debt-follow-up.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -3546,6 +4500,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-access-credential-issue",
+      "fieldContractRef": "field.dorm-access-credential-issue.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -3689,6 +4644,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-access-credential-revoke",
+      "fieldContractRef": "field.dorm-access-credential-revoke.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -3832,6 +4788,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-incident-record",
+      "fieldContractRef": "field.dorm-incident-record.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -3980,6 +4937,7 @@
       "ledgerPolicyRef": "ledger.readonly.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-period-review",
+      "fieldContractRef": "field.dorm-period-review.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -4124,6 +5082,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-period-action-plan-execute",
+      "fieldContractRef": "field.dorm-period-action-plan-execute.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -4266,6 +5225,7 @@
       "ledgerPolicyRef": "ledger.none.v1",
       "riskPolicyRef": "risk.dormitory.standard.v1",
       "surfacePolicyRef": "surface.mobile.work.dorm-exception-resolve",
+      "fieldContractRef": "field.dorm-exception-resolve.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -4405,6 +5365,7 @@
       "ledgerPolicyRef": "ledger.finance.correction.v1",
       "riskPolicyRef": "risk.finance.high.v1",
       "surfacePolicyRef": "surface.mobile.work.finance-correction-apply",
+      "fieldContractRef": "field.finance-correction-apply.v1",
       "dbTableGroups": [
         "operations-runtime",
         "evidence-audit",
@@ -4859,6 +5820,361 @@
       ],
       "downstreamWorkItems": [
         "Dorm.LeadCapture"
+      ],
+      "failureRoutes": [
+        "Dorm.ExceptionResolve",
+        "append_only_correction_work_item",
+        "blocked_with_missing_fields"
+      ]
+    },
+    {
+      "workItemType": "Dorm.OperationResourceSelect",
+      "entryFrom": "Mobile Surface 工作台、Search 只读跳转或上游 WorkItem 下游提示",
+      "systemAutoFilled": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion"
+      ],
+      "operatorFills": [
+        "roomOrBedScope",
+        "targetRoomOrBed"
+      ],
+      "leadApproves": [
+        "仅在例外或升级时审批"
+      ],
+      "readonlyFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion",
+        "createdAt",
+        "confirmedAt",
+        "ledgerEntryId",
+        "domainEventId"
+      ],
+      "editableFields": [
+        "roomOrBedScope",
+        "targetRoomOrBed"
+      ],
+      "evidenceRequired": [],
+      "submittedEvent": "OperationResourceSelectSubmitted",
+      "ledgerImpact": "无账务影响",
+      "lensUpdates": [
+        "OperationDraft"
+      ],
+      "downstreamWorkItems": [
+        "Dorm.OperationInspectionConfirm"
+      ],
+      "failureRoutes": [
+        "Dorm.ExceptionResolve",
+        "append_only_correction_work_item",
+        "blocked_with_missing_fields"
+      ]
+    },
+    {
+      "workItemType": "Dorm.OperationInspectionConfirm",
+      "entryFrom": "Mobile Surface 工作台、Search 只读跳转或上游 WorkItem 下游提示",
+      "systemAutoFilled": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion"
+      ],
+      "operatorFills": [
+        "cleaningInspectionResult",
+        "maintenanceInspectionResult",
+        "safetyInspectionResult",
+        "facilityInspectionResult",
+        "exceptionFlag",
+        "inspectionConclusion",
+        "exceptionDescription",
+        "operationInspectionNotes"
+      ],
+      "leadApproves": [
+        "仅在例外或升级时审批"
+      ],
+      "readonlyFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion",
+        "createdAt",
+        "confirmedAt",
+        "ledgerEntryId",
+        "domainEventId"
+      ],
+      "editableFields": [
+        "cleaningInspectionResult",
+        "maintenanceInspectionResult",
+        "safetyInspectionResult",
+        "facilityInspectionResult",
+        "exceptionFlag",
+        "inspectionConclusion",
+        "exceptionDescription",
+        "operationInspectionNotes"
+      ],
+      "evidenceRequired": [
+        "operation-inspection-photo",
+        "maintenance-record",
+        "safety-inspection-record",
+        "facility-inspection-record"
+      ],
+      "submittedEvent": "OperationInspectionConfirmSubmitted",
+      "ledgerImpact": "无账务影响",
+      "lensUpdates": [
+        "OperationInspection",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "downstreamWorkItems": [
+        "Dorm.OperationStatusDraft"
+      ],
+      "failureRoutes": [
+        "Dorm.ExceptionResolve",
+        "append_only_correction_work_item",
+        "blocked_with_missing_fields"
+      ]
+    },
+    {
+      "workItemType": "Dorm.OperationStatusDraft",
+      "entryFrom": "Mobile Surface 工作台、Search 只读跳转或上游 WorkItem 下游提示",
+      "systemAutoFilled": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion"
+      ],
+      "operatorFills": [
+        "newOperationStatus",
+        "statusReasonCode",
+        "impactScope",
+        "statusOwner",
+        "statusReason",
+        "expectedRestoreAt",
+        "operationStatusNotes"
+      ],
+      "leadApproves": [
+        "仅在例外或升级时审批"
+      ],
+      "readonlyFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion",
+        "createdAt",
+        "confirmedAt",
+        "ledgerEntryId",
+        "domainEventId"
+      ],
+      "editableFields": [
+        "newOperationStatus",
+        "statusReasonCode",
+        "impactScope",
+        "statusOwner",
+        "statusReason",
+        "expectedRestoreAt",
+        "operationStatusNotes"
+      ],
+      "evidenceRequired": [
+        "status-reason-proof",
+        "blocker-reason-proof"
+      ],
+      "submittedEvent": "OperationStatusDraftSubmitted",
+      "ledgerImpact": "无账务影响",
+      "lensUpdates": [
+        "OperationStatusDraft",
+        "OperationBlockerDraft"
+      ],
+      "downstreamWorkItems": [
+        "Dorm.OperationStatusChangeConfirm"
+      ],
+      "failureRoutes": [
+        "Dorm.ExceptionResolve",
+        "append_only_correction_work_item",
+        "blocked_with_missing_fields"
+      ]
+    },
+    {
+      "workItemType": "Dorm.OperationStatusChangeConfirm",
+      "entryFrom": "Mobile Surface 工作台、Search 只读跳转或上游 WorkItem 下游提示",
+      "systemAutoFilled": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion"
+      ],
+      "operatorFills": [
+        "submitImpactConfirmation",
+        "impactConfirmationNotes"
+      ],
+      "leadApproves": [
+        "仅在例外或升级时审批"
+      ],
+      "readonlyFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion",
+        "createdAt",
+        "confirmedAt",
+        "ledgerEntryId",
+        "domainEventId"
+      ],
+      "editableFields": [
+        "submitImpactConfirmation",
+        "impactConfirmationNotes"
+      ],
+      "evidenceRequired": [
+        "impact-proof"
+      ],
+      "submittedEvent": "OperationStatusChangeConfirmSubmitted",
+      "ledgerImpact": "无账务影响",
+      "lensUpdates": [
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "OperationBlocker",
+        "StatusHistory"
+      ],
+      "downstreamWorkItems": [
+        "Dorm.OperationBlockerUpdate"
+      ],
+      "failureRoutes": [
+        "Dorm.ExceptionResolve",
+        "append_only_correction_work_item",
+        "blocked_with_missing_fields"
+      ]
+    },
+    {
+      "workItemType": "Dorm.OperationBlockerUpdate",
+      "entryFrom": "Mobile Surface 工作台、Search 只读跳转或上游 WorkItem 下游提示",
+      "systemAutoFilled": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion"
+      ],
+      "operatorFills": [
+        "blockerStatus",
+        "followUpOwner",
+        "progressUpdate",
+        "expectedRestoreAt",
+        "blockerNotes"
+      ],
+      "leadApproves": [
+        "仅在例外或升级时审批"
+      ],
+      "readonlyFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion",
+        "createdAt",
+        "confirmedAt",
+        "ledgerEntryId",
+        "domainEventId"
+      ],
+      "editableFields": [
+        "blockerStatus",
+        "followUpOwner",
+        "progressUpdate",
+        "expectedRestoreAt",
+        "blockerNotes"
+      ],
+      "evidenceRequired": [
+        "progress-photo",
+        "maintenance-progress-record",
+        "supplement-proof"
+      ],
+      "submittedEvent": "OperationBlockerUpdateSubmitted",
+      "ledgerImpact": "无账务影响",
+      "lensUpdates": [
+        "OperationBlocker",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "downstreamWorkItems": [
+        "Dorm.OperationRestoreConfirm"
+      ],
+      "failureRoutes": [
+        "Dorm.ExceptionResolve",
+        "append_only_correction_work_item",
+        "blocked_with_missing_fields"
+      ]
+    },
+    {
+      "workItemType": "Dorm.OperationRestoreConfirm",
+      "entryFrom": "Mobile Surface 工作台、Search 只读跳转或上游 WorkItem 下游提示",
+      "systemAutoFilled": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion"
+      ],
+      "operatorFills": [
+        "recheckResult",
+        "restoreConclusion",
+        "restoreReason",
+        "restoreNotes"
+      ],
+      "leadApproves": [
+        "仅在例外或升级时审批"
+      ],
+      "readonlyFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId",
+        "projectionVersion",
+        "createdAt",
+        "confirmedAt",
+        "ledgerEntryId",
+        "domainEventId"
+      ],
+      "editableFields": [
+        "recheckResult",
+        "restoreConclusion",
+        "restoreReason",
+        "restoreNotes"
+      ],
+      "evidenceRequired": [
+        "restore-photo",
+        "recheck-record",
+        "blocker-close-proof"
+      ],
+      "submittedEvent": "OperationRestoreConfirmSubmitted",
+      "ledgerImpact": "无账务影响",
+      "lensUpdates": [
+        "OperationRestore",
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "StatusHistory"
+      ],
+      "downstreamWorkItems": [
+        "Dorm.RatePlanConfirm"
       ],
       "failureRoutes": [
         "Dorm.ExceptionResolve",
@@ -6424,6 +7740,19 @@
       "rate-policy",
       "completion-photo",
       "verification-check",
+      "operation-inspection-photo",
+      "maintenance-record",
+      "safety-inspection-record",
+      "facility-inspection-record",
+      "status-reason-proof",
+      "blocker-reason-proof",
+      "impact-proof",
+      "progress-photo",
+      "maintenance-progress-record",
+      "supplement-proof",
+      "restore-photo",
+      "recheck-record",
+      "blocker-close-proof",
       "lead-consent",
       "reservation-acknowledgement",
       "bed-availability-proof",

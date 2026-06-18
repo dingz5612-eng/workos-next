@@ -354,12 +354,15 @@ const allowedRuntimeGeneratedDiffs = new Set([
   "apps/mobile/src/generated/oam/dormitory-scenario1-resource-basic-readiness.generated.json",
   ...dormitoryScenarioSpecs.map((scenario) => scenario.generatedFiles.find((file) => file.startsWith("apps/mobile/"))),
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "apps/mobile/src/generated/oam/business-display-language.generated.js",
+    "apps/mobile/src/__tests__/BusinessTechnicalLayeringContract.test.js",
     "apps/mobile/src/__tests__/MobileOamHardeningMatrix.test.js",
     "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
     "apps/mobile/src/__tests__/SearchIntentHubContract.test.js",
     "apps/mobile/src/__tests__/SearchLearningSync.test.js",
     "apps/mobile/src/__tests__/workspaceSelectors.test.js",
     "apps/mobile/src/businessAnchorKernel.js",
+    "apps/mobile/src/businessDisplayLanguage.js",
     "apps/mobile/src/capabilityProjection.js",
     "apps/mobile/src/controls/fieldControls.js",
     "apps/mobile/src/controls/optionSetContract.js",
@@ -414,16 +417,23 @@ const generatedOutputFiles = [
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
-  "docs/contracts/generated/dormitory/test-plan.generated.json",
+  "docs/contracts/generated/dormitory/object-identity.generated.json",
+  "docs/contracts/generated/dormitory/bed-cardinality.generated.json",
+  "docs/contracts/generated/dormitory/business-invariants.generated.json",
+  "docs/contracts/generated/dormitory/command-contracts.generated.json",
+  "docs/contracts/generated/dormitory/failure-semantics.generated.json",
+  "docs/contracts/generated/dormitory/rule-source-map.generated.json",
   "docs/contracts/generated/dormitory/db-projection-policy.generated.json",
-  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "docs/contracts/generated/dormitory/test-plan.generated.json",
   "apps/mobile/src/generated/oam/capability-projection.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
   "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
+  "artifacts/oam/evidence/capability-digest-chain.json",
+  "artifacts/oam/evidence/capability-evidence-subject-chain.json",
   ...dormitory13ScenarioGeneratedFiles,
   ...dormitoryScenario1GeneratedFiles,
   ...dormitoryBenchmarkInheritanceGeneratedFiles,
-  ...dormitoryScenarioGeneratedFiles,
-  "artifacts/oam/evidence/capability-digest-chain.json"
+  ...dormitoryScenarioGeneratedFiles
 ];
 const sourceAuthorityFiles = [
   sourcePackagePath,
@@ -442,6 +452,7 @@ const generatorAndCheckerFiles = [
   "scripts/business/check-dormitory-13-scenario-control-authority.mjs",
   "scripts/business/check-dormitory-13-scenario-generated-contracts.mjs",
   "scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs",
+  "scripts/business/check-dormitory-field-authority-model.mjs",
   "scripts/business/generate-dormitory-scenario1-resource-basic-readiness-contracts.mjs",
   "scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs",
   "scripts/business/check-dormitory-scenario1-generated-contracts.mjs",
@@ -466,23 +477,27 @@ const generatorAndCheckerFiles = [
   "scripts/oam/check-oam-kernel-graph.mjs",
   "scripts/oam/check-generated-compile-authorization.mjs",
   "scripts/oam/check-generated-compile-execution.mjs",
+  "scripts/oam/check-dormitory-entry-admission-contract.mjs",
+  "scripts/oam/check-no-old-active-entry.mjs",
+  "scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs",
   "scripts/oam/lib/formal-generated-compile-authorization.mjs",
   "scripts/oam/lib/dormitory-generated-field-binding-closure.mjs"
 ];
 const compileCommands = [
   ["node", ["scripts/business/generate-dormitory-derived-contracts.mjs"]],
   ["node", ["scripts/oam/compile-current-kernel-graph.mjs"]],
-  ["node", ["scripts/oam/compile-current-capability.mjs"]],
   ["node", ["scripts/oam/generate-system-derived-contracts.mjs"]],
   ["node", ["scripts/business/generate-dormitory-13-scenario-control-contracts.mjs"]],
   ["node", ["scripts/business/generate-dormitory-scenario1-resource-basic-readiness-contracts.mjs"]],
   ["node", ["scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs"]],
-  ...dormitoryScenarioSpecs.map((scenario) => ["node", [scenario.generator]])
+  ...dormitoryScenarioSpecs.map((scenario) => ["node", [scenario.generator]]),
+  ["node", ["scripts/oam/compile-current-capability.mjs"]]
 ];
 const requiredPreGateResults = [
   ["dormitory13ScenarioControlAuthority", "artifacts/oam/checks/dormitory-13-scenario-control-authority-result.json"],
   ["dormitory13ScenarioGeneratedContracts", "artifacts/oam/checks/dormitory-13-scenario-generated-contracts-result.json"],
   ["dormitory13ScenarioConsumptionBoundary", "artifacts/oam/checks/dormitory-13-scenario-consumption-boundary-result.json"],
+  ["dormitoryFieldAuthorityModel", "artifacts/oam/checks/dormitory-field-authority-model-result.json"],
   ["dormitoryScenario1ResourceBasicReadinessAuthority", "artifacts/oam/checks/dormitory-scenario1-resource-basic-readiness-authority-result.json"],
   ["dormitoryScenario1GeneratedContracts", "artifacts/oam/checks/dormitory-scenario1-generated-contracts-result.json"],
   ["dormitoryScenario1ConsumptionBoundary", "artifacts/oam/checks/dormitory-scenario1-consumption-boundary-result.json"],
@@ -577,40 +592,36 @@ if (snapshotOnly) {
 }
 
 const inputSnapshotDocument = readJsonIfExists(snapshotPath);
-const shouldRebuildInputSnapshot = !inputSnapshotDocument || inputSnapshotDocument.status !== "PASS";
-const inputSnapshot = shouldRebuildInputSnapshot
-  ? buildSnapshot(inputSnapshotDocument ? "phase1_input_snapshot_invalid_local_rebuilt" : "phase1_input_snapshot_missing_local_rebuilt")
-  : inputSnapshotDocument.snapshot;
-if (shouldRebuildInputSnapshot) {
-  writeJson(snapshotPath, {
-    version: "oam.generated-compile-execution-input-snapshot.v1",
-    recordedAtUtc: new Date().toISOString(),
-    status: "PASS",
-    snapshot: inputSnapshot,
-    formalAuthorization: formalAuthorizationState(),
-    rebuiltBy: "normal generated compile execution",
-    replacedSnapshotStatus: inputSnapshotDocument?.status ?? "missing",
-    replacedSnapshotFailures: inputSnapshotDocument?.failures ?? [],
-    failures: [],
-    generatedCompileAuthorized: formalAuthorization.authorized,
-    generatedCompilationAllowed: formalAuthorization.authorized,
-    generatedCompileCompleted: false,
-    generatedCompilationCompleted: false,
-    generatedCandidateAcceptedBy00: false,
-    runtimeConsumptionReady: false,
-    businessFeatureDevelopmentAllowed: false,
-    productionConfirmAllowed: false,
-    releaseAuthority: false,
-    finalGoNoGo: "NO_GO"
-  });
-}
+const inputSnapshot = buildSnapshot("phase1_input_snapshot");
+writeJson(snapshotPath, {
+  version: "oam.generated-compile-execution-input-snapshot.v1",
+  recordedAtUtc: new Date().toISOString(),
+  status: "PASS",
+  snapshot: inputSnapshot,
+  formalAuthorization: formalAuthorizationState(),
+  rebuiltBy: "normal generated compile execution",
+  replacedSnapshotStatus: inputSnapshotDocument?.status ?? "missing",
+  replacedSnapshotSourceAuthorityDigest: inputSnapshotDocument?.snapshot?.sourceAuthorityDigest ?? null,
+  failures: [],
+  generatedCompileAuthorized: formalAuthorization.authorized,
+  generatedCompilationAllowed: formalAuthorization.authorized,
+  generatedCompileCompleted: false,
+  generatedCompilationCompleted: false,
+  generatedCandidateAcceptedBy00: false,
+  runtimeConsumptionReady: false,
+  businessFeatureDevelopmentAllowed: false,
+  productionConfirmAllowed: false,
+  releaseAuthority: false,
+  finalGoNoGo: "NO_GO"
+});
 runCompileRound("round1");
 const round1Snapshot = buildSnapshot("round1_after_compile");
 runCompileRound("round2");
 const round2Snapshot = buildSnapshot("round2_after_compile");
 
 checkSnapshotEquality(round1Snapshot, round2Snapshot);
-checkSourceAndRuntimeNoDrift();
+runPostCompilePreGateChecks();
+checkSourceAndRuntimeNoDrift(inputSnapshot, round2Snapshot);
 checkPreGateResults();
 checkGeneratedMarkers();
 
@@ -657,7 +668,7 @@ const proof = {
     derivedContracts: gateResultStatus("artifacts/oam/checks/derived-contract-consistency-result.json"),
     kernelGraph: gateResultStatus("artifacts/oam/checks/oam-kernel-graph-result.json")
   },
-  driftProof: buildDriftProof(),
+  driftProof: buildDriftProof(inputSnapshot, round2Snapshot),
   generatedCompileAuthorized: formalAuthorization.authorized,
   generatedCompilationAllowed: formalAuthorization.authorized,
   generatedCompileCompleted: status === "PASS",
@@ -744,7 +755,52 @@ function runCompileRound(round) {
   }
 }
 
+function runPostCompilePreGateChecks() {
+  const gateCommands = [
+    ["node", ["scripts/business/check-dormitory-13-scenario-control-authority.mjs"]],
+    ["node", ["scripts/business/check-dormitory-13-scenario-generated-contracts.mjs"]],
+    ["node", ["scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs"]],
+    ["node", ["scripts/business/check-dormitory-field-authority-model.mjs"]],
+    ["node", ["scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs"]],
+    ["node", ["scripts/business/check-dormitory-scenario1-generated-contracts.mjs"]],
+    ["node", ["scripts/business/check-dormitory-scenario1-consumption-boundary.mjs"]],
+    ["node", ["scripts/business/check-dormitory-scenario1-benchmark-inheritance-authority.mjs"]],
+    ["node", ["scripts/business/check-dormitory-scenario1-benchmark-inheritance-generated-contracts.mjs"]],
+    ["node", ["scripts/business/check-dormitory-scenario2-start-gate-trial.mjs"]],
+    ...dormitoryScenarioSpecs.flatMap((scenario) => [
+      ["node", [scenario.authorityCheck]],
+      ["node", [scenario.generatedCheck]],
+      ["node", [scenario.consumptionCheck]]
+    ]),
+    ["node", ["scripts/oam/check-generated-field-binding-closure.mjs"]],
+    ["node", ["scripts/oam/check-generated-files-not-manually-edited.mjs"]],
+    ["node", ["scripts/oam/check-generated-contract-consistency.mjs"]],
+    ["node", ["scripts/oam/check-derived-contract-consistency.mjs"]],
+    ["node", ["scripts/oam/check-oam-kernel-graph.mjs"]]
+  ];
+
+  for (const [command, args] of gateCommands) {
+    try {
+      execFileSync(command, args, {
+        cwd: root,
+        stdio: "inherit",
+        env: {
+          ...process.env,
+          ALLOW_GENERATED_COMPILE_CANDIDATE: "true",
+          OAM_GENERATED_MANUAL_EDIT_SCOPE: "generated_contract_candidate_only",
+          OAM_GENERATED_CONTRACT_CONSISTENCY_SCOPE: "generated_contract_candidate_only"
+        }
+      });
+    } catch (error) {
+      failures.push(`post-compile pre-gate refresh failed: ${command} ${args.join(" ")} exit=${error.status ?? "unknown"}`);
+      return;
+    }
+  }
+}
+
 function buildSnapshot(label) {
+  const runtimeDiffNames = runtimeBoundaryNames(git(["diff", "--name-only"]).split(/\r?\n/).filter(Boolean));
+  const runtimeUntrackedNames = runtimeBoundaryNames(git(["ls-files", "--others", "--exclude-standard"]).split(/\r?\n/).filter(Boolean));
   return {
     label,
     recordedAtUtc: new Date().toISOString(),
@@ -756,6 +812,7 @@ function buildSnapshot(label) {
     candidateApprovalHash: hashFile(candidateApprovalPath),
     sourcePackagePath,
     sourcePackageHash: hashFile(sourcePackagePath),
+    sourceAuthorityHashes: hashMap(sourceAuthorityFiles),
     sourceAuthorityDigest: digestForFiles(sourceAuthorityFiles),
     generatorAndCheckerHashes: hashMap(generatorAndCheckerFiles),
     generatedOutputFiles,
@@ -769,6 +826,18 @@ function buildSnapshot(label) {
     ]),
     kernelGraphSourceDigest: hashFile("docs/oam/oam-kernel-graph.json"),
     kernelGraphGeneratedDigest: hashFile("docs/oam/kernel/oam-kernel-graph.generated.json"),
+    runtimeImplementationBoundary: {
+      changed: runtimeDiffNames,
+      untracked: runtimeUntrackedNames,
+      changedHashes: hashMap(runtimeDiffNames),
+      untrackedHashes: hashMap(runtimeUntrackedNames),
+      digest: digestObject({
+        changed: runtimeDiffNames,
+        untracked: runtimeUntrackedNames,
+        changedHashes: hashMap(runtimeDiffNames),
+        untrackedHashes: hashMap(runtimeUntrackedNames)
+      })
+    },
     gitDiffNames: git(["diff", "--name-only"]).split(/\r?\n/).filter(Boolean),
     gitUntrackedNames: git(["ls-files", "--others", "--exclude-standard"]).split(/\r?\n/).filter(Boolean)
   };
@@ -822,58 +891,50 @@ function checkSnapshotEquality(first, second) {
   }
 }
 
-function checkSourceAndRuntimeNoDrift() {
-  const sourceDiffs = unique([
-    ...gitDiffNames(["docs/business/domains/dormitory"]),
-    ...gitDiffNames(["docs/business/dormitory"])
-  ]);
-  if (sourceDiffs.length > 0) {
-    failures.push(`Source business facts changed during formal generated compile: ${sourceDiffs.join(", ")}`);
+function checkSourceAndRuntimeNoDrift(before, after) {
+  if (before.sourceAuthorityDigest !== after.sourceAuthorityDigest) {
+    failures.push(`Source business facts changed during formal generated compile: ${changedHashFiles(before.sourceAuthorityHashes, after.sourceAuthorityHashes).join(", ") || `${before.sourceAuthorityDigest} -> ${after.sourceAuthorityDigest}`}`);
   }
 
-  const runtimeDiffs = unique([
-    ...gitDiffNames(["services"]),
-    ...gitDiffNames(["infra/db"]),
-    ...gitDiffNames(["tests"]),
-    ...gitDiffNames(["apps/mobile/src"])
-  ]).filter((file) => !allowedRuntimeGeneratedDiffs.has(file));
-  const runtimeUntracked = unique([
-    ...gitUntrackedNames(["services"]),
-    ...gitUntrackedNames(["infra/db"]),
-    ...gitUntrackedNames(["tests"]),
-    ...gitUntrackedNames(["apps/mobile/src"])
-  ]).filter((file) => !allowedRuntimeGeneratedDiffs.has(file));
-  if (runtimeDiffs.length > 0 || runtimeUntracked.length > 0) {
-    failures.push(`runtime/business implementation drift is forbidden: changed=${runtimeDiffs.join(", ") || "none"} untracked=${runtimeUntracked.join(", ") || "none"}`);
+  const beforeRuntimeDigest = before.runtimeImplementationBoundary?.digest ?? "missing";
+  const afterRuntimeDigest = after.runtimeImplementationBoundary?.digest ?? "missing";
+  if (beforeRuntimeDigest !== afterRuntimeDigest) {
+    failures.push(`runtime/business implementation drift during formal generated compile is forbidden: ${beforeRuntimeDigest} -> ${afterRuntimeDigest}`);
   }
 }
 
-function buildDriftProof() {
-  const sourceDiffs = unique([
-    ...gitDiffNames(["docs/business/domains/dormitory"]),
-    ...gitDiffNames(["docs/business/dormitory"])
-  ]);
-  const runtimeChanged = unique([
-    ...gitDiffNames(["services"]),
-    ...gitDiffNames(["infra/db"]),
-    ...gitDiffNames(["tests"]),
-    ...gitDiffNames(["apps/mobile/src"])
-  ]);
-  const runtimeUntracked = unique([
-    ...gitUntrackedNames(["services"]),
-    ...gitUntrackedNames(["infra/db"]),
-    ...gitUntrackedNames(["tests"]),
-    ...gitUntrackedNames(["apps/mobile/src"])
-  ]);
+function buildDriftProof(before, after) {
   return {
-    noSourceBusinessFactChanges: sourceDiffs.length === 0,
-    sourceBusinessFactDiffs: sourceDiffs,
-    noRuntimeImplementationChanges: runtimeChanged.filter((file) => !allowedRuntimeGeneratedDiffs.has(file)).length === 0 &&
-      runtimeUntracked.filter((file) => !allowedRuntimeGeneratedDiffs.has(file)).length === 0,
-    runtimeChanged,
-    runtimeUntracked,
+    sourceAuthorityInputDigest: before.sourceAuthorityDigest,
+    sourceAuthorityAfterCompileDigest: after.sourceAuthorityDigest,
+    sourceAuthorityChangedDuringCompile: changedHashFiles(before.sourceAuthorityHashes, after.sourceAuthorityHashes),
+    noSourceBusinessFactChangesDuringCompile: before.sourceAuthorityDigest === after.sourceAuthorityDigest,
+    runtimeImplementationInputDigest: before.runtimeImplementationBoundary?.digest ?? "missing",
+    runtimeImplementationAfterCompileDigest: after.runtimeImplementationBoundary?.digest ?? "missing",
+    noRuntimeImplementationChangesDuringCompile:
+      (before.runtimeImplementationBoundary?.digest ?? "missing") === (after.runtimeImplementationBoundary?.digest ?? "missing"),
+    runtimeInputChanged: before.runtimeImplementationBoundary?.changed ?? [],
+    runtimeInputUntracked: before.runtimeImplementationBoundary?.untracked ?? [],
+    runtimeAfterChanged: after.runtimeImplementationBoundary?.changed ?? [],
+    runtimeAfterUntracked: after.runtimeImplementationBoundary?.untracked ?? [],
     allowedRuntimeGeneratedDiffs: [...allowedRuntimeGeneratedDiffs]
   };
+}
+
+function runtimeBoundaryNames(files) {
+  return unique(files)
+    .filter((file) => [
+      "services/",
+      "infra/db/",
+      "tests/",
+      "apps/mobile/src/"
+    ].some((prefix) => file.startsWith(prefix)))
+    .filter((file) => !allowedRuntimeGeneratedDiffs.has(file));
+}
+
+function changedHashFiles(before = {}, after = {}) {
+  const keys = unique([...Object.keys(before), ...Object.keys(after)]);
+  return keys.filter((key) => before[key] !== after[key]);
 }
 
 function checkPreGateResults() {

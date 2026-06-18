@@ -101,6 +101,19 @@ if (JSON.stringify(financeBoundary?.financeBoundary?.exclusiveTruthWriters ?? []
   fail("finance truth writers must be finance-gate and finance-kernel.");
 }
 if (!String(pageEntryPolicy?.pageEntryPolicy?.search ?? "").includes("只读")) fail("search page entry must be readonly.");
+const entryAdmissionContract = pageEntryPolicy?.entryAdmissionContract ?? {};
+for (const field of ["businessTitle", "businessSummary", "legalActions", "admissionDecision", "nextAction", "cannotSubmitReason", "readonlyReason", "sourceScenario"]) {
+  if (!(entryAdmissionContract.requiredFields ?? []).includes(field)) fail(`entry admission generated contract missing ${field}.`);
+}
+if (entryAdmissionContract.rules?.frontendButtonJudgementForbidden !== true ||
+  entryAdmissionContract.rules?.searchReadonlyOnly !== true ||
+  entryAdmissionContract.rules?.oldWStayCurrentEntryForbidden !== true ||
+  entryAdmissionContract.rules?.writeFactsOnlyThroughOperationsRuntime !== true) {
+  fail("entry admission generated contract rules must keep frontend/search/legacy/runtime boundaries closed.");
+}
+if (JSON.stringify(entryAdmissionContract.resolverChain ?? []) !== JSON.stringify(["LegalAction Resolver", "Admission Attach", "Runtime Prepare", "WorkItem"])) {
+  fail("entry admission generated contract resolver chain mismatch.");
+}
 for (const summary of handoff?.summaries ?? []) {
   if (!Array.isArray(summary.summaryOutputs) || summary.summaryOutputs.length === 0) fail(`scenario ${summary.scenarioNo} missing handoff summary outputs.`);
   if (!String(summary.downstreamRuleZh ?? "").includes("不得要求用户重新填写")) fail(`scenario ${summary.scenarioNo} missing downstream no-refill rule.`);

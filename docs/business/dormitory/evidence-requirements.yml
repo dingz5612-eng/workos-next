@@ -107,6 +107,36 @@
       "missingBlocksConfirm": true
     },
     {
+      "requirementId": "blocker-close-proof",
+      "nameZh": "blocker-close-proof",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "blocker-reason-proof",
+      "nameZh": "blocker-reason-proof",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
       "requirementId": "cancel-request",
       "nameZh": "cancel-request",
       "scope": "workItem",
@@ -372,6 +402,21 @@
       "missingBlocksConfirm": true
     },
     {
+      "requirementId": "facility-inspection-record",
+      "nameZh": "facility-inspection-record",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
       "requirementId": "identity-document",
       "requiredFields": [
         "tenantId",
@@ -380,6 +425,21 @@
         "verifiedBy",
         "evidenceRef",
         "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "impact-proof",
+      "nameZh": "impact-proof",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
         "capturedAt",
         "capturedBy"
       ],
@@ -418,8 +478,53 @@
       "missingBlocksConfirm": true
     },
     {
+      "requirementId": "maintenance-progress-record",
+      "nameZh": "maintenance-progress-record",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "maintenance-record",
+      "nameZh": "maintenance-record",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
       "requirementId": "no-show-record",
       "nameZh": "no-show-record",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "operation-inspection-photo",
+      "nameZh": "operation-inspection-photo",
       "scope": "workItem",
       "requiredFields": [
         "evidenceRef",
@@ -468,6 +573,21 @@
       "missingBlocksConfirm": true
     },
     {
+      "requirementId": "progress-photo",
+      "nameZh": "progress-photo",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
       "requirementId": "rate-policy",
       "nameZh": "rate-policy",
       "scope": "workItem",
@@ -493,6 +613,21 @@
         "evidenceHash",
         "evidenceRef",
         "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "recheck-record",
+      "nameZh": "recheck-record",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
         "capturedAt",
         "capturedBy"
       ],
@@ -536,6 +671,21 @@
     {
       "requirementId": "resolution-evidence",
       "nameZh": "resolution-evidence",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "restore-photo",
+      "nameZh": "restore-photo",
       "scope": "workItem",
       "requiredFields": [
         "evidenceRef",
@@ -622,6 +772,21 @@
       "missingBlocksConfirm": true
     },
     {
+      "requirementId": "safety-inspection-record",
+      "nameZh": "safety-inspection-record",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
       "requirementId": "service-request",
       "nameZh": "service-request",
       "scope": "workItem",
@@ -662,6 +827,36 @@
         "reportHash",
         "status"
       ]
+    },
+    {
+      "requirementId": "status-reason-proof",
+      "nameZh": "status-reason-proof",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "supplement-proof",
+      "nameZh": "supplement-proof",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
     },
     {
       "requirementId": "transfer-application",

@@ -11,6 +11,25 @@ import {
 const root = process.cwd();
 const reportPath = "artifacts/oam/checks/generated-contract-consistency-result.json";
 const failures = [];
+const scope = process.env.OAM_GENERATED_CONTRACT_CONSISTENCY_SCOPE === "generated_contract_candidate_only"
+  ? "generated_contract_candidate_only"
+  : "full_runtime_consumption_generated";
+const runtimeConsumptionGeneratedFiles = new Set([
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "apps/mobile/src/generated/oam/capability-projection.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
+  "docs/contracts/generated/dormitory/object-identity.generated.json",
+  "docs/contracts/generated/dormitory/bed-cardinality.generated.json",
+  "docs/contracts/generated/dormitory/business-invariants.generated.json",
+  "docs/contracts/generated/dormitory/command-contracts.generated.json",
+  "docs/contracts/generated/dormitory/failure-semantics.generated.json",
+  "docs/contracts/generated/dormitory/rule-source-map.generated.json",
+  "docs/contracts/generated/dormitory/db-projection-policy.generated.json",
+  "docs/contracts/generated/dormitory/test-plan.generated.json",
+  "artifacts/oam/evidence/capability-evidence-subject-chain.json",
+  "artifacts/oam/evidence/capability-digest-chain.json"
+]);
+const isCandidateOnlyScope = scope === "generated_contract_candidate_only";
 const p0 = [
   "Dorm.RoomSetupConfirm",
   "Dorm.BedSetupConfirm",
@@ -258,7 +277,7 @@ const dormitoryBenchmarkInheritanceGeneratedFiles = [
 ];
 requiredGeneratedFiles.push(...dormitoryBenchmarkInheritanceGeneratedFiles);
 
-for (const file of requiredGeneratedFiles) {
+for (const file of requiredGeneratedFiles.filter((item) => !isCandidateOnlyScope || !runtimeConsumptionGeneratedFiles.has(item))) {
   if (!exists(file)) fail(`${file} is missing.`);
 }
 
@@ -312,22 +331,24 @@ for (const [file, document] of [
 ]) {
   checkGeneratedMetadata(file, document);
 }
-for (const [file, document] of [
-  ["apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json", mobileSurface],
-  ["apps/mobile/src/generated/oam/capability-projection.generated.json", capabilityProjection],
-  ["services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json", runtimeProjection],
-  ["docs/contracts/generated/dormitory/object-identity.generated.json", objectIdentity],
-  ["docs/contracts/generated/dormitory/bed-cardinality.generated.json", bedCardinality],
-  ["docs/contracts/generated/dormitory/business-invariants.generated.json", businessInvariants],
-  ["docs/contracts/generated/dormitory/command-contracts.generated.json", commandContracts],
-  ["docs/contracts/generated/dormitory/failure-semantics.generated.json", failureSemantics],
-  ["docs/contracts/generated/dormitory/rule-source-map.generated.json", ruleSourceMap],
-  ["docs/contracts/generated/dormitory/db-projection-policy.generated.json", dbProjectionPolicy],
-  ["docs/contracts/generated/dormitory/test-plan.generated.json", testPlan],
-  ["artifacts/oam/evidence/capability-evidence-subject-chain.json", subjectChain],
-  ["artifacts/oam/evidence/capability-digest-chain.json", capabilityDigestChain]
-]) {
-  checkCapabilityGeneratedMetadata(file, document);
+if (!isCandidateOnlyScope) {
+  for (const [file, document] of [
+    ["apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json", mobileSurface],
+    ["apps/mobile/src/generated/oam/capability-projection.generated.json", capabilityProjection],
+    ["services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json", runtimeProjection],
+    ["docs/contracts/generated/dormitory/object-identity.generated.json", objectIdentity],
+    ["docs/contracts/generated/dormitory/bed-cardinality.generated.json", bedCardinality],
+    ["docs/contracts/generated/dormitory/business-invariants.generated.json", businessInvariants],
+    ["docs/contracts/generated/dormitory/command-contracts.generated.json", commandContracts],
+    ["docs/contracts/generated/dormitory/failure-semantics.generated.json", failureSemantics],
+    ["docs/contracts/generated/dormitory/rule-source-map.generated.json", ruleSourceMap],
+    ["docs/contracts/generated/dormitory/db-projection-policy.generated.json", dbProjectionPolicy],
+    ["docs/contracts/generated/dormitory/test-plan.generated.json", testPlan],
+    ["artifacts/oam/evidence/capability-evidence-subject-chain.json", subjectChain],
+    ["artifacts/oam/evidence/capability-digest-chain.json", capabilityDigestChain]
+  ]) {
+    checkCapabilityGeneratedMetadata(file, document);
+  }
 }
 
 if ((graph.nodes ?? []).length === 0 || (graph.edges ?? []).length === 0 || graph.nodeCount <= 0 || graph.edgeCount <= 0) {
@@ -385,8 +406,10 @@ const generatedTypes = (workitems.workItems ?? []).map((item) => item.workItemTy
 if (JSON.stringify(generatedTypes) !== JSON.stringify([...p0].sort())) {
   fail(`generated workitems must contain only ${p0.join(", ")}.`);
 }
-checkCapabilityCompilerOutputs();
-checkMobileSurfaceCompilerProjection();
+if (!isCandidateOnlyScope) {
+  checkCapabilityCompilerOutputs();
+  checkMobileSurfaceCompilerProjection();
+}
 
 writeReport();
 
@@ -1797,6 +1820,8 @@ function writeReport() {
     version: "oam.generated-contract-consistency-result.v1",
     checkedAtUtc: new Date().toISOString(),
     status: failures.length === 0 ? "passed" : "failed",
+    scope,
+    runtimeConsumptionGeneratedFilesExcluded: isCandidateOnlyScope,
     requiredGeneratedFiles: requiredGeneratedFiles.map((file) => ({
       path: file,
       present: exists(file)

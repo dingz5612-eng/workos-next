@@ -10,6 +10,7 @@ import { escapeAttr, escapeHtml } from "./htmlEscaping.js";
 import { metric, localList, localTerm, task, tr, tx, workspace } from "./selectors/workspaceSelectors.js";
 import { isPcSurfaceView } from "./surfaceRegistry.js";
 import { userFacingBusinessText } from "./businessDisplayLanguage.js";
+import { runSearchFromCurrentUrlIfNeeded } from "./navigationController.js";
 
 const state = createInitialState();
 
@@ -121,4 +122,6 @@ function render(scrollTop = false) {
 }
 
 render();
-hydrateProjectionFromApi().finally(() => render());
+hydrateProjectionFromApi()
+  .finally(() => runSearchFromCurrentUrlIfNeeded(ctx).catch(() => false))
+  .finally(() => render());

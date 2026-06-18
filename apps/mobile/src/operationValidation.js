@@ -60,16 +60,19 @@ function validationFieldFromGeneratedControl(control, card, ctx) {
     ? "roomRef"
     : control.fieldId;
   const lang = ctx?.state?.lang || "zh-CN";
-  const required = fieldId === "buildingContextRef" ? true : control.required === true;
+  const required = control.required === true;
   return {
     id: fieldId,
+    classification: control.classification,
+    readonly: control.readonly === true,
+    userSubmitted: control.userSubmitted === true,
     label: {
       [lang]: labelForGeneratedField(fieldId, lang),
       "zh-CN": labelForGeneratedField(fieldId, "zh-CN")
     },
     required,
     ui: {
-      control: fieldId === "buildingContextRef" ? "searchSelect" : control.controlType || "text",
+      control: control.controlType || "text",
       optionSet: control.optionSet || "",
       defaultValue: control.defaultValue || ""
     }

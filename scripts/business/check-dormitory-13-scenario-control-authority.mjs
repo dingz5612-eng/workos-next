@@ -144,6 +144,7 @@ checkCrudPolicy();
 checkEvidencePolicy();
 checkFinanceBoundary();
 checkPageEntryPolicy();
+checkEntryAdmissionContract();
 checkOldPackageIsolation();
 checkTestStandard();
 checkRuntimeConsumptionBoundary();
@@ -307,6 +308,30 @@ function checkPageEntryPolicy() {
   if (!String(policy.search ?? "").includes("只读")) fail("search entry must be readonly.");
   for (const required of ["当前状态", "缺失项", "下一步动作", "不可提交原因", "完成摘要"]) {
     if (!(policy.displayRequirements ?? []).includes(required)) fail(`page display requirement missing ${required}.`);
+  }
+}
+
+function checkEntryAdmissionContract() {
+  const contract = authority.entryAdmissionContract ?? {};
+  if (contract.version !== "oam.dormitory.entry-admission-contract.v1") fail("entry admission contract version mismatch.");
+  for (const object of ["EntryResult", "SearchResult", "WorkItem"]) {
+    if (!(contract.objects ?? []).includes(object)) fail(`entry admission contract missing object ${object}.`);
+  }
+  for (const field of ["businessTitle", "businessSummary", "legalActions", "admissionDecision", "nextAction", "cannotSubmitReason", "readonlyReason", "sourceScenario"]) {
+    if (!(contract.requiredFields ?? []).includes(field)) fail(`entry admission contract missing required field ${field}.`);
+  }
+  for (const step of ["LegalAction Resolver", "Admission Attach", "Runtime Prepare", "WorkItem"]) {
+    if (!(contract.resolverChain ?? []).includes(step)) fail(`entry admission resolver chain missing ${step}.`);
+  }
+  const rules = contract.rules ?? {};
+  for (const rule of ["frontendButtonJudgementForbidden", "searchReadonlyOnly", "searchLearningOnlyForbidden", "correctionRequiresAdmission", "oldWStayCurrentEntryForbidden", "writeFactsOnlyThroughOperationsRuntime"]) {
+    if (rules[rule] !== true) fail(`entry admission rule ${rule} must be true.`);
+  }
+  for (const field of ["action", "label", "view", "allowed", "writeBusinessFact", "admissionDecision"]) {
+    if (!(contract.legalActionFields ?? []).includes(field)) fail(`entry admission legalAction field missing ${field}.`);
+  }
+  if (!String(contract.sourceScenarioRuleZh ?? "").includes("不得把旧 W-STAY 包当当前主链")) {
+    fail("entry admission contract must forbid old W-STAY current entry.");
   }
 }
 

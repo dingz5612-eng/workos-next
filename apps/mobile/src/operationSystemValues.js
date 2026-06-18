@@ -27,6 +27,7 @@ const valueAliases = {
   actionTitle: ["actionTitle", "行动标题"],
   area: ["area", "区域"],
   bedNo: ["bedNo", "床位号", "床位"],
+  buildingContextRef: ["buildingContextRef", "building_context_ref"],
   buildingName: ["buildingName", "buildingId", "楼栋", "楼栋/地点"],
   chargeType: ["chargeType", "应收类型"],
   checkInDate: ["checkInDate", "plannedCheckInDate", "入住日期", "计划入住日期"],
@@ -160,6 +161,7 @@ function derivedDepositRefundAmount(merged = {}, scope = {}) {
 }
 
 export function contextReferenceDisplayValue(fieldId = "", value = "", payload = {}) {
+  if (fieldId === "buildingContextRef") return readValue(payload, "buildingName") || value;
   if (fieldId === "leadId") return leadDisplayValue(value, payload);
   if (fieldId === "reservationId") return reservationDisplayValue(value, payload);
   if (fieldId === "residentId") return personDisplayValue(value, payload);

@@ -72,7 +72,8 @@ if (acceptance?.decisionStatus === "ACCEPTED_BY_00") {
     failures
   );
   requireForbiddenInterpretations(acceptance, failures);
-  if (currentSubjectState.subject.subjectDigest !== acceptedSubject?.subjectDigest) {
+  if (currentSubjectState.subject.subjectDigest !== acceptedSubject?.subjectDigest ||
+    currentBundle.generatedBundleDigest !== acceptedBundle?.generatedBundleDigest) {
     requireEqual(
       acceptance.currentGeneratedCandidateDivergence?.acceptedBundleRemainsImmutable,
       true,

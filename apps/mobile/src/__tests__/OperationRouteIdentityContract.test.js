@@ -300,6 +300,53 @@ describe("OAM Surface WorkItem route identity", () => {
     expect(html).not.toContain('aria-label="填写房间信息 更正中"');
   });
 
+  it("does not let an open correction WorkItem take over an explicit completed record route", () => {
+    const store = runtimeStore();
+    store.workspaces[0].cards[0] = {
+      ...store.workspaces[0].cards[0],
+      status: "confirmed",
+      operationMode: "correction",
+      correctionMode: "append_only"
+    };
+    store.operationWorkItems = [{
+      workItemId: "wi-correction-room",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm",
+      lifecycleState: "ready",
+      payload: {
+        cardId: "cert.roomSetupConfirm",
+        operationMode: "correction",
+        correctionMode: "append_only",
+        sourceWorkItemId: "wi-completed-room"
+      }
+    }];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-completed-room",
+      selectedWorkspace: "W-DORM-MAINLINE",
+      selectedCardId: "cert.roomSetupConfirm",
+      runtimeStore: store
+    });
+
+    const target = resolveOperationPanelTarget({
+      workItemId: "wi-completed-room",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm"
+    }, ctx.state);
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(target.canOpen).toBe(false);
+    expect(target.reason).toBe("missing_persisted_work_item");
+    expect(ctx.state.selectedWorkItemId).toBe("wi-completed-room");
+    expect(html).toContain('data-surface="completed-workspace-record"');
+    expect(html).toContain('data-step-state="completed"');
+    expect(text).toContain("只读记录");
+    expect(text).toContain("已完成 · 有更正");
+    expect(text).not.toContain("更正中");
+    expect(html).not.toContain('data-work-item-id="wi-correction-room"');
+  });
+
   it("projects Operations WorkItem lifecycle states onto the operation progress rail", () => {
     const store = runtimeStore();
     store.workspaces[0].cards = [

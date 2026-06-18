@@ -63,17 +63,34 @@ public sealed class CanonicalOperationsApiServiceTests
         var service = Service(
             out var runtime,
             out _,
-            workspaces: new[] { StartAdapterWorkspace("W-STAY-RESOURCE", "roomSetup") });
-        var workspace = runtime.FindWorkspace("W-STAY-RESOURCE")!;
+            workspaces: new[] { AcceptedCapabilityRuntimeProjection.Workspace() });
+        var workspace = runtime.FindWorkspace(AcceptedCapabilityRuntimeProjection.WorkspaceId)!;
 
-        var result = service.StartWorkspaceCase(workspace, "W-STAY-RESOURCE", OperatorActor());
+        var result = service.StartWorkspaceCase(workspace, AcceptedCapabilityRuntimeProjection.WorkspaceId, OperatorActor());
 
         Assert.IsNotNull(result.WorkItem.Admission);
         Assert.AreEqual(result.WorkItem.AdmissionDecisionRef, result.WorkItem.Admission["admissionDecisionRef"]);
         Assert.IsTrue((bool)result.WorkItem.Admission["confirmAllowed"]);
+        Assert.IsNotNull(result.WorkItem.BusinessTitle);
+        Assert.IsNotNull(result.WorkItem.BusinessSummary);
+        Assert.IsNotNull(result.WorkItem.LegalActions);
+        Assert.AreEqual("confirm_allowed_production_blocked", result.WorkItem.AdmissionDecision);
+        Assert.AreEqual("lodging.resource-basic-readiness", result.WorkItem.SourceScenario);
+        Assert.AreEqual(2, result.WorkItem.LegalActions!.Count);
+        Assert.AreEqual("openWorkItem", result.WorkItem.LegalActions[0].Action);
+        Assert.IsFalse(result.WorkItem.LegalActions[0].WriteBusinessFact);
+        Assert.AreEqual("submitWorkItem", result.WorkItem.LegalActions[1].Action);
+        Assert.IsTrue(result.WorkItem.LegalActions[1].Allowed);
+        Assert.IsTrue(result.WorkItem.LegalActions[1].WriteBusinessFact);
         var listed = result.OperationWorkItems.First(item => item.WorkItemId == result.WorkItem.WorkItemId);
         Assert.IsNotNull(listed.Admission);
         Assert.AreEqual(result.WorkItem.AdmissionDecisionRef, listed.AdmissionDecisionRef);
+        Assert.IsNotNull(listed.BusinessTitle);
+        Assert.IsNotNull(listed.BusinessSummary);
+        Assert.IsNotNull(listed.LegalActions);
+        Assert.AreEqual(result.WorkItem.AdmissionDecision, listed.AdmissionDecision);
+        Assert.AreEqual(result.WorkItem.SourceScenario, listed.SourceScenario);
+        Assert.AreEqual(result.WorkItem.LegalActions.Count, listed.LegalActions!.Count);
     }
 
     [TestMethod]
@@ -82,6 +99,7 @@ public sealed class CanonicalOperationsApiServiceTests
         var registry = WorkItemDefinitionRegistryService.LoadDefault();
         var adapterDefinition = registry.ResolveStartAdapter("W-STAY-LEAD-RESERVATION", "leadCapture");
         var currentKeyDefinition = registry.ResolveStartAdapter("W-DORM-MAINLINE", "cert.roomSetupConfirm");
+        var dynamicCurrentKeyDefinition = registry.ResolveStartAdapter("W-DORM-MAINLINE-20260617173941-case", "cert.roomSetupConfirm");
         var directWorkspaceCard = registry.ResolveByWorkspaceCard("W-STAY-LEAD-RESERVATION", "leadCapture");
 
         Assert.IsTrue(adapterDefinition.Resolved);
@@ -90,6 +108,9 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.IsTrue(currentKeyDefinition.Resolved);
         Assert.AreEqual("definition.dormitory.roomSetupConfirm.v1", currentKeyDefinition.DefinitionId);
         Assert.AreEqual("oam-certification-current", currentKeyDefinition.Definition?.DefinitionMode);
+        Assert.IsTrue(dynamicCurrentKeyDefinition.Resolved);
+        Assert.AreEqual("definition.dormitory.roomSetupConfirm.v1", dynamicCurrentKeyDefinition.DefinitionId);
+        Assert.AreEqual("oam-certification-current", dynamicCurrentKeyDefinition.Definition?.DefinitionMode);
         Assert.IsFalse(directWorkspaceCard.Resolved);
     }
 

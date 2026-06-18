@@ -71,6 +71,7 @@ const firstGoldenChainBrowserAuditScreenshotIndexPath =
   "artifacts/oam/evidence/dormitory-first-golden-chain-real-browser/screenshot-index.json";
 const firstGoldenChainBrowserAuditResultPath =
   "artifacts/oam/checks/dormitory-first-golden-chain-real-browser-result.json";
+const visibleBusinessCopyContractPath = "docs/oam/visible-business-copy-contract.json";
 const testPlanGeneratedFromCapabilityResultPath =
   "artifacts/oam/checks/test-plan-generated-from-capability-result.json";
 const firstGoldenChainDbProjectionProofResultPath =
@@ -7693,8 +7694,9 @@ function checkFirstGoldenChainBrowserReport(report, summary, node) {
     failures.push(`first golden chain browser report steps must be exactly ${expectedSteps.join(" -> ")}.`);
   }
   const reportText = JSON.stringify(report);
-  if (!reportText.includes("房源建档与基础就绪完成")) {
-    failures.push("scenario 1 browser report must prove 房源建档与基础就绪完成 is visible.");
+  const completionLabels = scenario1CompletionVisibleLabels();
+  if (!completionLabels.some((label) => reportText.includes(label))) {
+    failures.push(`scenario 1 browser report must prove completion is visible: ${completionLabels.join(" / ")}.`);
   }
   for (const requiredLabel of ["房间建档", "床位组确认", "基础就绪确认", "基础就绪结论", "通过"]) {
     if (!reportText.includes(requiredLabel)) {
@@ -8290,6 +8292,16 @@ function checkExecutionLog(entries, expectedDigest) {
       failures.push(`execution log event ${entry.event || "unknown"} source/evidence SHA must match commitSha for the current evidence run.`);
     }
   }
+}
+
+function scenario1CompletionVisibleLabels() {
+  const source = "房源建档与基础就绪完成";
+  const visibleCopyContract = exists(visibleBusinessCopyContractPath)
+    ? readJson(visibleBusinessCopyContractPath)
+    : {};
+  const replacement = (visibleCopyContract.displayTermReplacementsZh ?? [])
+    .find(([from]) => from === source)?.[1];
+  return Array.from(new Set([source, replacement].filter(Boolean)));
 }
 
 function readJson(file) {

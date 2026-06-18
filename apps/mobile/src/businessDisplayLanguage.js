@@ -29,7 +29,9 @@ function replaceZhTerms(value = "") {
 }
 
 function replaceTerms(value = "", replacements = []) {
-  return replacements.reduce((current, [from, to], index) => {
+  return [...replacements]
+    .sort(([left], [right]) => String(right ?? "").length - String(left ?? "").length)
+    .reduce((current, [from, to], index) => {
     const source = String(from ?? "");
     const target = String(to ?? "");
     if (!source || source === target) return current;

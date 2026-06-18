@@ -1,7 +1,7 @@
 import { selectRuntimeWorkspaces, selectSearchSurfaceResults, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
 import { buildSearchResultVM, rankSearchResults } from "../searchIntentHub.js";
 import { isAccommodationResourceSetupQuery, searchIntentSuggestions } from "../searchIntentRegistry.js";
-import { capabilityCommandCatalog, mainlineScenarioCatalog } from "../capabilityProjection.js";
+import { capabilityCommandCatalog, isGeneratedObjectSearchQuery, mainlineScenarioCatalog } from "../capabilityProjection.js";
 import { normalizeOperationLifecycleState } from "../operationStatus.js";
 import { buildBusinessAnchor } from "../businessAnchorKernel.js";
 import { BusinessSummaryHeader, BusinessTaskOverview } from "./experienceComponents.js";
@@ -12,7 +12,7 @@ export function searchView(ctx) {
   return ctx.shell(`
     <section class="search-box">
       <div class="search-line">
-        <input id="query" value="${ctx.escapeAttr(ctx.state.query)}" placeholder="${ctx.tr("searchPlaceholder")}" />
+        <input id="query" value="${ctx.escapeAttr(searchInputDisplayValue(ctx))}" placeholder="${ctx.tr("searchPlaceholder")}" />
         <button id="searchNow">${ctx.tr("search")}</button>
       </div>
       ${searchRecommendations(ctx)}
@@ -43,21 +43,26 @@ function recommendationGroup(titleKey, items, ctx) {
   if (!items.length) return "";
   return `<div class="search-recommendation-group">
     <span>${ctx.tr(titleKey)}</span>
-    <div>${items.map((item) => `<button type="button" data-search-query="${ctx.escapeAttr(item.query)}">${ctx.escapeHtml(item.label)}</button>`).join("")}</div>
+    <div>${items.map((item) => `<button type="button" data-search-query="${ctx.escapeAttr(item.query)}">${ctx.escapeHtml(userFacingBusinessText(item.label, ctx))}</button>`).join("")}</div>
   </div>`;
+}
+
+function searchInputDisplayValue(ctx) {
+  return userFacingBusinessText(ctx.state.query || "", ctx);
 }
 
 function workosSearchSections(ctx) {
   const { state } = ctx;
   const query = String(state.query || "").trim();
+  const objectQuery = isGeneratedObjectSearchQuery(query);
   const workspaces = selectRuntimeWorkspaces(state);
   const queue = selectWorkbenchQueue(state);
-  const backendCommandResults = query ? backendCommandSearchResults(state, query) : [];
+  const backendCommandResults = query && !objectQuery ? backendCommandSearchResults(state, query) : [];
   const backendOperationResults = query ? backendOperationSearchResults(state, query) : [];
   const workspaceResults = query ? selectSearchSurfaceResults(state, query).filter((workspace) => workspaceMatchesQuery(workspace, query, ctx)) : workspaces;
   const activeWorkspaceResults = workspaceResults.filter((workspace) => !isTerminalWorkspace(workspace));
-  const commands = dedupeCommandItems([...backendCommandResults, ...activeCommands(workspaces, ctx)]);
-  if (query && isAccommodationResourceSetupQuery(query)) {
+  const commands = objectQuery ? [] : dedupeCommandItems([...backendCommandResults, ...activeCommands(workspaces, ctx)]);
+  if (query && !objectQuery && isAccommodationResourceSetupQuery(query)) {
     return [section("activeCommands", commands)];
   }
   const recoveryItems = unfinishedRecoveryItems(queue, ctx);
@@ -115,7 +120,7 @@ function shouldHideHeaderAnchor(source = {}, ctx = {}, hasOverview = false) {
 }
 
 function searchBusinessTaskBody(normalized, ctx, item = {}) {
-  const issue = searchAdmissionRequiresExplanation(normalized.admissionDecision);
+  const issue = searchAdmissionRequiresExplanation(normalized);
   const overview = BusinessTaskOverview({
     workItemType: normalized.title,
     nextAction: normalized.nextActionLabel,
@@ -136,22 +141,25 @@ function searchBusinessTaskBody(normalized, ctx, item = {}) {
 }
 
 function searchResultState(normalized) {
-  return searchAdmissionRequiresExplanation(normalized.admissionDecision) ? "blocked" : "ready";
+  return searchAdmissionRequiresExplanation(normalized) ? "blocked" : "ready";
 }
 
-function searchAdmissionRequiresExplanation(decision = "") {
+function searchAdmissionRequiresExplanation(normalized = {}) {
+  const decision = typeof normalized === "string" ? normalized : normalized.admissionDecision || "";
+  const readonlyOpenActions = new Set(["openObject", "openWorkspace", "startOperationsWorkspace"]);
+  if (decision === "prepare_only_confirm_denied" && readonlyOpenActions.has(normalized.actionType)) return false;
+  if (decision === "confirm_allowed_production_blocked" && readonlyOpenActions.has(normalized.actionType)) return false;
   return [
     "visible_blocked",
     "visible_only",
-    "prepare_only_confirm_denied",
-    "confirm_allowed_production_blocked"
+    "prepare_only_confirm_denied"
   ].includes(decision);
 }
 
 function activeCommands(workspaces, ctx) {
   const query = String(ctx.state.query || "").trim();
   return generatedMainlineEntries(ctx)
-    .filter((command) => !query || command.keywords.some((keyword) => query.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())))
+    .filter((command) => !query || command.keywords.some((keyword) => keywordMatchesQuery(keyword, query)))
     .map((command) => {
       if (command.resultType === "mainlineScenario") return command;
       const admission = commandAdmission(ctx, command);
@@ -195,9 +203,9 @@ function searchKernelAdmissionForCommand(ctx = {}, command = {}) {
 
 function generatedMainlineEntries(ctx) {
   const scenarioOneCommand = capabilityCommandCatalog().map((item) =>
-    command(item.templateWorkspaceId, item.firstCardId, item, item.keywords));
+    command(item.templateWorkspaceId, item.firstCardId, item, item.keywords))
+    .filter((item) => commandAdmission(ctx, item));
   const scenarioDirectory = mainlineScenarioCatalog()
-    .filter((scenario) => scenario.scenarioNo !== 1)
     .map((scenario) => ({
       resultType: "mainlineScenario",
       scenarioNo: scenario.scenarioNo,
@@ -220,6 +228,13 @@ function command(templateWorkspaceId, firstCardId, { title, subtitle, nextAction
   return { templateWorkspaceId, firstCardId, title, subtitle, nextAction, keywords };
 }
 
+function keywordMatchesQuery(keyword = "", query = "") {
+  const normalizedKeyword = String(keyword || "").trim().toLocaleLowerCase();
+  const normalizedQuery = String(query || "").trim().toLocaleLowerCase();
+  return Boolean(normalizedKeyword && normalizedQuery) &&
+    (normalizedKeyword.includes(normalizedQuery) || normalizedQuery.includes(normalizedKeyword));
+}
+
 function backendOperationSearchResults(state = {}, query = "") {
   const results = state.runtimeStore?.searchResultsByQuery?.[normalizeQuery(query)] || [];
   return results
@@ -228,6 +243,7 @@ function backendOperationSearchResults(state = {}, query = "") {
     .map((item) => ({
       ...item,
       resultType: "workItem",
+      _searchKernelMatchedQuery: normalizeQuery(query),
       workItemId: item.workItemId || item.work_item_id || item.target?.workItemId || "",
       workspaceId: item.workspaceId || item.workspace_id || item.target?.workspaceId || "",
       cardId: item.cardId || item.card_id || item.target?.cardId || "",
@@ -323,7 +339,7 @@ function normalizeSearchCard(item, ctx) {
     resultType: item.resultType || item.type || "object",
     title: userFacingBusinessText(localized(item.localizedTitle ?? item.title, ctx) || ctx.tr("searchNoResult"), ctx),
     subtitle: userFacingBusinessText(localized(item.localizedSubtitle ?? item.subtitle, ctx) || ctx.tr("workosSearchSubtitle"), ctx),
-    status: localized(item.localizedStatus ?? item.status, ctx) || "-",
+    status: userFacingBusinessText(localized(item.localizedStatus ?? item.status, ctx) || "-", ctx),
     nextAction: userFacingBusinessText(localized(item.localizedNextAction ?? item.nextAction, ctx) || ctx.tr("search"), ctx)
   };
 }
@@ -407,18 +423,39 @@ function objectResults(workspaces, kind, ctx) {
   return workspaces
     .filter((workspace) => workspace.domain === "stay" || String(workspace.id).toLowerCase().includes(kind))
     .filter((workspace) => !isTerminalWorkspace(workspace))
+    .filter((workspace) => searchResultKindMatches(workspace, kind))
     .filter(() => objectKindMatchesQuery(kind, ctx.state.query))
     .slice(0, 5)
     .map((workspace) => ({
-      title: localized(workspace.localizedTitle, ctx) || `${labelByKind[kind]} · ${tx(workspace.title, ctx) || workspace.id}`,
+      title: localized(workspace.localizedTitle ?? workspace.businessTitle, ctx) || `${labelByKind[kind]} · ${tx(workspace.title, ctx) || workspace.id}`,
       resultType: kind,
       workspaceId: workspace.id,
-      cardId: workspace._surfaceCardId || workspace.cards?.[0]?.id || "",
-      subtitle: localized(workspace.localizedSubtitle, ctx) || tx(workspace.summary, ctx) || tx(activeDisplayCard(workspace)?.title, ctx) || accommodationBusinessLabel(ctx),
+      cardId: workspace._surfaceCardId || workspace.cardId || workspace.target?.cardId || workspace.cards?.[0]?.id || "",
+      subtitle: localized(workspace.localizedSubtitle ?? workspace.businessSummary, ctx) || tx(workspace.summary, ctx) || tx(activeDisplayCard(workspace)?.title, ctx) || accommodationBusinessLabel(ctx),
       status: localized(workspace.localizedStatus, ctx) || workspace.cards?.[0]?.status || "ready",
       nextAction: localized(workspace.localizedNextAction, ctx) || tx(workspace.next, ctx) || ctx.tr("openWorkspace"),
-      businessAnchor: buildBusinessAnchor(workspace, ctx)
+      businessAnchor: buildBusinessAnchor(workspace, ctx),
+      businessTitle: workspace.businessTitle,
+      businessSummary: workspace.businessSummary,
+      legalActions: workspace.legalActions,
+      admissionDecision: workspace.admissionDecision,
+      cannotSubmitReason: workspace.cannotSubmitReason,
+      readonlyReason: workspace.readonlyReason,
+      sourceScenario: workspace.sourceScenario,
+      admission: workspace.admission,
+      gateResult: workspace.gateResult,
+      sourceRefs: workspace.sourceRefs,
+      target: workspace.target
     }));
+}
+
+function searchResultKindMatches(workspace = {}, kind = "") {
+  if (!workspace.resultType && !workspace.sourceRefs && !workspace.target) return true;
+  const cardId = workspace._surfaceCardId || workspace.cardId || workspace.target?.cardId || "";
+  if (/bedSetup/i.test(cardId)) return kind === "bed";
+  if (/roomSetup|resourceReadiness/i.test(cardId)) return kind === "room";
+  if (/checkin|stay|lead|deposit|payment|checkout|serviceTask|expense|period/i.test(cardId)) return kind === "stay";
+  return kind === "room";
 }
 
 function section(titleKey, items) {
@@ -445,6 +482,13 @@ function workspaceMatchesQuery(workspace = {}, query = "", ctx = {}) {
     tx(workspace.title, ctx),
     tx(workspace.summary, ctx),
     tx(workspace.next, ctx),
+    localized(workspace.businessTitle, ctx),
+    localized(workspace.businessSummary, ctx),
+    localized(workspace.localizedTitle, ctx),
+    localized(workspace.localizedSubtitle, ctx),
+    localized(workspace.localizedNextAction, ctx),
+    workspace.matchedTerms?.join(" "),
+    workspace.matched_terms?.join(" "),
     workspace.cards?.map((card) => `${card.id} ${tx(card.title, ctx)} ${card.status || ""}`).join(" ")
   ].join(" ").toLocaleLowerCase();
   if (isAccommodationResourceSetupQuery(normalized)) return /房源建档|基础就绪|房间建档|床位组确认|住宿经营/i.test(text);

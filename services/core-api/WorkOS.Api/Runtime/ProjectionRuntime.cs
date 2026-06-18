@@ -51,7 +51,7 @@ public sealed partial class ProjectionRuntime
 
     public WorkspaceProjection? FindWorkspace(string workspaceId)
     {
-        lock (gate) return queryService.FindWorkspace(state, workspaceId);
+        lock (gate) return queryService.FindUserReachableWorkspace(state, workspaceId);
     }
 
     public WorkspaceProjection StartResourceSetup() =>

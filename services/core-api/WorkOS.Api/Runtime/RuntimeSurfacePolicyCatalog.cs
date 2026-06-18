@@ -17,8 +17,18 @@ internal sealed class RuntimeSurfacePolicyCatalog
 
     public static RuntimeSurfacePolicyCatalog LoadDefault() => Default.Value;
 
-    public RuntimeSurfacePolicy? ForWorkspace(string workspaceId) =>
-        byWorkspaceId.TryGetValue(workspaceId, out var policy) ? policy : null;
+    public RuntimeSurfacePolicy? ForWorkspace(string workspaceId)
+    {
+        if (byWorkspaceId.TryGetValue(workspaceId, out var policy))
+        {
+            return policy;
+        }
+
+        var templateWorkspaceId = TemplateWorkspaceIdForPolicy(workspaceId);
+        return templateWorkspaceId is not null && byWorkspaceId.TryGetValue(templateWorkspaceId, out policy)
+            ? policy
+            : null;
+    }
 
     public int MissingSurfaceCoverageCount(RuntimeState state) =>
         state.Workspaces.Count(workspace => ForWorkspace(workspace.Id) is null);
@@ -41,6 +51,22 @@ internal sealed class RuntimeSurfacePolicyCatalog
         }
 
         return new RuntimeSurfacePolicyCatalog(policies);
+    }
+
+    private static string? TemplateWorkspaceIdForPolicy(string workspaceId)
+    {
+        if (string.IsNullOrWhiteSpace(workspaceId))
+        {
+            return null;
+        }
+
+        if (workspaceId.Equals(AcceptedCapabilityRuntimeProjection.WorkspaceId, StringComparison.OrdinalIgnoreCase) ||
+            workspaceId.StartsWith($"{AcceptedCapabilityRuntimeProjection.WorkspaceId}-", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Dormitory.FirstGoldenChain";
+        }
+
+        return null;
     }
 
     private static RuntimeSurfacePolicy ParsePolicy(JsonElement item) =>

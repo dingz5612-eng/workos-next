@@ -40,6 +40,9 @@ export function workspaceView(ctx) {
       </section>
     `);
   }
+  if (isRetiredLegacyWorkspace(item)) {
+    return ctx.shell(retiredLegacyWorkspaceView(ctx));
+  }
   const activeCard = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   const workspaceCompleted = (item.cards || []).every((card) => isTerminalCardStatus(card.status));
   const viewingCompletedStep = isTerminalCardStatus(activeCard.status) && !workspaceCompleted;
@@ -209,6 +212,25 @@ function fieldsForRecord(card, item, ctx) {
       !["备注", "补充说明", "异议说明"].includes(ctx.localTerm(field, "zh-CN"));
     return isScopedResourceFieldVisible(card?.id, fieldId, values, fallbackVisible);
   });
+}
+
+function isRetiredLegacyWorkspace(item = {}) {
+  return /^W-STAY-/i.test(String(item.id || ""));
+}
+
+function retiredLegacyWorkspaceView(ctx) {
+  const archiveCopy = ctx.tr("legacyArchivedReadonly");
+  const currentEntry = ctx.state.lang === "ru-RU"
+    ? "Откройте текущий сценарий базовой готовности из рабочего списка или поиска."
+    : "请从“工作项”或“搜索”进入当前住宿办理。";
+  return `
+    <section class="workspace-page legacy-archive-readonly" data-legacy-archive-readonly="true">
+      <span>${ctx.tr("completedRecordReadonly")}</span>
+      <h1>${ctx.tr("completedRecordReadonly")}</h1>
+      <p>${ctx.escapeHtml(archiveCopy)}</p>
+      <p>${ctx.escapeHtml(currentEntry)}</p>
+    </section>
+  `;
 }
 
 function scenario1CompletionValues(item, ctx) {
@@ -487,7 +509,8 @@ export function primaryActionButton(actionState, ctx) {
   const disabled = action.disabled ? "disabled" : "";
   const title = action.reasonKey ? ` title="${ctx.escapeAttr(ctx.tr(action.reasonKey))}"` : "";
   const submit = ["ready", "readyObservation", "missingRequiredFields"].includes(actionState.status) ? "data-submit-card" : `data-action-state="${ctx.escapeAttr(actionState.status)}"`;
-  return `<button class="primary-action ${ctx.escapeAttr(actionState.status)}" ${submit} ${disabled}${title}>${ctx.tr(action.labelKey)}</button>`;
+  const label = action.label ? ctx.tx(action.label) : ctx.tr(action.labelKey);
+  return `<button class="primary-action ${ctx.escapeAttr(actionState.status)}" ${submit} ${disabled}${title}>${label}</button>`;
 }
 
 export function cardStatusHelp(card, ctx) {

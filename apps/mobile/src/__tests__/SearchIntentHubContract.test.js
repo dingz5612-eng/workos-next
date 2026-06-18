@@ -75,6 +75,120 @@ describe("OAM Surface search intent hub contract", () => {
     expect(text).toContain("开始设置营业状态");
   });
 
+  it("preserves generated entry admission contract fields from Search Kernel results", () => {
+    const ctx = createSurfaceCtx({ view: "search", query: "房源建档" });
+    const admission = {
+      ...internalPilotAdmissionFixture(),
+      confirmAllowed: false,
+      admissionDecisionRef: "admission:definition.dormitory.roomSetupConfirm.v1:search"
+    };
+    const vm = buildSearchResultVM({
+      resultType: "command",
+      templateWorkspaceId: DORMITORY_MAINLINE_WORKSPACE_ID,
+      firstCardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
+      businessTitle: { "zh-CN": "房源建档与基础就绪", "ru-RU": "Паспорт жилья и базовая готовность" },
+      businessSummary: { "zh-CN": "新建房间、确认床位组并完成基础检查。" },
+      nextAction: { "zh-CN": "开始新建房间和床位" },
+      readonlyReason: { "zh-CN": "搜索结果只读；开始入口会先创建 WorkItem，再由 Runtime Prepare 校验。" },
+      sourceScenario: "lodging.resource-basic-readiness",
+      admissionDecision: "prepare_only_confirm_denied",
+      legalActions: [{
+        action: "startOperationsWorkspace",
+        label: { "zh-CN": "开始新建房间和床位" },
+        view: "operationPanel",
+        allowed: true,
+        writeBusinessFact: false,
+        admissionDecision: "prepare_only_confirm_denied",
+        cannotSubmitReason: "search_readonly_runtime_start"
+      }],
+      admission
+    }, ctx);
+
+    expect(vm.businessTitle).toBe("房源建档与基础就绪");
+    expect(vm.businessSummary).toContain("新建房间");
+    expect(vm.nextAction).toBe("开始新建房间和床位");
+    expect(vm.readonlyReason).toContain("搜索结果只读");
+    expect(vm.sourceScenario).toBe("lodging.resource-basic-readiness");
+    expect(vm.admissionDecision).toBe("prepare_only_confirm_denied");
+    expect(vm.legalActions).toEqual([expect.objectContaining({
+      action: "startOperationsWorkspace",
+      allowed: true,
+      writeBusinessFact: false,
+      admissionDecision: "prepare_only_confirm_denied"
+    })]);
+  });
+
+  it("preserves Search Kernel readonly object admission and language on room search", () => {
+    const ctx = createSurfaceCtx({ view: "search", query: "A24126", lang: "ru-RU" });
+    const workspaceId = "W-DORM-MAINLINE-20260617173941-case";
+    const admission = {
+      ...internalPilotAdmissionFixture(),
+      confirmAllowed: false,
+      admissionDecisionRef: "admission:definition.dormitory.roomSetupConfirm.v1:search"
+    };
+    ctx.state.runtimeStore.workspaces = [{
+      ...ctx.state.runtimeStore.workspaces[0],
+      id: workspaceId,
+      title: { "zh-CN": "房源建档与基础就绪", "ru-RU": "Базовая готовность ресурса проживания" },
+      summary: { "zh-CN": "按房间建档、床位组确认、基础就绪确认三步办理。", "ru-RU": "Три шага: комната, койка, готовность." },
+      next: { "zh-CN": "按页面顺序完成当前办理。", "ru-RU": "Выполняйте действия по порядку." }
+    }];
+    ctx.state.runtimeStore.searchResultsByQuery = {
+      a24126: [{
+        resultType: "workspaceCardCompatibility",
+        workspaceId,
+        cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
+        businessTitle: { "zh-CN": "房源建档与基础就绪", "ru-RU": "Базовая готовность ресурса проживания" },
+        businessSummary: { "zh-CN": "按房间建档、床位组确认、基础就绪确认三步办理。", "ru-RU": "Три шага: комната, койка, готовность." },
+        nextAction: { "zh-CN": "查看合法下一步", "ru-RU": "Открыть допустимое действие" },
+        readonlyReason: {
+          "zh-CN": "搜索结果只读，只能跳转合法动作。",
+          "ru-RU": "Результат поиска только для чтения; можно перейти только к допустимому действию."
+        },
+        legalActions: [{
+          action: "openWorkItem",
+          label: { "zh-CN": "查看办理", "ru-RU": "Открыть задачу" },
+          view: "operationPanel",
+          allowed: true,
+          writeBusinessFact: false,
+          admissionDecision: "prepare_only_confirm_denied"
+        }],
+        admissionDecision: "prepare_only_confirm_denied",
+        matchedTerms: ["A24126"],
+        score: 204,
+        admission,
+        sourceRefs: {
+          source: "SearchKernelService",
+          sourceType: "workspaceCardProjection",
+          admissionDecisionRef: admission.admissionDecisionRef
+        },
+        gateResult: {
+          status: "visible_readonly",
+          source: "SearchKernelService",
+          sourceType: "workspaceCardProjection",
+          admissionDecisionRef: admission.admissionDecisionRef,
+          writeThroughSearchAllowed: false,
+          writeBusinessFactAllowed: false
+        }
+      }]
+    };
+
+    const html = searchView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-search-section="searchRooms"');
+    expect(html).not.toContain('data-search-section="searchBeds"');
+    expect(html).not.toContain('data-search-section="searchStays"');
+    expect(html).toContain('data-admission-decision="prepare_only_confirm_denied"');
+    expect(html).toContain(`data-workspace="${workspaceId}"`);
+    expect(text).toContain("Открыть допустимое действие");
+    expect(text).toContain("Базовая готовность ресурса проживания");
+    expect(text).toContain("Можно открыть задачу; отправка проверяется на странице оформления.");
+    expect(text).not.toContain("Текущая проблема");
+    expect(text).not.toContain("Подтверждение сейчас недоступно");
+    expect(text).not.toContain("查看合法下一步");
+  });
+
   it("uses Search Kernel admission for active commands without local command admission", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "房源建档" });
     ctx.state.runtimeStore.commandAdmission = null;
@@ -114,9 +228,10 @@ describe("OAM Surface search intent hub contract", () => {
     const text = visibleText(html);
 
     expect(html).not.toContain(`data-start-operations-workspace="${DORMITORY_MAINLINE_WORKSPACE_ID}"`);
-    expect(html).toContain('data-view="learning"');
+    expect(html).not.toContain('data-view="learning"');
+    expect(html).toContain('data-search-query="房源建档与基础就绪"');
     expect(text).not.toContain("开始办理");
-    expect(text).toContain("开始学习");
+    expect(text).toContain("查看详情");
   });
 
   it("renders account recent searches and registered common intent suggestions", () => {
@@ -142,6 +257,24 @@ describe("OAM Surface search intent hub contract", () => {
     expect(repeated).toBe("办理退房结算");
     expect(text).toContain("办理退房结算");
     expect(text).not.toContain("办理办理退房结算");
+  });
+
+  it("renders generated scenario directory in the current language on Search", () => {
+    const ru = visibleText(searchView(createSurfaceCtx({ view: "search", query: "", lang: "ru-RU", recentSearches: ["房源运营"] })));
+    const ky = visibleText(searchView(createSurfaceCtx({ view: "search", query: "", lang: "ky-KG", recentSearches: ["房源运营"] })));
+    const ruQueryHtml = searchView(createSurfaceCtx({ view: "search", query: "房源运营就绪与状态维护", lang: "ru-RU" }));
+
+    expect(ru).toContain("Настроить рабочий статус комнаты");
+    expect(ru).toContain("Только просмотр");
+    expect(ru).toContain("Открыть связанные задачи");
+    expect(ru).toContain("Эксплуатация жилья");
+    expect(ru).not.toMatch(/只读入口|房源运营|开始办理|设置房间营业状态|查看相关工作项|住宿商品与价格|办理入住|经营报表/);
+    expect(ruQueryHtml).toContain('value="Настройка рабочего статуса комнаты"');
+    expect(ruQueryHtml).not.toContain('value="房源运营就绪与状态维护"');
+    expect(ky).toContain("Бөлмөнүн иштөө абалын орнотуу");
+    expect(ky).toContain("Тек гана көрүү");
+    expect(ky).toContain("Турак жай иштетүү");
+    expect(ky).not.toMatch(/只读入口|房源运营|开始办理|设置房间营业状态|查看相关工作项|住宿商品与价格|办理入住|经营报表/);
   });
 
   it("routes object results while keeping evidence activity log out of Search", () => {
@@ -203,7 +336,7 @@ describe("OAM Surface search intent hub contract", () => {
       }]
     });
 
-    const text = visibleText(searchView(ctx));
+    const text = visibleText(searchView(withSearchKernelAdmission(ctx)));
 
     expect(text).toContain("新建房间和床位");
     expect(text).toContain("开始新建房间和床位");
@@ -486,6 +619,17 @@ describe("OAM Surface search intent hub contract", () => {
     expect(vm.actionLabel).toBe("查看记录");
     expect(vm.gateResult.writeThroughSearchAllowed).toBe(false);
     expect(vm.gateResult.writeBusinessFactAllowed).toBe(false);
+  });
+
+  it("does not find processable work items by technical work item type", () => {
+    const html = searchView(createSurfaceCtx({ view: "search", query: "Dorm.RoomSetupConfirm" }));
+    const text = visibleText(html);
+
+    expect(html).not.toContain('data-work-item-id="wi-dorm-room-setup"');
+    expect(html).not.toContain(`data-start-operations-workspace="${DORMITORY_MAINLINE_WORKSPACE_ID}"`);
+    expect(text).not.toContain("继续填写");
+    expect(text).not.toContain("开始办理");
+    expect(text).toContain("这条结果暂时没有可跳转目标");
   });
 
   it("renders Operations Search Kernel work items found by lead customer anchor", () => {

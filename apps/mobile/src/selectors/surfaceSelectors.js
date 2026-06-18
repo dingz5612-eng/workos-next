@@ -103,6 +103,15 @@ function isLegacyDormitoryActiveWorkItem(item = {}) {
     (/^Dorm\./i.test(cardId) && !/^W-DORM-MAINLINE(?:-|$)/i.test(workspaceId));
 }
 
+function isOldWStaySearchEntry(item = {}) {
+  const workspaceId = String(item.workspaceId || item.workspace_id || item.workspace?.id || "");
+  const sourceScenario = String(item.sourceScenario || item.source_scenario || "");
+  if (!sourceScenario) return false;
+  return /^W-STAY-/i.test(workspaceId) &&
+    !sourceScenario.startsWith("lodging.resource-basic-readiness") &&
+    !sourceScenario.startsWith("lodging.resource-operation-status");
+}
+
 function isTerminalQueueItem(item = {}) {
   return [
     item.lifecycleState,
@@ -196,6 +205,8 @@ export function selectSearchSurfaceResults(state, query) {
   const backendResults = state.runtimeStore?.searchResultsByQuery?.[normalized] || [];
   if (backendResults.length) {
     return backendResults
+      .filter((result) => state.debugSurface || !isLegacyDormitoryActiveWorkItem(result))
+      .filter((result) => state.debugSurface || !isOldWStaySearchEntry(result))
       .map((result) => withSurfaceCard(byId.get(result.workspaceId), result.cardId, result.score || 0, result))
       .filter(Boolean);
   }
@@ -306,13 +317,16 @@ function withSurfaceCard(workspace, cardId, score, result = {}) {
   if (!workspace) return null;
   return {
     ...workspace,
+    ...result,
+    id: workspace.id,
+    cards: workspace.cards,
     _surfaceCardId: cardId,
     _score: score,
     score,
-    localizedTitle: result.localizedTitle,
-    localizedSubtitle: result.localizedSubtitle,
+    localizedTitle: result.localizedTitle ?? result.businessTitle ?? result.title,
+    localizedSubtitle: result.localizedSubtitle ?? result.businessSummary ?? result.subtitle,
     localizedStatus: result.localizedStatus,
-    localizedNextAction: result.localizedNextAction
+    localizedNextAction: result.localizedNextAction ?? result.nextAction
   };
 }
 
@@ -324,8 +338,6 @@ function withSurfaceScore(workspace, query) {
 
 function workspaceText(workspace) {
   return [
-    workspace.id,
-    workspace.domain,
     workspace.title?.["zh-CN"],
     workspace.title?.["ru-RU"],
     workspace.summary?.["zh-CN"],
@@ -333,7 +345,7 @@ function workspaceText(workspace) {
     workspace.next?.["zh-CN"],
     workspace.next?.["ru-RU"],
     businessAnchorText(workspace),
-    workspace.cards?.map((card) => `${card.id} ${card.title?.["zh-CN"] || ""} ${card.title?.["ru-RU"] || ""}`).join(" ")
+    workspace.cards?.map((card) => `${card.title?.["zh-CN"] || ""} ${card.title?.["ru-RU"] || ""}`).join(" ")
   ].join(" ").toLocaleLowerCase();
 }
 

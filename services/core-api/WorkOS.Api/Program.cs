@@ -765,24 +765,11 @@ static string[] DormitoryTemplateWorkspaceIds() =>
     new[]
     {
         AcceptedCapabilityRuntimeProjection.WorkspaceId,
-        DormitoryScenario2RuntimeProjection.WorkspaceId,
-        "W-STAY-LEAD-RESERVATION",
-        "W-STAY-CHECKIN",
-        "W-STAY-LIFECYCLE",
-        "W-STAY-DEPOSIT-LEDGER",
-        "W-STAY-PAYMENT-LEDGER",
-        "W-STAY-SERVICE-TASK",
-        "W-STAY-CHECKOUT-SETTLEMENT",
-        "W-STAY-EXPENSE-LEDGER",
-        "W-STAY-PERIOD-ANALYTICS"
+        DormitoryScenario2RuntimeProjection.WorkspaceId
     };
 
 static string[] AllowedWorkspaceStartRoles(string templateWorkspaceId) =>
-    templateWorkspaceId switch
-    {
-        "W-STAY-DEPOSIT-LEDGER" or "W-STAY-PAYMENT-LEDGER" or "W-STAY-EXPENSE-LEDGER" => new[] { "operator", "manager", "admin", "finance" },
-        _ => new[] { "operator", "manager", "admin" }
-    };
+    new[] { "operator", "manager", "admin" };
 
 static IResult StartOperationsWorkspace(
     StartWorkspaceRequest request,

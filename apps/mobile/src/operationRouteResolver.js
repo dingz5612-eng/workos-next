@@ -32,6 +32,9 @@ export function resolvePersistedWorkItem(input = {}, state = {}) {
   const exact = normalized.workItemId
     ? items.find((item) => workItemIdOf(item) === normalized.workItemId)
     : null;
+  if (normalized.workItemId && isPersistedWorkItemId(normalized.workItemId)) {
+    return materializeWorkItem(exact || null, state);
+  }
   const byWorkspaceCard = normalized.workspaceId
     ? items.find((item) =>
       workspaceIdOf(item) === normalized.workspaceId &&

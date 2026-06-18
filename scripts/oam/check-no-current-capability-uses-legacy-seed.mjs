@@ -66,8 +66,7 @@ for (const requiredLegacyFile of [
 const acceptedGeneratedFiles = acceptance?.acceptedGeneratedFiles ?? [];
 const runtimeConsumedFiles = runtimeAdmission?.runtimeConsumedFilesDigestList ?? [];
 for (const item of [...acceptedGeneratedFiles, ...runtimeConsumedFiles]) {
-  if (!String(item?.path ?? "").includes("generated") && item?.path !== "docs/oam/domain-derived-contracts.json" &&
-    item?.path !== "docs/oam/system-derived-contracts.json") {
+  if (!isGeneratedOrDerivedContractAuthority(item?.path)) {
     failures.push(`current capability bundle file must be generated/derived contract authority, actual ${item?.path}.`);
   }
 }
@@ -115,4 +114,19 @@ function slash(value) {
 
 function requireEqual(actual, expected, label, target) {
   if (actual !== expected) target.push(`${label} must be ${JSON.stringify(expected)}, actual ${JSON.stringify(actual)}.`);
+}
+
+function isGeneratedOrDerivedContractAuthority(file) {
+  const normalized = slash(String(file ?? ""));
+  if (!normalized) return false;
+  if (normalized.includes("generated")) return true;
+  if (normalized === "docs/oam/domain-derived-contracts.json" ||
+    normalized === "docs/oam/system-derived-contracts.json") {
+    return true;
+  }
+  const document = readJsonIfExists(normalized, root);
+  return document?.generated === true &&
+    document?.doNotEdit === true &&
+    typeof document?.generatedBy === "string" &&
+    document.generatedBy.includes("generate-system-derived-contracts.mjs");
 }

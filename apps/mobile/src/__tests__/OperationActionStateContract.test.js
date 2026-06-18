@@ -16,6 +16,40 @@ describe("OAM Surface primary action state machine", () => {
     expect(visibleText(html)).toContain("填写房间信息");
   });
 
+  it("uses generated confirmation labels for non-scenario1 operation cards", () => {
+    const ctx = createSurfaceCtx({ lang: "ru-RU" });
+    const card = {
+      id: "cert.selectBaseReadyResource",
+      status: "ready",
+      confirmation: {
+        required: true,
+        requiredRole: "operator",
+        label: {
+          "zh-CN": "提交选择已基础就绪房源",
+          "ru-RU": "Отправить: Выбрать готовую комнату или койку"
+        }
+      }
+    };
+    const workItem = {
+      workspaceId: "W-DORM-RESOURCE-OPERATION-STATUS-TEST",
+      cardId: "cert.selectBaseReadyResource",
+      admission: {
+        visibleAllowed: true,
+        prepareAllowed: true,
+        confirmAllowed: true,
+        productionAllowed: false,
+        mode: "internal_pilot_observation"
+      }
+    };
+
+    const actionState = buildOperationActionState(workItem, card, null, ctx.state);
+    const html = primaryActionButton(actionState, ctx);
+    const text = visibleText(html);
+
+    expect(text).toContain("Отправить: Выбрать готовую комнату или койку");
+    expect(text).not.toContain("Отправить запись наблюдения");
+  });
+
   it("does not render a second card-internal submit button", () => {
     const store = runtimeStore();
     store.workspaces[0].cards[0].evidence = [];
@@ -28,7 +62,7 @@ describe("OAM Surface primary action state machine", () => {
   });
 
   it.each([
-    ["blocked", "查看不能提交原因"],
+    ["blocked", "查看暂不能提交的原因"],
     ["notStarted", "请先完成上一张卡"],
     ["done", "已完成"]
   ])("maps %s card state to the primary CTA", (status, label) => {
@@ -74,7 +108,7 @@ describe("OAM Surface primary action state machine", () => {
 
     const text = visibleText(routeView(ctx));
 
-    expect(text).toContain("查看提交轨迹");
+    expect(text).toContain("查看办理记录");
     expect(text).not.toContain("提交处理");
     expect(text).not.toContain("提交办理记录");
     expect(text).not.toContain("确认办理");
@@ -99,7 +133,7 @@ describe("OAM Surface primary action state machine", () => {
 
     expect(actionState.status).toBe("confirmDenied");
     expect(html).not.toContain("data-submit-card");
-    expect(visibleText(html)).toContain("查看不能提交原因");
+    expect(visibleText(html)).toContain("查看暂不能提交的原因");
   });
 
   it("does not bind submit when a Surface card has no Admission contract", () => {
@@ -118,7 +152,7 @@ describe("OAM Surface primary action state machine", () => {
     expect(actionState.admission.productionAllowed).toBe(false);
     expect(actionState.admission.reason).toBe("missing_admission_contract");
     expect(html).not.toContain("data-submit-card");
-    expect(visibleText(html)).toContain("查看不能提交原因");
+    expect(visibleText(html)).toContain("查看暂不能提交的原因");
   });
 
   it("keeps projection pending distinct from failure", () => {

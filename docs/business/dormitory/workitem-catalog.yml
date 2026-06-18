@@ -124,6 +124,196 @@
       "certificationScenario": "train-1-business-mainline"
     },
     {
+      "workItemType": "Dorm.OperationResourceSelect",
+      "decisionRef": "Dorm.OperationResourceSelect",
+      "中文名称": "选择已基础就绪房源",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [],
+      "affectedFacts": [
+        "CommandSubmission",
+        "DomainEvent",
+        "EvidenceObject"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-operation-resource-select:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "OperationDraft"
+      ],
+      "certificationScenario": "train-1-business-mainline"
+    },
+    {
+      "workItemType": "Dorm.OperationInspectionConfirm",
+      "decisionRef": "Dorm.OperationInspectionConfirm",
+      "中文名称": "运营检查确认",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "operation-inspection-photo",
+        "maintenance-record",
+        "safety-inspection-record",
+        "facility-inspection-record"
+      ],
+      "affectedFacts": [
+        "OperationInspection",
+        "OperationEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-operation-inspection-confirm:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "OperationInspection",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "certificationScenario": "train-1-business-mainline"
+    },
+    {
+      "workItemType": "Dorm.OperationStatusDraft",
+      "decisionRef": "Dorm.OperationStatusDraft",
+      "中文名称": "运营状态草稿",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "status-reason-proof",
+        "blocker-reason-proof"
+      ],
+      "affectedFacts": [
+        "CommandSubmission",
+        "DomainEvent",
+        "EvidenceObject"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-operation-status-draft:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "OperationStatusDraft",
+        "OperationBlockerDraft"
+      ],
+      "certificationScenario": "train-1-business-mainline"
+    },
+    {
+      "workItemType": "Dorm.OperationStatusChangeConfirm",
+      "decisionRef": "Dorm.OperationStatusChangeConfirm",
+      "中文名称": "运营状态变更确认",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "impact-proof"
+      ],
+      "affectedFacts": [
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "OperationBlocker",
+        "OperationStatusChange",
+        "OperationEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-operation-status-change-confirm:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "OperationBlocker",
+        "StatusHistory"
+      ],
+      "certificationScenario": "train-1-business-mainline"
+    },
+    {
+      "workItemType": "Dorm.OperationBlockerUpdate",
+      "decisionRef": "Dorm.OperationBlockerUpdate",
+      "中文名称": "日常状态维护",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "progress-photo",
+        "maintenance-progress-record",
+        "supplement-proof"
+      ],
+      "affectedFacts": [
+        "OperationBlocker",
+        "OperationEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-operation-blocker-update:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "OperationBlocker",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "certificationScenario": "train-1-business-mainline"
+    },
+    {
+      "workItemType": "Dorm.OperationRestoreConfirm",
+      "decisionRef": "Dorm.OperationRestoreConfirm",
+      "中文名称": "恢复运营确认",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "restore-photo",
+        "recheck-record",
+        "blocker-close-proof"
+      ],
+      "affectedFacts": [
+        "OperationRestore",
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "OperationEvidence",
+        "StatusHistory",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-operation-restore-confirm:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "OperationRestore",
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "StatusHistory"
+      ],
+      "certificationScenario": "train-1-business-mainline"
+    },
+    {
       "workItemType": "Dorm.LeadCapture",
       "decisionRef": "Dorm.LeadCapture",
       "中文名称": "线索录入",

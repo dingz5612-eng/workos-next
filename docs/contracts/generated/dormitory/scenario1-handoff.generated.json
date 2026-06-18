@@ -9,29 +9,29 @@
     "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
     "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
   ],
-  "inputDigest": "sha256:c8c902f667800a671b822de789664cb429648a89f624b3ef634f2f68633a0fb0",
+  "inputDigest": "sha256:e4b9f5266cf9f880120d68c833d6ba926e280ec9aa48cbd05e5ce15791a27b2c",
   "inputDigests": [
     {
       "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
-      "digest": "sha256:728dfe08030b24a241f5ac008d4d30cbf43d48f66cfddb5b97911b13a39320de"
+      "digest": "sha256:679ea4c4b65d843e49ed10b8ce554a56d9cae48792bf63db7de4a4583d70315c"
     },
     {
       "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
       "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
     }
   ],
-  "sourceContentDigest": "sha256:728dfe08030b24a241f5ac008d4d30cbf43d48f66cfddb5b97911b13a39320de",
+  "sourceContentDigest": "sha256:679ea4c4b65d843e49ed10b8ce554a56d9cae48792bf63db7de4a4583d70315c",
   "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "authorityId": "Dormitory.Scenario1.ResourceBasicReadiness",
   "scenarioPackageNo": 1,
   "scenarioId": "lodging.resource-basic-readiness",
-  "outputContentDigest": "sha256:b58aec3761c64f19264a142138ae021acab6f02510dcbe19b309503220a7271e",
+  "outputContentDigest": "sha256:0ac8baded754e230957ddd96c28fcb6a8fa03d53e3fa1b3cc024af865abea338",
   "productionConfirmAllowed": false,
   "releaseAuthority": false,
   "finalGoNoGo": "NO_GO",
   "nameZh": "房源建档与基础就绪",
   "businessGoalZh": "把房间和床位组建档，完成基础资料与基础检查确认，只输出基础就绪摘要，不输出可运营、可报价或可预订。",
-  "sourceScenarioDigest": "sha256:728dfe08030b24a241f5ac008d4d30cbf43d48f66cfddb5b97911b13a39320de",
+  "sourceScenarioDigest": "sha256:679ea4c4b65d843e49ed10b8ce554a56d9cae48792bf63db7de4a4583d70315c",
   "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
   "downstream": {
     "allowedConsumerPackageNo": 2,

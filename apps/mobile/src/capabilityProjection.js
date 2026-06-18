@@ -19,6 +19,7 @@ export const DORMITORY_SCENARIO1_STEPS = (scenarioOneMirror.steps || []).map((st
 }));
 
 export const ACCEPTED_MAINLINE_DIGEST = mainlineControl.outputContentDigest;
+export const MAINLINE_ENTRY_ADMISSION_CONTRACT = mainlineControl.entryAdmissionContract || {};
 export const MAINLINE_FIELD_CATEGORIES = scenarioOneMirror.fields || {};
 export const MAINLINE_DRAFT_POLICY = { editableUntilConfirmed: true };
 export const MAINLINE_BUSINESS_UI = { technicalDetailsDefaultExpanded: false };
@@ -230,6 +231,35 @@ export function capabilityCommandCatalog() {
   }];
 }
 
+export function capabilitySearchProjectionPolicy() {
+  return capabilityProjection.searchProjection || {};
+}
+
+export function isGeneratedObjectSearchQuery(query = "") {
+  const policy = capabilitySearchProjectionPolicy();
+  if (policy.objectQueriesStartCommand !== false) return false;
+  const normalized = normalizeSearchObjectQuery(query);
+  if (!normalized) return false;
+  const examples = (policy.objectQueryExamples || []).map(normalizeSearchObjectQuery).filter(Boolean);
+  if (examples.includes(normalized)) return true;
+  if (policy.ordinaryRoomQueryStartsCommand === false && looksLikeRoomObjectQuery(normalized)) return true;
+  return false;
+}
+
+function normalizeSearchObjectQuery(value = "") {
+  return String(value || "")
+    .trim()
+    .toLocaleLowerCase()
+    .replace(/[，。；、,.!?！？:：;；/\\|()[\]{}"'`~]/g, "")
+    .replace(/\s+/g, "");
+}
+
+function looksLikeRoomObjectQuery(value = "") {
+  return (/^[a-z]?\d+[a-z]?$/.test(value) && value.length >= 2) ||
+    (/^\d+房间$/.test(value)) ||
+    (/^[a-z]\d+房间$/.test(value));
+}
+
 function currentCommandKeywords(fallback = []) {
   const generated = capabilityProjection.commandCatalog?.[0]?.keywords || [];
   return Array.from(new Set([...fallback, ...generated].filter(Boolean)));
@@ -252,11 +282,10 @@ export function mainlineScenarioCatalog() {
 function scenarioKeywords(scenario = {}) {
   const words = [
     scenario.nameZh,
+    businessDisplayZh(scenario.nameZh),
     scenario.scenarioId,
     `场景${scenario.scenarioNo}`,
-    `场景 ${scenario.scenarioNo}`,
-    ...(scenario.summaryOutputs || []),
-    ...(scenario.upstreamSummaryInputs || [])
+    `场景 ${scenario.scenarioNo}`
   ].filter(Boolean);
   return Array.from(new Set(words));
 }

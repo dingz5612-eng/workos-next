@@ -1,0 +1,108 @@
+{
+  "version": "oam.dormitory.workitem-operation.v1",
+  "status": "derived",
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "workitem.Dorm.OperationStatusChangeConfirm",
+  "workItemType": "Dorm.OperationStatusChangeConfirm",
+  "entryFrom": "Mobile Surface 工作台、Search 只读跳转或上游 WorkItem 下游提示",
+  "systemAutoFilled": [
+    "tenantId",
+    "caseId",
+    "definitionId",
+    "workItemId",
+    "sourceWorkItemId",
+    "projectionVersion"
+  ],
+  "operatorFills": [
+    "submitImpactConfirmation",
+    "impactConfirmationNotes"
+  ],
+  "leadApproves": [
+    "仅在例外或升级时审批"
+  ],
+  "readonlyFields": [
+    "tenantId",
+    "caseId",
+    "definitionId",
+    "workItemId",
+    "sourceWorkItemId",
+    "projectionVersion",
+    "createdAt",
+    "confirmedAt",
+    "ledgerEntryId",
+    "domainEventId"
+  ],
+  "editableFields": [
+    "submitImpactConfirmation",
+    "impactConfirmationNotes"
+  ],
+  "evidenceRequired": [
+    "impact-proof"
+  ],
+  "submittedEvent": "OperationStatusChangeConfirmSubmitted",
+  "ledgerImpact": "无账务影响",
+  "lensUpdates": [
+    "RoomOperationStatus",
+    "BedOperationStatus",
+    "OperationBlocker",
+    "StatusHistory"
+  ],
+  "downstreamWorkItems": [
+    "Dorm.OperationBlockerUpdate"
+  ],
+  "failureRoutes": [
+    "Dorm.ExceptionResolve",
+    "append_only_correction_work_item",
+    "blocked_with_missing_fields"
+  ],
+  "definitionId": "definition.dormitory.operationStatusChangeConfirm.v1",
+  "commandType": "OperationStatusChange.Confirm",
+  "allowedFacts": [
+    "RoomOperationStatus",
+    "BedOperationStatus",
+    "OperationBlocker",
+    "OperationStatusChange",
+    "OperationEvidence",
+    "StatusHistory",
+    "EvidenceObject",
+    "DomainEvent",
+    "CommandSubmission"
+  ],
+  "forbiddenFacts": [
+    "RatePlan",
+    "Quote",
+    "Reservation",
+    "Stay",
+    "Payment",
+    "Deposit",
+    "DepositAccount",
+    "Refund",
+    "LedgerEntry",
+    "LedgerTransaction",
+    "PaymentAllocation",
+    "AmountBasis",
+    "MoneyBasis",
+    "FinancialFact",
+    "FinanceReceipt",
+    "DepositEntry"
+  ],
+  "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+  "evidencePolicyRef": "evidence.dormitory.scenario2.impact-confirmation.v1",
+  "ledgerPolicyRef": "ledger.none.v1",
+  "dbTableGroups": [
+    "operations-runtime",
+    "evidence-audit",
+    "projection-read-side",
+    "accommodation-facts"
+  ],
+  "tests": [
+    "tests/WorkOS.RuntimeIntegrationTests",
+    "tests/WorkOS.RuntimeContractTests",
+    "apps/mobile/src/__tests__"
+  ]
+}
