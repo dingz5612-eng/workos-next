@@ -1,0 +1,40 @@
+{
+  "version": "oam.evidence-projection-policy.v1",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "projectionOnlyArtifacts": [
+    "artifacts/oam/evidence/evidence-graph.json",
+    "artifacts/oam/final-report.json",
+    "artifacts/oam/evidence/current-oam-release-evidence-object.json",
+    "artifacts/oam/evidence/current-oam-release-attestation.json"
+  ],
+  "allowedProjectionInputs": [
+    "authority ledger replay result",
+    "capability state",
+    "acceptedGeneratedBundleDigest",
+    "runtimeConsumedBundleDigest",
+    "Environment Profile",
+    "lane results",
+    "forbidden interpretations"
+  ],
+  "forbiddenDecisionAuthority": [
+    "generated accepted",
+    "runtime ready",
+    "business landing",
+    "production confirmation",
+    "release GO"
+  ],
+  "finalGoAuthority": {
+    "onlySource": "RELEASE_AUTHORIZED ledger event",
+    "releaseAuthorizedEventPresent": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  },
+  "forbiddenInterpretations": [
+    "Evidence Root PASS is not generated acceptance",
+    "Evidence Root PASS is not runtime ready",
+    "Final Report PASS is not business landing",
+    "Release Evidence Object exists is not production confirmation",
+    "Release Attestation exists is not release authority",
+    "Final GO can only come from RELEASE_AUTHORIZED ledger event"
+  ]
+}

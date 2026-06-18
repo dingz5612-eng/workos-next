@@ -1,15 +1,18 @@
 import { selectRuntimeWorkspaces, selectSearchSurfaceResults, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
 import { buildSearchResultVM, rankSearchResults } from "../searchIntentHub.js";
-import { isAccommodationResourceSetupQuery, searchIntentSuggestions, searchIntentTerms } from "../searchIntentRegistry.js";
+import { isAccommodationResourceSetupQuery, searchIntentSuggestions } from "../searchIntentRegistry.js";
+import { capabilityCommandCatalog, isGeneratedObjectSearchQuery, mainlineScenarioCatalog } from "../capabilityProjection.js";
+import { normalizeOperationLifecycleState } from "../operationStatus.js";
 import { buildBusinessAnchor } from "../businessAnchorKernel.js";
 import { BusinessSummaryHeader, BusinessTaskOverview } from "./experienceComponents.js";
+import { userFacingBusinessText } from "../businessDisplayLanguage.js";
 
 export function searchView(ctx) {
   const results = workosSearchSections(ctx);
   return ctx.shell(`
     <section class="search-box">
       <div class="search-line">
-        <input id="query" value="${ctx.escapeAttr(ctx.state.query)}" placeholder="${ctx.tr("searchPlaceholder")}" />
+        <input id="query" value="${ctx.escapeAttr(searchInputDisplayValue(ctx))}" placeholder="${ctx.tr("searchPlaceholder")}" />
         <button id="searchNow">${ctx.tr("search")}</button>
       </div>
       ${searchRecommendations(ctx)}
@@ -22,6 +25,7 @@ export function searchView(ctx) {
 }
 
 function searchRecommendations(ctx) {
+  if (String(ctx.state.query || "").trim()) return "";
   const frequent = searchIntentSuggestions(ctx.state.lang).slice(0, 4);
   const recent = (ctx.state.recentSearches || [])
     .filter(Boolean)
@@ -39,19 +43,28 @@ function recommendationGroup(titleKey, items, ctx) {
   if (!items.length) return "";
   return `<div class="search-recommendation-group">
     <span>${ctx.tr(titleKey)}</span>
-    <div>${items.map((item) => `<button type="button" data-search-query="${ctx.escapeAttr(item.query)}">${ctx.escapeHtml(item.label)}</button>`).join("")}</div>
+    <div>${items.map((item) => `<button type="button" data-search-query="${ctx.escapeAttr(item.query)}">${ctx.escapeHtml(userFacingBusinessText(item.label, ctx))}</button>`).join("")}</div>
   </div>`;
+}
+
+function searchInputDisplayValue(ctx) {
+  return userFacingBusinessText(ctx.state.query || "", ctx);
 }
 
 function workosSearchSections(ctx) {
   const { state } = ctx;
   const query = String(state.query || "").trim();
+  const objectQuery = isGeneratedObjectSearchQuery(query);
   const workspaces = selectRuntimeWorkspaces(state);
   const queue = selectWorkbenchQueue(state);
+  const backendCommandResults = query && !objectQuery ? backendCommandSearchResults(state, query) : [];
   const backendOperationResults = query ? backendOperationSearchResults(state, query) : [];
   const workspaceResults = query ? selectSearchSurfaceResults(state, query).filter((workspace) => workspaceMatchesQuery(workspace, query, ctx)) : workspaces;
   const activeWorkspaceResults = workspaceResults.filter((workspace) => !isTerminalWorkspace(workspace));
-  const commands = activeCommands(workspaces, ctx);
+  const commands = objectQuery ? [] : dedupeCommandItems([...backendCommandResults, ...activeCommands(workspaces, ctx)]);
+  if (query && !objectQuery && isAccommodationResourceSetupQuery(query)) {
+    return [section("activeCommands", commands)];
+  }
   const recoveryItems = unfinishedRecoveryItems(queue, ctx);
   const recoveryKeys = new Set(recoveryItems.map(queueEntryKey));
   const queueWithoutRecovery = queue.filter((item) => !recoveryKeys.has(queueEntryKey(item)));
@@ -107,7 +120,7 @@ function shouldHideHeaderAnchor(source = {}, ctx = {}, hasOverview = false) {
 }
 
 function searchBusinessTaskBody(normalized, ctx, item = {}) {
-  const issue = searchAdmissionRequiresExplanation(normalized.admissionDecision);
+  const issue = searchAdmissionRequiresExplanation(normalized);
   const overview = BusinessTaskOverview({
     workItemType: normalized.title,
     nextAction: normalized.nextActionLabel,
@@ -115,7 +128,7 @@ function searchBusinessTaskBody(normalized, ctx, item = {}) {
     blocker: normalized.admissionReasonLabel
   }, ctx, { item });
   const note = !overview && normalized.nextActionLabel
-    ? `<p class="business-task-note">${ctx.escapeHtml(normalized.nextActionLabel)}</p>`
+    ? `<p class="business-task-note">${ctx.escapeHtml(userFacingBusinessText(normalized.nextActionLabel, ctx))}</p>`
     : "";
   return `<div class="business-task-body search-business-task-body" data-surface="business-task-body">
     ${overview}
@@ -128,23 +141,27 @@ function searchBusinessTaskBody(normalized, ctx, item = {}) {
 }
 
 function searchResultState(normalized) {
-  return searchAdmissionRequiresExplanation(normalized.admissionDecision) ? "blocked" : "ready";
+  return searchAdmissionRequiresExplanation(normalized) ? "blocked" : "ready";
 }
 
-function searchAdmissionRequiresExplanation(decision = "") {
+function searchAdmissionRequiresExplanation(normalized = {}) {
+  const decision = typeof normalized === "string" ? normalized : normalized.admissionDecision || "";
+  const readonlyOpenActions = new Set(["openObject", "openWorkspace", "startOperationsWorkspace"]);
+  if (decision === "prepare_only_confirm_denied" && readonlyOpenActions.has(normalized.actionType)) return false;
+  if (decision === "confirm_allowed_production_blocked" && readonlyOpenActions.has(normalized.actionType)) return false;
   return [
     "visible_blocked",
     "visible_only",
-    "prepare_only_confirm_denied",
-    "confirm_allowed_production_blocked"
+    "prepare_only_confirm_denied"
   ].includes(decision);
 }
 
 function activeCommands(workspaces, ctx) {
   const query = String(ctx.state.query || "").trim();
-  return dormitoryCommandCatalog(ctx)
-    .filter((command) => !query || command.keywords.some((keyword) => query.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())))
+  return generatedMainlineEntries(ctx)
+    .filter((command) => !query || command.keywords.some((keyword) => keywordMatchesQuery(keyword, query)))
     .map((command) => {
+      if (command.resultType === "mainlineScenario") return command;
       const admission = commandAdmission(ctx, command);
       return {
         resultType: "command",
@@ -184,63 +201,38 @@ function searchKernelAdmissionForCommand(ctx = {}, command = {}) {
   return match?.admission || null;
 }
 
-function dormitoryCommandCatalog(ctx) {
-  return [
-    command("W-STAY-RESOURCE", "roomSetup", {
-      title: { "zh-CN": "新增住宿房源", "ru-RU": "Добавить комнату", "ky-KG": "Бөлмө кошуу" },
-      subtitle: { "zh-CN": "先录房号和床位数，价格和可租状态后面再补。", "ru-RU": "Сначала внесите номер комнаты и число коек. Тарифы и готовность заполните дальше.", "ky-KG": "Алгач бөлмө номерин жана койка санын жазыңыз. Баа жана даярдык кийин толтурулат." },
-      nextAction: { "zh-CN": "先填房号", "ru-RU": "Начать с номера комнаты", "ky-KG": "Бөлмө номеринен баштоо" }
-    }, searchIntentTerms("accommodationResourceSetup")),
-    command("W-STAY-LEAD-RESERVATION", "leadCapture", {
-      title: { "zh-CN": "登记咨询和预订", "ru-RU": "Записать заявку и бронь", "ky-KG": "Суроо жана бронь каттоо" },
-      subtitle: { "zh-CN": "先把来访咨询记清楚，再决定预订、取消或转入住。", "ru-RU": "Сначала зафиксируйте обращение, затем бронь, отмена или заселение.", "ky-KG": "Адегенде кайрылууну так жазыңыз, анан бронь, жокко чыгаруу же кирүү." },
-      nextAction: { "zh-CN": "先登记咨询人", "ru-RU": "Начните с заявки", "ky-KG": "Суроо ээсинен баштаңыз" }
-    }, ["线索", "预订", "咨询", "预约", "lead", "reservation", "бронь", "заявка", "суроо", "бронь"]),
-    command("W-STAY-CHECKIN", "lead", {
-      title: { "zh-CN": "安排入住和收款", "ru-RU": "Оформить заезд и оплату", "ky-KG": "Кирүү жана төлөм уюштуруу" },
-      subtitle: { "zh-CN": "从入住人开始，完成分床、计费、押金和收款确认。", "ru-RU": "От жильца к койке, начислению, депозиту и подтверждению оплаты.", "ky-KG": "Жашоочудан баштап койка, эсеп, депозит жана төлөмдү тастыктоо." },
-      nextAction: { "zh-CN": "先确认入住人", "ru-RU": "Начните с жильца", "ky-KG": "Жашоочудан баштаңыз" }
-    }, ["入住收款", "入住", "收款", "押金入住", "安排入住", "checkin", "payment", "заезд", "оплата", "кирүү", "төлөм"]),
-    command("W-STAY-LIFECYCLE", "residentProfile", {
-      title: { "zh-CN": "维护在住信息", "ru-RU": "Обновить данные проживания", "ky-KG": "Жашоо маалыматтарын жаңыртуу" },
-      subtitle: { "zh-CN": "处理住客资料、分床、应收、续住和在住变更。", "ru-RU": "Данные жильца, койка, начисления, продление и изменения проживания.", "ky-KG": "Жашоочу, койка, эсеп, узартуу жана жашоо өзгөрүүлөрү." },
-      nextAction: { "zh-CN": "先打开住客资料", "ru-RU": "Откройте профиль жильца", "ky-KG": "Жашоочу профилин ачыңыз" }
-    }, ["在住", "住客", "续住", "生命周期", "resident", "stay", "жилец", "проживание", "жашоочу", "жашоо"]),
-    command("W-STAY-DEPOSIT-LEDGER", "depositAssessment", {
-      title: { "zh-CN": "处理押金", "ru-RU": "Обработать депозит", "ky-KG": "Депозитти иштетүү" },
-      subtitle: { "zh-CN": "押金评估、收取、财务确认、扣除、退款和关闭。", "ru-RU": "Оценка, прием, фин. подтверждение, удержание, возврат и закрытие.", "ky-KG": "Баалоо, алуу, финансы тастыктоо, кармоо, кайтаруу жана жабуу." },
-      nextAction: { "zh-CN": "先评估押金", "ru-RU": "Начните с оценки", "ky-KG": "Баалоодон баштаңыз" }
-    }, ["押金", "押金账本", "退款", "扣除", "deposit", "refund", "депозит", "возврат"]),
-    command("W-STAY-PAYMENT-LEDGER", "paymentReceipt", {
-      title: { "zh-CN": "登记普通收款", "ru-RU": "Записать обычный платеж", "ky-KG": "Кадимки төлөмдү каттоо" },
-      subtitle: { "zh-CN": "登记收款、财务确认、分配到应收，后续处理欠款。", "ru-RU": "Запись платежа, фин. подтверждение, распределение и долги.", "ky-KG": "Төлөмдү каттоо, финансы тастыктоо, бөлүштүрүү жана карыз." },
-      nextAction: { "zh-CN": "先登记收款", "ru-RU": "Начните с платежа", "ky-KG": "Төлөмдөн баштаңыз" }
-    }, ["普通收款", "收款账本", "欠款", "付款", "payment", "receipt", "платеж", "оплата", "төлөм"]),
-    command("W-STAY-SERVICE-TASK", "serviceTaskCreate", {
-      title: { "zh-CN": "安排清洁或维修", "ru-RU": "Назначить уборку или ремонт", "ky-KG": "Тазалоо же оңдоону дайындоо" },
-      subtitle: { "zh-CN": "创建影响房间、床位可售状态的清洁、维修或配置任务。", "ru-RU": "Создайте задачу, которая влияет на доступность комнаты или койки.", "ky-KG": "Бөлмө же койканын сатылуу абалына таасир берген тапшырма түзүңүз." },
-      nextAction: { "zh-CN": "先创建服务任务", "ru-RU": "Создайте задачу", "ky-KG": "Тапшырма түзүңүз" }
-    }, ["清洁", "维修", "服务任务", "保洁", "cleaning", "repair", "уборка", "ремонт", "тазалоо", "оңдоо"]),
-    command("W-STAY-CHECKOUT-SETTLEMENT", "checkoutStart", {
-      title: { "zh-CN": "办理退住结算", "ru-RU": "Рассчитать выезд", "ky-KG": "Чыгуу эсептешүүсү" },
-      subtitle: { "zh-CN": "处理退住、查房、押金、最终结算、床位释放和清洁任务。", "ru-RU": "Выезд, проверка, депозит, финальный расчет, освобождение койки и уборка.", "ky-KG": "Чыгуу, текшерүү, депозит, акыркы эсеп, койка бошотуу жана тазалоо." },
-      nextAction: { "zh-CN": "先开始退住", "ru-RU": "Начните расчет", "ky-KG": "Эсептешүүнү баштаңыз" }
-    }, ["退住", "结算", "退住结算", "查房", "settlement", "расчет", "эсептешүү"]),
-    command("W-STAY-EXPENSE-LEDGER", "expenseRecord", {
-      title: { "zh-CN": "登记宿舍支出", "ru-RU": "Записать расход общежития", "ky-KG": "Жатакана чыгымын каттоо" },
-      subtitle: { "zh-CN": "登记宿舍支出，后续审批并关联到房间、床位或服务任务。", "ru-RU": "Запишите расход, затем подтвердите и свяжите с комнатой, койкой или задачей.", "ky-KG": "Чыгымды каттап, кийин бөлмө, койка же тапшырмага байланыштырыңыз." },
-      nextAction: { "zh-CN": "先登记支出", "ru-RU": "Начните с расхода", "ky-KG": "Чыгымдан баштаңыз" }
-    }, ["登记宿舍支出", "宿舍支出", "支出", "成本", "费用", "expense", "cost", "расход", "стоимость", "чыгым"]),
-    command("W-STAY-PERIOD-ANALYTICS", "periodScope", {
-      title: { "zh-CN": "做周期复盘", "ru-RU": "Провести обзор периода", "ky-KG": "Мезгилдик талдоо жүргүзүү" },
-      subtitle: { "zh-CN": "确认周期范围，查看指标、财务、运营诊断和行动计划。", "ru-RU": "Период, метрики, финансы, операционная диагностика и план действий.", "ky-KG": "Мезгил, көрсөткүч, финансы, операциялык диагноз жана аракет планы." },
-      nextAction: { "zh-CN": "先确认周期范围", "ru-RU": "Уточните период", "ky-KG": "Мезгилди тактаңыз" }
-    }, ["复盘", "周期", "经营", "指标", "period", "review", "обзор", "период", "талдоо", "мезгил"])
-  ];
+function generatedMainlineEntries(ctx) {
+  const scenarioOneCommand = capabilityCommandCatalog().map((item) =>
+    command(item.templateWorkspaceId, item.firstCardId, item, item.keywords))
+    .filter((item) => commandAdmission(ctx, item));
+  const scenarioDirectory = mainlineScenarioCatalog()
+    .map((scenario) => ({
+      resultType: "mainlineScenario",
+      scenarioNo: scenario.scenarioNo,
+      scenarioId: scenario.scenarioId,
+      title: scenario.title,
+      subtitle: scenario.subtitle,
+      status: scenario.status,
+      nextAction: scenario.nextAction,
+      keywords: scenario.keywords,
+      query: scenario.nameZh,
+      sourceRefs: {
+        source: "dormitory-13-scenario-control.generated",
+        sourceType: "generated-page-entry-policy"
+      }
+    }));
+  return [...scenarioOneCommand, ...scenarioDirectory];
 }
 
 function command(templateWorkspaceId, firstCardId, { title, subtitle, nextAction }, keywords) {
   return { templateWorkspaceId, firstCardId, title, subtitle, nextAction, keywords };
+}
+
+function keywordMatchesQuery(keyword = "", query = "") {
+  const normalizedKeyword = String(keyword || "").trim().toLocaleLowerCase();
+  const normalizedQuery = String(query || "").trim().toLocaleLowerCase();
+  return Boolean(normalizedKeyword && normalizedQuery) &&
+    (normalizedKeyword.includes(normalizedQuery) || normalizedQuery.includes(normalizedKeyword));
 }
 
 function backendOperationSearchResults(state = {}, query = "") {
@@ -251,6 +243,7 @@ function backendOperationSearchResults(state = {}, query = "") {
     .map((item) => ({
       ...item,
       resultType: "workItem",
+      _searchKernelMatchedQuery: normalizeQuery(query),
       workItemId: item.workItemId || item.work_item_id || item.target?.workItemId || "",
       workspaceId: item.workspaceId || item.workspace_id || item.target?.workspaceId || "",
       cardId: item.cardId || item.card_id || item.target?.cardId || "",
@@ -263,6 +256,46 @@ function backendOperationSearchResults(state = {}, query = "") {
       nextAction: item.nextAction || item.next_action,
       businessAnchor: item.businessAnchor || item.business_anchor || item.payload?.fieldValues || {}
     }));
+}
+
+function backendCommandSearchResults(state = {}, query = "") {
+  const results = state.runtimeStore?.searchResultsByQuery?.[normalizeQuery(query)] || [];
+  return results
+    .filter((item) => (item.resultType || item.result_type) === "command")
+    .filter((item) => item.templateWorkspaceId || item.template_workspace_id || item.target?.workspaceId)
+    .map((item) => ({
+      ...item,
+      resultType: "command",
+      commandId: item.commandId || item.command_id || "startOperationsWorkspace",
+      templateWorkspaceId: item.templateWorkspaceId || item.template_workspace_id || item.target?.workspaceId || "",
+      firstCardId: item.firstCardId || item.first_card_id || item.target?.cardId || "",
+      title: item.title,
+      subtitle: item.subtitle || item.summary || item.localizedSubtitle,
+      status: item.status || "ready",
+      nextAction: item.nextAction || item.next_action || item.localizedNextAction,
+      keywords: item.keywords || item.matchedTerms || item.matched_terms || [],
+      sourceRefs: item.sourceRefs || item.source_refs || {},
+      admission: item.admission || null,
+      gateResult: item.gateResult || item.gate_result || null
+    }));
+}
+
+function dedupeCommandItems(items = []) {
+  const seen = new Set();
+  return items.filter((item) => {
+    if ((item.resultType || item.type) === "mainlineScenario") {
+      const key = `mainlineScenario:${item.scenarioNo || item.scenarioId || item.query || item.title?.["zh-CN"] || item.title || ""}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }
+    const workspaceId = item.templateWorkspaceId || item.template_workspace_id || item.workspaceId || item.workspace_id || "";
+    const cardId = item.firstCardId || item.first_card_id || item.cardId || item.card_id || "";
+    const key = `${item.resultType || "command"}:${workspaceId}:${cardId}`;
+    if (!workspaceId || !cardId || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function dedupeSearchItems(items = []) {
@@ -294,6 +327,9 @@ function searchAction(result, ctx) {
   if (["openObject", "openWorkspace"].includes(result.actionType)) {
     return `<button data-workspace="${ctx.escapeAttr(result.workspaceId)}" data-card-id="${ctx.escapeAttr(result.cardId)}" data-case-id="${ctx.escapeAttr(result.caseId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
   }
+  if (result.actionType === "queryOnly") {
+    return `<button data-search-query="${ctx.escapeAttr(result.query || result.title)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
+  }
   return `<p class="surface-guidance">${ctx.escapeHtml(result.reasonIfNoAction)}</p>`;
 }
 
@@ -301,10 +337,10 @@ function normalizeSearchCard(item, ctx) {
   return {
     ...item,
     resultType: item.resultType || item.type || "object",
-    title: localized(item.localizedTitle ?? item.title, ctx) || ctx.tr("searchNoResult"),
-    subtitle: localized(item.localizedSubtitle ?? item.subtitle, ctx) || ctx.tr("workosSearchSubtitle"),
-    status: localized(item.localizedStatus ?? item.status, ctx) || "-",
-    nextAction: localized(item.localizedNextAction ?? item.nextAction, ctx) || ctx.tr("search")
+    title: userFacingBusinessText(localized(item.localizedTitle ?? item.title, ctx) || ctx.tr("searchNoResult"), ctx),
+    subtitle: userFacingBusinessText(localized(item.localizedSubtitle ?? item.subtitle, ctx) || ctx.tr("workosSearchSubtitle"), ctx),
+    status: userFacingBusinessText(localized(item.localizedStatus ?? item.status, ctx) || "-", ctx),
+    nextAction: userFacingBusinessText(localized(item.localizedNextAction ?? item.nextAction, ctx) || ctx.tr("search"), ctx)
   };
 }
 
@@ -387,18 +423,39 @@ function objectResults(workspaces, kind, ctx) {
   return workspaces
     .filter((workspace) => workspace.domain === "stay" || String(workspace.id).toLowerCase().includes(kind))
     .filter((workspace) => !isTerminalWorkspace(workspace))
+    .filter((workspace) => searchResultKindMatches(workspace, kind))
     .filter(() => objectKindMatchesQuery(kind, ctx.state.query))
     .slice(0, 5)
     .map((workspace) => ({
-      title: localized(workspace.localizedTitle, ctx) || `${labelByKind[kind]} · ${tx(workspace.title, ctx) || workspace.id}`,
+      title: localized(workspace.localizedTitle ?? workspace.businessTitle, ctx) || `${labelByKind[kind]} · ${tx(workspace.title, ctx) || workspace.id}`,
       resultType: kind,
       workspaceId: workspace.id,
-      cardId: workspace._surfaceCardId || workspace.cards?.[0]?.id || "",
-      subtitle: localized(workspace.localizedSubtitle, ctx) || tx(workspace.summary, ctx) || tx(activeDisplayCard(workspace)?.title, ctx) || accommodationBusinessLabel(ctx),
+      cardId: workspace._surfaceCardId || workspace.cardId || workspace.target?.cardId || workspace.cards?.[0]?.id || "",
+      subtitle: localized(workspace.localizedSubtitle ?? workspace.businessSummary, ctx) || tx(workspace.summary, ctx) || tx(activeDisplayCard(workspace)?.title, ctx) || accommodationBusinessLabel(ctx),
       status: localized(workspace.localizedStatus, ctx) || workspace.cards?.[0]?.status || "ready",
       nextAction: localized(workspace.localizedNextAction, ctx) || tx(workspace.next, ctx) || ctx.tr("openWorkspace"),
-      businessAnchor: buildBusinessAnchor(workspace, ctx)
+      businessAnchor: buildBusinessAnchor(workspace, ctx),
+      businessTitle: workspace.businessTitle,
+      businessSummary: workspace.businessSummary,
+      legalActions: workspace.legalActions,
+      admissionDecision: workspace.admissionDecision,
+      cannotSubmitReason: workspace.cannotSubmitReason,
+      readonlyReason: workspace.readonlyReason,
+      sourceScenario: workspace.sourceScenario,
+      admission: workspace.admission,
+      gateResult: workspace.gateResult,
+      sourceRefs: workspace.sourceRefs,
+      target: workspace.target
     }));
+}
+
+function searchResultKindMatches(workspace = {}, kind = "") {
+  if (!workspace.resultType && !workspace.sourceRefs && !workspace.target) return true;
+  const cardId = workspace._surfaceCardId || workspace.cardId || workspace.target?.cardId || "";
+  if (/bedSetup/i.test(cardId)) return kind === "bed";
+  if (/roomSetup|resourceReadiness/i.test(cardId)) return kind === "room";
+  if (/checkin|stay|lead|deposit|payment|checkout|serviceTask|expense|period/i.test(cardId)) return kind === "stay";
+  return kind === "room";
 }
 
 function section(titleKey, items) {
@@ -413,7 +470,7 @@ function isTerminalWorkspace(workspace = {}) {
 }
 
 function activeDisplayCard(workspace = {}) {
-  return workspace.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(card.status)) || workspace.cards?.[0];
+  return workspace.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(normalizeOperationLifecycleState(card.status, ""))) || workspace.cards?.[0];
 }
 
 function workspaceMatchesQuery(workspace = {}, query = "", ctx = {}) {
@@ -425,11 +482,16 @@ function workspaceMatchesQuery(workspace = {}, query = "", ctx = {}) {
     tx(workspace.title, ctx),
     tx(workspace.summary, ctx),
     tx(workspace.next, ctx),
+    localized(workspace.businessTitle, ctx),
+    localized(workspace.businessSummary, ctx),
+    localized(workspace.localizedTitle, ctx),
+    localized(workspace.localizedSubtitle, ctx),
+    localized(workspace.localizedNextAction, ctx),
+    workspace.matchedTerms?.join(" "),
+    workspace.matched_terms?.join(" "),
     workspace.cards?.map((card) => `${card.id} ${tx(card.title, ctx)} ${card.status || ""}`).join(" ")
   ].join(" ").toLocaleLowerCase();
-  if (isAccommodationResourceSetupQuery(normalized)) {
-    return /(roomsetup|房间配置|房间床位配置|创建住宿资源|住宿资源建档)/i.test(text);
-  }
+  if (isAccommodationResourceSetupQuery(normalized)) return /房源建档|基础就绪|房间建档|床位组确认|住宿经营/i.test(text);
   if ((workspace._score || workspace.score || 0) > 0) return true;
   return text.includes(normalized)
     || normalized.split(/\s+/).filter(Boolean).some((part) => text.includes(part))

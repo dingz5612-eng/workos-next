@@ -1,0 +1,41 @@
+{
+  "version": "oam.environment-profile.v1",
+  "authorityType": "runtime_browser_ci_evidence_environment_profile",
+  "environmentProfileId": "local.in_memory.browser_evidence",
+  "environmentKind": "local",
+  "runtimeStorageMode": "in_memory",
+  "backgroundWorkerMode": "local_development_hosted",
+  "browserMode": "playwright_chromium_headless",
+  "apiBaseUrl": "http://127.0.0.1:5191",
+  "mobileBaseUrl": "http://127.0.0.1:5175",
+  "ciRunId": null,
+  "localRunId": "local",
+  "artifactDigest": "local_candidate_reference_only",
+  "workspaceDirtyStatus": "dirty_at_generation_allowed_local_only",
+  "evidenceSemantics": {
+    "localTestOnlyEvidence": true,
+    "ciEvidence": false,
+    "postgresEvidence": false,
+    "productionLikeEvidence": false,
+    "businessLandingEvidence": false,
+    "productionConfirmationEvidence": false,
+    "releaseEvidence": false
+  },
+  "evidenceRefs": [
+    "docs/oam/dormitory-runtime-admission.current.json",
+    "artifacts/oam/evidence/dormitory-runtime-test-only-consumption-proof.json",
+    "artifacts/oam/evidence/runtime-proof.json",
+    "artifacts/oam/evidence/search-readonly-proof.json",
+    "artifacts/oam/evidence/dormitory-l1-browser-e2e",
+    "artifacts/oam/evidence/dormitory-real-browser"
+  ],
+  "forbiddenInterpretations": [
+    "local in-memory browser PASS is not CI evidence",
+    "local in-memory browser PASS is not Postgres evidence",
+    "local in-memory browser PASS is not production-like evidence",
+    "test-only runtime admission is not business landing",
+    "browser evidence is not production confirmation",
+    "Environment Profile PASS is not release authority",
+    "Environment Profile PASS is not final GO"
+  ]
+}

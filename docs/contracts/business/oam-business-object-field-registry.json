@@ -6,6 +6,174 @@
   "truthOwnerRegistry": "docs/business/truth-owner-registry.yml",
   "objects": [
     {
+      "objectId": "价格版本历史",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "价格版本历史",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "价格版本历史.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "价格状态历史",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "价格状态历史",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "价格状态历史.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "商品资源选择草稿",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "商品资源选择草稿",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "商品资源选择草稿.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "证据摘要",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "证据摘要",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "证据摘要.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "AccessCredential",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "AccessCredential",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "AccessCredential.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "AccessCredentialStatus",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "AccessCredentialStatus",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "AccessCredentialStatus.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "AccommodationProduct",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "AccommodationProduct",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "AccommodationProduct.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "AccountUser",
       "module": "identity",
       "ownerCapability": "identity.account-actor",
@@ -170,6 +338,30 @@
       ]
     },
     {
+      "objectId": "AgreementEligibility",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "AgreementEligibility",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "AgreementEligibility.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "AmountBasis",
       "module": "finance-gate",
       "ownerCapability": "finance.expense",
@@ -223,6 +415,54 @@
       ]
     },
     {
+      "objectId": "ArrivingGuest",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "ArrivingGuest",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ArrivingGuest.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "AuditFinding",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "AuditFinding",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "AuditFinding.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "AuditTrail",
       "module": "identity",
       "ownerCapability": "governance.release-control",
@@ -241,6 +481,54 @@
           "searchable": false,
           "ledgerRelevant": false,
           "nameZh": "note"
+        }
+      ]
+    },
+    {
+      "objectId": "AvailabilityCheck",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "AvailabilityCheck",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "AvailabilityCheck.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "AvailabilitySnapshot",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "AvailabilitySnapshot",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "AvailabilitySnapshot.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
         }
       ]
     },
@@ -388,6 +676,30 @@
       ]
     },
     {
+      "objectId": "BedOperationStatus",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "BedOperationStatus",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "BedOperationStatus.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "BedStatus",
       "module": "accommodation",
       "ownerCapability": "accommodation.resource",
@@ -427,6 +739,390 @@
       ]
     },
     {
+      "objectId": "BedTransferRequest",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "BedTransferRequest",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "BedTransferRequest.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "BookingRequest",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "BookingRequest",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "BookingRequest.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CancellationCase",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "CancellationCase",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CancellationCase.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CancellationEvidence",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "CancellationEvidence",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CancellationEvidence.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CancellationFeeIntent",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "CancellationFeeIntent",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CancellationFeeIntent.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "CancellationPolicySnapshot",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "CancellationPolicySnapshot",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CancellationPolicySnapshot.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CancellationStatusHistory",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "CancellationStatusHistory",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CancellationStatusHistory.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ChannelEligibility",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ChannelEligibility",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ChannelEligibility.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ChannelPartner",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ChannelPartner",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ChannelPartner.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ChannelProductMapping",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ChannelProductMapping",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ChannelProductMapping.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ChannelPublicationRule",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ChannelPublicationRule",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ChannelPublicationRule.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ChannelPublicationStatus",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ChannelPublicationStatus",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ChannelPublicationStatus.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ChannelStatusHistory",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "ChannelStatusHistory",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ChannelStatusHistory.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CheckInAgreement",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "CheckInAgreement",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckInAgreement.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CheckInCase",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "CheckInCase",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckInCase.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CheckInEvidence",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "CheckInEvidence",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckInEvidence.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "CheckinHandoff",
       "module": "accommodation",
       "ownerCapability": "accommodation.checkin",
@@ -461,6 +1157,54 @@
           "searchable": true,
           "ledgerRelevant": false,
           "nameZh": "bedLabels"
+        }
+      ]
+    },
+    {
+      "objectId": "CheckInSnapshot",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "CheckInSnapshot",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckInSnapshot.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CheckInStatusHistory",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "CheckInStatusHistory",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckInStatusHistory.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
         }
       ]
     },
@@ -600,6 +1344,102 @@
       ]
     },
     {
+      "objectId": "CheckoutConfirmation",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "CheckoutConfirmation",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckoutConfirmation.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CheckoutEvidence",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "CheckoutEvidence",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckoutEvidence.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CheckoutInspection",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "CheckoutInspection",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckoutInspection.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CheckoutStatusHistory",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "CheckoutStatusHistory",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckoutStatusHistory.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "CommandSubmission",
       "module": "identity",
       "ownerCapability": "governance.release-control",
@@ -622,6 +1462,78 @@
       ]
     },
     {
+      "objectId": "CommissionRuleIntent",
+      "module": "finance-gate",
+      "ownerCapability": "finance.expense",
+      "truthOwnerRef": "CommissionRuleIntent",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CommissionRuleIntent.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "ContactPerson",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "ContactPerson",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ContactPerson.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ContractEvidence",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ContractEvidence",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ContractEvidence.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "ControlPlaneGateResult",
       "module": "identity",
       "ownerCapability": "governance.release-control",
@@ -640,6 +1552,78 @@
           "searchable": true,
           "ledgerRelevant": false,
           "nameZh": "confirmationResult"
+        }
+      ]
+    },
+    {
+      "objectId": "CorporateAccount",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "CorporateAccount",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CorporateAccount.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CorporateAgreement",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "CorporateAgreement",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CorporateAgreement.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CorporateEligibility",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "CorporateEligibility",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CorporateEligibility.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
         }
       ]
     },
@@ -677,6 +1661,126 @@
           "searchable": true,
           "ledgerRelevant": true,
           "nameZh": "correctionReason"
+        }
+      ]
+    },
+    {
+      "objectId": "CredentialReturnRecord",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "CredentialReturnRecord",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CredentialReturnRecord.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CustomerConfirmationRecord",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "CustomerConfirmationRecord",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CustomerConfirmationRecord.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CustomerContact",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "CustomerContact",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CustomerContact.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CustomerNotificationRecord",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "CustomerNotificationRecord",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CustomerNotificationRecord.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "DamageAssessment",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "DamageAssessment",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "DamageAssessment.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
         }
       ]
     },
@@ -892,6 +1996,126 @@
       ]
     },
     {
+      "objectId": "DepositGuarantee",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "DepositGuarantee",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "DepositGuarantee.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "DepositIntent",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "DepositIntent",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "DepositIntent.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "DepositRequirement",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "DepositRequirement",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "DepositRequirement.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "DepositSettlementDraft",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "DepositSettlementDraft",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "DepositSettlementDraft.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "DepositStatusHistory",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "DepositStatusHistory",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "DepositStatusHistory.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
       "objectId": "DeviceSession",
       "module": "identity",
       "ownerCapability": "identity.account-actor",
@@ -955,6 +2179,30 @@
           "searchable": true,
           "ledgerRelevant": false,
           "nameZh": "note"
+        }
+      ]
+    },
+    {
+      "objectId": "EvidenceReviewRecord",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "EvidenceReviewRecord",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "EvidenceReviewRecord.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
         }
       ]
     },
@@ -1197,6 +2445,30 @@
       ]
     },
     {
+      "objectId": "ExpenseIntent",
+      "module": "finance-gate",
+      "ownerCapability": "finance.expense",
+      "truthOwnerRef": "ExpenseIntent",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ExpenseIntent.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
       "objectId": "ExpenseLink",
       "module": "finance-gate",
       "ownerCapability": "finance.expense",
@@ -1301,6 +2573,54 @@
       ]
     },
     {
+      "objectId": "FeeSettlementDraft",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "FeeSettlementDraft",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "FeeSettlementDraft.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "FinalGo",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "FinalGo",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "FinalGo.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "FinanceCase",
       "module": "finance-gate",
       "ownerCapability": "finance.reconciliation",
@@ -1320,6 +2640,54 @@
           "searchable": true,
           "ledgerRelevant": false,
           "nameZh": "correctionReason"
+        }
+      ]
+    },
+    {
+      "objectId": "FinanceConfirmationSnapshot",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "FinanceConfirmationSnapshot",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "FinanceConfirmationSnapshot.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "FinanceProcessingRequest",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "FinanceProcessingRequest",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "FinanceProcessingRequest.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
         }
       ]
     },
@@ -1362,6 +2730,30 @@
       ]
     },
     {
+      "objectId": "FinanceTruth",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "FinanceTruth",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "FinanceTruth.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
       "objectId": "FinancialFact",
       "module": "finance-gate",
       "ownerCapability": "finance.payment",
@@ -1396,6 +2788,174 @@
           "source": "FinanceTruthPack",
           "searchable": true,
           "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "FollowUpTask",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "FollowUpTask",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "FollowUpTask.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ForfeitOrFeeIntent",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "ForfeitOrFeeIntent",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ForfeitOrFeeIntent.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "IdentityVerification",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "IdentityVerification",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "IdentityVerification.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "Inquiry",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "Inquiry",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Inquiry.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "InventoryHold",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "InventoryHold",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "InventoryHold.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "InventoryReleaseRequest",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "InventoryReleaseRequest",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "InventoryReleaseRequest.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "IssueTrackingItem",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "IssueTrackingItem",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "IssueTrackingItem.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
         }
       ]
     },
@@ -1615,6 +3175,30 @@
       ]
     },
     {
+      "objectId": "MetricSnapshot",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "MetricSnapshot",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "MetricSnapshot.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "MoneyBasis",
       "module": "finance-gate",
       "ownerCapability": "finance.expense",
@@ -1715,6 +3299,174 @@
           "source": "Dormitory operating kernel",
           "searchable": true,
           "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "NoShowCase",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "NoShowCase",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "NoShowCase.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "OperationBlocker",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "OperationBlocker",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "OperationBlocker.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "OperationEvidence",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "OperationEvidence",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "OperationEvidence.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "OperationInspection",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "OperationInspection",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "OperationInspection.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "OperationRestore",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "OperationRestore",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "OperationRestore.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "OperationStatusChange",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "OperationStatusChange",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "OperationStatusChange.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "OutOfServiceRequest",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "OutOfServiceRequest",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "OutOfServiceRequest.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
         }
       ]
     },
@@ -1891,6 +3643,102 @@
       ]
     },
     {
+      "objectId": "PaymentIntent",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "PaymentIntent",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PaymentIntent.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "PaymentReceiptEvidence",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "PaymentReceiptEvidence",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PaymentReceiptEvidence.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "PaymentRequirement",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "PaymentRequirement",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PaymentRequirement.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "PaymentStatusHistory",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "PaymentStatusHistory",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PaymentStatusHistory.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
       "objectId": "PeriodSnapshot",
       "module": "accommodation",
       "ownerCapability": "accommodation.lifecycle",
@@ -2024,6 +3872,174 @@
       ]
     },
     {
+      "objectId": "PriceCalendar",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "PriceCalendar",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PriceCalendar.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "PriceEvidence",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "PriceEvidence",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PriceEvidence.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "PriceStatusHistory",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "PriceStatusHistory",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PriceStatusHistory.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "PriceVersion",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "PriceVersion",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PriceVersion.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "PriceVersion draft",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "PriceVersion draft",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PriceVersion draft.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ProductionGo",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ProductionGo",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ProductionGo.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ProductResourceBinding",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ProductResourceBinding",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ProductResourceBinding.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "ProjectionReadModel",
       "module": "identity",
       "ownerCapability": "governance.release-control",
@@ -2044,6 +4060,198 @@
           "searchable": true,
           "ledgerRelevant": false,
           "nameZh": "note"
+        }
+      ]
+    },
+    {
+      "objectId": "Quote",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "Quote",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Quote.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "QuoteDeliveryRecord",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "QuoteDeliveryRecord",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "QuoteDeliveryRecord.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "QuoteEvidence",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "QuoteEvidence",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "QuoteEvidence.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "QuoteOption",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "QuoteOption",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "QuoteOption.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "QuotePriceSnapshot",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "QuotePriceSnapshot",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "QuotePriceSnapshot.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "QuoteStatusHistory",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "QuoteStatusHistory",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "QuoteStatusHistory.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "QuoteValidity",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "QuoteValidity",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "QuoteValidity.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "QuoteVersion",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "QuoteVersion",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "QuoteVersion.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
         }
       ]
     },
@@ -2183,6 +4391,30 @@
       ]
     },
     {
+      "objectId": "RateRule",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "RateRule",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RateRule.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "ReconciliationCase",
       "module": "finance-gate",
       "ownerCapability": "finance.reconciliation",
@@ -2220,6 +4452,30 @@
       ]
     },
     {
+      "objectId": "RecoveryRecommendation",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "RecoveryRecommendation",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RecoveryRecommendation.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "Refund",
       "module": "finance-gate",
       "ownerCapability": "finance.deposit",
@@ -2239,6 +4495,174 @@
           "searchable": false,
           "ledgerRelevant": true,
           "nameZh": "refundAmount"
+        }
+      ]
+    },
+    {
+      "objectId": "RefundCalculationDraft",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "RefundCalculationDraft",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RefundCalculationDraft.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "RefundRequestIntent",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "RefundRequestIntent",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RefundRequestIntent.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "ReleaseAuthority",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ReleaseAuthority",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReleaseAuthority.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ReportPeriod",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ReportPeriod",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReportPeriod.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ReportScope",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ReportScope",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReportScope.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ReportSnapshot",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ReportSnapshot",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReportSnapshot.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ReportStatusTimeline",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ReportStatusTimeline",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReportStatusTimeline.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
         }
       ]
     },
@@ -2362,9 +4786,177 @@
       ]
     },
     {
-      "objectId": "Resident",
+      "objectId": "ReservationConfirmation",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ReservationConfirmation",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReservationConfirmation.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ReservationEvidence",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ReservationEvidence",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReservationEvidence.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ReservationGuest",
       "module": "identity",
       "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "ReservationGuest",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReservationGuest.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ReservationPolicySnapshot",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ReservationPolicySnapshot",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReservationPolicySnapshot.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ReservationPriceSnapshot",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ReservationPriceSnapshot",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReservationPriceSnapshot.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ReservationResourceBinding",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ReservationResourceBinding",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReservationResourceBinding.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ReservationStatusHistory",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "ReservationStatusHistory",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReservationStatusHistory.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "Resident",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
       "truthOwnerRef": "Resident",
       "fields": [
         {
@@ -2466,6 +5058,102 @@
       ]
     },
     {
+      "objectId": "ResidentIncident",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ResidentIncident",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ResidentIncident.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ResidentProfile",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "ResidentProfile",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ResidentProfile.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ResidentServiceRequest",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ResidentServiceRequest",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ResidentServiceRequest.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ResourceRecoveryRequest",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "ResourceRecoveryRequest",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ResourceRecoveryRequest.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "Revenue",
       "module": "finance-gate",
       "ownerCapability": "finance.payment",
@@ -2484,6 +5172,54 @@
           "searchable": false,
           "ledgerRelevant": true,
           "nameZh": "confirmedAmount"
+        }
+      ]
+    },
+    {
+      "objectId": "ReviewConclusion",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ReviewConclusion",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReviewConclusion.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ReviewMeetingRecord",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "ReviewMeetingRecord",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ReviewMeetingRecord.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
         }
       ]
     },
@@ -2585,6 +5321,54 @@
           "editableWhen": "Room.availableBedCount.current_workitem_before_confirm",
           "auditRequired": true,
           "languageKey": "availableBedCount",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "RoomBedHandover",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "RoomBedHandover",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RoomBedHandover.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "RoomBedOccupancy",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "RoomBedOccupancy",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RoomBedOccupancy.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
           "source": "Dormitory operating kernel",
           "searchable": true,
           "ledgerRelevant": false
@@ -2696,6 +5480,30 @@
       ]
     },
     {
+      "objectId": "RoomOperationStatus",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "RoomOperationStatus",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RoomOperationStatus.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "RoomReadiness",
       "module": "accommodation",
       "ownerCapability": "accommodation.resource",
@@ -2716,6 +5524,30 @@
           "searchable": true,
           "ledgerRelevant": false,
           "nameZh": "readinessState"
+        }
+      ]
+    },
+    {
+      "objectId": "SellableUnit",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "SellableUnit",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "SellableUnit.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
         }
       ]
     },
@@ -2855,6 +5687,102 @@
       ]
     },
     {
+      "objectId": "ServiceWorkCase",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "ServiceWorkCase",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ServiceWorkCase.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "SettlementRuleIntent",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "SettlementRuleIntent",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "SettlementRuleIntent.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "StatusHistory",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "StatusHistory",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "StatusHistory.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "StatusTimeline",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "StatusTimeline",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "StatusTimeline.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
       "objectId": "Stay",
       "module": "accommodation",
       "ownerCapability": "accommodation.lifecycle",
@@ -2959,6 +5887,174 @@
       ]
     },
     {
+      "objectId": "StayChangeRequest",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "StayChangeRequest",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "StayChangeRequest.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "StayDemand",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "StayDemand",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "StayDemand.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "StayEvidence",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "StayEvidence",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "StayEvidence.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "StayExtensionRequest",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "StayExtensionRequest",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "StayExtensionRequest.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "StayStatus",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "StayStatus",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "StayStatus.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "TaskEvidence",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "TaskEvidence",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "TaskEvidence.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "TopUpRequestIntent",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "TopUpRequestIntent",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "TopUpRequestIntent.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
       "objectId": "UnclearMoneyCase",
       "module": "finance-gate",
       "ownerCapability": "finance.reconciliation",
@@ -2978,6 +6074,198 @@
           "searchable": true,
           "ledgerRelevant": false,
           "nameZh": "differenceReason"
+        }
+      ]
+    },
+    {
+      "objectId": "WorkAssignee",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "WorkAssignee",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "WorkAssignee.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "WorkAssignment",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "WorkAssignment",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "WorkAssignment.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "WorkCompletion",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "WorkCompletion",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "WorkCompletion.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "WorkCompletionEvidence",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "WorkCompletionEvidence",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "WorkCompletionEvidence.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "WorkSchedule",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "WorkSchedule",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "WorkSchedule.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "WorkStatusHistory",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "WorkStatusHistory",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "WorkStatusHistory.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "WorkVerification",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "WorkVerification",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "WorkVerification.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "WorkVerificationResult",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "WorkVerificationResult",
+      "fields": [
+        {
+          "fieldId": "note",
+          "nameZh": "note",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "WorkVerificationResult.note.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
         }
       ]
     }

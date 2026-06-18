@@ -19,15 +19,13 @@ public sealed class SearchProjectionService
     public string SearchText(WorkspaceProjection workspace) =>
         string.Join(" ", new[]
         {
-            workspace.Id,
-            workspace.Domain,
             workspace.Title.GetValueOrDefault("zh-CN", ""),
             workspace.Title.GetValueOrDefault("ru-RU", ""),
             workspace.Summary.GetValueOrDefault("zh-CN", ""),
             workspace.Summary.GetValueOrDefault("ru-RU", ""),
             workspace.Next.GetValueOrDefault("zh-CN", ""),
             workspace.Next.GetValueOrDefault("ru-RU", ""),
-            string.Join(" ", workspace.Cards.Select(card => $"{card.Id} {card.Title.GetValueOrDefault("zh-CN", "")} {card.Title.GetValueOrDefault("ru-RU", "")}"))
+            string.Join(" ", workspace.Cards.Select(card => $"{card.Title.GetValueOrDefault("zh-CN", "")} {card.Title.GetValueOrDefault("ru-RU", "")}"))
         });
 
     public CardProjection? CurrentCard(WorkspaceProjection workspace) =>

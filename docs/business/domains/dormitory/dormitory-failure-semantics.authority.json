@@ -1,0 +1,74 @@
+{
+  "version": "oam.dormitory.failure-semantics-authority.v1",
+  "status": "authoritative",
+  "authorityType": "dormitory_first_golden_chain_failure_semantics",
+  "currentCapabilityId": "Dormitory.FirstGoldenChain",
+  "globalFailurePolicy": {
+    "sideEffectsAllowedOnFailure": false,
+    "domainEventsAllowedOnFailure": false,
+    "projectionMutationsAllowedOnFailure": false,
+    "workItemStateChangeAllowedOnFailure": false,
+    "ledgerEffectAllowedOnFailure": false
+  },
+  "failureSemantics": [
+    {
+      "caseId": "duplicate_room",
+      "httpStatus": 409,
+      "code": "room_already_exists",
+      "appliesTo": [
+        "Dorm.RoomSetupConfirm"
+      ]
+    },
+    {
+      "caseId": "duplicate_bed",
+      "httpStatus": 409,
+      "code": "bed_already_exists",
+      "appliesTo": [
+        "Dorm.BedSetupConfirm"
+      ]
+    },
+    {
+      "caseId": "bed_count_not_satisfied",
+      "httpStatus": 422,
+      "code": "bed_count_not_satisfied",
+      "appliesTo": [
+        "Dorm.BedSetupConfirm",
+        "Dorm.ResourceReadinessConfirm"
+      ]
+    },
+    {
+      "caseId": "forged_stable_ref",
+      "httpStatus": 422,
+      "code": "readonly_stable_ref_violation",
+      "appliesTo": [
+        "Dorm.RoomSetupConfirm",
+        "Dorm.BedSetupConfirm",
+        "Dorm.ResourceReadinessConfirm"
+      ]
+    },
+    {
+      "caseId": "invalid_readiness_state",
+      "httpStatus": 422,
+      "code": "invalid_readiness_state",
+      "appliesTo": [
+        "Dorm.ResourceReadinessConfirm"
+      ]
+    },
+    {
+      "caseId": "not_saleable_missing_reason",
+      "httpStatus": 422,
+      "code": "not_saleable_reason_required",
+      "appliesTo": [
+        "Dorm.ResourceReadinessConfirm"
+      ]
+    },
+    {
+      "caseId": "maintenance_missing_service_verification",
+      "httpStatus": 422,
+      "code": "service_verification_required",
+      "appliesTo": [
+        "Dorm.ResourceReadinessConfirm"
+      ]
+    }
+  ]
+}

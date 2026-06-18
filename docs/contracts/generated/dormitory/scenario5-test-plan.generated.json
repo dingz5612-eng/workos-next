@@ -1,0 +1,132 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario5-testPlan.generated",
+  "version": "oam.dormitory-scenario5-testPlan.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario5-reservation-and-inventory-hold-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario5-reservation-and-inventory-hold-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:8d9f2e060062ebe92e3f03387d5f7cf5999eaeb080030a14e577526de78e2fed",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "digest": "sha256:fc1f65a896a14573452c5025592c8ca2acfda62cdf515938fb82aff274aceabb"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:fc1f65a896a14573452c5025592c8ca2acfda62cdf515938fb82aff274aceabb",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario5.ReservationAndInventoryHold",
+  "scenarioPackageNo": 5,
+  "scenarioId": "lodging.reservation-and-inventory-hold",
+  "outputContentDigest": "sha256:14561e1aaa1039894947d84d3f2a4abdf9f0e4eac9174bddd56eb9a0f8717842",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "预订与库存锁定",
+  "businessGoalZh": "承接场景包 4 已确认的报价/客户意向，重新校验资源、价格、报价有效期、日期和当前占用后，完成库存锁定、确认预订并生成预订号。",
+  "sourceScenarioDigest": "sha256:fc1f65a896a14573452c5025592c8ca2acfda62cdf515938fb82aff274aceabb",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario5.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "BookingRequest",
+      "AvailabilityCheck",
+      "AvailabilitySnapshot",
+      "InventoryHold",
+      "Reservation",
+      "ReservationGuest",
+      "ReservationResourceBinding",
+      "ReservationPriceSnapshot",
+      "ReservationPolicySnapshot",
+      "ReservationConfirmation",
+      "ReservationEvidence",
+      "ReservationStatusHistory"
+    ],
+    "searchReadModel": [
+      "预订与库存锁定",
+      "预订确认摘要",
+      "预订号",
+      "客户信息",
+      "日期范围",
+      "人数",
+      "房间/床位",
+      "价格快照",
+      "库存锁定历史",
+      "预订状态",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "noRefillRuleZh": "场景包 5 只能读取场景包 1、2、3、4 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品、价格或报价字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "positiveBrowserTestPlan": [
+    "从场景包 4 报价进入转预订准备。",
+    "查看客户和报价摘要。",
+    "输入或确认入住日期/离店日期/人数。",
+    "查看可订资源。",
+    "选择房间/床位。",
+    "点击锁定。",
+    "看到锁定截止时间。",
+    "确认预订。",
+    "看到系统生成预订号。",
+    "查看预订详情。",
+    "查看今日、工作项、搜索、我的入口表现。"
+  ],
+  "negativeBrowserTestPlan": [
+    "报价过期进入预订。",
+    "缺客户联系方式。",
+    "入住日期晚于或等于离店日期。",
+    "人数为 0。",
+    "资源维修或停售仍被选择。",
+    "资源已被他人锁定。",
+    "重复锁定。",
+    "并发锁定。",
+    "锁定过期后确认。",
+    "未锁定直接确认预订。",
+    "伪造 roomId、bedId、quoteId、holdId、reservationId。",
+    "用户手填预订号。",
+    "搜索结果直接写预订。",
+    "确认预订后直接收款或入住。",
+    "重复提交。"
+  ],
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "enter-reservation-preparation": [
+        "报价确认证据",
+        "客户意向证据"
+      ],
+      "review-available-resource": [
+        "可订复核证据"
+      ],
+      "create-inventory-hold": [
+        "库存锁定证据"
+      ],
+      "confirm-reservation-information": [
+        "客户确认证据",
+        "预订规则证据"
+      ],
+      "confirm-reservation": [
+        "预订确认证据"
+      ],
+      "reservation-result-and-checkin-preparation": [
+        "预订结果证据"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "screenshotAnalysisRequired": true,
+  "noSideEffectsProofRequired": true
+}

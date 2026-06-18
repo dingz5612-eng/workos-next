@@ -1,0 +1,89 @@
+{
+  "version": "oam.capability-active-path-boundary.v1",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "activeAuthorityDigestFields": [
+    "generatedBundleDigest",
+    "acceptedGeneratedBundleDigest",
+    "runtimeConsumedBundleDigest"
+  ],
+  "activePathFiles": [
+    "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+    "docs/oam/capabilities/dormitory-first-golden-chain.registry.json",
+    "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+    "docs/oam/generated-candidate-acceptance.current.json",
+    "docs/oam/dormitory-runtime-admission.current.json",
+    "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+    "docs/contracts/generated/dormitory/fields.generated.json",
+    "docs/contracts/generated/dormitory/workitems.generated.json",
+    "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+    "docs/contracts/generated/dormitory/read-model.generated.json",
+    "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+  ],
+  "allowedReferenceZones": {
+    "compatibilityBox": [
+      "docs/oam/capabilities/compatibility-box.current.json",
+      "docs/oam/compatibility/compatibility-box.current.json"
+    ],
+    "migrationRefs": [
+      "docs/contracts/definition/",
+      "docs/contracts/business/oam-workflow-state-registry.json",
+      "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "docs/contracts/slice-manifest.json",
+      "docs/contracts/production-slice-manifest.json",
+      "docs/oam/compatibility/legacy-slice-manifest.json",
+      "docs/contracts/runtime-surface-policy.json",
+      "docs/contracts/frontend-experience/",
+      "docs/oam/reviews/"
+    ],
+    "legacyRegressionLane": [
+      "services/core-api/WorkOS.Api/Runtime/",
+      "services/core-api/WorkOS.Api/Slices/Accommodation/",
+      "apps/mobile/src/",
+      ".github/workflows/ci.yml",
+      "docs/oam/control-plane/gate-lane-taxonomy.current.json",
+      "scripts/surface/run-dormitory-l1-browser-e2e-audit.mjs",
+      "scripts/surface/run-dormitory-ten-scenario-real-browser-audit.mjs",
+      "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs",
+      "scripts/surface/run-dormitory-real-browser-audits.ps1"
+    ],
+    "historicalEvidenceAppendix": [
+      "docs/oam/generated-candidate-acceptance.current.json",
+      "docs/oam/generated-compile-candidate-approval.current.json",
+      "docs/oam/evidence-attestation-packages/",
+      "docs/oam/oam-kernel-graph.json"
+    ],
+    "deletionLedger": [
+      "docs/oam/current-engineering-ledger.json"
+    ],
+    "mainlineGovernanceLedger": [
+      "docs/oam/dormitory-mainline-manifest.json",
+      "docs/oam/lodging-consumer-graph.json",
+      "docs/oam/legacy-retirement-ledger.json",
+      "docs/oam/dormitory-defect-closure-ledger.json",
+      "docs/oam/visible-business-copy-contract.json"
+    ]
+  },
+  "forbiddenActiveTerms": [
+    "WorkspaceSeedCatalog",
+    "rateSetup",
+    "roomBlock",
+    "roomRelease",
+    "sourceCardId",
+    "workspaceCardId",
+    "executionHead",
+    "S5",
+    "S6",
+    "S7",
+    "S8",
+    "ten-scenario"
+  ],
+  "forbiddenInterpretations": [
+    "old 6-card flow is not current Dormitory.FirstGoldenChain",
+    "WorkspaceSeedCatalog is not current capability authority",
+    "ten-scenario browser evidence is not a main generated/runtime gate",
+    "Evidence Root PASS is not business GO",
+    "CI PASS is not business GO"
+  ],
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO"
+}

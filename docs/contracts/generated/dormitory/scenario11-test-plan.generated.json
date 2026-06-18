@@ -1,0 +1,143 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario11-testPlan.generated",
+  "version": "oam.dormitory-scenario11-testPlan.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario11-housekeeping-maintenance-outofservice-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario11-housekeeping-maintenance-outofservice-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:a174cf7da149c4f0ef295ed0b5c70d09a6358bc54a27fb161d62185dceb59ea4",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "digest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+  "scenarioPackageNo": 11,
+  "scenarioId": "lodging.housekeeping-maintenance-outofservice",
+  "outputContentDigest": "sha256:33c6ee1ab587a82439d881ec4ece5c87f36e00d3a9d69d4e353f5f14eacceb62",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "房务、维修与停售协同",
+  "businessGoalZh": "承接场景包 2 的运营阻断、场景包 8 的在住服务请求、场景包 9 的退房资源待恢复、场景包 10 的释放后待处理资源，完成保洁、维修、检查、停售申请、恢复建议、作业证据和任务闭环。",
+  "sourceScenarioDigest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario11.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "ServiceWorkCase",
+      "HousekeepingTask",
+      "MaintenanceTask",
+      "InspectionTask",
+      "OutOfServiceRequest",
+      "WorkAssignment",
+      "WorkAssignee",
+      "WorkSchedule",
+      "WorkCompletion",
+      "WorkCompletionEvidence",
+      "WorkVerification",
+      "WorkVerificationResult",
+      "RecoveryRecommendation",
+      "ExpenseIntent",
+      "TaskEvidence",
+      "StatusHistory",
+      "WorkStatusHistory"
+    ],
+    "searchReadModel": [
+      "房务、维修与停售协同",
+      "房务/维修完成摘要",
+      "验收摘要",
+      "停售建议",
+      "恢复运营建议",
+      "费用意向",
+      "作业证据摘要",
+      "状态历史",
+      "只读对象引用",
+      "作业完成摘要",
+      "停售/恢复建议"
+    ],
+    "noRefillRuleZh": "场景包 11 只能读取上游摘要，不得要求用户重新填写场景包 2、8、9、10 已确认字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "positiveBrowserTestPlan": [
+    "从退房待恢复进入保洁任务。",
+    "派工保洁任务。",
+    "更新保洁进度。",
+    "提交保洁完成。",
+    "验收通过。",
+    "输出恢复运营建议。",
+    "从在住服务请求进入维修任务。",
+    "派工维修任务。",
+    "提交维修完成。",
+    "验收不通过并生成返工。",
+    "返工后验收通过。",
+    "提交费用意向。",
+    "查看今日、工作项、搜索、我的入口表现。"
+  ],
+  "negativeBrowserTestPlan": [
+    "无合法来源创建正式作业。",
+    "无负责人派工。",
+    "缺证据提交完成。",
+    "未完成直接验收通过。",
+    "验收不通过未生成返工。",
+    "维修未关闭却建议恢复。",
+    "场景包 11 直接改为可运营。",
+    "费用意向直接写账。",
+    "伪造 roomId/bedId/taskId。",
+    "搜索结果直接写任务。",
+    "重复提交。",
+    "并发验收同一任务。"
+  ],
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "enter-housekeeping-maintenance-processing": [
+        "合法来源摘要",
+        "证据摘要"
+      ],
+      "dispatch-work-assignment": [
+        "来源摘要",
+        "作业范围"
+      ],
+      "update-work-progress": [
+        "现场照片或过程证据"
+      ],
+      "submit-work-completion": [
+        "完成说明",
+        "完成照片或维修/保洁记录"
+      ],
+      "verify-work-result": [
+        "完成证据",
+        "验收记录"
+      ],
+      "output-outofservice-or-recovery-recommendation": [
+        "验收摘要",
+        "风险说明"
+      ],
+      "submit-expense-intent": [
+        "费用依据",
+        "供应商凭证"
+      ]
+    },
+    "screenshotAnalysisRequired": true,
+    "noSideEffectsProofRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "screenshotAnalysisRequired": true,
+  "noSideEffectsProofRequired": true,
+  "localEvidencePassAllowed": true
+}

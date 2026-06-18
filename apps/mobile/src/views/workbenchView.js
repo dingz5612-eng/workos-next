@@ -1,4 +1,5 @@
 import { queueFiltersFromState } from "../queueFilterState.js";
+import { normalizeOperationLifecycleState } from "../operationStatus.js";
 import { countEvidenceState, countTransferable, queueTasks } from "../selectors/queueSelectors.js";
 import { selectCompletedWorkbenchQueue, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
 import { WorkItemCard } from "./experienceComponents.js";
@@ -62,7 +63,7 @@ function workChip(id, labelKey, count, ctx, state = "ready") {
 
 function completedWorkCard(item, ctx) {
   const title = item.businessObject || item.workspace?.title || item.card?.title || item.workItemType || ctx.tr("completedWorkItems");
-  const subtitle = item.workItemType || item.card?.id || "";
+  const subtitle = completedWorkSubtitle(item, ctx);
   const status = item.lifecycleState || item.status || item.card?.status || "done";
   return `<article class="completed-work-card">
     <div>
@@ -71,6 +72,18 @@ function completedWorkCard(item, ctx) {
     </div>
     <button data-workspace="${ctx.escapeAttr(item.workspaceId)}" data-card-id="${ctx.escapeAttr(item.cardId)}">${ctx.tr("viewOnly")}</button>
   </article>`;
+}
+
+function completedWorkSubtitle(item, ctx) {
+  const cardTitle = item.card?.title;
+  const translated = cardTitle ? (ctx.tx ? ctx.tx(cardTitle) : cardTitle?.["zh-CN"] || cardTitle) : "";
+  if (translated) return translated;
+  const businessTitles = {
+    "Dorm.RoomSetupConfirm": "填写房间信息",
+    "Dorm.BedSetupConfirm": "确认床位信息",
+    "Dorm.ResourceReadinessConfirm": "完成基础检查"
+  };
+  return businessTitles[item.workItemType] || ctx.tr("completedWorkItems");
 }
 
 function countStatus(state, status) {
@@ -105,7 +118,7 @@ function filterSummary(filters, ctx) {
 function countMyCanDo(state) {
   return selectWorkbenchQueue(state).filter((item) =>
     (item.badges?.includes("mine") || item.ownerRole === state.currentActor?.role) &&
-    (item.status === "ready" || item.lifecycleState === "ready" || item.card?.status === "ready")).length;
+    [item.status, item.lifecycleState, item.card?.status].some((status) => normalizeOperationLifecycleState(status, "") === "ready")).length;
 }
 
 function countWaitingOthers(state) {

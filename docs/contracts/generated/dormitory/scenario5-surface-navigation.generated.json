@@ -1,0 +1,192 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario5-surfaceNavigation.generated",
+  "version": "oam.dormitory-scenario5-surfaceNavigation.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario5-reservation-and-inventory-hold-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario5-reservation-and-inventory-hold-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:8d9f2e060062ebe92e3f03387d5f7cf5999eaeb080030a14e577526de78e2fed",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "digest": "sha256:fc1f65a896a14573452c5025592c8ca2acfda62cdf515938fb82aff274aceabb"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:fc1f65a896a14573452c5025592c8ca2acfda62cdf515938fb82aff274aceabb",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario5.ReservationAndInventoryHold",
+  "scenarioPackageNo": 5,
+  "scenarioId": "lodging.reservation-and-inventory-hold",
+  "outputContentDigest": "sha256:a0093130682dc8d6319bdb19e89b18a84629963993dcd7ee54013356739b5e8b",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "预订与库存锁定",
+  "businessGoalZh": "承接场景包 4 已确认的报价/客户意向，重新校验资源、价格、报价有效期、日期和当前占用后，完成库存锁定、确认预订并生成预订号。",
+  "sourceScenarioDigest": "sha256:fc1f65a896a14573452c5025592c8ca2acfda62cdf515938fb82aff274aceabb",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario5.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "BookingRequest",
+      "AvailabilityCheck",
+      "AvailabilitySnapshot",
+      "InventoryHold",
+      "Reservation",
+      "ReservationGuest",
+      "ReservationResourceBinding",
+      "ReservationPriceSnapshot",
+      "ReservationPolicySnapshot",
+      "ReservationConfirmation",
+      "ReservationEvidence",
+      "ReservationStatusHistory"
+    ],
+    "searchReadModel": [
+      "预订与库存锁定",
+      "预订确认摘要",
+      "预订号",
+      "客户信息",
+      "日期范围",
+      "人数",
+      "房间/床位",
+      "价格快照",
+      "库存锁定历史",
+      "预订状态",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "noRefillRuleZh": "场景包 5 只能读取场景包 1、2、3、4 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品、价格或报价字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "surfaceNavigation": {
+    "pagesZh": [
+      "预订准备列表",
+      "可订资源复核页",
+      "库存锁定页",
+      "预订确认页",
+      "预订结果页",
+      "预订详情页",
+      "锁定历史页",
+      "预订状态历史页"
+    ],
+    "todayZh": "今日只展示锁定即将过期、待确认预订、今日预订待入住准备等今天需要处理的被动任务。",
+    "workItemsZh": "工作项展示全部预订与库存锁定被动任务池。",
+    "searchZh": "搜索可以查客户、手机号、预订号、日期、房间/床位、预订状态；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "mustShowZh": [
+      "当前锁定状态",
+      "预订状态",
+      "截止时间",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": [
+      {
+        "state": "quote_valid",
+        "buttonsZh": [
+          "选择资源",
+          "锁定"
+        ]
+      },
+      {
+        "state": "held",
+        "buttonsZh": [
+          "确认预订",
+          "释放锁定"
+        ]
+      },
+      {
+        "state": "hold_expired",
+        "buttonsZh": [
+          "重新锁定"
+        ]
+      },
+      {
+        "state": "reserved",
+        "buttonsZh": [
+          "查看预订",
+          "进入入住办理准备"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "已入住",
+      "已收款",
+      "押金已收",
+      "退款",
+      "final GO",
+      "生产发布",
+      "lead-reservation",
+      "reservationCreate",
+      "reservationConvert",
+      "check-in"
+    ]
+  },
+  "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“客户姓名已脱敏，6 月 20 日至 6 月 23 日，301 房间，已锁定至 20:00”“预订号 R202606200001”。",
+  "forbiddenUserInputFields": [
+    "bookingRequestId",
+    "inventoryHoldId",
+    "holdId",
+    "reservationId",
+    "reservationNo",
+    "quoteId",
+    "productId",
+    "ratePlanId",
+    "roomId",
+    "bedId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId"
+  ],
+  "buttonByState": [
+    {
+      "state": "quote_valid",
+      "buttonsZh": [
+        "选择资源",
+        "锁定"
+      ]
+    },
+    {
+      "state": "held",
+      "buttonsZh": [
+        "确认预订",
+        "释放锁定"
+      ]
+    },
+    {
+      "state": "hold_expired",
+      "buttonsZh": [
+        "重新锁定"
+      ]
+    },
+    {
+      "state": "reserved",
+      "buttonsZh": [
+        "查看预订",
+        "进入入住办理准备"
+      ]
+    }
+  ],
+  "reservationStatusOptions": [
+    "待锁定",
+    "锁定中",
+    "已锁定",
+    "锁定过期",
+    "待确认预订",
+    "已预订",
+    "预订确认失败",
+    "转入住准备"
+  ]
+}

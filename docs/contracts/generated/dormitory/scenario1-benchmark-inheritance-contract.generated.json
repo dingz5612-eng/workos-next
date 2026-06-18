@@ -1,0 +1,147 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario1-benchmark-inheritance-contract.generated",
+  "version": "oam.dormitory-scenario1-benchmark-inheritance-contract.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario1-benchmark-inheritance-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:a4be5229d3c249017f22f49d1356e0e4ee7e181203c2963c1d694f3116b18218",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+      "digest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+      "digest": "sha256:480980f4c45e3e1cacc8a40876eb8d2b54c1a735b3849a5ad7996fdd88747d3b"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
+  "authorityId": "Dormitory.Scenario1BenchmarkInheritanceContract",
+  "outputContentDigest": "sha256:e7c0157bc3b3d958a0aa36927bf4b43860fe9663a27b00982c42c20e9b255dc9",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "场景 1 标杆继承合同",
+  "highestBusinessAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+  "highestBusinessAuthorityId": "Dormitory.Operating13ScenarioControl",
+  "benchmarkImplementationRef": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+  "controlAuthorityDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "benchmarkContractDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
+  "scenario1SourceDigest": "sha256:480980f4c45e3e1cacc8a40876eb8d2b54c1a735b3849a5ad7996fdd88747d3b",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "scopeZh": "把场景包 1：房源建档与基础就绪沉淀为后续场景的执行方法标杆；只继承方法，不继承场景 1 的业务字段、对象、状态或证据要求。",
+  "authorityHierarchy": {
+    "highestBusinessAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+    "highestBusinessAuthorityId": "Dormitory.Operating13ScenarioControl",
+    "packageIndexRef": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+    "benchmarkImplementationRef": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+    "rules": [
+      "总控 Source Authority 是住宿经营 13 场景最高业务权威。",
+      "场景 1 是实现方法标杆，不是后续场景的业务规则总源。",
+      "后续场景只能从总控和本场景 Source Authority 获得业务规则。",
+      "本合同只提供执行方法、门禁、模板和证据组织方式。"
+    ],
+    "forbiddenHierarchyInterpretations": [
+      "不得把场景 1 写成最高权威。",
+      "不得让场景 1 覆盖总控 Source Authority。",
+      "不得从场景 1 复制 Room、BedSet、Bed、BasicReadiness 等业务对象到后续场景。"
+    ]
+  },
+  "inheritancePrinciples": [
+    {
+      "principleId": "method_only_not_business_source",
+      "ruleZh": "后续场景继承方法，不继承场景 1 的业务字段和对象。"
+    },
+    {
+      "principleId": "read_control_and_benchmark_before_start",
+      "ruleZh": "后续场景启动前必须读取总控、读取场景 1 标杆继承合同，并提交差异清单。"
+    },
+    {
+      "principleId": "difference_goes_to_scene_source_first",
+      "ruleZh": "差异必须先进入本场景 Source Authority，再生成合同。"
+    },
+    {
+      "principleId": "legacy_reference_only",
+      "ruleZh": "旧项目场景包只能作为迁移参考、内部 ID、历史映射或证据隔离对象，不得覆盖新设计。"
+    }
+  ],
+  "inheritableMethodItems": [
+    "开发顺序",
+    "Source Authority 优先",
+    "generated 不手改",
+    "runtime 只消费 generated",
+    "surface 只展示和提交合法动作",
+    "字段来源分类",
+    "CRUD 规则",
+    "页面动作组织",
+    "今日/工作项/搜索/我的入口规则",
+    "正向浏览器截图",
+    "反向浏览器截图",
+    "截图分析",
+    "无副作用证明",
+    "局部证据闭环"
+  ],
+  "forbiddenInheritanceItems": {
+    "businessObjects": [
+      "Room",
+      "BedSet",
+      "Bed",
+      "BasicReadiness"
+    ],
+    "businessFieldsOrConceptsZh": [
+      "房间号",
+      "床位数",
+      "床位 01..N",
+      "基础就绪字段",
+      "room.bedCount",
+      "bedNo[01..N]",
+      "房间建档字段",
+      "床位组确认字段",
+      "基础就绪确认字段"
+    ],
+    "businessEvidenceCopyForbiddenZh": [
+      "不得把场景 1 的房间照片、床位照片、基础检查证据要求照搬到财务、入住、报表等场景。",
+      "不得把场景 1 的证据必填项当作所有场景的证据必填项。"
+    ],
+    "surfaceCopyForbiddenZh": [
+      "不得把场景 1 的按钮和页面文案直接复用为后续业务。",
+      "不得把后续场景强行做成三步。",
+      "不得把后续场景标题写成房源建档与基础就绪。"
+    ],
+    "blockingRuleZh": "发现后续场景复制场景 1 的业务字段或对象，而不是继承方法，必须阻断。"
+  },
+  "globalReadonlyAndFinanceBoundaries": {
+    "searchDashboardReportReadonly": true,
+    "businessScenarioDirectLedgerWriteAllowed": false,
+    "financeTruthOwner": "finance-gate",
+    "businessScenarioAllowedFinanceOutputs": [
+      "Intent",
+      "Draft",
+      "Request",
+      "Snapshot"
+    ]
+  },
+  "noGo": {
+    "businessFeatureDevelopmentAllowed": false,
+    "productionConfirmAllowed": false,
+    "businessGoLiveAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO",
+    "ruleZh": "本合同只建立后续场景执行门禁，不授予场景 2-13 功能开发、生产发布、业务上线或 final GO。"
+  }
+}

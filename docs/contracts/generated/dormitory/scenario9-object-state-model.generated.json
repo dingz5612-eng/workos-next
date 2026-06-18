@@ -1,0 +1,320 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario9-objectStateModel.generated",
+  "version": "oam.dormitory-scenario9-objectStateModel.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario9-checkout-settlement-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario9-checkout-settlement-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:2a8a0365c783206e0a870f20e7a4938488eec7eaa8f3822dd142bc8892529e21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "digest": "sha256:87e69a9634931a45d6ade3d2e8afc9ddd3135ecfdc3e17ea84efd3c9eb892baa"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:87e69a9634931a45d6ade3d2e8afc9ddd3135ecfdc3e17ea84efd3c9eb892baa",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario9.CheckoutSettlement",
+  "scenarioPackageNo": 9,
+  "scenarioId": "lodging.checkout-and-settlement",
+  "outputContentDigest": "sha256:3edf1a10e6bd622d306478614d094ed570f798bebdca3f023fa597e803be6510",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "退房结算",
+  "businessGoalZh": "承接场景包 7 的入住事实和场景包 8 的在住管理/退房准备摘要，办理实际退房、交接、验房、费用核算、押金抵扣、应退/应补结算意向、退房确认、凭证回收、财务处理请求和资源待恢复请求。",
+  "sourceScenarioDigest": "sha256:87e69a9634931a45d6ade3d2e8afc9ddd3135ecfdc3e17ea84efd3c9eb892baa",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario9.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "CheckoutCase",
+      "CurrentStaySnapshot",
+      "CheckoutInspection",
+      "RoomBedHandover",
+      "DamageAssessment",
+      "FeeSettlementDraft",
+      "DepositSettlementDraft",
+      "RefundRequestIntent",
+      "TopUpRequestIntent",
+      "CredentialReturnRecord",
+      "CheckoutConfirmation",
+      "ResourceRecoveryRequest",
+      "CheckoutEvidence",
+      "CheckoutStatusHistory"
+    ],
+    "searchReadModel": [
+      "退房结算",
+      "退房确认摘要",
+      "费用核算摘要",
+      "押金抵扣摘要",
+      "应退/应补意向",
+      "客户确认摘要",
+      "财务处理请求",
+      "资源待恢复请求",
+      "证据摘要",
+      "只读对象引用",
+      "结算意向"
+    ],
+    "noRefillRuleZh": "场景包 9 只能读取入住、在住、占用、收款、押金、财务、服务、异常、凭证、退房准备和证据摘要，不得要求用户重新填写已确认入住字段或财务确认字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "objects": [
+    {
+      "objectName": "CheckoutCase",
+      "businessNameZh": "退房办理单",
+      "descriptionZh": "承接有效入住和在住摘要，组织退房办理、交接、验房、费用、客户确认、财务请求和资源恢复交接的上下文对象。",
+      "ownedByScenarioPackageNo": 9,
+      "writeDisposition": "caseEnvelopeAppendOnly",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "feeVersionHistory",
+        "evidenceHistory",
+        "financeProcessingHistory",
+        "resourceRecoveryHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CurrentStaySnapshot",
+      "businessNameZh": "当前在住快照",
+      "descriptionZh": "来自场景包 7 和 8 的只读入住、占用、住客、凭证和退房准备摘要。",
+      "ownedByScenarioPackageNo": 7,
+      "writeDisposition": "readonlyUpstreamSummary",
+      "requiredLifecycle": [
+        "currentState",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CheckoutInspection",
+      "businessNameZh": "退房验房记录",
+      "descriptionZh": "房间、床位、物品、卫生、损坏、遗失和争议检查结果。",
+      "ownedByScenarioPackageNo": 9,
+      "writeDisposition": "appendOnlyFact",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "RoomBedHandover",
+      "businessNameZh": "离店交接记录",
+      "descriptionZh": "实际离店时间、本人/代办/异常离店、交接备注、签字和交接照片。",
+      "ownedByScenarioPackageNo": 9,
+      "writeDisposition": "appendOnlyFact",
+      "internalMigrationAlias": "CheckoutHandover",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "DamageAssessment",
+      "businessNameZh": "损坏/遗失评估",
+      "descriptionZh": "损坏或遗失说明、照片、物品清单、维修评估和赔偿依据。",
+      "ownedByScenarioPackageNo": 9,
+      "writeDisposition": "appendOnlyFact",
+      "internalMigrationAlias": "AssetDamageRecord",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "FeeSettlementDraft",
+      "businessNameZh": "费用核算草稿",
+      "descriptionZh": "住宿费、服务费、赔偿费、已收金额、押金金额、应退金额、应补金额的来源化计算草稿。",
+      "ownedByScenarioPackageNo": 9,
+      "writeDisposition": "appendOnlyDraftVersion",
+      "internalMigrationAlias": "CheckoutFeeCalculation",
+      "requiredLifecycle": [
+        "currentState",
+        "feeVersionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "DepositSettlementDraft",
+      "businessNameZh": "押金抵扣草稿",
+      "descriptionZh": "押金抵扣、应退、应补方向的业务意向，不是财务真值。",
+      "ownedByScenarioPackageNo": 9,
+      "writeDisposition": "appendOnlyIntent",
+      "internalMigrationAlias": "DepositSettlementIntent",
+      "requiredLifecycle": [
+        "currentState",
+        "feeVersionHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "RefundRequestIntent",
+      "businessNameZh": "应退处理请求",
+      "descriptionZh": "应退方向的 finance-gate 请求意向，不等于已退款。",
+      "ownedByScenarioPackageNo": 9,
+      "writeDisposition": "appendOnlyIntent",
+      "internalMigrationAlias": "RefundOrTopUpRequest",
+      "requiredLifecycle": [
+        "currentState",
+        "financeProcessingHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "TopUpRequestIntent",
+      "businessNameZh": "应补处理请求",
+      "descriptionZh": "应补方向的 finance-gate 请求意向，不等于已收款。",
+      "ownedByScenarioPackageNo": 9,
+      "writeDisposition": "appendOnlyIntent",
+      "internalMigrationAlias": "RefundOrTopUpRequest",
+      "requiredLifecycle": [
+        "currentState",
+        "financeProcessingHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CredentialReturnRecord",
+      "businessNameZh": "凭证回收记录",
+      "descriptionZh": "钥匙、门卡、门禁码、入住单等退房时的回收或异常记录。",
+      "ownedByScenarioPackageNo": 9,
+      "writeDisposition": "appendOnlyFact",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CheckoutConfirmation",
+      "businessNameZh": "退房确认",
+      "descriptionZh": "所有退房必需条件完成后的退房确认事实，追加生成退房单号。",
+      "ownedByScenarioPackageNo": 9,
+      "writeDisposition": "appendOnlyFact",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "ResourceRecoveryRequest",
+      "businessNameZh": "资源恢复请求",
+      "descriptionZh": "退房后把资源交接为待保洁、待检查、待维修或异常待处理，供场景包 2 复查恢复。",
+      "ownedByScenarioPackageNo": 9,
+      "writeDisposition": "appendOnlyRequest",
+      "requiredLifecycle": [
+        "currentState",
+        "resourceRecoveryHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CheckoutEvidence",
+      "businessNameZh": "退房证据",
+      "descriptionZh": "客户签字、交接照片、沟通记录、验房照片、损坏照片、清单、复核、客户确认和争议证据。",
+      "ownedByScenarioPackageNo": 9,
+      "writeDisposition": "appendOnlyEvidence",
+      "requiredLifecycle": [
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CheckoutStatusHistory",
+      "businessNameZh": "退房状态历史",
+      "descriptionZh": "退房、验房、结算、客户确认、财务处理、资源恢复和纠错的追加历史。",
+      "ownedByScenarioPackageNo": 9,
+      "writeDisposition": "appendOnlyHistory",
+      "internalMigrationAlias": "StatusHistory",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    }
+  ],
+  "checkoutStatusOptions": [
+    "待退房",
+    "待验房",
+    "待结算",
+    "待客户确认",
+    "待财务处理",
+    "已退房",
+    "结算有争议",
+    "需补证",
+    "资源待保洁",
+    "资源待检查",
+    "资源待维修",
+    "异常待处理"
+  ],
+  "stateLayering": {
+    "upstreamStayLayerZh": "有效 Stay、当前 Occupancy、入住凭证和在住状态来自场景包 7 和 8。",
+    "scenario9CheckoutLayerZh": "退房结算由场景包 9 产生，状态可为待退房、待验房、待结算、待客户确认、待财务处理、已退房、结算有争议、需补证、资源待保洁、资源待检查、资源待维修、异常待处理。",
+    "resourceRecoveryLayerZh": "资源恢复、运营状态复查和可运营确认由场景包 2 产生，场景包 9 只输出资源待恢复请求。",
+    "financeTruthLayerZh": "实际退款、补收确认和账务真值由 finance-gate 或后续财务场景产生。",
+    "nonEquivalenceZh": [
+      "已退房不等于已退款。",
+      "已退房不等于房源可运营。",
+      "结算意向不等于账务真值。",
+      "资源待保洁/待检查/待维修不等于可运营。"
+    ]
+  },
+  "invariants": [
+    "退房必须基于有效 Stay 和当前 Occupancy；无有效在住记录不得进入退房结算。",
+    "用户不得手填 stayId、checkoutCaseId、roomId、bedId、ledgerEntryId 作为办理入口；入口必须来自今日待退房、在住详情、房间/床位详情、工作项或搜索只读跳转。",
+    "退房确认必须完成实际离店时间、房间/床位交接、凭证回收、资产检查、费用核算和客户确认。",
+    "代办或异常离店必须有说明和证据。",
+    "有损坏或遗失必须填写说明并绑定验房/损坏证据。",
+    "金额来源必须来自价格快照、财务确认摘要、服务/损坏证据或授权调整，不得手填最终账务真值。",
+    "客户拒绝或存在争议时不得直接完成普通退房结算，必须进入争议或复核路径。",
+    "资源退房后只能转为待保洁、待检查、待维修或异常待处理，不得直接恢复可运营。",
+    "押金抵扣、应退、应补只能形成结算意向和 finance-gate 请求，不能直接退款、收款或写账。",
+    "查询、搜索、列表、看板、报表永远只读，不得写退房、款项、账务或资源恢复事实。",
+    "失败路径不得结束入住、不得释放资源、不得生成退款或账务、不得刷新错误 Projection/Search/Dashboard。"
+  ],
+  "checkoutInvariantRule": {
+    "validStayRequired": true,
+    "currentOccupancyRequired": true,
+    "actualCheckoutAtRequired": true,
+    "handoverRequired": true,
+    "credentialReturnRequired": true,
+    "inspectionEvidenceRequired": true,
+    "damageRequiresDescriptionAndEvidence": true,
+    "feeSourcesAuthoritative": true,
+    "customerConfirmationRequired": true,
+    "disputedSettlementRequiresReview": true,
+    "checkoutDoesNotMeanRefunded": true,
+    "checkoutDoesNotMakeResourceOperational": true,
+    "financeGateHandlesRefundTopUpLedger": true,
+    "resourceRecoveryViaScenario2Only": true,
+    "failureNoSideEffects": true
+  }
+}

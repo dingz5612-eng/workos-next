@@ -1,0 +1,39 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-evidencePolicy.generated",
+  "version": "oam.dormitory-13-scenario-evidencePolicy.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:206a7609fdae45bdae06d121cf337ad49e02575acc296d975af6fecc12ccdd21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    }
+  ],
+  "sourceContentDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:e4f98228140d0c26bb58e161c2a11888f231eff61d8433a9c35941e7a1ce652e",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "evidencePolicy": {
+    "classes": {
+      "requiredEvidence": "没有则不能确认。",
+      "supplementableEvidence": "允许先提交草稿或待补状态，不能确认最终事实。",
+      "systemAutoBoundEvidence": "事件、时间、操作人、来源摘要、版本自动绑定。",
+      "internalAuditEvidence": "digest、projectionVersion、evidence envelope、运行证明。"
+    },
+    "failureSemantics": [
+      "证据缺失",
+      "证据不可信",
+      "证据范围错误"
+    ],
+    "noSideEffectsRequired": true,
+    "userBurdenRuleZh": "证据不得变成每步都强制上传一堆文件；每个场景只要求本场景确认所必需证据。"
+  }
+}

@@ -5,6 +5,7 @@ vi.mock("../apiClient.js", () => ({
   confirmOperationWorkItem: vi.fn(),
   createEvidenceDraft: vi.fn(),
   fetchAccommodationLens: vi.fn(),
+  fetchOperationWorkItem: vi.fn(),
   fetchOperationWorkItems: vi.fn(),
   fetchSearchResults: vi.fn(),
   prepareOperationWorkItem: vi.fn(),
@@ -18,6 +19,7 @@ import {
   confirmOperationWorkItem,
   createEvidenceDraft,
   fetchAccommodationLens,
+  fetchOperationWorkItem,
   fetchOperationWorkItems,
   fetchSearchResults,
   prepareOperationWorkItem,
@@ -45,6 +47,7 @@ import {
   openReadonlyWorkspaceRecord,
   openWorkspace,
   runSearch,
+  runSearchFromCurrentUrlIfNeeded,
   setLang,
   setView,
   startOperationsWorkspaceCommand
@@ -73,8 +76,7 @@ describe("OAM hardening operation runtime matrix", () => {
     waitForProjectionEvents.mockResolvedValue(true);
     fetchAccommodationLens
       .mockResolvedValueOnce({ lensId: "dormitory.roomInventory" })
-      .mockResolvedValueOnce({ lensId: "dormitory.bedInventory" })
-      .mockResolvedValueOnce({ lensId: "dormitory.resourceReadiness" });
+      .mockResolvedValueOnce({ lensId: "dormitory.bedInventory" });
     fetchOperationWorkItems.mockResolvedValue([{ workItemId: "wi-next" }]);
     const projection = vi.fn();
     const lens = vi.fn();
@@ -82,12 +84,12 @@ describe("OAM hardening operation runtime matrix", () => {
     const readSideSynced = vi.fn();
 
     const result = await submitWorkItemOperation({
-      workspace: { id: "W-STAY-RESOURCE", workItemId: "W-STAY-RESOURCE:roomSetup" },
-      card: { id: "roomSetup" },
+      workspace: { id: "W-DORM-MAINLINE", workItemId: "wi-dorm-room-setup" },
+      card: { id: "cert.roomSetupConfirm" },
       actor: { token: "operator-token" },
       deviceId: "mobile-current",
       language: "zh-CN",
-      fieldValues: { roomId: "R-101" },
+      fieldValues: { roomNo: "301" },
       evidenceIds: ["evd-room"],
       submissionProtocol: {
         idempotencyKey: "idem-1",
@@ -102,11 +104,10 @@ describe("OAM hardening operation runtime matrix", () => {
     });
 
     expect(result.readSideSyncStatus).toBe("scheduled");
-    expect(prepareOperationWorkItem).toHaveBeenCalledWith("W-STAY-RESOURCE:roomSetup", expect.objectContaining({
-      aggregateRef: "roomId:R-101",
+    expect(prepareOperationWorkItem).toHaveBeenCalledWith("wi-dorm-room-setup", expect.objectContaining({
       evidenceIds: ["evd-room"]
     }), "operator-token");
-    expect(confirmOperationWorkItem).toHaveBeenCalledWith("W-STAY-RESOURCE:roomSetup", "operator-token", expect.objectContaining({
+    expect(confirmOperationWorkItem).toHaveBeenCalledWith("wi-dorm-room-setup", "operator-token", expect.objectContaining({
       deviceId: "mobile-current",
       idempotencyKey: "idem-1"
     }));
@@ -177,6 +178,33 @@ describe("OAM hardening operation runtime matrix", () => {
     expect(attachEvidence).toHaveBeenCalledWith("evd-existing", expect.objectContaining({
       contentSha256: "sha",
       sizeBytes: 9
+    }), "");
+
+    createEvidenceDraft.mockClear();
+    attachEvidence.mockClear();
+    expect(await materializeEvidenceObjects({
+      workspace: { id: "W-STAY-RESOURCE" },
+      card: { id: "roomSetup" },
+      actor: {},
+      submissionProtocol: { submissionId: "sub-1", cardInstanceId: "ci-1" },
+      evidenceDrafts: [{ requirementId: "restore-photo", evidenceId: "ev-existing", submissionId: "sub-1", cardInstanceId: "ci-1" }]
+    })).toEqual(["ev-existing"]);
+    expect(createEvidenceDraft).not.toHaveBeenCalled();
+    expect(attachEvidence).not.toHaveBeenCalled();
+
+    createEvidenceDraft.mockResolvedValue({ evidenceId: "ev-new" });
+    attachEvidence.mockResolvedValue({ evidenceId: "ev-new" });
+    expect(await materializeEvidenceObjects({
+      workspace: { id: "W-STAY-RESOURCE" },
+      card: { id: "roomSetup" },
+      actor: {},
+      submissionProtocol: { submissionId: "sub-2", cardInstanceId: "ci-2" },
+      evidenceDrafts: [{ requirementId: "restore-photo", evidenceId: "ev-existing", submissionId: "sub-1", cardInstanceId: "ci-1" }]
+    })).toEqual(["ev-new"]);
+    expect(createEvidenceDraft).toHaveBeenCalledWith(expect.objectContaining({
+      evidenceId: null,
+      submissionId: "sub-2",
+      cardInstanceId: "ci-2"
     }), "");
   });
 
@@ -253,9 +281,12 @@ describe("OAM hardening surface and navigation matrix", () => {
     ctx.render = vi.fn();
 
     expect(defaultHomeForCurrentSurface(ctx)).toBe("home");
+    ctx.state.operationMessage = ctx.tr("draftSaved");
     setLang("ru-RU", ctx);
     expect(ctx.state.lang).toBe("ru-RU");
     expect(localStorage.getItem("workosnext.lang")).toBe("ru-RU");
+    expect(ctx.state.operationMessage).toBe(ctx.tr("draftSaved"));
+    expect(ctx.state.operationMessage).not.toContain("草稿已保存");
 
     onboard(ctx);
     expect(localStorage.getItem("workosnext.onboarded")).toBe("1");
@@ -269,14 +300,14 @@ describe("OAM hardening surface and navigation matrix", () => {
     ];
     const target = openWorkspace("W-STAY-RESOURCE", readonly, "bedSetup");
     expect(target.canOpen).toBe(false);
-    expect(readonly.state.view).toBe("workspace");
+    expect(readonly.state.view).toBe("operationPanel");
 
     const operation = createSurfaceCtx({
       operationMessage: "运行服务未连接",
       fieldValidation: { missingFieldIds: ["roomId"] },
       lastActionResult: { status: "business_blocked_422", reason: "persisted_work_item_required" }
     });
-    const opened = openOperationPanel("W-STAY-RESOURCE:roomSetup", operation);
+    const opened = openOperationPanel("wi-dorm-room-setup", operation);
     expect(opened.canOpen).toBe(true);
     expect(operation.state.operationMessage).toBe("");
     expect(operation.state.lastActionResult).toBeNull();
@@ -286,18 +317,49 @@ describe("OAM hardening surface and navigation matrix", () => {
     expect(operation.state.operationRouteIssue).toBeNull();
   });
 
+  it("hydrates full operation work item detail when opening a lightweight work item", async () => {
+    const ctx = createSurfaceCtx();
+    ctx.render = vi.fn();
+    const lightItem = {
+      workItemId: "wi-light-evidence",
+      workspaceId: "W-STAY-RESOURCE",
+      cardId: "roomSetup",
+      lifecycleState: "ready",
+      ownerRole: "operator"
+    };
+    ctx.state.runtimeStore.operationWorkItems = [lightItem];
+    ctx.state.runtimeStore.workQueue = [lightItem];
+    fetchOperationWorkItem.mockResolvedValueOnce({
+      ...lightItem,
+      card: {
+        id: "roomSetup",
+        evidence: [{ id: "quote-proof", label: { "zh-CN": "报价确认证据" }, required: true }]
+      }
+    });
+
+    const opened = openOperationPanel("wi-light-evidence", ctx);
+    expect(opened.canOpen).toBe(true);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(fetchOperationWorkItem).toHaveBeenCalledWith("wi-light-evidence");
+    const hydrated = ctx.state.runtimeStore.operationWorkItems.find((item) => item.workItemId === "wi-light-evidence");
+    expect(hydrated.card.evidence[0].id).toBe("quote-proof");
+    expect(ctx.render).toHaveBeenCalled();
+  });
+
   it("keeps Search read side resilient to request races, offline fallback, and start command failures", async () => {
     const ctx = createSurfaceCtx({ query: "房间" });
     ctx.render = vi.fn();
     fetchSearchResults
       .mockImplementationOnce(() => new Promise((resolve) => setTimeout(() => resolve([{ resultType: "workItem", workItemId: "wi-slow" }]), 10)))
-      .mockResolvedValueOnce([{ resultType: "workItem", workItemId: "wi-fast", workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup" }]);
+      .mockResolvedValueOnce([{ resultType: "workItem", workItemId: "wi-fast", workspaceId: "W-DORM-MAINLINE", cardId: "cert.roomSetupConfirm" }]);
     recordMobileClientEvent.mockRejectedValue(new Error("analytics offline"));
 
     const slow = runSearch(ctx, "慢请求");
     await runSearch(ctx, "快请求");
     await slow;
 
+    expect(fetchSearchResults).toHaveBeenCalledWith("快请求", "zh-CN");
     expect(ctx.state.view).toBe("search");
     expect(ctx.state.runtimeStore.operationWorkItems.some((item) => item.workItemId === "wi-fast")).toBe(true);
     expect(ctx.state.runtimeStore.operationWorkItems.some((item) => item.workItemId === "wi-slow")).toBe(false);
@@ -306,14 +368,31 @@ describe("OAM hardening surface and navigation matrix", () => {
     await runSearch(ctx, "离线");
     expect(ctx.state.view).toBe("search");
 
+    fetchSearchResults.mockClear();
+    fetchSearchResults.mockResolvedValueOnce([{
+      resultType: "workItem",
+      workItemId: "wi-url-search",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm"
+    }]);
+    const urlSearch = createSurfaceCtx({ view: "search", query: "A24126", lang: "ru-RU" });
+    urlSearch.render = vi.fn();
+    await expect(runSearchFromCurrentUrlIfNeeded(urlSearch)).resolves.toBe(true);
+    expect(fetchSearchResults).toHaveBeenCalledWith("A24126", "ru-RU");
+    expect(urlSearch.state.runtimeStore.searchResultsByQuery.a24126[0].workItemId).toBe("wi-url-search");
+
+    fetchSearchResults.mockClear();
+    await expect(runSearchFromCurrentUrlIfNeeded(urlSearch)).resolves.toBe(false);
+    expect(fetchSearchResults).not.toHaveBeenCalled();
+
     const startCtx = createSurfaceCtx();
     startCtx.render = vi.fn();
     startOperationsWorkspace.mockResolvedValueOnce({});
-    await startOperationsWorkspaceCommand(startCtx, "W-STAY-RESOURCE", "roomSetup");
+    await startOperationsWorkspaceCommand(startCtx, "W-DORM-MAINLINE", "cert.roomSetupConfirm");
     expect(startCtx.state.operationMessage).toBe(startCtx.tr("apiOffline"));
 
     startOperationsWorkspace.mockRejectedValueOnce({ status: 401, reason: "actor_session_required" });
-    await startOperationsWorkspaceCommand(startCtx, "W-STAY-RESOURCE", "roomSetup");
+    await startOperationsWorkspaceCommand(startCtx, "W-DORM-MAINLINE", "cert.roomSetupConfirm");
     expect(startCtx.state.currentActor).toBeNull();
     expect(startCtx.state.view).toBe("login");
   });
@@ -457,7 +536,7 @@ describe("OAM hardening queue and Search readonly matrix", () => {
   });
 
   it("keeps personal runtime support surfaces current, readonly, and evidence-backed", () => {
-    localStorage.setItem("workosnext.operationDraft.W-STAY-RESOURCE.roomSetup", JSON.stringify({
+    localStorage.setItem("workosnext.operationDraft.W-DORM-MAINLINE.cert.roomSetupConfirm", JSON.stringify({
       savedAt: "2026-06-07T00:00:00Z",
       evidenceDrafts: [
         { evidenceId: "evd-draft", status: "upload_failed" },
@@ -466,13 +545,20 @@ describe("OAM hardening queue and Search readonly matrix", () => {
     }));
     const store = runtimeStore();
     store.workQueue.push({
-      workItemId: "W-STAY-RESOURCE:doneRoomSetup",
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "roomSetup",
+      workItemId: "wi-dorm-room-setup-done",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm",
       lifecycleState: "done",
       ownerRole: "operator",
       commandSubmissionId: "cmd-done",
       reason: "已完成"
+    }, {
+      workItemId: "wi-dorm-scenario2-draft",
+      workspaceId: "W-DORM-RESOURCE-OPERATION-STATUS",
+      cardId: "cert.selectBaseReadyResource",
+      lifecycleState: "ready",
+      ownerRole: "operator",
+      nextAction: { "zh-CN": "继续填写房源运营状态", "ru-RU": "Вернуться в работу" }
     });
     const ctx = createSurfaceCtx({
       runtimeStore: store,
@@ -485,7 +571,7 @@ describe("OAM hardening queue and Search readonly matrix", () => {
       currentActor: { role: "unknownRole", displayName: "未知角色" },
       currentDevice: { surface: "mobile", deviceTrustStatus: "trusted" }
     });
-    ctx.task = () => ({ title: { "zh-CN": "确认房间配置" } });
+    ctx.task = () => ({ title: { "zh-CN": "填写房间信息" } });
 
     const drafts = visibleText(simpleView("drafts", "draftsBody", { ...ctx, state: { ...ctx.state, view: "drafts" } }));
     const uploadQueue = visibleText(simpleView("uploadQueue", "uploadQueueBody", { ...ctx, state: { ...ctx.state, view: "uploadQueue" } }));
@@ -500,17 +586,19 @@ describe("OAM hardening queue and Search readonly matrix", () => {
     const evidenceLibrary = visibleText(simpleView("evidenceLibrary", "evidenceLibraryBody", { ...ctx, state: { ...ctx.state, view: "evidenceLibrary" } }));
 
     expect(drafts).toContain("本地草稿 1");
-    expect(uploadQueue).toContain("证据上传 1");
+    expect(uploadQueue).toContain("材料上传 1");
     expect(submitQueue).toContain("committed_projection_failed");
     expect(failedSync).toContain("投影失败，等待恢复");
     expect(recentSubmissions).toContain("确认后的稳定审计引用");
     expect(recentTraces).toContain("1");
     expect(permissions).toContain("经办人");
     expect(deviceTrust).toContain("设备已验证");
-    expect(businessRecords).toContain("住宿资源");
+    expect(businessRecords).toContain("新建房间和床位");
+    expect(businessRecords).toContain("继续填写房源运营状态");
+    expect(businessRecords).not.toContain("[object Object]");
     expect(completedRecords).toContain("已完成记录");
     expect(evidenceLibrary).toContain("room-photo.txt");
-    expect(visibleText(confirmPageView(ctx))).toContain("确认房间配置");
+    expect(visibleText(confirmPageView(ctx))).toContain("填写房间信息");
     expect(visibleText(resultView(ctx))).toContain("工作项");
   });
 });

@@ -19,9 +19,9 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
   "sourceGraphVersion": "oam.kernel-graph.v1",
-  "sourceHash": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-  "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-  "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+  "sourceHash": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+  "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+  "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
   "deterministicSort": true,
   "contracts": [
     {
@@ -47,18 +47,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/domain-pack.yml",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:7d9c9dd775be4c3a6764d89f107830aa45a848dd8b5a9f7c0b490cc3da290c3b"
+      "compilerInputDigest": "sha256:be11ff3a7463bf3d5d48d3861c00ce7b489ae6b4787b326c1379656827f5d968"
     },
     {
       "targetPath": "docs/business/domains/dormitory/dormitory-observability-contract.json",
@@ -83,18 +83,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/dormitory-observability-contract.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:4eb24449a073e73879949b3878b84e1750e4075065f584254d04f5212d256114"
+      "compilerInputDigest": "sha256:5f32acb388528971109c2c4583832b2ea718a3bca87d56a899b0c634fdc82540"
     },
     {
       "targetPath": "docs/business/domains/dormitory/dormitory-operator-playbook.md",
@@ -119,18 +119,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/dormitory-operator-playbook.md",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:bc1dc2b2faffcabc65617eb366855a7991eb24be98ba00e32d6c757b1d3be787"
+      "compilerInputDigest": "sha256:507e4f8724d5245edc8ca0353a23393062be7a95aede403bc7a450a19d9c1b4d"
     },
     {
       "targetPath": "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
@@ -155,18 +155,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:2a875315733e0206c9607f54aa31e696dcf9fcba8f187ff11a64ba830e115e30"
+      "compilerInputDigest": "sha256:47abf781fc251f827a66a0303588af27f0572025285f29de5769c3b8659bf2e2"
     },
     {
       "targetPath": "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
@@ -191,18 +191,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
       "checker": "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:93f115bfa94f86258bdcc00f00642bba13badb0a3c2b2c3e39620cd11c5f0624"
+      "compilerInputDigest": "sha256:099e72a8b22ce885ce98c70fbcfad6c9deb0f06ce5842fe64d8f8cbf7109a09d"
     },
     {
       "targetPath": "docs/business/domains/dormitory/dormitory-release-train.yml",
@@ -227,18 +227,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/dormitory-release-train.yml",
       "checker": "scripts/business/check-dormitory-release-train.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:abd4e799ee6924dd59e4edbec0cc7408bd26b8c8e19d035ff9a9fc1d530fdb2a"
+      "compilerInputDigest": "sha256:d1cde85835e4572501e5cd6b8947a09e5390a0ac2901db2ccaf8fc79015bada9"
     },
     {
       "targetPath": "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
@@ -263,18 +263,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/dormitory-seed-data-pack.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:a301523590d3d4d79ccee7a7cb03ff508ed4c93a5e1a389df3e38df103f2905b"
+      "compilerInputDigest": "sha256:f8e83486055f99acf8e25b2a38128db2de4c4d30e16479034668f950f10fdb51"
     },
     {
       "targetPath": "docs/business/domains/dormitory/handoff-contract.json",
@@ -299,18 +299,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/handoff-contract.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:c30be0109387ec1a38e95a0db381c5e7823c06c79ef788e8c0047f5f2a50f58a"
+      "compilerInputDigest": "sha256:2f8dd3fae05b44d9c1ddf73f1c9af0800556c9a57dc09791e226476b575949d3"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
@@ -335,18 +335,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:0cff4e3edbc66c698cc3baae18581b8e99f4f092557b492fefbad7f2409df8d2"
+      "compilerInputDigest": "sha256:1e6fcaa2b1ac0fa43f9d9da956f7503aeef8452d6fb36d059c4b0496bdc6e6e2"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-access-credential-revoke.json",
@@ -371,18 +371,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-access-credential-revoke.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:8a7310085082772d2f7a055fa1265b93b8417a4d351b49e0407e4dd82e30db62"
+      "compilerInputDigest": "sha256:792bedaf77c25021ea22114e23ed07c2bfc4fd6183c54e5a1256b3c525f1b4c6"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-bed-setup-confirm.json",
@@ -407,18 +407,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-bed-setup-confirm.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:513f7137f6a58de638384eaed09c2d2ed91e4cf66ac40e839e5cf626c9d6d20d"
+      "compilerInputDigest": "sha256:286f083af29f6db6fc0d32bd333f34c4a3c241191ce4a415adbeaace7dd82fc1"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-bed-transfer-approve.json",
@@ -443,18 +443,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-bed-transfer-approve.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:129ae88de81330dec96f9c93a2e5c6fda164cd5f41472cce95be87ea83ffa540"
+      "compilerInputDigest": "sha256:4cc889061f000d3ad8ec470185b382457509f5ef9f92b8a77feffdc08a8b5702"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-checkin-confirm.json",
@@ -479,18 +479,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-checkin-confirm.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:739eab1bf77b986c6ab4f1b1e82f1f87a6f0b970a5782e54ad0472782d475c89"
+      "compilerInputDigest": "sha256:e53e33029e03cda4c678e5cb44b44d47d8a92548152ba3044e008230a40bb193"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-checkout-settlement-approve.json",
@@ -515,18 +515,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-checkout-settlement-approve.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:72947134c673919cfaca2d48889760e58b21fb60d8af40376f9db0e9ae8da4ae"
+      "compilerInputDigest": "sha256:27c64806ccccadf0f4810f4fbccec169eef89f145c223ab869dc6f3b2a8be703"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-deposit-confirm.json",
@@ -551,18 +551,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-deposit-confirm.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:6fd7f86894c11308bb113730ce9dae1ce5b98554aea6f26ba42efcbbd0be13b3"
+      "compilerInputDigest": "sha256:6817dfbaa260c3419702508bf3fc8f246b8a234982d6287efd2bd9f7696f9ae3"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-exception-resolve.json",
@@ -587,18 +587,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-exception-resolve.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:8ddff4a8f35352b0bbacdd0214248069a330db87eae4ef2d66d05dd0dd4a1006"
+      "compilerInputDigest": "sha256:f2e7b573a1681e5bd375bd33894e58b5a4fceadd959a668038aa8f6e73fa14a8"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-incident-record.json",
@@ -623,18 +623,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-incident-record.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:3b587b45e3be2c9f71b86822c9ca6b11d33f081c0425d276edc6d6a08f8c84aa"
+      "compilerInputDigest": "sha256:e489c9422f57a488d9f7cafe053e7df9ee1113b9288558228c8571ac1e09a297"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-lead-capture.json",
@@ -659,18 +659,234 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-lead-capture.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:f97335c9760c9b114a424651423fee1c7982b1beb464bb13d0e0c1b44927cda8"
+      "compilerInputDigest": "sha256:7d8556a7fce9b5c87dd3afb7d145c58ec8cef1c73d6aee937ce4f87e8e7421eb"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-operation-blocker-update.json",
+      "generated": true,
+      "doNotEdit": true,
+      "manifestKind": "domain-derived",
+      "derivedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "domain.dormitory",
+        "graph.oam"
+      ],
+      "sourceNodeRefs": [
+        "domain.dormitory",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-operation-blocker-update.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "sourceHashes": {
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
+      },
+      "compilerInputDigest": "sha256:89524c9a6537e690206217f9f5da340975fc26ed59bf03859d7e727dde6bc457"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-operation-inspection-confirm.json",
+      "generated": true,
+      "doNotEdit": true,
+      "manifestKind": "domain-derived",
+      "derivedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "domain.dormitory",
+        "graph.oam"
+      ],
+      "sourceNodeRefs": [
+        "domain.dormitory",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-operation-inspection-confirm.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "sourceHashes": {
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
+      },
+      "compilerInputDigest": "sha256:0ec3c192e909e8b7ee304e915d16b757f1927647dc1415af866fbe1eb9980007"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-operation-resource-select.json",
+      "generated": true,
+      "doNotEdit": true,
+      "manifestKind": "domain-derived",
+      "derivedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "domain.dormitory",
+        "graph.oam"
+      ],
+      "sourceNodeRefs": [
+        "domain.dormitory",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-operation-resource-select.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "sourceHashes": {
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
+      },
+      "compilerInputDigest": "sha256:12fc8d089643d2f9c3e2ad32bef83b96c98948ba8d0ab43073a956a100cee1bc"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-operation-restore-confirm.json",
+      "generated": true,
+      "doNotEdit": true,
+      "manifestKind": "domain-derived",
+      "derivedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "domain.dormitory",
+        "graph.oam"
+      ],
+      "sourceNodeRefs": [
+        "domain.dormitory",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-operation-restore-confirm.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "sourceHashes": {
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
+      },
+      "compilerInputDigest": "sha256:71148b3b31627ec248a230f7b4200b36ac16b00902e99dfb582c3dfa3362c4ba"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-operation-status-change-confirm.json",
+      "generated": true,
+      "doNotEdit": true,
+      "manifestKind": "domain-derived",
+      "derivedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "domain.dormitory",
+        "graph.oam"
+      ],
+      "sourceNodeRefs": [
+        "domain.dormitory",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-operation-status-change-confirm.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "sourceHashes": {
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
+      },
+      "compilerInputDigest": "sha256:aab10ead0ad9bf74bc8d21d0e1ac2df353b9c16a8e6e5a9ab5c05545144a0fe2"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-operation-status-draft.json",
+      "generated": true,
+      "doNotEdit": true,
+      "manifestKind": "domain-derived",
+      "derivedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "domain.dormitory",
+        "graph.oam"
+      ],
+      "sourceNodeRefs": [
+        "domain.dormitory",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-operation-status-draft.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "sourceHashes": {
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
+      },
+      "compilerInputDigest": "sha256:aa5d5e5f0e6481fd0d1ded64b6a4a086743754d823f23a54bbf7a09a5a133656"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-payment-confirm.json",
@@ -695,18 +911,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-payment-confirm.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:37cbf082dcc8b5dc8af9f3acfd32bdb3727e6de29754d8ea9f3a1d0bcb6f841d"
+      "compilerInputDigest": "sha256:46996916b5b3f99ec0341cdc7acf05feb4cce050e3489cf2f3b749e279279dfe"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-period-action-plan-execute.json",
@@ -731,18 +947,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-period-action-plan-execute.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:0f293940353e0024101a8b06ca3070153e3413349c43f393594cb1cd257f4691"
+      "compilerInputDigest": "sha256:4202ddf88d4edfac31d50a06ee511a2ca64e2cf47dcc2966c3cde6e254dfc47f"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-period-review.json",
@@ -767,18 +983,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-period-review.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:0195d7e367256d058153302b65552df805926b7acf49d33c40edc455b05bf6fb"
+      "compilerInputDigest": "sha256:5d5731f1b1c11596cdd24a7caac4b8fcb8b8328f6b8db9fde54113220c423f27"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-rate-plan-confirm.json",
@@ -803,18 +1019,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-rate-plan-confirm.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:c6cd4d5f2986d17a8c7a0150a4f172de0f0d5190f040fed2da550417271f516a"
+      "compilerInputDigest": "sha256:6dfbced547b1499ac53d8dba3b1a1d88eca9f6352eba9214f250e5bd74f5b9b8"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-reservation-cancel-close.json",
@@ -839,18 +1055,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-reservation-cancel-close.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:50be73e63bcb8db6858b6c0f41f6db8aae7a6812d82c732e2bf9531b686aa7c2"
+      "compilerInputDigest": "sha256:0533255a68d7ae3768b8f514c71842f868220e280198152a87d9d8c0d36e06a6"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-reservation-confirm.json",
@@ -875,18 +1091,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-reservation-confirm.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:7e9cc0acb2e3af22c0fe14ac01443c582afd3c50051df28e904fb1e359d4da15"
+      "compilerInputDigest": "sha256:dd549128e315587cc42788d051ab6fe78bb112f1b13202f3b4535679bdfe9b43"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-reservation-no-show-close.json",
@@ -911,18 +1127,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-reservation-no-show-close.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:aea0d6a08d984be9fc474537565edafe994b5efb8c3a56a9e4dadae3757efc3d"
+      "compilerInputDigest": "sha256:75a1994e678f065d16baa04bf2c98bdd91233c930a8b020148ff41ab929678a3"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-resource-readiness-confirm.json",
@@ -947,18 +1163,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-resource-readiness-confirm.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:5f720ef644f5442a3446cabd429ef86ee841fba01aba1af7cf78a565d3788d34"
+      "compilerInputDigest": "sha256:1c7e6dec544bf74c6962f76c762ad183f309b0108bdfdbf711ee8bf93281bc85"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-room-inspection-confirm.json",
@@ -983,18 +1199,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-room-inspection-confirm.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:6b13e688541c9ba86ad89c1b35d1456a48ca80d594be42dff4eb33a3ed578314"
+      "compilerInputDigest": "sha256:27af14d21bfc4b078db778dad76540442dd3ffa5a0b09e6fb60145004ef2ec95"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-room-setup-confirm.json",
@@ -1019,18 +1235,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-room-setup-confirm.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:e2080c29da43eb2ac378de45b3d91c44e63098bcef9118bb81325dd0602118e7"
+      "compilerInputDigest": "sha256:fc9c80dec90e1bb67a85d185ff62d00f63b32b819944129547f4832a07d43371"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-service-task-assign.json",
@@ -1055,18 +1271,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-service-task-assign.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:2bf08609f3f4f0fbcffb42038baddb604f738c7a74a8acf79a8a06fb8e57771f"
+      "compilerInputDigest": "sha256:7ea4a0523e9fe81b0ecbadd64061a415c8bc687ea65702d5868542bb615dc8d1"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-service-task-complete.json",
@@ -1091,18 +1307,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-service-task-complete.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:ee3e3259ee0e336c16691458a8683483e931662d5c2934330c5f7fc067c7559d"
+      "compilerInputDigest": "sha256:bc28551cb5dc6e67360ee08f9940fb2cdc5d68d0b4ff70359713a8785bf1545d"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-service-task-create.json",
@@ -1127,18 +1343,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-service-task-create.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:ac169f5b6906a56f1a19251e40f8ff832f0364d561130318e106fdd042936035"
+      "compilerInputDigest": "sha256:7440eebee722bd34c5940e66f220a060cd6ad28d8b94cff0a424c4e707b9b4de"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-service-task-verify.json",
@@ -1163,18 +1379,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-service-task-verify.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:17b7e26da85fcea69279016e37f000b8993071262421b3d3ee5fad303163bac1"
+      "compilerInputDigest": "sha256:f9daa9828e67e22d67db0b7aaa835463834ce9991b10ffc4beaf252e65a494db"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-stay-extend-approve.json",
@@ -1199,18 +1415,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-stay-extend-approve.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:c7273acea5188bc33a0f8f05347e5d2f8f30947af213710eeee0f89315ffefbe"
+      "compilerInputDigest": "sha256:5465409098fe294a6282b15df11f41d56bc0623e09b4f074ff4dc4124b9b75f6"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/finance-charge-adjustment-approve.json",
@@ -1235,18 +1451,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-charge-adjustment-approve.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:36850888c98e8d9d1d55a4ecc9eff1f83b3a588bcac8c5c4761cb18035c27341"
+      "compilerInputDigest": "sha256:a7b7d83ed5720081b349d84b632f34d55f2f944b508345497c260eab74893ddc"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/finance-correction-apply.json",
@@ -1271,18 +1487,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-correction-apply.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:a9732f72e7c4e067fe6419026c07b2be5164035eb94cb216124127ebba18b0d7"
+      "compilerInputDigest": "sha256:a2f6abb3c53bd2c2c8cd7182d58760e700a8f403e270440baa1bb31c916d18cb"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/finance-debt-follow-up.json",
@@ -1307,18 +1523,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-debt-follow-up.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:d7f1ef4114367ec9e8b59f96534394163a4f4b1d82e022d9c51603ad40f44f96"
+      "compilerInputDigest": "sha256:8ba02c84a111a5f04df6b8452447ea158228c15badc9a861fd05a433d9b96905"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/finance-expense-approve.json",
@@ -1343,18 +1559,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-expense-approve.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:b3e973de41e9ecf78023ed914d1dfd2b107faaeedf4b66156a3eb5091ff271d2"
+      "compilerInputDigest": "sha256:7282e5cb0e05c914ace14a33573445ebd486ef7ff091b4e8d0e6d50c58aa55c8"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/finance-expense-link.json",
@@ -1379,18 +1595,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-expense-link.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:2c4a2c03b75cb29edb298d4968e020fbc5d9062d3a2fa5aede76efc39aff0ff0"
+      "compilerInputDigest": "sha256:6cca71278212d7a4aa054c19ed7e57307cccfbf3d36509a8e96aede905f35480"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/finance-expense-record.json",
@@ -1415,18 +1631,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-expense-record.json",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:ba74b84ff2e3f8af3a441c4afee71d55964fa9b3a71c54e890d08fb25b1389c3"
+      "compilerInputDigest": "sha256:4fb72dc470d22547e4baebeaec20e001bdfcb2ecefadacd9126dc8a4a70c379e"
     },
     {
       "targetPath": "docs/business/dormitory/evidence-policy.yml",
@@ -1451,18 +1667,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/dormitory/evidence-policy.yml",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:6ea970f257f39cb70330672dcc9918e4b309c65e2278135382d587482c07ab0a"
+      "compilerInputDigest": "sha256:da11db9b804b3c093cf42df0e502c556864d6d753a206406b42e46167d7cd79b"
     },
     {
       "targetPath": "docs/business/dormitory/evidence-requirements.yml",
@@ -1487,18 +1703,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/dormitory/evidence-requirements.yml",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:141b386f7f734861ffc063530389de1fb15e22ae359dd02b58f89fc6b05c6950"
+      "compilerInputDigest": "sha256:863414aee3c92f72d95b931a89d13938d6ff53a3c1e7fb301e8e96e13e7d328f"
     },
     {
       "targetPath": "docs/business/dormitory/go-no-go.yml",
@@ -1523,18 +1739,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/dormitory/go-no-go.yml",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:10e112b71e7d3c7a5cbf765f459784ddb12178574d5ae7d732ab279b658e2d9b"
+      "compilerInputDigest": "sha256:d704a626275c16c6bb94dc563c1aef4da342e6e4a4b8bde492a5e5caf69ef44b"
     },
     {
       "targetPath": "docs/business/dormitory/lens-map.yml",
@@ -1559,18 +1775,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/dormitory/lens-map.yml",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:132d63a7d26466ed9c5aca5a6d2f19c5d804d35c16fc90892d8c176141047264"
+      "compilerInputDigest": "sha256:cf1041a817774686f58a62c856b071292d824b360445438339f0a923cbb67e74"
     },
     {
       "targetPath": "docs/business/dormitory/metric-formula-contract.yml",
@@ -1595,18 +1811,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/dormitory/metric-formula-contract.yml",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:0aad49e9c0de7b6e47ce8859393d13faf48d916d2b227de4eec398aa12d05abb"
+      "compilerInputDigest": "sha256:a5a0bfa6b88ec77943b475a51cd397072c12c3ba8075a8c285593b1193789469"
     },
     {
       "targetPath": "docs/business/dormitory/metrics-tree.yml",
@@ -1631,18 +1847,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/dormitory/metrics-tree.yml",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:9e58e25436bde2c0f8cef80bf4566f3c6d5a95bf4e85154e7b6e5de7b120229a"
+      "compilerInputDigest": "sha256:1dd24fabf3178f226fc02c2c40e0a076542fd3948e850a2c465c7cf636484502"
     },
     {
       "targetPath": "docs/business/dormitory/value-streams.yml",
@@ -1667,18 +1883,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/dormitory/value-streams.yml",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:f9676c03924677dff6336400b61c1a0221f16f1b38bc7197de76ff603126f720"
+      "compilerInputDigest": "sha256:453a1781ad9cdfbd4878462dbf81056d9b735d1d70aaa2ec4dfeab29aa91400c"
     },
     {
       "targetPath": "docs/business/dormitory/workitem-catalog.yml",
@@ -1703,18 +1919,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/dormitory/workitem-catalog.yml",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:e93b538bef0fe3389d12724f725c7b66668273f6a0d40e9916868f9cde8286fd"
+      "compilerInputDigest": "sha256:6abde12521f7e45c795fddcbffc269f2bb46b5c296a63772589ae7ccc06ea76c"
     },
     {
       "targetPath": "docs/business/dormitory/workitem-decision-table.json",
@@ -1739,18 +1955,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/dormitory/workitem-decision-table.json",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:1317a9d16cbcd28952527689cb42d88e6c60d001a8f1344ca93f5111961d34f5"
+      "compilerInputDigest": "sha256:ad20c3aac253e9ac5e450e2da519ee5858d79f177f262247fea15fc1e3243ef4"
     },
     {
       "targetPath": "docs/business/dormitory/workitem-raci.yml",
@@ -1775,18 +1991,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/dormitory/workitem-raci.yml",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:09a6874b30a62a761e7c6cfd36ab79f10da53705d976304b2f4c21d563cc2114"
+      "compilerInputDigest": "sha256:e412098c1e95a29b27327d1334dce4483bf0d26cab481546240e37f3e2083df2"
     },
     {
       "targetPath": "docs/business/dormitory/workitem-sla.yml",
@@ -1811,18 +2027,18 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/dormitory/workitem-sla.yml",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:906db4144d511b288555e3decfab23a5a8da202944986f9dac649fd78f9ee1f2"
+      "compilerInputDigest": "sha256:f475890541741fe61f5e62dd686e693be9be5a0b804cf61e653eefb17a49acfd"
     },
     {
       "targetPath": "docs/scenarios/dormitory/golden-pilot.yml",
@@ -1847,20 +2063,20 @@
         "domain.dormitory",
         "graph.oam"
       ],
-      "sourceContentDigest": "sha256:c4567a60a1ead8668f64651ffa8f7cd2ad29d0a11283cf5d3bf1ec6859833815",
-      "kernelGraphHash": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d",
+      "sourceContentDigest": "sha256:aa9233d52f364126ae465ec1edad80bea00dd7be0474813d4dad41215a4df483",
+      "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
       "graphBinding": "file.docs/scenarios/dormitory/golden-pilot.yml",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:2f500c3714c9d8f87380db950941936e58258d6346e6ffd7b4f854432f621b0c",
-        "docs/oam/oam-kernel-graph.json": "sha256:576f30d3e2340ba1c6655fde8e80333ee2e136eb9973c7548a20a35007c4c11d"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+        "docs/oam/oam-kernel-graph.json": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec"
       },
-      "compilerInputDigest": "sha256:934e45116b5f0e55e1f1b923271bade8a1ebea96bdceb3fda9237550ac28a3a3"
+      "compilerInputDigest": "sha256:f69f15564a37d86aae391db15ba0faf3003452f135a9e327b16c7da2e90fdbb3"
     }
   ],
-  "compilerInputDigest": "sha256:e9f18db8102e509e9c363ab7c91dfe7cf6be58c65f75faa3543b8847e9b0a8f4",
-  "outputContentDigest": "sha256:aa1f3499008310084c17327a269f1d85c6bff6e29fa9ccb5dcbbe48ec1e42ae2"
+  "compilerInputDigest": "sha256:2b36a6ee13500fcf4c8723f82d610f97ad5e63c090bf541637f879ae1c979f1d",
+  "outputContentDigest": "sha256:250abf05df09f2e7d2aa2278c492e6ebd4b03300b7d79c1157a8b52a4f601a31"
 }

@@ -96,17 +96,20 @@ public sealed class OperationsRuntimeService
         return null;
     }
 
-    public IReadOnlyList<WorkItem> ListWorkItems(string? tenantId = null, string? caseId = null) =>
+    public IReadOnlyList<WorkItem> ListWorkItems(string? tenantId = null, string? caseId = null, string? workspaceId = null, bool activeOnly = false) =>
         workItems.List(tenantId, caseId)
+            .Where(item => WorkspaceMatches(item, workspaceId))
             .Concat(runtime.GetProcessWorkItemIntents(tenantId)
             .Where(item => string.IsNullOrWhiteSpace(caseId) || PayloadValue(item.Payload, "caseId").Equals(caseId, StringComparison.OrdinalIgnoreCase))
+            .Where(item => string.IsNullOrWhiteSpace(workspaceId) || item.TargetWorkspaceId.Equals(workspaceId, StringComparison.OrdinalIgnoreCase))
             .Select(ToWorkItem))
             .GroupBy(item => item.WorkItemId, StringComparer.OrdinalIgnoreCase)
             .Select(group => group.First())
+            .Where(item => !activeOnly || !IsTerminalStatus(item.Status))
             .ToArray();
 
-    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(string? tenantId = null, string? caseId = null) =>
-        ListWorkItems(tenantId, caseId).Select(ToSurface).ToArray();
+    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(string? tenantId = null, string? caseId = null, string? workspaceId = null, bool activeOnly = false) =>
+        ListWorkItems(tenantId, caseId, workspaceId, activeOnly).Select(ToSurface).ToArray();
 
     public RuntimeDeviceSession? FindDeviceSession(string tenantId, string? deviceId) =>
         string.IsNullOrWhiteSpace(deviceId) ? null : runtime.FindDeviceSession(tenantId, deviceId);
@@ -368,13 +371,49 @@ public sealed class OperationsRuntimeService
         var templateWorkspaceId = FirstNonEmpty(
             PayloadValue(workItem.Payload, "templateWorkspaceId"),
             WorkspaceSeedCatalog.FindWorkspace(workItem.WorkspaceId)?.Id);
+        if (IsAcceptedCapabilityWorkspace(templateWorkspaceId) || IsAcceptedCapabilityWorkspace(workItem.WorkspaceId))
+        {
+            var acceptedCard = AcceptedCapabilityRuntimeProjection.Workspace().Cards
+                .FirstOrDefault(item => item.Id.Equals(cardId, StringComparison.OrdinalIgnoreCase));
+            if (acceptedCard is not null)
+            {
+                return ApplyCardContract(workItem, target, acceptedCard);
+            }
+        }
+        if (DormitoryScenario2RuntimeProjection.IsWorkspace(templateWorkspaceId) ||
+            DormitoryScenario2RuntimeProjection.IsWorkspace(workItem.WorkspaceId))
+        {
+            var scenario2Card = DormitoryScenario2RuntimeProjection.CardFor(cardId, workItem.Payload);
+            if (scenario2Card is not null)
+            {
+                return ApplyCardContract(workItem, target, scenario2Card);
+            }
+        }
+        if (Dormitory13ScenarioRuntimeProjection.IsWorkspace(templateWorkspaceId) ||
+            Dormitory13ScenarioRuntimeProjection.IsWorkspace(workItem.WorkspaceId))
+        {
+            var scenarioCard = Dormitory13ScenarioRuntimeProjection.CardFor(
+                FirstNonEmpty(templateWorkspaceId, workItem.WorkspaceId),
+                cardId,
+                workItem.Payload);
+            if (scenarioCard is not null)
+            {
+                return ApplyCardContract(workItem, target, scenarioCard);
+            }
+        }
+
         var seed = WorkspaceSeedCatalog.FindCard(templateWorkspaceId, cardId);
         if (seed is null)
         {
             return target;
         }
 
-        var effectiveCard = CardContractFactory.Create(seed) with
+        return ApplyCardContract(workItem, target, CardContractFactory.Create(seed));
+    }
+
+    private static OperationTarget ApplyCardContract(WorkItem workItem, OperationTarget target, CardProjection card)
+    {
+        var effectiveCard = card with
         {
             Status = EffectiveCardStatusFor(workItem, target.Card.Status),
             BlockerRules = target.Card.BlockerRules
@@ -391,6 +430,11 @@ public sealed class OperationsRuntimeService
             Card = effectiveCard
         };
     }
+
+    private static bool IsAcceptedCapabilityWorkspace(string? workspaceId) =>
+        !string.IsNullOrWhiteSpace(workspaceId) &&
+        (workspaceId.Equals(AcceptedCapabilityRuntimeProjection.WorkspaceId, StringComparison.OrdinalIgnoreCase) ||
+         workspaceId.StartsWith($"{AcceptedCapabilityRuntimeProjection.WorkspaceId}-", StringComparison.OrdinalIgnoreCase));
 
     private OperationsWorkItemSurface ToSurface(WorkItem workItem)
     {
@@ -435,7 +479,7 @@ public sealed class OperationsRuntimeService
 
     private static string EffectiveCardStatusFor(WorkItem workItem, string projectedStatus)
     {
-        if (IsCorrectionWorkItem(workItem) && !IsTerminalStatus(workItem.Status))
+        if (!IsTerminalStatus(workItem.Status))
         {
             return WorkItemStatusForCard(workItem.Status);
         }
@@ -456,6 +500,10 @@ public sealed class OperationsRuntimeService
     private static bool IsTerminalStatus(string status) =>
         new[] { "done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped" }
             .Contains(status, StringComparer.OrdinalIgnoreCase);
+
+    private static bool WorkspaceMatches(WorkItem item, string? workspaceId) =>
+        string.IsNullOrWhiteSpace(workspaceId) ||
+        item.WorkspaceId.Equals(workspaceId, StringComparison.OrdinalIgnoreCase);
 
     private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key) =>
         payload.TryGetValue(key, out var value) ? value : string.Empty;
@@ -565,7 +613,15 @@ public sealed record WorkItem(
     IReadOnlyList<string>? RequiredEvidenceRefs = null,
     IReadOnlyList<string>? AffectedFactRefs = null,
     IReadOnlyDictionary<string, object>? Admission = null,
-    string? AdmissionDecisionRef = null);
+    string? AdmissionDecisionRef = null,
+    object? BusinessTitle = null,
+    object? BusinessSummary = null,
+    IReadOnlyList<EntryLegalAction>? LegalActions = null,
+    string? AdmissionDecision = null,
+    object? NextAction = null,
+    string? CannotSubmitReason = null,
+    object? ReadonlyReason = null,
+    string? SourceScenario = null);
 
 public sealed record OperationsWorkItemSurface(
     string WorkItemId,
@@ -593,7 +649,15 @@ public sealed record OperationsWorkItemSurface(
     WorkspaceProjection? Workspace,
     CardProjection? Card,
     IReadOnlyDictionary<string, object>? Admission = null,
-    string? AdmissionDecisionRef = null)
+    string? AdmissionDecisionRef = null,
+    object? BusinessTitle = null,
+    object? BusinessSummary = null,
+    IReadOnlyList<EntryLegalAction>? LegalActions = null,
+    string? AdmissionDecision = null,
+    object? NextAction = null,
+    string? CannotSubmitReason = null,
+    object? ReadonlyReason = null,
+    string? SourceScenario = null)
 {
     public static OperationsWorkItemSurface From(
         WorkItem workItem,
@@ -626,8 +690,25 @@ public sealed record OperationsWorkItemSurface(
             workspace,
             card,
             workItem.Admission,
-            workItem.AdmissionDecisionRef);
+            workItem.AdmissionDecisionRef,
+            workItem.BusinessTitle,
+            workItem.BusinessSummary,
+            workItem.LegalActions,
+            workItem.AdmissionDecision,
+            workItem.NextAction,
+            workItem.CannotSubmitReason,
+            workItem.ReadonlyReason,
+            workItem.SourceScenario);
 }
+
+public sealed record EntryLegalAction(
+    string Action,
+    object Label,
+    string View,
+    bool Allowed,
+    bool WriteBusinessFact,
+    string AdmissionDecision,
+    string CannotSubmitReason = "");
 
 public sealed record PrepareWorkItemRequest(
     string? WorkspaceId = null,
@@ -790,6 +871,37 @@ public sealed record ConfirmWorkItemResult(
                 ["definitionMode"] = definition.DefinitionMode
             },
             "operations_admission_kernel",
+            idempotencyKey,
+            null,
+            null);
+
+    internal static ConfirmWorkItemResult GeneratedRuleRejected(
+        string caseId,
+        string workItemId,
+        string? submissionId,
+        string? idempotencyKey,
+        GeneratedCapabilityRuntimeValidationResult validation) =>
+        new(
+            validation.StatusCode,
+            validation.Code,
+            validation.Code,
+            false,
+            "not_committed",
+            "not_projected",
+            caseId,
+            workItemId,
+            submissionId ?? string.Empty,
+            Array.Empty<string>(),
+            validation.UserMessage,
+            new Dictionary<string, object>
+            {
+                ["disableRetry"] = validation.StatusCode is StatusCodes.Status409Conflict,
+                ["refreshProjection"] = false,
+                ["observeOutbox"] = false,
+                ["generatedRuleId"] = validation.GeneratedRuleId,
+                ["confirmExecutionOrder"] = GeneratedCapabilityRuntimeRulePipeline.ConfirmExecutionOrder
+            },
+            "generated_capability_runtime_rules",
             idempotencyKey,
             null,
             null);

@@ -1,0 +1,363 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-scenarioIndex.generated",
+  "version": "oam.dormitory-13-scenario-scenarioIndex.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:206a7609fdae45bdae06d121cf337ad49e02575acc296d975af6fecc12ccdd21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    }
+  ],
+  "sourceContentDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:2fb890c196b946d33dcc13a52142cfe01da2c9d1c2f12e3e0e8c44f2a0fe5421",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "scenarios": [
+    {
+      "scenarioNo": 1,
+      "scenarioId": "lodging.resource-basic-readiness",
+      "nameZh": "房源建档与基础就绪",
+      "chainLayer": "main_operating_chain",
+      "upstreamSummaryInputs": [],
+      "summaryOutputs": [
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要"
+      ],
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "historicalPackageReferences": [
+        "resource-saleability"
+      ]
+    },
+    {
+      "scenarioNo": 2,
+      "scenarioId": "lodging.resource-operation-status",
+      "nameZh": "房源运营就绪与状态维护",
+      "chainLayer": "main_operating_chain",
+      "upstreamSummaryInputs": [
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要"
+      ],
+      "summaryOutputs": [
+        "运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护"
+      ],
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "historicalPackageReferences": [
+        "resource-saleability"
+      ]
+    },
+    {
+      "scenarioNo": 3,
+      "scenarioId": "lodging.product-and-rate",
+      "nameZh": "住宿商品与价格",
+      "chainLayer": "main_operating_chain",
+      "upstreamSummaryInputs": [
+        "运营状态摘要"
+      ],
+      "summaryOutputs": [
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本和价格日历摘要"
+      ],
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "historicalPackageReferences": [
+        "RatePlanConfirm"
+      ]
+    },
+    {
+      "scenarioNo": 4,
+      "scenarioId": "lodging.inquiry-and-quote",
+      "nameZh": "询价与报价",
+      "chainLayer": "main_operating_chain",
+      "upstreamSummaryInputs": [
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本和价格日历摘要"
+      ],
+      "summaryOutputs": [
+        "询价摘要",
+        "报价单",
+        "报价版本",
+        "价格快照",
+        "有效期"
+      ],
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "historicalPackageReferences": [
+        "lead-reservation"
+      ]
+    },
+    {
+      "scenarioNo": 5,
+      "scenarioId": "lodging.reservation-and-inventory-hold",
+      "nameZh": "预订与库存锁定",
+      "chainLayer": "main_operating_chain",
+      "upstreamSummaryInputs": [
+        "报价单",
+        "报价版本",
+        "价格快照",
+        "有效期"
+      ],
+      "summaryOutputs": [
+        "预订确认摘要",
+        "预订号",
+        "库存锁定历史"
+      ],
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "historicalPackageReferences": [
+        "lead-reservation"
+      ]
+    },
+    {
+      "scenarioNo": 6,
+      "scenarioId": "lodging.payment-deposit-and-guarantee",
+      "nameZh": "收款、押金与担保",
+      "chainLayer": "main_operating_chain",
+      "upstreamSummaryInputs": [
+        "预订确认摘要",
+        "预订号",
+        "库存锁定历史"
+      ],
+      "summaryOutputs": [
+        "收款/押金/担保确认摘要",
+        "财务状态"
+      ],
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "historicalPackageReferences": [
+        "ordinary-payment",
+        "deposit-liability"
+      ]
+    },
+    {
+      "scenarioNo": 7,
+      "scenarioId": "lodging.check-in-processing",
+      "nameZh": "入住办理",
+      "chainLayer": "main_operating_chain",
+      "upstreamSummaryInputs": [
+        "预订确认摘要",
+        "财务状态",
+        "房间摘要",
+        "床位组摘要"
+      ],
+      "summaryOutputs": [
+        "入住记录摘要",
+        "住客摘要",
+        "占用摘要",
+        "凭证摘要"
+      ],
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "historicalPackageReferences": [
+        "check-in",
+        "CheckinConfirm"
+      ]
+    },
+    {
+      "scenarioNo": 8,
+      "scenarioId": "lodging.in-stay-management",
+      "nameZh": "在住管理",
+      "chainLayer": "main_operating_chain",
+      "upstreamSummaryInputs": [
+        "入住记录摘要",
+        "住客摘要",
+        "占用摘要",
+        "凭证摘要"
+      ],
+      "summaryOutputs": [
+        "在住状态",
+        "服务/异常/续住/换房换床摘要",
+        "退房准备"
+      ],
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "historicalPackageReferences": [
+        "service-task"
+      ]
+    },
+    {
+      "scenarioNo": 9,
+      "scenarioId": "lodging.checkout-and-settlement",
+      "nameZh": "退房结算",
+      "chainLayer": "main_operating_chain",
+      "upstreamSummaryInputs": [
+        "在住状态",
+        "财务状态",
+        "服务/异常/续住/换房换床摘要"
+      ],
+      "summaryOutputs": [
+        "退房确认摘要",
+        "结算意向",
+        "资源待恢复请求"
+      ],
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "historicalPackageReferences": [
+        "checkout-settlement"
+      ]
+    },
+    {
+      "scenarioNo": 10,
+      "scenarioId": "lodging.cancel-noshow-refund-intake",
+      "nameZh": "取消、未到店与退款处理",
+      "chainLayer": "main_operating_chain",
+      "upstreamSummaryInputs": [
+        "预订确认摘要",
+        "财务状态",
+        "库存锁定历史"
+      ],
+      "summaryOutputs": [
+        "取消/未到店摘要",
+        "退款/扣费申请",
+        "库存释放请求"
+      ],
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "historicalPackageReferences": [
+        "lead-reservation",
+        "ordinary-payment"
+      ]
+    },
+    {
+      "scenarioNo": 11,
+      "scenarioId": "lodging.housekeeping-maintenance-outofservice",
+      "nameZh": "房务、维修与停售协同",
+      "chainLayer": "horizontal_support_chain",
+      "upstreamSummaryInputs": [
+        "房间摘要",
+        "运营状态摘要",
+        "在住状态",
+        "退房确认摘要"
+      ],
+      "summaryOutputs": [
+        "作业完成摘要",
+        "验收摘要",
+        "停售/恢复建议",
+        "费用意向"
+      ],
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "historicalPackageReferences": [
+        "service-task",
+        "resource-saleability"
+      ]
+    },
+    {
+      "scenarioNo": 12,
+      "scenarioId": "lodging.channel-corporate-customer",
+      "nameZh": "渠道与企业客户",
+      "chainLayer": "horizontal_support_chain",
+      "upstreamSummaryInputs": [
+        "商品摘要",
+        "价格方案摘要",
+        "运营状态摘要"
+      ],
+      "summaryOutputs": [
+        "渠道摘要",
+        "企业客户摘要",
+        "协议资格",
+        "发布规则"
+      ],
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "historicalPackageReferences": []
+    },
+    {
+      "scenarioNo": 13,
+      "scenarioId": "lodging.reporting-audit-review",
+      "nameZh": "经营报表、审计与复盘",
+      "chainLayer": "readonly_governance_chain",
+      "upstreamSummaryInputs": [
+        "房间摘要",
+        "运营状态摘要",
+        "商品摘要",
+        "报价单",
+        "预订确认摘要",
+        "财务状态",
+        "入住记录摘要",
+        "退房确认摘要",
+        "取消/未到店摘要",
+        "作业完成摘要",
+        "渠道摘要"
+      ],
+      "summaryOutputs": [
+        "报表快照",
+        "审计发现",
+        "复盘结论",
+        "行动计划"
+      ],
+      "pageEntries": [
+        "search",
+        "mine"
+      ],
+      "historicalPackageReferences": [
+        "period-review"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,257 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario12-surfaceNavigation.generated",
+  "version": "oam.dormitory-scenario12-surfaceNavigation.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario12-channel-corporate-customer-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario12-channel-corporate-customer-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:8509552e372fda3a473c97c7ded7142f445c75caf8bab6af715500b37ad3f19e",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "digest": "sha256:84dbed278bccc4a0da3a590157249a3dc02a7266af0d862a8690ca5adb07d196"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:84dbed278bccc4a0da3a590157249a3dc02a7266af0d862a8690ca5adb07d196",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario12.ChannelCorporateCustomer",
+  "scenarioPackageNo": 12,
+  "scenarioId": "lodging.channel-corporate-customer",
+  "outputContentDigest": "sha256:4f5e459242ac8589f78ea05a4402052c2b81d416c9e952cac0fc3d65557f772b",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "渠道与企业客户",
+  "businessGoalZh": "维护外部渠道、企业客户、协议客户、渠道发布规则、企业协议资格、渠道对接状态、佣金/结算规则意向和证据，并向场景包 3、4、5、finance-gate 和看板提供只读条件。",
+  "sourceScenarioDigest": "sha256:84dbed278bccc4a0da3a590157249a3dc02a7266af0d862a8690ca5adb07d196",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario12.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "ChannelPartner",
+      "ChannelAccount",
+      "CorporateAccount",
+      "CorporateCustomer",
+      "CorporateAgreement",
+      "AgreementEligibility",
+      "ChannelEligibility",
+      "CorporateEligibility",
+      "ChannelProductMapping",
+      "ChannelPublicationRule",
+      "ChannelPublicationStatus",
+      "CommissionRuleIntent",
+      "SettlementRuleIntent",
+      "ChannelContact",
+      "CorporateContact",
+      "ContactPerson",
+      "ContractEvidence",
+      "StatusHistory",
+      "ChannelStatusHistory"
+    ],
+    "searchReadModel": [
+      "渠道与企业客户",
+      "渠道摘要",
+      "企业客户摘要",
+      "协议摘要",
+      "适用商品/价格资格摘要",
+      "渠道发布规则摘要",
+      "佣金/结算规则意向",
+      "证据摘要",
+      "只读对象引用",
+      "协议资格",
+      "发布规则"
+    ],
+    "noRefillRuleZh": "场景包 12 只能读取场景包 2 的运营阻断摘要和场景包 3 的商品/价格摘要，不得要求用户重新填写上游已确认字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "surfaceNavigation": {
+    "entryPages": [
+      "渠道列表",
+      "渠道详情",
+      "企业客户列表",
+      "企业客户详情",
+      "协议维护页",
+      "商品资格绑定页",
+      "渠道发布规则页",
+      "佣金结算意向页",
+      "审核页",
+      "版本历史页"
+    ],
+    "todayZh": "今日只展示今天需要处理的被动任务：协议即将到期、渠道待审核、资料待补、发布异常待处理、财务规则待确认。",
+    "workItemsZh": "工作项展示全部渠道、企业客户、协议、发布规则、续签、补证和财务规则意向被动任务池。",
+    "searchZh": "搜索可以查渠道名、企业名、联系人、协议编号、商品、状态；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "pageMustShowZh": [
+      "当前状态",
+      "有效期",
+      "适用范围",
+      "证据缺失项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": {
+      "渠道草稿": [
+        "继续填写",
+        "提交审核"
+      ],
+      "企业客户草稿": [
+        "继续填写",
+        "提交审核"
+      ],
+      "待审核": [
+        "审核通过",
+        "退回修改"
+      ],
+      "已启用": [
+        "暂停",
+        "停用",
+        "新建版本"
+      ],
+      "已暂停": [
+        "恢复审核",
+        "停用"
+      ],
+      "已停用": [
+        "查看历史",
+        "新建版本"
+      ],
+      "协议待审核": [
+        "审核通过",
+        "退回修改"
+      ],
+      "协议已生效": [
+        "续签",
+        "停用协议",
+        "新建版本"
+      ],
+      "协议已过期": [
+        "续签",
+        "新建协议"
+      ],
+      "发布待检查": [
+        "检查发布",
+        "暂停发布"
+      ],
+      "发布已启用": [
+        "暂停发布",
+        "新建版本"
+      ],
+      "财务规则待确认": [
+        "提交财务规则复核",
+        "补充证据"
+      ]
+    },
+    "forbiddenUserVisibleTermsZh": [
+      "已报价",
+      "已预订",
+      "已收款",
+      "已入账",
+      "final GO",
+      "生产发布",
+      "业务上线",
+      "lead-reservation",
+      "RatePlan",
+      "PaymentConfirm",
+      "channel/OTA 临时字段"
+    ]
+  },
+  "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“携程渠道，已启用，适用 301 整房按晚价”“某某公司协议客户，有效至 2026-12-31”。普通用户不得输入或记住内部编号。",
+  "forbiddenUserInputFields": [
+    "channelId",
+    "corporateAccountId",
+    "agreementId",
+    "productId",
+    "priceVersionId",
+    "ratePlanId",
+    "quoteId",
+    "reservationId",
+    "inventoryHoldId",
+    "paymentId",
+    "refundId",
+    "ledgerEntryId",
+    "ledgerTransactionId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId"
+  ],
+  "buttonByState": {
+    "渠道草稿": [
+      "继续填写",
+      "提交审核"
+    ],
+    "企业客户草稿": [
+      "继续填写",
+      "提交审核"
+    ],
+    "待审核": [
+      "审核通过",
+      "退回修改"
+    ],
+    "已启用": [
+      "暂停",
+      "停用",
+      "新建版本"
+    ],
+    "已暂停": [
+      "恢复审核",
+      "停用"
+    ],
+    "已停用": [
+      "查看历史",
+      "新建版本"
+    ],
+    "协议待审核": [
+      "审核通过",
+      "退回修改"
+    ],
+    "协议已生效": [
+      "续签",
+      "停用协议",
+      "新建版本"
+    ],
+    "协议已过期": [
+      "续签",
+      "新建协议"
+    ],
+    "发布待检查": [
+      "检查发布",
+      "暂停发布"
+    ],
+    "发布已启用": [
+      "暂停发布",
+      "新建版本"
+    ],
+    "财务规则待确认": [
+      "提交财务规则复核",
+      "补充证据"
+    ]
+  },
+  "channelCorporateStatusOptions": [
+    "渠道草稿",
+    "待审核",
+    "已启用",
+    "已暂停",
+    "已停用",
+    "企业客户草稿",
+    "协议待审核",
+    "协议已生效",
+    "协议已过期",
+    "协议已停用",
+    "发布待检查",
+    "发布已启用",
+    "发布已暂停",
+    "财务规则待确认"
+  ]
+}

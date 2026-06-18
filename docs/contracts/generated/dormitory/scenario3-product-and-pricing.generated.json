@@ -1,0 +1,278 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario3-canonical.generated",
+  "version": "oam.dormitory-scenario3-canonical.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario3-product-and-pricing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario3-product-and-pricing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:60372bae88f8c69027805c9a2225b4939e2108913d66b25e962e445b68fcf5e1",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "digest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario3.ProductAndPricing",
+  "scenarioPackageNo": 3,
+  "scenarioId": "lodging.product-and-rate",
+  "outputContentDigest": "sha256:9a8c17d38e4f9ca4d15e2db30fab2d03efc4b44da1c136c347526a6d0b141d80",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "住宿商品与价格",
+  "businessGoalZh": "承接场景包 1 的房源摘要和场景包 2 已确认可运营且未阻断的运营状态摘要，配置住宿商品、售卖单位、商品资源绑定、价格方案、适用日期、价格版本及价格生效/停用记录。",
+  "sourceScenarioDigest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario3.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "AccommodationProduct",
+      "SellableUnit",
+      "ProductResourceBinding",
+      "RatePlan",
+      "RateRule",
+      "PriceCalendar",
+      "PriceVersion",
+      "PriceEvidence",
+      "PriceStatusHistory"
+    ],
+    "searchReadModel": [
+      "住宿商品与价格",
+      "商品摘要",
+      "价格方案摘要",
+      "价格日历摘要",
+      "价格版本历史",
+      "可否进入询价报价",
+      "证据摘要",
+      "只读对象引用",
+      "价格版本和价格日历摘要"
+    ],
+    "noRefillRuleZh": "场景包 3 只能读取场景包 1 和场景包 2 的只读摘要，不得要求用户重新填写房间、床位组、基础就绪或运营状态字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "packageIndexRow": {
+    "packageNo": 3,
+    "scenarioId": "lodging.product-and-rate",
+    "nameZh": "住宿商品与价格",
+    "businessPurposeZh": "读取场景包 1 房源摘要和场景包 2 已确认可运营的运营状态摘要，定义住宿商品、售卖单位、价格方案、价格日历和价格版本。",
+    "upstreamPackages": [
+      1,
+      2
+    ],
+    "downstreamPackages": [
+      4
+    ],
+    "handoffInputs": [
+      "房间摘要",
+      "床位组摘要",
+      "房间/床位运营状态摘要",
+      "阻断原因",
+      "可否进入价格维护",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用"
+    ],
+    "handoffOutputs": [
+      "商品摘要",
+      "价格方案摘要",
+      "价格日历摘要",
+      "价格版本历史",
+      "可否进入询价报价",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "mustNotOutputZh": [
+      "报价",
+      "库存锁定",
+      "预订",
+      "入住",
+      "收款",
+      "押金",
+      "退款",
+      "账务",
+      "已预订",
+      "已锁定"
+    ]
+  },
+  "highestAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+  "methodBenchmarkRef": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+  "upstream": {
+    "allowedSourcePackageNos": [
+      1,
+      2
+    ],
+    "requiredReadonlyInputs": [
+      "房间摘要",
+      "床位组摘要",
+      "房间/床位运营状态摘要",
+      "阻断原因",
+      "可否进入价格维护",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用"
+    ],
+    "operationStatusRequiredZh": "只允许选择场景包 2 已确认可运营，且未被维修、停售、暂停开放或异常阻断的房间/床位。",
+    "upstreamWriteBackAllowed": false,
+    "mustNotRequireRefillZh": "场景包 3 只能读取场景包 1 和场景包 2 的只读摘要，不得要求用户重新填写房间、床位组、基础就绪或运营状态字段。"
+  },
+  "downstream": {
+    "allowedConsumerPackageNo": 4,
+    "allowedConsumerPackageNameZh": "询价与报价",
+    "handoffOutputs": [
+      "商品摘要",
+      "价格方案摘要",
+      "价格日历摘要",
+      "价格版本历史",
+      "可否进入询价报价",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "forbiddenOutputsZh": [
+      "报价",
+      "库存锁定",
+      "预订",
+      "入住",
+      "收款",
+      "押金",
+      "退款",
+      "账务",
+      "已预订",
+      "已锁定"
+    ],
+    "downstreamNoRefillRuleZh": "场景包 4 只能读取商品摘要、价格方案摘要、价格日历摘要、价格版本历史、可否进入询价报价、证据摘要和只读对象引用，不得要求用户重新填写场景包 1、2、3 的已确认字段。"
+  },
+  "businessBoundaries": {
+    "responsibilityZh": "本场景包只负责住宿商品定义、资源绑定、售卖单位、价格方案、价格日历、价格版本、价格生效/停用/作废和证据历史。",
+    "notResponsibleZh": [
+      "询价",
+      "报价",
+      "库存锁定",
+      "预订",
+      "入住",
+      "收款",
+      "押金",
+      "退款",
+      "账务"
+    ],
+    "semanticGuardsZh": [
+      "可运营来自场景包 2，不由场景包 3 产生。",
+      "可定价来自场景包 3。",
+      "可定价不等于可报价。",
+      "价格已生效不等于库存可锁定。",
+      "价格存在不代表可预订。",
+      "价格方案不得承载押金、收款或账务事实。"
+    ]
+  },
+  "objects": [
+    "AccommodationProduct",
+    "SellableUnit",
+    "ProductResourceBinding",
+    "RatePlan",
+    "RateRule",
+    "PriceCalendar",
+    "PriceVersion",
+    "PriceEvidence",
+    "PriceStatusHistory"
+  ],
+  "priceStatusOptions": [
+    "价格草稿",
+    "待审核",
+    "已生效",
+    "已停用",
+    "已过期",
+    "已作废",
+    "需补充证据"
+  ],
+  "commands": [
+    {
+      "commandId": "Dorm.AccommodationProductConfirm",
+      "businessNameZh": "住宿商品确认",
+      "writesObjects": [
+        "AccommodationProduct",
+        "SellableUnit",
+        "ProductResourceBinding",
+        "PriceEvidence",
+        "PriceStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.RatePlanDefinitionConfirm",
+      "businessNameZh": "价格方案确认",
+      "writesObjects": [
+        "RatePlan",
+        "RateRule",
+        "PriceEvidence",
+        "PriceStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.PriceVersionActivate",
+      "businessNameZh": "价格版本生效",
+      "writesObjects": [
+        "AccommodationProduct",
+        "RatePlan",
+        "PriceCalendar",
+        "PriceVersion",
+        "PriceEvidence",
+        "PriceStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.PriceDisable",
+      "businessNameZh": "价格停用",
+      "writesObjects": [
+        "PriceVersion",
+        "PriceEvidence",
+        "PriceStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.PriceDraftVoid",
+      "businessNameZh": "价格草稿作废",
+      "writesObjects": [
+        "PriceVersion",
+        "PriceEvidence",
+        "PriceStatusHistory"
+      ]
+    }
+  ],
+  "readSideOutputs": [
+    "商品摘要",
+    "价格方案摘要",
+    "价格日历摘要",
+    "价格版本历史",
+    "可否进入询价报价",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "noGo": {
+    "businessFeatureDevelopmentAllowed": false,
+    "businessGoLiveAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO",
+    "reasonZh": "本 Source 只完成场景包 3 精准落地闭环，不授予生产发布、业务上线或 final GO。"
+  },
+  "oldProjectExpressionIsolation": {
+    "RatePlanConfirmAllowedUseZh": "只允许作为内部迁移映射或兼容参考，不得作为新设计源、用户可见名称或规则来源。",
+    "forbiddenAsNewBusinessSource": [
+      "RatePlanConfirm",
+      "resource-saleability",
+      "lead-reservation",
+      "golden-chain"
+    ]
+  }
+}

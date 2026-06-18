@@ -1,5 +1,6 @@
 import { isTerminalCardStatus } from "./selectors/workspaceSelectors.js";
 import { admissionCopy, admissionStateFromWorkItem } from "./admissionSurface.js";
+import { capabilitySubmitLabelKey, isDormitoryScenario1CardId } from "./capabilityProjection.js";
 
 export function buildOperationActionState(workItem = {}, card = {}, runtimeResult = null, state = {}) {
   const candidateResult = runtimeResult || state.lastActionResult || null;
@@ -19,9 +20,9 @@ export function buildOperationActionState(workItem = {}, card = {}, runtimeResul
   if (card.status === "notStarted") return OperationActionStateVM("notStarted", { disabled: true });
   if (card.status === "blocked" || workItem.lifecycleState === "blocked") return OperationActionStateVM("blocked");
   const admission = admissionStateFromWorkItem(workItem, state);
-  if (!admission.confirmAllowed) return OperationActionStateVM("confirmDenied", { admission });
-  if (!admission.productionAllowed) return OperationActionStateVM("readyObservation", { admission });
-  return OperationActionStateVM("ready", { admission });
+  if (!admission.confirmAllowed) return OperationActionStateVM("confirmDenied", { admission, card });
+  if (!admission.productionAllowed) return OperationActionStateVM("readyObservation", { admission, card });
+  return OperationActionStateVM("ready", { admission, card });
 }
 
 function isEvidenceBlocker(result = {}) {
@@ -65,7 +66,28 @@ export function PrimaryActionVM(status, extra = {}) {
     done: { labelKey: "primaryDone", disabled: true, reasonKey: "completedCardHelp" },
     failed: { labelKey: "primaryViewFailure", disabled: false }
   };
-  return { status, ...(table[status] || table.ready), disabled: Boolean(extra.disabled || table[status]?.disabled) };
+  const entry = { ...(table[status] || table.ready) };
+  const cardId = extra.card?.id || "";
+  if (["ready", "readyObservation"].includes(status) && isDormitoryScenario1CardId(cardId)) {
+    entry.labelKey = capabilitySubmitLabelKey(cardId, "business-landing");
+  } else if (["ready", "readyObservation"].includes(status)) {
+    const confirmationLabel = generatedConfirmationLabel(extra.card);
+    if (confirmationLabel) entry.label = confirmationLabel;
+  }
+  return { status, ...entry, disabled: Boolean(extra.disabled || table[status]?.disabled) };
+}
+
+function generatedConfirmationLabel(card = {}) {
+  const label = card.confirmation?.label ||
+    card.Confirmation?.label ||
+    card.confirmationLabel ||
+    card.ConfirmationLabel ||
+    null;
+  if (typeof label === "string") return label.trim() ? label : null;
+  if (label && typeof label === "object" && Object.values(label).some((value) => String(value || "").trim())) {
+    return label;
+  }
+  return null;
 }
 
 export function SubmissionResultVM(result = null) {

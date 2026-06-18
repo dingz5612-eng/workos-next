@@ -1,0 +1,92 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-pageEntryPolicy.generated",
+  "version": "oam.dormitory-13-scenario-pageEntryPolicy.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:206a7609fdae45bdae06d121cf337ad49e02575acc296d975af6fecc12ccdd21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    }
+  ],
+  "sourceContentDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:981a5c29ae8e89e62832e0dfb2d28c5bc9bb657cdd5e03e055d8e913ffb1e638",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "pageEntryPolicy": {
+    "today": "今天需要处理的被动任务，只显示到期、逾期、今天计划、今天待确认。",
+    "workItems": "全量被动任务池。",
+    "search": "主动查询，只读结果，只能跳转合法动作，不能搜索即写事实。",
+    "mine": "草稿、收藏、个人跟进、导出、设置等个人入口。",
+    "displayRequirements": [
+      "当前状态",
+      "缺失项",
+      "下一步动作",
+      "不可提交原因",
+      "完成摘要"
+    ],
+    "buttonRuleZh": "所有按钮按状态出现，不得固定一个大提交按钮。"
+  },
+  "entryAdmissionContract": {
+    "version": "oam.dormitory.entry-admission-contract.v1",
+    "objects": [
+      "EntryResult",
+      "SearchResult",
+      "WorkItem"
+    ],
+    "requiredFields": [
+      "businessTitle",
+      "businessSummary",
+      "legalActions",
+      "admissionDecision",
+      "nextAction",
+      "cannotSubmitReason",
+      "readonlyReason",
+      "sourceScenario"
+    ],
+    "entryPages": [
+      "today",
+      "workItems",
+      "search",
+      "mine",
+      "detail",
+      "correction"
+    ],
+    "resolverChain": [
+      "LegalAction Resolver",
+      "Admission Attach",
+      "Runtime Prepare",
+      "WorkItem"
+    ],
+    "rules": {
+      "frontendButtonJudgementForbidden": true,
+      "searchReadonlyOnly": true,
+      "searchLearningOnlyForbidden": true,
+      "correctionRequiresAdmission": true,
+      "oldWStayCurrentEntryForbidden": true,
+      "writeFactsOnlyThroughOperationsRuntime": true
+    },
+    "legalActionFields": [
+      "action",
+      "label",
+      "view",
+      "allowed",
+      "writeBusinessFact",
+      "admissionDecision"
+    ],
+    "decisionCopy": {
+      "cannotSubmitReasonZh": "当前不能提交时，必须显示业务可懂原因。",
+      "readonlyReasonZh": "只读入口必须说明只能查看或只能跳转合法动作。",
+      "nextActionZh": "下一步必须是业务动作，不得显示内部编号或技术状态。"
+    },
+    "sourceScenarioRuleZh": "入口必须声明来自哪个 13 场景；搜索、今日、工作项、我的和更正入口不得把旧 W-STAY 包当当前主链。"
+  }
+}

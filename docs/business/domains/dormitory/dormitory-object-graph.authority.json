@@ -1,0 +1,123 @@
+{
+  "version": "oam.dormitory.object-graph-authority.v1",
+  "status": "authoritative",
+  "authorityType": "dormitory_first_golden_chain_object_graph",
+  "currentCapabilityId": "Dormitory.FirstGoldenChain",
+  "capabilityDecisionRef": "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json",
+  "objects": [
+    {
+      "objectId": "Dormitory.BuildingContext",
+      "stableRef": "buildingContextRef",
+      "role": "trusted_context_boundary",
+      "uniqueKey": [
+        "tenantStableRef",
+        "campusStableRef",
+        "buildingStableRef"
+      ],
+      "createdByCurrentChain": false,
+      "userSubmittedAsTrustedSource": false
+    },
+    {
+      "objectId": "Dormitory.Room",
+      "stableRef": "roomStableRef",
+      "role": "room_business_object",
+      "uniqueKey": [
+        "buildingContextRef",
+        "normalizedRoomNo"
+      ],
+      "createdBy": "Dorm.RoomSetupConfirm",
+      "declares": [
+        "room.bedCount"
+      ],
+      "userSubmittedAsTrustedSource": false
+    },
+    {
+      "objectId": "Dormitory.BedSet",
+      "stableRef": "bedSetStableRef",
+      "role": "room_bed_collection",
+      "uniqueKey": [
+        "roomStableRef",
+        "bedSetVersion"
+      ],
+      "configuredBy": "Dorm.BedSetupConfirm",
+      "requires": [
+        "Dormitory.Room",
+        "room.bedCount"
+      ],
+      "userSubmittedAsTrustedSource": false
+    },
+    {
+      "objectId": "Dormitory.Bed",
+      "stableRef": "bedStableRef",
+      "role": "bed_business_object",
+      "uniqueKey": [
+        "roomStableRef",
+        "normalizedBedNo"
+      ],
+      "createdBy": "Dorm.BedSetupConfirm",
+      "requires": [
+        "Dormitory.Room",
+        "Dormitory.BedSet"
+      ],
+      "userSubmittedAsTrustedSource": false
+    },
+    {
+      "objectId": "Dormitory.RoomReadiness",
+      "stableRef": "roomReadinessStableRef",
+      "role": "readiness_snapshot",
+      "uniqueKey": [
+        "roomStableRef",
+        "readinessSnapshotVersion"
+      ],
+      "createdOrUpdatedBy": "Dorm.ResourceReadinessConfirm",
+      "requires": [
+        "Dormitory.Room",
+        "complete Dormitory.BedSet"
+      ],
+      "userSubmittedAsTrustedSource": false
+    }
+  ],
+  "relationships": [
+    {
+      "from": "Dormitory.Room",
+      "to": "Dormitory.BuildingContext",
+      "type": "belongs_to",
+      "cardinality": "many_rooms_per_building_context"
+    },
+    {
+      "from": "Dormitory.BedSet",
+      "to": "Dormitory.Room",
+      "type": "belongs_to",
+      "cardinality": "one_active_bed_set_per_room_version"
+    },
+    {
+      "from": "Dormitory.Bed",
+      "to": "Dormitory.Room",
+      "type": "belongs_to",
+      "cardinality": "many_beds_per_room"
+    },
+    {
+      "from": "Dormitory.RoomReadiness",
+      "to": "Dormitory.Room",
+      "type": "snapshot_of",
+      "cardinality": "many_snapshots_per_room"
+    }
+  ],
+  "trustedSourcePolicy": {
+    "buildingContextRefTrustedSource": "Source Layer context",
+    "roomStableRefDerivedByAuthority": true,
+    "bedStableRefDerivedByAuthority": true,
+    "buildingContextRefUserSubmittedAsTruthAllowed": false,
+    "roomIdUserSubmittedAsTruthAllowed": false,
+    "bedIdUserSubmittedAsTruthAllowed": false
+  },
+  "forbiddenRules": [
+    "roomNo_global_unique",
+    "bedNo_global_unique",
+    "user_submitted_roomId_as_trusted_source",
+    "user_submitted_bedId_as_trusted_source",
+    "user_submitted_buildingContextRef_as_trusted_source",
+    "runtime_ui_test_invent_object_graph_rules",
+    "w_stay_resource_as_current_proof"
+  ]
+}

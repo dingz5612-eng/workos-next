@@ -1,0 +1,174 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-stateLadder.generated",
+  "version": "oam.dormitory-13-scenario-stateLadder.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:206a7609fdae45bdae06d121cf337ad49e02575acc296d975af6fecc12ccdd21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    }
+  ],
+  "sourceContentDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:5351c3e1faaf7eb49a4b13d7634b694ea22cde966548c360c22a49bbfb9c5524",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "stateLadder": [
+    {
+      "state": "基础就绪",
+      "producerScenarios": [
+        1
+      ],
+      "notEquivalentTo": [
+        "可运营",
+        "可报价",
+        "可入住"
+      ]
+    },
+    {
+      "state": "可运营",
+      "producerScenarios": [
+        2
+      ],
+      "notEquivalentTo": [
+        "基础就绪",
+        "可报价",
+        "房务维修作业完成"
+      ]
+    },
+    {
+      "state": "可定价",
+      "producerScenarios": [
+        3
+      ],
+      "notEquivalentTo": [
+        "可运营",
+        "可报价"
+      ]
+    },
+    {
+      "state": "可报价",
+      "producerScenarios": [
+        4
+      ],
+      "notEquivalentTo": [
+        "可定价",
+        "已预订"
+      ]
+    },
+    {
+      "state": "可锁定",
+      "producerScenarios": [
+        5
+      ],
+      "notEquivalentTo": [
+        "可报价",
+        "已预订"
+      ]
+    },
+    {
+      "state": "已预订",
+      "producerScenarios": [
+        5
+      ],
+      "notEquivalentTo": [
+        "可入住",
+        "在住"
+      ]
+    },
+    {
+      "state": "财务满足/担保满足",
+      "producerScenarios": [
+        6
+      ],
+      "alsoConfirmedBy": [
+        "finance-gate"
+      ],
+      "notEquivalentTo": [
+        "已预订",
+        "可入住"
+      ]
+    },
+    {
+      "state": "可入住",
+      "producerScenarios": [
+        7
+      ],
+      "notEquivalentTo": [
+        "已预订",
+        "在住"
+      ]
+    },
+    {
+      "state": "在住",
+      "producerScenarios": [
+        7
+      ],
+      "maintainerScenarios": [
+        8
+      ],
+      "notEquivalentTo": [
+        "可入住",
+        "退房结算"
+      ]
+    },
+    {
+      "state": "退房结算",
+      "producerScenarios": [
+        9
+      ],
+      "notEquivalentTo": [
+        "退款到账",
+        "资源恢复"
+      ]
+    },
+    {
+      "state": "取消/未到店关闭",
+      "producerScenarios": [
+        10
+      ],
+      "notEquivalentTo": [
+        "退款到账",
+        "库存释放完成"
+      ]
+    },
+    {
+      "state": "房务维修作业完成",
+      "producerScenarios": [
+        11
+      ],
+      "notEquivalentTo": [
+        "可运营"
+      ]
+    },
+    {
+      "state": "渠道/企业资格",
+      "producerScenarios": [
+        12
+      ],
+      "notEquivalentTo": [
+        "可定价",
+        "已预订"
+      ]
+    },
+    {
+      "state": "报表审计复盘",
+      "producerScenarios": [
+        13
+      ],
+      "readonly": true,
+      "notEquivalentTo": [
+        "业务事实确认"
+      ]
+    }
+  ],
+  "nonEquivalenceRuleZh": "上游状态不等于下游状态；任何越级写入都必须被拒绝或迁回 Source Authority。"
+}

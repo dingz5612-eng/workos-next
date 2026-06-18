@@ -1,0 +1,136 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario7-testPlan.generated",
+  "version": "oam.dormitory-scenario7-testPlan.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario7-check-in-processing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario7-check-in-processing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:288b527a49cfb6fcb1a19b854dcb05468e92b3dfbc4c50796d5ffd0369e6b311",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "digest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario7.CheckInProcessing",
+  "scenarioPackageNo": 7,
+  "scenarioId": "lodging.check-in-processing",
+  "outputContentDigest": "sha256:58919e284bc096391c1141009ac0e9f8dd1c720cda2c1f093902d2adfa3a3eff",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "入住办理",
+  "businessGoalZh": "承接已确认预订、财务确认摘要和房源运营状态摘要，核验客户到店、身份信息、入住协议、预订信息、房间/床位当前可入住状态后，生成入住记录、占用记录和入住凭证。",
+  "sourceScenarioDigest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario7.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "CheckInCase",
+      "ArrivingGuest",
+      "ResidentProfile",
+      "IdentityVerification",
+      "Stay",
+      "RoomBedOccupancy",
+      "CheckInAgreement",
+      "AccessCredential",
+      "CheckInSnapshot",
+      "CheckInEvidence",
+      "CheckInStatusHistory"
+    ],
+    "searchReadModel": [
+      "入住办理",
+      "入住记录摘要",
+      "住客摘要",
+      "房间/床位占用摘要",
+      "入住凭证摘要",
+      "协议摘要",
+      "身份核验摘要",
+      "证据摘要",
+      "只读对象引用",
+      "占用摘要",
+      "凭证摘要"
+    ],
+    "noRefillRuleZh": "场景包 7 只能读取预订、财务、价格和运营状态只读摘要，不得要求用户重新填写已确认的预订、价格或财务字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "positiveBrowserTestPlan": [
+    "从今日待入住进入。",
+    "查看预订和财务摘要。",
+    "录入/核验入住人身份。",
+    "确认协议。",
+    "复核房间/床位可入住。",
+    "确认入住。",
+    "看到系统生成入住记录号。",
+    "发放入住凭证。",
+    "查看入住详情。",
+    "查看今日、工作项、搜索、我的入口表现。"
+  ],
+  "negativeBrowserTestPlan": [
+    "无有效预订办理入住。",
+    "预订已取消。",
+    "预订已转入住。",
+    "财务规则未满足。",
+    "缺身份凭证。",
+    "入住人与预订不一致且未审批。",
+    "协议未确认。",
+    "房间/床位维修或已占用。",
+    "重复入住。",
+    "并发入住同一床位。",
+    "未入住先发凭证。",
+    "伪造 reservationId、stayId、roomId、bedId、credentialId。",
+    "搜索结果直接写入住。",
+    "入住确认后直接退房或退款。"
+  ],
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "enter-check-in-processing": [
+        "预订确认摘要证据",
+        "财务确认摘要证据"
+      ],
+      "arrival-and-identity-verification": [
+        "证件照片/扫描件",
+        "本人确认",
+        "授权同意记录"
+      ],
+      "finance-and-agreement-review": [
+        "协议签署记录",
+        "客户确认凭证",
+        "负责人例外审批证据"
+      ],
+      "room-bed-handover-recheck": [
+        "房间交付照片",
+        "床位交付照片",
+        "清洁确认记录"
+      ],
+      "confirm-check-in": [
+        "入住确认凭证",
+        "入住确认摘要证据"
+      ],
+      "issue-access-credential": [
+        "领取确认记录",
+        "凭证发放照片"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "screenshotAnalysisRequired": true,
+  "noSideEffectsProofRequired": true,
+  "localEvidencePassAllowed": true
+}

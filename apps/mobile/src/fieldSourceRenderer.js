@@ -1,5 +1,13 @@
 import { generatedBedLabelsForCount, splitBedLabels } from "./controls/bedLabelControls.js";
 import { capacityForRoomType, defaultValueForField, fieldControlKind } from "./controls/fieldControls.js";
+import {
+  defaultBedTypeForCount,
+  generatedFieldLabel,
+  generatedSurfaceControlsForCard,
+  isBedSetupCardId,
+  isDormitoryScenario1CardId,
+  isResourceReadinessCardId
+} from "./capabilityProjection.js";
 import { isScopedResourceFieldRequired, isScopedResourceFieldVisible } from "./controls/resourceScopeControls.js";
 import { loadCompletedRecordSnapshots, loadDraft } from "./operationDrafts.js";
 import { operationFieldId } from "./operationFieldKernel.js";
@@ -17,7 +25,9 @@ import {
 } from "./systemContextContract.js";
 
 export function operationInputFields(card, ctx, item = null) {
-  return (card.fields?.business || []).filter((field) => operationFieldVisible(field, card, item, ctx));
+  const generatedFields = generatedOperationInputFields(card, ctx);
+  const sourceFields = generatedFields.length ? generatedFields : (card.fields?.business || []);
+  return sourceFields.filter((field) => operationFieldVisible(field, card, item, ctx));
 }
 
 export function operationValue(field, item, card, ctx) {
@@ -40,12 +50,16 @@ export function operationFieldState(field, item, card, ctx) {
     if (carried) return { value: carried.value, displayValue: carried.displayValue, source: "caseContext" };
     return { value: "", displayValue: "", source: "missingContext" };
   }
-  if (card?.id === "bedSetup" && fieldId === "bedLabels") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedLabels") {
     const bedCount = carriedForwardValue({ id: "bedCount", label: { "zh-CN": "床位数" } }, item, card, values, ctx)?.value || values.bedCount || "";
     return { value: generatedBedLabelsForCount(bedCount), source: "derived" };
   }
-  if (card?.id === "bedSetup" && fieldId === "bedType") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedType") {
     return bedSetupGenerationModeState(field, item, card, values, ctx);
+  }
+  if (field?.classification === "contextReadonly" && fieldId === "buildingContextRef") {
+    const contextValue = values.buildingContextRef || values.buildingName || item?.buildingContextRef || item?.buildingName || "当前楼栋/区域";
+    return { value: contextValue, displayValue: contextValue, source: "caseContext" };
   }
   if (values[fieldId]) return { value: values[fieldId], source: "draft" };
   if (values[field.id]) return { value: values[field.id], source: "draft" };
@@ -76,17 +90,25 @@ export function operationFieldState(field, item, card, ctx) {
 
 export function operationFieldRequired(field, card, item, ctx) {
   const fieldId = operationFieldId(field);
-  if (card?.id === "bedSetup" && fieldId === "bedStatus") return false;
+  if (isBedSetupCardId(card?.id) && ["bedStatus", "bedNo", "bedLabel"].includes(fieldId)) return false;
   const values = operationDraftValues(item, card);
   const contextRequired = fieldRequiresUserAction(card?.id, fieldId, Boolean(field.required));
+  if (isResourceReadinessCardId(card?.id) && fieldId === "basicReadinessRemark") {
+    return values.readinessState === "needs_supplement";
+  }
   return isScopedResourceFieldRequired(card?.id, fieldId, values, contextRequired);
 }
 
 export function operationFieldVisible(field, card, item, ctx) {
   const fieldId = operationFieldId(field);
   const values = operationDraftValues(item, card);
-  if (card?.id === "bedSetup" && fieldId === "bedStatus") return false;
+  if (isDormitoryScenario1CardId(card?.id) && isCaseContextIdentityField(fieldId) && fieldId !== "roomRef") return false;
+  if (isBedSetupCardId(card?.id) && ["bedStatus", "bedNo", "bedLabel"].includes(fieldId)) return false;
   if (!fieldVisibleByContext(card?.id, fieldId)) return false;
+  if (isEmptyContextReadonlyField(field, fieldId, card, item, ctx)) return false;
+  if (isResourceReadinessCardId(card?.id) && fieldId === "basicReadinessRemark") {
+    return values.readinessState === "needs_supplement" || Boolean(values.basicReadinessRemark);
+  }
   const fallbackVisible = operationFieldRequired(field, card, item, ctx) ||
     !["备注", "补充说明", "异议说明"].includes(ctx.localTerm(field, "zh-CN"));
   return isScopedResourceFieldVisible(card?.id, fieldId, values, fallbackVisible);
@@ -129,8 +151,8 @@ export function stepDependencyValidationChips(card, item, ctx) {
   const fieldById = new Map(fields.map((field) => [operationFieldId(field), field]));
   const inheritedMissing = summary.inherited
     .map((fieldId) => {
-      const field = fieldById.get(fieldId) || { id: fieldId, label: { "zh-CN": fieldId } };
-      return hasCarryValue(operationFieldState(field, item, card, ctx).value) ? "" : ctx.localTerm(field);
+      const field = fieldById.get(fieldId) || syntheticContextField(fieldId, ctx);
+      return hasCarryValue(operationFieldState(field, item, card, ctx).value) ? "" : contextFieldLabel(field, fieldId, ctx);
     })
     .filter(Boolean);
   const userMissing = summary.user
@@ -171,7 +193,7 @@ export function missingFieldIdsFor(card, item, ctx) {
 
 export function isCaseContextReadonlyField(fieldId, card) {
   const role = fieldContextRole(card?.id, fieldId);
-  if (role.contract) return role.kind === "inherited";
+  if (role.contract && role.entry) return role.kind === "inherited";
   if (isForcedCaseContextReadonlyField(fieldId, card)) return true;
   if (isContextCarriedField(card?.id, fieldId)) return true;
   if (isCaseContextIdentityField(fieldId)) return true;
@@ -180,8 +202,16 @@ export function isCaseContextReadonlyField(fieldId, card) {
 
 export function isForcedCaseContextReadonlyField(fieldId, card) {
   if (isContextCarriedField(card?.id, fieldId)) return true;
-  if (fieldContextRole(card?.id, fieldId).contract) return false;
-  return card?.id === "bedSetup" && ["roomId", "bedCount"].includes(fieldId);
+  const role = fieldContextRole(card?.id, fieldId);
+  if (role.contract && role.entry) return false;
+  if (isResourceReadinessCardId(card?.id) && fieldId === "roomRef") return true;
+  return isBedSetupCardId(card?.id) && ["roomRef", "roomId", "bedCount"].includes(fieldId);
+}
+
+function isEmptyContextReadonlyField(field, fieldId, card, item, ctx) {
+  if (!isCaseContextReadonlyField(fieldId, card)) return false;
+  const state = operationFieldState(field, item, card, ctx);
+  return !hasCarryValue(state.displayValue || state.value);
 }
 
 export function sameWorkspaceEvents(item, ctx) {
@@ -214,7 +244,59 @@ function bedSetupGenerationModeState(field, item, card, values, ctx) {
   if (values.bedType && draftMatchesCurrentCount && values.bedLayout) {
     return { value: values.bedType, source: "draft" };
   }
-  return { value: defaultValueForField(field) || "bunk_pair", source: "default" };
+  return { value: defaultValueForField(field) || defaultBedTypeForCount(bedCount), source: "default" };
+}
+
+function generatedOperationInputFields(card, ctx) {
+  return generatedSurfaceControlsForCard(card?.id)
+    .filter((control) => operationSurfaceControlVisible(control))
+    .map((control) => generatedControlField(displayControlForSurface(control, card), ctx));
+}
+
+function operationSurfaceControlVisible(control) {
+  if (control.hiddenSubmitOnly || control.controlType === "hidden") return false;
+  if (control.classification === "contextReadonly") return control.fieldId === "buildingContextRef";
+  return ["clientSubmitted", "selectedStableRef", "systemDerived"].includes(control.classification);
+}
+
+function displayControlForSurface(control, card) {
+  if (isBedSetupCardId(card?.id) && control.fieldId === "roomId") {
+    return {
+      ...control,
+      fieldId: "roomRef",
+      classification: "selectedStableRef",
+      controlType: "readonly",
+      readonly: true,
+      required: false,
+      label: { "zh-CN": "所属房间", "ru-RU": "Комната", "ky-KG": "Бөлмө" }
+    };
+  }
+  return control;
+}
+
+function generatedControlField(control, ctx) {
+  const lang = ctx?.state?.lang || "zh-CN";
+  const generatedLabel = control.label?.[lang] || control.label?.["zh-CN"] || generatedFieldLabel(control.fieldId, lang);
+  const controlKind = control.optionSet ? "select" : control.controlType || control.ui?.control || "text";
+  return {
+    id: control.fieldId,
+    label: {
+      [lang]: generatedLabel,
+      "zh-CN": control.label?.["zh-CN"] || generatedFieldLabel(control.fieldId, "zh-CN")
+    },
+    required: control.required === true,
+    classification: control.classification,
+    userSubmitted: control.userSubmitted === true,
+    readonly: control.readonly === true,
+    source: control.source,
+    ui: {
+      control: controlKind,
+      optionSet: control.optionSet || "",
+      defaultValue: control.defaultValue || "",
+      readonly: control.readonly === true,
+      hiddenSubmitOnly: control.hiddenSubmitOnly === true
+    }
+  };
 }
 
 function backendDefaultValue(fieldId, ctx) {
@@ -306,7 +388,7 @@ function carriedFieldFromPayload(fieldId, payload = {}, ctx) {
   if (hasCarryValue(direct)) {
     return { value: String(direct), displayValue: contextDisplayValue(fieldId, String(direct), payload, ctx) };
   }
-  if (fieldId === "roomId") {
+  if (fieldId === "roomRef" || fieldId === "roomId") {
     const roomNo = payload.roomNo || payload["房间号"];
     if (hasCarryValue(roomNo)) {
       const value = `room-${String(roomNo).trim()}`.toLowerCase();
@@ -343,7 +425,7 @@ function carriedFieldFromLatestCompletedSnapshot(fieldId, item, card, ctx) {
 function contextDisplayValue(fieldId, value, payload, ctx) {
   const sharedDisplay = contextReferenceDisplayValue(fieldId, value, payload);
   if (sharedDisplay && sharedDisplay !== value) return sharedDisplay;
-  if (fieldId === "roomId") return roomDisplayValue(value, payload, ctx);
+  if (fieldId === "roomRef" || fieldId === "roomId") return roomDisplayValue(value, payload, ctx);
   if (fieldId === "bedId") return bedDisplayValue(value, payload, ctx);
   return value;
 }
@@ -386,7 +468,7 @@ function hasRequiredFieldValue(field, item, card, ctx) {
 function filteredValidationMissingLabels(validation, card, item, ctx) {
   const missingIds = validation.missingFieldIds || [];
   if (!missingIds.length) return validation.missingLabels || [];
-  const currentRequiredIds = new Set((card.fields?.business || [])
+  const currentRequiredIds = new Set(operationInputFields(card, ctx, item)
     .filter((field) => operationFieldRequired(field, card, item, ctx))
     .map((field) => operationFieldId(field)));
   return (validation.missingLabels || []).filter((label, index) => {
@@ -403,6 +485,7 @@ function contextFieldLabel(field, fieldId, ctx) {
   if (field) return ctx.localTerm(field);
   const labels = {
     "zh-CN": {
+      roomRef: "所属房间",
       roomId: "所属房间",
       bedId: "床位",
       bedCount: "床位数",
@@ -416,6 +499,7 @@ function contextFieldLabel(field, fieldId, ctx) {
       checkoutId: "退住单"
     },
     "ru-RU": {
+      roomRef: "Комната",
       roomId: "Комната",
       bedId: "Койка",
       bedCount: "Количество коек",
@@ -429,6 +513,7 @@ function contextFieldLabel(field, fieldId, ctx) {
       checkoutId: "Выезд"
     },
     "ky-KG": {
+      roomRef: "Бөлмө",
       roomId: "Бөлмө",
       bedId: "Койка",
       bedCount: "Койка саны",
@@ -446,11 +531,11 @@ function contextFieldLabel(field, fieldId, ctx) {
 }
 
 function isCaseContextIdentityField(fieldId) {
-  return ["roomId", "bedId", "stayId", "residentId", "reservationId", "leadId", "depositId", "depositReceiptId", "paymentId", "chargeId", "taskId", "expenseId", "periodId"].includes(fieldId);
+  return ["roomRef", "roomId", "bedId", "stayId", "residentId", "reservationId", "leadId", "depositId", "depositReceiptId", "paymentId", "chargeId", "taskId", "expenseId", "periodId"].includes(fieldId);
 }
 
 function aggregateRefForValues(values) {
-  for (const key of ["depositId", "paymentId", "stayId", "residentId", "reservationId", "leadId", "roomId", "bedId", "taskId", "expenseId", "periodId"]) {
+  for (const key of ["depositId", "paymentId", "stayId", "residentId", "reservationId", "leadId", "roomRef", "roomId", "bedId", "taskId", "expenseId", "periodId"]) {
     if (values[key]) return `${key}:${values[key]}`;
   }
   return "";

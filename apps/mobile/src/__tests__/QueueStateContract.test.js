@@ -9,7 +9,7 @@ describe("SURFACE-C queue state contract", () => {
 
     expect(html).toContain('data-surface="upload-queue"');
     expect(html).toContain('data-surface="submit-queue"');
-    expect(html).toContain("证据上传");
+    expect(html).toContain("材料上传");
     expect(html).toContain("提交队列");
     expect(html).toContain("没有待上传证据");
     expect(html).toContain("没有待提交办理");

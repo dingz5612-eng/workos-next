@@ -3,9 +3,11 @@ import path from "node:path";
 
 const root = process.cwd();
 const scenarioPath = "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml";
+const controlAuthorityPath = "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json";
 const kernelPath = "docs/business/domains/dormitory/dormitory-operating-kernel.json";
 const authorityIndexPath = "docs/oam/current-authority-index.json";
 const reportPath = "artifacts/oam/checks/dormitory-resource-saleability-golden-chain-result.json";
+const writeProof = process.argv.includes("--write-proof") || process.env.OAM_WRITE_PROOF === "1";
 
 const requiredInScope = [
   "Dorm.RoomSetupConfirm",
@@ -94,6 +96,7 @@ const violations = [];
 const text = readText(scenarioPath);
 const kernel = readJson(kernelPath);
 const authorityIndex = readJson(authorityIndexPath);
+const controlAuthority = readJson(controlAuthorityPath);
 
 requireValue(hasLine("version: oam.dormitory.resource-saleability-golden-chain.v1"), "scenario.version", "第一金链场景定稿包 version 不正确。");
 requireValue(hasLine("status: authoritative"), "scenario.status", "第一金链场景定稿包必须是 authoritative。");
@@ -103,8 +106,26 @@ requireValue(hasLine("generated: false"), "scenario.generated_false", "第一金
 requireValue(hasLine("doNotEdit: false"), "scenario.do_not_edit_false", "第一金链场景定稿包不得声明 doNotEdit。");
 requireValue(hasLine("scenarioNameZhForReviewOnly: 宿舍资源可售第一金链"), "scenario.name", "场景名称必须是 review-only 的宿舍资源可售第一金链。");
 requireValue(!/^scenarioNameZh:/m.test(text), "scenario.name_raw_not_allowed", "scenarioNameZh 不得作为用户可见文案权威。");
-requireValue(hasLine("businessGoalZhForReviewOnly: 房间、床位、资源准备达到 L1 internal pilot 可售条件。"), "scenario.goal", "业务目标必须以 review-only 方式绑定 L1 internal pilot 可售条件。");
+requireValue(hasLine("businessGoalZhForReviewOnly: 房间、床位和资源准备完成内部试点检查；这不代表生产可售已放开。"), "scenario.goal", "业务目标必须以 review-only 方式表达内部试点检查，且不得暗示生产可售放开。");
 requireValue(!/^businessGoalZh:/m.test(text), "scenario.goal_raw_not_allowed", "businessGoalZh 不得作为用户可见文案权威。");
+for (const [field, value] of [
+  ["sourceFinalizationStatus", "SOURCE_FINALIZED_BY_00"],
+  ["sourceScenarioPackageReviewStatus", "SOURCE_FINALIZED_BY_00"],
+  ["sourceFieldGapsDecisionStatus", "DECIDED_AND_BOUND"],
+  ["compileDecisionStatus", "READY_FOR_00_COMPILE_DECISION"],
+  ["generatedCompilationAllowed", "false_until_00_explicit_generated_compile_approval"],
+  ["generatedContractStatus10B", "PENDING_GENERATED_CONTRACT"],
+  ["generatedCompilationCompleted", "false"],
+  ["businessFeatureDevelopmentAllowed", "false"],
+  ["businessProductionGoNoGo", "NO_GO"],
+  ["dormitoryL2GoNoGo", "NO_GO"],
+  ["productionConfirmAllowed", "false"],
+  ["releaseAuthority", "false"],
+  ["finalGoNoGo", "NO_GO"],
+  ["nextStageAllowed", "false"]
+]) {
+  requireValue(hasLine(`${field}: ${value}`), "scenario.source_finalized_status_missing", `Source 定稿状态缺少 ${field}: ${value}。`, { field, value });
+}
 
 requireList("inScope", requiredInScope);
 requireList("outOfScope", requiredOutOfScope);
@@ -114,8 +135,26 @@ requireList("branchFlows", requiredBranchFlows);
 for (const id of ["missing-field", "missing-evidence", "untrusted-evidence", "duplicate-room", "wrong-bed-room-owner", "resource-not-saleable", "manual-review", "correction"]) {
   const branch = blockFor(section("branchFlows"), `id: ${id}`, "\n  - id:");
   requireValue(Boolean(branch), "scenario.branch_missing", `branchFlows 缺少 ${id}。`, { id });
-  for (const required of ["blockingReasonCode:", "blockingReasonCopyKey:", "requiredEvidenceRefs:", "allowedNextAction:", "allowedNextActionCopyKey:", "correctionAllowed:", "admissionNoGoItem:", "safeErrorCopyKey:", "explanationKey:", "expectedNoSideEffects: true"]) {
+  for (const required of ["blockingReasonCode:", "blockingReasonCopyKey:", "requiredEvidenceRefs:", "allowedNextAction:", "allowedNextActionCopyKey:", "correctionAllowed:", "admissionNoGoItem:", "safeErrorCopyKey:", "explanationKey:", "expectedNoSideEffects:"]) {
     requireValue(branch.includes(required), "scenario.branch_semantic_missing", `${id} 缺少 ${required}。`, { id, required });
+  }
+  for (const effect of [
+    "no_command_submission",
+    "no_uow_commit",
+    "no_domain_event",
+    "no_workitem_event",
+    "no_ledger_transaction",
+    "no_ledger_entry",
+    "no_outbox",
+    "no_confirmed_transition",
+    "no_next_workitem_dispatch",
+    "no_projection_mutation",
+    "no_lens_mutation",
+    "no_search_mutation",
+    "no_dashboard_mutation",
+    "no_business_evidence_mutation"
+  ]) {
+    requireValue(branch.includes(`- ${effect}`), "scenario.branch_no_side_effect_missing", `${id} 缺少 no-side-effect ${effect}。`, { id, effect });
   }
   requireValue(branch.includes("nameZhForReviewOnly:") && !branch.includes("nameZh:"), "scenario.branch_name_review_only", `${id} 必须使用 nameZhForReviewOnly。`, { id });
 }
@@ -199,7 +238,21 @@ for (const forbidden of ["route param", "cardId", "sourceCardId", "workspaceCard
   requireValue(section("selectedStableRefRules").includes(`- ${forbidden}`), "scenario.stable_ref_forbidden_source_missing", `selectedStableRefRules 必须禁止 ${forbidden}。`, { forbidden });
 }
 requireValue(section("objectIdBinding").includes("oldCardIdRenameBlocked: true"), "scenario.old_card_rename_not_blocked", "objectIdBinding 必须阻断旧 cardId 换名伪装。");
-requireValue(section("sourceFieldGaps").includes("pending00Decision: true") && section("sourceFieldGaps").includes("compilePreparationAllowed: false_until_00_approval"), "scenario.source_field_gap_policy_missing", "sourceFieldGaps 必须等待 00 裁决且不得放行编译准备。");
+requireValue(
+  section("sourceFieldGaps").includes("pending00Decision: false") &&
+    section("sourceFieldGaps").includes("decisions:") &&
+    section("sourceFieldGaps").includes("compilePreparationAllowed: READY_FOR_00_COMPILE_DECISION"),
+  "scenario.source_field_gap_policy_missing",
+  "sourceFieldGaps 必须完成 00 裁决结构化决策，且只进入 00 compile decision。"
+);
+requireValue(
+  section("sourceToGeneratedProvenancePlan").includes("compilePreparationAllowed: READY_FOR_00_COMPILE_DECISION") &&
+    section("sourceToGeneratedProvenancePlan").includes("generatedCompilationAllowed: false_until_00_explicit_generated_compile_approval") &&
+    section("sourceToGeneratedProvenancePlan").includes("generatedCompilationCompleted: false") &&
+    section("sourceToGeneratedProvenancePlan").includes("expectedGeneratedStatus: PENDING_GENERATED_CONTRACT"),
+  "scenario.generated_compile_not_authorized",
+  "Source 已定稿后只能进入 00 compile decision，generated 编译仍未授权。"
+);
 
 const mainFlow = section("mainFlow");
 const workItemsInFlow = [...mainFlow.matchAll(/workItemType:\s*([^\n\r]+)/g)].map((match) => match[1].trim());
@@ -272,17 +325,50 @@ for (const ref of forbiddenSourceRefs) {
 const authorityEntry = (authorityIndex.entries ?? []).find((entry) => entry.path === scenarioPath);
 requireValue(Boolean(authorityEntry), "scenario.authority_index_missing", "第一金链场景定稿包必须登记到 current-authority-index。");
 if (authorityEntry) {
-  requireValue(authorityEntry.layer === "source", "scenario.authority_layer", "authority index 必须登记为 source。");
-  requireValue(authorityEntry.authorityRole === "sourceKernel", "scenario.authority_role", "authorityRole 必须是 sourceKernel。");
-  requireValue(authorityEntry.manualEditAllowed === true, "scenario.authority_manual_edit", "Source 场景必须 manualEditAllowed=true。");
-  requireValue(authorityEntry.generated === false && authorityEntry.doNotEdit === false, "scenario.authority_generated_flags", "Source 场景不得 generated/doNotEdit。");
-  requireValue(authorityEntry.currentTruthAllowed === true && authorityEntry.businessFactAuthorityAllowed === true, "scenario.authority_truth", "Source 场景必须允许业务事实权威。");
+  requireValue(authorityEntry.layer === "manual", "scenario.authority_layer", "旧 resource-saleability 包必须登记为 manual 迁移参考，不得再作为 current Source。");
+  requireValue(authorityEntry.authorityRole === "humanManual", "scenario.authority_role", "旧 resource-saleability 包 authorityRole 必须是 humanManual。");
+  requireValue(authorityEntry.manualEditAllowed === true, "scenario.authority_manual_edit", "旧 resource-saleability 包作为迁移参考必须 manualEditAllowed=true。");
+  requireValue(authorityEntry.generated === false && authorityEntry.doNotEdit === false, "scenario.authority_generated_flags", "旧 resource-saleability 包不得 generated/doNotEdit。");
+  requireValue(
+    authorityEntry.currentTruthAllowed === false &&
+      authorityEntry.businessFactAuthorityAllowed === false &&
+      authorityEntry.contractAuthorityAllowed === false &&
+      authorityEntry.runtimeWriteAllowed === false &&
+      authorityEntry.financeLedgerTruthAllowed === false,
+    "scenario.authority_truth",
+    "旧 resource-saleability 包不得保留当前业务事实、合同、runtime 或财务真值权威。"
+  );
+  requireValue((authorityEntry.sourceRefs ?? []).includes(controlAuthorityPath), "scenario.control_authority_ref_missing", "旧 resource-saleability 包必须引用 13 场景总控 Source Authority。");
 }
 const whitelist = new Set(authorityIndex.classificationModel?.sourceLayerWhitelist ?? []);
 const topWhitelist = new Set((authorityIndex.sourceLayerWhitelist ?? []).map((item) => item.path));
-requireValue(whitelist.has(scenarioPath) && topWhitelist.has(scenarioPath), "scenario.source_whitelist_missing", "第一金链场景定稿包必须进入 Source Layer 白名单。");
+requireValue(!whitelist.has(scenarioPath) && !topWhitelist.has(scenarioPath), "scenario.source_whitelist_forbidden", "旧 resource-saleability 包不得进入 Source Layer 白名单。");
+requireValue(whitelist.has(controlAuthorityPath) && topWhitelist.has(controlAuthorityPath), "scenario.control_authority_whitelist_missing", "13 场景总控 Source Authority 必须进入 Source Layer 白名单。");
+const resourceSaleabilityMapping = (controlAuthority.oldPackageMigrationMap ?? [])
+  .find((item) => item.oldPackage === "resource-saleability");
+requireValue(Boolean(resourceSaleabilityMapping), "scenario.control_migration_mapping_missing", "13 场景总控必须登记 resource-saleability 迁移映射。");
+if (resourceSaleabilityMapping) {
+  requireValue(
+    JSON.stringify(resourceSaleabilityMapping.mapsToScenarios ?? []) === JSON.stringify([1, 2]),
+    "scenario.control_migration_mapping_scope",
+    "resource-saleability 只能映射到场景 1/2 的历史参考。"
+  );
+  requireValue(
+    String(resourceSaleabilityMapping.forbiddenUse ?? "").includes("当前总控源"),
+    "scenario.control_migration_forbidden_use",
+    "resource-saleability 迁移映射必须禁止继续作为当前总控源。"
+  );
+}
+requireValue(
+  (controlAuthority.oldPackageIsolationPolicy?.forbiddenIn ?? []).includes("当前 Source Authority 名称") &&
+    controlAuthority.oldPackageIsolationPolicy?.mustBeLabeledAs === "migration_reference_only",
+  "scenario.control_migration_isolation",
+  "13 场景总控必须声明旧包仅为 migration_reference_only。"
+);
 
-writeReport();
+if (writeProof) {
+  writeReport();
+}
 if (violations.length) {
   for (const item of violations) console.error(`${item.id}: ${item.message}`);
   process.exit(1);

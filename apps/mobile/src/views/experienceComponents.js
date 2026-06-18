@@ -14,9 +14,11 @@ import {
 import { normalizeOperationLifecycleState } from "../operationStatus.js";
 import { resolveOperationPanelTarget, resolvePersistedWorkItem } from "../operationRouteResolver.js";
 import { evidenceStateFor } from "../selectors/queueSelectors.js";
-import { isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
+import { isActionableCardStatus, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { permissionDiagnosticCopy } from "../surfaceGuard.js";
 import { buildBusinessAnchor, businessAnchorFieldsHtml, businessAnchorHtml } from "../businessAnchorKernel.js";
+import { isBedSetupCardId } from "../capabilityProjection.js";
+import { userFacingBusinessText } from "../businessDisplayLanguage.js";
 import { stepContextContract } from "../systemContextContract.js";
 import {
   DeviceTrustVM,
@@ -60,8 +62,9 @@ export function WorkItemCard(item, ctx) {
     workspaceId: model.workspaceId,
     cardId: model.cardId
   }, ctx.state);
+  const actionLabel = workItemActionLabel(model, ctx);
   const workspaceButton = route.canOpen
-    ? `<button data-work-item-id="${attr(route.workItem.workItemId, ctx)}" data-workspace-id="${attr(route.workItem.workspaceId, ctx)}" data-card-id="${attr(route.workItem.cardId, ctx)}">${text(ctx.tr("openWorkspace"), ctx)}</button>`
+    ? `<button data-work-item-id="${attr(route.workItem.workItemId, ctx)}" data-workspace-id="${attr(route.workItem.workspaceId, ctx)}" data-card-id="${attr(route.workItem.cardId, ctx)}">${text(actionLabel, ctx)}</button>`
     : `<div class="workitem-route-blocked"><b>${text(ctx.tr("operationUnavailableCta"), ctx)}</b><small>${text(ctx.tr("operationUnavailableBody"), ctx)}</small><button data-view="workbench">${text(ctx.tr("returnWorkbench"), ctx)}</button></div>`;
   const debug = ctx.state?.debugSurface ? `<details class="debug-only"><summary>${text(ctx.tr("debugTrace"), ctx)}</summary><dl>
       ${field("workItemId", model.workItemId, ctx)}
@@ -83,6 +86,17 @@ export function WorkItemCard(item, ctx) {
     <div class="business-summary-actions">${workspaceButton}</div>
     ${debug}
   </article>`;
+}
+
+function workItemActionLabel(model = {}, ctx) {
+  const state = normalizeOperationLifecycleState(model.lifecycleState || model.status || model.card?.status || "", "");
+  if (["prepared", "draft", "in_progress", "syncing", "committed_projection_pending"].includes(state)) {
+    return ctx.tr("continueHandling");
+  }
+  if (state && !["ready", "not_started", "pending"].includes(state)) {
+    return ctx.tr("searchActionViewWorkItems");
+  }
+  return ctx.tr("startHandling");
 }
 
 export function WorkItemSummaryCard(item, ctx) {
@@ -247,7 +261,7 @@ function taskRowForField(field, card, task, values, ctx, options = {}) {
 }
 
 function taskFieldState(field, fieldId, card, task, values, ctx, options = {}) {
-  if (card?.id === "bedSetup" && fieldId === "bedLabels") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedLabels") {
     const bedCount = taskValueByFieldId(values, "bedCount", field, ctx) ||
       inheritedTaskValue(task, "bedCount", ctx) ||
       taskValueByFieldId(values, "capacity", field, ctx);
@@ -255,7 +269,7 @@ function taskFieldState(field, fieldId, card, task, values, ctx, options = {}) {
     const displayValue = bedLayoutPreviewValue(bedCount, pattern, ctx);
     return { value: displayValue, displayValue, source: "derived" };
   }
-  if (card?.id === "bedSetup" && fieldId === "bedType") {
+  if (isBedSetupCardId(card?.id) && fieldId === "bedType") {
     const value = taskValueByFieldId(values, fieldId, field, ctx) || defaultValueForField(field) || "bunk_pair";
     return { value, source: value ? "default" : "" };
   }
@@ -510,22 +524,12 @@ export function TrustedConfirmSheet(item, card, ctx) {
   const workspace = item.workspace || item;
   const model = workItemModel({ ...item, workspace, card, workspaceId: item.workspaceId || workspace.id, cardId: item.cardId || card.id }, ctx);
   const vm = TrustedConfirmVM({ ...item, workspace, card }, ctx);
+  const commitmentBody = trustedCommitmentBody(vm.businessCommitment.body, card, ctx);
   return `<section class="trusted-confirm-sheet" data-surface="trusted-confirm">
-    <h2>${text(ctx.tr("trustedConfirm"), ctx)}</h2>
-    <article>
-      <h3>${text(vm.businessCommitment.title, ctx)}</h3>
-      <p>${text(vm.businessCommitment.body, ctx)}</p>
-      <p>${text(vm.businessCommitment.ledgerImpact, ctx)}</p>
-    </article>
-    <article>
-      <h3>${text(vm.evidenceAndPermission.title, ctx)}</h3>
-      <p>${text(vm.evidenceAndPermission.body, ctx)}</p>
-      <p>${text(ctx.tr("permissionPolicyMatched"), ctx)} · ${text(ctx.tr("decisionRisk"), ctx)} ${text(vm.evidenceAndPermission.risk, ctx)}</p>
-    </article>
-    <article>
-      <h3>${text(vm.auditAndRollback.title, ctx)}</h3>
-      <p>${text(vm.auditAndRollback.body, ctx)}</p>
-    </article>
+    <b>${text(ctx.tr("trustedConfirm"), ctx)}</b>
+    <p>${text(commitmentBody, ctx)}</p>
+    <p>${text(vm.businessCommitment.ledgerImpact, ctx)}</p>
+    <small>${text(vm.auditAndRollback.body, ctx)}</small>
     ${ctx.state?.debugSurface ? `<dl>
       ${field("workItemId", model.workItemId, ctx)}
       ${field("caseId", model.caseId, ctx)}
@@ -540,6 +544,11 @@ export function TrustedConfirmSheet(item, card, ctx) {
 export function TechnicalAuditDetails(details = {}, ctx) {
   const canInspect = technicalDetailsVisible(ctx);
   const shouldOpen = Boolean(ctx.state?.debugSurface);
+  if (!canInspect) {
+    return `<details class="operation-technical-details" hidden data-surface="operation-runtime-proof" data-work-item-id="${attr(details.model?.workItemId, ctx)}" data-case-id="${attr(details.model?.caseId, ctx)}" data-submission-id="${attr(details.commandSubmissionId, ctx)}" data-payload-fingerprint="${attr(details.payloadHash, ctx)}">
+    <summary aria-label="${attr(ctx.tr("auditDetails"), ctx)}"></summary>
+  </details>`;
+  }
   return `<details class="operation-technical-details" data-surface="operation-runtime-proof" data-work-item-id="${attr(details.model?.workItemId, ctx)}" data-case-id="${attr(details.model?.caseId, ctx)}" data-submission-id="${attr(details.commandSubmissionId, ctx)}" data-payload-fingerprint="${attr(details.payloadHash, ctx)}" ${shouldOpen ? "open" : ""}>
     <summary>${text(ctx.tr(canInspect ? "auditDetails" : "technicalDetails"), ctx)}</summary>
     ${canInspect ? `<section class="operation-panel-runtime">
@@ -613,10 +622,17 @@ export function EvidenceSheet(card, draft, ctx) {
   const states = evidence.map((field) => EvidenceStateVM(field, (draft.evidenceDrafts || []).find((item) => item.requirementId === field.id), ctx));
   const verified = states.filter((state) => ["verified", "system_ready"].includes(state.status)).length;
   const hasMissing = states.some((state) => state.status === "missing");
+  const missing = states.filter((state) => !["verified", "system_ready"].includes(state.status));
+  const listSeparator = ctx.tr?.("listSeparator") || "、";
+  const materialNames = states.map((state) => state.name).join(listSeparator);
+  const missingNames = missing.map((state) => state.name).join(listSeparator);
+  const body = evidence.length
+    ? (missing.length ? `${ctx.tr("evidenceNeedReview")}：${missingNames}` : `${materialNames} ${ctx.tr("evidenceReady")}`)
+    : ctx.tr("noRequiredEvidence");
   return `<section class="evidence-sheet" data-surface="evidence-sheet">
     <b>${text(ctx.tr("trustedEvidence"), ctx)}</b>
-    <p>${evidence.length ? states.map((state) => text(`${state.name}: ${state.label}`, ctx)).join(" · ") : text(ctx.tr("noRequiredEvidence"), ctx)}</p>
-    <small>${verified}/${evidence.length} ${text(verified >= evidence.length && evidence.length ? ctx.tr("evidenceReady") : ctx.tr("evidenceNeedReview"), ctx)}</small>
+    <p>${text(body, ctx)}</p>
+    ${evidence.length ? `<small>${verified}/${evidence.length}</small>` : ""}
     ${hasMissing ? `<p>${text(ctx.tr("evidenceMissingBlocksSubmit"), ctx)}</p>` : ""}
   </section>`;
 }
@@ -625,7 +641,7 @@ export function EvidenceStateVM(field, draft = null, ctx = {}) {
   const name = ctx.localTerm ? ctx.localTerm(field) : field?.id || "";
   if (!draft) return { status: "system_ready", name, label: ctx.tr?.("evidenceSystemReady") || "系统将在提交时自动绑定" };
   const status = draft.status || draft.verificationStatus || (isRuntimePlaceholder(draft) ? "pending_review" : "draft");
-  if (status === "verified") return { status, name, label: ctx.tr?.("evidenceReady") || "证据已就绪" };
+  if (status === "verified") return { status, name, label: ctx.tr?.("evidenceReady") || "材料已就绪" };
   if (status === "rejected") return { status, name, label: `${ctx.tr?.("evidenceRejected") || "证据被拒绝"}：${draft.reason || ctx.tr?.("evidenceRejectedNext") || "请重新补充并提交复核"}` };
   if (status === "scope_mismatch") return { status, name, label: ctx.tr?.("evidenceScopeMismatch") || "证据不属于当前办理，请重新选择" };
   if (status === "already_used" || status === "used") return { status, name, label: ctx.tr?.("evidenceAlreadyUsed") || "证据已被其他办理使用，请更换证据" };
@@ -740,7 +756,7 @@ function queuePanel(component, label, count, message, ctx) {
 }
 
 function activeCard(workspace) {
-  return workspace?.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(card.status)) || workspace?.cards?.[0] || {};
+  return workspace?.cards?.find((card) => isActionableCardStatus(card.status)) || workspace?.cards?.[0] || {};
 }
 
 function roleLabel(role, ctx) {
@@ -788,9 +804,12 @@ function array(value) {
 
 function tx(value, ctx) {
   if (!value) return "";
-  if (typeof value === "string") return value;
-  if (ctx.tx) return ctx.tx(value);
-  return value["zh-CN"] || value["ru-RU"] || "";
+  const resolved = typeof value === "string"
+    ? value
+    : ctx.tx
+      ? ctx.tx(value)
+      : value["zh-CN"] || value["ru-RU"] || "";
+  return userFacingBusinessText(resolved, ctx);
 }
 
 function activeBlockers(item, card) {
@@ -799,7 +818,38 @@ function activeBlockers(item, card) {
 }
 
 function text(value, ctx) {
-  return ctx.escapeHtml ? ctx.escapeHtml(String(value ?? "")) : String(value ?? "");
+  const display = userFacingBusinessText(String(value ?? ""), ctx);
+  return ctx.escapeHtml ? ctx.escapeHtml(display) : display;
+}
+
+function trustedCommitmentBody(body = "", card = {}, ctx = {}) {
+  const byLang = {
+    "zh-CN": {
+      "cert.roomSetupConfirm": "本次只提交房间信息；不会设置营业状态、价格或预订。",
+      "cert.bedSetupConfirm": "本次只提交床位信息；不会设置营业状态、价格或预订。",
+      "cert.resourceReadinessConfirm": "本次只提交基础检查结果；不会设置营业状态、价格或预订。",
+      "Dorm.RoomSetupConfirm": "本次只提交房间信息；不会设置营业状态、价格或预订。",
+      "Dorm.BedSetupConfirm": "本次只提交床位信息；不会设置营业状态、价格或预订。",
+      "Dorm.ResourceReadinessConfirm": "本次只提交基础检查结果；不会设置营业状态、价格或预订。"
+    },
+    "ru-RU": {
+      "cert.roomSetupConfirm": "Этот шаг отправляет только данные комнаты; он не меняет эксплуатацию, цены или бронирование.",
+      "cert.bedSetupConfirm": "Этот шаг отправляет только данные коек; он не меняет эксплуатацию, цены или бронирование.",
+      "cert.resourceReadinessConfirm": "Этот шаг отправляет только результаты базовой проверки; он не меняет эксплуатацию, цены или бронирование.",
+      "Dorm.RoomSetupConfirm": "Этот шаг отправляет только данные комнаты; он не меняет эксплуатацию, цены или бронирование.",
+      "Dorm.BedSetupConfirm": "Этот шаг отправляет только данные коек; он не меняет эксплуатацию, цены или бронирование.",
+      "Dorm.ResourceReadinessConfirm": "Этот шаг отправляет только результаты базовой проверки; он не меняет эксплуатацию, цены или бронирование."
+    },
+    "ky-KG": {
+      "cert.roomSetupConfirm": "Бул кадам бөлмө маалыматтарын гана тапшырат; иштетүү абалын, бааны же брондоону өзгөртпөйт.",
+      "cert.bedSetupConfirm": "Бул кадам койка маалыматтарын гана тапшырат; иштетүү абалын, бааны же брондоону өзгөртпөйт.",
+      "cert.resourceReadinessConfirm": "Бул кадам негизги текшерүүнүн жыйынтыгын гана тапшырат; иштетүү абалын, бааны же брондоону өзгөртпөйт.",
+      "Dorm.RoomSetupConfirm": "Бул кадам бөлмө маалыматтарын гана тапшырат; иштетүү абалын, бааны же брондоону өзгөртпөйт.",
+      "Dorm.BedSetupConfirm": "Бул кадам койка маалыматтарын гана тапшырат; иштетүү абалын, бааны же брондоону өзгөртпөйт.",
+      "Dorm.ResourceReadinessConfirm": "Бул кадам негизги текшерүүнүн жыйынтыгын гана тапшырат; иштетүү абалын, бааны же брондоону өзгөртпөйт."
+    }
+  };
+  return byLang[ctx.state?.lang || "zh-CN"]?.[card?.id] || userFacingBusinessText(body, ctx);
 }
 
 function attr(value, ctx) {

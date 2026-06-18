@@ -1,0 +1,374 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario2-runtimeRules.generated",
+  "version": "oam.dormitory-scenario2-runtimeRules.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario2-resource-operation-status-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario2-resource-operation-status-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:cddb492e94853f3a2fa63dfb38fdad290ecd2b2d2f0f6df9e83cf3de8adaa166",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+      "digest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario2.ResourceOperationStatus",
+  "scenarioPackageNo": 2,
+  "scenarioId": "lodging.resource-operation-status",
+  "outputContentDigest": "sha256:5d960b534b0c0334a2494cf64feec8e8a9a5430c0fd2e86b006f431500cb5f6f",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "房源运营就绪与状态维护",
+  "businessGoalZh": "承接场景包 1 已完成的房间建档、床位组确认、基础就绪确认摘要，完成房间或床位的运营检查、运营状态设置、阻断维护和恢复确认。",
+  "sourceScenarioDigest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario2.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "OperationResource",
+      "RoomOperationStatus",
+      "BedOperationStatus",
+      "OperationInspection",
+      "OperationBlocker",
+      "OperationStatusChange",
+      "OperationRestore",
+      "OperationEvidence",
+      "StatusHistory"
+    ],
+    "searchReadModel": [
+      "房源运营就绪与状态维护",
+      "房间/床位运营状态摘要",
+      "阻断原因",
+      "预计恢复时间",
+      "可否进入价格维护",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用",
+      "运营状态摘要"
+    ],
+    "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "commands": [
+    {
+      "commandId": "Dorm.OperationInspectionConfirm",
+      "businessNameZh": "运营检查确认",
+      "writesObjects": [
+        "OperationInspection",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "房间建档",
+        "床位组建档",
+        "基础就绪确认",
+        "价格",
+        "报价",
+        "预订",
+        "入住",
+        "收款",
+        "押金",
+        "退款",
+        "账务"
+      ]
+    },
+    {
+      "commandId": "Dorm.OperationStatusChangeConfirm",
+      "businessNameZh": "运营状态变更确认",
+      "writesObjects": [
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "OperationBlocker",
+        "OperationStatusChange",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "价格",
+        "报价",
+        "预订",
+        "入住",
+        "收款",
+        "押金",
+        "退款",
+        "账务"
+      ]
+    },
+    {
+      "commandId": "Dorm.OperationBlockerUpdate",
+      "businessNameZh": "阻断原因更新",
+      "writesObjects": [
+        "OperationBlocker",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "价格",
+        "报价",
+        "预订",
+        "入住",
+        "收款",
+        "押金",
+        "退款",
+        "账务"
+      ]
+    },
+    {
+      "commandId": "Dorm.OperationRestoreConfirm",
+      "businessNameZh": "恢复运营确认",
+      "writesObjects": [
+        "OperationRestore",
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "价格",
+        "报价",
+        "预订",
+        "入住",
+        "收款",
+        "押金",
+        "退款",
+        "账务"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "upstream_basic_readiness_missing",
+      "messageZh": "该房源尚未完成基础就绪确认，不能进入运营状态维护。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "inspection_required",
+      "messageZh": "请先完成运营检查，再设置运营状态。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "operation_evidence_missing",
+      "messageZh": "缺少必要运营证据，不能提交。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "unclosed_blocker_for_operable",
+      "messageZh": "仍有未关闭阻断原因，不能设置为可运营。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "invalid_status_transition",
+      "messageZh": "当前状态不能执行该变更，请查看合法下一步动作。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_status_conflict",
+      "messageZh": "状态已被他人更新，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用不匹配，请从页面重新选择房源。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_submission",
+      "messageZh": "该提交已处理，系统将返回原处理结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_result_write_attempt",
+      "messageZh": "查询、搜索、列表、看板、报表只读，不能在这里写入业务事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "post_confirm_inline_edit_forbidden",
+      "messageZh": "已确认事实不能原地编辑，请走追加变更、补充证据、纠错或作废。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "cross_scenario_price_reservation_forbidden",
+      "messageZh": "本场景不能进入价格、报价或预订操作。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "restore_without_recheck_pass",
+      "messageZh": "复查未通过或证据不完整，不能恢复运营。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "invariants": [
+    "同一时间每个房间只能有一个当前运营状态。",
+    "同一时间每个床位只能有一个当前运营状态。",
+    "房间级运营状态影响整个房间及其全部床位。",
+    "床位级运营状态只影响该床位。",
+    "房间为维修中、停售、暂停开放或异常待处理时，必须阻断该房间全部床位进入价格、报价和预订。",
+    "单个床位为维修中时，只阻断该床位进入价格、报价和预订。",
+    "恢复运营必须关闭全部相关阻断原因，且必须有复查通过证据。",
+    "可运营只能输出可否进入价格维护，不得输出可报价或可预订。",
+    "确认失败不得写 CommandSubmission、DomainEvent、Outbox、Projection、Lens、Search、Dashboard、Ledger。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。"
+  ],
+  "operationStatusOptions": [
+    "可运营",
+    "暂不可运营",
+    "部分不可运营",
+    "暂停开放",
+    "维修中",
+    "保洁中",
+    "停售",
+    "异常待处理",
+    "待复查",
+    "已恢复"
+  ],
+  "scopeImpactRules": [
+    {
+      "scope": "room",
+      "statusZh": [
+        "维修中",
+        "停售",
+        "暂停开放",
+        "异常待处理"
+      ],
+      "blocksZh": [
+        "全房间",
+        "全部床位",
+        "价格维护",
+        "报价",
+        "预订"
+      ]
+    },
+    {
+      "scope": "bed",
+      "statusZh": [
+        "维修中",
+        "保洁中",
+        "异常待处理",
+        "待复查"
+      ],
+      "blocksZh": [
+        "该床位",
+        "该床位价格维护",
+        "该床位报价",
+        "该床位预订"
+      ]
+    },
+    {
+      "scope": "room_or_bed",
+      "statusZh": [
+        "可运营",
+        "已恢复"
+      ],
+      "outputsZh": [
+        "运营状态摘要",
+        "可否进入价格维护"
+      ],
+      "mustNotOutputsZh": [
+        "可报价",
+        "可预订"
+      ]
+    }
+  ],
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "select-base-ready-resource": [
+        "场景包 1 基础就绪摘要",
+        "只读对象引用绑定记录"
+      ],
+      "operation-inspection": [
+        "运营检查照片",
+        "保洁/维修/安全/设施检查记录"
+      ],
+      "set-operation-status": [
+        "状态原因说明",
+        "阻断原因证据"
+      ],
+      "impact-confirmation": [
+        "影响确认记录",
+        "证据摘要"
+      ],
+      "daily-status-maintenance": [
+        "进度记录",
+        "补充证据"
+      ],
+      "restore-operation": [
+        "复查通过记录",
+        "恢复照片",
+        "关闭阻断证据"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "commandsImplemented": [
+      "Dorm.OperationInspectionConfirm",
+      "Dorm.OperationStatusChangeConfirm",
+      "Dorm.OperationBlockerUpdate",
+      "Dorm.OperationRestoreConfirm"
+    ],
+    "mustSupportZh": [
+      "幂等提交",
+      "并发版本检查",
+      "上游基础就绪检查",
+      "状态流转检查",
+      "证据完整性检查",
+      "未关闭阻断阻断可运营",
+      "伪造内部引用阻断",
+      "失败无副作用"
+    ],
+    "failureNoSideEffectTargets": [
+      "CommandSubmission",
+      "DomainEvent",
+      "Outbox",
+      "Projection",
+      "Lens",
+      "Search",
+      "Dashboard",
+      "Ledger"
+    ],
+    "forbiddenRuntimeWritesZh": [
+      "房间建档",
+      "床位组建档",
+      "基础就绪确认",
+      "价格",
+      "报价",
+      "预订",
+      "入住",
+      "收款",
+      "押金",
+      "退款",
+      "账务"
+    ]
+  }
+}

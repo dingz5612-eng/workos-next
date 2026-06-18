@@ -1,53 +1,16 @@
+import { capabilityCommandCatalog, isGeneratedObjectSearchQuery } from "./capabilityProjection.js";
+
+const [dormitoryScenario1Command] = capabilityCommandCatalog();
+
 const searchIntents = {
   accommodationResourceSetup: {
     intentId: "accommodationResourceSetup",
     commandId: "startOperationsWorkspace",
-    templateWorkspaceId: "W-STAY-RESOURCE",
-    firstCardId: "roomSetup",
-    title: {
-      "zh-CN": "新增住宿房源",
-      "ru-RU": "Добавить комнату",
-      "ky-KG": "Бөлмө кошуу"
-    },
+    templateWorkspaceId: dormitoryScenario1Command.templateWorkspaceId,
+    firstCardId: dormitoryScenario1Command.firstCardId,
+    title: dormitoryScenario1Command.title,
     suggestionGroups: ["frequent", "team"],
-    terms: [
-      "新增住宿房源",
-      "新增房源",
-      "添加房源",
-      "创建住宿资源",
-      "新增住宿资源",
-      "住宿资源建档",
-      "房源建档",
-      "宿舍建档",
-      "房间建档",
-      "创建房间",
-      "新增房间",
-      "新建房间",
-      "配置房间",
-      "宿舍房间",
-      "住宿房源",
-      "住宿资源",
-      "房源",
-      "房间",
-      "房号",
-      "床位",
-      "资源建档",
-      "room setup",
-      "create room",
-      "add room",
-      "new room",
-      "add accommodation resource",
-      "xinzengfangyuan",
-      "xinzeng fangyuan",
-      "chuangjianfangjian",
-      "chuangjian fangjian",
-      "добавить комнату",
-      "создать комнату",
-      "комната",
-      "койки",
-      "бөлмө",
-      "койка"
-    ]
+    terms: dormitoryScenario1Command.keywords
   }
 };
 
@@ -76,6 +39,7 @@ export function resolveSearchIntentId(query = "") {
 }
 
 export function isAccommodationResourceSetupQuery(query = "") {
+  if (isGeneratedObjectSearchQuery(query)) return false;
   return matchesSearchIntent("accommodationResourceSetup", query);
 }
 

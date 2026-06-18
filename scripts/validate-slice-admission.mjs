@@ -17,6 +17,7 @@ const manifestSliceIds = new Set((manifest.slices || []).map((slice) => slice.id
 const policiesByWorkspace = new Map((surfacePolicy.policies || []).map((policy) => [policy.workspaceId, policy]));
 const lensById = new Map((lensContract.lenses || []).map((lens) => [lens.id, lens]));
 const eventTypesByCard = parseEventCatalog(eventCatalogSource);
+const runtimeTestOnlySlices = new Set(["Dormitory.FirstGoldenChain"]);
 
 assert(surfacePolicy.version, "runtime-surface-policy.json must declare version");
 assert((surfacePolicy.policies || []).length >= (manifest.slices || []).length, "Every manifest slice must have a surface policy entry.");
@@ -28,14 +29,19 @@ const productionSlices = (manifest.slices || []).filter((slice) => slice.status 
 const aggregateOwners = new Map();
 for (const slice of manifest.slices || []) {
   const policy = policiesBySlice.get(slice.id);
-  assert(slice.status === "production-slice", `Slice ${slice.id} must be current production-slice; non-current runtime entries are forbidden.`);
+  const runtimeTestOnly = runtimeTestOnlySlices.has(slice.id);
+  if (runtimeTestOnly) {
+    assert(slice.status === "runtime-test-admitted", `Runtime test-only slice ${slice.id} must declare runtime-test-admitted status.`);
+  } else {
+    assert(slice.status === "production-slice", `Slice ${slice.id} must be current production-slice; non-current runtime entries are forbidden.`);
+  }
   assert(policy, `Slice ${slice.id} missing runtime surface policy.`);
   assert(policy.workspaceId === slice.workspaceId, `Slice ${slice.id} surface policy workspaceId mismatch.`);
   assert(policiesByWorkspace.get(slice.workspaceId)?.sliceId === slice.id, `Workspace ${slice.workspaceId} has duplicate or mismatched surface policy.`);
   assertCardsMatch(slice, policy);
   assertSurfaceDeclarations(slice, policy);
 
-  if (slice.status === "production-slice") {
+  if (!runtimeTestOnly && slice.status === "production-slice") {
     assertProductionAdmission(slice, policy);
     for (const aggregate of slice.ownsAggregates || []) {
       const currentOwner = aggregateOwners.get(aggregate);

@@ -34,6 +34,7 @@ import {
   toggleEvidenceSelection,
   updateDerivedFields
 } from "../operationController.js";
+import { DORMITORY_SCENARIO1_STEPS } from "../capabilityProjection.js";
 import { loadDraft } from "../operationDrafts.js";
 import { createSurfaceCtx, runtimeStore } from "./surfaceContractTestHelpers.js";
 
@@ -87,12 +88,19 @@ describe("operationController hardening matrix", () => {
       { requirementId: "room-photo", evidenceId: "evd-existing", source: "system", status: "verified" },
       { requirementId: "duplicate-check", evidenceId: "evidence-duplicate-check-uuid-1", source: "system", status: undefined }
     ]);
+    expect(systemEvidenceDraftsFor({
+      evidence: [{ id: "restore-photo" }]
+    }, [
+      { requirementId: "restore-photo", evidenceId: "ev-existing", source: "system" }
+    ])).toEqual([
+      { requirementId: "restore-photo", evidenceId: "ev-existing", source: "system", status: "verified" }
+    ]);
   });
 
   it("saves draft and evidence selection with submission protocol", () => {
     const node = evidenceNode("room-photo", false);
     installDocument({
-      fields: [input("roomId", "R-101")],
+      fields: [input("roomNo", "A101")],
       evidence: [node]
     });
     const ctx = operationCtx();
@@ -100,9 +108,9 @@ describe("operationController hardening matrix", () => {
     toggleEvidenceSelection({ target: node }, ctx);
     saveCurrentDraft(ctx);
 
-    const draft = loadDraft("W-STAY-RESOURCE", "roomSetup");
+    const draft = loadDraft("W-DORM-MAINLINE", "cert.roomSetupConfirm");
     expect(node.classList.contains("selected")).toBe(true);
-    expect(draft.values.roomId).toBe("R-101");
+    expect(draft.values.roomNo).toBe("A101");
     expect(draft.evidenceDrafts[0].requirementId).toBe("room-photo");
     expect(draft.submissionProtocol).toMatchObject({ submissionId: "sub-mock" });
     expect(ctx.state.operationMessage).toBe(ctx.tr("draftSaved"));
@@ -118,7 +126,7 @@ describe("operationController hardening matrix", () => {
     const bedLayout = input("bedLayout", "");
     const preview = previewNode();
     installDocument({
-      fields: [input("roomId", "R-101"), amount, unitRate, tariffQuantity, bedCount, bedLabels, bedType, bedLayout],
+      fields: [input("roomNo", "A101"), input("floor", "3"), input("buildingContextRef", "1号楼"), amount, unitRate, tariffQuantity, bedCount, bedLabels, bedType, bedLayout],
       preview
     });
     const ctx = operationCtx();
@@ -133,7 +141,7 @@ describe("operationController hardening matrix", () => {
       type: "change",
       target: {
         tagName: "SELECT",
-        dataset: { operationField: "roomId" },
+        dataset: { operationField: "roomNo" },
         matches: () => true
       }
     }, ctx);
@@ -145,6 +153,120 @@ describe("operationController hardening matrix", () => {
     expect(ctx.state.lastActionResult).toBeNull();
     expect(ctx.state.fieldValidation).toBeNull();
     expect(ctx.render).toHaveBeenCalled();
+  });
+
+  it("reopens submit after the current card recoverable business blocker is edited", () => {
+    const fields = roomSetupInputs();
+    const roomNo = fields.find((entry) => entry.dataset.operationField === "roomNo");
+    installDocument({ fields });
+    const ctx = operationCtx();
+    ctx.state.lastActionResult = {
+      status: "business_blocked_422",
+      reason: "invalid_date_range",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm"
+    };
+    ctx.state.operationMessage = "提交校验未通过";
+    ctx.render = vi.fn();
+
+    roomNo.value = "A302";
+    collectDraftingValuesOnInput({
+      type: "input",
+      target: roomNo
+    }, ctx);
+
+    expect(ctx.state.lastActionResult).toBeNull();
+    expect(ctx.state.operationMessage).toBe("");
+    expect(ctx.state.fieldValidation).toBeNull();
+    expect(ctx.render).toHaveBeenCalled();
+  });
+
+  it("reopens submit when saving a corrected draft after a current card business blocker", () => {
+    const fields = roomSetupInputs();
+    const roomNo = fields.find((entry) => entry.dataset.operationField === "roomNo");
+    installDocument({ fields });
+    const ctx = operationCtx();
+    ctx.state.lastActionResult = {
+      status: "business_blocked_422",
+      reason: "target_resource_blocked_for_transfer",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm"
+    };
+    ctx.state.operationMessage = "提交校验未通过";
+    ctx.render = vi.fn();
+
+    roomNo.value = "A302";
+    saveCurrentDraft(ctx);
+
+    expect(ctx.state.lastActionResult).toBeNull();
+    expect(ctx.state.fieldValidation).toBeNull();
+    expect(ctx.state.operationMessage).toBe(ctx.tr("draftSaved"));
+  });
+
+  it("keeps an unrelated card business blocker when another card is edited", () => {
+    const fields = roomSetupInputs();
+    const roomNo = fields.find((entry) => entry.dataset.operationField === "roomNo");
+    installDocument({ fields });
+    const ctx = operationCtx();
+    const unrelatedBlocker = {
+      status: "business_blocked_422",
+      reason: "invalid_date_range",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.otherStep"
+    };
+    ctx.state.lastActionResult = unrelatedBlocker;
+    ctx.state.operationMessage = "提交校验未通过";
+    ctx.render = vi.fn();
+
+    roomNo.value = "A302";
+    collectDraftingValuesOnInput({
+      type: "input",
+      target: roomNo
+    }, ctx);
+
+    expect(ctx.state.lastActionResult).toBe(unrelatedBlocker);
+    expect(ctx.state.operationMessage).toBe("提交校验未通过");
+    expect(ctx.render).not.toHaveBeenCalled();
+  });
+
+  it("keeps the scenario 1 readiness select alias in the current-step draft", () => {
+    const store = runtimeStore();
+    const cardId = DORMITORY_SCENARIO1_STEPS[2].cardId;
+    store.workspaces[0].cards = [{
+      id: cardId,
+      status: "ready",
+      title: { "zh-CN": "完成基础检查" },
+      fields: { business: [field("readinessState", "基础就绪结论")], system: [], analytics: [] },
+      evidence: [],
+      checks: [],
+      blockerRules: [],
+      confirmation: { required: true, requiredRole: "operator" }
+    }];
+    store.operationWorkItems = [{
+      workItemId: "wi-readiness-select",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId,
+      lifecycleState: "ready",
+      ownerRole: "operator"
+    }];
+    store.workQueue = [...store.operationWorkItems];
+    const readiness = { ...input("readinessState", "passed"), tagName: "SELECT" };
+    installDocument({ fields: [readiness] });
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-readiness-select",
+      selectedWorkspace: "W-DORM-MAINLINE",
+      selectedCardId: cardId,
+      runtimeStore: store
+    });
+    ctx.render = vi.fn();
+
+    collectDraftingValuesOnInput({
+      type: "change",
+      target: readiness
+    }, ctx);
+
+    expect(loadDraft("W-DORM-MAINLINE", cardId).values.readinessState).toBe("passed");
   });
 
   it("binds segmented field buttons and ignores disabled or missing controls", () => {
@@ -187,7 +309,7 @@ describe("operationController hardening matrix", () => {
     offline.hydrateProjectionFromApi = vi.fn(async () => {
       offline.state.apiStatus = "offline";
     });
-    installDocument({ fields: [input("roomId", "R-101")] });
+    installDocument({ fields: roomSetupInputs() });
     await submitCurrentCard(offline);
     expect(offline.state.operationMessage).toBe(offline.tr("apiOfflineSubmit"));
     expect(submitWorkItemOperation).not.toHaveBeenCalled();
@@ -195,7 +317,7 @@ describe("operationController hardening matrix", () => {
 
   it("submits committed results, preserves pending/failed projection states, and maps blocked/errors", async () => {
     installDocument({
-      fields: [input("roomId", "R-101")],
+      fields: roomSetupInputs(),
       evidence: [evidenceNode("room-photo", true)]
     });
     materializeEvidenceObjects.mockResolvedValue(["evd-room"]);
@@ -229,6 +351,7 @@ describe("operationController hardening matrix", () => {
       projectionStatus: "not_started"
     });
     const blocked = operationCtx();
+    installDocument({ fields: roomSetupInputs(), evidence: [evidenceNode("room-photo", true)] });
     await submitCurrentCard(blocked);
     expect(blocked.state.lastActionResult).toMatchObject({
       status: "business_blocked_422",
@@ -237,17 +360,139 @@ describe("operationController hardening matrix", () => {
     expect(confirmBlockedMessage({ status: "idempotency_conflict_409" }, blocked)).toBe(blocked.tr("operations.error.safe.422"));
 
     submitWorkItemOperation.mockRejectedValueOnce({
+      status: 422,
+      reason: "missing_required_evidence",
+      code: "operations_confirm_failed"
+    });
+    const rejected = operationCtx();
+    installDocument({ fields: roomSetupInputs(), evidence: [evidenceNode("room-photo", true)] });
+    await submitCurrentCard(rejected);
+    expect(rejected.state.lastActionResult).toMatchObject({
+      status: "business_blocked_422",
+      reason: "missing_required_evidence",
+      code: "operations_confirm_failed"
+    });
+
+    submitWorkItemOperation.mockRejectedValueOnce({
       status: 403,
       reason: "capability_missing",
       requiredPermission: "operation.confirm"
     });
     const denied = operationCtx();
+    installDocument({ fields: roomSetupInputs(), evidence: [evidenceNode("room-photo", true)] });
     await submitCurrentCard(denied);
     expect(denied.state.permissionDiagnostic).toMatchObject({
       reason: "capability_missing",
       status: "permission_blocked_403"
     });
     expect(denied.state.lastActionResult.status).toBe("permission_blocked_403");
+  });
+
+  it("submits operation panel cards with persisted WorkItem evidence instead of stale workspace cards", async () => {
+    const store = runtimeStore();
+    store.workspaces[0].cards[0] = {
+      ...store.workspaces[0].cards[0],
+      evidence: []
+    };
+    store.operationWorkItems[0] = {
+      ...store.operationWorkItems[0],
+      card: {
+        ...store.workspaces[0].cards[0],
+        status: "ready",
+        evidence: [{ id: "price-proof", label: { "zh-CN": "价格依据证据" }, required: true }]
+      }
+    };
+    const ctx = operationCtx({ runtimeStore: store });
+    installDocument({ fields: roomSetupInputs() });
+    materializeEvidenceObjects.mockResolvedValueOnce(["evd-price-proof"]);
+    submitWorkItemOperation.mockResolvedValueOnce({
+      confirmed: false,
+      status: "business_blocked_422",
+      reason: "controlled_test_stop",
+      commitStatus: "blocked",
+      projectionStatus: "not_started"
+    });
+
+    await submitCurrentCard(ctx);
+
+    expect(materializeEvidenceObjects).toHaveBeenCalledWith(expect.objectContaining({
+      card: expect.objectContaining({
+        evidence: [expect.objectContaining({ id: "price-proof", required: true })]
+      }),
+      evidenceDrafts: [expect.objectContaining({ requirementId: "price-proof", source: "system" })]
+    }));
+    expect(submitWorkItemOperation).toHaveBeenCalledWith(expect.objectContaining({
+      evidenceIds: ["evd-price-proof"]
+    }));
+  });
+
+  it("keeps submit bound to the selected WorkItem card when route card state is stale", async () => {
+    const store = runtimeStore();
+    const workspaceId = "W-DORM-AUTO-ADVANCE";
+    const staleCard = {
+      id: "cert.previousStep",
+      status: "done",
+      title: { "zh-CN": "上一办理步骤" },
+      fields: { business: [field("roomNo", "房间号")], system: [], analytics: [] },
+      evidence: [],
+      checks: [],
+      blockerRules: [],
+      confirmation: { required: true, requiredRole: "operator" }
+    };
+    const currentCard = {
+      id: "cert.currentStep",
+      status: "ready",
+      title: { "zh-CN": "当前办理步骤" },
+      fields: { business: [field("roomNo", "房间号")], system: [], analytics: [] },
+      evidence: [{ id: "current-step-proof", label: { "zh-CN": "当前步骤证据" }, required: true }],
+      checks: [],
+      blockerRules: [],
+      confirmation: { required: true, requiredRole: "operator" }
+    };
+    store.workspaces[0] = {
+      ...store.workspaces[0],
+      id: workspaceId,
+      cards: [staleCard, { ...currentCard, evidence: [] }]
+    };
+    store.operationWorkItems = [{
+      workItemId: "wi-current-step",
+      workspaceId,
+      cardId: currentCard.id,
+      lifecycleState: "ready",
+      ownerRole: "operator",
+      card: currentCard
+    }];
+    store.workQueue = [...store.operationWorkItems];
+    const ctx = operationCtx({
+      runtimeStore: store,
+      selectedWorkItemId: "wi-current-step",
+      selectedWorkspace: workspaceId,
+      selectedCardId: staleCard.id
+    });
+    installDocument({ fields: [input("roomNo", "A301")] });
+    materializeEvidenceObjects.mockResolvedValueOnce(["evd-current-step-proof"]);
+    submitWorkItemOperation.mockResolvedValueOnce({
+      confirmed: false,
+      status: "business_blocked_422",
+      reason: "controlled_test_stop",
+      commitStatus: "blocked",
+      projectionStatus: "not_started"
+    });
+
+    await submitCurrentCard(ctx);
+
+    expect(materializeEvidenceObjects).toHaveBeenCalledWith(expect.objectContaining({
+      card: expect.objectContaining({
+        id: currentCard.id,
+        evidence: [expect.objectContaining({ id: "current-step-proof", required: true })]
+      }),
+      evidenceDrafts: [expect.objectContaining({ requirementId: "current-step-proof", source: "system" })]
+    }));
+    expect(submitWorkItemOperation).toHaveBeenCalledWith(expect.objectContaining({
+      workItemId: "wi-current-step",
+      card: expect.objectContaining({ id: currentCard.id }),
+      evidenceIds: ["evd-current-step-proof"]
+    }));
   });
 });
 
@@ -256,7 +501,7 @@ function operationCtx(overrides = {}) {
   store.workspaces[0].cards[0] = {
     ...store.workspaces[0].cards[0],
     fields: {
-      business: [field("roomId", "房间")],
+      business: [field("roomNo", "房间号")],
       system: [],
       analytics: []
     },
@@ -293,6 +538,15 @@ function input(id, value = "") {
     closest: () => null,
     matches: (selector) => selector.includes("[data-operation-field]")
   };
+}
+
+function roomSetupInputs() {
+  return [
+    input("roomNo", "A101"),
+    input("floor", "3"),
+    input("bedCount", "2"),
+    input("buildingContextRef", "1号楼")
+  ];
 }
 
 function rangeStart(id, value = "") {

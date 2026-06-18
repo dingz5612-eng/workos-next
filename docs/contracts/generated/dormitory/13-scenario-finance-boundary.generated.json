@@ -1,0 +1,54 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-financeBoundary.generated",
+  "version": "oam.dormitory-13-scenario-financeBoundary.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:206a7609fdae45bdae06d121cf337ad49e02575acc296d975af6fecc12ccdd21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    }
+  ],
+  "sourceContentDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:78b85140116df223ddb72c1ff967053ce5f31c3c2665ee8ee5139c4572aa7432",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "financeBoundary": {
+    "exclusiveTruthWriters": [
+      "finance-gate",
+      "finance-kernel"
+    ],
+    "financeTruthObjects": [
+      "Payment",
+      "Deposit",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction",
+      "FinanceReceipt"
+    ],
+    "businessScenarioAllowedOutputs": [
+      "Intent",
+      "Draft",
+      "Request",
+      "Snapshot",
+      "费用意向",
+      "退款意向",
+      "佣金意向"
+    ],
+    "forbiddenEquivalences": [
+      "押金不是收入",
+      "担保不是收款",
+      "退款申请不是退款到账",
+      "应退应补不是账务真值",
+      "维修费用意向不是成本入账"
+    ]
+  }
+}

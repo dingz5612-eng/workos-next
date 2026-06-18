@@ -1,0 +1,170 @@
+{
+  "version": "oam.dormitory.command-contracts-authority.v1",
+  "status": "authoritative",
+  "authorityType": "dormitory_first_golden_chain_command_contracts",
+  "currentCapabilityId": "Dormitory.FirstGoldenChain",
+  "invariantAuthorityRef": "docs/business/domains/dormitory/dormitory-invariants.authority.json",
+  "failureSemanticsRef": "docs/business/domains/dormitory/dormitory-failure-semantics.authority.json",
+  "commands": [
+    {
+      "command": "Dorm.RoomSetupConfirm",
+      "runtimeCommandType": "RoomSetup.Confirm",
+      "requiredInputs": [
+        "roomNo",
+        "capacity",
+        "roomEvidenceRefs"
+      ],
+      "derivedInputs": [
+        "normalizedRoomNo",
+        "room.bedCount",
+        "roomStableRef"
+      ],
+      "readonlyInputs": [
+        "buildingContextRef",
+        "tenantId",
+        "definitionId",
+        "workItemId",
+        "idempotencyKey"
+      ],
+      "normalizedInputs": [
+        "normalizedRoomNo",
+        "room.bedCount"
+      ],
+      "invariantRefs": [
+        "room_unique_within_building_context",
+        "readonly_stable_refs",
+        "failure_no_side_effects",
+        "idempotent_retry_same_command",
+        "concurrent_duplicate_conflict_safe"
+      ],
+      "successEvents": [
+        "Accommodation.RoomConfigured"
+      ],
+      "conflictResponses": [
+        "409 room_already_exists"
+      ],
+      "validationResponses": [
+        "422 readonly_stable_ref_violation"
+      ],
+      "sideEffectPolicy": "atomic_success_only_no_side_effects_on_failure",
+      "idempotencyPolicy": "same_command_same_key_returns_same_result",
+      "concurrencyPolicy": "duplicate_room_conflict_safe",
+      "searchCommandPolicy": "search_readonly_no_command_write",
+      "surfaceRenderingPolicy": "render_generated_contract_fields_only",
+      "dbProjectionPolicy": "Accommodation.RoomConfigured -> accommodation_rooms",
+      "testProofPolicy": "positive_and_conflict_negative_required_before_business_landing"
+    },
+    {
+      "command": "Dorm.BedSetupConfirm",
+      "runtimeCommandType": "BedSetup.Confirm",
+      "requiredInputs": [
+        "roomStableRef",
+        "room.bedCount",
+        "bedEvidenceRefs"
+      ],
+      "derivedInputs": [
+        "bedSetVersion",
+        "bedSetStableRef",
+        "normalizedBedNo[01..room.bedCount]",
+        "bedStableRef[01..room.bedCount]"
+      ],
+      "readonlyInputs": [
+        "roomStableRef",
+        "buildingContextRef",
+        "tenantId",
+        "definitionId",
+        "workItemId",
+        "idempotencyKey"
+      ],
+      "normalizedInputs": [
+        "room.bedCount",
+        "normalizedBedNo[01..room.bedCount]"
+      ],
+      "invariantRefs": [
+        "bed_unique_within_room",
+        "bed_count_matches_room_bed_count",
+        "bed_requires_existing_room",
+        "readonly_stable_refs",
+        "failure_no_side_effects",
+        "idempotent_retry_same_command",
+        "concurrent_duplicate_conflict_safe"
+      ],
+      "successEvents": [
+        "Accommodation.BedSetConfigured",
+        "Accommodation.BedConfigured[]"
+      ],
+      "conflictResponses": [
+        "409 bed_already_exists"
+      ],
+      "validationResponses": [
+        "422 bed_count_not_satisfied",
+        "422 readonly_stable_ref_violation"
+      ],
+      "sideEffectPolicy": "atomic_success_only_no_side_effects_on_failure",
+      "idempotencyPolicy": "same_command_same_key_returns_same_result",
+      "concurrencyPolicy": "duplicate_bed_conflict_safe",
+      "searchCommandPolicy": "search_readonly_no_command_write",
+      "surfaceRenderingPolicy": "render_bed_set_as_generated_sequence",
+      "dbProjectionPolicy": "Accommodation.BedConfigured -> accommodation_beds",
+      "testProofPolicy": "bed_count_positive_and_duplicate_negative_required_before_business_landing"
+    },
+    {
+      "command": "Dorm.ResourceReadinessConfirm",
+      "runtimeCommandType": "ResourceReadiness.Confirm",
+      "requiredInputs": [
+        "roomStableRef",
+        "readinessState",
+        "readinessEvidenceRefs"
+      ],
+      "derivedInputs": [
+        "readinessSnapshotVersion",
+        "roomReadinessStableRef",
+        "createdBedCount"
+      ],
+      "readonlyInputs": [
+        "roomStableRef",
+        "bedStableRefs",
+        "buildingContextRef",
+        "tenantId",
+        "definitionId",
+        "workItemId",
+        "idempotencyKey"
+      ],
+      "normalizedInputs": [
+        "readinessState",
+        "notSaleableReason",
+        "serviceVerificationRef"
+      ],
+      "invariantRefs": [
+        "readiness_requires_existing_room_and_complete_bed_set",
+        "readiness_closed_option_set",
+        "not_saleable_requires_reason",
+        "maintenance_requires_service_verification",
+        "readonly_stable_refs",
+        "failure_no_side_effects",
+        "idempotent_retry_same_command"
+      ],
+      "successEvents": [
+        "Accommodation.RoomReadinessChanged"
+      ],
+      "conflictResponses": [
+        "409 room_already_exists",
+        "409 bed_already_exists"
+      ],
+      "validationResponses": [
+        "422 bed_count_not_satisfied",
+        "422 readonly_stable_ref_violation",
+        "422 invalid_readiness_state",
+        "422 not_saleable_reason_required",
+        "422 service_verification_required"
+      ],
+      "sideEffectPolicy": "atomic_success_only_no_side_effects_on_failure",
+      "idempotencyPolicy": "same_command_same_key_returns_same_result",
+      "concurrencyPolicy": "readiness_snapshot_version_conflict_safe",
+      "searchCommandPolicy": "search_readonly_no_command_write",
+      "surfaceRenderingPolicy": "render_closed_readiness_options_only",
+      "dbProjectionPolicy": "Accommodation.RoomReadinessChanged -> readiness/read model",
+      "testProofPolicy": "readiness_positive_closed_option_and_missing_bed_negative_required_before_business_landing"
+    }
+  ]
+}

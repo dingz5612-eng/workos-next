@@ -1,0 +1,147 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario7-handoff.generated",
+  "version": "oam.dormitory-scenario7-handoff.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario7-check-in-processing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario7-check-in-processing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:288b527a49cfb6fcb1a19b854dcb05468e92b3dfbc4c50796d5ffd0369e6b311",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "digest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario7.CheckInProcessing",
+  "scenarioPackageNo": 7,
+  "scenarioId": "lodging.check-in-processing",
+  "outputContentDigest": "sha256:842d9521644e4ededa5578291c2e463b2c756372e89a3662ed1a6647f9f30e0f",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "入住办理",
+  "businessGoalZh": "承接已确认预订、财务确认摘要和房源运营状态摘要，核验客户到店、身份信息、入住协议、预订信息、房间/床位当前可入住状态后，生成入住记录、占用记录和入住凭证。",
+  "sourceScenarioDigest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario7.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "CheckInCase",
+      "ArrivingGuest",
+      "ResidentProfile",
+      "IdentityVerification",
+      "Stay",
+      "RoomBedOccupancy",
+      "CheckInAgreement",
+      "AccessCredential",
+      "CheckInSnapshot",
+      "CheckInEvidence",
+      "CheckInStatusHistory"
+    ],
+    "searchReadModel": [
+      "入住办理",
+      "入住记录摘要",
+      "住客摘要",
+      "房间/床位占用摘要",
+      "入住凭证摘要",
+      "协议摘要",
+      "身份核验摘要",
+      "证据摘要",
+      "只读对象引用",
+      "占用摘要",
+      "凭证摘要"
+    ],
+    "noRefillRuleZh": "场景包 7 只能读取预订、财务、价格和运营状态只读摘要，不得要求用户重新填写已确认的预订、价格或财务字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "upstream": {
+    "allowedSourcePackageNos": [
+      5,
+      6,
+      2,
+      3
+    ],
+    "requiredReadonlyInputs": [
+      "预订确认摘要",
+      "预订号",
+      "客户信息",
+      "日期范围",
+      "人数",
+      "房间/床位",
+      "价格快照",
+      "预订状态",
+      "收款确认摘要",
+      "押金确认摘要",
+      "担保确认摘要",
+      "剩余待收",
+      "财务确认状态",
+      "财务确认摘要",
+      "房源运营状态摘要",
+      "阻断原因",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "confirmedReservationRequiredZh": "没有场景包 5 的有效预订确认摘要，不得进入入住办理。",
+    "financeReadinessRequiredZh": "需要财务确认但场景包 6 未确认时，必须阻断普通入住或走负责人例外审批并留证据。",
+    "upstreamWriteBackAllowed": false,
+    "mustNotRequireRefillZh": "场景包 7 只能读取预订、财务、价格和运营状态只读摘要，不得要求用户重新填写已确认的预订、价格或财务字段。"
+  },
+  "downstream": {
+    "allowedConsumerPackageNo": 8,
+    "allowedConsumerPackageNameZh": "在住管理",
+    "handoffOutputs": [
+      "入住记录摘要",
+      "住客摘要",
+      "房间/床位占用摘要",
+      "入住凭证摘要",
+      "协议摘要",
+      "身份核验摘要",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "forbiddenOutputsZh": [
+      "Payment",
+      "Deposit",
+      "Refund",
+      "CheckoutCase",
+      "LedgerEntry",
+      "LedgerTransaction",
+      "价格变更",
+      "报价",
+      "预订变更",
+      "收款",
+      "押金变更",
+      "退款",
+      "退房",
+      "已退房",
+      "已退款",
+      "押金已退",
+      "账务入账"
+    ],
+    "downstreamRecheckRuleZh": "在住管理只能读取入住记录、住客、房间/床位占用、入住凭证、协议、身份核验、证据摘要和只读对象引用；不得要求用户重新填写已确认入住字段，也不得把已入住解释为已结清、已退房或已退款。"
+  },
+  "readSideOutputs": [
+    "入住记录摘要",
+    "住客摘要",
+    "房间/床位占用摘要",
+    "入住凭证摘要",
+    "协议摘要",
+    "身份核验摘要",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "downstreamRecheckRuleZh": "在住管理只能读取入住记录、住客、房间/床位占用、入住凭证、协议、身份核验、证据摘要和只读对象引用；不得要求用户重新填写已确认入住字段，也不得把已入住解释为已结清、已退房或已退款。"
+}

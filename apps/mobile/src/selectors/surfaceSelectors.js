@@ -1,3 +1,4 @@
+import { normalizeOperationLifecycleState } from "../operationStatus.js";
 import { normalizeQuery } from "../runtime/runtimeStore.js";
 import { businessAnchorText } from "../businessAnchorKernel.js";
 
@@ -72,6 +73,7 @@ function materializeQueue(queue, byId, state, options = {}) {
     .filter((item) => state.debugSurface || queueItemAllowedForActor(item, state))
     .filter((item) => {
       if (state.debugSurface) return true;
+      if (options.terminal !== "only" && isReadonlyCorrectionPreview(item)) return false;
       const terminal = isTerminalQueueItem(item);
       if (options.terminal === "only") return terminal;
       return !terminal;
@@ -79,6 +81,7 @@ function materializeQueue(queue, byId, state, options = {}) {
 }
 
 function isOrdinaryPilotQueueItem(item = {}) {
+  if (isLegacyDormitoryActiveWorkItem(item)) return false;
   const tokens = [
     item.workItemId,
     item.work_item_id,
@@ -93,6 +96,22 @@ function isOrdinaryPilotQueueItem(item = {}) {
   return !/(runtimeAudit|\brf[-_:]|engineering|diagnostic|fixture_replay|projection_guard_shadow)/i.test(tokens);
 }
 
+function isLegacyDormitoryActiveWorkItem(item = {}) {
+  const workspaceId = String(item.workspaceId || item.workspace_id || item.workspace?.id || "");
+  const cardId = String(item.cardId || item.card_id || item.card?.id || "");
+  return /^Dormitory\.FirstGoldenChain(?:-|$)/i.test(workspaceId) ||
+    (/^Dorm\./i.test(cardId) && !/^W-DORM-MAINLINE(?:-|$)/i.test(workspaceId));
+}
+
+function isOldWStaySearchEntry(item = {}) {
+  const workspaceId = String(item.workspaceId || item.workspace_id || item.workspace?.id || "");
+  const sourceScenario = String(item.sourceScenario || item.source_scenario || "");
+  if (!sourceScenario) return false;
+  return /^W-STAY-/i.test(workspaceId) &&
+    !sourceScenario.startsWith("lodging.resource-basic-readiness") &&
+    !sourceScenario.startsWith("lodging.resource-operation-status");
+}
+
 function isTerminalQueueItem(item = {}) {
   return [
     item.lifecycleState,
@@ -100,6 +119,13 @@ function isTerminalQueueItem(item = {}) {
     item.status,
     item.card?.status
   ].some((status) => terminalStatuses.has(String(status || "").trim()));
+}
+
+function isReadonlyCorrectionPreview(item = {}) {
+  const payload = item.payload || item.Payload || {};
+  const operationMode = String(payload.operationMode || payload.operation_mode || "").toLowerCase();
+  const correctionMode = String(payload.correctionMode || payload.correction_mode || "").toLowerCase();
+  return operationMode === "correction" || correctionMode === "append_only";
 }
 
 function isTerminalHomeItem(item = {}) {
@@ -179,6 +205,8 @@ export function selectSearchSurfaceResults(state, query) {
   const backendResults = state.runtimeStore?.searchResultsByQuery?.[normalized] || [];
   if (backendResults.length) {
     return backendResults
+      .filter((result) => state.debugSurface || !isLegacyDormitoryActiveWorkItem(result))
+      .filter((result) => state.debugSurface || !isOldWStaySearchEntry(result))
       .map((result) => withSurfaceCard(byId.get(result.workspaceId), result.cardId, result.score || 0, result))
       .filter(Boolean);
   }
@@ -187,7 +215,7 @@ export function selectSearchSurfaceResults(state, query) {
     .map((workspace) => withSurfaceScore(workspace, normalized))
     .filter((item) => item._score > 0)
     .sort((a, b) => b._score - a._score);
-  return found.length ? found : workspaces;
+  return found;
 }
 
 export function selectLearningCatalog(state) {
@@ -239,7 +267,7 @@ export function isUnsafeLedgerCarryForward(workspace, fieldId) {
 }
 
 export function activeCard(workspace) {
-  return workspace?.cards?.find((card) => activeStatuses.has(card.status)) || workspace?.cards?.[0];
+  return workspace?.cards?.find((card) => activeStatuses.has(normalizeOperationLifecycleState(card.status, ""))) || workspace?.cards?.[0];
 }
 
 function projectionHomeItem(workspace) {
@@ -289,13 +317,16 @@ function withSurfaceCard(workspace, cardId, score, result = {}) {
   if (!workspace) return null;
   return {
     ...workspace,
+    ...result,
+    id: workspace.id,
+    cards: workspace.cards,
     _surfaceCardId: cardId,
     _score: score,
     score,
-    localizedTitle: result.localizedTitle,
-    localizedSubtitle: result.localizedSubtitle,
+    localizedTitle: result.localizedTitle ?? result.businessTitle ?? result.title,
+    localizedSubtitle: result.localizedSubtitle ?? result.businessSummary ?? result.subtitle,
     localizedStatus: result.localizedStatus,
-    localizedNextAction: result.localizedNextAction
+    localizedNextAction: result.localizedNextAction ?? result.nextAction
   };
 }
 
@@ -307,8 +338,6 @@ function withSurfaceScore(workspace, query) {
 
 function workspaceText(workspace) {
   return [
-    workspace.id,
-    workspace.domain,
     workspace.title?.["zh-CN"],
     workspace.title?.["ru-RU"],
     workspace.summary?.["zh-CN"],
@@ -316,7 +345,7 @@ function workspaceText(workspace) {
     workspace.next?.["zh-CN"],
     workspace.next?.["ru-RU"],
     businessAnchorText(workspace),
-    workspace.cards?.map((card) => `${card.id} ${card.title?.["zh-CN"] || ""} ${card.title?.["ru-RU"] || ""}`).join(" ")
+    workspace.cards?.map((card) => `${card.title?.["zh-CN"] || ""} ${card.title?.["ru-RU"] || ""}`).join(" ")
   ].join(" ").toLocaleLowerCase();
 }
 
@@ -354,17 +383,19 @@ function normalizeDomain(value = "") {
 
 function badgesFor(card) {
   if (!card) return [];
-  const badges = [card.status];
-  if (activeStatuses.has(card.status)) badges.push("mine");
+  const status = normalizeOperationLifecycleState(card.status, card.status);
+  const badges = [status];
+  if (activeStatuses.has(status)) badges.push("mine");
   if (card.status === "blocked") badges.push("blocked");
   if (card.confirmation?.required || card.Confirmation?.required) badges.push("confirm");
   return Array.from(new Set(badges));
 }
 
 function priorityFor(status) {
-  if (status === "blocked") return 100;
-  if (status === "ready") return 90;
-  if (status === "inProgress") return 80;
+  const normalized = normalizeOperationLifecycleState(status, "");
+  if (normalized === "blocked") return 100;
+  if (normalized === "ready") return 90;
+  if (normalized === "inProgress") return 80;
   return 40;
 }
 

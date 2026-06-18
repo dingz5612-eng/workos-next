@@ -1,0 +1,75 @@
+{
+  "version": "oam.dormitory.invariants-authority.v1",
+  "status": "authoritative",
+  "authorityType": "dormitory_first_golden_chain_invariants",
+  "currentCapabilityId": "Dormitory.FirstGoldenChain",
+  "objectGraphRef": "docs/business/domains/dormitory/dormitory-object-graph.authority.json",
+  "bedCardinalityRef": "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json",
+  "closedOptionSets": {
+    "readinessState": [
+      "saleable",
+      "cleaning_required",
+      "maintenance_required",
+      "materials_missing",
+      "not_saleable"
+    ]
+  },
+  "invariants": [
+    {
+      "invariantId": "room_unique_within_building_context",
+      "rule": "buildingContextRef + normalizedRoomNo identifies one Dormitory.Room",
+      "failureCode": "room_already_exists"
+    },
+    {
+      "invariantId": "bed_unique_within_room",
+      "rule": "roomStableRef + normalizedBedNo identifies one Dormitory.Bed",
+      "failureCode": "bed_already_exists"
+    },
+    {
+      "invariantId": "bed_count_matches_room_bed_count",
+      "rule": "generatedBedCount == room.bedCount",
+      "failureCode": "bed_count_not_satisfied"
+    },
+    {
+      "invariantId": "bed_requires_existing_room",
+      "rule": "Dormitory.Bed and Dormitory.BedSet require an existing Dormitory.Room"
+    },
+    {
+      "invariantId": "readiness_requires_existing_room_and_complete_bed_set",
+      "rule": "Dormitory.RoomReadiness requires an existing Dormitory.Room and complete Dormitory.BedSet",
+      "failureCode": "bed_count_not_satisfied"
+    },
+    {
+      "invariantId": "readonly_stable_refs",
+      "rule": "roomStableRef, bedStableRef and buildingContextRef are authority-derived or context-readonly",
+      "failureCode": "readonly_stable_ref_violation"
+    },
+    {
+      "invariantId": "readiness_closed_option_set",
+      "rule": "readinessState must be one of closedOptionSets.readinessState",
+      "failureCode": "invalid_readiness_state"
+    },
+    {
+      "invariantId": "not_saleable_requires_reason",
+      "rule": "readinessState not_saleable requires notSaleableReason",
+      "failureCode": "not_saleable_reason_required"
+    },
+    {
+      "invariantId": "maintenance_requires_service_verification",
+      "rule": "readinessState maintenance_required requires serviceVerificationRef",
+      "failureCode": "service_verification_required"
+    },
+    {
+      "invariantId": "failure_no_side_effects",
+      "rule": "validation or conflict failure writes no domain event, projection mutation, work item transition or ledger effect"
+    },
+    {
+      "invariantId": "idempotent_retry_same_command",
+      "rule": "same command identity and same idempotency key returns the same result without duplicate writes"
+    },
+    {
+      "invariantId": "concurrent_duplicate_conflict_safe",
+      "rule": "concurrent duplicate room or bed creation resolves to a 409 conflict without partial writes"
+    }
+  ]
+}

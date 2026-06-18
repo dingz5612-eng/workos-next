@@ -17,6 +17,12 @@
 - Dorm.BedSetupConfirm：床位建档确认，宿舍经办人，无账务影响
 - Dorm.RatePlanConfirm：价格方案确认，宿舍负责人，无账务影响
 - Dorm.ResourceReadinessConfirm：资源可售确认，宿舍经办人，无账务影响
+- Dorm.OperationResourceSelect：选择已基础就绪房源，宿舍经办人，无账务影响
+- Dorm.OperationInspectionConfirm：运营检查确认，宿舍经办人，无账务影响
+- Dorm.OperationStatusDraft：运营状态草稿，宿舍经办人，无账务影响
+- Dorm.OperationStatusChangeConfirm：运营状态变更确认，宿舍经办人，无账务影响
+- Dorm.OperationBlockerUpdate：日常状态维护，宿舍经办人，无账务影响
+- Dorm.OperationRestoreConfirm：恢复运营确认，宿舍经办人，无账务影响
 - Dorm.LeadCapture：线索录入，宿舍经办人，无账务影响
 - Dorm.ReservationConfirm：预订确认，宿舍负责人，无账务影响
 - Dorm.CheckinConfirm：入住确认，宿舍经办人，无账务影响

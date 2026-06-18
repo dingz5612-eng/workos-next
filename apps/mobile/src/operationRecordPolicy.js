@@ -33,11 +33,20 @@ export function nextAvailableWorkItemForRecord(workspace = {}, currentCardId = "
       workItemId: item.workItemId || item.work_item_id || "",
       workspaceId: item.workspaceId || item.workspace_id || item.workspace?.id || "",
       cardId: item.cardId || item.card_id || item.payload?.cardId || item.Payload?.cardId || item.card?.id || "",
-      lifecycleState: item.lifecycleState || item.lifecycle_state || item.status || ""
+      lifecycleState: item.lifecycleState || item.lifecycle_state || item.status || "",
+      payload: item.payload || item.Payload || {}
     }))
     .find((item) =>
       item.workItemId &&
       item.workspaceId === workspace.id &&
       item.cardId === nextCard.id &&
+      !isReadonlyCorrectionPreview(item) &&
       !isTerminalCardStatus(item.lifecycleState)) || null;
+}
+
+function isReadonlyCorrectionPreview(item = {}) {
+  const payload = item.payload || {};
+  const operationMode = String(payload.operationMode || payload.operation_mode || "").toLowerCase();
+  const correctionMode = String(payload.correctionMode || payload.correction_mode || "").toLowerCase();
+  return operationMode === "correction" || correctionMode === "append_only";
 }

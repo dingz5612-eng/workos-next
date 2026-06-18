@@ -266,6 +266,398 @@
       ]
     },
     {
+      "workflowId": "workflow.dormitory.OperationResourceSelect.v1",
+      "workItemType": "Dorm.OperationResourceSelect",
+      "definitionId": "definition.dormitory.operationResourceSelect.v1",
+      "commandType": "OperationResource.Select",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.selectBaseReadyResource",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-operation-resource-select.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "base-ready-resource-selection-proof"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.OperationInspectionConfirm.v1",
+      "workItemType": "Dorm.OperationInspectionConfirm",
+      "definitionId": "definition.dormitory.operationInspectionConfirm.v1",
+      "commandType": "OperationInspection.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.operationInspection",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-operation-inspection-confirm.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "operation-inspection-photo",
+            "maintenance-record",
+            "safety-inspection-record",
+            "facility-inspection-record"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.OperationStatusDraft.v1",
+      "workItemType": "Dorm.OperationStatusDraft",
+      "definitionId": "definition.dormitory.operationStatusDraft.v1",
+      "commandType": "OperationStatus.Draft",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.setOperationStatus",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-operation-status-draft.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "status-reason-proof",
+            "blocker-reason-proof"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.OperationStatusChangeConfirm.v1",
+      "workItemType": "Dorm.OperationStatusChangeConfirm",
+      "definitionId": "definition.dormitory.operationStatusChangeConfirm.v1",
+      "commandType": "OperationStatusChange.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.impactConfirmation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-operation-status-change-confirm.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "impact-proof"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.OperationBlockerUpdate.v1",
+      "workItemType": "Dorm.OperationBlockerUpdate",
+      "definitionId": "definition.dormitory.operationBlockerUpdate.v1",
+      "commandType": "OperationBlocker.Update",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.dailyStatusMaintenance",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-operation-blocker-update.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "progress-photo",
+            "maintenance-progress-record",
+            "supplement-proof"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.OperationRestoreConfirm.v1",
+      "workItemType": "Dorm.OperationRestoreConfirm",
+      "definitionId": "definition.dormitory.operationRestoreConfirm.v1",
+      "commandType": "OperationRestore.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.restoreOperation",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-operation-restore-confirm.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "restore-photo",
+            "recheck-record",
+            "blocker-close-proof"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
       "workflowId": "workflow.dormitory.LeadCapture.v1",
       "workItemType": "Dorm.LeadCapture",
       "definitionId": "definition.dormitory.leadCapture.v1",

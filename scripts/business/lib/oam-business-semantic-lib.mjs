@@ -3,6 +3,7 @@ import path from "node:path";
 
 export const root = process.cwd();
 export const artifactPath = "artifacts/oam/checks/dormitory-business-semantic-contract-result.json";
+export const writeProof = process.argv.includes("--write-proof") || process.env.OAM_WRITE_PROOF === "1";
 export const requiredScenarioIds = Array.from({ length: 10 }, (_, index) => `dorm-cert-${String(index + 1).padStart(3, "0")}`);
 export const allCheckIds = [
   "dormitory-execution-kernel",
@@ -77,7 +78,9 @@ export function writeCheckResult(checkId, violations, scannedFiles) {
 }
 
 export function failIfViolations(checkId, violations, scannedFiles) {
-  writeCheckResult(checkId, violations, scannedFiles);
+  if (writeProof) {
+    writeCheckResult(checkId, violations, scannedFiles);
+  }
   if (violations.length > 0) {
     for (const item of violations) console.error(`${item.severity} ${item.id}: ${item.message}`);
     throw new Error(`${checkId} failed.`);

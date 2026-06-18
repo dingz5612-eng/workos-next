@@ -1,0 +1,106 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario5-crudPolicy.generated",
+  "version": "oam.dormitory-scenario5-crudPolicy.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario5-reservation-and-inventory-hold-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario5-reservation-and-inventory-hold-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:8d9f2e060062ebe92e3f03387d5f7cf5999eaeb080030a14e577526de78e2fed",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "digest": "sha256:fc1f65a896a14573452c5025592c8ca2acfda62cdf515938fb82aff274aceabb"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:fc1f65a896a14573452c5025592c8ca2acfda62cdf515938fb82aff274aceabb",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario5.ReservationAndInventoryHold",
+  "scenarioPackageNo": 5,
+  "scenarioId": "lodging.reservation-and-inventory-hold",
+  "outputContentDigest": "sha256:5c52e8bb103228eac19ea84e6c39f2c010b8163471857e1178496adbacd26939",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "预订与库存锁定",
+  "businessGoalZh": "承接场景包 4 已确认的报价/客户意向，重新校验资源、价格、报价有效期、日期和当前占用后，完成库存锁定、确认预订并生成预订号。",
+  "sourceScenarioDigest": "sha256:fc1f65a896a14573452c5025592c8ca2acfda62cdf515938fb82aff274aceabb",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario5.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "BookingRequest",
+      "AvailabilityCheck",
+      "AvailabilitySnapshot",
+      "InventoryHold",
+      "Reservation",
+      "ReservationGuest",
+      "ReservationResourceBinding",
+      "ReservationPriceSnapshot",
+      "ReservationPolicySnapshot",
+      "ReservationConfirmation",
+      "ReservationEvidence",
+      "ReservationStatusHistory"
+    ],
+    "searchReadModel": [
+      "预订与库存锁定",
+      "预订确认摘要",
+      "预订号",
+      "客户信息",
+      "日期范围",
+      "人数",
+      "房间/床位",
+      "价格快照",
+      "库存锁定历史",
+      "预订状态",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "noRefillRuleZh": "场景包 5 只能读取场景包 1、2、3、4 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品、价格或报价字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "crudRules": {
+    "createZh": "新增不是普通新增按钮，而是“发起预订准备 / 创建库存锁定 / 确认预订”。",
+    "draftEditable": true,
+    "confirmedReservationInlineEditAllowed": false,
+    "allowedPostConfirmChangesZh": [
+      "预订变更流程",
+      "补充备注",
+      "追加证据",
+      "释放未确认锁定",
+      "锁定过期",
+      "纠错申请"
+    ],
+    "deletePolicyZh": "不得物理删除已确认预订；未确认锁定可释放，已确认预订只能由后续取消/未到店场景处理。",
+    "readOnlySurfacesZh": [
+      "查询",
+      "搜索",
+      "列表",
+      "看板",
+      "报表"
+    ],
+    "readOnlySurfacesWriteBusinessFactAllowed": false,
+    "requiredLifecyclePerObject": [
+      "currentState",
+      "statusHistory",
+      "evidenceHistory",
+      "legalNextActions"
+    ]
+  },
+  "requiredLifecyclePerObject": [
+    "currentState",
+    "statusHistory",
+    "evidenceHistory",
+    "legalNextActions"
+  ]
+}

@@ -1,0 +1,401 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario11-runtimeRules.generated",
+  "version": "oam.dormitory-scenario11-runtimeRules.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario11-housekeeping-maintenance-outofservice-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario11-housekeeping-maintenance-outofservice-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:a174cf7da149c4f0ef295ed0b5c70d09a6358bc54a27fb161d62185dceb59ea4",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "digest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+  "scenarioPackageNo": 11,
+  "scenarioId": "lodging.housekeeping-maintenance-outofservice",
+  "outputContentDigest": "sha256:03ed2f322144d2a2a7ff9ac4e3d52dfb2522aba3e930c4ebd197b2ad72312423",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "房务、维修与停售协同",
+  "businessGoalZh": "承接场景包 2 的运营阻断、场景包 8 的在住服务请求、场景包 9 的退房资源待恢复、场景包 10 的释放后待处理资源，完成保洁、维修、检查、停售申请、恢复建议、作业证据和任务闭环。",
+  "sourceScenarioDigest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario11.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "ServiceWorkCase",
+      "HousekeepingTask",
+      "MaintenanceTask",
+      "InspectionTask",
+      "OutOfServiceRequest",
+      "WorkAssignment",
+      "WorkAssignee",
+      "WorkSchedule",
+      "WorkCompletion",
+      "WorkCompletionEvidence",
+      "WorkVerification",
+      "WorkVerificationResult",
+      "RecoveryRecommendation",
+      "ExpenseIntent",
+      "TaskEvidence",
+      "StatusHistory",
+      "WorkStatusHistory"
+    ],
+    "searchReadModel": [
+      "房务、维修与停售协同",
+      "房务/维修完成摘要",
+      "验收摘要",
+      "停售建议",
+      "恢复运营建议",
+      "费用意向",
+      "作业证据摘要",
+      "状态历史",
+      "只读对象引用",
+      "作业完成摘要",
+      "停售/恢复建议"
+    ],
+    "noRefillRuleZh": "场景包 11 只能读取上游摘要，不得要求用户重新填写场景包 2、8、9、10 已确认字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "commands": [
+    {
+      "commandId": "Dorm.ServiceWorkCaseDraftStart",
+      "businessNameZh": "进入房务/维修处理",
+      "writesObjects": [
+        "ServiceWorkCase",
+        "TaskEvidence",
+        "WorkStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.HousekeepingTaskCreate",
+      "businessNameZh": "创建保洁任务",
+      "writesObjects": [
+        "HousekeepingTask",
+        "TaskEvidence",
+        "WorkStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.MaintenanceTaskCreate",
+      "businessNameZh": "创建维修任务",
+      "writesObjects": [
+        "MaintenanceTask",
+        "TaskEvidence",
+        "WorkStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.InspectionTaskCreate",
+      "businessNameZh": "创建检查任务",
+      "writesObjects": [
+        "InspectionTask",
+        "TaskEvidence",
+        "WorkStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.OutOfServiceRequestDraftStart",
+      "businessNameZh": "申请停售",
+      "writesObjects": [
+        "OutOfServiceRequest",
+        "TaskEvidence",
+        "WorkStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.WorkAssignmentDispatch",
+      "businessNameZh": "派工作业",
+      "writesObjects": [
+        "WorkAssignment",
+        "WorkAssignee",
+        "WorkSchedule",
+        "WorkStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.WorkProgressUpdate",
+      "businessNameZh": "更新作业进度",
+      "writesObjects": [
+        "WorkSchedule",
+        "TaskEvidence",
+        "WorkStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.WorkCompletionSubmit",
+      "businessNameZh": "提交作业完成",
+      "writesObjects": [
+        "WorkCompletion",
+        "WorkCompletionEvidence",
+        "TaskEvidence",
+        "WorkStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.WorkVerificationConfirm",
+      "businessNameZh": "验收确认",
+      "writesObjects": [
+        "WorkVerification",
+        "WorkVerificationResult",
+        "TaskEvidence",
+        "WorkStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.WorkReworkRequest",
+      "businessNameZh": "生成返工",
+      "writesObjects": [
+        "WorkAssignment",
+        "TaskEvidence",
+        "WorkStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.OutOfServiceOrRecoveryRecommendationCreate",
+      "businessNameZh": "输出停售或恢复建议",
+      "writesObjects": [
+        "OutOfServiceRequest",
+        "RecoveryRecommendation",
+        "TaskEvidence",
+        "WorkStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ExpenseIntentSubmit",
+      "businessNameZh": "提交费用意向",
+      "writesObjects": [
+        "ExpenseIntent",
+        "TaskEvidence",
+        "WorkStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.TaskEvidenceSupplement",
+      "businessNameZh": "补充作业证据",
+      "writesObjects": [
+        "TaskEvidence",
+        "WorkStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ServiceWorkCorrectionRequest",
+      "businessNameZh": "房务/维修纠错申请",
+      "writesObjects": [
+        "ServiceWorkCase",
+        "TaskEvidence",
+        "WorkStatusHistory"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "no_legal_work_source",
+      "messageZh": "缺少运营阻断、在住服务、退房待恢复、取消释放待处理、人工巡检或负责人批准来源，不能创建正式作业。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "missing_work_assignee",
+      "messageZh": "缺少负责人，不能派工作业。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "missing_work_scope",
+      "messageZh": "缺少房间或床位作业范围，不能派工。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "missing_source_summary",
+      "messageZh": "缺少来源摘要，不能派工或提交作业。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "completion_evidence_required",
+      "messageZh": "缺少完成说明或完成证据，不能提交验收。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "completion_required_before_verification",
+      "messageZh": "作业尚未完成，不能直接验收通过。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "verification_failure_requires_rework",
+      "messageZh": "验收不通过时必须生成返工或异常待处理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "unresolved_maintenance_recovery_forbidden",
+      "messageZh": "维修、停售或异常尚未关闭，不能建议恢复运营。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "direct_operational_restore_forbidden",
+      "messageZh": "房务、维修与停售协同不能直接把房源改为可运营，必须交给场景包 2 重新确认。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "direct_expense_ledger_forbidden",
+      "messageZh": "费用意向不能直接写账务成本，必须交给 finance-gate 或支出治理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用由系统绑定，用户不能填写内部编号。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_result_write_attempt",
+      "messageZh": "搜索、列表、看板和报表只读，不能直接写作业事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_work_submission",
+      "messageZh": "该房务/维修提交已处理，请查看结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_work_conflict",
+      "messageZh": "同一作业正在被其他人更新，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "unauthorized_work_action",
+      "messageZh": "当前角色不能执行该房务、维修、停售或验收动作。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "confirmed_work_inline_edit_forbidden",
+      "messageZh": "已派工、已完成或已验收记录不能原地编辑，只能补充进度、返工、补证或纠错。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "invalid_resource_scope",
+      "messageZh": "房间级和床位级作业范围不一致，不能提交。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "out_of_service_reason_required",
+      "messageZh": "申请停售或暂停开放时必须填写原因和影响时间。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "recovery_recommendation_requires_resolution",
+      "messageZh": "建议恢复运营必须说明阻断原因已处理并完成验收。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "expense_evidence_required",
+      "messageZh": "提交费用意向时必须绑定费用依据或供应商凭证。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "invariants": [
+    "每个正式作业必须绑定合法来源：运营阻断、在住服务、退房待恢复、取消释放后待处理、人工巡检或负责人批准。",
+    "房间级作业影响整房；床位级作业只影响指定床位。",
+    "维修、停售、异常未关闭前，不得建议恢复。",
+    "作业完成必须有完成说明和证据；缺完成证据不得提交验收。",
+    "验收通过必须由有权限角色确认；验收通过只能输出恢复建议，不得直接改为可运营。",
+    "验收不通过必须生成返工或异常待处理。",
+    "费用意向只能交给 finance-gate 或支出治理场景，不得直接写账务成本。",
+    "查询、搜索、列表、看板、报表永远只读，不得写作业、运营、库存或财务事实。",
+    "失败路径不得关闭阻断、不得恢复运营、不得释放库存、不得写账，不得刷新错误 Projection/Search/Dashboard。"
+  ],
+  "workStatusOptions": [
+    "待派工",
+    "已派工",
+    "处理中",
+    "待验收",
+    "验收通过",
+    "验收不通过",
+    "返工中",
+    "建议停售",
+    "建议恢复",
+    "已关闭",
+    "需财务处理"
+  ],
+  "housekeepingMaintenanceInvariantRule": {
+    "legalSourceRequired": true,
+    "sourceSummaryRequired": true,
+    "resourceScopeRequired": true,
+    "roomScopeAffectsWholeRoom": true,
+    "bedScopeAffectsOnlyBed": true,
+    "operationStatusOwnedByScenario2": true,
+    "completionEvidenceRequired": true,
+    "verificationAuthorizedRequired": true,
+    "completionRequiredBeforeVerification": true,
+    "failedVerificationCreatesReworkOrException": true,
+    "unresolvedMaintenanceBlocksRecoveryRecommendation": true,
+    "outOfServiceRecommendationOnly": true,
+    "recoveryRecommendationRequiresResolvedBlocks": true,
+    "expenseIntentOnly": true,
+    "financeGateHandlesExpenseTruth": true,
+    "appendOnlyProgressHistory": true,
+    "failureNoSideEffects": true,
+    "querySearchListBoardReportReadonly": true
+  },
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "enter-housekeeping-maintenance-processing": [
+        "合法来源摘要",
+        "证据摘要"
+      ],
+      "dispatch-work-assignment": [
+        "来源摘要",
+        "作业范围"
+      ],
+      "update-work-progress": [
+        "现场照片或过程证据"
+      ],
+      "submit-work-completion": [
+        "完成说明",
+        "完成照片或维修/保洁记录"
+      ],
+      "verify-work-result": [
+        "完成证据",
+        "验收记录"
+      ],
+      "output-outofservice-or-recovery-recommendation": [
+        "验收摘要",
+        "风险说明"
+      ],
+      "submit-expense-intent": [
+        "费用依据",
+        "供应商凭证"
+      ]
+    },
+    "screenshotAnalysisRequired": true,
+    "noSideEffectsProofRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "businessRuntimeMayWriteOperationStatus": false,
+    "businessRuntimeMayWriteReservation": false,
+    "businessRuntimeMayWriteStay": false,
+    "businessRuntimeMayWritePaymentRefund": false,
+    "businessRuntimeMayWriteLedger": false,
+    "financeGateMayConsumeExpenseIntentOnly": true,
+    "scenario2MayConsumeRecommendationOnly": true,
+    "failurePathBusinessSideEffectsAllowed": false,
+    "successMayWriteWorkFactsAndRequestsOnly": true
+  }
+}

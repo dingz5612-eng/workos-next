@@ -53,8 +53,12 @@ public static class ProjectionSeed
     private static string BusinessLineFor(string role) =>
         role.Equals("finance", StringComparison.OrdinalIgnoreCase) ? "finance" : "stay";
 
-    private static List<WorkspaceProjection> Workspaces() => WorkspaceSeedCatalog.All()
-        .Select(Workspace)
+    private static List<WorkspaceProjection> Workspaces() => new[]
+        {
+            AcceptedCapabilityRuntimeProjection.Workspace(),
+            DormitoryScenario2RuntimeProjection.Workspace()
+        }
+        .Concat(Dormitory13ScenarioRuntimeProjection.Workspaces())
         .ToList();
 
     private static WorkspaceProjection Workspace(WorkspaceSeed seed)

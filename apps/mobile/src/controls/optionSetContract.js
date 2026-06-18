@@ -1,3 +1,9 @@
+import capabilityProjection from "../generated/oam/capability-projection.generated.json" with { type: "json" };
+
+const generatedLocalizedOptionLabels = (optionSet) => Object.fromEntries(
+  (capabilityProjection.optionSets?.[optionSet] || []).map((item) => [item.value, item.label || { "zh-CN": item.value }])
+);
+
 const optionValueLabels = {
   roomType: {
     single: "单人间",
@@ -20,15 +26,13 @@ const optionValueLabels = {
   technicalState: {
     ready: "可入住",
     not_ready: "未准备",
-    repair: "需维修",
     repair_required: "需维修"
   },
-  bunkType: {
-    bunk_pair: "上下铺：两上两下",
-    upper: "全部上铺",
-    lower: "全部下铺",
-    whole: "全部平铺"
-  },
+  bunkType: generatedLocalizedOptionLabels("bunkType"),
+  bedEnabledStatus: generatedLocalizedOptionLabels("bedEnabledStatus"),
+  bedTypeBatchSetting: generatedLocalizedOptionLabels("bedTypeBatchSetting"),
+  basicReadinessCheckResult: generatedLocalizedOptionLabels("basicReadinessCheckResult"),
+  readinessState: generatedLocalizedOptionLabels("readinessState"),
   messenger: {
     whatsapp: "WhatsApp",
     phone: "电话",
@@ -65,15 +69,19 @@ const optionValueLabels = {
 };
 
 const preferredDefaults = {
-  bunkType: "bunk_pair"
+  bunkType: capabilityProjection.optionSetDefaults?.bunkType?.oneBed || "whole",
+  bedEnabledStatus: "enabled",
+  bedTypeBatchSetting: capabilityProjection.optionSetDefaults?.bunkType?.multiBed || "bunk_pair",
+  basicReadinessCheckResult: "checked_ok",
+  readinessState: capabilityProjection.optionSetDefaults?.readinessState?.default || ""
 };
 
 export function canonicalOptionLabels(optionSet) {
   return optionValueLabels[optionSet] || null;
 }
 
-export function canonicalLabelForOptionValue(optionSet, value) {
-  return canonicalOptionLabels(optionSet)?.[value] || "";
+export function canonicalLabelForOptionValue(optionSet, value, lang = "zh-CN") {
+  return localizedOptionLabel(canonicalOptionLabels(optionSet)?.[value], lang);
 }
 
 export function preferredOptionSetDefault(optionSet) {
@@ -86,6 +94,18 @@ export function normalizeOptionSetValue(optionSet, value) {
   const canonical = canonicalOptionLabels(optionSet);
   if (!canonical) return text;
   if (canonical[text]) return text;
-  const match = Object.entries(canonical).find(([, label]) => label === text);
+  const match = Object.entries(canonical).find(([, label]) => optionLabelVariants(label).includes(text));
   return match?.[0] || text;
+}
+
+function localizedOptionLabel(label, lang = "zh-CN") {
+  if (!label) return "";
+  if (typeof label === "string") return label;
+  return label[lang] || label["zh-CN"] || Object.values(label).find(Boolean) || "";
+}
+
+function optionLabelVariants(label) {
+  if (!label) return [];
+  if (typeof label === "string") return [label];
+  return Object.values(label).filter(Boolean);
 }

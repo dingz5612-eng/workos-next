@@ -7,8 +7,8 @@ describe("SURFACE-C upload queue recovery", () => {
     const ctx = createSurfaceCtx({ uploadQueue: [{ evidenceId: "evd-1" }] });
     const html = UploadQueue(ctx.state, ctx);
 
-    expect(html).toContain("证据上传");
-    expect(html).toContain("证据等待上传");
+    expect(html).toContain("材料上传");
+    expect(html).toContain("材料等待上传");
     expect(html).toContain("<strong>1</strong>");
   });
 });

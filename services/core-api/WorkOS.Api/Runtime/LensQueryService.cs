@@ -15,12 +15,13 @@ public sealed class LensQueryService
         RuntimeState state,
         IReadOnlyList<ProcessWorkItemIntentRecord> workItemIntents) =>
         (workItemIntents ?? Array.Empty<ProcessWorkItemIntentRecord>())
+            .Where(item => !RuntimeActiveWorkspacePolicy.IsRetiredUserEntryWorkspaceId(item.TargetWorkspaceId))
             .Where(item => !TerminalStatuses.Contains(item.Status))
             .Select(item => ProcessIntentQueueItem(state, item))
             .ToArray();
 
     public IReadOnlyList<object> GetHomeSurface(RuntimeState state) =>
-        state.Workspaces
+        RuntimeActiveWorkspacePolicy.CurrentUserReachable(state.Workspaces)
             .Select(workspace =>
             {
                 var policy = surfacePolicies.ForWorkspace(workspace.Id);
@@ -56,15 +57,15 @@ public sealed class LensQueryService
     public IReadOnlyList<object> Search(RuntimeState state, string? q)
     {
         var query = (q ?? string.Empty).Trim();
-        return state.Workspaces
+        return RuntimeActiveWorkspacePolicy.CurrentUserReachable(state.Workspaces)
             .Where(workspace =>
             {
                 var policy = surfacePolicies.ForWorkspace(workspace.Id);
                 return policy?.Search.Visible == true &&
-                    (query.Length == 0 || SearchText(workspace, policy).Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    (query.Length == 0 || SearchText(state, workspace, policy).Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         PolicyTerms(policy).Any(term => query.Contains(term, StringComparison.OrdinalIgnoreCase)));
             })
-            .Select(workspace => BuildSearchSurfaceResult(workspace, query))
+            .Select(workspace => BuildSearchSurfaceResult(state, workspace, query))
             .OrderByDescending(item => item.Score)
             .ThenBy(item => item.WorkspaceId)
             .Select(item => new
@@ -85,7 +86,7 @@ public sealed class LensQueryService
     }
 
     public IReadOnlyList<object> GetLearningCatalog(RuntimeState state) =>
-        state.Workspaces
+        RuntimeActiveWorkspacePolicy.CurrentUserReachable(state.Workspaces)
             .SelectMany(workspace =>
             {
                 var policy = surfacePolicies.ForWorkspace(workspace.Id);
@@ -128,12 +129,12 @@ public sealed class LensQueryService
         _ => 40
     };
 
-    private SearchSurfaceResult BuildSearchSurfaceResult(WorkspaceProjection workspace, string query)
+    private SearchSurfaceResult BuildSearchSurfaceResult(RuntimeState state, WorkspaceProjection workspace, string query)
     {
         var policy = surfacePolicies.ForWorkspace(workspace.Id);
         var card = searchProjection.CurrentCard(workspace);
         var cardPolicy = card is null ? null : policy?.Card(card.Id);
-        var text = SearchText(workspace, policy);
+        var text = SearchText(state, workspace, policy);
         var terms = MatchedTerms(query, text, policy, cardPolicy);
         var score = (policy?.Home.Priority ?? 0) + StatusPriorityFor(card?.Status ?? string.Empty) + terms.Count * 25;
         return new SearchSurfaceResult(
@@ -174,12 +175,28 @@ public sealed class LensQueryService
         return terms.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
     }
 
-    private string SearchText(WorkspaceProjection workspace, RuntimeSurfacePolicy? policy) =>
+    private string SearchText(RuntimeState state, WorkspaceProjection workspace, RuntimeSurfacePolicy? policy) =>
         string.Join(" ", new[]
         {
             new[] { searchProjection.SearchText(workspace) },
+            new[] { EventBusinessAnchorText(state, workspace.Id) },
             PolicyTerms(policy)
         }.SelectMany(item => item));
+
+    private static string EventBusinessAnchorText(RuntimeState state, string workspaceId) =>
+        string.Join(" ", state.Events
+            .Where(item => item.WorkspaceId.Equals(workspaceId, StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(item => item.OccurredAtUtc)
+            .Take(32)
+            .SelectMany(item => BusinessAnchorSearchValues(item.Payload)));
+
+    private static IReadOnlyList<string> BusinessAnchorSearchValues(IReadOnlyDictionary<string, string> payload) =>
+        payload
+            .Where(item => SearchableBusinessAnchorKeys.Contains(item.Key))
+            .Select(item => item.Value)
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
 
     private static IReadOnlyList<string> PolicyTerms(RuntimeSurfacePolicy? policy, SurfaceCardPolicy? cardPolicy = null) =>
         policy is null
@@ -292,6 +309,38 @@ public sealed class LensQueryService
         "closed",
         "cancelled",
         "skipped"
+    };
+
+    private static readonly ISet<string> SearchableBusinessAnchorKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        "buildingName",
+        "building",
+        "buildingContextLabel",
+        "floor",
+        "roomNo",
+        "roomLabel",
+        "bedLabels",
+        "bedNo",
+        "bedLabel",
+        "bedType",
+        "bedTypeLabel",
+        "residentName",
+        "guestName",
+        "leadName",
+        "customerName",
+        "contactName",
+        "phone",
+        "residentPhone",
+        "customerPhone",
+        "contactPhone",
+        "mobile",
+        "periodLabel",
+        "depositStatus",
+        "paymentStatus",
+        "taskStatus",
+        "checkoutStatus",
+        "operationStatus",
+        "readinessState"
     };
 
     private sealed record SearchSurfaceResult(

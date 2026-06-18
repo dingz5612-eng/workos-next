@@ -8,6 +8,8 @@ const sliceManifest = JSON.parse(fs.readFileSync("docs/contracts/slice-manifest.
 const surfacePolicy = JSON.parse(fs.readFileSync("docs/contracts/runtime-surface-policy.json", "utf8"));
 const lensContract = JSON.parse(fs.readFileSync("docs/contracts/accommodation-lens-contract.json", "utf8"));
 const definitionRegistry = JSON.parse(fs.readFileSync("docs/contracts/definition/workitem-definition-registry.json", "utf8"));
+const operationPanelRuntimeContractText = fs.readFileSync("docs/surface/operation-panel-runtime-contract.yml", "utf8");
+const operationPanelRuntimeContract = JSON.parse(operationPanelRuntimeContractText);
 const startupTimeoutMs = Number.parseInt(process.env.WORKOS_API_VALIDATE_TIMEOUT_MS ?? "90000", 10);
 const defaultTestConnectionString =
   "Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev";
@@ -49,6 +51,7 @@ function startDevelopmentApi() {
 }
 
 try {
+  validateRuntimeIdentityBoundaryContract();
   if (!externalApi) {
     await validateProductionRejectsDevAuthDefaults();
     startDevelopmentApi();
@@ -459,22 +462,60 @@ async function findOperationsWorkItem(workspaceId, cardId, options = {}) {
   const item = startedItems.find((candidate) =>
     matchesOperationsWorkItem(candidate, workspaceId, cardId) && isCurrentDefinitionWorkItem(candidate));
   if (!item) {
+    const returned = startedItems.map((candidate) => ({
+      workItemId: workItemIdOf(candidate),
+      workspaceId: workspaceIdOf(candidate),
+      cardId: cardIdOf(candidate),
+      definitionId: definitionIdOf(candidate),
+      definitionMode: definitionModeOf(candidate),
+      admissionReason: admissionReasonOf(candidate)
+    }));
     if (requireStartAdapterResult) {
-      const returned = startedItems.map((candidate) => ({
-        workItemId: workItemIdOf(candidate),
-        workspaceId: workspaceIdOf(candidate),
-        cardId: cardIdOf(candidate),
-        definitionId: definitionIdOf(candidate),
-        definitionMode: definitionModeOf(candidate),
-        admissionReason: admissionReasonOf(candidate)
-      }));
       assert(false, `Operations Workspace Start must return a current WorkItem for ${workspaceId}/${cardId}; returned=${JSON.stringify(returned)}`);
     }
-    return await fallbackForNonStartValidation(workspaceId, cardId);
+    assert(false, `Operations runtime validation requires a persisted current WorkItem for ${workspaceId}/${cardId}; no workspace/card create fallback is allowed; returned=${JSON.stringify(returned)}`);
   }
   assert(item, `Operations Workspace Start did not return a WorkItem for ${workspaceId}/${cardId}`);
   assert(workItemIdOf(item), `Operations WorkItem missing workItemId for ${workspaceId}/${cardId}`);
   return item;
+}
+
+function validateRuntimeIdentityBoundaryContract() {
+  const resolutionOrder = operationPanelRuntimeContract.persistedWorkItemResolutionOrder || [];
+  assert(Array.isArray(resolutionOrder), "operation panel persistedWorkItemResolutionOrder must be an array");
+  assert(resolutionOrder.length === 2 &&
+    resolutionOrder[0] === "persisted workItemId from operationWorkItems" &&
+    resolutionOrder[1] === "block",
+    "operation panel actions may resolve only by persisted workItemId from operationWorkItems, then block");
+  assert(!resolutionOrder.includes("workQueue") &&
+    !resolutionOrder.some((item) => String(item).includes("workspaceId/cardId")),
+    "workQueue and workspaceId/cardId must not appear in action identity resolution order");
+
+  const actionIdentity = operationPanelRuntimeContract.actionIdentityPath || {};
+  assert(actionIdentity.onlyAllowedIdentity === "persisted workItemId", "operation panel onlyAllowedIdentity must be persisted workItemId");
+  assert(actionIdentity.prepare === "POST /api/operations/work-items/{workItemId}/prepare", "prepare path must use persisted workItemId");
+  assert(actionIdentity.confirm === "POST /api/operations/work-items/{workItemId}/confirm", "confirm path must use persisted workItemId");
+  assert(workItemPath("sample", "/confirm") === "/api/operations/work-items/sample/confirm", "runtime validator confirm path must use operation workItemId");
+
+  const historicalReadOnlyPath = operationPanelRuntimeContract.historicalReadOnlyPath || {};
+  assert(String(historicalReadOnlyPath.workQueue || "").includes("derived display view"), "workQueue must be documented as a derived display view");
+  for (const forbidden of ["confirm identity", "prepare identity", "admission truth", "truth owner resolution", "ledger source"]) {
+    assert((historicalReadOnlyPath.forbiddenFor || []).includes(forbidden), `historical read-only path must forbid ${forbidden}`);
+  }
+
+  const forbiddenInputs = new Set([
+    ...(operationPanelRuntimeContract.OperationWorkItemRemovalContract?.forbiddenIdentityInputs || []),
+    ...(operationPanelRuntimeContract.forbiddenFallback || [])
+  ]);
+  for (const forbidden of ["cardId", "sourceCardId", "workspaceCardId", "workspaceId/cardId fallback", "workQueue", "workspaceId/cardId persisted mapping"]) {
+    assert(forbiddenInputs.has(forbidden), `operation panel contract must forbid ${forbidden} as action identity`);
+  }
+
+  const paths = Object.keys(openApi.paths || {});
+  assert(paths.includes("/api/operations/work-items/{workItemId}/confirm"), "OpenAPI must expose operation WorkItem confirm path");
+  assert(openApi.paths["/api/operations/work-items/{workItemId}/confirm"]?.post, "operation WorkItem confirm path must be POST");
+  assert(!paths.some((path) => /\/api\/workspaces\/\{workspaceId\}\/cards\/\{cardId\}\/(prepare|confirm|admission|mutation)/.test(path)),
+    "OpenAPI must not expose workspace/card action fallback paths");
 }
 
 function matchesOperationsWorkItem(item, workspaceId, cardId) {
@@ -498,36 +539,6 @@ function isCurrentDefinitionWorkItem(item) {
     ) &&
     !String(admissionReason).includes("definition_not_resolved") &&
     !String(admissionReason).includes("start_adapter_not_registered");
-}
-
-async function fallbackForNonStartValidation(workspaceId, cardId) {
-  const definition = currentDefinitionForStart(workspaceId, cardId);
-  assert(definition?.definitionId, `Non-Start validation fallback requires a current definitionId for ${workspaceId}/${cardId}`);
-  const created = await postJson("/api/operations/work-items", {
-    workItemId: `validate-${workspaceId}-${cardId}-${Date.now()}`,
-    workItemType: definition.workItemType,
-    targetWorkspaceId: workspaceId,
-    workspaceId,
-    cardId,
-    ownerRole: "operator",
-    payload: {
-      caseId: `case-${workspaceId}`,
-      cardId,
-      templateWorkspaceId: workspaceId,
-      definitionId: definition.definitionId
-    }
-  });
-  assert(workItemIdOf(created), `Operations WorkItem create did not return workItemId for ${workspaceId}/${cardId}`);
-  assert(workspaceIdOf(created) === workspaceId, `created WorkItem workspace mismatch for ${workspaceId}/${cardId}`);
-  assert(cardIdOf(created) === cardId, `created WorkItem card mismatch for ${workspaceId}/${cardId}`);
-  return created;
-}
-
-function currentDefinitionForStart(workspaceId, cardId) {
-  return (definitionRegistry.definitions || []).find((definition) =>
-    definition.workspaceId === workspaceId &&
-    definition.definitionMode === "oam-certification-current" &&
-    (definition.migrationRefs || []).some((ref) => ref.type === "sourceCardId" && ref.value === cardId));
 }
 
 function definitionById(definitionId) {

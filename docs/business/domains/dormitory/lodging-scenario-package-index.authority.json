@@ -1,0 +1,949 @@
+{
+  "version": "oam.dormitory.lodging-scenario-package-index-source-authority.v1",
+  "status": "authoritative",
+  "manualEditAllowed": true,
+  "authorityId": "Dormitory.LodgingScenarioPackageIndex",
+  "nameZh": "住宿经营场景包总索引",
+  "scopeZh": "声明住宿经营新业务场景包顺序、衔接摘要和旧项目表达隔离规则。",
+  "businessLine": "dormitory",
+  "scenarioPackageOrder": [
+    {
+      "packageNo": 1,
+      "scenarioId": "lodging.resource-basic-readiness",
+      "nameZh": "房源建档与基础就绪",
+      "businessPurposeZh": "建立房间与床位组的基础事实，完成基础资料与基础检查确认。",
+      "upstreamPackages": [],
+      "downstreamPackages": [
+        2
+      ],
+      "handoffOutputs": [
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "状态历史",
+        "只读对象引用"
+      ],
+      "mustNotOutputZh": [
+        "可运营",
+        "可报价",
+        "可预订",
+        "可售"
+      ]
+    },
+    {
+      "packageNo": 2,
+      "scenarioId": "lodging.resource-operation-status",
+      "nameZh": "房源运营就绪与状态维护",
+      "businessPurposeZh": "读取场景包 1 的只读基础房源摘要，维护运营状态。",
+      "upstreamPackages": [
+        1
+      ],
+      "downstreamPackages": [
+        3
+      ],
+      "handoffInputs": [
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "状态历史",
+        "只读对象引用"
+      ],
+      "handoffOutputs": [
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "可否进入价格维护",
+        "证据摘要",
+        "状态历史",
+        "只读对象引用"
+      ],
+      "mustNotOutputZh": [
+        "价格",
+        "报价",
+        "预订",
+        "入住",
+        "收款",
+        "押金",
+        "退款",
+        "账务",
+        "可报价",
+        "可预订"
+      ]
+    },
+    {
+      "packageNo": 3,
+      "scenarioId": "lodging.product-and-rate",
+      "nameZh": "住宿商品与价格",
+      "businessPurposeZh": "读取场景包 1 房源摘要和场景包 2 已确认可运营的运营状态摘要，定义住宿商品、售卖单位、价格方案、价格日历和价格版本。",
+      "upstreamPackages": [
+        1,
+        2
+      ],
+      "downstreamPackages": [
+        4
+      ],
+      "handoffInputs": [
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "证据摘要",
+        "状态历史",
+        "只读对象引用"
+      ],
+      "handoffOutputs": [
+        "商品摘要",
+        "价格方案摘要",
+        "价格日历摘要",
+        "价格版本历史",
+        "可否进入询价报价",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "mustNotOutputZh": [
+        "报价",
+        "库存锁定",
+        "预订",
+        "入住",
+        "收款",
+        "押金",
+        "退款",
+        "账务",
+        "已预订",
+        "已锁定"
+      ]
+    },
+    {
+      "packageNo": 4,
+      "scenarioId": "lodging.inquiry-and-quote",
+      "nameZh": "询价与报价",
+      "businessPurposeZh": "读取场景包 1 房源摘要、场景包 2 运营状态摘要和场景包 3 已生效商品价格摘要，登记客户询价、入住需求、报价方案、报价单、报价版本和报价有效期。",
+      "upstreamPackages": [
+        1,
+        2,
+        3
+      ],
+      "downstreamPackages": [
+        5
+      ],
+      "handoffInputs": [
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "商品摘要",
+        "价格方案摘要",
+        "价格日历摘要",
+        "价格版本历史",
+        "可否进入询价报价",
+        "证据摘要",
+        "状态历史",
+        "只读对象引用"
+      ],
+      "handoffOutputs": [
+        "询价摘要",
+        "客户需求摘要",
+        "报价单摘要",
+        "报价版本",
+        "价格快照",
+        "报价有效期",
+        "客户反馈",
+        "转预订准备摘要",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "mustNotOutputZh": [
+        "库存锁定",
+        "预订",
+        "入住",
+        "收款",
+        "押金",
+        "退款",
+        "账务",
+        "已锁定",
+        "已预订",
+        "已入住",
+        "已收款"
+      ]
+    },
+    {
+      "packageNo": 5,
+      "scenarioId": "lodging.reservation-and-inventory-hold",
+      "nameZh": "预订与库存锁定",
+      "businessPurposeZh": "承接场景包 4 已确认的报价/客户意向，重新校验房源、运营状态、价格快照、报价有效期、日期和当前占用后，完成库存锁定、确认预订并生成预订号。",
+      "upstreamPackages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "downstreamPackages": [
+        6
+      ],
+      "handoffInputs": [
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本历史",
+        "询价摘要",
+        "客户需求摘要",
+        "报价单摘要",
+        "报价版本",
+        "价格快照",
+        "报价有效期",
+        "客户选择意向",
+        "证据摘要",
+        "状态历史",
+        "只读对象引用"
+      ],
+      "handoffOutputs": [
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "价格快照",
+        "库存锁定历史",
+        "预订状态",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "mustNotOutputZh": [
+        "入住",
+        "已入住",
+        "可入住",
+        "收款",
+        "已收款",
+        "押金",
+        "押金已收",
+        "退款",
+        "账务",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "packageNo": 6,
+      "scenarioId": "lodging.payment-deposit-and-guarantee",
+      "nameZh": "收款、押金与担保",
+      "businessPurposeZh": "承接场景包 5 已确认预订，生成应收、押金和担保要求，采集收款凭证、押金凭证和担保信息，并通过 finance-gate 完成财务确认。",
+      "upstreamPackages": [
+        5,
+        3,
+        4
+      ],
+      "downstreamPackages": [
+        7
+      ],
+      "handoffInputs": [
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "价格快照",
+        "预订状态",
+        "证据摘要",
+        "只读对象引用",
+        "价格方案摘要",
+        "报价单摘要",
+        "报价版本"
+      ],
+      "handoffOutputs": [
+        "收款确认摘要",
+        "押金确认摘要",
+        "担保确认摘要",
+        "剩余待收",
+        "财务确认状态",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "mustNotOutputZh": [
+        "入住",
+        "已入住",
+        "可入住",
+        "退房",
+        "已退房",
+        "退款",
+        "已退款",
+        "取消",
+        "库存变更",
+        "房源状态变更",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "packageNo": 7,
+      "scenarioId": "lodging.check-in-processing",
+      "nameZh": "入住办理",
+      "businessPurposeZh": "承接已确认预订、财务确认摘要和房源运营状态摘要，核验客户到店、身份信息、入住协议、房间/床位当前可入住状态后，生成入住记录、占用记录和入住凭证。",
+      "upstreamPackages": [
+        5,
+        6,
+        2,
+        3
+      ],
+      "downstreamPackages": [
+        8
+      ],
+      "handoffInputs": [
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "价格快照",
+        "预订状态",
+        "收款确认摘要",
+        "押金确认摘要",
+        "担保确认摘要",
+        "剩余待收",
+        "财务确认状态",
+        "财务确认摘要",
+        "房源运营状态摘要",
+        "阻断原因",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "handoffOutputs": [
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "mustNotOutputZh": [
+        "价格变更",
+        "报价",
+        "预订变更",
+        "收款",
+        "押金变更",
+        "退房结算",
+        "退款",
+        "已退款",
+        "押金已退",
+        "账务入账",
+        "LedgerEntry",
+        "LedgerTransaction",
+        "房源建档",
+        "运营维修"
+      ]
+    },
+    {
+      "packageNo": 8,
+      "scenarioId": "lodging.in-stay-management",
+      "nameZh": "在住管理",
+      "businessPurposeZh": "承接场景包 7 已确认入住后的只读入住摘要，维护在住状态、入住凭证、续住申请、换房/换床申请、在住服务请求、在住异常记录和退房准备。",
+      "upstreamPackages": [
+        7,
+        6,
+        2,
+        3
+      ],
+      "downstreamPackages": [
+        9
+      ],
+      "handoffInputs": [
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "财务确认摘要",
+        "当前房源状态摘要",
+        "当前价格摘要",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "handoffOutputs": [
+        "在住状态摘要",
+        "当前占用摘要",
+        "服务请求摘要",
+        "异常摘要",
+        "续住/换房换床结果",
+        "凭证状态",
+        "退房准备摘要",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "mustNotOutputZh": [
+        "退房",
+        "退房结算",
+        "已退房",
+        "普通收款",
+        "押金确认",
+        "退款",
+        "已退款",
+        "房源释放",
+        "已释放房源",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "CheckoutSettlement",
+        "CheckoutCase",
+        "RoomRelease",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "packageNo": 9,
+      "scenarioId": "lodging.checkout-and-settlement",
+      "nameZh": "退房结算",
+      "businessPurposeZh": "承接场景包 7 的入住事实和场景包 8 的在住管理/退房准备摘要，办理实际退房、交接、验房、费用核算、押金抵扣、应退/应补结算意向、退房确认、凭证回收、财务处理请求和资源恢复请求。",
+      "upstreamPackages": [
+        7,
+        8,
+        6
+      ],
+      "downstreamPackages": [
+        10,
+        2
+      ],
+      "handoffInputs": [
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "收款确认摘要",
+        "押金确认摘要",
+        "财务确认摘要",
+        "在住状态摘要",
+        "当前占用摘要",
+        "服务请求摘要",
+        "异常摘要",
+        "续住/换房换床结果",
+        "凭证状态",
+        "退房准备摘要",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "handoffOutputs": [
+        "退房确认摘要",
+        "费用核算摘要",
+        "押金抵扣摘要",
+        "应退/应补意向",
+        "客户确认摘要",
+        "财务处理请求",
+        "资源待恢复请求",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "mustNotOutputZh": [
+        "Payment",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction",
+        "RoomOperationStatus=可运营",
+        "已退款",
+        "已入账",
+        "房源已可运营"
+      ]
+    },
+    {
+      "packageNo": 10,
+      "scenarioId": "lodging.cancel-noshow-refund-intake",
+      "nameZh": "取消、未到店与退款处理",
+      "businessPurposeZh": "承接预订确认、收款押金担保、入住状态和退房结算意向等只读摘要，处理预订取消、客户未到店、取消费/未到店费计算、退款或扣费申请、库存释放请求、客户确认和证据留存。",
+      "upstreamPackages": [
+        5,
+        6,
+        7,
+        9
+      ],
+      "downstreamPackages": [
+        11,
+        13
+      ],
+      "handoffInputs": [
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "房间/床位",
+        "价格快照",
+        "库存锁定历史",
+        "预订状态",
+        "收款确认摘要",
+        "押金确认摘要",
+        "担保确认摘要",
+        "财务确认状态",
+        "入住状态摘要",
+        "退房确认摘要",
+        "应退/应补意向",
+        "财务处理请求",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "handoffOutputs": [
+        "取消/未到店关闭摘要",
+        "政策计算摘要",
+        "退款/扣费申请",
+        "库存释放请求",
+        "客户确认摘要",
+        "财务处理请求",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "mustNotOutputZh": [
+        "Payment",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction",
+        "Stay",
+        "CheckoutCase",
+        "RoomOperationStatus=可运营",
+        "直接退款到账",
+        "直接收款入账",
+        "已退款到账",
+        "已入账",
+        "已入住",
+        "已退房"
+      ]
+    },
+    {
+      "packageNo": 11,
+      "scenarioId": "lodging.housekeeping-maintenance-outofservice",
+      "nameZh": "房务、维修与停售协同",
+      "businessPurposeZh": "承接运营阻断、在住服务请求、退房资源待恢复和取消释放后待处理资源，完成保洁、维修、检查、停售申请、恢复建议、作业证据和任务闭环。",
+      "upstreamPackages": [
+        2,
+        8,
+        9,
+        10
+      ],
+      "downstreamPackages": [
+        2,
+        8,
+        9,
+        13
+      ],
+      "handoffInputs": [
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "退房待恢复请求",
+        "资源待恢复请求",
+        "取消释放资源摘要",
+        "库存释放请求",
+        "房间/床位",
+        "影响范围",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "handoffOutputs": [
+        "房务/维修完成摘要",
+        "验收摘要",
+        "停售建议",
+        "恢复运营建议",
+        "费用意向",
+        "作业证据摘要",
+        "状态历史",
+        "只读对象引用"
+      ],
+      "mustNotOutputZh": [
+        "RoomOperationStatus=可运营",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction",
+        "已可运营",
+        "已可预订",
+        "已入账",
+        "已退款"
+      ]
+    },
+    {
+      "packageNo": 12,
+      "scenarioId": "lodging.channel-corporate-customer",
+      "nameZh": "渠道与企业客户",
+      "businessPurposeZh": "维护外部渠道、企业客户、协议客户、渠道发布规则、企业协议资格、渠道对接状态、佣金/结算规则意向和证据。",
+      "upstreamPackages": [
+        2,
+        3
+      ],
+      "downstreamPackages": [
+        3,
+        4,
+        5,
+        13
+      ],
+      "handoffInputs": [
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "handoffOutputs": [
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "渠道发布规则摘要",
+        "佣金/结算规则意向",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "mustNotOutputZh": [
+        "RatePlan 金额真值",
+        "Quote",
+        "Reservation",
+        "InventoryHold",
+        "Payment",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction",
+        "已报价",
+        "已预订",
+        "已收款",
+        "已入账"
+      ]
+    },
+    {
+      "packageNo": 13,
+      "scenarioId": "lodging.reporting-audit-review",
+      "nameZh": "经营报表、审计与复盘",
+      "businessPurposeZh": "读取场景包 1-12 和 finance-gate 的已确认事实、证据、投影和摘要，形成经营报表、财务核对视图、审计发现、周期复盘、行动计划和问题追踪。",
+      "upstreamPackages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "downstreamPackages": [],
+      "handoffInputs": [
+        "场景包 1-12 已确认事实摘要",
+        "状态历史",
+        "证据摘要",
+        "只读对象引用",
+        "授权投影",
+        "finance-gate 已确认账务事实",
+        "permission envelope",
+        "lineage envelope",
+        "freshness envelope"
+      ],
+      "handoffOutputs": [
+        "报表快照",
+        "指标快照",
+        "财务核对视图",
+        "审计发现",
+        "复盘结论",
+        "行动计划",
+        "问题追踪",
+        "导出记录",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "mustNotOutputZh": [
+        "Room",
+        "Bed",
+        "OperationStatus",
+        "RatePlan",
+        "Quote",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction",
+        "已修复原事实",
+        "已入账",
+        "已上线",
+        "final GO"
+      ]
+    }
+  ],
+  "currentBusinessOrderInvariantZh": "住宿经营当前主链十三包必须按 1 房源建档与基础就绪、2 房源运营就绪与状态维护、3 住宿商品与价格、4 询价与报价、5 预订与库存锁定、6 收款押金与担保、7 入住办理、8 在住管理、9 退房结算、10 取消未到店与退款处理、11 房务维修与停售协同、12 渠道与企业客户、13 经营报表、审计与复盘推进。",
+  "oldProjectExpressionIsolation": {
+    "policyId": "old-project-expression-migration-reference-only",
+    "forbiddenAsNewBusinessSource": [
+      "RatePlanConfirm",
+      "RatePlan",
+      "resource-saleability",
+      "golden-chain",
+      "lead-reservation",
+      "ordinary-payment",
+      "deposit-liability",
+      "PaymentConfirm",
+      "DepositConfirm",
+      "CheckinConfirm",
+      "reservationConvert",
+      "AccessCredentialIssue",
+      "StayLifecycle",
+      "bed-transfer-extend",
+      "service-task",
+      "maintenance",
+      "AccessCredentialRevoke"
+      ,
+      "CheckoutSettlementApprove",
+      "RefundApprove",
+      "RoomInspectionConfirm",
+      "reservationCancel",
+      "reservationNoShow",
+      "channel/OTA 临时字段",
+      "period-review",
+      "dashboard",
+      "analytics"
+    ],
+    "allowedUseZh": [
+      "内部 ID",
+      "历史映射",
+      "迁移参考",
+      "证据隔离对象"
+    ],
+    "forbiddenUseZh": [
+      "业务用户可见名称",
+      "新设计 Source 名称",
+      "新业务场景包总索引",
+      "新业务按钮文案",
+      "新业务状态文案"
+    ],
+    "migrationMap": [
+      {
+        "oldExpression": "RatePlanConfirm",
+        "newBusinessPackages": [
+          3,
+          12
+        ],
+        "allowedUseZh": "只允许作为住宿商品与价格或渠道资格绑定的迁移映射或兼容参考，不得替代“住宿商品与价格”或“渠道与企业客户”的 Source Authority、对象、步骤、字段或用户可见文案。"
+      },
+      {
+        "oldExpression": "RatePlan",
+        "newBusinessPackages": [
+          3,
+          12
+        ],
+        "allowedUseZh": "只允许作为旧价格方案或渠道适用价格引用的迁移参考；价格金额真值仍由场景包 3 定义，场景包 12 只能读取商品/价格版本摘要。"
+      },
+      {
+        "oldExpression": "resource-saleability",
+        "newBusinessPackages": [
+          1,
+          2,
+          11
+        ],
+        "allowedUseZh": "只允许作为历史迁移映射和证据隔离参考，不得替代“房源建档与基础就绪”或“房源运营就绪与状态维护”。"
+      },
+      {
+        "oldExpression": "golden-chain",
+        "newBusinessPackages": [
+          1
+        ],
+        "allowedUseZh": "只允许作为内部历史能力 ID 或审计证据，不得成为业务用户可见名称。"
+      },
+      {
+        "oldExpression": "lead-reservation",
+        "newBusinessPackages": [
+          4,
+          5,
+          12
+        ],
+        "allowedUseZh": "只允许作为询价、报价、预订或渠道客户来源迁移参考，不得覆盖新业务索引或把渠道资格直接解释为报价/预订事实。"
+      },
+      {
+        "oldExpression": "ordinary-payment",
+        "newBusinessPackages": [
+          6
+        ],
+        "allowedUseZh": "只允许作为收款、押金与担保的迁移参考，不得替代 finance-gate 边界或新业务用户可见文案。"
+      },
+      {
+        "oldExpression": "deposit-liability",
+        "newBusinessPackages": [
+          6
+        ],
+        "allowedUseZh": "只允许作为押金历史映射参考，不得把押金解释成收入或直接账务事实。"
+      },
+      {
+        "oldExpression": "PaymentConfirm",
+        "newBusinessPackages": [
+          6,
+          12
+        ],
+        "allowedUseZh": "只允许作为旧确认动作迁移参考；渠道佣金/结算只能形成意向并交给 finance-gate，不得绕过 finance-gate。"
+      },
+      {
+        "oldExpression": "DepositConfirm",
+        "newBusinessPackages": [
+          6
+        ],
+        "allowedUseZh": "只允许作为旧押金确认迁移参考，不得把押金确认为收入。"
+      },
+      {
+        "oldExpression": "CheckinConfirm",
+        "newBusinessPackages": [
+          7
+        ],
+        "allowedUseZh": "只允许作为入住办理旧确认动作迁移参考，不得替代“入住办理”的 Source Authority、对象、步骤、字段或用户可见文案。"
+      },
+      {
+        "oldExpression": "reservationConvert",
+        "newBusinessPackages": [
+          7
+        ],
+        "allowedUseZh": "只允许作为预订转入住历史映射，不得绕过预订有效性、财务摘要、身份协议和资源占用复核。"
+      },
+      {
+        "oldExpression": "AccessCredentialIssue",
+        "newBusinessPackages": [
+          7,
+          8
+        ],
+        "allowedUseZh": "只允许作为入住凭证发放或在住凭证状态旧表达迁移参考，不得在未入住成功前发放有效凭证，也不得替代“在住管理”的凭证状态 Source。"
+      },
+      {
+        "oldExpression": "StayLifecycle",
+        "newBusinessPackages": [
+          8
+        ],
+        "allowedUseZh": "只允许作为在住期间状态迁移参考，不得替代“在住管理”的 Source Authority、对象、步骤、字段或用户可见文案。"
+      },
+      {
+        "oldExpression": "bed-transfer-extend",
+        "newBusinessPackages": [
+          8
+        ],
+        "allowedUseZh": "只允许作为续住、换房/换床旧流程迁移参考，不得绕过有效入住、目标占用、日期和财务边界校验。"
+      },
+      {
+        "oldExpression": "service-task",
+        "newBusinessPackages": [
+          8,
+          11
+        ],
+        "allowedUseZh": "只允许作为在住服务或房务维修作业的迁移参考，不得替代“在住管理”或“房务、维修与停售协同”的用户可见名称、对象、步骤或状态。"
+      },
+      {
+        "oldExpression": "maintenance",
+        "newBusinessPackages": [
+          11
+        ],
+        "allowedUseZh": "只允许作为维修旧表达迁移参考，不得替代“房务、维修与停售协同”的 Source Authority、对象、步骤、字段或用户可见文案。"
+      },
+      {
+        "oldExpression": "AccessCredentialRevoke",
+        "newBusinessPackages": [
+          8
+        ],
+        "allowedUseZh": "只允许作为凭证撤销旧表达迁移参考，不得替代“门禁/入住凭证管理”的业务文案或规则。"
+      },
+      {
+        "oldExpression": "CheckoutSettlementApprove",
+        "newBusinessPackages": [
+          9
+        ],
+        "allowedUseZh": "只允许作为退房结算旧审批动作迁移映射，不得替代“退房结算”的 Source Authority、对象、步骤、字段或用户可见文案。"
+      },
+      {
+        "oldExpression": "RefundApprove",
+        "newBusinessPackages": [
+          9,
+          10
+        ],
+        "allowedUseZh": "只允许作为退款旧审批动作迁移参考；实际退款、补收确认和账务入账必须交给 finance-gate 或后续财务场景处理。"
+      },
+      {
+        "oldExpression": "RoomInspectionConfirm",
+        "newBusinessPackages": [
+          9,
+          11
+        ],
+        "allowedUseZh": "只允许作为旧验房确认迁移参考，不得把验房结果直接解释为房源可运营或资源已恢复。"
+      },
+      {
+        "oldExpression": "reservationCancel",
+        "newBusinessPackages": [
+          10
+        ],
+        "allowedUseZh": "只允许作为预订取消旧流程迁移映射或兼容参考，不得替代“取消、未到店与退款处理”的 Source Authority、对象、步骤、字段或用户可见文案。"
+      },
+      {
+        "oldExpression": "reservationNoShow",
+        "newBusinessPackages": [
+          10
+        ],
+        "allowedUseZh": "只允许作为未到店旧流程迁移映射或兼容参考，不得替代“取消、未到店与退款处理”的 Source Authority、对象、步骤、字段或用户可见文案。"
+      },
+      {
+        "oldExpression": "channel/OTA 临时字段",
+        "newBusinessPackages": [
+          12
+        ],
+        "allowedUseZh": "只允许作为外部渠道、OTA 字段迁移映射或兼容参考，不得替代“渠道与企业客户”的 Source Authority、对象、步骤、状态或用户可见文案。"
+      },
+      {
+        "oldExpression": "period-review",
+        "newBusinessPackages": [
+          13
+        ],
+        "allowedUseZh": "只允许作为周期复盘旧表达迁移参考，不得替代“经营报表、审计与复盘”的 Source Authority、对象、指标口径、步骤或用户可见文案。"
+      },
+      {
+        "oldExpression": "dashboard",
+        "newBusinessPackages": [
+          13
+        ],
+        "allowedUseZh": "只允许作为旧看板迁移参考；新场景包 13 的报表、看板、搜索、导出均只读，不得反写业务事实或账务事实。"
+      },
+      {
+        "oldExpression": "analytics",
+        "newBusinessPackages": [
+          13
+        ],
+        "allowedUseZh": "只允许作为旧分析模块迁移参考；指标口径、权限、血缘和新鲜度必须来自“经营报表、审计与复盘” Source Authority。"
+      }
+    ]
+  },
+  "sourceAuthorityRefs": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json"
+  ],
+  "finalSafety": {
+    "businessFeatureDevelopmentAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

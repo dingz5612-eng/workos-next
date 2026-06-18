@@ -1,0 +1,475 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario5-runtimeRules.generated",
+  "version": "oam.dormitory-scenario5-runtimeRules.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario5-reservation-and-inventory-hold-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario5-reservation-and-inventory-hold-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:8d9f2e060062ebe92e3f03387d5f7cf5999eaeb080030a14e577526de78e2fed",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario5-reservation-and-inventory-hold.authority.json",
+      "digest": "sha256:fc1f65a896a14573452c5025592c8ca2acfda62cdf515938fb82aff274aceabb"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:fc1f65a896a14573452c5025592c8ca2acfda62cdf515938fb82aff274aceabb",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario5.ReservationAndInventoryHold",
+  "scenarioPackageNo": 5,
+  "scenarioId": "lodging.reservation-and-inventory-hold",
+  "outputContentDigest": "sha256:96926ca38ad7d4ea3696aa90e9627ec8fb5e51eb6225b2322c87cab9f7351fb2",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "预订与库存锁定",
+  "businessGoalZh": "承接场景包 4 已确认的报价/客户意向，重新校验资源、价格、报价有效期、日期和当前占用后，完成库存锁定、确认预订并生成预订号。",
+  "sourceScenarioDigest": "sha256:fc1f65a896a14573452c5025592c8ca2acfda62cdf515938fb82aff274aceabb",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario5.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "BookingRequest",
+      "AvailabilityCheck",
+      "AvailabilitySnapshot",
+      "InventoryHold",
+      "Reservation",
+      "ReservationGuest",
+      "ReservationResourceBinding",
+      "ReservationPriceSnapshot",
+      "ReservationPolicySnapshot",
+      "ReservationConfirmation",
+      "ReservationEvidence",
+      "ReservationStatusHistory"
+    ],
+    "searchReadModel": [
+      "预订与库存锁定",
+      "预订确认摘要",
+      "预订号",
+      "客户信息",
+      "日期范围",
+      "人数",
+      "房间/床位",
+      "价格快照",
+      "库存锁定历史",
+      "预订状态",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "noRefillRuleZh": "场景包 5 只能读取场景包 1、2、3、4 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品、价格或报价字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "commands": [
+    {
+      "commandId": "Dorm.BookingPreparationStart",
+      "businessNameZh": "发起预订准备",
+      "writesObjects": [
+        "BookingRequest",
+        "ReservationEvidence",
+        "ReservationStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.AvailabilityRecheck",
+      "businessNameZh": "可订资源复核",
+      "writesObjects": [
+        "AvailabilityCheck",
+        "AvailabilitySnapshot",
+        "ReservationEvidence",
+        "ReservationStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.InventoryHoldCreate",
+      "businessNameZh": "创建库存锁定",
+      "writesObjects": [
+        "InventoryHold",
+        "ReservationEvidence",
+        "ReservationStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "atomicResourceDateCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.InventoryHoldRelease",
+      "businessNameZh": "释放未确认锁定",
+      "writesObjects": [
+        "InventoryHold",
+        "ReservationEvidence",
+        "ReservationStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.InventoryHoldExpire",
+      "businessNameZh": "锁定过期处理",
+      "writesObjects": [
+        "InventoryHold",
+        "ReservationStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.ReservationDraftConfirm",
+      "businessNameZh": "确认预订信息",
+      "writesObjects": [
+        "ReservationPolicySnapshot",
+        "ReservationPriceSnapshot",
+        "ReservationEvidence",
+        "ReservationStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.ReservationConfirm",
+      "businessNameZh": "确认预订",
+      "writesObjects": [
+        "Reservation",
+        "ReservationGuest",
+        "ReservationResourceBinding",
+        "ReservationPriceSnapshot",
+        "ReservationPolicySnapshot",
+        "ReservationConfirmation",
+        "ReservationEvidence",
+        "ReservationStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "reservationNoSystemGenerated": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.ReservationSummaryOutput",
+      "businessNameZh": "预订摘要输出",
+      "writesObjects": [
+        "ReservationStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "Stay",
+        "CheckIn",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "quote_expired_for_booking",
+      "messageZh": "报价已过期，请返回询价与报价重新报价。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "quote_price_snapshot_required",
+      "messageZh": "缺少报价价格快照，不能进入预订确认。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "contact_required",
+      "messageZh": "请补齐客户联系方式后再继续预订。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "date_range_invalid",
+      "messageZh": "入住日期必须早于离店日期。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "guest_count_invalid",
+      "messageZh": "入住人数必须大于 0。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "operation_blocked_for_booking",
+      "messageZh": "该资源存在维修、停售、暂停或异常阻断，不能锁定。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "effective_price_required",
+      "messageZh": "价格已失效或缺少有效价格版本，请返回重新报价。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "resource_unavailable_or_occupied",
+      "messageZh": "该资源在所选日期不可订或已被占用。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "resource_already_locked",
+      "messageZh": "该资源在所选日期已被锁定，请选择其他资源或等待锁定释放。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "resource_already_reserved",
+      "messageZh": "该资源在所选日期已有有效预订。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "resource_already_stayed",
+      "messageZh": "该资源在所选日期已有在住占用。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "hold_until_required",
+      "messageZh": "库存锁定必须设置锁定截止时间。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_inventory_hold_conflict",
+      "messageZh": "资源刚刚被他人锁定，请刷新可订资源后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "inventory_hold_required",
+      "messageZh": "请先完成库存锁定，再确认预订。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "hold_expired_for_reservation",
+      "messageZh": "库存锁定已过期，请重新锁定后再确认预订。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "price_snapshot_mismatch",
+      "messageZh": "预订价格快照与报价来源不一致，请重新复核价格。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "reservation_no_user_input_forbidden",
+      "messageZh": "预订号由系统生成，不能手工填写。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用不匹配，请从页面重新选择报价、资源或锁定记录。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_submission",
+      "messageZh": "该提交已处理，系统将返回原处理结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_reservation_version_conflict",
+      "messageZh": "预订信息已被更新，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_result_write_attempt",
+      "messageZh": "查询、搜索、列表、看板、报表只读，不能在这里写入锁定或预订事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "cross_scenario_checkin_payment_forbidden",
+      "messageZh": "本场景只能完成预订，后续办理或财务事项请到对应场景处理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "finance_fact_forbidden",
+      "messageZh": "预订与库存锁定不能写入财务事实，请到对应场景处理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "reservation_evidence_missing",
+      "messageZh": "缺少必要预订证据，不能提交。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "invariants": [
+    "库存锁定必须按资源和日期范围原子校验。",
+    "同一房间/床位在同一日期范围内，不能同时存在有效锁定、有效预订、在住占用或运营阻断。",
+    "锁定必须有 holdUntil；过期锁定不能确认预订。",
+    "确认预订必须基于未过期 InventoryHold、有效报价、有效价格快照、可运营资源、合法客户信息。",
+    "预订号由系统生成，用户不得手填。",
+    "报价过期、价格失效、资源不可用时，不得进入确认预订。",
+    "已预订不等于已入住。",
+    "已预订不等于已收款。",
+    "已预订不等于押金已收。",
+    "失败路径不得写预订事实、不得释放他人库存、不得生成入住或账务。",
+    "确认失败不得写 CommandSubmission、DomainEvent、Outbox、Projection、Lens、Search、Dashboard、Ledger。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。"
+  ],
+  "reservationStatusOptions": [
+    "待锁定",
+    "锁定中",
+    "已锁定",
+    "锁定过期",
+    "待确认预订",
+    "已预订",
+    "预订确认失败",
+    "转入住准备"
+  ],
+  "inventoryInvariantRule": {
+    "atomicResourceDateCheckRequired": true,
+    "resourceDateConflictForbiddenZh": "同一房间/床位在同一日期范围内，不能同时存在有效锁定、有效预订、在住占用或运营阻断。",
+    "holdUntilRequired": true,
+    "expiredHoldCannotConfirmReservation": true,
+    "reservationNoSystemGenerated": true,
+    "failureCodeForConcurrency": "concurrent_inventory_hold_conflict"
+  },
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "enter-reservation-preparation": [
+        "报价确认证据",
+        "客户意向证据"
+      ],
+      "review-available-resource": [
+        "可订复核证据"
+      ],
+      "create-inventory-hold": [
+        "库存锁定证据"
+      ],
+      "confirm-reservation-information": [
+        "客户确认证据",
+        "预订规则证据"
+      ],
+      "confirm-reservation": [
+        "预订确认证据"
+      ],
+      "reservation-result-and-checkin-preparation": [
+        "预订结果证据"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "commandsImplemented": [
+      "Dorm.BookingPreparationStart",
+      "Dorm.AvailabilityRecheck",
+      "Dorm.InventoryHoldCreate",
+      "Dorm.InventoryHoldRelease",
+      "Dorm.InventoryHoldExpire",
+      "Dorm.ReservationDraftConfirm",
+      "Dorm.ReservationConfirm",
+      "Dorm.ReservationSummaryOutput"
+    ],
+    "mustSupportZh": [
+      "幂等提交",
+      "并发锁定检查",
+      "上游报价有效性校验",
+      "价格快照校验",
+      "运营状态校验",
+      "资源占用校验",
+      "锁定过期校验",
+      "预订号系统生成",
+      "伪造内部引用阻断",
+      "失败无副作用"
+    ],
+    "failureNoSideEffectTargets": [
+      "CommandSubmission",
+      "DomainEvent",
+      "Outbox",
+      "Projection",
+      "Lens",
+      "Search",
+      "Dashboard",
+      "Ledger"
+    ],
+    "forbiddenRuntimeWritesZh": [
+      "Stay",
+      "CheckIn",
+      "Payment",
+      "Deposit",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction"
+    ]
+  }
+}

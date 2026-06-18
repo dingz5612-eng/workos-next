@@ -7,19 +7,20 @@ describe("Stage B search result render contract", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "住宿" });
     ctx.state.runtimeStore.searchResultsByQuery = {
       "住宿": [{
-        workspaceId: "W-STAY-RESOURCE",
-        cardId: "roomSetup",
-        localizedTitle: { "zh-CN": "房间配置办理" },
-        localizedSubtitle: { "zh-CN": "宿舍资源" },
-        localizedStatus: { "zh-CN": "可办理" },
-        localizedNextAction: { "zh-CN": "进入办理面" }
+        workspaceId: "W-DORM-MAINLINE",
+        cardId: "cert.roomSetupConfirm",
+        localizedTitle: { "zh-CN": "填写房间信息" },
+        localizedSubtitle: { "zh-CN": "新建房间和床位" },
+        localizedStatus: { "zh-CN": "待处理" },
+        localizedNextAction: { "zh-CN": "继续填写" }
       }]
     };
 
     const html = searchView(ctx);
 
     expect(visibleText(html)).not.toContain("[object Object]");
-    expect(html).toContain("房间配置办理");
+    expect(html).toContain("填写房间信息");
+    expect(html).toContain("新建房间和床位");
     expect(html).toContain('data-surface="business-summary-header"');
     expect(html).toContain('data-surface="business-task-body"');
     expect(html).toContain('class="search-result-main"');
@@ -31,13 +32,13 @@ describe("Stage B search result render contract", () => {
   it("localizes object result prefixes outside Chinese", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "room", lang: "ru-RU" });
     ctx.state.runtimeStore.workspaces.push({
-      id: "W-STAY-RU-ROOM",
+      id: "W-DORM-RU-MAINLINE",
       domain: "stay",
-      title: { "zh-CN": "我要创建住宿资源", "ru-RU": "Создать ресурс проживания" },
+      title: { "zh-CN": "新建房间和床位", "ru-RU": "Создать комнаты и койки" },
       summary: { "ru-RU": "Комнаты и койки" },
       next: { "ru-RU": "Открыть объект" },
       cards: [{
-        id: "roomSetup",
+        id: "cert.roomSetupConfirm",
         status: "ready",
         title: { "ru-RU": "Комната" },
         fields: { business: [], system: [], analytics: [] },
@@ -49,7 +50,7 @@ describe("Stage B search result render contract", () => {
 
     const text = visibleText(searchView(ctx));
 
-    expect(text).toContain("Комнаты · Создать ресурс проживания");
-    expect(text).not.toContain("房间 · Создать ресурс проживания");
+    expect(text).toContain("Комнаты · Создать комнаты и койки");
+    expect(text).not.toContain("房间 · Создать комнаты и койки");
   });
 });

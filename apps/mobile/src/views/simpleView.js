@@ -182,7 +182,7 @@ function businessRecordRows(state, ctx) {
   return queue.map((item) => ({
     label: ctx.tr("searchOperationCases"),
     value: displayRecordTitle(item, ctx),
-    body: [displayRecordContext(item, ctx), item.reason || item.nextAction || item.lifecycleState || item.status].filter(Boolean).join(" · ")
+    body: [displayRecordContext(item, ctx), displayRecordDetail(item, ctx)].filter(Boolean).join(" · ")
   }));
 }
 
@@ -230,6 +230,20 @@ function localizedText(value, ctx) {
   if (typeof value === "string" || typeof value === "number") return String(value);
   const lang = ctx.state?.lang || "zh-CN";
   return value[lang] || value["zh-CN"] || value["ru-RU"] || value["ky-KG"] || value.label || value.title || value.id || "";
+}
+
+function displayRecordDetail(item, ctx) {
+  const detail = translatedBusinessText(item.reason || item.nextAction, ctx);
+  if (detail && !looksTechnicalLabel(detail)) return detail;
+  const status = item.lifecycleState || item.status || "";
+  return status ? ctx.tr(status) : "";
+}
+
+function translatedBusinessText(value, ctx) {
+  const text = localizedText(value, ctx);
+  if (!text) return "";
+  const translated = ctx.tr(text);
+  return translated === text ? text : translated;
 }
 
 function displayRecordContext(item, ctx) {

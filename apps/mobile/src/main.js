@@ -9,16 +9,18 @@ import { applyRuntimeOfflineFallback, applyRuntimeProjection, applyRuntimeSurfac
 import { escapeAttr, escapeHtml } from "./htmlEscaping.js";
 import { metric, localList, localTerm, task, tr, tx, workspace } from "./selectors/workspaceSelectors.js";
 import { isPcSurfaceView } from "./surfaceRegistry.js";
+import { userFacingBusinessText } from "./businessDisplayLanguage.js";
+import { runSearchFromCurrentUrlIfNeeded } from "./navigationController.js";
 
 const state = createInitialState();
 
 const ctx = {
   state,
   shell: (content) => shell(content, ctx),
-  tr: (key) => escapeHtml(tr(state, key)),
-  tx: (value) => escapeHtml(tx(state, value)),
-  localTerm: (value, lang = state.lang) => escapeHtml(localTerm(state, value, lang)),
-  localList: (items) => escapeHtml(localList(state, items)),
+  tr: (key) => escapeHtml(userFacingBusinessText(tr(state, key), { state })),
+  tx: (value) => escapeHtml(userFacingBusinessText(tx(state, value), { state })),
+  localTerm: (value, lang = state.lang) => escapeHtml(userFacingBusinessText(localTerm(state, value, lang), { state: { ...state, lang } })),
+  localList: (items) => escapeHtml(userFacingBusinessText(localList(state, items), { state })),
   escapeHtml,
   escapeAttr,
   task: () => task(state),
@@ -52,7 +54,7 @@ async function hydrateProjectionFromApi() {
   try {
     const projection = await optionalProtectedSurface(fetchWorkspaceProjection);
     if (!state.currentActor) return;
-    const operationWorkItems = await optionalProtectedSurface(fetchOperationWorkItems);
+    const operationWorkItems = await optionalProtectedSurface(() => fetchOperationWorkItems({ activeOnly: "true" }));
     if (!state.currentActor) return;
     if (projection) applyRuntimeProjection(state, projection);
     applyRuntimeSurfacePayloads(state, { operationWorkItems });
@@ -120,4 +122,6 @@ function render(scrollTop = false) {
 }
 
 render();
-hydrateProjectionFromApi().finally(() => render());
+hydrateProjectionFromApi()
+  .finally(() => runSearchFromCurrentUrlIfNeeded(ctx).catch(() => false))
+  .finally(() => render());

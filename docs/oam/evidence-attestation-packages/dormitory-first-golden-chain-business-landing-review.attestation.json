@@ -1,0 +1,25 @@
+{
+  "version": "oam.dormitory-first-golden-chain-business-landing-review.attestation.v1",
+  "status": "attested",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "reviewPackageType": "00_business_landing_review",
+  "businessLandingReviewStatus": "BUSINESS_LANDING_NOT_READY_REVIEW_PACKAGE",
+  "subjectChainRef": "artifacts/oam/evidence/capability-evidence-subject-chain.json",
+  "subjectChainDigest": "sha256:bbd3ce1b8a5fe6e05fe72c9f5ed699cbed7eda722ee02c230aa775e6625d6b99",
+  "dbProjectionProofRef": "artifacts/oam/checks/dormitory-first-golden-chain-db-projection-proof-result.json",
+  "dbProjectionProofStatus": "PASS",
+  "policyMode": "null_if_runtime_test_only",
+  "businessLandingBlockedBecause": "db_projection_not_active",
+  "environmentProfileDigest": "sha256:b922be12cde60ced8baa0007a8aebcefd140be9b5f6c1cea8200402bca73101a",
+  "codexMayAdmitBusinessLanding": false,
+  "businessFeatureDevelopmentAllowed": false,
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "forbiddenInterpretations": [
+    "00 review package is not business landing admission",
+    "browser PASS is not production confirmation",
+    "Evidence Root PASS is not release authority",
+    "Control Plane PASS is not final GO"
+  ]
+}

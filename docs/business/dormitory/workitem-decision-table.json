@@ -109,6 +109,144 @@
       "reasonZh": "当前宿舍内核可执行 WorkItem。"
     },
     {
+      "workItemType": "Dorm.OperationResourceSelect",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.operationResourceSelect.v1",
+      "commandType": "OperationResource.Select",
+      "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+      "surfaceId": "mobile.work.dormitory-scenario2-select-base-ready-resource",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.OperationInspectionConfirm",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.operationInspectionConfirm.v1",
+      "commandType": "OperationInspection.Confirm",
+      "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+      "surfaceId": "mobile.work.dormitory-scenario2-operation-inspection",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.OperationStatusDraft",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.operationStatusDraft.v1",
+      "commandType": "OperationStatus.Draft",
+      "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+      "surfaceId": "mobile.work.dormitory-scenario2-set-operation-status",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.OperationStatusChangeConfirm",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.operationStatusChangeConfirm.v1",
+      "commandType": "OperationStatusChange.Confirm",
+      "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+      "surfaceId": "mobile.work.dormitory-scenario2-impact-confirmation",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.OperationBlockerUpdate",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.operationBlockerUpdate.v1",
+      "commandType": "OperationBlocker.Update",
+      "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+      "surfaceId": "mobile.work.dormitory-scenario2-daily-status-maintenance",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.OperationRestoreConfirm",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.operationRestoreConfirm.v1",
+      "commandType": "OperationRestore.Confirm",
+      "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+      "surfaceId": "mobile.work.dormitory-scenario2-restore-operation",
+      "ownerSlice": "Accommodation.ResourceOperationStatus",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
       "workItemType": "Dorm.LeadCapture",
       "decision": "currentExecutableWorkItem",
       "keepInDormitoryCatalog": true,

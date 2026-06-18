@@ -1,0 +1,388 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario3-runtimeRules.generated",
+  "version": "oam.dormitory-scenario3-runtimeRules.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario3-product-and-pricing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario3-product-and-pricing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:60372bae88f8c69027805c9a2225b4939e2108913d66b25e962e445b68fcf5e1",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "digest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario3.ProductAndPricing",
+  "scenarioPackageNo": 3,
+  "scenarioId": "lodging.product-and-rate",
+  "outputContentDigest": "sha256:6921286154e711e22e2a9c704a88ecd0f6a1249e309003568a15feb186c7b3a5",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "住宿商品与价格",
+  "businessGoalZh": "承接场景包 1 的房源摘要和场景包 2 已确认可运营且未阻断的运营状态摘要，配置住宿商品、售卖单位、商品资源绑定、价格方案、适用日期、价格版本及价格生效/停用记录。",
+  "sourceScenarioDigest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario3.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "AccommodationProduct",
+      "SellableUnit",
+      "ProductResourceBinding",
+      "RatePlan",
+      "RateRule",
+      "PriceCalendar",
+      "PriceVersion",
+      "PriceEvidence",
+      "PriceStatusHistory"
+    ],
+    "searchReadModel": [
+      "住宿商品与价格",
+      "商品摘要",
+      "价格方案摘要",
+      "价格日历摘要",
+      "价格版本历史",
+      "可否进入询价报价",
+      "证据摘要",
+      "只读对象引用",
+      "价格版本和价格日历摘要"
+    ],
+    "noRefillRuleZh": "场景包 3 只能读取场景包 1 和场景包 2 的只读摘要，不得要求用户重新填写房间、床位组、基础就绪或运营状态字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "commands": [
+    {
+      "commandId": "Dorm.AccommodationProductConfirm",
+      "businessNameZh": "住宿商品确认",
+      "writesObjects": [
+        "AccommodationProduct",
+        "SellableUnit",
+        "ProductResourceBinding",
+        "PriceEvidence",
+        "PriceStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "Quote",
+        "Reservation",
+        "InventoryHold",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.RatePlanDefinitionConfirm",
+      "businessNameZh": "价格方案确认",
+      "writesObjects": [
+        "RatePlan",
+        "RateRule",
+        "PriceEvidence",
+        "PriceStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "Quote",
+        "Reservation",
+        "InventoryHold",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.PriceVersionActivate",
+      "businessNameZh": "价格版本生效",
+      "writesObjects": [
+        "AccommodationProduct",
+        "RatePlan",
+        "PriceCalendar",
+        "PriceVersion",
+        "PriceEvidence",
+        "PriceStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "Quote",
+        "Reservation",
+        "InventoryHold",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.PriceDisable",
+      "businessNameZh": "价格停用",
+      "writesObjects": [
+        "PriceVersion",
+        "PriceEvidence",
+        "PriceStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "Quote",
+        "Reservation",
+        "InventoryHold",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    },
+    {
+      "commandId": "Dorm.PriceDraftVoid",
+      "businessNameZh": "价格草稿作废",
+      "writesObjects": [
+        "PriceVersion",
+        "PriceEvidence",
+        "PriceStatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "Quote",
+        "Reservation",
+        "InventoryHold",
+        "Stay",
+        "Payment",
+        "Deposit",
+        "Refund",
+        "LedgerEntry",
+        "LedgerTransaction"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "upstream_operable_required",
+      "messageZh": "该房源尚未确认为可运营，不能创建商品或价格。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "operation_blocked_for_pricing",
+      "messageZh": "该房源存在运营阻断，不能进入价格维护。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "product_resource_binding_required",
+      "messageZh": "请先明确商品绑定的房间、床位或床位组。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "product_name_not_binding",
+      "messageZh": "商品名称不能替代资源绑定，请重新选择适用房源。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "price_value_invalid",
+      "messageZh": "价格必须大于等于 0。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "currency_required",
+      "messageZh": "请填写币种后再提交价格方案。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "pricing_period_required",
+      "messageZh": "请填写计价周期后再提交价格方案。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "date_range_invalid",
+      "messageZh": "生效日期不能晚于失效日期。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "price_date_conflict",
+      "messageZh": "相同商品、日期、渠道和客户类型下已有生效价格，请新建不冲突的版本。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "deposit_payment_forbidden",
+      "messageZh": "价格方案不能写入押金、收款或账务信息。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "price_evidence_missing",
+      "messageZh": "缺少必要价格证据，不能提交。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用不匹配，请从页面重新选择商品或房源。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_submission",
+      "messageZh": "该提交已处理，系统将返回原处理结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_price_version_conflict",
+      "messageZh": "价格版本已被他人更新，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_result_write_attempt",
+      "messageZh": "查询、搜索、列表、看板、报表只读，不能在这里写入商品或价格事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "post_effective_inline_edit_forbidden",
+      "messageZh": "已生效价格不能原地编辑，请新建调价版本或停用。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "cross_scenario_quote_reservation_forbidden",
+      "messageZh": "本场景不能生成报价、库存锁定或预订。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "invariants": [
+    "只有场景包 2 输出为可运营且未被维修、停售、暂停开放或异常阻断的房间/床位，才能绑定商品。",
+    "一个商品必须明确售卖单位：整房、单床位、床位组、包月、包周或按晚。",
+    "价格必须有币种、计价周期、适用日期、适用资源、版本号、生效时间和停用时间。",
+    "已生效价格不得原地覆盖；价格调整必须创建新版本。",
+    "相同商品、相同日期范围、相同渠道、相同客户类型下不得存在互相冲突的生效价格。",
+    "商品名称不能替代资源绑定。",
+    "价格必须大于等于 0。",
+    "价格方案不得写押金、收款或账务事实。",
+    "可定价不等于可报价。",
+    "价格已生效不等于库存可锁定。",
+    "价格存在不代表可预订。",
+    "确认失败不得写 CommandSubmission、DomainEvent、Outbox、Projection、Lens、Search、Dashboard、Ledger。",
+    "确认失败不得刷新报价可用读模型。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。"
+  ],
+  "priceStatusOptions": [
+    "价格草稿",
+    "待审核",
+    "已生效",
+    "已停用",
+    "已过期",
+    "已作废",
+    "需补充证据"
+  ],
+  "priceConflictRule": {
+    "conflictDimensions": [
+      "productRef",
+      "dateRange",
+      "channel",
+      "customerType"
+    ],
+    "effectiveOverlapAllowed": false,
+    "failureCode": "price_date_conflict"
+  },
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "select-operable-resource": [
+        "场景包 2 可运营摘要",
+        "只读对象引用绑定记录"
+      ],
+      "define-accommodation-product": [
+        "商品定义证据",
+        "资源绑定证据"
+      ],
+      "configure-rate-plan": [
+        "价格依据证据",
+        "审批材料"
+      ],
+      "configure-price-calendar": [
+        "日期规则证据",
+        "特殊价格证据"
+      ],
+      "review-and-activate-price": [
+        "审核证据",
+        "生效确认记录"
+      ],
+      "price-maintenance": [
+        "调价证据",
+        "停用证据",
+        "作废证据",
+        "补充证据"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "commandsImplemented": [
+      "Dorm.AccommodationProductConfirm",
+      "Dorm.RatePlanDefinitionConfirm",
+      "Dorm.PriceVersionActivate",
+      "Dorm.PriceDisable",
+      "Dorm.PriceDraftVoid"
+    ],
+    "mustSupportZh": [
+      "幂等提交",
+      "并发版本检查",
+      "上游可运营校验",
+      "运营阻断校验",
+      "日期冲突校验",
+      "价格版本校验",
+      "证据完整性校验",
+      "伪造内部引用阻断",
+      "失败无副作用"
+    ],
+    "failureNoSideEffectTargets": [
+      "CommandSubmission",
+      "DomainEvent",
+      "Outbox",
+      "Projection",
+      "Lens",
+      "Search",
+      "Dashboard",
+      "Ledger"
+    ],
+    "forbiddenRuntimeWritesZh": [
+      "Quote",
+      "Reservation",
+      "InventoryHold",
+      "Stay",
+      "Payment",
+      "Deposit",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction"
+    ]
+  }
+}

@@ -48,6 +48,12 @@ public sealed class CanonicalOperationsApiService
     public WorkItem? CreateWorkItem(CreateWorkItemRequest request) =>
         catalog.CreateWorkItem(request);
 
+    public WorkItem? CreateWorkItem(CreateWorkItemRequest request, RuntimeActorContext actor)
+    {
+        var created = catalog.CreateWorkItem(request);
+        return created is null ? null : AttachAdmission(created, actor);
+    }
+
     public OperationsWorkspaceStartResult StartWorkspaceCase(
         WorkspaceProjection workspace,
         string templateWorkspaceId,
@@ -63,7 +69,7 @@ public sealed class CanonicalOperationsApiService
         }
 
         var definition = ResolveStartDefinition(templateWorkspaceId, card.Id);
-        var routeCardId = UiRouteCardIdForDefinition(definition.Definition, card.Id);
+        var routeCardId = RouteCardIdForRuntime(workspace.Id, definition.Definition, card.Id);
         var ownerRole = FirstNonEmpty(card.Confirmation.RequiredRole, actor.Role, "operator");
         var admissionDecision = StartAdmissionDecision(definition, actor, ownerRole);
         var operationCase = CreateCase(new CreateOperationCaseRequest(workspace.Id, actor.TenantId, workspace.Id))
@@ -84,30 +90,33 @@ public sealed class CanonicalOperationsApiService
                 definition.MigrationRefs,
                 operationCase.CaseId,
                 actor,
+                catalog.ListWorkItems(actor.TenantId),
                 anchorPayload,
                 anchorQuery))) ??
             throw new InvalidOperationException("operation_workspace_start_work_item_not_resolved");
-        var workItem = createdWorkItem with
+        var workItem = AttachAdmission(createdWorkItem with
         {
             Admission = admissionDecision.ToContract(),
             AdmissionDecisionRef = admissionDecision.AdmissionDecisionRef
-        };
+        }, actor);
+        var workItemSurface = GetWorkItemSurface(workItem.WorkItemId, actor)
+            ?? throw new InvalidOperationException("operation_workspace_start_work_item_surface_not_resolved");
 
         return new OperationsWorkspaceStartResult(
             workspace,
             operationCase,
-            workItem,
-            ListWorkItems(actor.TenantId).Select(item => AttachAdmission(item, actor)).ToArray());
+            workItemSurface,
+            ListWorkItemSurfaces(actor, operationCase.CaseId, workspace.Id));
     }
 
-    public IReadOnlyList<WorkItem> ListWorkItems(string? tenantId = null, string? caseId = null) =>
-        catalog.ListWorkItems(tenantId, caseId);
+    public IReadOnlyList<WorkItem> ListWorkItems(string? tenantId = null, string? caseId = null, string? workspaceId = null, bool activeOnly = false) =>
+        catalog.ListWorkItems(tenantId, caseId, workspaceId, activeOnly);
 
-    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(string? tenantId = null, string? caseId = null) =>
-        catalog.ListWorkItemSurfaces(tenantId, caseId);
+    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(string? tenantId = null, string? caseId = null, string? workspaceId = null, bool activeOnly = false) =>
+        catalog.ListWorkItemSurfaces(tenantId, caseId, workspaceId, activeOnly);
 
-    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(RuntimeActorContext actor, string? caseId = null) =>
-        catalog.ListWorkItemSurfaces(actor.TenantId, caseId)
+    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(RuntimeActorContext actor, string? caseId = null, string? workspaceId = null, bool activeOnly = false) =>
+        catalog.ListWorkItemSurfaces(actor.TenantId, caseId, workspaceId, activeOnly)
             .Select(item => AttachAdmission(item, actor))
             .ToArray();
 
@@ -125,27 +134,27 @@ public sealed class CanonicalOperationsApiService
 
     private WorkItem AttachAdmission(WorkItem workItem, RuntimeActorContext actor)
     {
-        if (workItem.Admission is not null)
-        {
-            return workItem;
-        }
-
         var definition = definitions.Resolve(workItem);
         var decision = StartAdmissionDecision(definition, actor, workItem.OwnerRole);
+        var surface = catalog.GetWorkItemSurface(workItem.WorkItemId);
+        var entry = EntryAdmissionFor(workItem, surface, definition, decision);
         return workItem with
         {
-            Admission = decision.ToContract(),
-            AdmissionDecisionRef = decision.AdmissionDecisionRef
+            Admission = workItem.Admission ?? decision.ToContract(),
+            AdmissionDecisionRef = FirstNonEmpty(workItem.AdmissionDecisionRef, decision.AdmissionDecisionRef),
+            BusinessTitle = entry.BusinessTitle,
+            BusinessSummary = entry.BusinessSummary,
+            LegalActions = entry.LegalActions,
+            AdmissionDecision = entry.AdmissionDecision,
+            NextAction = entry.NextAction,
+            CannotSubmitReason = entry.CannotSubmitReason,
+            ReadonlyReason = entry.ReadonlyReason,
+            SourceScenario = entry.SourceScenario
         };
     }
 
     private OperationsWorkItemSurface AttachAdmission(OperationsWorkItemSurface surface, RuntimeActorContext actor)
     {
-        if (surface.Admission is not null)
-        {
-            return surface;
-        }
-
         var workItem = new WorkItem(
             surface.WorkItemId,
             surface.WorkItemType,
@@ -167,13 +176,81 @@ public sealed class CanonicalOperationsApiService
             surface.BackupOwnerId,
             surface.EscalationOwnerRole,
             surface.RequiredEvidenceRefs,
-            surface.AffectedFactRefs);
+            surface.AffectedFactRefs,
+            surface.Admission,
+            surface.AdmissionDecisionRef,
+            surface.BusinessTitle,
+            surface.BusinessSummary,
+            surface.LegalActions,
+            surface.AdmissionDecision,
+            surface.NextAction,
+            surface.CannotSubmitReason,
+            surface.ReadonlyReason,
+            surface.SourceScenario);
         var admitted = AttachAdmission(workItem, actor);
         return surface with
         {
             Admission = admitted.Admission,
-            AdmissionDecisionRef = admitted.AdmissionDecisionRef
+            AdmissionDecisionRef = admitted.AdmissionDecisionRef,
+            BusinessTitle = admitted.BusinessTitle,
+            BusinessSummary = admitted.BusinessSummary,
+            LegalActions = admitted.LegalActions,
+            AdmissionDecision = admitted.AdmissionDecision,
+            NextAction = admitted.NextAction,
+            CannotSubmitReason = admitted.CannotSubmitReason,
+            ReadonlyReason = admitted.ReadonlyReason,
+            SourceScenario = admitted.SourceScenario
         };
+    }
+
+    private static EntryAdmissionFields EntryAdmissionFor(
+        WorkItem workItem,
+        OperationsWorkItemSurface? surface,
+        WorkItemDefinitionResolution definition,
+        AdmissionKernelDecision decision)
+    {
+        var title = surface?.Card?.Title ?? surface?.Workspace?.Title ?? Text(
+            FirstNonEmpty(workItem.WorkItemType, "住宿办理"),
+            FirstNonEmpty(workItem.WorkItemType, "Операция размещения"),
+            FirstNonEmpty(workItem.WorkItemType, "Жайгаштыруу иши"));
+        var summary = surface?.Workspace?.Summary ?? Text(
+            "从工作项进入办理；提交前由系统检查材料、权限和设备。",
+            "Откройте задачу; перед отправкой система проверит материалы, права и устройство.",
+            "Иш тапшырмасынан ачыңыз; жөнөтүүдөн мурун система материалдарды, укукту жана түзмөктү текшерет.");
+        var admissionDecision = AdmissionDecisionCode(decision);
+        var cannotSubmitReason = decision.ConfirmAllowed ? string.Empty : decision.Reason;
+        return new EntryAdmissionFields(
+            title,
+            summary,
+            new[]
+            {
+                new EntryLegalAction(
+                    "openWorkItem",
+                    Text("继续办理", "Продолжить", "Улантуу"),
+                    "operationPanel",
+                    decision.VisibleAllowed && decision.PrepareAllowed,
+                    false,
+                    admissionDecision,
+                    string.Empty),
+                new EntryLegalAction(
+                    "submitWorkItem",
+                    Text("提交办理", "Отправить", "Жөнөтүү"),
+                    "operationPanel",
+                    decision.VisibleAllowed && decision.ConfirmAllowed,
+                    true,
+                    admissionDecision,
+                    cannotSubmitReason)
+            },
+            admissionDecision,
+            decision.ConfirmAllowed
+                ? Text("继续填写并提交", "Заполнить и отправить", "Толтуруп жөнөтүү")
+                : Text("查看不能提交的原因", "Показать причину запрета отправки", "Жөнөтүүгө болбой турган себебин көрүү"),
+            cannotSubmitReason,
+            Text(
+                "入口只显示可做的下一步；提交必须通过办理页。",
+                "Вход показывает только допустимый следующий шаг; отправка выполняется на странице задачи.",
+                "Кирүү мыйзамдуу кийинки кадамды гана көрсөтөт; жөнөтүү иш барагында аткарылат."),
+            SourceScenarioFor(definition, workItem.WorkspaceId, PayloadValue(workItem.Payload, "cardId"), workItem.WorkItemType));
     }
 
     private AdmissionKernelDecision StartAdmissionDecision(
@@ -194,6 +271,87 @@ public sealed class CanonicalOperationsApiService
             null,
             Array.Empty<string>(),
             false);
+    }
+
+    private static string AdmissionDecisionCode(AdmissionKernelDecision decision)
+    {
+        if (!decision.VisibleAllowed)
+        {
+            return "visible_blocked";
+        }
+
+        if (!decision.PrepareAllowed)
+        {
+            return "visible_only";
+        }
+
+        if (!decision.ConfirmAllowed)
+        {
+            return "prepare_only_confirm_denied";
+        }
+
+        return decision.ProductionAllowed
+            ? "confirm_allowed_production_allowed"
+            : "confirm_allowed_production_blocked";
+    }
+
+    private static string SourceScenarioFor(
+        WorkItemDefinitionResolution definition,
+        string workspaceId,
+        string cardId,
+        string workItemType)
+    {
+        var text = string.Join(" ", definition.DefinitionId, definition.Definition?.SliceId, workspaceId, cardId, workItemType);
+        if (text.Contains("ResourceOperationStatus", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("operation", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.resource-operation-status";
+        }
+
+        if (text.Contains("ResourceSetup", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("ResourceReadiness", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("roomSetup", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("bedSetup", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.resource-basic-readiness";
+        }
+
+        if (text.Contains("RatePlan", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.product-and-rate";
+        }
+
+        if (text.Contains("Lead", StringComparison.OrdinalIgnoreCase) || text.Contains("Quote", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.inquiry-and-quote";
+        }
+
+        if (text.Contains("Reservation", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.reservation-and-inventory-hold";
+        }
+
+        if (text.Contains("Deposit", StringComparison.OrdinalIgnoreCase) || text.Contains("Payment", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.payment-deposit-and-guarantee";
+        }
+
+        if (text.Contains("CheckIn", StringComparison.OrdinalIgnoreCase) || text.Contains("Checkin", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.check-in-processing";
+        }
+
+        if (text.Contains("Stay", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.in-stay-management";
+        }
+
+        if (text.Contains("Checkout", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lodging.checkout-and-settlement";
+        }
+
+        return "lodging.unknown-entry";
     }
 
     public PrepareWorkItemResult? PrepareWorkItem(string workItemId, PrepareWorkItemRequest request) =>
@@ -240,7 +398,7 @@ public sealed class CanonicalOperationsApiService
         var effectiveCardId = FirstNonEmpty(request.CardId, PayloadValue(workItem.Payload, "cardId"), workItem.WorkItemType);
         var normalized = request.Normalize(workItemId, workItem.WorkspaceId, effectiveCardId);
         var caseId = FirstNonEmpty(workItem.CaseId, $"case-{workItem.TenantId}");
-        var fieldKeyFailure = ValidateFieldKeys(workItem.WorkItemId, normalized);
+        var fieldKeyFailure = ValidateFieldKeys(workItem, normalized);
         if (!string.IsNullOrWhiteSpace(fieldKeyFailure))
         {
             return ConfirmWorkItemResult.Rejected(
@@ -292,6 +450,26 @@ public sealed class CanonicalOperationsApiService
                 definition);
         }
 
+        var runtimeContextRequest = normalized with
+        {
+            FieldValues = FieldValuesWithRuntimeContext(normalized.FieldValues, workItem, actor)
+        };
+        var generatedRuleValidation = GeneratedCapabilityRuntimeRulePipeline.Validate(workItem, runtimeContextRequest, definition);
+        if (!generatedRuleValidation.Allowed)
+        {
+            return ConfirmWorkItemResult.GeneratedRuleRejected(
+                caseId,
+                workItem.WorkItemId,
+                normalized.SubmissionId,
+                normalized.IdempotencyKey,
+                generatedRuleValidation);
+        }
+
+        var validated = normalized with
+        {
+            FieldValues = FieldValuesWithoutRuntimeContext(generatedRuleValidation.FieldValues)
+        };
+
         var command = new OperationsCommandRequest(
             workItem.TenantId,
             caseId,
@@ -299,11 +477,11 @@ public sealed class CanonicalOperationsApiService
             ConfirmCommandType,
             "CommandEnvelope.v1",
             definition.DefinitionId,
-            normalized.IdempotencyKey!,
-            PayloadFor(workItem, normalized, actor, definition, admissionDecision, deviceTrust),
+            validated.IdempotencyKey!,
+            PayloadFor(workItem, validated, actor, definition, admissionDecision, deviceTrust),
             actor.ActorId,
             $"{workItem.TenantId}:{workItem.WorkItemId}:confirm",
-            normalized.SubmissionId,
+            validated.SubmissionId,
             requestId);
 
         var commit = unitOfWork.Commit(command);
@@ -321,12 +499,12 @@ public sealed class CanonicalOperationsApiService
             DispatchNextOperationWorkItem(
                 workItem,
                 definition,
-                normalized.FieldValues,
+                validated.FieldValues,
                 actor,
                 caseId);
         }
 
-        return ToConfirmResult(commit, normalized);
+        return ToConfirmResult(commit, validated);
     }
 
     private void DispatchNextOperationWorkItem(
@@ -353,7 +531,26 @@ public sealed class CanonicalOperationsApiService
             return;
         }
 
-        var nextCardId = UiRouteCardIdForDefinition(nextDefinition, nextDefinition.MigrationSourceCardId);
+        var nextCardId = RouteCardIdForRuntime(current.WorkspaceId, nextDefinition, nextDefinition.MigrationSourceCardId);
+        var nextPayload = new Dictionary<string, string>
+        {
+            ["caseId"] = caseId,
+            ["cardId"] = nextCardId,
+            ["definitionId"] = nextDefinition.DefinitionId,
+            ["definitionMigrationRefs"] = MigrationRefsJson(nextDefinition.MigrationRefs),
+            ["generatedTransitionPolicyId"] = transition.PolicyId,
+            ["generatedTransitionSource"] = transition.Source,
+            ["operationAxis"] = "DomainEvent -> GeneratedTransitionPolicy -> WorkItem",
+            ["sourceWorkItemId"] = current.WorkItemId,
+            ["ownerRole"] = ConfirmationPolicyCatalog.OwnerRoleForCard(nextCardId),
+            ["dispatchedBy"] = "generated_transition_policy"
+        };
+        foreach (var (key, value) in GeneratedTransitionPolicy.CarryForwardPayload(current, currentDefinition, fieldValues))
+        {
+            nextPayload[key] = value;
+        }
+        ApplyGeneratedTransitionRuntimeContext(nextPayload, nextDefinition);
+
         catalog.CreateWorkItem(new CreateWorkItemRequest(
             OperationsWorkItemIdFor(current.WorkspaceId, nextDefinition.DefinitionId),
             current.TenantId,
@@ -362,19 +559,57 @@ public sealed class CanonicalOperationsApiService
             current.WorkspaceId,
             nextCardId,
             ConfirmationPolicyCatalog.OwnerRoleForCard(nextCardId),
-            new Dictionary<string, string>
-            {
-                ["caseId"] = caseId,
-                ["cardId"] = nextCardId,
-                ["definitionId"] = nextDefinition.DefinitionId,
-                ["definitionMigrationRefs"] = MigrationRefsJson(nextDefinition.MigrationRefs),
-                ["generatedTransitionPolicyId"] = transition.PolicyId,
-                ["generatedTransitionSource"] = GeneratedTransitionPolicy.SourceContract,
-                ["operationAxis"] = "DomainEvent -> GeneratedTransitionPolicy -> WorkItem",
-                ["sourceWorkItemId"] = current.WorkItemId,
-                ["ownerRole"] = ConfirmationPolicyCatalog.OwnerRoleForCard(nextCardId),
-                ["dispatchedBy"] = "generated_transition_policy"
-            }));
+            nextPayload));
+    }
+
+    private static IReadOnlyDictionary<string, string> FieldValuesWithRuntimeContext(
+        IReadOnlyDictionary<string, string>? fieldValues,
+        WorkItem workItem,
+        RuntimeActorContext actor)
+    {
+        var values = new Dictionary<string, string>(
+            Dormitory13ScenarioRuntimeProjection.CanonicalizeSubmittedFieldValues(workItem, fieldValues),
+            StringComparer.Ordinal);
+        values["actorRole"] = actor.Role;
+        values["role"] = actor.Role;
+        values["actorId"] = actor.ActorId;
+        values["actorTenantId"] = actor.TenantId;
+        values["ownerRole"] = workItem.OwnerRole;
+        return values;
+    }
+
+    private static void ApplyGeneratedTransitionRuntimeContext(
+        IDictionary<string, string> payload,
+        WorkItemDefinition? nextDefinition)
+    {
+        if (nextDefinition is null)
+        {
+            return;
+        }
+
+        if (!IsFinanceGateDefinition(nextDefinition))
+        {
+            return;
+        }
+
+        payload["viaFinanceGate"] = "true";
+        payload["financeGateTask"] = "true";
+    }
+
+    private static bool IsFinanceGateDefinition(WorkItemDefinition definition) =>
+        new[] { "Dorm.FinanceGateConfirm", "Dorm.FinanceGateReturn" }
+            .Contains(definition.WorkItemType, StringComparer.OrdinalIgnoreCase) ||
+        definition.DefinitionId.Contains("financeGate", StringComparison.OrdinalIgnoreCase);
+
+    private static IReadOnlyDictionary<string, string> FieldValuesWithoutRuntimeContext(
+        IReadOnlyDictionary<string, string> fieldValues)
+    {
+        var values = new Dictionary<string, string>(fieldValues, StringComparer.Ordinal);
+        foreach (var key in new[] { "actorRole", "role", "actorId", "actorTenantId", "ownerRole" })
+        {
+            values.Remove(key);
+        }
+        return values;
     }
 
     private static string OperationsWorkItemIdFor(string workspaceId, string cardId) =>
@@ -388,6 +623,7 @@ public sealed class CanonicalOperationsApiService
         IReadOnlyList<DefinitionMigrationRef> migrationRefs,
         string caseId,
         RuntimeActorContext actor,
+        IReadOnlyList<WorkItem> workItems,
         IReadOnlyDictionary<string, string>? anchorPayload = null,
         string? anchorQuery = null)
     {
@@ -402,6 +638,14 @@ public sealed class CanonicalOperationsApiService
             ["startedByActorId"] = actor.ActorId
         };
         foreach (var (key, value) in DormitoryDirectStartContext(workspace.Id, templateWorkspaceId, cardId, actor, anchorPayload, anchorQuery))
+        {
+            payload[key] = value;
+        }
+        foreach (var (key, value) in DormitoryScenario2RuntimeProjection.StartContext(workspace.Id, templateWorkspaceId, cardId, actor, workItems, anchorPayload, anchorQuery))
+        {
+            payload[key] = value;
+        }
+        foreach (var (key, value) in Dormitory13ScenarioRuntimeProjection.StartContext(workspace.Id, templateWorkspaceId, cardId, actor, workItems, anchorPayload, anchorQuery))
         {
             payload[key] = value;
         }
@@ -435,6 +679,7 @@ public sealed class CanonicalOperationsApiService
             ["residentName"] = anchor.ResidentName,
             ["phone"] = anchor.Phone,
             ["buildingName"] = anchor.BuildingName,
+            ["buildingContextRef"] = $"building:{Slug(actor.TenantId)}:{Slug(anchor.BuildingName)}",
             ["roomNo"] = anchor.RoomNo,
             ["roomId"] = $"room-d02-22-{suffix}",
             ["bedNo"] = anchor.BedNo,
@@ -479,6 +724,15 @@ public sealed class CanonicalOperationsApiService
             ? definition.DefinitionId
             : routeCardId;
 
+    private static string RouteCardIdForRuntime(string workspaceId, WorkItemDefinition? definition, string fallbackCardId) =>
+        IsAcceptedCapabilityWorkspace(workspaceId) && !string.IsNullOrWhiteSpace(definition?.WorkItemType)
+            ? CurrentMainlineRouteCardId(definition.WorkItemType)
+            : UiRouteCardIdForDefinition(definition, fallbackCardId);
+
+    private static bool IsAcceptedCapabilityWorkspace(string workspaceId) =>
+        workspaceId.Equals(AcceptedCapabilityRuntimeProjection.WorkspaceId, StringComparison.OrdinalIgnoreCase) ||
+        workspaceId.StartsWith($"{AcceptedCapabilityRuntimeProjection.WorkspaceId}-", StringComparison.OrdinalIgnoreCase);
+
     private static string UiRouteCardIdForDefinition(WorkItemDefinition? definition, string fallbackCardId) =>
         definition?.DefinitionId switch
         {
@@ -487,6 +741,14 @@ public sealed class CanonicalOperationsApiService
             "definition.dormitory.resourceReadinessConfirm.v1" => "roomReadiness",
             _ => fallbackCardId
         };
+
+    private static string CurrentMainlineRouteCardId(string workItemType)
+    {
+        var suffix = workItemType.Split('.', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? string.Empty;
+        return string.IsNullOrWhiteSpace(suffix)
+            ? workItemType
+            : $"cert.{char.ToLowerInvariant(suffix[0])}{suffix[1..]}";
+    }
 
     private sealed record DormitoryAnchor(
         string Query,
@@ -812,7 +1074,7 @@ public sealed class CanonicalOperationsApiService
         PayloadValue(workItem.Payload, "correctionMode").Equals("append_only", StringComparison.OrdinalIgnoreCase) ||
         PayloadValue(workItem.Payload, "operationMode").Equals("correction", StringComparison.OrdinalIgnoreCase);
 
-    private string? ValidateFieldKeys(string workItemId, ConfirmWorkItemRequest request)
+    private string? ValidateFieldKeys(WorkItem workItem, ConfirmWorkItemRequest request)
     {
         var values = request.FieldValues ?? new Dictionary<string, string>();
         if (values.Count == 0)
@@ -820,7 +1082,7 @@ public sealed class CanonicalOperationsApiService
             return null;
         }
 
-        var prepared = catalog.PrepareWorkItem(workItemId, new PrepareWorkItemRequest(
+        var prepared = catalog.PrepareWorkItem(workItem.WorkItemId, new PrepareWorkItemRequest(
             request.WorkspaceId,
             request.CardId,
             request.SubmissionId,
@@ -840,8 +1102,39 @@ public sealed class CanonicalOperationsApiService
         {
             allowed.Add(key);
         }
+        foreach (var key in AcceptedCapabilityDerivedFieldKeys(request.WorkspaceId, request.CardId))
+        {
+            allowed.Add(key);
+        }
+        foreach (var key in AcceptedCapabilityCommandFieldKeys(request.WorkspaceId, workItem.WorkItemType))
+        {
+            allowed.Add(key);
+        }
         var unknown = values.Keys.FirstOrDefault(key => !allowed.Contains(key));
         return string.IsNullOrWhiteSpace(unknown) ? null : $"unknown_field_key:{unknown}";
+    }
+
+    private static IReadOnlyList<string> AcceptedCapabilityDerivedFieldKeys(string? workspaceId, string? cardId)
+    {
+        if (!IsAcceptedCapabilityWorkspace(workspaceId ?? string.Empty))
+        {
+            return Array.Empty<string>();
+        }
+
+        return AcceptedCapabilityRuntimeProjection.DerivedFieldKeys(cardId)
+            .Concat(GeneratedRuleSourceMapRuntimeAdapter.ReadonlyStableRefKeys)
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+    }
+
+    private static IReadOnlyList<string> AcceptedCapabilityCommandFieldKeys(string? workspaceId, string workItemType)
+    {
+        if (!IsAcceptedCapabilityWorkspace(workspaceId ?? string.Empty))
+        {
+            return Array.Empty<string>();
+        }
+
+        return GeneratedRuleSourceMapRuntimeAdapter.CommandFieldKeys(workItemType);
     }
 
     private static readonly string[] ReservedControlFieldKeys =
@@ -939,15 +1232,33 @@ public sealed class CanonicalOperationsApiService
             string.IsNullOrWhiteSpace(result.SubmissionId) ? null : $"/api/operations/trace/submissions/{Uri.EscapeDataString(result.SubmissionId)}");
     }
 
+    private static IReadOnlyDictionary<string, string> Text(string zh, string ru, string ky) =>
+        new Dictionary<string, string>
+        {
+            ["zh-CN"] = zh,
+            ["ru-RU"] = ru,
+            ["ky-KG"] = ky
+        };
+
     private static string FirstNonEmpty(params string?[] values) =>
         values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
+
+    private sealed record EntryAdmissionFields(
+        object BusinessTitle,
+        object BusinessSummary,
+        IReadOnlyList<EntryLegalAction> LegalActions,
+        string AdmissionDecision,
+        object NextAction,
+        string CannotSubmitReason,
+        object ReadonlyReason,
+        string SourceScenario);
 }
 
 public sealed record OperationsWorkspaceStartResult(
     WorkspaceProjection Workspace,
     OperationCase OperationCase,
-    WorkItem WorkItem,
-    IReadOnlyList<WorkItem> OperationWorkItems);
+    OperationsWorkItemSurface WorkItem,
+    IReadOnlyList<OperationsWorkItemSurface> OperationWorkItems);
 
 internal static class GeneratedTransitionPolicy
 {
@@ -958,12 +1269,19 @@ internal static class GeneratedTransitionPolicy
         new GeneratedTransitionRule(
             "generated-transition.dormitory.room-setup-to-bed-setup.v1",
             "definition.dormitory.roomSetupConfirm.v1",
-            "definition.dormitory.bedSetupConfirm.v1"),
+            "definition.dormitory.bedSetupConfirm.v1",
+            SourceContract,
+            null),
         new GeneratedTransitionRule(
             "generated-transition.dormitory.bed-setup-to-resource-readiness.v1",
             "definition.dormitory.bedSetupConfirm.v1",
-            "definition.dormitory.resourceReadinessConfirm.v1")
-    };
+            "definition.dormitory.resourceReadinessConfirm.v1",
+            SourceContract,
+            null)
+    }
+    .Concat(DormitoryScenario2RuntimeProjection.TransitionRules())
+    .Concat(Dormitory13ScenarioRuntimeProjection.TransitionRules())
+    .ToArray();
 
     public static GeneratedTransitionDecision? ResolveNext(
         WorkItem current,
@@ -977,16 +1295,188 @@ internal static class GeneratedTransitionPolicy
 
         var rule = Rules.FirstOrDefault(item =>
             item.FromDefinitionId.Equals(currentDefinition.DefinitionId, StringComparison.OrdinalIgnoreCase));
-        return rule is null
-            ? null
-            : new GeneratedTransitionDecision(rule.PolicyId, rule.NextDefinitionId, SourceContract);
+        if (rule is null || !ConditionSatisfied(rule.Condition, current, fieldValues))
+        {
+            return null;
+        }
+
+        return new GeneratedTransitionDecision(rule.PolicyId, rule.NextDefinitionId, rule.SourceContract);
+    }
+
+    public static IReadOnlyDictionary<string, string> CarryForwardPayload(
+        WorkItem current,
+        WorkItemDefinitionResolution currentDefinition,
+        IReadOnlyDictionary<string, string>? fieldValues)
+    {
+        var scenario1Payload = DormitoryScenario1CarryForwardPayload(current, currentDefinition, fieldValues);
+        if (scenario1Payload.Count > 0)
+        {
+            return scenario1Payload;
+        }
+
+        if (DormitoryScenario2RuntimeProjection.IsWorkspace(current.WorkspaceId))
+        {
+            return DormitoryScenario2RuntimeProjection.CarryForwardPayload(current, currentDefinition, fieldValues);
+        }
+
+        if (Dormitory13ScenarioRuntimeProjection.IsWorkspace(current.WorkspaceId))
+        {
+            return Dormitory13ScenarioRuntimeProjection.CarryForwardPayload(current, currentDefinition, fieldValues);
+        }
+
+        return new Dictionary<string, string>();
+    }
+
+    private static IReadOnlyDictionary<string, string> DormitoryScenario1CarryForwardPayload(
+        WorkItem current,
+        WorkItemDefinitionResolution currentDefinition,
+        IReadOnlyDictionary<string, string>? fieldValues)
+    {
+        var definitionId = currentDefinition.DefinitionId;
+        if (!definitionId.Equals("definition.dormitory.roomSetupConfirm.v1", StringComparison.OrdinalIgnoreCase) &&
+            !definitionId.Equals("definition.dormitory.bedSetupConfirm.v1", StringComparison.OrdinalIgnoreCase))
+        {
+            return new Dictionary<string, string>();
+        }
+
+        var carriedKeys = new[]
+        {
+            "buildingContextRef",
+            "floor",
+            "roomNo",
+            "normalizedRoomNo",
+            "roomStableRef",
+            "room.bedCount",
+            "bedCount",
+            "capacity",
+            "createdBedCount",
+            "bedSetVersion",
+            "bedSetStableRef",
+            "bedLabels",
+            "bedRemark",
+            "specialNotes",
+            "bedType",
+            "bedEnabledStatus",
+            "bedTypeBatchSetting",
+            "roomRef",
+            "roomReadinessStableRef",
+            "basicReadinessRef",
+            "basicReadinessStableRef",
+            "readinessSnapshotVersion"
+        };
+        var payload = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var key in carriedKeys)
+        {
+            PutIfPresent(payload, key, FirstNonEmpty(FieldValue(fieldValues, key), PayloadValue(current.Payload, key)));
+        }
+
+        var roomNo = FirstNonEmpty(Value(payload, "roomNo"), FieldValue(fieldValues, "roomRef"), PayloadValue(current.Payload, "roomRef"));
+        var bedCount = FirstNonEmpty(Value(payload, "bedCount"), Value(payload, "room.bedCount"), Value(payload, "capacity"), Value(payload, "createdBedCount"));
+        if (!string.IsNullOrWhiteSpace(roomNo))
+        {
+            payload["roomNo"] = roomNo;
+            PutIfPresent(payload, "normalizedRoomNo", NormalizeToken(roomNo));
+        }
+
+        if (!string.IsNullOrWhiteSpace(bedCount))
+        {
+            payload["bedCount"] = bedCount;
+            payload["room.bedCount"] = bedCount;
+            PutIfPresent(payload, "createdBedCount", bedCount);
+            PutIfPresent(payload, "bedLabels", BedLabels(bedCount));
+        }
+
+        var buildingContextRef = FirstNonEmpty(Value(payload, "buildingContextRef"), $"building:{NormalizeToken(current.TenantId)}:default");
+        PutIfPresent(payload, "buildingContextRef", buildingContextRef);
+        var roomStableRef = FirstNonEmpty(Value(payload, "roomStableRef"), StableRef("room", buildingContextRef, NormalizeToken(roomNo)));
+        PutIfPresent(payload, "roomStableRef", roomStableRef);
+        PutIfPresent(payload, "bedSetVersion", FirstNonEmpty(Value(payload, "bedSetVersion"), "1"));
+        PutIfPresent(payload, "bedSetStableRef", FirstNonEmpty(Value(payload, "bedSetStableRef"), StableRef("bed-set", roomStableRef, Value(payload, "bedSetVersion"))));
+        PutIfPresent(payload, "readinessSnapshotVersion", FirstNonEmpty(Value(payload, "readinessSnapshotVersion"), "1"));
+        var readinessRef = FirstNonEmpty(
+            Value(payload, "basicReadinessStableRef"),
+            Value(payload, "basicReadinessRef"),
+            Value(payload, "roomReadinessStableRef"),
+            StableRef("basic-readiness", roomStableRef, Value(payload, "readinessSnapshotVersion")));
+        PutIfPresent(payload, "basicReadinessRef", readinessRef);
+        PutIfPresent(payload, "basicReadinessStableRef", readinessRef);
+        PutIfPresent(payload, "roomReadinessStableRef", readinessRef);
+        PutIfPresent(payload, "baseReadySnapshotRef", readinessRef);
+
+        return payload;
+    }
+
+    private static void PutIfPresent(IDictionary<string, string> payload, string key, string value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            payload[key] = value;
+        }
+    }
+
+    private static string FieldValue(IReadOnlyDictionary<string, string>? fields, string key) =>
+        fields is not null && fields.TryGetValue(key, out var value) ? value : string.Empty;
+
+    private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key) =>
+        payload.TryGetValue(key, out var value) ? value : string.Empty;
+
+    private static string Value(IReadOnlyDictionary<string, string> payload, string key) =>
+        payload.TryGetValue(key, out var value) ? value : string.Empty;
+
+    private static string FirstNonEmpty(params string?[] values) =>
+        values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
+
+    private static bool ConditionSatisfied(
+        GeneratedTransitionCondition? condition,
+        WorkItem current,
+        IReadOnlyDictionary<string, string>? fieldValues)
+    {
+        if (condition is null || string.IsNullOrWhiteSpace(condition.FieldId))
+        {
+            return true;
+        }
+
+        var value = FirstNonEmpty(
+            FieldValue(fieldValues, condition.FieldId),
+            PayloadValue(current.Payload, condition.FieldId));
+        if (condition.Operator.Equals("equalsAny", StringComparison.OrdinalIgnoreCase))
+        {
+            return condition.Values.Any(item => item.Equals(value, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return false;
+    }
+
+    private static string StableRef(params string[] parts) =>
+        string.Join(":", parts.Where(item => !string.IsNullOrWhiteSpace(item)));
+
+    private static string NormalizeToken(string value) =>
+        string.IsNullOrWhiteSpace(value)
+            ? string.Empty
+            : new string(value.Trim().ToLowerInvariant().Select(ch => char.IsLetterOrDigit(ch) ? ch : '-').ToArray()).Trim('-');
+
+    private static string BedLabels(string bedCount)
+    {
+        return int.TryParse(bedCount, out var count) && count > 0
+            ? string.Join(", ", Enumerable.Range(1, count).Select(item => item.ToString("00")))
+            : string.Empty;
     }
 }
 
 internal sealed record GeneratedTransitionRule(
     string PolicyId,
     string FromDefinitionId,
-    string NextDefinitionId);
+    string NextDefinitionId,
+    string SourceContract,
+    GeneratedTransitionCondition? Condition);
+
+internal sealed record GeneratedTransitionCondition(
+    string ConditionId,
+    string FieldId,
+    string Operator,
+    IReadOnlyList<string> Values,
+    string WhenNotMet,
+    string SourceAuthorityRuleZh);
 
 internal sealed record GeneratedTransitionDecision(
     string PolicyId,

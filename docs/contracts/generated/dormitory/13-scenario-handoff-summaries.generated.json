@@ -1,0 +1,246 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-handoffSummaries.generated",
+  "version": "oam.dormitory-13-scenario-handoffSummaries.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:206a7609fdae45bdae06d121cf337ad49e02575acc296d975af6fecc12ccdd21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    }
+  ],
+  "sourceContentDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:d9f87c1f5d8179a16db7a4866cc6c143fcd204206038ec1cc4706064228addd2",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "summaries": [
+    {
+      "scenarioNo": 1,
+      "scenarioId": "lodging.resource-basic-readiness",
+      "nameZh": "房源建档与基础就绪",
+      "upstreamSummaryInputs": [],
+      "summaryOutputs": [
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要"
+      ],
+      "downstreamRuleZh": "下游只能读取上游完成摘要，不得要求用户重新填写已确认上游字段。"
+    },
+    {
+      "scenarioNo": 2,
+      "scenarioId": "lodging.resource-operation-status",
+      "nameZh": "房源运营就绪与状态维护",
+      "upstreamSummaryInputs": [
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要"
+      ],
+      "summaryOutputs": [
+        "运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护"
+      ],
+      "downstreamRuleZh": "下游只能读取上游完成摘要，不得要求用户重新填写已确认上游字段。"
+    },
+    {
+      "scenarioNo": 3,
+      "scenarioId": "lodging.product-and-rate",
+      "nameZh": "住宿商品与价格",
+      "upstreamSummaryInputs": [
+        "运营状态摘要"
+      ],
+      "summaryOutputs": [
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本和价格日历摘要"
+      ],
+      "downstreamRuleZh": "下游只能读取上游完成摘要，不得要求用户重新填写已确认上游字段。"
+    },
+    {
+      "scenarioNo": 4,
+      "scenarioId": "lodging.inquiry-and-quote",
+      "nameZh": "询价与报价",
+      "upstreamSummaryInputs": [
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本和价格日历摘要"
+      ],
+      "summaryOutputs": [
+        "询价摘要",
+        "报价单",
+        "报价版本",
+        "价格快照",
+        "有效期"
+      ],
+      "downstreamRuleZh": "下游只能读取上游完成摘要，不得要求用户重新填写已确认上游字段。"
+    },
+    {
+      "scenarioNo": 5,
+      "scenarioId": "lodging.reservation-and-inventory-hold",
+      "nameZh": "预订与库存锁定",
+      "upstreamSummaryInputs": [
+        "报价单",
+        "报价版本",
+        "价格快照",
+        "有效期"
+      ],
+      "summaryOutputs": [
+        "预订确认摘要",
+        "预订号",
+        "库存锁定历史"
+      ],
+      "downstreamRuleZh": "下游只能读取上游完成摘要，不得要求用户重新填写已确认上游字段。"
+    },
+    {
+      "scenarioNo": 6,
+      "scenarioId": "lodging.payment-deposit-and-guarantee",
+      "nameZh": "收款、押金与担保",
+      "upstreamSummaryInputs": [
+        "预订确认摘要",
+        "预订号",
+        "库存锁定历史"
+      ],
+      "summaryOutputs": [
+        "收款/押金/担保确认摘要",
+        "财务状态"
+      ],
+      "downstreamRuleZh": "下游只能读取上游完成摘要，不得要求用户重新填写已确认上游字段。"
+    },
+    {
+      "scenarioNo": 7,
+      "scenarioId": "lodging.check-in-processing",
+      "nameZh": "入住办理",
+      "upstreamSummaryInputs": [
+        "预订确认摘要",
+        "财务状态",
+        "房间摘要",
+        "床位组摘要"
+      ],
+      "summaryOutputs": [
+        "入住记录摘要",
+        "住客摘要",
+        "占用摘要",
+        "凭证摘要"
+      ],
+      "downstreamRuleZh": "下游只能读取上游完成摘要，不得要求用户重新填写已确认上游字段。"
+    },
+    {
+      "scenarioNo": 8,
+      "scenarioId": "lodging.in-stay-management",
+      "nameZh": "在住管理",
+      "upstreamSummaryInputs": [
+        "入住记录摘要",
+        "住客摘要",
+        "占用摘要",
+        "凭证摘要"
+      ],
+      "summaryOutputs": [
+        "在住状态",
+        "服务/异常/续住/换房换床摘要",
+        "退房准备"
+      ],
+      "downstreamRuleZh": "下游只能读取上游完成摘要，不得要求用户重新填写已确认上游字段。"
+    },
+    {
+      "scenarioNo": 9,
+      "scenarioId": "lodging.checkout-and-settlement",
+      "nameZh": "退房结算",
+      "upstreamSummaryInputs": [
+        "在住状态",
+        "财务状态",
+        "服务/异常/续住/换房换床摘要"
+      ],
+      "summaryOutputs": [
+        "退房确认摘要",
+        "结算意向",
+        "资源待恢复请求"
+      ],
+      "downstreamRuleZh": "下游只能读取上游完成摘要，不得要求用户重新填写已确认上游字段。"
+    },
+    {
+      "scenarioNo": 10,
+      "scenarioId": "lodging.cancel-noshow-refund-intake",
+      "nameZh": "取消、未到店与退款处理",
+      "upstreamSummaryInputs": [
+        "预订确认摘要",
+        "财务状态",
+        "库存锁定历史"
+      ],
+      "summaryOutputs": [
+        "取消/未到店摘要",
+        "退款/扣费申请",
+        "库存释放请求"
+      ],
+      "downstreamRuleZh": "下游只能读取上游完成摘要，不得要求用户重新填写已确认上游字段。"
+    },
+    {
+      "scenarioNo": 11,
+      "scenarioId": "lodging.housekeeping-maintenance-outofservice",
+      "nameZh": "房务、维修与停售协同",
+      "upstreamSummaryInputs": [
+        "房间摘要",
+        "运营状态摘要",
+        "在住状态",
+        "退房确认摘要"
+      ],
+      "summaryOutputs": [
+        "作业完成摘要",
+        "验收摘要",
+        "停售/恢复建议",
+        "费用意向"
+      ],
+      "downstreamRuleZh": "下游只能读取上游完成摘要，不得要求用户重新填写已确认上游字段。"
+    },
+    {
+      "scenarioNo": 12,
+      "scenarioId": "lodging.channel-corporate-customer",
+      "nameZh": "渠道与企业客户",
+      "upstreamSummaryInputs": [
+        "商品摘要",
+        "价格方案摘要",
+        "运营状态摘要"
+      ],
+      "summaryOutputs": [
+        "渠道摘要",
+        "企业客户摘要",
+        "协议资格",
+        "发布规则"
+      ],
+      "downstreamRuleZh": "下游只能读取上游完成摘要，不得要求用户重新填写已确认上游字段。"
+    },
+    {
+      "scenarioNo": 13,
+      "scenarioId": "lodging.reporting-audit-review",
+      "nameZh": "经营报表、审计与复盘",
+      "upstreamSummaryInputs": [
+        "房间摘要",
+        "运营状态摘要",
+        "商品摘要",
+        "报价单",
+        "预订确认摘要",
+        "财务状态",
+        "入住记录摘要",
+        "退房确认摘要",
+        "取消/未到店摘要",
+        "作业完成摘要",
+        "渠道摘要"
+      ],
+      "summaryOutputs": [
+        "报表快照",
+        "审计发现",
+        "复盘结论",
+        "行动计划"
+      ],
+      "downstreamRuleZh": "下游只能读取上游完成摘要，不得要求用户重新填写已确认上游字段。"
+    }
+  ]
+}

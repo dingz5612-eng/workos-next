@@ -1,0 +1,495 @@
+{
+  "version": "oam.dormitory.scenario1-benchmark-inheritance-source-authority.v1",
+  "status": "authoritative",
+  "manualEditAllowed": true,
+  "authorityId": "Dormitory.Scenario1BenchmarkInheritanceContract",
+  "nameZh": "场景 1 标杆继承合同",
+  "domain": "dormitory",
+  "contractRole": "execution_method_contract_under_13_scenario_control",
+  "scopeZh": "把场景包 1：房源建档与基础就绪沉淀为后续场景的执行方法标杆；只继承方法，不继承场景 1 的业务字段、对象、状态或证据要求。",
+  "authorityHierarchy": {
+    "highestBusinessAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+    "highestBusinessAuthorityId": "Dormitory.Operating13ScenarioControl",
+    "packageIndexRef": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+    "benchmarkImplementationRef": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+    "rules": [
+      "总控 Source Authority 是住宿经营 13 场景最高业务权威。",
+      "场景 1 是实现方法标杆，不是后续场景的业务规则总源。",
+      "后续场景只能从总控和本场景 Source Authority 获得业务规则。",
+      "本合同只提供执行方法、门禁、模板和证据组织方式。"
+    ],
+    "forbiddenHierarchyInterpretations": [
+      "不得把场景 1 写成最高权威。",
+      "不得让场景 1 覆盖总控 Source Authority。",
+      "不得从场景 1 复制 Room、BedSet、Bed、BasicReadiness 等业务对象到后续场景。"
+    ]
+  },
+  "inheritancePrinciples": [
+    {
+      "principleId": "method_only_not_business_source",
+      "ruleZh": "后续场景继承方法，不继承场景 1 的业务字段和对象。"
+    },
+    {
+      "principleId": "read_control_and_benchmark_before_start",
+      "ruleZh": "后续场景启动前必须读取总控、读取场景 1 标杆继承合同，并提交差异清单。"
+    },
+    {
+      "principleId": "difference_goes_to_scene_source_first",
+      "ruleZh": "差异必须先进入本场景 Source Authority，再生成合同。"
+    },
+    {
+      "principleId": "legacy_reference_only",
+      "ruleZh": "旧项目场景包只能作为迁移参考、内部 ID、历史映射或证据隔离对象，不得覆盖新设计。"
+    }
+  ],
+  "inheritableMethodItems": [
+    "开发顺序",
+    "Source Authority 优先",
+    "generated 不手改",
+    "runtime 只消费 generated",
+    "surface 只展示和提交合法动作",
+    "字段来源分类",
+    "CRUD 规则",
+    "页面动作组织",
+    "今日/工作项/搜索/我的入口规则",
+    "正向浏览器截图",
+    "反向浏览器截图",
+    "截图分析",
+    "无副作用证明",
+    "局部证据闭环"
+  ],
+  "forbiddenInheritanceItems": {
+    "businessObjects": [
+      "Room",
+      "BedSet",
+      "Bed",
+      "BasicReadiness"
+    ],
+    "businessFieldsOrConceptsZh": [
+      "房间号",
+      "床位数",
+      "床位 01..N",
+      "基础就绪字段",
+      "room.bedCount",
+      "bedNo[01..N]",
+      "房间建档字段",
+      "床位组确认字段",
+      "基础就绪确认字段"
+    ],
+    "businessEvidenceCopyForbiddenZh": [
+      "不得把场景 1 的房间照片、床位照片、基础检查证据要求照搬到财务、入住、报表等场景。",
+      "不得把场景 1 的证据必填项当作所有场景的证据必填项。"
+    ],
+    "surfaceCopyForbiddenZh": [
+      "不得把场景 1 的按钮和页面文案直接复用为后续业务。",
+      "不得把后续场景强行做成三步。",
+      "不得把后续场景标题写成房源建档与基础就绪。"
+    ],
+    "blockingRuleZh": "发现后续场景复制场景 1 的业务字段或对象，而不是继承方法，必须阻断。"
+  },
+  "subsequentScenarioStartGate": {
+    "appliesToScenarioNos": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+    "gateId": "dormitory.subsequent-scenario.start-gate.v1",
+    "requiredChecklist": [
+      "已读取总控 Source Authority。",
+      "已读取场景 1 标杆继承合同。",
+      "已确认本场景在 13 场景总索引中的位置。",
+      "已确认上游只读摘要。",
+      "已确认本场景唯一对象归属。",
+      "已确认禁止写入事项。",
+      "已提交与场景 1 的差异清单。",
+      "已确认是否涉及 finance-gate、库存、价格、运营状态、报表只读等高风险边界。"
+    ],
+    "blockingRuleZh": "任一启动清单项缺失，不得开始本场景开发。",
+    "requiredSourceReads": [
+      "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json"
+    ]
+  },
+  "differenceChecklistTemplate": {
+    "requiredSections": [
+      "对象差异",
+      "状态差异",
+      "字段差异",
+      "证据差异",
+      "财务差异",
+      "页面差异",
+      "测试差异"
+    ],
+    "objectDifferenceRequiredZh": "本场景写哪些对象，不写哪些对象。",
+    "stateDifferenceRequiredZh": "本场景产生哪些状态，不得越级产生哪些状态。",
+    "fieldDifferenceRequiredClasses": [
+      "用户填写",
+      "用户选择",
+      "上游只读带入",
+      "系统生成",
+      "系统计算",
+      "证据绑定",
+      "财务确认",
+      "内部审计"
+    ],
+    "evidenceDifferenceRequiredClasses": [
+      "必需证据",
+      "可后补证据",
+      "系统自动证据",
+      "内部审计证据"
+    ],
+    "financeDifferenceRequiredZh": "若涉及金额，必须声明只能产生 Intent、Draft、Request、Snapshot，或交给 finance-gate。",
+    "pageDifferenceRequiredZh": "本场景有哪些页面、按钮、入口和不可提交原因。",
+    "testDifferenceRequiredZh": "本场景正向、反向、无副作用测试如何覆盖。",
+    "blockingRulesZh": [
+      "差异清单为空必须阻断。",
+      "差异清单只复制场景 1 必须阻断。"
+    ]
+  },
+  "fieldReviewGate": {
+    "requiredColumns": [
+      "fieldKey",
+      "businessNameZh",
+      "source",
+      "editableByUser",
+      "displayMode",
+      "searchable",
+      "exportable",
+      "auditField"
+    ],
+    "allowedSources": [
+      "userFilled",
+      "userSelected",
+      "upstreamReadonly",
+      "systemGenerated",
+      "systemCalculated",
+      "evidenceBound",
+      "financeConfirmed",
+      "internalAudit"
+    ],
+    "forbiddenUserInputFields": [
+      "roomId",
+      "bedId",
+      "ratePlanId",
+      "quoteId",
+      "reservationId",
+      "stayId",
+      "paymentId",
+      "depositId",
+      "refundId",
+      "ledgerEntryId",
+      "stableRef",
+      "digest",
+      "projectionVersion",
+      "domainEventId"
+    ],
+    "internalIdExposureScanScope": [
+      "label",
+      "placeholder",
+      "表单字段",
+      "错误提示",
+      "提交 payload",
+      "截图报告"
+    ],
+    "businessDisplayRuleZh": "业务展示号可以展示和搜索，但内部引用必须由系统绑定，普通用户不得填写或记忆内部 ID。"
+  },
+  "uxAndButtonGate": {
+    "uxFiveQuestions": [
+      "用户是谁？",
+      "用户此刻要完成什么业务动作？",
+      "系统已经从上游带入了什么？",
+      "用户还缺什么？",
+      "下一步是什么，为什么现在能或不能提交？"
+    ],
+    "pageDisplayRequirements": [
+      "当前状态",
+      "已完成步骤",
+      "缺失项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "entryRules": {
+      "today": "今日只显示今日被动任务。",
+      "workItems": "工作项显示全量被动任务。",
+      "search": "搜索只读跳转，不得写事实。",
+      "mine": "我的只放草稿、收藏、个人跟进、导出、设置。"
+    },
+    "buttonRuleZh": "按钮必须按状态出现，不得所有状态都显示一个固定提交按钮。",
+    "blockingRulesZh": [
+      "页面像技术字段表单必须阻断。",
+      "入口职责混乱必须阻断。",
+      "按钮无状态必须阻断。"
+    ]
+  },
+  "failureAttributionRouting": [
+    {
+      "failureClass": "business_rule_missing",
+      "routeBackTo": "总控或本场景 Source Authority"
+    },
+    {
+      "failureClass": "field_source_wrong",
+      "routeBackTo": "字段矩阵"
+    },
+    {
+      "failureClass": "state_overreach",
+      "routeBackTo": "状态阶梯和对象归属"
+    },
+    {
+      "failureClass": "surface_action_confusing",
+      "routeBackTo": "surface 合同和 UX 五问"
+    },
+    {
+      "failureClass": "runtime_hardcoded",
+      "routeBackTo": "Source Authority 或 generated 合同"
+    },
+    {
+      "failureClass": "finance_overreach",
+      "routeBackTo": "finance-gate 边界"
+    },
+    {
+      "failureClass": "evidence_missing",
+      "routeBackTo": "证据策略"
+    },
+    {
+      "failureClass": "test_bypass",
+      "routeBackTo": "测试计划"
+    }
+  ],
+  "forbiddenFailureBypassZh": [
+    "不得手改 generated。",
+    "不得手改报告。",
+    "不得放宽测试脚本绕过失败。"
+  ],
+  "screenshotEvidenceTemplate": {
+    "requiredColumns": [
+      "场景编号",
+      "步骤编号",
+      "页面名称",
+      "用户动作",
+      "预期结果",
+      "实际结果",
+      "截图路径",
+      "问题",
+      "建议",
+      "是否闭环"
+    ],
+    "positiveCoverageZh": "正向截图必须覆盖完整主流程。",
+    "negativeCoverage": [
+      "缺字段",
+      "缺证据",
+      "重复提交",
+      "并发冲突",
+      "伪造内部 ID",
+      "越权操作",
+      "跨场景提前操作",
+      "搜索写事实",
+      "已确认事实原地编辑"
+    ],
+    "evidenceLayering": {
+      "singleScenario": "单场景只要求局部证据 PASS。",
+      "integrationStage": "阶段集成要求集成证据 PASS。",
+      "fullChainStage": "全链路阶段再要求 Evidence Root PASS。"
+    },
+    "rootEvidenceRuleZh": "不得要求每个小改动都完整重跑全链路 Evidence Root；任何进入集成闭环的变更必须最终纳入 Evidence Root。"
+  },
+  "globalReadonlyAndFinanceBoundaries": {
+    "searchDashboardReportReadonly": true,
+    "businessScenarioDirectLedgerWriteAllowed": false,
+    "financeTruthOwner": "finance-gate",
+    "businessScenarioAllowedFinanceOutputs": [
+      "Intent",
+      "Draft",
+      "Request",
+      "Snapshot"
+    ]
+  },
+  "scenario2StartGateTrial": {
+    "scenarioNo": 2,
+    "scenarioId": "lodging.resource-operation-status",
+    "nameZh": "房源运营就绪与状态维护",
+    "status": "trial_gate_only_no_business_feature_development",
+    "reads": [
+      "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json"
+    ],
+    "positionConfirmedIn13ScenarioIndex": true,
+    "upstreamReadonlySummaries": [
+      "房间摘要",
+      "床位组摘要",
+      "基础就绪摘要",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用"
+    ],
+    "ownedObjects": [
+      "OperationStatus",
+      "OperationBlocker"
+    ],
+    "methodInheritedFromScenario1": [
+      "Source Authority 优先",
+      "generated 不手改",
+      "字段来源分类",
+      "按钮按状态出现",
+      "正反向截图和无副作用证明"
+    ],
+    "businessFieldsNotInheritedFromScenario1": [
+      "Room",
+      "BedSet",
+      "Bed",
+      "BasicReadiness",
+      "房间号",
+      "床位数",
+      "床位 01..N",
+      "基础就绪字段"
+    ],
+    "differenceChecklist": {
+      "objectDifference": {
+        "writes": [
+          "OperationStatus",
+          "OperationBlocker"
+        ],
+        "doesNotWrite": [
+          "Room",
+          "BedSet",
+          "Bed",
+          "BasicReadiness",
+          "RatePlan",
+          "Quote",
+          "Reservation",
+          "LedgerEntry"
+        ]
+      },
+      "stateDifference": {
+        "produces": [
+          "可运营"
+        ],
+        "mustNotProduce": [
+          "基础就绪",
+          "可报价",
+          "可预订",
+          "价格生效",
+          "账务真值"
+        ]
+      },
+      "fieldDifference": {
+        "userFilled": [
+          "运营状态备注",
+          "阻断原因说明",
+          "恢复运营说明"
+        ],
+        "userSelected": [
+          "运营状态",
+          "阻断原因类型",
+          "是否采纳场景 11 作业建议"
+        ],
+        "upstreamReadonly": [
+          "房间摘要",
+          "床位组摘要",
+          "基础就绪摘要"
+        ],
+        "systemGenerated": [
+          "operationStatusRef",
+          "operationStatusVersion",
+          "domainEventId",
+          "projectionVersion"
+        ],
+        "systemCalculated": [
+          "是否可进入价格维护",
+          "是否存在未关闭阻断"
+        ],
+        "evidenceBound": [
+          "运营检查记录",
+          "恢复运营证明"
+        ],
+        "financeConfirmed": [],
+        "internalAudit": [
+          "stableRef",
+          "digest",
+          "domainEventId",
+          "projectionVersion"
+        ]
+      },
+      "evidenceDifference": {
+        "requiredEvidence": [
+          "运营状态确认记录"
+        ],
+        "supplementableEvidence": [
+          "恢复运营补充证明"
+        ],
+        "systemAutoEvidence": [
+          "场景 1 上游摘要读取记录",
+          "状态变更事件"
+        ],
+        "internalAuditEvidence": [
+          "摘要 digest",
+          "投影版本",
+          "操作者"
+        ]
+      },
+      "financeDifference": {
+        "involvesAmount": false,
+        "allowedFinanceOutputs": []
+      },
+      "pageDifference": {
+        "pages": [
+          "运营状态维护入口",
+          "运营状态确认页",
+          "阻断原因维护页",
+          "恢复运营确认页",
+          "运营状态摘要页"
+        ],
+        "buttons": [
+          "确认运营状态",
+          "登记阻断原因",
+          "恢复运营",
+          "查看摘要"
+        ],
+        "entryRules": [
+          "今日只显示今日待确认运营状态和待处理阻断任务。",
+          "工作项显示全部运营状态维护任务。",
+          "搜索只读跳转合法动作。",
+          "我的只放草稿、收藏、个人跟进、导出、设置。"
+        ],
+        "cannotSubmitReasons": [
+          "缺少场景 1 基础摘要",
+          "存在未关闭阻断原因",
+          "缺少运营状态确认记录",
+          "试图进入价格或预订"
+        ]
+      },
+      "testDifference": {
+        "positive": [
+          "读取场景 1 摘要后确认运营状态",
+          "登记阻断原因",
+          "采纳或拒绝场景 11 作业建议",
+          "恢复运营后查看摘要"
+        ],
+        "negative": [
+          "未读取场景 1 摘要直接确认运营状态",
+          "复制房间/床位/基础就绪字段",
+          "运营状态后直接进入价格或预订",
+          "搜索结果写事实",
+          "伪造内部 ID",
+          "重复提交",
+          "并发冲突"
+        ],
+        "noSideEffects": [
+          "任何失败不得写 DomainEvent、Outbox、Projection、Search、Dashboard、Ledger"
+        ]
+      }
+    },
+    "highRiskBoundaries": {
+      "financeGate": false,
+      "inventory": false,
+      "price": false,
+      "operationStatus": true,
+      "readonlyReport": false,
+      "mustNotEnterPriceOrReservation": true,
+      "scenario11WorkSuggestionOnly": true
+    }
+  },
+  "NO_GO": {
+    "businessFeatureDevelopmentAllowed": false,
+    "productionConfirmAllowed": false,
+    "businessGoLiveAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO",
+    "ruleZh": "本合同只建立后续场景执行门禁，不授予场景 2-13 功能开发、生产发布、业务上线或 final GO。"
+  }
+}

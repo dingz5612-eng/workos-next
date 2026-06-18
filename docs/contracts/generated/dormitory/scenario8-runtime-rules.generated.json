@@ -1,0 +1,367 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario8-runtimeRules.generated",
+  "version": "oam.dormitory-scenario8-runtimeRules.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario8-in-stay-management-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario8-in-stay-management-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:386e1d71aad403f143fa13b3e85a0842199d40113c2cd14efa418c41678ebacd",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "digest": "sha256:b871f26c8745b9497fdd18e7214b5577eed73c360d813f3c39f061372ae4f05f"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:b871f26c8745b9497fdd18e7214b5577eed73c360d813f3c39f061372ae4f05f",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario8.InStayManagement",
+  "scenarioPackageNo": 8,
+  "scenarioId": "lodging.in-stay-management",
+  "outputContentDigest": "sha256:1a49820168c96db35b2eb0179230bfbcd9fe233f81d5202ea9b50aaf547de82b",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "在住管理",
+  "businessGoalZh": "承接场景包 7 已确认入住后的只读入住摘要，在在住期间维护在住状态、入住凭证、续住申请、换房/换床申请、在住服务请求、在住异常记录，并为场景包 9 输出退房准备摘要。",
+  "sourceScenarioDigest": "sha256:b871f26c8745b9497fdd18e7214b5577eed73c360d813f3c39f061372ae4f05f",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario8.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "StayManagementCase",
+      "StayStatus",
+      "ResidentCurrentProfile",
+      "OccupancyStatus",
+      "AccessCredentialStatus",
+      "StayExtensionRequest",
+      "BedTransferRequest",
+      "ResidentServiceRequest",
+      "ResidentIncident",
+      "StayEvidence",
+      "StayStatusHistory"
+    ],
+    "searchReadModel": [
+      "在住管理",
+      "在住状态摘要",
+      "当前占用摘要",
+      "服务请求摘要",
+      "异常摘要",
+      "续住/换房换床结果",
+      "凭证状态",
+      "退房准备摘要",
+      "证据摘要",
+      "只读对象引用",
+      "在住状态",
+      "服务/异常/续住/换房换床摘要",
+      "退房准备"
+    ],
+    "noRefillRuleZh": "场景包 8 只能读取入住、住客、占用、凭证、协议、身份核验、财务、房源状态、价格和证据摘要，不得要求用户重新填写已确认入住字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "commands": [
+    {
+      "commandId": "Dorm.StayManagementContextView",
+      "businessNameZh": "查看在住上下文",
+      "writesObjects": []
+    },
+    {
+      "commandId": "Dorm.StayStatusChange",
+      "businessNameZh": "变更在住状态",
+      "writesObjects": [
+        "StayStatus",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ResidentServiceRequestRegister",
+      "businessNameZh": "登记服务请求",
+      "writesObjects": [
+        "ResidentServiceRequest",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ResidentServiceProgressUpdate",
+      "businessNameZh": "补充服务进度",
+      "writesObjects": [
+        "ResidentServiceRequest",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ResidentIncidentRegister",
+      "businessNameZh": "登记在住异常",
+      "writesObjects": [
+        "ResidentIncident",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ResidentIncidentClose",
+      "businessNameZh": "关闭在住异常",
+      "writesObjects": [
+        "ResidentIncident",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.StayExtensionRequestSubmit",
+      "businessNameZh": "发起续住申请",
+      "writesObjects": [
+        "StayExtensionRequest",
+        "StayChangeRequest",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.BedTransferRequestSubmit",
+      "businessNameZh": "发起换房/换床申请",
+      "writesObjects": [
+        "BedTransferRequest",
+        "StayChangeRequest",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.AccessCredentialStatusChange",
+      "businessNameZh": "变更入住凭证状态",
+      "writesObjects": [
+        "AccessCredentialStatus",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CheckoutPreparationSnapshotCreate",
+      "businessNameZh": "发起退房准备",
+      "writesObjects": [
+        "StayChangeRequest",
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.StayManagementCorrectionRequest",
+      "businessNameZh": "在住管理纠错入口",
+      "writesObjects": [
+        "StayEvidence",
+        "StatusHistory"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "no_effective_stay",
+      "messageZh": "没有有效入住记录，不能进入在住管理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "stay_already_checked_out",
+      "messageZh": "该入住已结束，不能登记在住期间业务。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "current_occupancy_required",
+      "messageZh": "缺少当前房间/床位占用摘要，不能处理在住管理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "target_bed_occupied",
+      "messageZh": "目标床位当前已占用，不能发起换房/换床。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "target_resource_unavailable",
+      "messageZh": "目标房间或床位当前不可用，不能作为换房/换床目标。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "target_resource_blocked_for_transfer",
+      "messageZh": "目标房间或床位处于维修、停售、暂停或异常状态，不能换入。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "extension_date_invalid",
+      "messageZh": "新计划离店日期必须晚于当前计划离店日期。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "extension_finance_requires_finance_gate",
+      "messageZh": "续住涉及费用时只能生成财务准备，不能在在住管理中直接收款或写账。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "service_finance_write_forbidden",
+      "messageZh": "服务请求不能直接生成支出、收款或账务。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "incident_refund_forbidden",
+      "messageZh": "异常记录不能直接退款、改账或退房。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "high_risk_incident_review_required",
+      "messageZh": "高风险异常必须提交负责人复核并绑定审批证据。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "credential_without_effective_stay_forbidden",
+      "messageZh": "无有效入住不得发放、补发或恢复有效凭证。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "credential_after_checkout_forbidden",
+      "messageZh": "退房后不得保持或恢复有效入住凭证。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "checkout_preparation_release_forbidden",
+      "messageZh": "退房准备不能直接退房结算、退款或释放房源。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用不匹配，请从页面重新选择住客、入住记录、房间/床位或凭证。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_result_write_attempt",
+      "messageZh": "查询、搜索、列表、看板、报表只读，不能在这里写入在住事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_in_stay_submission",
+      "messageZh": "该在住管理提交已处理，系统将返回原处理结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_occupancy_conflict",
+      "messageZh": "房间/床位占用状态已变化，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "confirmed_fact_inline_edit_forbidden",
+      "messageZh": "已确认在住事实不能原地覆盖，只能补充证据、追加进度、状态变更、负责人复核或纠错。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "unauthorized_in_stay_action",
+      "messageZh": "当前角色不能执行该在住管理动作。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "cross_scenario_checkout_refund_ledger_forbidden",
+      "messageZh": "在住管理不能直接收款、退款、退房结算、释放房源或写账。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "invariants": [
+    "有效在住必须绑定一个有效 Stay 和一个当前占用房间/床位。",
+    "同一床位同一时间只能有一个有效在住占用。",
+    "换房/换床必须释放原床位占用并绑定新床位占用，但不得覆盖原入住事实；必须追加 OccupancyChanged 变更记录。",
+    "续住必须校验日期、房源状态、价格/财务条件，但不得直接收款或写账。",
+    "门禁/凭证状态必须跟随有效入住和有效占用；退房后不得保持有效凭证。",
+    "退房准备只输出退房准备摘要，不得生成退房、退款、结算、账务或房源释放。",
+    "正常在住不等于已结清。",
+    "退房待准备不等于已退房。",
+    "换房/换床不等于重新入住。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。",
+    "失败路径不得改变占用、不得生成退房、不得写账。",
+    "失败路径不得写非法 Occupancy、Checkout、Payment、Deposit、Refund、Ledger，不得刷新错误 Projection、Search、Dashboard。"
+  ],
+  "stayStatusOptions": [
+    "正常在住",
+    "待跟进",
+    "服务处理中",
+    "异常待处理",
+    "续住待确认",
+    "换房/换床待确认",
+    "凭证待处理",
+    "退房待准备"
+  ],
+  "inStayInvariantRule": {
+    "effectiveStayRequired": true,
+    "currentOccupancyRequired": true,
+    "singleActiveOccupancyPerBedAtSameTime": true,
+    "transferAppendOnlyOccupancyChanged": true,
+    "transferReleasesOldAndBindsNewOnSuccess": true,
+    "extensionDateMustBeLaterThanCurrentCheckout": true,
+    "extensionFinanceHandledByFinanceGateOnly": true,
+    "credentialRequiresEffectiveStayAndOccupancy": true,
+    "checkoutAfterCredentialMustNotRemainActive": true,
+    "checkoutPreparationNotCheckoutSettlement": true,
+    "failureNoSideEffects": true
+  },
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "enter-in-stay-management": [
+        "有效入住摘要证据",
+        "当前占用摘要证据"
+      ],
+      "maintain-stay-status": [
+        "沟通记录",
+        "现场记录",
+        "住客确认"
+      ],
+      "resident-service-request": [
+        "照片",
+        "语音/文字记录",
+        "完成证据"
+      ],
+      "resident-incident-record": [
+        "异常证据",
+        "处理记录",
+        "审批记录"
+      ],
+      "stay-extension-request": [
+        "住客确认",
+        "续住沟通记录"
+      ],
+      "bed-transfer-request": [
+        "住客确认",
+        "换房/换床审批记录"
+      ],
+      "access-credential-management": [
+        "领取/归还确认记录",
+        "凭证异常记录"
+      ],
+      "checkout-preparation": [
+        "退房准备沟通记录",
+        "未闭环事项摘要"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "businessRuntimeMayWriteLedger": false,
+    "businessRuntimeMayWritePaymentDepositRefund": false,
+    "businessRuntimeMayWriteCheckoutSettlement": false,
+    "businessRuntimeMayReleaseRoom": false,
+    "failurePathBusinessSideEffectsAllowed": false,
+    "successMayWriteInStayFactsOnly": true
+  }
+}

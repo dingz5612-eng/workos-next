@@ -1,0 +1,203 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario11-handoff.generated",
+  "version": "oam.dormitory-scenario11-handoff.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario11-housekeeping-maintenance-outofservice-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario11-housekeeping-maintenance-outofservice-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:a174cf7da149c4f0ef295ed0b5c70d09a6358bc54a27fb161d62185dceb59ea4",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "digest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+  "scenarioPackageNo": 11,
+  "scenarioId": "lodging.housekeeping-maintenance-outofservice",
+  "outputContentDigest": "sha256:4ca2a55e158d0c419435e5464609b688785570c96eb6dce724b54c8ad45df3c7",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "房务、维修与停售协同",
+  "businessGoalZh": "承接场景包 2 的运营阻断、场景包 8 的在住服务请求、场景包 9 的退房资源待恢复、场景包 10 的释放后待处理资源，完成保洁、维修、检查、停售申请、恢复建议、作业证据和任务闭环。",
+  "sourceScenarioDigest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario11.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "ServiceWorkCase",
+      "HousekeepingTask",
+      "MaintenanceTask",
+      "InspectionTask",
+      "OutOfServiceRequest",
+      "WorkAssignment",
+      "WorkAssignee",
+      "WorkSchedule",
+      "WorkCompletion",
+      "WorkCompletionEvidence",
+      "WorkVerification",
+      "WorkVerificationResult",
+      "RecoveryRecommendation",
+      "ExpenseIntent",
+      "TaskEvidence",
+      "StatusHistory",
+      "WorkStatusHistory"
+    ],
+    "searchReadModel": [
+      "房务、维修与停售协同",
+      "房务/维修完成摘要",
+      "验收摘要",
+      "停售建议",
+      "恢复运营建议",
+      "费用意向",
+      "作业证据摘要",
+      "状态历史",
+      "只读对象引用",
+      "作业完成摘要",
+      "停售/恢复建议"
+    ],
+    "noRefillRuleZh": "场景包 11 只能读取上游摘要，不得要求用户重新填写场景包 2、8、9、10 已确认字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "upstream": {
+    "allowedSourcePackageNos": [
+      2,
+      8,
+      9,
+      10
+    ],
+    "requiredReadonlyInputs": [
+      "运营阻断摘要",
+      "阻断原因",
+      "预计恢复时间",
+      "在住服务请求",
+      "服务请求摘要",
+      "异常摘要",
+      "退房待恢复请求",
+      "资源待恢复请求",
+      "取消释放资源摘要",
+      "库存释放请求",
+      "房间/床位",
+      "影响范围",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "legalSourceRequiredZh": "没有运营阻断、在住服务请求、退房待恢复、取消释放后待处理、人工巡检或负责人批准，不得创建正式房务/维修作业。",
+    "upstreamWriteBackAllowed": false,
+    "mustNotRequireRefillZh": "场景包 11 只能读取上游摘要，不得要求用户重新填写场景包 2、8、9、10 已确认字段。"
+  },
+  "downstream": {
+    "allowedConsumers": [
+      {
+        "consumerPackageNo": 2,
+        "consumerPackageNameZh": "房源运营就绪与状态维护",
+        "allowedReadOutputs": [
+          "停售建议",
+          "恢复运营建议",
+          "验收摘要",
+          "作业证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "场景包 2 只能读取停售或恢复建议后重新确认运营状态；场景包 11 不拥有最终运营状态权威。"
+      },
+      {
+        "consumerPackageNo": 8,
+        "consumerPackageNameZh": "在住管理",
+        "allowedReadOutputs": [
+          "房务/维修完成摘要",
+          "验收摘要",
+          "作业证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "ruleZh": "场景包 8 只能读取作业结果更新在住服务请求进度，不得把作业结果解释为收款、退款或退房事实。"
+      },
+      {
+        "consumerPackageNo": 9,
+        "consumerPackageNameZh": "退房结算",
+        "allowedReadOutputs": [
+          "房务/维修完成摘要",
+          "验收摘要",
+          "恢复运营建议",
+          "作业证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "场景包 9 只能读取退房后恢复进度，不得绕过场景包 2 确认可运营。"
+      },
+      {
+        "consumer": "finance-gate",
+        "allowedReadOutputs": [
+          "费用意向",
+          "费用依据",
+          "供应商凭证",
+          "作业证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "finance-gate 或支出治理只能读取费用意向后处理财务事实；场景包 11 不写 Payment、Refund、LedgerEntry 或 LedgerTransaction。"
+      },
+      {
+        "consumerPackageNo": 13,
+        "consumerPackageNameZh": "经营看板与复盘",
+        "allowedReadOutputs": [
+          "房务/维修完成摘要",
+          "停售建议",
+          "恢复运营建议",
+          "费用意向",
+          "作业证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "ruleZh": "看板和复盘只读，不得写作业、运营状态、库存、财务或账务事实。"
+      }
+    ],
+    "handoffOutputs": [
+      "房务/维修完成摘要",
+      "验收摘要",
+      "停售建议",
+      "恢复运营建议",
+      "费用意向",
+      "作业证据摘要",
+      "状态历史",
+      "只读对象引用"
+    ],
+    "forbiddenOutputsZh": [
+      "RoomOperationStatus=可运营",
+      "Reservation",
+      "Stay",
+      "Payment",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction",
+      "已可运营",
+      "已可预订",
+      "已入账",
+      "已退款"
+    ],
+    "downstreamRecheckRuleZh": "场景包 11 只输出作业完成摘要、验收摘要、停售建议、恢复运营建议、费用意向、作业证据摘要、状态历史和只读对象引用；场景包 2 必须重新做运营状态确认，finance-gate 或支出治理处理费用事实。"
+  },
+  "readSideOutputs": [
+    "房务/维修完成摘要",
+    "验收摘要",
+    "停售建议",
+    "恢复运营建议",
+    "费用意向",
+    "作业证据摘要",
+    "状态历史",
+    "只读对象引用"
+  ],
+  "downstreamRecheckRuleZh": "场景包 11 只输出作业完成摘要、验收摘要、停售建议、恢复运营建议、费用意向、作业证据摘要、状态历史和只读对象引用；场景包 2 必须重新做运营状态确认，finance-gate 或支出治理处理费用事实。"
+}

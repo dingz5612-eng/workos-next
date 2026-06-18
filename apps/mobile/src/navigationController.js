@@ -1,12 +1,23 @@
-import { fetchSearchResults, recordMobileClientEvent, startOperationsWorkspace } from "./apiClient.js";
+import { fetchOperationWorkItem, fetchSearchResults, recordMobileClientEvent, startOperationsWorkspace } from "./apiClient.js";
 import { searchPreferenceKey } from "./appState.js";
-import { applyRuntimeSearchResults, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
+import { applyRuntimeSearchResults, applyRuntimeSurfacePayloads, normalizeQuery } from "./runtime/runtimeStore.js";
 import { selectWorkspaceById } from "./selectors/surfaceSelectors.js";
 import { evaluateSurfaceAccess } from "./surfaceGuard.js";
 import { safeConfirmErrorKey, safeReasonCode } from "./admissionSurface.js";
 import { defaultHomeForCurrentSurface as resolveDefaultHomeForCurrentSurface } from "./surfaceResolver.js";
 import { resolveOperationPanelTarget } from "./operationRouteResolver.js";
 import { resolveSearchIntentId } from "./searchIntentRegistry.js";
+import { DORMITORY_MAINLINE_WORKSPACE_ID } from "./capabilityProjection.js";
+
+const relocalizedOperationMessageKeys = [
+  "draftSaved",
+  "apiOffline",
+  "apiOfflineSubmit",
+  "submitting",
+  "submitDone",
+  "submitProjectionPending",
+  "submitProjectionFailed"
+];
 
 export function setView(view, ctx) {
   if (!ctx.state.currentActor && view !== "login") {
@@ -31,8 +42,10 @@ export function setView(view, ctx) {
 }
 
 export function setLang(lang, ctx) {
+  const transientMessageKey = transientOperationMessageKey(ctx);
   ctx.state.lang = lang;
   localStorage.setItem("workosnext.lang", lang);
+  if (transientMessageKey) ctx.state.operationMessage = ctx.tr(transientMessageKey);
   syncUrlFromState(ctx);
   ctx.render();
 }
@@ -101,6 +114,7 @@ export function openOperationPanel(workItemId, ctx, fallback = {}) {
   ctx.state.selectedCardId = selected.cardId || fallback.cardId || ctx.state.selectedCardId || "";
   ctx.state.selectedCardIndex = -1;
   setView("operationPanel", ctx);
+  void hydrateSelectedOperationWorkItemDetail(ctx, selected.workItemId);
   return target;
 }
 
@@ -122,17 +136,18 @@ export async function runSearch(ctx, explicitQuery = null) {
     rememberSearch(ctx, ctx.state.query);
     void recordSearchIntentEvent(ctx, ctx.state.query);
   }
+  ctx.state.view = "search";
+  syncUrlFromState(ctx);
+  ctx.render(true);
   if (ctx.state.apiStatus === "online") {
     try {
       const query = ctx.state.query;
-      const results = await fetchSearchResults(query);
+      const results = await fetchSearchResults(query, ctx.state.lang);
       if (ctx.state.searchRequestId !== requestId) return;
       applyRuntimeSearchResults(ctx.state, query, results);
       const operationItems = operationWorkItemsFromSearchResults(results);
       if (operationItems.length) {
-        applyRuntimeSurfacePayloads(ctx.state, {
-          operationWorkItems: mergeOperationWorkItems(ctx.state.runtimeStore?.operationWorkItems || [], operationItems)
-        });
+        applyRuntimeSurfacePayloads(ctx.state, { operationWorkItems: operationItems });
       }
     } catch {
       // Projection fallback remains available through surface selectors.
@@ -142,6 +157,19 @@ export async function runSearch(ctx, explicitQuery = null) {
   ctx.state.view = "search";
   syncUrlFromState(ctx);
   ctx.render(true);
+}
+
+export async function runSearchFromCurrentUrlIfNeeded(ctx) {
+  if (!shouldAutoRunSearchFromUrl(ctx?.state)) return false;
+  await runSearch(ctx, ctx.state.query);
+  return true;
+}
+
+export function shouldAutoRunSearchFromUrl(state = {}) {
+  const query = String(state.query || "").trim();
+  if (!state.currentActor || state.view !== "search" || !query) return false;
+  const cache = state.runtimeStore?.searchResultsByQuery || {};
+  return !Object.prototype.hasOwnProperty.call(cache, normalizeQuery(query));
 }
 
 function rememberSearch(ctx, query) {
@@ -194,16 +222,6 @@ function operationWorkItemsFromSearchResults(results = []) {
       },
       source: "search-kernel-operations"
     }));
-}
-
-function mergeOperationWorkItems(existing = [], incoming = []) {
-  const byId = new Map();
-  for (const item of [...incoming, ...existing]) {
-    const id = item.workItemId || item.work_item_id || "";
-    if (!id || byId.has(id)) continue;
-    byId.set(id, item);
-  }
-  return Array.from(byId.values());
 }
 
 function localizedSearchValue(value) {
@@ -293,7 +311,39 @@ function handleStartWorkspaceError(error, ctx) {
   ctx.state.operationMessage = ctx.tr("apiOffline");
 }
 
-function latestStartedWorkspaceId(projection = {}, templateWorkspaceId = "W-STAY-RESOURCE") {
+async function hydrateSelectedOperationWorkItemDetail(ctx, workItemId = "") {
+  if (!workItemId || !ctx.state.currentActor) return;
+  const selected = selectedOperationWorkItemForDetail(ctx.state, workItemId);
+  if (!operationWorkItemNeedsDetail(selected)) return;
+  try {
+    const detail = await fetchOperationWorkItem(workItemId);
+    if ((ctx.state.selectedWorkItemId || "") !== workItemId) return;
+    applyRuntimeSurfacePayloads(ctx.state, { operationWorkItems: [detail] });
+    ctx.render(true);
+  } catch {
+    // Opening the operation panel remains possible from the lightweight item;
+    // submit-time runtime checks still protect the business boundary.
+  }
+}
+
+function selectedOperationWorkItemForDetail(state = {}, workItemId = "") {
+  const items = [
+    ...(state.runtimeStore?.operationWorkItems || []),
+    ...(state.runtimeStore?.workQueue || [])
+  ];
+  return items.find((item) => (item.workItemId || item.work_item_id || "") === workItemId) || null;
+}
+
+function operationWorkItemNeedsDetail(item = null) {
+  if (!item) return true;
+  const card = item.card || null;
+  const cardEvidence = Array.isArray(card?.evidence) ? card.evidence : [];
+  const workspaceCard = item.workspace?.cards?.find((candidate) => candidate.id === (item.cardId || item.card_id || item.payload?.cardId));
+  const workspaceEvidence = Array.isArray(workspaceCard?.evidence) ? workspaceCard.evidence : [];
+  return !card || (cardEvidence.length === 0 && workspaceEvidence.length === 0);
+}
+
+function latestStartedWorkspaceId(projection = {}, templateWorkspaceId = DORMITORY_MAINLINE_WORKSPACE_ID) {
   return (projection.workspaces || projection.Workspaces || [])
     .filter((workspace) => String(workspace.id || workspace.Id || "").startsWith(`${templateWorkspaceId}-`))
     .map((workspace) => workspace.id || workspace.Id)
@@ -394,6 +444,12 @@ function clearTransientOperationMessage(ctx) {
   if (transient.includes(message) || offlineCopy.test(message)) {
     ctx.state.operationMessage = "";
   }
+}
+
+function transientOperationMessageKey(ctx) {
+  const message = String(ctx.state.operationMessage || "");
+  if (!message) return "";
+  return relocalizedOperationMessageKeys.find((key) => message === ctx.tr(key)) || "";
 }
 
 function clearOperationStateOutsideRuntimeSurface(ctx, view) {

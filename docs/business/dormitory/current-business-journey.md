@@ -1,6 +1,8 @@
 # 宿舍当前业务旅程
 
-本文是宿舍业务的人读入口，只解释当前 OAM 已生效的业务主线。机器权威仍以 `docs/scenarios/dormitory/golden-pilot.yml`、`docs/business/dormitory/value-streams.yml`、`docs/business/dormitory/workitem-catalog.yml`、`docs/business/dormitory/scenario-field-contract.yml`、`docs/business/dormitory/evidence-coverage-contract.yml` 和 `docs/business/dormitory/ledger-posting-contract.yml` 为准。
+本文是宿舍业务的人读入口，只解释当前 OAM 已生效的业务主线，不定义业务事实权威。当前机器权威只来自 `docs/business/domains/dormitory/dormitory-operating-kernel.json`、`docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml` 和 `docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml`。
+
+`docs/scenarios/dormitory/golden-pilot.yml`、旧 catalog、旧 seed、generated view、dashboard、search、surface 只能作为 derived / reference / readonly view，不能反向覆盖 Source。
 
 ## 权威边界
 
@@ -79,7 +81,8 @@
 
 ## 当前验收入口
 
-- 业务场景：`docs/scenarios/dormitory/golden-pilot.yml`
+- Source 场景包：`docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml`
+- 旧业务场景参考视图：`docs/scenarios/dormitory/golden-pilot.yml`
 - 业务旅程：`docs/business/dormitory/value-streams.yml`
 - 工作项目录：`docs/business/dormitory/workitem-catalog.yml`
 - 字段合同：`docs/business/dormitory/scenario-field-contract.yml`

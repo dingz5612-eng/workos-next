@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { renderSurface, source, visibleText } from "./surfaceContractTestHelpers.js";
+import { DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS } from "../capabilityProjection.js";
 
 describe("SURFACE-C Today Mission Control contract", () => {
   it("renders Today as shell title, compact overview, and concrete work items only", () => {
@@ -59,8 +60,8 @@ describe("SURFACE-C Today Mission Control contract", () => {
   it("does not count system-bound submit checks as missing evidence on Home", () => {
     const text = visibleText(renderSurface("home"));
 
-    expect(text).toContain("缺材料/缺证据 0");
-    expect(text).not.toContain("有办理项缺少可信证据");
+    expect(text).toContain("缺证据 0");
+    expect(text).not.toContain("有办理项缺少办理材料");
     expect(text).not.toContain("已有可办理任务等待处理");
   });
 
@@ -86,7 +87,9 @@ describe("SURFACE-C Today Mission Control contract", () => {
     expect((html.match(/class="today-scenario-card/g) || []).length).toBeLessThanOrEqual(1);
     expect(html).not.toContain("workspace-card-strip");
     expect(html).not.toContain('data-workspace="W-STAY-RESOURCE"');
-    expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
+    expect(html).toContain('data-work-item-id="wi-dorm-room-setup"');
+    expect(html).toContain(`data-workspace-id="${DORMITORY_MAINLINE_WORKSPACE_ID}"`);
+    expect(html).toContain(`data-card-id="${DORMITORY_SCENARIO1_STEPS[0].cardId}"`);
     expect(html).not.toContain("进入办理面");
     expect(html).not.toContain('data-surface="action-decision-card"');
   });
@@ -126,17 +129,17 @@ describe("SURFACE-C Today Mission Control contract", () => {
 function sourceRuntimeStoreWithoutWorkItems() {
   return {
     workspaces: [{
-      id: "W-STAY-RESOURCE",
+      id: DORMITORY_MAINLINE_WORKSPACE_ID,
       domain: "stay",
-      caseId: "case:W-STAY-RESOURCE",
-      title: { "zh-CN": "我要创建住宿资源" },
-      summary: { "zh-CN": "房间床位入住资源" },
-      next: { "zh-CN": "先配置房间和床位" },
+      caseId: `case:${DORMITORY_MAINLINE_WORKSPACE_ID}`,
+      title: { "zh-CN": "新建房间和床位" },
+      summary: { "zh-CN": "房间建档、确认床位信息和完成基础检查" },
+      next: { "zh-CN": "开始新建房间和床位" },
       blockers: [],
       cards: [{
-        id: "roomSetup",
+        id: DORMITORY_SCENARIO1_STEPS[0].cardId,
         status: "ready",
-        title: { "zh-CN": "房间配置卡" },
+        title: { "zh-CN": "填写房间信息" },
         fields: { business: [], system: [], analytics: [] },
         evidence: [],
         checks: [],

@@ -1,0 +1,111 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario10-crudPolicy.generated",
+  "version": "oam.dormitory-scenario10-crudPolicy.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario10-cancel-noshow-refund-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario10-cancel-noshow-refund-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:dcf41b54839e673cf20fdce8624cfcdcb96b2d4e00587daf264cf1548990751c",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "digest": "sha256:64a4732f01f0d570eb336b2744aad0bfa475db887d30917d7c07a369b2f26de0"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:64a4732f01f0d570eb336b2744aad0bfa475db887d30917d7c07a369b2f26de0",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario10.CancelNoShowRefund",
+  "scenarioPackageNo": 10,
+  "scenarioId": "lodging.cancel-noshow-refund-intake",
+  "outputContentDigest": "sha256:299feca20ec3e187fcfa82f3b713138e8c8e62e53d40312719d230f57fe57f5b",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "取消、未到店与退款处理",
+  "businessGoalZh": "承接场景包 5 的预订确认摘要、场景包 6 的收款/押金/担保摘要、场景包 7 的入住状态摘要和场景包 9 的退房结算意向，处理预订取消、客户未到店、取消费/未到店费计算、退款或扣费申请、库存释放请求、客户确认和证据留存。",
+  "sourceScenarioDigest": "sha256:64a4732f01f0d570eb336b2744aad0bfa475db887d30917d7c07a369b2f26de0",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario10.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "CancellationCase",
+      "NoShowCase",
+      "ReservationClosureSnapshot",
+      "CancellationPolicySnapshot",
+      "PaymentDepositSnapshot",
+      "RefundCalculationDraft",
+      "RefundRequestIntent",
+      "CancellationFeeIntent",
+      "ForfeitOrFeeIntent",
+      "InventoryReleaseRequest",
+      "CustomerConfirmationRecord",
+      "CustomerNotificationRecord",
+      "FinanceProcessingRequest",
+      "CancellationEvidence",
+      "CancellationStatusHistory"
+    ],
+    "searchReadModel": [
+      "取消、未到店与退款处理",
+      "取消/未到店关闭摘要",
+      "政策计算摘要",
+      "退款/扣费申请",
+      "库存释放请求",
+      "客户确认摘要",
+      "财务处理请求",
+      "证据摘要",
+      "只读对象引用",
+      "取消/未到店摘要"
+    ],
+    "noRefillRuleZh": "场景包 10 只能读取预订、财务、入住状态和退房结算意向摘要，不得要求用户重新填写已确认预订、收款押金或退房字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "crudRules": {
+    "createBusinessActionsZh": [
+      "发起取消处理",
+      "发起未到店关闭",
+      "发起退款或扣费申请"
+    ],
+    "draftEditable": true,
+    "confirmedClosureInlineEditAllowed": false,
+    "confirmedFactMutationRulesZh": [
+      "已确认取消、未到店关闭、财务处理请求不得原地覆盖。",
+      "修改只能走补充证据、负责人复核、财务退回补证、争议处理、纠错申请。",
+      "删除不得物理删除已确认事实；未提交草稿可撤销，已确认取消/未到店只能追加纠错或后续财务处理。"
+    ],
+    "readOnlySurfacesZh": [
+      "查询",
+      "搜索",
+      "列表",
+      "看板",
+      "报表"
+    ],
+    "readOnlySurfacesWriteBusinessFactAllowed": false,
+    "requiredLifecyclePerObject": [
+      "currentState",
+      "amountVersionHistory",
+      "policySnapshot",
+      "evidenceHistory",
+      "financeProcessingHistory",
+      "legalNextActions"
+    ]
+  },
+  "requiredLifecyclePerObject": [
+    "currentState",
+    "amountVersionHistory",
+    "policySnapshot",
+    "evidenceHistory",
+    "financeProcessingHistory",
+    "legalNextActions"
+  ]
+}

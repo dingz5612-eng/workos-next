@@ -1,0 +1,367 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario9-runtimeRules.generated",
+  "version": "oam.dormitory-scenario9-runtimeRules.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario9-checkout-settlement-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario9-checkout-settlement-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:2a8a0365c783206e0a870f20e7a4938488eec7eaa8f3822dd142bc8892529e21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "digest": "sha256:87e69a9634931a45d6ade3d2e8afc9ddd3135ecfdc3e17ea84efd3c9eb892baa"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:87e69a9634931a45d6ade3d2e8afc9ddd3135ecfdc3e17ea84efd3c9eb892baa",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario9.CheckoutSettlement",
+  "scenarioPackageNo": 9,
+  "scenarioId": "lodging.checkout-and-settlement",
+  "outputContentDigest": "sha256:7a8df1d221873fbde165d9379b9ef9cc5621c0ab66178187a5aa6733302a1ecd",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "退房结算",
+  "businessGoalZh": "承接场景包 7 的入住事实和场景包 8 的在住管理/退房准备摘要，办理实际退房、交接、验房、费用核算、押金抵扣、应退/应补结算意向、退房确认、凭证回收、财务处理请求和资源待恢复请求。",
+  "sourceScenarioDigest": "sha256:87e69a9634931a45d6ade3d2e8afc9ddd3135ecfdc3e17ea84efd3c9eb892baa",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario9.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "CheckoutCase",
+      "CurrentStaySnapshot",
+      "CheckoutInspection",
+      "RoomBedHandover",
+      "DamageAssessment",
+      "FeeSettlementDraft",
+      "DepositSettlementDraft",
+      "RefundRequestIntent",
+      "TopUpRequestIntent",
+      "CredentialReturnRecord",
+      "CheckoutConfirmation",
+      "ResourceRecoveryRequest",
+      "CheckoutEvidence",
+      "CheckoutStatusHistory"
+    ],
+    "searchReadModel": [
+      "退房结算",
+      "退房确认摘要",
+      "费用核算摘要",
+      "押金抵扣摘要",
+      "应退/应补意向",
+      "客户确认摘要",
+      "财务处理请求",
+      "资源待恢复请求",
+      "证据摘要",
+      "只读对象引用",
+      "结算意向"
+    ],
+    "noRefillRuleZh": "场景包 9 只能读取入住、在住、占用、收款、押金、财务、服务、异常、凭证、退房准备和证据摘要，不得要求用户重新填写已确认入住字段或财务确认字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "commands": [
+    {
+      "commandId": "Dorm.CheckoutCaseDraftStart",
+      "businessNameZh": "发起退房办理",
+      "writesObjects": [
+        "CheckoutCase",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CheckoutHandoverConfirm",
+      "businessNameZh": "确认离店交接",
+      "writesObjects": [
+        "RoomBedHandover",
+        "CredentialReturnRecord",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CheckoutInspectionConfirm",
+      "businessNameZh": "确认退房验房",
+      "writesObjects": [
+        "CheckoutInspection",
+        "DamageAssessment",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CheckoutFeeCalculationGenerate",
+      "businessNameZh": "生成费用核算",
+      "writesObjects": [
+        "FeeSettlementDraft",
+        "DepositSettlementDraft",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CustomerSettlementConfirm",
+      "businessNameZh": "客户确认结算",
+      "writesObjects": [
+        "FeeSettlementDraft",
+        "DepositSettlementDraft",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CheckoutConfirm",
+      "businessNameZh": "确认退房",
+      "writesObjects": [
+        "CheckoutConfirmation",
+        "CredentialReturnRecord",
+        "ResourceRecoveryRequest",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CheckoutFinanceRequestCreate",
+      "businessNameZh": "发起财务处理请求",
+      "writesObjects": [
+        "RefundRequestIntent",
+        "TopUpRequestIntent",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ResourceRecoveryRequestCreate",
+      "businessNameZh": "发起资源恢复请求",
+      "writesObjects": [
+        "ResourceRecoveryRequest",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CheckoutCorrectionRequest",
+      "businessNameZh": "退房纠错申请",
+      "writesObjects": [
+        "CheckoutCase",
+        "CheckoutEvidence",
+        "CheckoutStatusHistory"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "no_effective_stay",
+      "messageZh": "没有有效在住记录，不能办理退房结算。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "stay_already_checked_out",
+      "messageZh": "该入住记录已经退房，不能重复办理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "current_occupancy_required",
+      "messageZh": "没有当前房间/床位占用摘要，不能确认退房。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "high_risk_incident_blocks_normal_checkout",
+      "messageZh": "存在禁止普通退房的高风险异常，需要先复核或处理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "actual_checkout_time_required",
+      "messageZh": "请填写实际离店时间后再确认交接。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "proxy_or_abnormal_handover_evidence_required",
+      "messageZh": "代办或异常离店必须补充说明和证据。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "credential_return_required",
+      "messageZh": "凭证回收或异常说明未完成，不能确认退房。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "inspection_evidence_required",
+      "messageZh": "缺少验房证据，不能进入结算确认。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "damage_description_evidence_required",
+      "messageZh": "有损坏或遗失时必须填写说明并绑定证据。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "fee_source_invalid",
+      "messageZh": "费用来源必须来自价格快照、财务确认摘要、服务/损坏证据或授权调整。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "final_ledger_truth_manual_input_forbidden",
+      "messageZh": "退房结算不能手填最终账务真值。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "customer_confirmation_required",
+      "messageZh": "客户尚未确认结算，不能确认退房。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "disputed_settlement_requires_review",
+      "messageZh": "存在争议或客户拒绝时必须转复核，不能普通完成结算。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "finance_gate_required_for_refund_or_topup",
+      "messageZh": "应退/应补只能形成 finance-gate 请求，不能在退房结算中直接处理款项。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "resource_operational_direct_restore_forbidden",
+      "messageZh": "退房后资源只能进入待保洁/待检查/待维修或异常待处理，不能直接恢复可运营。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "direct_payment_refund_ledger_forbidden",
+      "messageZh": "退房结算不能直接退款、收款或写账。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用由系统绑定，用户不能填写内部编号。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_result_write_attempt",
+      "messageZh": "搜索、列表、看板和报表只读，不能直接写退房事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_checkout_submission",
+      "messageZh": "该退房提交已处理，请查看退房结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_checkout_conflict",
+      "messageZh": "同一入住记录正在被其他退房办理更新，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "confirmed_checkout_inline_edit_forbidden",
+      "messageZh": "已确认退房不能原地编辑，只能补充证据、复核或纠错。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "unauthorized_checkout_action",
+      "messageZh": "当前角色不能执行该退房结算动作。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "invariants": [
+    "退房必须基于有效 Stay 和当前 Occupancy；无有效在住记录不得进入退房结算。",
+    "用户不得手填 stayId、checkoutCaseId、roomId、bedId、ledgerEntryId 作为办理入口；入口必须来自今日待退房、在住详情、房间/床位详情、工作项或搜索只读跳转。",
+    "退房确认必须完成实际离店时间、房间/床位交接、凭证回收、资产检查、费用核算和客户确认。",
+    "代办或异常离店必须有说明和证据。",
+    "有损坏或遗失必须填写说明并绑定验房/损坏证据。",
+    "金额来源必须来自价格快照、财务确认摘要、服务/损坏证据或授权调整，不得手填最终账务真值。",
+    "客户拒绝或存在争议时不得直接完成普通退房结算，必须进入争议或复核路径。",
+    "资源退房后只能转为待保洁、待检查、待维修或异常待处理，不得直接恢复可运营。",
+    "押金抵扣、应退、应补只能形成结算意向和 finance-gate 请求，不能直接退款、收款或写账。",
+    "查询、搜索、列表、看板、报表永远只读，不得写退房、款项、账务或资源恢复事实。",
+    "失败路径不得结束入住、不得释放资源、不得生成退款或账务、不得刷新错误 Projection/Search/Dashboard。"
+  ],
+  "checkoutStatusOptions": [
+    "待退房",
+    "待验房",
+    "待结算",
+    "待客户确认",
+    "待财务处理",
+    "已退房",
+    "结算有争议",
+    "需补证",
+    "资源待保洁",
+    "资源待检查",
+    "资源待维修",
+    "异常待处理"
+  ],
+  "checkoutInvariantRule": {
+    "validStayRequired": true,
+    "currentOccupancyRequired": true,
+    "actualCheckoutAtRequired": true,
+    "handoverRequired": true,
+    "credentialReturnRequired": true,
+    "inspectionEvidenceRequired": true,
+    "damageRequiresDescriptionAndEvidence": true,
+    "feeSourcesAuthoritative": true,
+    "customerConfirmationRequired": true,
+    "disputedSettlementRequiresReview": true,
+    "checkoutDoesNotMeanRefunded": true,
+    "checkoutDoesNotMakeResourceOperational": true,
+    "financeGateHandlesRefundTopUpLedger": true,
+    "resourceRecoveryViaScenario2Only": true,
+    "failureNoSideEffects": true
+  },
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "enter-checkout-processing": [
+        "有效入住摘要",
+        "当前在住/占用摘要"
+      ],
+      "confirm-actual-checkout-handover": [
+        "客户签字或沟通记录",
+        "交接照片"
+      ],
+      "room-bed-inspection": [
+        "验房照片",
+        "物品清单或检查记录"
+      ],
+      "fee-settlement-calculation": [
+        "价格快照",
+        "财务确认摘要",
+        "服务/损坏证据或授权调整"
+      ],
+      "customer-settlement-confirmation": [
+        "客户确认凭证或争议记录"
+      ],
+      "checkout-confirmation": [
+        "交接摘要",
+        "验房摘要",
+        "费用核算摘要",
+        "客户确认摘要"
+      ],
+      "finance-resource-handoff": [
+        "财务处理请求证据",
+        "资源恢复交接证据"
+      ]
+    },
+    "screenshotAnalysisRequired": true,
+    "noSideEffectsProofRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "businessRuntimeMayWriteLedger": false,
+    "businessRuntimeMayWritePaymentRefund": false,
+    "businessRuntimeMayRestoreOperationalStatus": false,
+    "financeGateMayConsumeSettlementIntentOnly": true,
+    "failurePathBusinessSideEffectsAllowed": false,
+    "successMayWriteCheckoutFactsAndRequestsOnly": true
+  }
+}

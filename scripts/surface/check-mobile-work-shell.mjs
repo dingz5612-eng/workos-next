@@ -10,7 +10,7 @@ const violations = [];
 const html = renderMobile();
 const text = visibleText(html);
 
-for (const label of ["必须做", "即将超时", "缺材料/缺证据", "等他人", "等待财务", "刚提交 / 同步中", "风险提醒", "全部工作项", "我的可办", "有阻断", "等他人处理", "可转交", "住宿资源", "入住收款", "押金", "普通收款", "服务任务", "退住", "支出", "周期复盘"]) {
+for (const label of ["必须做", "即将超时", "缺证据", "等他人", "等待财务", "刚提交 / 同步中", "风险提醒", "全部工作项", "我的可办", "有阻断", "等他人处理", "可转交", "住宿资源", "入住收款", "押金", "普通收款", "服务任务", "退住", "支出", "周期复盘"]) {
   if (!text.includes(label)) violations.push(v("mobile_work.ia_missing", `移动端 IA 缺少 ${label}`, { label }));
 }
 
@@ -55,9 +55,9 @@ function renderMobile() {
     queueDomain: "all",
     queueBadge: "all",
     todayFilter: "must-do",
-    selectedWorkspace: "W-STAY-RESOURCE",
-    selectedCardId: "roomSetup",
-    currentActor: { role: "operator", displayName: "内测经办人" },
+    selectedWorkspace: "W-DORM-MAINLINE",
+    selectedCardId: "cert.roomSetupConfirm",
+    currentActor: { role: "operator", displayName: "住宿经办人" },
     currentDevice: { deviceId: "mobile-current", deviceTrustStatus: "trusted", surface: "mobile" },
     runtimeStore: runtimeStore()
   };
@@ -81,17 +81,17 @@ function renderMobile() {
 
 function runtimeStore() {
   const workspace = {
-    id: "W-STAY-RESOURCE",
+    id: "W-DORM-MAINLINE",
     domain: "stay",
-    caseId: "case:W-STAY-RESOURCE",
-    title: { "zh-CN": "住宿资源" },
-    summary: { "zh-CN": "房间床位入住资源" },
-    next: { "zh-CN": "先配置房间和床位" },
+    caseId: "case:W-DORM-MAINLINE",
+    title: { "zh-CN": "房源建档与基础就绪" },
+    summary: { "zh-CN": "房间建档、床位组确认和基础就绪确认" },
+    next: { "zh-CN": "发起房源建档与基础就绪" },
     blockers: [],
     cards: [{
-      id: "roomSetup",
+      id: "cert.roomSetupConfirm",
       status: "ready",
-      title: { "zh-CN": "房间床位配置" },
+      title: { "zh-CN": "房间建档确认" },
       fields: { business: [], system: [], analytics: [] },
       evidence: [{ id: "room-duplicate-check", label: { "zh-CN": "房间重复校验" } }],
       checks: [],
@@ -102,8 +102,8 @@ function runtimeStore() {
   return {
     workspaces: [workspace],
     workQueue: [
-      { workItemId: "W-STAY-RESOURCE:roomSetup", workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup", domain: "stay", lifecycleState: "ready", badges: ["mine", "ready"], reason: "先配置房间和床位" },
-      { workItemId: "runtimeAudit-001", workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup", domain: "diagnostic", badges: ["mine"] }
+      { workItemId: "wi-dorm-room-setup", workspaceId: "W-DORM-MAINLINE", cardId: "cert.roomSetupConfirm", domain: "stay", lifecycleState: "ready", badges: ["mine", "ready"], reason: "发起房源建档与基础就绪" },
+      { workItemId: "runtimeAudit-001", workspaceId: "W-DORM-MAINLINE", cardId: "cert.roomSetupConfirm", domain: "diagnostic", badges: ["mine"] }
     ],
     operationWorkItems: []
   };

@@ -1,0 +1,345 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario7-runtimeRules.generated",
+  "version": "oam.dormitory-scenario7-runtimeRules.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario7-check-in-processing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario7-check-in-processing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:288b527a49cfb6fcb1a19b854dcb05468e92b3dfbc4c50796d5ffd0369e6b311",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "digest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario7.CheckInProcessing",
+  "scenarioPackageNo": 7,
+  "scenarioId": "lodging.check-in-processing",
+  "outputContentDigest": "sha256:b1176b641aed111cf96313d570f33dc42bef498dc186310988298965c562ef1c",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "入住办理",
+  "businessGoalZh": "承接已确认预订、财务确认摘要和房源运营状态摘要，核验客户到店、身份信息、入住协议、预订信息、房间/床位当前可入住状态后，生成入住记录、占用记录和入住凭证。",
+  "sourceScenarioDigest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario7.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "CheckInCase",
+      "ArrivingGuest",
+      "ResidentProfile",
+      "IdentityVerification",
+      "Stay",
+      "RoomBedOccupancy",
+      "CheckInAgreement",
+      "AccessCredential",
+      "CheckInSnapshot",
+      "CheckInEvidence",
+      "CheckInStatusHistory"
+    ],
+    "searchReadModel": [
+      "入住办理",
+      "入住记录摘要",
+      "住客摘要",
+      "房间/床位占用摘要",
+      "入住凭证摘要",
+      "协议摘要",
+      "身份核验摘要",
+      "证据摘要",
+      "只读对象引用",
+      "占用摘要",
+      "凭证摘要"
+    ],
+    "noRefillRuleZh": "场景包 7 只能读取预订、财务、价格和运营状态只读摘要，不得要求用户重新填写已确认的预订、价格或财务字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "commands": [
+    {
+      "commandId": "Dorm.CheckInDraftStart",
+      "businessNameZh": "发起入住办理",
+      "writesObjects": [
+        "CheckInCase",
+        "CheckInStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.GuestIdentityVerify",
+      "businessNameZh": "核验到店与身份",
+      "writesObjects": [
+        "ArrivingGuest",
+        "ResidentProfile",
+        "IdentityVerification",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CheckInAgreementFinanceReview",
+      "businessNameZh": "复核财务摘要与入住协议",
+      "writesObjects": [
+        "CheckInAgreement",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.RoomBedHandoverRecheck",
+      "businessNameZh": "复核房间/床位交付",
+      "writesObjects": [
+        "RoomBedOccupancy",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.StayConfirm",
+      "businessNameZh": "确认入住",
+      "writesObjects": [
+        "Stay",
+        "RoomBedOccupancy",
+        "CheckInSnapshot",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.StayCredentialIssue",
+      "businessNameZh": "发放入住凭证",
+      "writesObjects": [
+        "AccessCredential",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CheckInManualReviewRequest",
+      "businessNameZh": "转人工复核",
+      "writesObjects": [
+        "CheckInStatusHistory",
+        "CheckInEvidence"
+      ]
+    },
+    {
+      "commandId": "Dorm.CheckInCorrectionRequest",
+      "businessNameZh": "入住纠错入口",
+      "writesObjects": [
+        "CheckInStatusHistory",
+        "CheckInEvidence"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "reservation_not_valid",
+      "messageZh": "没有有效预订，不能办理入住。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "reservation_cancelled",
+      "messageZh": "预订已取消，不能办理入住。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "reservation_expired",
+      "messageZh": "预订已过期，请先处理预订。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "reservation_already_converted",
+      "messageZh": "该预订已转为入住，不能重复办理。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "finance_rule_unmet_without_exception",
+      "messageZh": "财务摘要未满足入住规则，需补齐或走负责人例外审批。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "manager_exception_approval_required",
+      "messageZh": "例外入住必须有负责人审批和证据。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "identity_evidence_required",
+      "messageZh": "请先上传或绑定身份核验证据。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "identity_verification_failed",
+      "messageZh": "身份核验未通过，不能继续办理入住。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "guest_mismatch_without_approval",
+      "messageZh": "入住人与预订不一致，且没有审批证据。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "agreement_not_confirmed",
+      "messageZh": "入住协议未确认，不能办理入住。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "resource_not_available_for_checkin",
+      "messageZh": "房间或床位当前不可入住。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "resource_already_occupied",
+      "messageZh": "房间或床位所选日期范围已有在住占用。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "resource_blocked_for_checkin",
+      "messageZh": "房间或床位存在维修、停售、暂停或异常阻断。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "stay_no_user_input_forbidden",
+      "messageZh": "入住记录号由系统生成，不能手工填写。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "credential_before_checkin_forbidden",
+      "messageZh": "未成功入住，不能发放有效入住凭证。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用不匹配，请从页面重新选择预订、住客、房间/床位或凭证。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_result_write_attempt",
+      "messageZh": "查询、搜索、列表、看板、报表只读，不能在这里写入入住事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_checkin",
+      "messageZh": "该入住提交已处理，系统将返回原处理结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_occupancy_conflict",
+      "messageZh": "房间或床位状态已变化，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "confirmed_checkin_inline_edit_forbidden",
+      "messageZh": "已确认入住不能原地覆盖，只能走更正、换房换床、人工复核或纠错流程。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "cross_scenario_checkout_refund_forbidden",
+      "messageZh": "本场景只办理入住，不能直接退房、退款或写账。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "invariants": [
+    "确认入住必须同时满足预订有效、未取消、未过期、未转入住。",
+    "房间/床位必须仍可入住，且未维修、停售、暂停或异常。",
+    "同一房间/床位同一日期范围不得存在其他有效在住占用。",
+    "身份核验必须通过。",
+    "入住协议必须确认。",
+    "必要财务摘要必须满足入住规则；未满足时不得普通入住，只能走负责人例外审批并留证据。",
+    "入住记录号由系统生成，用户不得手填。",
+    "入住成功后资源状态必须变为“在住占用”。",
+    "入住成功后预订状态必须变为“已转入住”。",
+    "失败路径不得生成 Stay，不得占用床位，不得发放入住凭证，不得写账。",
+    "未成功入住不得发放有效入住凭证。",
+    "已入住不等于已结清。",
+    "已入住不等于押金可退。",
+    "已入住不等于房源恢复。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。",
+    "确认失败不得写 Stay、Occupancy、Credential、CommandSubmission、DomainEvent、Outbox、Projection、Lens、Search、Dashboard、Ledger。"
+  ],
+  "checkInStatusOptions": [
+    "待到店",
+    "待身份核验",
+    "待协议确认",
+    "待财务补齐",
+    "待房源复核",
+    "可办理入住",
+    "已入住",
+    "入住失败",
+    "需人工复核",
+    "凭证待发放",
+    "凭证已发放"
+  ],
+  "checkInInvariantRule": {
+    "validReservationRequired": true,
+    "reservationCancelledBlocked": true,
+    "reservationExpiredBlocked": true,
+    "reservationAlreadyConvertedBlocked": true,
+    "resourceAvailableForCheckInRequired": true,
+    "resourceOccupiedBlocked": true,
+    "resourceMaintenanceSalePausedAbnormalBlocked": true,
+    "identityVerificationRequired": true,
+    "agreementConfirmationRequired": true,
+    "financeReadinessOrManagerExceptionRequired": true,
+    "managerExceptionRequiresEvidence": true,
+    "stayNoSystemGenerated": true,
+    "confirmedStayStartsOccupancy": true,
+    "reservationConvertedToStayOnSuccess": true,
+    "credentialRequiresSuccessfulStay": true,
+    "failureNoSideEffects": true
+  },
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "enter-check-in-processing": [
+        "预订确认摘要证据",
+        "财务确认摘要证据"
+      ],
+      "arrival-and-identity-verification": [
+        "证件照片/扫描件",
+        "本人确认",
+        "授权同意记录"
+      ],
+      "finance-and-agreement-review": [
+        "协议签署记录",
+        "客户确认凭证",
+        "负责人例外审批证据"
+      ],
+      "room-bed-handover-recheck": [
+        "房间交付照片",
+        "床位交付照片",
+        "清洁确认记录"
+      ],
+      "confirm-check-in": [
+        "入住确认凭证",
+        "入住确认摘要证据"
+      ],
+      "issue-access-credential": [
+        "领取确认记录",
+        "凭证发放照片"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "businessRuntimeMayWriteLedger": false,
+    "businessRuntimeMayWritePaymentDepositRefund": false,
+    "businessRuntimeMayWriteCheckout": false,
+    "failurePathBusinessSideEffectsAllowed": false,
+    "successMayWriteStayOccupancyCredentialOnly": true
+  }
+}

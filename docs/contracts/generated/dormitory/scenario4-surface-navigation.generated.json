@@ -1,0 +1,198 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario4-surfaceNavigation.generated",
+  "version": "oam.dormitory-scenario4-surfaceNavigation.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario4-inquiry-and-quote-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario4-inquiry-and-quote-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:49a1b855da0cc309b2f797c1ff1f12c2bc00fe76bb8161b29ae5c320abc2acf3",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+      "digest": "sha256:8dbbc0974699eac161fddffd13c6df6e16c63aeee4d29b00f37af52b35886dd2"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:8dbbc0974699eac161fddffd13c6df6e16c63aeee4d29b00f37af52b35886dd2",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario4.InquiryAndQuote",
+  "scenarioPackageNo": 4,
+  "scenarioId": "lodging.inquiry-and-quote",
+  "outputContentDigest": "sha256:f125aa3ec682a6248037238c9db56fbdd03c19dd7bf0f55cb6342db20047283b",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "询价与报价",
+  "businessGoalZh": "承接场景包 1 的房源摘要、场景包 2 的运营状态摘要、场景包 3 的商品与价格摘要，为客户生成询价记录、报价方案、报价单、报价版本和报价有效期。",
+  "sourceScenarioDigest": "sha256:8dbbc0974699eac161fddffd13c6df6e16c63aeee4d29b00f37af52b35886dd2",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario4.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "Inquiry",
+      "CustomerContact",
+      "StayDemand",
+      "QuoteOption",
+      "Quote",
+      "QuoteVersion",
+      "QuotePriceSnapshot",
+      "QuoteValidity",
+      "QuoteDeliveryRecord",
+      "QuoteEvidence",
+      "FollowUpTask",
+      "QuoteStatusHistory"
+    ],
+    "searchReadModel": [
+      "询价与报价",
+      "询价摘要",
+      "客户需求摘要",
+      "报价单摘要",
+      "报价版本",
+      "价格快照",
+      "报价有效期",
+      "客户反馈",
+      "转预订准备摘要",
+      "证据摘要",
+      "只读对象引用",
+      "报价单",
+      "有效期"
+    ],
+    "noRefillRuleZh": "场景包 4 只能读取场景包 1、2、3 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品或价格字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "surfaceNavigation": {
+    "pagesZh": [
+      "询价列表",
+      "询价详情",
+      "客户需求页",
+      "可报价商品页",
+      "报价草稿页",
+      "报价单预览页",
+      "报价发送页",
+      "报价版本历史页",
+      "客户反馈页",
+      "转预订准备入口"
+    ],
+    "todayZh": "今日只展示今天需要处理的被动任务，例如今日待跟进、报价今日过期、客户待确认、报价需重算。",
+    "workItemsZh": "工作项展示全部被动任务池。",
+    "searchZh": "搜索可以查客户、手机号、报价单号、入住日期、商品、报价状态，但搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "pageMustShowZh": [
+      "当前报价状态",
+      "有效期",
+      "价格来源",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": [
+      {
+        "state": "inquiry_draft",
+        "buttonsZh": [
+          "继续填写",
+          "生成报价"
+        ]
+      },
+      {
+        "state": "quote_draft",
+        "buttonsZh": [
+          "确认报价",
+          "返回修改"
+        ]
+      },
+      {
+        "state": "quote_sent",
+        "buttonsZh": [
+          "记录反馈",
+          "重新报价",
+          "发起转预订准备",
+          "关闭报价"
+        ]
+      },
+      {
+        "state": "expired",
+        "buttonsZh": [
+          "重新报价"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "已锁定",
+      "已预订",
+      "已入住",
+      "已收款",
+      "final GO",
+      "生产发布",
+      "lead-reservation",
+      "reservationCreate",
+      "RatePlanConfirm"
+    ]
+  },
+  "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“客户姓名已脱敏，6 月 20 日至 6 月 23 日，2 人，301 整房，报价 540 元，有效至今晚 20:00”。",
+  "forbiddenUserInputFields": [
+    "inquiryId",
+    "customerId",
+    "quoteId",
+    "quoteVersionId",
+    "productId",
+    "ratePlanId",
+    "roomId",
+    "bedId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId"
+  ],
+  "buttonByState": [
+    {
+      "state": "inquiry_draft",
+      "buttonsZh": [
+        "继续填写",
+        "生成报价"
+      ]
+    },
+    {
+      "state": "quote_draft",
+      "buttonsZh": [
+        "确认报价",
+        "返回修改"
+      ]
+    },
+    {
+      "state": "quote_sent",
+      "buttonsZh": [
+        "记录反馈",
+        "重新报价",
+        "发起转预订准备",
+        "关闭报价"
+      ]
+    },
+    {
+      "state": "expired",
+      "buttonsZh": [
+        "重新报价"
+      ]
+    }
+  ],
+  "quoteStatusOptions": [
+    "询价草稿",
+    "待补充需求",
+    "可报价",
+    "报价草稿",
+    "已报价",
+    "报价已发送",
+    "客户待确认",
+    "报价过期",
+    "报价关闭",
+    "转预订准备"
+  ]
+}

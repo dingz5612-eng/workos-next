@@ -1,0 +1,2361 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario6-mobileMirror.generated",
+  "version": "oam.dormitory-scenario6-mobileMirror.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario6-payment-deposit-and-guarantee-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario6-payment-deposit-and-guarantee-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:728f2da1a8cce479fad0139d66a71f2c5df6bfe4fde02dc8be476179cd2c08a5",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "digest": "sha256:b1efd73f8434736d54338d3cfa6bbc910f503b8eeb0164c00708031469684514"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:b1efd73f8434736d54338d3cfa6bbc910f503b8eeb0164c00708031469684514",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+  "scenarioPackageNo": 6,
+  "scenarioId": "lodging.payment-deposit-and-guarantee",
+  "outputContentDigest": "sha256:23938ae36a423b5ca258bb7ede72bfdbd4e092dc0c8116d8bae4f26196c08e94",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "收款、押金与担保",
+  "businessGoalZh": "承接场景包 5 已确认预订，生成应收、押金和担保要求，采集收款凭证、押金凭证和担保信息，并通过 finance-gate 完成财务确认。",
+  "sourceScenarioDigest": "sha256:b1efd73f8434736d54338d3cfa6bbc910f503b8eeb0164c00708031469684514",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario6.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "PaymentRequirement",
+      "PaymentIntent",
+      "PaymentReceiptEvidence",
+      "DepositRequirement",
+      "DepositIntent",
+      "DepositGuarantee",
+      "FinanceReviewRequest",
+      "FinanceConfirmationSnapshot",
+      "PaymentStatusHistory",
+      "DepositStatusHistory"
+    ],
+    "searchReadModel": [
+      "收款、押金与担保",
+      "收款确认摘要",
+      "押金确认摘要",
+      "担保确认摘要",
+      "剩余待收",
+      "财务确认状态",
+      "证据摘要",
+      "只读对象引用",
+      "收款/押金/担保确认摘要",
+      "财务状态"
+    ],
+    "noRefillRuleZh": "场景包 6 只能读取预订和价格/报价只读摘要，不得要求用户重新填写房间、床位、报价或预订字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "consumer": "surface",
+  "surfaceNavigation": {
+    "pagesZh": [
+      "收款押金办理页",
+      "应收摘要页",
+      "收款凭证提交页",
+      "押金/担保提交页",
+      "财务确认页",
+      "财务退回补证页",
+      "确认摘要页",
+      "状态历史页"
+    ],
+    "todayZh": "今日只展示今日待收款、押金待确认、担保即将过期、财务退回待补证等今天需要处理的被动任务。",
+    "workItemsZh": "工作项展示全部收款、押金与担保被动任务池。",
+    "searchZh": "搜索可以查客户、手机号、预订号、收款状态、押金状态、担保状态；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "mustShowZh": [
+      "当前财务状态",
+      "剩余待处理",
+      "不可提交原因",
+      "下一步动作",
+      "finance-gate 状态"
+    ],
+    "buttonByState": [
+      {
+        "state": "待提交凭证",
+        "buttonsZh": [
+          "上传收款凭证",
+          "上传押金凭证",
+          "提交担保信息"
+        ]
+      },
+      {
+        "state": "待财务确认",
+        "buttonsZh": [
+          "查看提交",
+          "补充证据"
+        ]
+      },
+      {
+        "state": "财务退回",
+        "buttonsZh": [
+          "按退回原因补充"
+        ]
+      },
+      {
+        "state": "财务已确认",
+        "buttonsZh": [
+          "查看确认摘要",
+          "进入入住办理准备"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "已入住",
+      "已退房",
+      "已退款",
+      "final GO",
+      "生产发布",
+      "ordinary-payment",
+      "deposit-liability",
+      "PaymentConfirm",
+      "DepositConfirm"
+    ]
+  },
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "enter-payment-deposit-processing",
+      "nameZh": "进入收款押金办理",
+      "commandId": "Dorm.PaymentDepositCaseStart",
+      "commandBusinessNameZh": "进入收款押金办理",
+      "userSees": [
+        "预订号",
+        "客户",
+        "入住/离店日期",
+        "房间/床位",
+        "价格快照",
+        "应收摘要",
+        "押金规则",
+        "担保要求",
+        "预订确认摘要",
+        "客户信息",
+        "日期范围",
+        "人数"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [],
+      "userUploadedOrBoundEvidence": [],
+      "systemGeneratedFields": [
+        "paymentCaseRef",
+        "reservationRef",
+        "priceSnapshotRef",
+        "policySnapshotRef",
+        "sourceScenarioRef"
+      ],
+      "validations": [
+        "未确认预订、预订已取消、价格快照缺失时不得办理。"
+      ],
+      "outputs": [
+        "PaymentStatusHistory",
+        "DepositStatusHistory"
+      ],
+      "primaryBusinessObject": "PaymentRequirement",
+      "requiredReadContext": [
+        "预订号",
+        "客户",
+        "入住/离店日期",
+        "房间/床位",
+        "价格快照",
+        "应收摘要",
+        "押金规则",
+        "担保要求",
+        "预订确认摘要",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "预订状态",
+        "证据摘要"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "预订收款/押金/担保",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格快照",
+          "应收摘要",
+          "押金规则",
+          "担保要求"
+        ],
+        "direction": "押金/担保",
+        "stage": "进入收款押金办理",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "startRoomFeePayment",
+          "labelZh": "办理房费/订金",
+          "labelKey": "scenario6.action.startRoomFeePayment.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.enter-payment-deposit-processing.startRoomFeePayment.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "startDepositHandling",
+          "labelZh": "办理押金",
+          "labelKey": "scenario6.action.startDepositHandling.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.enter-payment-deposit-processing.startDepositHandling.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "startGuaranteeHandling",
+          "labelZh": "办理担保",
+          "labelKey": "scenario6.action.startGuaranteeHandling.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.enter-payment-deposit-processing.startGuaranteeHandling.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "预订状态",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "to": [
+          "PaymentStatusHistory",
+          "DepositStatusHistory",
+          "收款确认摘要",
+          "押金确认摘要",
+          "担保确认摘要",
+          "剩余待收",
+          "财务确认状态",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 6 只能读取预订和价格/报价只读摘要，不得要求用户重新填写房间、床位、报价或预订字段。"
+      },
+      "searchReadModel": [
+        "收款、押金与担保",
+        "进入收款押金办理",
+        "PaymentRequirement",
+        "预订号",
+        "客户",
+        "入住/离店日期",
+        "房间/床位",
+        "价格快照",
+        "应收摘要",
+        "押金规则",
+        "担保要求",
+        "预订确认摘要",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "PaymentStatusHistory"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "confirm-payment-and-deposit-requirements",
+      "nameZh": "确认应收与押金要求",
+      "commandId": "Dorm.PaymentDepositRequirementConfirm",
+      "commandBusinessNameZh": "确认应收与押金要求",
+      "userSees": [
+        "房费金额",
+        "订金金额",
+        "押金金额",
+        "币种",
+        "收款期限",
+        "押金退还说明",
+        "担保要求",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "收款项目",
+        "是否分笔",
+        "是否需要押金",
+        "是否需要担保"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "应收依据证据",
+        "押金政策证据"
+      ],
+      "systemGeneratedFields": [
+        "paymentRequirementRef",
+        "depositRequirementRef",
+        "requirementVersion"
+      ],
+      "systemCalculatedFields": [
+        "应收金额",
+        "押金金额",
+        "剩余待收",
+        "币种一致性",
+        "到期时间"
+      ],
+      "validations": [
+        "金额来源必须来自价格快照或押金政策；不得手填最终财务真值。"
+      ],
+      "outputs": [
+        "PaymentRequirement",
+        "DepositRequirement"
+      ],
+      "primaryBusinessObject": "PaymentRequirement",
+      "requiredReadContext": [
+        "房费金额",
+        "订金金额",
+        "押金金额",
+        "币种",
+        "收款期限",
+        "押金退还说明",
+        "担保要求",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "价格快照"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [
+        "收款项目",
+        "是否分笔",
+        "是否需要押金",
+        "是否需要担保"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "预订收款/押金/担保",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "房费金额",
+          "订金金额",
+          "押金金额",
+          "币种",
+          "押金退还说明",
+          "担保要求",
+          "价格快照",
+          "是否需要押金",
+          "是否需要担保",
+          "应收金额",
+          "剩余待收",
+          "币种一致性"
+        ],
+        "direction": "应退/退款申请",
+        "stage": "确认应收与押金要求",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "预订状态",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "to": [
+          "PaymentRequirement",
+          "DepositRequirement",
+          "收款确认摘要",
+          "押金确认摘要",
+          "担保确认摘要",
+          "剩余待收",
+          "财务确认状态",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 6 只能读取预订和价格/报价只读摘要，不得要求用户重新填写房间、床位、报价或预订字段。"
+      },
+      "searchReadModel": [
+        "收款、押金与担保",
+        "确认应收与押金要求",
+        "PaymentRequirement",
+        "房费金额",
+        "订金金额",
+        "押金金额",
+        "币种",
+        "收款期限",
+        "押金退还说明",
+        "担保要求",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "DepositRequirement"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "submit-payment-receipt-evidence",
+      "nameZh": "提交收款凭证",
+      "commandId": "Dorm.PaymentReceiptSubmit",
+      "commandBusinessNameZh": "提交收款凭证",
+      "userSees": [
+        "应收项目",
+        "剩余待收",
+        "币种",
+        "凭证要求",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "收款确认摘要",
+        "押金确认摘要"
+      ],
+      "userFilledFields": [
+        "实收金额",
+        "收款方式",
+        "收款时间",
+        "付款人",
+        "备注"
+      ],
+      "userSelectedFields": [
+        "对应收款项目"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "转账截图",
+        "收据",
+        "POS 凭证",
+        "现金收款记录"
+      ],
+      "systemGeneratedFields": [
+        "paymentIntentRef",
+        "receiptEvidenceRef",
+        "submittedAt",
+        "submittedBy"
+      ],
+      "validations": [
+        "金额必须大于 0；币种必须一致；缺凭证不得提交财务确认。"
+      ],
+      "outputs": [
+        "PaymentIntent",
+        "PaymentReceiptEvidence",
+        "PaymentStatusHistory"
+      ],
+      "primaryBusinessObject": "PaymentRequirement",
+      "requiredReadContext": [
+        "客户信息",
+        "联系电话",
+        "预订号",
+        "入住日期",
+        "离店日期",
+        "人数",
+        "房间/床位",
+        "价格快照",
+        "应收项目",
+        "已收金额",
+        "本次金额",
+        "剩余待收",
+        "币种",
+        "凭证要求",
+        "预订确认摘要",
+        "日期范围",
+        "收款确认摘要",
+        "押金确认摘要",
+        "预订状态",
+        "证据摘要",
+        "只读对象引用",
+        "价格方案摘要",
+        "报价单摘要",
+        "报价版本",
+        "reservationNoDisplay",
+        "customerName",
+        "contactPhone",
+        "checkInDate",
+        "checkOutDate",
+        "guestCount",
+        "roomOrBedSummary",
+        "priceSnapshot",
+        "reservationStatus",
+        "quoteNo",
+        "quoteVersion",
+        "evidenceSummary",
+        "库存锁定历史",
+        "担保确认摘要"
+      ],
+      "editableInputs": [
+        "实收金额",
+        "收款方式",
+        "收款时间",
+        "付款人",
+        "备注"
+      ],
+      "fixedSelections": [
+        "对应收款项目"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "预订收款/押金/担保",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格快照",
+          "应收项目",
+          "已收金额",
+          "本次金额",
+          "剩余待收",
+          "币种",
+          "押金确认摘要",
+          "价格方案摘要",
+          "priceSnapshot",
+          "担保确认摘要",
+          "实收金额",
+          "对应收款项目"
+        ],
+        "direction": "押金/担保",
+        "stage": "提交收款凭证",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "预订状态",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "to": [
+          "PaymentIntent",
+          "PaymentReceiptEvidence",
+          "PaymentStatusHistory",
+          "收款确认摘要",
+          "押金确认摘要",
+          "担保确认摘要",
+          "剩余待收",
+          "财务确认状态",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 6 只能读取预订和价格/报价只读摘要，不得要求用户重新填写房间、床位、报价或预订字段。"
+      },
+      "searchReadModel": [
+        "收款、押金与担保",
+        "提交收款凭证",
+        "PaymentRequirement",
+        "应收项目",
+        "剩余待收",
+        "币种",
+        "凭证要求",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "收款确认摘要",
+        "押金确认摘要",
+        "PaymentIntent"
+      ]
+    },
+    {
+      "stepNo": 4,
+      "stepId": "submit-deposit-or-guarantee",
+      "nameZh": "提交押金或担保信息",
+      "commandId": "Dorm.DepositGuaranteeSubmit",
+      "commandBusinessNameZh": "提交押金或担保信息",
+      "userSees": [
+        "押金金额",
+        "押金方式",
+        "担保要求",
+        "预授权要求",
+        "凭证要求",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "收款确认摘要"
+      ],
+      "userFilledFields": [
+        "押金金额",
+        "押金方式",
+        "担保人/担保方式",
+        "担保有效期",
+        "备注"
+      ],
+      "userSelectedFields": [
+        "押金",
+        "担保",
+        "预授权"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "押金凭证",
+        "担保协议",
+        "预授权凭证"
+      ],
+      "systemGeneratedFields": [
+        "depositIntentRef",
+        "guaranteeRef",
+        "guaranteeValidUntil",
+        "evidenceEnvelopeRef"
+      ],
+      "validations": [
+        "押金不得标记为收入；担保不得标记为已收款。"
+      ],
+      "outputs": [
+        "DepositIntent",
+        "DepositGuarantee",
+        "DepositStatusHistory"
+      ],
+      "primaryBusinessObject": "PaymentRequirement",
+      "requiredReadContext": [
+        "押金金额",
+        "押金方式",
+        "担保要求",
+        "预授权要求",
+        "凭证要求",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "收款确认摘要",
+        "价格快照",
+        "预订状态"
+      ],
+      "editableInputs": [
+        "押金金额",
+        "押金方式",
+        "担保人/担保方式",
+        "担保有效期",
+        "备注"
+      ],
+      "fixedSelections": [
+        "押金",
+        "担保",
+        "预授权"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "预订收款/押金/担保",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "押金金额",
+          "押金方式",
+          "担保要求",
+          "价格快照",
+          "担保人/担保方式",
+          "担保有效期",
+          "押金",
+          "担保"
+        ],
+        "direction": "押金/担保",
+        "stage": "提交押金或担保信息",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "预订状态",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "to": [
+          "DepositIntent",
+          "DepositGuarantee",
+          "DepositStatusHistory",
+          "收款确认摘要",
+          "押金确认摘要",
+          "担保确认摘要",
+          "剩余待收",
+          "财务确认状态",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 6 只能读取预订和价格/报价只读摘要，不得要求用户重新填写房间、床位、报价或预订字段。"
+      },
+      "searchReadModel": [
+        "收款、押金与担保",
+        "提交押金或担保信息",
+        "PaymentRequirement",
+        "押金金额",
+        "押金方式",
+        "担保要求",
+        "预授权要求",
+        "凭证要求",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "收款确认摘要",
+        "DepositIntent"
+      ]
+    },
+    {
+      "stepNo": 5,
+      "stepId": "finance-gate-confirmation",
+      "nameZh": "财务确认",
+      "commandId": "Dorm.FinanceGateConfirm",
+      "commandBusinessNameZh": "finance-gate 财务确认",
+      "userSees": [
+        "预订摘要",
+        "应收依据",
+        "押金依据",
+        "凭证",
+        "金额",
+        "币种",
+        "提交人",
+        "证据摘要",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围"
+      ],
+      "userFilledFields": [
+        "确认备注",
+        "退回原因"
+      ],
+      "userSelectedFields": [],
+      "userUploadedOrBoundEvidence": [
+        "财务确认凭证",
+        "退回补证说明"
+      ],
+      "systemGeneratedFields": [
+        "financeReviewRequestRef",
+        "financeConfirmationSnapshotRef",
+        "financeGateEventRef",
+        "confirmedAt",
+        "confirmedBy"
+      ],
+      "validations": [
+        "非授权角色不得财务确认；财务确认失败必须无账务副作用。"
+      ],
+      "outputs": [
+        "FinanceReviewRequest",
+        "FinanceConfirmationSnapshot",
+        "PaymentStatusHistory",
+        "DepositStatusHistory"
+      ],
+      "primaryBusinessObject": "PaymentRequirement",
+      "requiredReadContext": [
+        "预订摘要",
+        "应收依据",
+        "押金依据",
+        "凭证",
+        "金额",
+        "币种",
+        "提交人",
+        "证据摘要",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位"
+      ],
+      "editableInputs": [
+        "确认备注",
+        "退回原因"
+      ],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "预订收款/押金/担保",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "应收依据",
+          "押金依据",
+          "金额",
+          "币种"
+        ],
+        "direction": "押金/担保",
+        "stage": "财务确认",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "confirmFinanceGate",
+          "labelZh": "确认",
+          "labelKey": "scenario6.action.confirmFinanceGate.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.finance-gate-confirmation.confirmFinanceGate.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "returnForEvidence",
+          "labelZh": "退回补证",
+          "labelKey": "scenario6.action.returnForEvidence.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.finance-gate-confirmation.returnForEvidence.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "partiallyConfirm",
+          "labelZh": "部分确认",
+          "labelKey": "scenario6.action.partiallyConfirm.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.finance-gate-confirmation.partiallyConfirm.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "markException",
+          "labelZh": "标记异常",
+          "labelKey": "scenario6.action.markException.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.finance-gate-confirmation.markException.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "预订状态",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "to": [
+          "FinanceReviewRequest",
+          "FinanceConfirmationSnapshot",
+          "PaymentStatusHistory",
+          "DepositStatusHistory",
+          "收款确认摘要",
+          "押金确认摘要",
+          "担保确认摘要",
+          "剩余待收",
+          "财务确认状态",
+          "证据摘要"
+        ],
+        "noRefillRuleZh": "场景包 6 只能读取预订和价格/报价只读摘要，不得要求用户重新填写房间、床位、报价或预订字段。"
+      },
+      "searchReadModel": [
+        "收款、押金与担保",
+        "财务确认",
+        "finance-gate 财务确认",
+        "PaymentRequirement",
+        "预订摘要",
+        "应收依据",
+        "押金依据",
+        "凭证",
+        "金额",
+        "币种",
+        "提交人",
+        "证据摘要",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围"
+      ]
+    },
+    {
+      "stepNo": 6,
+      "stepId": "output-finance-ready-summary",
+      "nameZh": "输出入住前财务摘要",
+      "commandId": "Dorm.FinanceReadySummaryOutput",
+      "commandBusinessNameZh": "输出入住前财务摘要",
+      "userSees": [
+        "房费/订金确认状态",
+        "押金确认状态",
+        "担保状态",
+        "剩余待收",
+        "财务确认时间",
+        "下一步进入入住办理准备",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [],
+      "userUploadedOrBoundEvidence": [
+        "财务确认摘要证据"
+      ],
+      "systemGeneratedFields": [
+        "financeReadySnapshotRef",
+        "financeStatusHistoryRef",
+        "downstreamReadonlyRef"
+      ],
+      "validations": [
+        "是否允许入住由场景包 7 综合证件、协议、入住规则、财务摘要判断；场景包 6 不直接办理入住。"
+      ],
+      "outputs": [
+        "收款确认摘要",
+        "押金确认摘要",
+        "担保确认摘要",
+        "剩余待收",
+        "财务确认状态",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "primaryBusinessObject": "PaymentRequirement",
+      "requiredReadContext": [
+        "房费/订金确认状态",
+        "押金确认状态",
+        "担保状态",
+        "剩余待收",
+        "财务确认时间",
+        "下一步进入入住办理准备",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "价格快照",
+        "预订状态"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "预订收款/押金/担保",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "押金确认状态",
+          "担保状态",
+          "剩余待收",
+          "财务确认时间",
+          "价格快照"
+        ],
+        "direction": "押金/担保",
+        "stage": "输出入住前财务摘要",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "viewConfirmationSummary",
+          "labelZh": "查看确认摘要",
+          "labelKey": "scenario6.action.viewConfirmationSummary.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.output-finance-ready-summary.viewConfirmationSummary.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "startCheckInPreparation",
+          "labelZh": "进入入住办理准备",
+          "labelKey": "scenario6.action.startCheckInPreparation.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.output-finance-ready-summary.startCheckInPreparation.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "预订状态",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "to": [
+          "收款确认摘要",
+          "押金确认摘要",
+          "担保确认摘要",
+          "剩余待收",
+          "财务确认状态",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 6 只能读取预订和价格/报价只读摘要，不得要求用户重新填写房间、床位、报价或预订字段。"
+      },
+      "searchReadModel": [
+        "收款、押金与担保",
+        "输出入住前财务摘要",
+        "PaymentRequirement",
+        "房费/订金确认状态",
+        "押金确认状态",
+        "担保状态",
+        "剩余待收",
+        "财务确认时间",
+        "下一步进入入住办理准备",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "收款确认摘要"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“客户姓名已脱敏，预订号 R202606200001，房费待确认 540 元，押金待确认 300 元”。",
+    "upstreamReadonly": [
+      "reservationNoDisplay",
+      "customerName",
+      "contactPhone",
+      "checkInDate",
+      "checkOutDate",
+      "guestCount",
+      "roomOrBedSummary",
+      "priceSnapshot",
+      "reservationStatus",
+      "quoteNo",
+      "quoteVersion",
+      "evidenceSummary"
+    ],
+    "userFilled": [
+      "receivedAmount",
+      "paymentMethod",
+      "paymentTime",
+      "payerName",
+      "paymentRemark",
+      "depositAmount",
+      "depositMethod",
+      "guarantorName",
+      "guaranteeMethod",
+      "guaranteeValidUntil",
+      "financeConfirmRemark",
+      "financeReturnReason"
+    ],
+    "userSelected": [
+      "paymentItem",
+      "splitPayment",
+      "depositRequired",
+      "guaranteeRequired",
+      "depositOption",
+      "guaranteeOption",
+      "preAuthorizationOption",
+      "financeConfirm",
+      "financeReturnForEvidence",
+      "financePartialConfirm",
+      "financeMarkException"
+    ],
+    "userUploadedOrBoundEvidence": [
+      "转账截图",
+      "收据",
+      "POS 凭证",
+      "现金收款记录",
+      "押金凭证",
+      "担保协议",
+      "预授权凭证",
+      "财务确认凭证",
+      "退回补证说明"
+    ],
+    "systemGenerated": [
+      "paymentCaseRef",
+      "reservationRef",
+      "priceSnapshotRef",
+      "policySnapshotRef",
+      "sourceScenarioRef",
+      "paymentRequirementRef",
+      "depositRequirementRef",
+      "requirementVersion",
+      "paymentIntentRef",
+      "receiptEvidenceRef",
+      "submittedAt",
+      "submittedBy",
+      "depositIntentRef",
+      "guaranteeRef",
+      "guaranteeValidUntil",
+      "evidenceEnvelopeRef",
+      "financeReviewRequestRef",
+      "financeConfirmationSnapshotRef",
+      "financeGateEventRef",
+      "confirmedAt",
+      "confirmedBy",
+      "financeReadySnapshotRef",
+      "financeStatusHistoryRef",
+      "projectionVersion",
+      "domainEventId",
+      "commandSubmissionRef"
+    ],
+    "systemCalculated": [
+      "paymentAmountDue",
+      "depositAmountDue",
+      "remainingReceivable",
+      "currencyMatched",
+      "dueAt",
+      "financeReadyFlag",
+      "cannotSubmitReasons",
+      "legalNextActions"
+    ],
+    "evidenceBound": [
+      "PaymentReceiptEvidence",
+      "ReceiptEvidence",
+      "EvidenceBinding",
+      "evidenceEnvelopeRef"
+    ],
+    "financeConfirmed": [
+      "financeConfirmationStatus",
+      "financeConfirmedAmount",
+      "financeConfirmedCurrency",
+      "financeConfirmedMethod",
+      "financeConfirmedAt",
+      "financeConfirmedBy",
+      "financeGateEventRef"
+    ],
+    "internalAuditOnlyFields": [
+      "paymentCaseRef",
+      "reservationRef",
+      "priceSnapshotRef",
+      "policySnapshotRef",
+      "paymentRequirementRef",
+      "depositRequirementRef",
+      "paymentIntentRef",
+      "receiptEvidenceRef",
+      "depositIntentRef",
+      "guaranteeRef",
+      "financeReviewRequestRef",
+      "financeConfirmationSnapshotRef",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId",
+      "commandSubmissionRef"
+    ],
+    "forbiddenUserInputFields": [
+      "paymentId",
+      "depositId",
+      "guaranteeId",
+      "ledgerEntryId",
+      "ledgerTransactionId",
+      "reservationId",
+      "paymentCaseId",
+      "financeReviewRequestId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "fieldAuthority": {
+      "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#fieldAuthorityModel",
+      "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+      "businessInput": [
+        {
+          "fieldId": "receivedAmount",
+          "labelZh": "receivedAmount",
+          "control": "number",
+          "labelKey": "scenario6.field.receivedAmount.label",
+          "helpKey": "scenario6.field.receivedAmount.help",
+          "errorKey": "scenario6.field.receivedAmount.error"
+        },
+        {
+          "fieldId": "paymentMethod",
+          "labelZh": "paymentMethod",
+          "control": "text",
+          "labelKey": "scenario6.field.paymentMethod.label",
+          "helpKey": "scenario6.field.paymentMethod.help",
+          "errorKey": "scenario6.field.paymentMethod.error"
+        },
+        {
+          "fieldId": "paymentTime",
+          "labelZh": "paymentTime",
+          "control": "text",
+          "labelKey": "scenario6.field.paymentTime.label",
+          "helpKey": "scenario6.field.paymentTime.help",
+          "errorKey": "scenario6.field.paymentTime.error"
+        },
+        {
+          "fieldId": "payerName",
+          "labelZh": "payerName",
+          "control": "text",
+          "labelKey": "scenario6.field.payerName.label",
+          "helpKey": "scenario6.field.payerName.help",
+          "errorKey": "scenario6.field.payerName.error"
+        },
+        {
+          "fieldId": "paymentRemark",
+          "labelZh": "paymentRemark",
+          "control": "textarea",
+          "labelKey": "scenario6.field.paymentRemark.label",
+          "helpKey": "scenario6.field.paymentRemark.help",
+          "errorKey": "scenario6.field.paymentRemark.error"
+        },
+        {
+          "fieldId": "depositAmount",
+          "labelZh": "depositAmount",
+          "control": "number",
+          "labelKey": "scenario6.field.depositAmount.label",
+          "helpKey": "scenario6.field.depositAmount.help",
+          "errorKey": "scenario6.field.depositAmount.error"
+        },
+        {
+          "fieldId": "depositMethod",
+          "labelZh": "depositMethod",
+          "control": "text",
+          "labelKey": "scenario6.field.depositMethod.label",
+          "helpKey": "scenario6.field.depositMethod.help",
+          "errorKey": "scenario6.field.depositMethod.error"
+        },
+        {
+          "fieldId": "guarantorName",
+          "labelZh": "guarantorName",
+          "control": "text",
+          "labelKey": "scenario6.field.guarantorName.label",
+          "helpKey": "scenario6.field.guarantorName.help",
+          "errorKey": "scenario6.field.guarantorName.error"
+        },
+        {
+          "fieldId": "guaranteeMethod",
+          "labelZh": "guaranteeMethod",
+          "control": "text",
+          "labelKey": "scenario6.field.guaranteeMethod.label",
+          "helpKey": "scenario6.field.guaranteeMethod.help",
+          "errorKey": "scenario6.field.guaranteeMethod.error"
+        },
+        {
+          "fieldId": "guaranteeValidUntil",
+          "labelZh": "guaranteeValidUntil",
+          "control": "text",
+          "labelKey": "scenario6.field.guaranteeValidUntil.label",
+          "helpKey": "scenario6.field.guaranteeValidUntil.help",
+          "errorKey": "scenario6.field.guaranteeValidUntil.error"
+        },
+        {
+          "fieldId": "financeConfirmRemark",
+          "labelZh": "financeConfirmRemark",
+          "control": "textarea",
+          "labelKey": "scenario6.field.financeConfirmRemark.label",
+          "helpKey": "scenario6.field.financeConfirmRemark.help",
+          "errorKey": "scenario6.field.financeConfirmRemark.error"
+        },
+        {
+          "fieldId": "financeReturnReason",
+          "labelZh": "financeReturnReason",
+          "control": "textarea",
+          "labelKey": "scenario6.field.financeReturnReason.label",
+          "helpKey": "scenario6.field.financeReturnReason.help",
+          "errorKey": "scenario6.field.financeReturnReason.error"
+        },
+        {
+          "fieldId": "v-34492a83",
+          "labelZh": "实收金额",
+          "control": "number",
+          "labelKey": "scenario6.field.v-34492a83.label",
+          "helpKey": "scenario6.field.v-34492a83.help",
+          "errorKey": "scenario6.field.v-34492a83.error"
+        },
+        {
+          "fieldId": "v-db960091",
+          "labelZh": "收款方式",
+          "control": "text",
+          "labelKey": "scenario6.field.v-db960091.label",
+          "helpKey": "scenario6.field.v-db960091.help",
+          "errorKey": "scenario6.field.v-db960091.error"
+        },
+        {
+          "fieldId": "v-51b7da57",
+          "labelZh": "收款时间",
+          "control": "text",
+          "labelKey": "scenario6.field.v-51b7da57.label",
+          "helpKey": "scenario6.field.v-51b7da57.help",
+          "errorKey": "scenario6.field.v-51b7da57.error"
+        },
+        {
+          "fieldId": "v-e0a3d3b3",
+          "labelZh": "付款人",
+          "control": "text",
+          "labelKey": "scenario6.field.v-e0a3d3b3.label",
+          "helpKey": "scenario6.field.v-e0a3d3b3.help",
+          "errorKey": "scenario6.field.v-e0a3d3b3.error"
+        },
+        {
+          "fieldId": "v-2834e28a",
+          "labelZh": "备注",
+          "control": "textarea",
+          "labelKey": "scenario6.field.v-2834e28a.label",
+          "helpKey": "scenario6.field.v-2834e28a.help",
+          "errorKey": "scenario6.field.v-2834e28a.error"
+        },
+        {
+          "fieldId": "v-192ad240",
+          "labelZh": "押金金额",
+          "control": "number",
+          "labelKey": "scenario6.field.v-192ad240.label",
+          "helpKey": "scenario6.field.v-192ad240.help",
+          "errorKey": "scenario6.field.v-192ad240.error"
+        },
+        {
+          "fieldId": "v-eb74d0de",
+          "labelZh": "押金方式",
+          "control": "text",
+          "labelKey": "scenario6.field.v-eb74d0de.label",
+          "helpKey": "scenario6.field.v-eb74d0de.help",
+          "errorKey": "scenario6.field.v-eb74d0de.error"
+        },
+        {
+          "fieldId": "v-a9ae9d6e",
+          "labelZh": "担保人/担保方式",
+          "control": "text",
+          "labelKey": "scenario6.field.v-a9ae9d6e.label",
+          "helpKey": "scenario6.field.v-a9ae9d6e.help",
+          "errorKey": "scenario6.field.v-a9ae9d6e.error"
+        },
+        {
+          "fieldId": "v-34f4dc9b",
+          "labelZh": "担保有效期",
+          "control": "text",
+          "labelKey": "scenario6.field.v-34f4dc9b.label",
+          "helpKey": "scenario6.field.v-34f4dc9b.help",
+          "errorKey": "scenario6.field.v-34f4dc9b.error"
+        },
+        {
+          "fieldId": "v-904255d0",
+          "labelZh": "确认备注",
+          "control": "textarea",
+          "labelKey": "scenario6.field.v-904255d0.label",
+          "helpKey": "scenario6.field.v-904255d0.help",
+          "errorKey": "scenario6.field.v-904255d0.error"
+        },
+        {
+          "fieldId": "v-56eefd0c",
+          "labelZh": "退回原因",
+          "control": "textarea",
+          "labelKey": "scenario6.field.v-56eefd0c.label",
+          "helpKey": "scenario6.field.v-56eefd0c.help",
+          "errorKey": "scenario6.field.v-56eefd0c.error"
+        }
+      ],
+      "businessSelect": [
+        {
+          "fieldId": "paymentItem",
+          "labelZh": "paymentItem",
+          "control": "select",
+          "labelKey": "scenario6.field.paymentItem.label",
+          "helpKey": "scenario6.field.paymentItem.help",
+          "errorKey": "scenario6.field.paymentItem.error",
+          "optionSet": "option.paymentItem",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "splitPayment",
+          "labelZh": "splitPayment",
+          "control": "select",
+          "labelKey": "scenario6.field.splitPayment.label",
+          "helpKey": "scenario6.field.splitPayment.help",
+          "errorKey": "scenario6.field.splitPayment.error",
+          "optionSet": "option.splitPayment",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "depositRequired",
+          "labelZh": "depositRequired",
+          "control": "select",
+          "labelKey": "scenario6.field.depositRequired.label",
+          "helpKey": "scenario6.field.depositRequired.help",
+          "errorKey": "scenario6.field.depositRequired.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "guaranteeRequired",
+          "labelZh": "guaranteeRequired",
+          "control": "select",
+          "labelKey": "scenario6.field.guaranteeRequired.label",
+          "helpKey": "scenario6.field.guaranteeRequired.help",
+          "errorKey": "scenario6.field.guaranteeRequired.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "depositOption",
+          "labelZh": "depositOption",
+          "control": "select",
+          "labelKey": "scenario6.field.depositOption.label",
+          "helpKey": "scenario6.field.depositOption.help",
+          "errorKey": "scenario6.field.depositOption.error",
+          "optionSet": "option.depositOption",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "guaranteeOption",
+          "labelZh": "guaranteeOption",
+          "control": "select",
+          "labelKey": "scenario6.field.guaranteeOption.label",
+          "helpKey": "scenario6.field.guaranteeOption.help",
+          "errorKey": "scenario6.field.guaranteeOption.error",
+          "optionSet": "option.guaranteeOption",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "preAuthorizationOption",
+          "labelZh": "preAuthorizationOption",
+          "control": "select",
+          "labelKey": "scenario6.field.preAuthorizationOption.label",
+          "helpKey": "scenario6.field.preAuthorizationOption.help",
+          "errorKey": "scenario6.field.preAuthorizationOption.error",
+          "optionSet": "option.preAuthorizationOption",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "financeConfirm",
+          "labelZh": "financeConfirm",
+          "control": "select",
+          "labelKey": "scenario6.field.financeConfirm.label",
+          "helpKey": "scenario6.field.financeConfirm.help",
+          "errorKey": "scenario6.field.financeConfirm.error",
+          "optionSet": "option.financeConfirm",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "financeReturnForEvidence",
+          "labelZh": "financeReturnForEvidence",
+          "control": "select",
+          "labelKey": "scenario6.field.financeReturnForEvidence.label",
+          "helpKey": "scenario6.field.financeReturnForEvidence.help",
+          "errorKey": "scenario6.field.financeReturnForEvidence.error",
+          "optionSet": "option.financeReturnForEvidence",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "financePartialConfirm",
+          "labelZh": "financePartialConfirm",
+          "control": "select",
+          "labelKey": "scenario6.field.financePartialConfirm.label",
+          "helpKey": "scenario6.field.financePartialConfirm.help",
+          "errorKey": "scenario6.field.financePartialConfirm.error",
+          "optionSet": "option.financePartialConfirm",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "financeMarkException",
+          "labelZh": "financeMarkException",
+          "control": "select",
+          "labelKey": "scenario6.field.financeMarkException.label",
+          "helpKey": "scenario6.field.financeMarkException.help",
+          "errorKey": "scenario6.field.financeMarkException.error",
+          "optionSet": "option.financeMarkException",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-812b135e",
+          "labelZh": "收款项目",
+          "control": "select",
+          "labelKey": "scenario6.field.v-812b135e.label",
+          "helpKey": "scenario6.field.v-812b135e.help",
+          "errorKey": "scenario6.field.v-812b135e.error",
+          "optionSet": "option.v-812b135e",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-8e2fd91a",
+          "labelZh": "是否分笔",
+          "control": "select",
+          "labelKey": "scenario6.field.v-8e2fd91a.label",
+          "helpKey": "scenario6.field.v-8e2fd91a.help",
+          "errorKey": "scenario6.field.v-8e2fd91a.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-7810ae3c",
+          "labelZh": "是否需要押金",
+          "control": "select",
+          "labelKey": "scenario6.field.v-7810ae3c.label",
+          "helpKey": "scenario6.field.v-7810ae3c.help",
+          "errorKey": "scenario6.field.v-7810ae3c.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-8277ba05",
+          "labelZh": "是否需要担保",
+          "control": "select",
+          "labelKey": "scenario6.field.v-8277ba05.label",
+          "helpKey": "scenario6.field.v-8277ba05.help",
+          "errorKey": "scenario6.field.v-8277ba05.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-f88f6b7b",
+          "labelZh": "对应收款项目",
+          "control": "select",
+          "labelKey": "scenario6.field.v-f88f6b7b.label",
+          "helpKey": "scenario6.field.v-f88f6b7b.help",
+          "errorKey": "scenario6.field.v-f88f6b7b.error",
+          "optionSet": "option.v-f88f6b7b",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-eb77d99e",
+          "labelZh": "押金",
+          "control": "select",
+          "labelKey": "scenario6.field.v-eb77d99e.label",
+          "helpKey": "scenario6.field.v-eb77d99e.help",
+          "errorKey": "scenario6.field.v-eb77d99e.error",
+          "optionSet": "option.v-eb77d99e",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-a0f5e1e7",
+          "labelZh": "担保",
+          "control": "select",
+          "labelKey": "scenario6.field.v-a0f5e1e7.label",
+          "helpKey": "scenario6.field.v-a0f5e1e7.help",
+          "errorKey": "scenario6.field.v-a0f5e1e7.error",
+          "optionSet": "option.v-a0f5e1e7",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-86fd03a6",
+          "labelZh": "预授权",
+          "control": "select",
+          "labelKey": "scenario6.field.v-86fd03a6.label",
+          "helpKey": "scenario6.field.v-86fd03a6.help",
+          "errorKey": "scenario6.field.v-86fd03a6.error",
+          "optionSet": "option.v-86fd03a6",
+          "submitValueSource": "stableValue"
+        }
+      ],
+      "systemDerived": [
+        {
+          "fieldId": "paymentAmountDue",
+          "labelZh": "paymentAmountDue",
+          "labelKey": "scenario6.field.paymentAmountDue.label",
+          "helpKey": "scenario6.field.paymentAmountDue.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "depositAmountDue",
+          "labelZh": "depositAmountDue",
+          "labelKey": "scenario6.field.depositAmountDue.label",
+          "helpKey": "scenario6.field.depositAmountDue.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "remainingReceivable",
+          "labelZh": "remainingReceivable",
+          "labelKey": "scenario6.field.remainingReceivable.label",
+          "helpKey": "scenario6.field.remainingReceivable.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "currencyMatched",
+          "labelZh": "currencyMatched",
+          "labelKey": "scenario6.field.currencyMatched.label",
+          "helpKey": "scenario6.field.currencyMatched.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "dueAt",
+          "labelZh": "dueAt",
+          "labelKey": "scenario6.field.dueAt.label",
+          "helpKey": "scenario6.field.dueAt.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "financeReadyFlag",
+          "labelZh": "financeReadyFlag",
+          "labelKey": "scenario6.field.financeReadyFlag.label",
+          "helpKey": "scenario6.field.financeReadyFlag.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "cannotSubmitReasons",
+          "labelZh": "cannotSubmitReasons",
+          "labelKey": "scenario6.field.cannotSubmitReasons.label",
+          "helpKey": "scenario6.field.cannotSubmitReasons.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "legalNextActions",
+          "labelZh": "legalNextActions",
+          "labelKey": "scenario6.field.legalNextActions.label",
+          "helpKey": "scenario6.field.legalNextActions.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        }
+      ],
+      "readOnlySummary": [
+        {
+          "fieldId": "reservationNoDisplay",
+          "labelZh": "预订号",
+          "labelKey": "scenario6.field.reservationNoDisplay.label",
+          "helpKey": "scenario6.field.reservationNoDisplay.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "customerName",
+          "labelZh": "客户姓名",
+          "labelKey": "scenario6.field.customerName.label",
+          "helpKey": "scenario6.field.customerName.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "contactPhone",
+          "labelZh": "联系电话",
+          "labelKey": "scenario6.field.contactPhone.label",
+          "helpKey": "scenario6.field.contactPhone.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "checkInDate",
+          "labelZh": "入住日期",
+          "labelKey": "scenario6.field.checkInDate.label",
+          "helpKey": "scenario6.field.checkInDate.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "checkOutDate",
+          "labelZh": "离店日期",
+          "labelKey": "scenario6.field.checkOutDate.label",
+          "helpKey": "scenario6.field.checkOutDate.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "guestCount",
+          "labelZh": "人数",
+          "labelKey": "scenario6.field.guestCount.label",
+          "helpKey": "scenario6.field.guestCount.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "roomOrBedSummary",
+          "labelZh": "房间/床位",
+          "labelKey": "scenario6.field.roomOrBedSummary.label",
+          "helpKey": "scenario6.field.roomOrBedSummary.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "priceSnapshot",
+          "labelZh": "价格快照",
+          "labelKey": "scenario6.field.priceSnapshot.label",
+          "helpKey": "scenario6.field.priceSnapshot.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "reservationStatus",
+          "labelZh": "预订状态",
+          "labelKey": "scenario6.field.reservationStatus.label",
+          "helpKey": "scenario6.field.reservationStatus.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "quoteNo",
+          "labelZh": "报价单号",
+          "labelKey": "scenario6.field.quoteNo.label",
+          "helpKey": "scenario6.field.quoteNo.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "quoteVersion",
+          "labelZh": "报价版本",
+          "labelKey": "scenario6.field.quoteVersion.label",
+          "helpKey": "scenario6.field.quoteVersion.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "evidenceSummary",
+          "labelZh": "证据摘要",
+          "labelKey": "scenario6.field.evidenceSummary.label",
+          "helpKey": "scenario6.field.evidenceSummary.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-b7e26a46",
+          "labelZh": "预订确认摘要",
+          "labelKey": "scenario6.field.v-b7e26a46.label",
+          "helpKey": "scenario6.field.v-b7e26a46.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "reservationNoDisplay",
+          "labelZh": "预订号",
+          "labelKey": "scenario6.field.reservationNoDisplay.label",
+          "helpKey": "scenario6.field.reservationNoDisplay.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "customerInfo",
+          "labelZh": "客户信息",
+          "labelKey": "scenario6.field.customerInfo.label",
+          "helpKey": "scenario6.field.customerInfo.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "stayDateRange",
+          "labelZh": "日期范围",
+          "labelKey": "scenario6.field.stayDateRange.label",
+          "helpKey": "scenario6.field.stayDateRange.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "guestCount",
+          "labelZh": "人数",
+          "labelKey": "scenario6.field.guestCount.label",
+          "helpKey": "scenario6.field.guestCount.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "roomOrBedSummary",
+          "labelZh": "房间/床位",
+          "labelKey": "scenario6.field.roomOrBedSummary.label",
+          "helpKey": "scenario6.field.roomOrBedSummary.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "priceSnapshot",
+          "labelZh": "价格快照",
+          "labelKey": "scenario6.field.priceSnapshot.label",
+          "helpKey": "scenario6.field.priceSnapshot.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-c07ac6ca",
+          "labelZh": "预订状态",
+          "labelKey": "scenario6.field.v-c07ac6ca.label",
+          "helpKey": "scenario6.field.v-c07ac6ca.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-f71ae921",
+          "labelZh": "证据摘要",
+          "labelKey": "scenario6.field.v-f71ae921.label",
+          "helpKey": "scenario6.field.v-f71ae921.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-cd66b0d5",
+          "labelZh": "只读对象引用",
+          "labelKey": "scenario6.field.v-cd66b0d5.label",
+          "helpKey": "scenario6.field.v-cd66b0d5.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-63d001f4",
+          "labelZh": "价格方案摘要",
+          "labelKey": "scenario6.field.v-63d001f4.label",
+          "helpKey": "scenario6.field.v-63d001f4.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-09c43e0b",
+          "labelZh": "报价单摘要",
+          "labelKey": "scenario6.field.v-09c43e0b.label",
+          "helpKey": "scenario6.field.v-09c43e0b.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-070dd6b1",
+          "labelZh": "报价版本",
+          "labelKey": "scenario6.field.v-070dd6b1.label",
+          "helpKey": "scenario6.field.v-070dd6b1.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        },
+        {
+          "fieldId": "v-63ea5e51",
+          "labelZh": "库存锁定历史",
+          "labelKey": "scenario6.field.v-63ea5e51.label",
+          "helpKey": "scenario6.field.v-63ea5e51.help",
+          "sourceScenario": "预订确认摘要 / 预订号 / 库存锁定历史"
+        }
+      ],
+      "evidenceBinding": [
+        {
+          "fieldId": "evidence.v-b83a3a3b",
+          "labelZh": "转账截图",
+          "labelKey": "scenario6.evidence.evidence.v-b83a3a3b.label",
+          "helpKey": "scenario6.evidence.evidence.v-b83a3a3b.help",
+          "evidenceType": "image"
+        },
+        {
+          "fieldId": "evidence.v-24d3caa5",
+          "labelZh": "收据",
+          "labelKey": "scenario6.evidence.evidence.v-24d3caa5.label",
+          "helpKey": "scenario6.evidence.evidence.v-24d3caa5.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.pos",
+          "labelZh": "POS 凭证",
+          "labelKey": "scenario6.evidence.evidence.pos.label",
+          "helpKey": "scenario6.evidence.evidence.pos.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.v-739ae69d",
+          "labelZh": "现金收款记录",
+          "labelKey": "scenario6.evidence.evidence.v-739ae69d.label",
+          "helpKey": "scenario6.evidence.evidence.v-739ae69d.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-6c206cd8",
+          "labelZh": "押金凭证",
+          "labelKey": "scenario6.evidence.evidence.v-6c206cd8.label",
+          "helpKey": "scenario6.evidence.evidence.v-6c206cd8.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.v-cff63fe2",
+          "labelZh": "担保协议",
+          "labelKey": "scenario6.evidence.evidence.v-cff63fe2.label",
+          "helpKey": "scenario6.evidence.evidence.v-cff63fe2.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.v-9be44c70",
+          "labelZh": "预授权凭证",
+          "labelKey": "scenario6.evidence.evidence.v-9be44c70.label",
+          "helpKey": "scenario6.evidence.evidence.v-9be44c70.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.v-ddfdd710",
+          "labelZh": "财务确认凭证",
+          "labelKey": "scenario6.evidence.evidence.v-ddfdd710.label",
+          "helpKey": "scenario6.evidence.evidence.v-ddfdd710.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.v-43979ffb",
+          "labelZh": "退回补证说明",
+          "labelKey": "scenario6.evidence.evidence.v-43979ffb.label",
+          "helpKey": "scenario6.evidence.evidence.v-43979ffb.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-e89ca99f",
+          "labelZh": "应收依据证据",
+          "labelKey": "scenario6.evidence.evidence.v-e89ca99f.label",
+          "helpKey": "scenario6.evidence.evidence.v-e89ca99f.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-40e2bc5c",
+          "labelZh": "押金政策证据",
+          "labelKey": "scenario6.evidence.evidence.v-40e2bc5c.label",
+          "helpKey": "scenario6.evidence.evidence.v-40e2bc5c.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-b301c34a",
+          "labelZh": "财务确认摘要证据",
+          "labelKey": "scenario6.evidence.evidence.v-b301c34a.label",
+          "helpKey": "scenario6.evidence.evidence.v-b301c34a.help",
+          "evidenceType": "businessEvidence"
+        }
+      ],
+      "legalAction": [
+        {
+          "fieldId": "startRoomFeePayment",
+          "labelZh": "办理房费/订金",
+          "labelKey": "scenario6.action.startRoomFeePayment.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.startRoomFeePayment.v1"
+        },
+        {
+          "fieldId": "startDepositHandling",
+          "labelZh": "办理押金",
+          "labelKey": "scenario6.action.startDepositHandling.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.startDepositHandling.v1"
+        },
+        {
+          "fieldId": "startGuaranteeHandling",
+          "labelZh": "办理担保",
+          "labelKey": "scenario6.action.startGuaranteeHandling.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.startGuaranteeHandling.v1"
+        },
+        {
+          "fieldId": "confirmFinanceGate",
+          "labelZh": "确认",
+          "labelKey": "scenario6.action.confirmFinanceGate.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.confirmFinanceGate.v1"
+        },
+        {
+          "fieldId": "returnForEvidence",
+          "labelZh": "退回补证",
+          "labelKey": "scenario6.action.returnForEvidence.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.returnForEvidence.v1"
+        },
+        {
+          "fieldId": "partiallyConfirm",
+          "labelZh": "部分确认",
+          "labelKey": "scenario6.action.partiallyConfirm.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.partiallyConfirm.v1"
+        },
+        {
+          "fieldId": "markException",
+          "labelZh": "标记异常",
+          "labelKey": "scenario6.action.markException.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.markException.v1"
+        },
+        {
+          "fieldId": "viewConfirmationSummary",
+          "labelZh": "查看确认摘要",
+          "labelKey": "scenario6.action.viewConfirmationSummary.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.viewConfirmationSummary.v1"
+        },
+        {
+          "fieldId": "startCheckInPreparation",
+          "labelZh": "进入入住办理准备",
+          "labelKey": "scenario6.action.startCheckInPreparation.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.startCheckInPreparation.v1"
+        }
+      ],
+      "actionControl": [
+        {
+          "fieldId": "startRoomFeePayment",
+          "labelZh": "办理房费/订金",
+          "labelKey": "scenario6.action.startRoomFeePayment.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.startRoomFeePayment.v1"
+        },
+        {
+          "fieldId": "startDepositHandling",
+          "labelZh": "办理押金",
+          "labelKey": "scenario6.action.startDepositHandling.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.startDepositHandling.v1"
+        },
+        {
+          "fieldId": "startGuaranteeHandling",
+          "labelZh": "办理担保",
+          "labelKey": "scenario6.action.startGuaranteeHandling.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.startGuaranteeHandling.v1"
+        },
+        {
+          "fieldId": "confirmFinanceGate",
+          "labelZh": "确认",
+          "labelKey": "scenario6.action.confirmFinanceGate.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.confirmFinanceGate.v1"
+        },
+        {
+          "fieldId": "returnForEvidence",
+          "labelZh": "退回补证",
+          "labelKey": "scenario6.action.returnForEvidence.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.returnForEvidence.v1"
+        },
+        {
+          "fieldId": "partiallyConfirm",
+          "labelZh": "部分确认",
+          "labelKey": "scenario6.action.partiallyConfirm.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.partiallyConfirm.v1"
+        },
+        {
+          "fieldId": "markException",
+          "labelZh": "标记异常",
+          "labelKey": "scenario6.action.markException.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.markException.v1"
+        },
+        {
+          "fieldId": "viewConfirmationSummary",
+          "labelZh": "查看确认摘要",
+          "labelKey": "scenario6.action.viewConfirmationSummary.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.viewConfirmationSummary.v1"
+        },
+        {
+          "fieldId": "startCheckInPreparation",
+          "labelZh": "进入入住办理准备",
+          "labelKey": "scenario6.action.startCheckInPreparation.label",
+          "legalActionRef": "legalAction.dormitory.scenario6.startCheckInPreparation.v1"
+        }
+      ],
+      "conditionalInput": [
+        {
+          "fieldId": "paymentRemark",
+          "labelZh": "paymentRemark",
+          "control": "textarea",
+          "labelKey": "scenario6.field.paymentRemark.label",
+          "helpKey": "scenario6.field.paymentRemark.help",
+          "errorKey": "scenario6.field.paymentRemark.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        },
+        {
+          "fieldId": "financeConfirmRemark",
+          "labelZh": "financeConfirmRemark",
+          "control": "textarea",
+          "labelKey": "scenario6.field.financeConfirmRemark.label",
+          "helpKey": "scenario6.field.financeConfirmRemark.help",
+          "errorKey": "scenario6.field.financeConfirmRemark.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        },
+        {
+          "fieldId": "financeReturnReason",
+          "labelZh": "financeReturnReason",
+          "control": "textarea",
+          "labelKey": "scenario6.field.financeReturnReason.label",
+          "helpKey": "scenario6.field.financeReturnReason.help",
+          "errorKey": "scenario6.field.financeReturnReason.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        }
+      ],
+      "auditInternal": [
+        {
+          "fieldId": "paymentCaseRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "policySnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "paymentRequirementRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "depositRequirementRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "paymentIntentRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "receiptEvidenceRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "depositIntentRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "guaranteeRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "financeReviewRequestRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "financeConfirmationSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "projectionVersion",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "digest",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "domainEventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "commandSubmissionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "sourceScenarioRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "evidenceEnvelopeRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "financeGateEventRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "financeReadySnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "financeStatusHistoryRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "paymentId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "depositId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "guaranteeId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ledgerEntryId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ledgerTransactionId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "paymentCaseId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "financeReviewRequestId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        }
+      ]
+    }
+  },
+  "paymentDepositStatusOptions": [
+    "待提交凭证",
+    "待财务确认",
+    "财务已确认",
+    "财务退回",
+    "部分确认",
+    "押金已确认",
+    "担保已确认",
+    "需补充证据"
+  ],
+  "readSideOutputs": [
+    "收款确认摘要",
+    "押金确认摘要",
+    "担保确认摘要",
+    "剩余待收",
+    "财务确认状态",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "forbiddenUserVisibleTermsZh": [
+    "已入住",
+    "已退房",
+    "已退款",
+    "final GO",
+    "生产发布",
+    "ordinary-payment",
+    "deposit-liability",
+    "PaymentConfirm",
+    "DepositConfirm"
+  ],
+  "financeBoundaryRule": {
+    "financeGateRequired": true,
+    "businessRuntimeMayWriteLedger": false,
+    "ledgerEntryWrittenOnlyByFinanceKernel": true,
+    "paymentIntentIsNotFinanceTruth": true,
+    "depositIsNotIncome": true,
+    "guaranteeIsNotPayment": true,
+    "financeConfirmationRequiresAuthorizedRole": true,
+    "failureCodeForDirectLedgerWrite": "ledger_write_forbidden",
+    "failureCodeForFinanceBypass": "finance_gate_required"
+  },
+  "noGo": {
+    "businessFeatureDevelopmentAllowed": false,
+    "businessGoLiveAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO",
+    "reasonZh": "本 Source 只完成场景包 6 精准落地闭环，不授予生产发布、业务上线或 final GO。"
+  }
+}

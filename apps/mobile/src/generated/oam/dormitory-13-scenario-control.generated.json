@@ -1,0 +1,410 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-mobileControl.generated",
+  "version": "oam.dormitory-13-scenario-mobileControl.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:206a7609fdae45bdae06d121cf337ad49e02575acc296d975af6fecc12ccdd21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    }
+  ],
+  "sourceContentDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:f35447fcb2d29134139471a1b966fb574d91a0c22fe3f39d2028d04995b50a0a",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "consumer": "surface",
+  "scenarios": [
+    {
+      "scenarioNo": 1,
+      "scenarioId": "lodging.resource-basic-readiness",
+      "nameZh": "房源建档与基础就绪",
+      "chainLayer": "main_operating_chain",
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "summaryOutputs": [
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要"
+      ]
+    },
+    {
+      "scenarioNo": 2,
+      "scenarioId": "lodging.resource-operation-status",
+      "nameZh": "房源运营就绪与状态维护",
+      "chainLayer": "main_operating_chain",
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "summaryOutputs": [
+        "运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护"
+      ]
+    },
+    {
+      "scenarioNo": 3,
+      "scenarioId": "lodging.product-and-rate",
+      "nameZh": "住宿商品与价格",
+      "chainLayer": "main_operating_chain",
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "summaryOutputs": [
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本和价格日历摘要"
+      ]
+    },
+    {
+      "scenarioNo": 4,
+      "scenarioId": "lodging.inquiry-and-quote",
+      "nameZh": "询价与报价",
+      "chainLayer": "main_operating_chain",
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "summaryOutputs": [
+        "询价摘要",
+        "报价单",
+        "报价版本",
+        "价格快照",
+        "有效期"
+      ]
+    },
+    {
+      "scenarioNo": 5,
+      "scenarioId": "lodging.reservation-and-inventory-hold",
+      "nameZh": "预订与库存锁定",
+      "chainLayer": "main_operating_chain",
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "summaryOutputs": [
+        "预订确认摘要",
+        "预订号",
+        "库存锁定历史"
+      ]
+    },
+    {
+      "scenarioNo": 6,
+      "scenarioId": "lodging.payment-deposit-and-guarantee",
+      "nameZh": "收款、押金与担保",
+      "chainLayer": "main_operating_chain",
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "summaryOutputs": [
+        "收款/押金/担保确认摘要",
+        "财务状态"
+      ]
+    },
+    {
+      "scenarioNo": 7,
+      "scenarioId": "lodging.check-in-processing",
+      "nameZh": "入住办理",
+      "chainLayer": "main_operating_chain",
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "summaryOutputs": [
+        "入住记录摘要",
+        "住客摘要",
+        "占用摘要",
+        "凭证摘要"
+      ]
+    },
+    {
+      "scenarioNo": 8,
+      "scenarioId": "lodging.in-stay-management",
+      "nameZh": "在住管理",
+      "chainLayer": "main_operating_chain",
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "summaryOutputs": [
+        "在住状态",
+        "服务/异常/续住/换房换床摘要",
+        "退房准备"
+      ]
+    },
+    {
+      "scenarioNo": 9,
+      "scenarioId": "lodging.checkout-and-settlement",
+      "nameZh": "退房结算",
+      "chainLayer": "main_operating_chain",
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "summaryOutputs": [
+        "退房确认摘要",
+        "结算意向",
+        "资源待恢复请求"
+      ]
+    },
+    {
+      "scenarioNo": 10,
+      "scenarioId": "lodging.cancel-noshow-refund-intake",
+      "nameZh": "取消、未到店与退款处理",
+      "chainLayer": "main_operating_chain",
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "summaryOutputs": [
+        "取消/未到店摘要",
+        "退款/扣费申请",
+        "库存释放请求"
+      ]
+    },
+    {
+      "scenarioNo": 11,
+      "scenarioId": "lodging.housekeeping-maintenance-outofservice",
+      "nameZh": "房务、维修与停售协同",
+      "chainLayer": "horizontal_support_chain",
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "summaryOutputs": [
+        "作业完成摘要",
+        "验收摘要",
+        "停售/恢复建议",
+        "费用意向"
+      ]
+    },
+    {
+      "scenarioNo": 12,
+      "scenarioId": "lodging.channel-corporate-customer",
+      "nameZh": "渠道与企业客户",
+      "chainLayer": "horizontal_support_chain",
+      "pageEntries": [
+        "today",
+        "workItems",
+        "search",
+        "mine"
+      ],
+      "summaryOutputs": [
+        "渠道摘要",
+        "企业客户摘要",
+        "协议资格",
+        "发布规则"
+      ]
+    },
+    {
+      "scenarioNo": 13,
+      "scenarioId": "lodging.reporting-audit-review",
+      "nameZh": "经营报表、审计与复盘",
+      "chainLayer": "readonly_governance_chain",
+      "pageEntries": [
+        "search",
+        "mine"
+      ],
+      "summaryOutputs": [
+        "报表快照",
+        "审计发现",
+        "复盘结论",
+        "行动计划"
+      ]
+    }
+  ],
+  "operationExperienceContract": {
+    "version": "oam.dormitory.operation-experience-contract.v1",
+    "sourceAuthorityRole": "business-work-surface-contract",
+    "appliesToScenarioNos": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "purposeZh": "每个住宿场景步骤都必须声明当前业务对象、页面只读上下文、真正可编辑字段、固定选择、金额语义、合法动作、上下游承接和搜索阅读模型。",
+    "requiredStepFields": [
+      "primaryBusinessObject",
+      "requiredReadContext",
+      "editableInputs",
+      "fixedSelections",
+      "financialContext",
+      "legalActions",
+      "handoffSummary",
+      "searchReadModel"
+    ],
+    "rules": {
+      "readContextMustNotBeUserInput": true,
+      "legalActionsMustNotEnterFormFields": true,
+      "fixedSelectionsRequireOptionSet": true,
+      "amountRequiresCurrencyBusinessObjectDirectionAndStage": true,
+      "searchReadModelUsesBusinessLanguage": true,
+      "handoffMustDeclareNoRefillForUpstreamReadonly": true,
+      "labelsAndSubmittedValuesSeparatedForThreeLanguages": true,
+      "auditInternalForbiddenOnBusinessSurface": true
+    },
+    "paymentBaselineZh": [
+      "客户信息",
+      "联系电话",
+      "预订号",
+      "入住日期",
+      "离店日期",
+      "人数",
+      "房间/床位",
+      "价格快照",
+      "应收项目",
+      "已收金额",
+      "本次金额",
+      "剩余待收",
+      "币种",
+      "凭证要求"
+    ],
+    "finalSafety": {
+      "productionConfirmAllowed": false,
+      "releaseAuthority": false,
+      "finalGoNoGo": "NO_GO"
+    }
+  },
+  "pageEntryPolicy": {
+    "today": "今天需要处理的被动任务，只显示到期、逾期、今天计划、今天待确认。",
+    "workItems": "全量被动任务池。",
+    "search": "主动查询，只读结果，只能跳转合法动作，不能搜索即写事实。",
+    "mine": "草稿、收藏、个人跟进、导出、设置等个人入口。",
+    "displayRequirements": [
+      "当前状态",
+      "缺失项",
+      "下一步动作",
+      "不可提交原因",
+      "完成摘要"
+    ],
+    "buttonRuleZh": "所有按钮按状态出现，不得固定一个大提交按钮。"
+  },
+  "entryAdmissionContract": {
+    "version": "oam.dormitory.entry-admission-contract.v1",
+    "objects": [
+      "EntryResult",
+      "SearchResult",
+      "WorkItem"
+    ],
+    "requiredFields": [
+      "businessTitle",
+      "businessSummary",
+      "legalActions",
+      "admissionDecision",
+      "nextAction",
+      "cannotSubmitReason",
+      "readonlyReason",
+      "sourceScenario"
+    ],
+    "entryPages": [
+      "today",
+      "workItems",
+      "search",
+      "mine",
+      "detail",
+      "correction"
+    ],
+    "resolverChain": [
+      "LegalAction Resolver",
+      "Admission Attach",
+      "Runtime Prepare",
+      "WorkItem"
+    ],
+    "rules": {
+      "frontendButtonJudgementForbidden": true,
+      "searchReadonlyOnly": true,
+      "searchLearningOnlyForbidden": true,
+      "correctionRequiresAdmission": true,
+      "oldWStayCurrentEntryForbidden": true,
+      "writeFactsOnlyThroughOperationsRuntime": true
+    },
+    "legalActionFields": [
+      "action",
+      "label",
+      "view",
+      "allowed",
+      "writeBusinessFact",
+      "admissionDecision"
+    ],
+    "decisionCopy": {
+      "cannotSubmitReasonZh": "当前不能提交时，必须显示业务可懂原因。",
+      "readonlyReasonZh": "只读入口必须说明只能查看或只能跳转合法动作。",
+      "nextActionZh": "下一步必须是业务动作，不得显示内部编号或技术状态。"
+    },
+    "sourceScenarioRuleZh": "入口必须声明来自哪个 13 场景；搜索、今日、工作项、我的和更正入口不得把旧 W-STAY 包当当前主链。"
+  },
+  "forbiddenUserInputFields": [
+    "roomId",
+    "bedId",
+    "ratePlanId",
+    "quoteId",
+    "reservationId",
+    "stayId",
+    "paymentId",
+    "depositId",
+    "refundId",
+    "ledgerEntryId",
+    "stableRef",
+    "digest",
+    "projectionVersion",
+    "domainEventId"
+  ],
+  "runtimeConsumptionBoundary": {
+    "runtime": "只消费总控 generated 合同和各场景 generated 合同来执行命令与校验。",
+    "surface": "只展示、解释、跳转和提交合法动作。",
+    "readModelSearchDashboardReport": "只读消费，不写业务事实。",
+    "financeGate": "独占账务真值。",
+    "forbidden": "runtime、surface、测试脚本不得绕过总控硬编码业务规则。"
+  },
+  "finalSafety": {
+    "businessFeatureDevelopmentAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

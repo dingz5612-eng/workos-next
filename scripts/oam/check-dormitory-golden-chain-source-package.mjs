@@ -18,7 +18,19 @@ const operationsRuntimePath = "services/core-api/WorkOS.Api/Runtime/OperationsRu
 const operationsEndpointsPath = "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs";
 const canonicalOperationsPath = "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs";
 const definitionRegistryPath = "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs";
+const runtimeValidatorPath = "scripts/validate-runtime-api.mjs";
+const operationPanelRuntimeContractPath = "docs/surface/operation-panel-runtime-contract.yml";
 const noSideEffectsProofPath = "docs/oam/db-no-side-effects-proof.json";
+const writeProof = process.argv.includes("--write-proof") || process.env.OAM_WRITE_PROOF === "1";
+const sourceFinalizationStatus = "SOURCE_FINALIZED_BY_00";
+const sourceFieldGapsDecisionStatus = "DECIDED_AND_BOUND";
+const sourceReadyForCompileDecision = true;
+const compileDecisionStatus = "READY_FOR_00_COMPILE_DECISION";
+const generatedCompileAuthorized = false;
+const generatedCompilationAllowed = "false_until_00_explicit_generated_compile_approval";
+const generatedContractStatus10B = "PENDING_GENERATED_CONTRACT";
+const generatedCompileCompleted = false;
+const runtimeConsumptionReady = false;
 
 const firstChainTypes = [
   "Dorm.RoomSetupConfirm",
@@ -63,6 +75,85 @@ const noSideEffectWrites = [
   "Dashboard mutation",
   "business Evidence mutation"
 ];
+const branchNoSideEffects = [
+  "no_command_submission",
+  "no_uow_commit",
+  "no_domain_event",
+  "no_workitem_event",
+  "no_ledger_transaction",
+  "no_ledger_entry",
+  "no_outbox",
+  "no_confirmed_transition",
+  "no_next_workitem_dispatch",
+  "no_projection_mutation",
+  "no_lens_mutation",
+  "no_search_mutation",
+  "no_dashboard_mutation",
+  "no_business_evidence_mutation"
+];
+const allowedFieldCategories = [
+  "clientSubmitted",
+  "contextReadonly",
+  "systemGenerated",
+  "derived",
+  "stable-reference",
+  "evidence-reference",
+  "branch-output",
+  "forbidden"
+];
+const sourceGapIds = [
+  "buildingId",
+  "roomType",
+  "readinessEvidenceRefs",
+  "readinessNote",
+  "blockedReason",
+  "notSaleableReason",
+  "serviceVerificationRef"
+];
+const sourceFieldGapDecisions = {
+  buildingId: {
+    decision: "add_as_context_readonly_ref",
+    owner: "01｜产品业务",
+    compileBlocking: true,
+    compilerInputImpact: "contextReadonly_ref_required"
+  },
+  roomType: {
+    decision: "defer_to_P1",
+    owner: "01｜产品业务",
+    compileBlocking: false,
+    compilerInputImpact: "deferred_not_blocking"
+  },
+  readinessEvidenceRefs: {
+    decision: "bind_to_evidence_envelope",
+    owner: "06｜质量证据",
+    compileBlocking: true,
+    compilerInputImpact: "evidenceEnvelope_required"
+  },
+  readinessNote: {
+    decision: "defer_to_P2_audit_note",
+    owner: "01｜产品业务",
+    compileBlocking: false,
+    compilerInputImpact: "audit_note_only"
+  },
+  blockedReason: {
+    decision: "map_to_branch_outcome",
+    owner: "02｜架构运行时",
+    compileBlocking: true,
+    compilerInputImpact: "branchOutputOnly"
+  },
+  notSaleableReason: {
+    decision: "map_to_resource_not_saleable_branch",
+    owner: "02｜架构运行时",
+    compileBlocking: true,
+    compilerInputImpact: "branchOutputOnly"
+  },
+  serviceVerificationRef: {
+    decision: "bind_to_verification_evidence_ref",
+    owner: "06｜质量证据",
+    compileBlocking: true,
+    compilerInputImpact: "evidenceObjectStableRef_required"
+  }
+};
 
 const p0Failures = [];
 const p1Residuals = [];
@@ -82,6 +173,8 @@ const operationsRuntime = readText(operationsRuntimePath);
 const operationsEndpoints = readText(operationsEndpointsPath);
 const canonicalOperations = readText(canonicalOperationsPath);
 const definitionRegistry = readText(definitionRegistryPath);
+const runtimeValidator = readText(runtimeValidatorPath);
+const operationPanelRuntimeContract = readJson(operationPanelRuntimeContractPath);
 const noSideEffectsProof = readJson(noSideEffectsProofPath);
 
 checkSourceIdentity();
@@ -92,6 +185,7 @@ checkLanguageBoundary();
 checkReadSideEnvelope();
 checkPriorIdentityDeletionChain();
 checkAdmissionTrustBoundary();
+checkWorkItemTombstoneResidual();
 checkSourceGeneratedProvenanceDirection();
 checkSourceLevelNoSideEffects();
 runSourceMutationCases();
@@ -107,6 +201,8 @@ const sourceInputs = [
   operationsEndpointsPath,
   canonicalOperationsPath,
   definitionRegistryPath,
+  runtimeValidatorPath,
+  operationPanelRuntimeContractPath,
   generatorPath
 ];
 const report = {
@@ -120,16 +216,26 @@ const report = {
   p2Residuals,
   evidenceNodeReady: status === "PASS",
   finalGoNoGo: "NO_GO",
-  sourceScenarioPackageReviewStatus: status === "PASS" ? "READY_FOR_00_FINAL_REVIEW" : "CONDITIONAL_NO_PASS",
-  compilePreparationDecision: "PENDING_00_DECISION",
-  compilePreparationAllowed: "false_until_00_approval",
+  sourceFinalizationStatus: status === "PASS" ? sourceFinalizationStatus : "CONDITIONAL_NO_PASS",
+  sourceScenarioPackageReviewStatus: status === "PASS" ? sourceFinalizationStatus : "CONDITIONAL_NO_PASS",
+  sourceFieldGapsDecisionStatus,
+  sourceReadyForCompileDecision,
+  compilePreparationDecision: compileDecisionStatus,
+  compileDecisionStatus,
+  compilePreparationAllowed: compileDecisionStatus,
+  generatedCompileAuthorized,
+  generatedCompilationAllowed,
+  generatedCompileCompleted,
+  generatedCompilationCompleted: false,
+  runtimeConsumptionReady,
   businessFeatureDevelopmentAllowed: false,
   businessProductionGoNoGo: "NO_GO",
   dormitoryL2GoNoGo: "NO_GO",
   productionConfirmAllowed: false,
+  releaseAuthority: false,
   mutation10AStatus: mutationCases.every((item) => item.status === "PASS") ? "PASS" : "FAIL",
   mutationCases,
-  generatedContractStatus10B: "PENDING_GENERATED_CONTRACT",
+  generatedContractStatus10B,
   noSideEffectsStatus: verifiedControls.includes("source-level-no-side-effects") ? "PASS" : "FAIL",
   verifiedControls,
   evidenceGraphNodeContract: {
@@ -138,14 +244,27 @@ const report = {
     scope: "compile_preparation_review",
     releaseAuthority: false,
     businessGoAuthority: false,
-    decisionState: status === "PASS" ? "READY_FOR_GENERATOR" : "BLOCKED_BY_SOURCE_P0",
+    decisionState: status === "PASS" ? sourceFinalizationStatus : "BLOCKED_BY_SOURCE_P0",
+    sourceReadyForCompileDecision,
+    compileDecisionStatus,
+    generatedCompileAuthorized,
+    generatedCompilationAllowed,
+    generatedCompileCompleted,
+    runtimeConsumptionReady,
     goNoGoImpact: ["finalGoNoGo"],
     dependsOn: [
-      sourcePath,
-      matrixPath,
-      kernelPath,
-      resultPath,
-      noSideEffectsProofPath
+      "source-package-proof.source-package-file-hash",
+      "source-package-proof.scenario-matrix-hash",
+      "source-package-proof.dormitory-operating-kernel-hash",
+      "source-package-proof.source-package-checker-result",
+      "source-package-proof.language-copy-proof",
+      "source-package-proof.read-side-envelope-proof",
+      "source-package-proof.finance-ledger-none-proof",
+      "source-package-proof.prior-identity-blocker-proof",
+      "source-package-proof.no-side-effects-proof",
+      "source-package-proof.mutation-result-proof",
+      "source-package-proof.source-field-gaps-decision-proof",
+      "source-package-proof.branch-flows-no-side-effects-proof"
     ],
     requiredDigests: [
       "sourceDigest",
@@ -155,17 +274,15 @@ const report = {
     ]
   },
   sourceFieldGaps: {
-    pending00Decision: true,
-    compilePreparationAllowed: "false_until_00_approval",
-    gaps: [
-      "buildingId",
-      "roomType",
-      "readinessEvidenceRefs",
-      "readinessNote",
-      "blockedReason",
-      "notSaleableReason",
-      "serviceVerificationRef"
-    ]
+    pending00Decision: false,
+    compilePreparationAllowed: compileDecisionStatus,
+    decisions: sourceFieldGapDecisions
+  },
+  branchFlowContract: {
+    requiredNoSideEffects: branchNoSideEffects,
+    correctionMode: "source-package-return-only",
+    nonCorrectionMode: "not_allowed",
+    bypassAdmissionAllowed: false
   },
   p1P2Policy: {
     p1RequiresOwnerBlockingScopeDeferredReason: true,
@@ -180,7 +297,14 @@ const report = {
       sourceScenarioRef: sourcePath,
       scenarioMatrixRef: matrixPath,
       sourceKernelRef: kernelPath,
-      expectedGeneratedStatus: "PENDING_GENERATED_CONTRACT"
+      sourceReadyForCompileDecision,
+      compilePreparationAllowed: compileDecisionStatus,
+      generatedCompileAuthorized,
+      generatedCompilationAllowed,
+      generatedCompileCompleted,
+      runtimeConsumptionReady,
+      generatedCompilationCompleted: false,
+      expectedGeneratedStatus: generatedContractStatus10B
     })
   },
   trackedInputs: sourceInputs,
@@ -198,10 +322,14 @@ report.digests.checkerResultDigest = digestObject({
   p0Failures,
   p1Residuals,
   p2Residuals,
-  mutationCases
+  mutationCases,
+  sourceFieldGaps: report.sourceFieldGaps,
+  branchFlowContract: report.branchFlowContract
 });
 
-writeStableJson(resultPath, report);
+if (writeProof) {
+  writeStableJson(resultPath, report);
+}
 
 if (p0Failures.length) {
   for (const item of p0Failures) {
@@ -257,6 +385,30 @@ function checkSourceReviewSemantics() {
   requireCondition(!/^scenarioNameZh:/m.test(sourceText), "source.scenario_name裸_zh", "scenarioNameZh must not be a user-visible source of truth.", {});
   requireCondition(sourceText.includes("businessGoalZhForReviewOnly:"), "source.business_goal_review_only_missing", "businessGoalZh must be review-only.", {});
   requireCondition(!/^businessGoalZh:/m.test(sourceText), "source.business_goal裸_zh", "businessGoalZh must not be a user-visible source of truth.", {});
+  requireCondition(sourceText.includes("businessGoalZhForReviewOnly: 房间、床位和资源准备完成内部试点检查；这不代表生产可售已放开。"), "source.business_goal_review_only_unsafe", "businessGoal review-only text must say internal pilot inspection does not open production saleability.", {});
+  requireCondition(!sourceText.includes("达到 L1 internal pilot 可售条件") && !sourceText.includes("达到内部试点可售条件"), "source.business_goal_saleability_implies_go", "businessGoal must not imply internal pilot saleability is opened.", {});
+  for (const [field, value] of [
+    ["sourceFinalizationStatus", sourceFinalizationStatus],
+    ["sourceScenarioPackageReviewStatus", sourceFinalizationStatus],
+    ["sourceFieldGapsDecisionStatus", sourceFieldGapsDecisionStatus],
+    ["sourceReadyForCompileDecision", "true"],
+    ["compileDecisionStatus", compileDecisionStatus],
+    ["generatedCompileAuthorized", "false"],
+    ["generatedCompilationAllowed", generatedCompilationAllowed],
+    ["generatedContractStatus10B", generatedContractStatus10B],
+    ["generatedCompileCompleted", "false"],
+    ["generatedCompilationCompleted", "false"],
+    ["runtimeConsumptionReady", "false"],
+    ["businessFeatureDevelopmentAllowed", "false"],
+    ["businessProductionGoNoGo", "NO_GO"],
+    ["dormitoryL2GoNoGo", "NO_GO"],
+    ["productionConfirmAllowed", "false"],
+    ["releaseAuthority", "false"],
+    ["finalGoNoGo", "NO_GO"],
+    ["nextStageAllowed", "false"]
+  ]) {
+    requireCondition(sourceText.includes(`${field}: ${value}`), "source.finalized_status_missing", `Source package missing ${field}: ${value}.`, { field, value });
+  }
 
   const branchFlows = section(sourceText, "branchFlows");
   for (const id of [
@@ -284,10 +436,30 @@ function checkSourceReviewSemantics() {
       "admissionNoGoItem:",
       "safeErrorCopyKey:",
       "explanationKey:",
-      "expectedNoSideEffects: true"
+      "expectedNoSideEffects:"
     ]) {
       requireCondition(branch.includes(required), "source.branch_semantic_field_missing", `branch ${id} missing ${required}.`, { id, required });
     }
+    for (const effect of branchNoSideEffects) {
+      requireCondition(branch.includes(`- ${effect}`), "source.branch_no_side_effect_missing", `branch ${id} missing no-side-effect ${effect}.`, { id, effect });
+    }
+    for (const required of [
+      "directRuntimeCorrectionApplyAllowed: false",
+      "financeCorrectionApplyAllowed: false",
+      "ledgerReversalAllowed: false",
+      "ordinaryBusinessFactWriteAllowed: false",
+      "bypassAdmissionAllowed: false"
+    ]) {
+      requireCondition(branch.includes(required), "source.branch_correction_guard_missing", `branch ${id} correctionAllowed missing ${required}.`, { id, required });
+    }
+    if (id === "correction") {
+      requireCondition(branch.includes("mode: source-package-return-only"), "source.correction_mode_invalid", "correction branch must return to Source package only.", { id });
+      requireCondition(branch.includes("explanationKey: explain.correctionDoesNotBypassAdmission"), "source.correction_explanation_missing", "correction branch must use correction-does-not-bypass-admission explanation.", { id });
+    } else {
+      requireCondition(branch.includes("mode: not_allowed"), "source.non_correction_mode_invalid", `branch ${id} must not allow correction mode.`, { id });
+    }
+    requireCondition(!/correctionAllowed:\s*false|correctionAllowed:\s*true/.test(branch), "source.branch_boolean_correction_allowed", `branch ${id} must use correctionAllowed object, not boolean.`, { id });
+    requireCondition(!branch.includes("expectedNoSideEffects: true"), "source.branch_boolean_side_effects", `branch ${id} must use explicit expectedNoSideEffects list.`, { id });
     requireCondition(!branch.includes("nameZh:"), "source.branch_name_not_review_only", `branch ${id} must not expose nameZh as user copy.`, { id });
   }
 
@@ -336,15 +508,24 @@ function checkSourceReviewSemantics() {
     const fieldId = match[1].trim();
     const field = blockFor(fieldContracts.slice(match.index), `fieldId: ${fieldId}`, "\n      - fieldId:");
     for (const required of [
+      "sourceFieldId:",
+      "labelCopyKey:",
       "category:",
       "editable:",
       "source:",
       "fallbackAllowed: false",
       "ordinaryUserVisible:",
-      "controlSource: generatedSurfaceModelOnly"
+      "controlSource: generatedSurfaceModelOnly",
+      "rawIdManualInputAllowed: false",
+      "objectKind:",
+      "definitionScope:",
+      "generatedContractRef:"
     ]) {
       requireCondition(field.includes(required), "source.executable_field_control_missing", `field ${fieldId} missing ${required}.`, { fieldId, required });
     }
+    const categoryMatch = /category:\s*([^\s]+)/.exec(field);
+    requireCondition(Boolean(categoryMatch) && allowedFieldCategories.includes(categoryMatch[1]), "source.executable_field_category_invalid", `field ${fieldId} category is not allowed.`, { fieldId, category: categoryMatch?.[1] ?? "missing" });
+    requireCondition(!/(cardId|sourceCardId|workspaceCardId)/i.test(fieldId), "source.executable_field_prior_identity", `field ${fieldId} must not use prior card identity.`, { fieldId });
   }
   verifiedControls.push("source-review-semantics");
 }
@@ -428,11 +609,29 @@ function checkFieldAndStableRefBoundary() {
   requireText(sourceText, "rawIdManualInputAllowed: false", "fields.raw_id_block_missing", "rawIdManualInputAllowed=false must be declared.");
   requireText(sourceText, "oldCardIdRenameBlocked: true", "fields.old_card_rename_missing", "objectIdBinding must block renamed card identity.");
   const gaps = section(sourceText, "sourceFieldGaps");
-  for (const gap of ["buildingId", "roomType", "readinessEvidenceRefs", "readinessNote", "blockedReason", "notSaleableReason", "serviceVerificationRef"]) {
-    requireCondition(gaps.includes(`- ${gap}`), "fields.source_gap_missing", `sourceFieldGaps missing ${gap}.`, { gap });
+  requireCondition(gaps.includes("pending00Decision: false"), "fields.source_gap_pending_not_closed", "sourceFieldGaps.pending00Decision must be false after 00 decision preparation.");
+  requireCondition(gaps.includes(`compilePreparationAllowed: ${compileDecisionStatus}`), "fields.source_gap_compile_decision_missing", "sourceFieldGaps must be ready only for 00 compile decision after decisions are bound.");
+  requireCondition(gaps.includes("decisions:"), "fields.source_gap_decisions_missing", "sourceFieldGaps must contain structured decisions.");
+  for (const gap of sourceGapIds) {
+    const decision = decisionBlock(gaps, gap);
+    requireCondition(Boolean(decision), "fields.source_gap_decision_missing", `sourceFieldGaps decision missing ${gap}.`, { gap });
+    for (const required of ["decision:", "owner:", "compileBlocking:", "compilerInputImpact:"]) {
+      requireCondition(decision.includes(required), "fields.source_gap_decision_field_missing", `sourceFieldGaps.${gap} missing ${required}.`, { gap, required });
+    }
     requireCondition(!fieldContracts.includes(`fieldId: ${gap}`) && !fieldContracts.includes(`sourceFieldId: ${gap}`), "fields.source_gap_promoted_to_executable", `sourceFieldGaps item must not be executable in this round: ${gap}.`, { gap });
   }
-  requireCondition(gaps.includes("pending00Decision: true") && gaps.includes("compilePreparationAllowed: false_until_00_approval"), "fields.source_gap_decision_missing", "sourceFieldGaps must remain pending 00 decision.");
+  requireCondition(decisionBlock(gaps, "buildingId").includes("decision: add_as_context_readonly_ref") && sourceText.includes("fieldId: buildingContextRef"), "fields.building_context_ref_missing", "buildingId must be resolved as buildingContextRef/contextReadonly, not raw user input.");
+  requireCondition(decisionBlock(gaps, "roomType").includes("decision: defer_to_P1") && decisionBlock(gaps, "roomType").includes("deferred_not_blocking"), "fields.room_type_not_deferred", "roomType must be deferred P1 and non-blocking.");
+  requireCondition(decisionBlock(gaps, "readinessEvidenceRefs").includes("decision: bind_to_evidence_envelope") && section(sourceText, "fieldBindings").includes("readinessEvidenceRefs:"), "fields.readiness_evidence_not_envelope", "readinessEvidenceRefs must bind to EvidenceEnvelope.");
+  requireCondition(decisionBlock(gaps, "readinessNote").includes("notConfirmBasis: true") && decisionBlock(gaps, "readinessNote").includes("notCompilerInputInCurrentRound: true"), "fields.readiness_note_not_audit_only", "readinessNote must be P2 audit/collaboration note only.");
+  requireCondition(decisionBlock(gaps, "blockedReason").includes("compilerInputImpact: branchOutputOnly") && section(sourceText, "fieldBindings").includes("blockedReason:"), "fields.blocked_reason_not_branch_output", "blockedReason must map to branch output only.");
+  requireCondition(decisionBlock(gaps, "notSaleableReason").includes("decision: map_to_resource_not_saleable_branch") && section(sourceText, "fieldBindings").includes("notSaleableReason:"), "fields.not_saleable_not_branch_output", "notSaleableReason must map to resource-not-saleable branch output.");
+  requireCondition(decisionBlock(gaps, "serviceVerificationRef").includes("decision: bind_to_verification_evidence_ref") && section(sourceText, "fieldBindings").includes("serviceVerificationRef:"), "fields.service_verification_not_evidence_ref", "serviceVerificationRef must bind to EvidenceObject stableRef.");
+  for (const evidenceField of ["readinessEvidenceRefs", "serviceVerificationRef"]) {
+    const binding = mappingBlock(section(sourceText, "fieldBindings"), evidenceField, 2);
+    requireCondition(binding.includes("source: Evidence Kernel") && binding.includes("userEditable: false") && binding.includes("rawManualInputAllowed: false"), "fields.evidence_ref_user_editable", `${evidenceField} must not be user-editable business input.`, { evidenceField });
+    requireCondition(!fieldContracts.includes(`fieldId: ${evidenceField}`) && !fieldContracts.includes(`sourceFieldId: ${evidenceField}`), "fields.evidence_ref_client_submitted", `${evidenceField} must not be a clientSubmitted executable field.`, { evidenceField });
+  }
   const handoff = section(sourceText, "handoffPolicy");
   for (const required of [
     "from: Dorm.ResourceReadinessConfirm",
@@ -480,6 +679,13 @@ function checkLanguageBoundary() {
         requireCondition(typeof copy[language] === "string" && copy[language].length > 0, "language.copy_language_missing", `${key} missing ${language}.`, { key, language });
       }
     }
+  }
+  const businessGoalCopy = copyIds.get("dormitory.resourceSaleability.businessGoal");
+  requireCondition(businessGoalCopy?.["zh-CN"] === "房间、床位和资源准备完成内部试点检查；这不代表生产可售已放开。", "language.business_goal_copy_unsafe", "businessGoal copy must keep internal pilot inspection / not production wording.");
+  for (const [key, copy] of copyIds) {
+    const text = Object.values(copy ?? {}).join("\n");
+    if (!key.startsWith("dormitory.resourceSaleability.")) continue;
+    requireCondition(!text.includes("当前可售") && !text.includes("当前可确认") && !text.includes("可以提交确认"), "language.misleading_resource_saleability_copy", `resource saleability copy is misleading: ${key}.`, { key });
   }
   requireCondition(sourceText.includes("missingTranslationNoGoItems: []"), "language.translation_no_go_missing", "Source package must explicitly declare empty missingTranslationNoGoItems or fail.");
   for (const required of ["ordinaryUserVisibleInternalTerms: false", "internalTraceVisibilityScope: internal/evidence", "permissionGated: true"]) {
@@ -597,6 +803,9 @@ function checkAdmissionTrustBoundary() {
   for (const forbidden of ["request.Admission", "request.AdmissionDecisionRef", "request.Surface", "request.DeviceTrustStatus", "request.TrustedDevice"]) {
     requireCondition(!operationsEndpoints.includes(forbidden) && !operationsRuntime.includes(forbidden), "admission.request_field_used", `public request field is used: ${forbidden}.`, { forbidden });
   }
+  requireCondition(!runtimeValidator.includes("fallbackForNonStartValidation"), "identity.runtime_validator_create_fallback_present", "Runtime API validator must not keep workspace/card create fallback.", {});
+  requireCondition(!runtimeValidator.includes('postJson("/api/operations/work-items"'), "identity.runtime_validator_public_create_fallback_present", "Runtime API validator must not create WorkItems through the public endpoint as fallback.", {});
+  requireCondition(runtimeValidator.includes("no workspace/card create fallback is allowed"), "identity.runtime_validator_negative_guard_missing", "Runtime API validator must explicitly fail when Start cannot return a current WorkItem.", {});
   requireCondition(canonicalOperations.includes("admission.EvaluateConfirm"), "admission.kernel_not_used", "Canonical operations must evaluate confirm through Admission Kernel.");
   requireCondition(canonicalOperations.includes("VerifiedDeviceTrustContext.FromServerSession"), "admission.server_device_context_missing", "Canonical operations must use server device session for trust context.");
   requireCondition(!canonicalOperations.includes("VerifiedDeviceTrustContext.FromRequest"), "admission.request_trust_context_used", "Canonical operations must not use request trust context.");
@@ -606,6 +815,27 @@ function checkAdmissionTrustBoundary() {
   requireCondition(!resolveStartAdapter.includes("ResolveByWorkspaceCard") && !resolveStartAdapter.includes("FindBySourceCardId"), "identity.start_adapter_uses_prior_identity", "Start adapter must not resolve from prior card identity.");
   requireCondition(!/public\s+string\?\s+SourceCardId/.test(definitionRegistry) && !/SourceCardId\s*\?\?/.test(definitionRegistry), "identity.top_level_source_card_promoted", "Definition registry must not promote top-level sourceCardId.");
   verifiedControls.push("admission-trust-server-only");
+}
+
+function checkWorkItemTombstoneResidual() {
+  const lifecycle = operationPanelRuntimeContract.OperationWorkItemLifecycleContract ?? {};
+  const removal = operationPanelRuntimeContract.OperationWorkItemRemovalContract ?? {};
+  const tombstone = operationPanelRuntimeContract.OperationWorkItemTombstoneContract ?? {};
+  requireCondition(lifecycle.authoritativeProducer === "Operations Runtime", "runtime.tombstone_lifecycle_producer_missing", "OperationWorkItemLifecycleContract must identify Operations Runtime as authoritative producer.", {});
+  requireCondition(lifecycle.readonlyForSurface === true, "runtime.tombstone_lifecycle_surface_not_readonly", "OperationWorkItemLifecycleContract must be readonly for Surface.", {});
+  for (const state of ["closed", "canceled", "cancelled", "revoked", "removed", "deleted"]) {
+    requireCondition((lifecycle.terminalRemovalStates ?? []).includes(state), "runtime.tombstone_terminal_state_missing", `OperationWorkItemLifecycleContract missing terminal removal state ${state}.`, { state });
+  }
+  for (const field of ["removedWorkItemIds", "removed_work_item_ids"]) {
+    requireCondition((removal.fields ?? []).includes(field), "runtime.removed_workitem_field_missing", `OperationWorkItemRemovalContract missing ${field}.`, { field });
+  }
+  requireCondition(removal.workQueueIsDerivedView === true, "runtime.workqueue_not_derived_view", "OperationWorkItemRemovalContract must state workQueue is derived from operationWorkItems.", {});
+  requireCondition(removal.workQueueWritesBusinessFacts === false, "runtime.workqueue_writes_business_facts", "OperationWorkItemRemovalContract must forbid workQueue business fact writes.", {});
+  for (const field of ["tombstone", "removed", "isDeleted", "lifecycleState", "status"]) {
+    requireCondition((tombstone.fields ?? []).includes(field), "runtime.tombstone_field_missing", `OperationWorkItemTombstoneContract missing ${field}.`, { field });
+  }
+  requireCondition(tombstone.confirmAllowedWhenTombstone === false && tombstone.productionConfirmAllowedWhenTombstone === false, "runtime.tombstone_confirm_not_blocked", "Tombstone contract must block confirm and production confirm.", {});
+  verifiedControls.push("runtime-workitem-tombstone-contract");
 }
 
 function checkSourceGeneratedProvenanceDirection() {
@@ -629,6 +859,15 @@ function checkSourceGeneratedProvenanceDirection() {
   requireCondition(scenarioFieldContract.scenarioFieldContractStatus === "PENDING_SOURCE_PACKAGE_REVIEW", "derived.scenario_field_status_not_pending", "scenarioFieldContractStatus must remain PENDING_SOURCE_PACKAGE_REVIEW.");
   requireCondition(scenarioFieldContract.firstGoldenChainFieldContractReady === false, "derived.first_chain_field_contract_ready", "firstGoldenChainFieldContractReady must remain false.");
   requireCondition(scenarioFieldContract.generatedCompilationCompleted === false, "derived.generated_compilation_completed", "generatedCompilationCompleted must remain false.");
+  const provenance = section(sourceText, "sourceToGeneratedProvenancePlan");
+  requireCondition(provenance.includes("sourceReadyForCompileDecision: true"), "provenance.source_ready_decision_missing", "sourceToGeneratedProvenancePlan must mark only Source readiness for 00 compile decision.", {});
+  requireCondition(provenance.includes(`compilePreparationAllowed: ${compileDecisionStatus}`), "provenance.compile_decision_status_missing", "sourceToGeneratedProvenancePlan must be ready only for 00 compile decision.");
+  requireCondition(provenance.includes("generatedCompileAuthorized: false"), "provenance.generated_compile_authorized", "sourceToGeneratedProvenancePlan must keep generatedCompileAuthorized=false.", {});
+  requireCondition(provenance.includes(`generatedCompilationAllowed: ${generatedCompilationAllowed}`), "provenance.generated_compile_not_authorized", "sourceToGeneratedProvenancePlan must keep generated compilation unauthorized.");
+  requireCondition(provenance.includes("generatedCompileCompleted: false"), "provenance.generated_compile_completed", "sourceToGeneratedProvenancePlan must keep generatedCompileCompleted=false.", {});
+  requireCondition(provenance.includes("generatedCompilationCompleted: false"), "provenance.generated_compilation_completed", "sourceToGeneratedProvenancePlan must keep generatedCompilationCompleted=false.");
+  requireCondition(provenance.includes("runtimeConsumptionReady: false"), "provenance.runtime_consumption_ready", "sourceToGeneratedProvenancePlan must keep runtimeConsumptionReady=false.", {});
+  requireCondition(provenance.includes("expectedGeneratedStatus: PENDING_GENERATED_CONTRACT"), "provenance.generated_contract_pending", "sourceToGeneratedProvenancePlan must keep generated contract pending.");
   verifiedControls.push("generated-provenance-direction-prepared");
 }
 
@@ -662,6 +901,22 @@ function runSourceMutationCases() {
   expectFail("golden_pilot_as_source_reference", () => section(sourceText, "sourceReferences").includes("docs/scenarios/dormitory/golden-pilot.yml"));
   expectFail("future_package_uses_first_source_in_generator", () => !generatorText.includes("PENDING_SOURCE_PACKAGE_REVIEW"));
   expectFail("future_chain_maps_to_first_source", () => (canonicalMap.mappings ?? []).some((mapping) => futureChainTypes.includes(mapping.workItemType) && mapping.sourceScenario === sourcePath));
+  expectFail("missing_source_field_gap_decision", () => !section(sourceText, "sourceFieldGaps").includes("decisions:") || section(sourceText, "sourceFieldGaps").includes("pending00Decision: true"));
+  expectFail("building_id_raw_user_input", () => /fieldId:\s*buildingId[\s\S]{0,260}(clientSubmitted|rawIdManualInputAllowed:\s*true|route param|sourceCardId|workspaceCardId|search label)/.test(sourceText));
+  expectFail("readiness_evidence_refs_client_submitted", () => /fieldId:\s*readinessEvidenceRefs[\s\S]{0,260}(clientSubmitted|userEditable:\s*true|rawManualInputAllowed:\s*true)/.test(sourceText));
+  expectFail("blocked_reason_user_field", () => /fieldId:\s*blockedReason[\s\S]{0,260}(clientSubmitted|userSubmitted:\s*true)/.test(sourceText));
+  expectFail("branch_flow_missing_no_command_submission", () => !section(sourceText, "branchFlows").includes("- no_command_submission"));
+  expectFail("correction_bypass_admission_allowed", () => section(sourceText, "branchFlows").includes("bypassAdmissionAllowed: true"));
+  expectFail("final_go_no_go_go", () => sourceText.includes("finalGoNoGo: GO"));
+  expectFail("generated_compilation_completed_true", () => sourceText.includes("generatedCompilationCompleted: true"));
+  expectFail("generated_compile_completed_true", () => sourceText.includes("generatedCompileCompleted: true"));
+  expectFail("generated_compile_authorized_true", () => sourceText.includes("generatedCompileAuthorized: true"));
+  expectFail("runtime_consumption_ready_true", () => sourceText.includes("runtimeConsumptionReady: true"));
+  expectFail("generated_compilation_allowed_true", () => sourceText.includes("generatedCompilationAllowed: true"));
+  expectFail("generated_contract_completed", () => sourceText.includes("generatedContractStatus10B: COMPLETED"));
+  expectFail("business_feature_development_allowed", () => sourceText.includes("businessFeatureDevelopmentAllowed: true"));
+  expectFail("production_confirm_allowed", () => sourceText.includes("productionConfirmAllowed: true"));
+  expectFail("runtime_validator_workspace_card_create_fallback", () => runtimeValidator.includes('postJson("/api/operations/work-items"') || runtimeValidator.includes("fallbackForNonStartValidation"));
   expectFail("visible_not_confirm_copy_key_removed", () => !sourceText.includes("- explain.visibleNotConfirm"));
   expectFail("ru_or_ky_copy_missing", () => {
     const copy = (surfaceCopy.copies ?? []).find((item) => item.copyId === "dormitory.resourceSaleability.scenarioName")?.copy;
@@ -732,6 +987,24 @@ function blockFor(value, marker, nextMarker) {
   if (start < 0) return "";
   const next = value.indexOf(nextMarker, start + marker.length);
   return next < 0 ? value.slice(start) : value.slice(start, next);
+}
+
+function decisionBlock(gapsSection, gapId) {
+  const marker = `    ${gapId}:`;
+  const start = gapsSection.indexOf(marker);
+  if (start < 0) return "";
+  const next = /\n    [A-Za-z0-9_.-]+:/.exec(gapsSection.slice(start + marker.length));
+  return next ? gapsSection.slice(start, start + marker.length + next.index) : gapsSection.slice(start);
+}
+
+function mappingBlock(value, key, indent = 2) {
+  const spaces = " ".repeat(indent);
+  const marker = `${spaces}${key}:`;
+  const start = value.indexOf(marker);
+  if (start < 0) return "";
+  const pattern = new RegExp(`\\n${spaces}[A-Za-z0-9_.-]+:`);
+  const next = pattern.exec(value.slice(start + marker.length));
+  return next ? value.slice(start, start + marker.length + next.index) : value.slice(start);
 }
 
 function recordBody(source, recordName) {

@@ -366,8 +366,8 @@ app.MapGet("/api/evidence", (string? evidenceId, HttpRequest httpRequest) =>
 });
 app.MapPost("/api/evidence/drafts", (EvidenceDraftRequest request, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
-    return Results.Ok(runtime.CreateEvidenceDraft(request, actorId));
+    var actor = httpRequest.HttpContext.RequireActor();
+    return Results.Ok(runtime.CreateEvidenceDraft(request with { TenantId = actor.TenantId }, actor.ActorId));
 });
 app.MapPost("/api/evidence/{evidenceId}/attachments", (string evidenceId, EvidenceAttachmentRequest request, HttpRequest httpRequest) =>
 {
@@ -764,24 +764,14 @@ static IResult TenantScopeForbidden(string reason) =>
 static string[] DormitoryTemplateWorkspaceIds() =>
     new[]
     {
-        "W-STAY-RESOURCE",
-        "W-STAY-LEAD-RESERVATION",
-        "W-STAY-CHECKIN",
-        "W-STAY-LIFECYCLE",
-        "W-STAY-DEPOSIT-LEDGER",
-        "W-STAY-PAYMENT-LEDGER",
-        "W-STAY-SERVICE-TASK",
-        "W-STAY-CHECKOUT-SETTLEMENT",
-        "W-STAY-EXPENSE-LEDGER",
-        "W-STAY-PERIOD-ANALYTICS"
-    };
+        AcceptedCapabilityRuntimeProjection.WorkspaceId,
+        DormitoryScenario2RuntimeProjection.WorkspaceId
+    }
+    .Concat(Dormitory13ScenarioRuntimeProjection.Workspaces().Select(item => item.Id))
+    .ToArray();
 
 static string[] AllowedWorkspaceStartRoles(string templateWorkspaceId) =>
-    templateWorkspaceId switch
-    {
-        "W-STAY-DEPOSIT-LEDGER" or "W-STAY-PAYMENT-LEDGER" or "W-STAY-EXPENSE-LEDGER" => new[] { "operator", "manager", "admin", "finance" },
-        _ => new[] { "operator", "manager", "admin" }
-    };
+    new[] { "operator", "manager", "admin" };
 
 static IResult StartOperationsWorkspace(
     StartWorkspaceRequest request,
@@ -808,7 +798,11 @@ static IResult StartOperationsWorkspace(
             started.OperationCase,
             started.WorkItem,
             started.OperationWorkItems,
-            projection = runtime.GetAll()
+            projection = new
+            {
+                workspaces = new[] { started.Workspace },
+                events = Array.Empty<object>()
+            }
         });
     }
     catch (InvalidOperationException ex) when (ex.Message.StartsWith("operation_workspace_start_", StringComparison.OrdinalIgnoreCase))

@@ -1,10 +1,11 @@
 import { splitBedLabels } from "./controls/bedLabelControls.js";
+import { generatedFieldLabel, generatedSurfaceControlsForCard, isBedSetupCardId } from "./capabilityProjection.js";
 import { isScopedResourceFieldRequired } from "./controls/resourceScopeControls.js";
 import { operationFieldId } from "./operationFieldKernel.js";
 import { contextContractSummary, fieldContextRole, fieldParticipatesInUserValidation } from "./systemContextContract.js";
 
 export function validateRequiredFields(card, values, ctx) {
-  const businessFields = card.fields?.business || [];
+  const businessFields = validationBusinessFields(card, ctx);
   const missingFields = businessFields
     .filter((field) => operationFieldParticipatesInUserSubmit(card, field))
     .filter((field) => isScopedResourceFieldRequired(card?.id, operationFieldId(field), values, Boolean(field.required)))
@@ -43,12 +44,50 @@ function operationFieldParticipatesInUserSubmit(card = {}, field = {}) {
   const role = fieldContextRole(card?.id, fieldId);
   if (role.kind !== "user") return false;
   if (!fieldParticipatesInUserValidation(card?.id, fieldId)) return false;
-  if (card?.id === "bedSetup" && fieldId === "bedStatus") return false;
+  if (isBedSetupCardId(card?.id) && ["bedStatus", "bedNo", "bedLabel"].includes(fieldId)) return false;
   return true;
 }
 
+function validationBusinessFields(card, ctx) {
+  const generated = generatedSurfaceControlsForCard(card?.id)
+    .filter((control) => !control.hiddenSubmitOnly && control.controlType !== "hidden")
+    .map((control) => validationFieldFromGeneratedControl(control, card, ctx));
+  return generated.length ? generated : (card.fields?.business || []);
+}
+
+function validationFieldFromGeneratedControl(control, card, ctx) {
+  const fieldId = isBedSetupCardId(card?.id) && control.fieldId === "roomId"
+    ? "roomRef"
+    : control.fieldId;
+  const lang = ctx?.state?.lang || "zh-CN";
+  const required = control.required === true;
+  return {
+    id: fieldId,
+    classification: control.classification,
+    readonly: control.readonly === true,
+    userSubmitted: control.userSubmitted === true,
+    label: {
+      [lang]: labelForGeneratedField(fieldId, lang),
+      "zh-CN": labelForGeneratedField(fieldId, "zh-CN")
+    },
+    required,
+    ui: {
+      control: control.controlType || "text",
+      optionSet: control.optionSet || "",
+      defaultValue: control.defaultValue || ""
+    }
+  };
+}
+
+function labelForGeneratedField(fieldId, lang) {
+  if (fieldId === "roomRef") {
+    return { "zh-CN": "所属房间", "ru-RU": "Комната", "ky-KG": "Бөлмө" }[lang] || "所属房间";
+  }
+  return generatedFieldLabel(fieldId, lang);
+}
+
 function bedSetupCardinalityViolations(card = {}, values = {}, ctx) {
-  if (card.id !== "bedSetup") return [];
+  if (!isBedSetupCardId(card.id)) return [];
   const bedCount = Number(values.bedCount || 0);
   if (!Number.isFinite(bedCount) || bedCount <= 0) return [];
   const labelField = (card.fields?.business || []).find((field) => operationFieldId(field) === "bedLabels");

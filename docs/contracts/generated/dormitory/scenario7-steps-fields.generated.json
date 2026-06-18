@@ -1,0 +1,1886 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario7-stepsFields.generated",
+  "version": "oam.dormitory-scenario7-stepsFields.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario7-check-in-processing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario7-check-in-processing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:288b527a49cfb6fcb1a19b854dcb05468e92b3dfbc4c50796d5ffd0369e6b311",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "digest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario7.CheckInProcessing",
+  "scenarioPackageNo": 7,
+  "scenarioId": "lodging.check-in-processing",
+  "outputContentDigest": "sha256:d044c7cce80ba38bca85fe33128598b71b096ffd0e85daac7a17fb9caae9829c",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "入住办理",
+  "businessGoalZh": "承接已确认预订、财务确认摘要和房源运营状态摘要，核验客户到店、身份信息、入住协议、预订信息、房间/床位当前可入住状态后，生成入住记录、占用记录和入住凭证。",
+  "sourceScenarioDigest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario7.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "CheckInCase",
+      "ArrivingGuest",
+      "ResidentProfile",
+      "IdentityVerification",
+      "Stay",
+      "RoomBedOccupancy",
+      "CheckInAgreement",
+      "AccessCredential",
+      "CheckInSnapshot",
+      "CheckInEvidence",
+      "CheckInStatusHistory"
+    ],
+    "searchReadModel": [
+      "入住办理",
+      "入住记录摘要",
+      "住客摘要",
+      "房间/床位占用摘要",
+      "入住凭证摘要",
+      "协议摘要",
+      "身份核验摘要",
+      "证据摘要",
+      "只读对象引用",
+      "占用摘要",
+      "凭证摘要"
+    ],
+    "noRefillRuleZh": "场景包 7 只能读取预订、财务、价格和运营状态只读摘要，不得要求用户重新填写已确认的预订、价格或财务字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "enter-check-in-processing",
+      "nameZh": "进入入住办理",
+      "commandId": "Dorm.CheckInDraftStart",
+      "commandBusinessNameZh": "发起入住办理",
+      "entrySourcesZh": [
+        "今日待入住",
+        "预订详情",
+        "工作项",
+        "搜索只读跳转"
+      ],
+      "userSees": [
+        "预订号",
+        "客户姓名",
+        "联系电话",
+        "入住/离店日期",
+        "人数",
+        "房间/床位",
+        "价格摘要",
+        "收款/押金/担保状态",
+        "预订确认摘要",
+        "客户信息",
+        "日期范围",
+        "入住记录摘要"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [],
+      "userUploadedOrBoundEvidence": [],
+      "systemGeneratedFields": [
+        "checkInCaseRef",
+        "reservationRef",
+        "financeReadySnapshotRef",
+        "sourceScenarioRef"
+      ],
+      "validations": [
+        "无有效预订或预订已取消/已转入住时不得办理。"
+      ],
+      "outputs": [
+        "CheckInCase",
+        "CheckInStatusHistory"
+      ],
+      "primaryBusinessObject": "CheckInCase",
+      "requiredReadContext": [
+        "预订号",
+        "客户姓名",
+        "联系电话",
+        "入住/离店日期",
+        "人数",
+        "房间/床位",
+        "价格摘要",
+        "收款/押金/担保状态",
+        "预订确认摘要",
+        "客户信息",
+        "日期范围",
+        "入住记录摘要",
+        "价格快照",
+        "预订状态"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "入住财务摘要",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格摘要",
+          "收款/押金/担保状态",
+          "价格快照"
+        ],
+        "direction": "押金/担保",
+        "stage": "进入入住办理",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "v-4999797d",
+          "labelZh": "办理入住",
+          "labelKey": "scenario7.action.v-4999797d.label",
+          "legalActionRef": "legalAction.dormitory.scenario7.enter-check-in-processing.v-4999797d.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-fd9c9b61",
+          "labelZh": "返回预订",
+          "labelKey": "scenario7.action.v-fd9c9b61.label",
+          "legalActionRef": "legalAction.dormitory.scenario7.enter-check-in-processing.v-fd9c9b61.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-3df51e48",
+          "labelZh": "标记待到店",
+          "labelKey": "scenario7.action.v-3df51e48.label",
+          "legalActionRef": "legalAction.dormitory.scenario7.enter-check-in-processing.v-3df51e48.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "预订状态",
+          "收款确认摘要",
+          "押金确认摘要"
+        ],
+        "to": [
+          "CheckInCase",
+          "CheckInStatusHistory",
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要",
+          "身份核验摘要",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 7 只能读取预订、财务、价格和运营状态只读摘要，不得要求用户重新填写已确认的预订、价格或财务字段。"
+      },
+      "searchReadModel": [
+        "入住办理",
+        "进入入住办理",
+        "发起入住办理",
+        "CheckInCase",
+        "预订号",
+        "客户姓名",
+        "联系电话",
+        "入住/离店日期",
+        "人数",
+        "房间/床位",
+        "价格摘要",
+        "收款/押金/担保状态",
+        "预订确认摘要",
+        "客户信息",
+        "日期范围",
+        "入住记录摘要"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "arrival-and-identity-verification",
+      "nameZh": "到店与身份核验",
+      "commandId": "Dorm.GuestIdentityVerify",
+      "commandBusinessNameZh": "核验到店与身份",
+      "userSees": [
+        "预订客户",
+        "预订人数",
+        "已到店人员",
+        "身份核验要求",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "入住记录摘要",
+        "住客摘要"
+      ],
+      "userFilledFields": [
+        "实际到店时间",
+        "入住人姓名",
+        "证件类型",
+        "证件号码后脱敏展示",
+        "联系电话",
+        "紧急联系人"
+      ],
+      "userSelectedFields": [
+        "身份核验结果"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "证件照片/扫描件",
+        "本人确认",
+        "授权同意记录"
+      ],
+      "systemGeneratedFields": [
+        "residentRef",
+        "identityVerificationRef",
+        "identityTrustLevel",
+        "verifiedAt",
+        "verifiedBy"
+      ],
+      "validations": [
+        "身份缺失、证据不可信、入住人与预订不一致且未审批时不得继续。"
+      ],
+      "outputs": [
+        "ArrivingGuest",
+        "ResidentProfile",
+        "IdentityVerification",
+        "CheckInEvidence"
+      ],
+      "primaryBusinessObject": "CheckInCase",
+      "requiredReadContext": [
+        "预订客户",
+        "预订人数",
+        "已到店人员",
+        "身份核验要求",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "入住记录摘要",
+        "住客摘要",
+        "价格快照",
+        "预订状态"
+      ],
+      "editableInputs": [
+        "实际到店时间",
+        "入住人姓名",
+        "证件类型",
+        "证件号码后脱敏展示",
+        "联系电话",
+        "紧急联系人"
+      ],
+      "fixedSelections": [
+        "身份核验结果"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "入住财务摘要",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格快照"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "到店与身份核验",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "预订状态",
+          "收款确认摘要",
+          "押金确认摘要"
+        ],
+        "to": [
+          "ArrivingGuest",
+          "ResidentProfile",
+          "IdentityVerification",
+          "CheckInEvidence",
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要",
+          "身份核验摘要"
+        ],
+        "noRefillRuleZh": "场景包 7 只能读取预订、财务、价格和运营状态只读摘要，不得要求用户重新填写已确认的预订、价格或财务字段。"
+      },
+      "searchReadModel": [
+        "入住办理",
+        "到店与身份核验",
+        "核验到店与身份",
+        "CheckInCase",
+        "预订客户",
+        "预订人数",
+        "已到店人员",
+        "身份核验要求",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "入住记录摘要",
+        "住客摘要"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "finance-and-agreement-review",
+      "nameZh": "财务与协议复核",
+      "commandId": "Dorm.CheckInAgreementFinanceReview",
+      "commandBusinessNameZh": "复核财务摘要与入住协议",
+      "userSees": [
+        "房费/订金确认状态",
+        "押金确认状态",
+        "担保状态",
+        "剩余待处理",
+        "入住协议",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "入住记录摘要"
+      ],
+      "userFilledFields": [
+        "协议备注",
+        "负责人例外审批说明"
+      ],
+      "userSelectedFields": [
+        "协议已确认",
+        "需补财务",
+        "负责人例外审批"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "协议签署记录",
+        "客户确认凭证",
+        "负责人例外审批证据"
+      ],
+      "systemGeneratedFields": [
+        "agreementRef",
+        "agreementVersion",
+        "financeCheckSnapshotRef"
+      ],
+      "validations": [
+        "财务规则要求未满足时不得普通入住；例外入住必须走负责人审批并留证据。"
+      ],
+      "outputs": [
+        "CheckInAgreement",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ],
+      "primaryBusinessObject": "CheckInCase",
+      "requiredReadContext": [
+        "房费/订金确认状态",
+        "押金确认状态",
+        "担保状态",
+        "剩余待处理",
+        "入住协议",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "入住记录摘要",
+        "价格快照",
+        "预订状态"
+      ],
+      "editableInputs": [
+        "协议备注",
+        "负责人例外审批说明"
+      ],
+      "fixedSelections": [
+        "协议已确认",
+        "需补财务",
+        "负责人例外审批"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "入住财务摘要",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "押金确认状态",
+          "担保状态",
+          "价格快照",
+          "需补财务"
+        ],
+        "direction": "押金/担保",
+        "stage": "财务与协议复核",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "预订状态",
+          "收款确认摘要",
+          "押金确认摘要"
+        ],
+        "to": [
+          "CheckInAgreement",
+          "CheckInEvidence",
+          "CheckInStatusHistory",
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要",
+          "身份核验摘要",
+          "证据摘要"
+        ],
+        "noRefillRuleZh": "场景包 7 只能读取预订、财务、价格和运营状态只读摘要，不得要求用户重新填写已确认的预订、价格或财务字段。"
+      },
+      "searchReadModel": [
+        "入住办理",
+        "财务与协议复核",
+        "复核财务摘要与入住协议",
+        "CheckInCase",
+        "房费/订金确认状态",
+        "押金确认状态",
+        "担保状态",
+        "剩余待处理",
+        "入住协议",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "入住记录摘要"
+      ]
+    },
+    {
+      "stepNo": 4,
+      "stepId": "room-bed-handover-recheck",
+      "nameZh": "房间/床位交付复核",
+      "commandId": "Dorm.RoomBedHandoverRecheck",
+      "commandBusinessNameZh": "复核房间/床位交付",
+      "userSees": [
+        "房间/床位当前运营状态",
+        "是否空置",
+        "是否已清洁",
+        "是否有维修/停售/异常阻断",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "入住记录摘要",
+        "住客摘要"
+      ],
+      "userFilledFields": [
+        "交付备注",
+        "钥匙/门禁说明"
+      ],
+      "userSelectedFields": [
+        "确认交付",
+        "暂缓入住",
+        "换房/换床申请入口"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "房间交付照片",
+        "床位交付照片",
+        "清洁确认记录"
+      ],
+      "systemGeneratedFields": [
+        "occupancyCandidateRef",
+        "resourceStatusSnapshotRef",
+        "handoverEvidenceRef"
+      ],
+      "validations": [
+        "资源被占用、维修、停售、暂停、异常时不得直接入住。"
+      ],
+      "outputs": [
+        "RoomBedOccupancy",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ],
+      "primaryBusinessObject": "CheckInCase",
+      "requiredReadContext": [
+        "房间/床位当前运营状态",
+        "是否空置",
+        "是否已清洁",
+        "是否有维修/停售/异常阻断",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "入住记录摘要",
+        "住客摘要",
+        "价格快照",
+        "预订状态"
+      ],
+      "editableInputs": [
+        "交付备注",
+        "钥匙/门禁说明"
+      ],
+      "fixedSelections": [
+        "确认交付",
+        "暂缓入住",
+        "换房/换床申请入口"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "入住财务摘要",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格快照"
+        ],
+        "direction": "支出/费用意向",
+        "stage": "房间/床位交付复核",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "预订状态",
+          "收款确认摘要",
+          "押金确认摘要"
+        ],
+        "to": [
+          "RoomBedOccupancy",
+          "CheckInEvidence",
+          "CheckInStatusHistory",
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要",
+          "身份核验摘要",
+          "证据摘要"
+        ],
+        "noRefillRuleZh": "场景包 7 只能读取预订、财务、价格和运营状态只读摘要，不得要求用户重新填写已确认的预订、价格或财务字段。"
+      },
+      "searchReadModel": [
+        "入住办理",
+        "房间/床位交付复核",
+        "复核房间/床位交付",
+        "CheckInCase",
+        "房间/床位当前运营状态",
+        "是否空置",
+        "是否已清洁",
+        "是否有维修/停售/异常阻断",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "房间/床位",
+        "入住记录摘要",
+        "住客摘要"
+      ]
+    },
+    {
+      "stepNo": 5,
+      "stepId": "confirm-check-in",
+      "nameZh": "确认入住",
+      "commandId": "Dorm.StayConfirm",
+      "commandBusinessNameZh": "确认入住",
+      "userSees": [
+        "住客",
+        "预订",
+        "日期",
+        "房间/床位",
+        "财务摘要",
+        "协议摘要",
+        "交付摘要",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数"
+      ],
+      "userFilledFields": [
+        "确认备注"
+      ],
+      "userSelectedFields": [
+        "确认入住"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "入住确认凭证"
+      ],
+      "systemGeneratedFields": [
+        "stayRef",
+        "stayNo",
+        "occupancyRef",
+        "checkInSnapshotRef",
+        "confirmedAt",
+        "confirmedBy"
+      ],
+      "systemWrites": [
+        "StayCreated",
+        "OccupancyStarted",
+        "ReservationConvertedToStay",
+        "CheckInConfirmed",
+        "EvidenceBinding",
+        "Projection update"
+      ],
+      "validations": [
+        "全部入住不变量必须满足；失败不得生成 Stay、不得占用床位、不得发放入住凭证、不得写账。"
+      ],
+      "forbiddenWrites": [
+        "收款",
+        "押金",
+        "退款",
+        "退房",
+        "账务"
+      ],
+      "outputs": [
+        "Stay",
+        "RoomBedOccupancy",
+        "CheckInSnapshot",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ],
+      "primaryBusinessObject": "CheckInCase",
+      "requiredReadContext": [
+        "住客",
+        "预订",
+        "日期",
+        "房间/床位",
+        "财务摘要",
+        "协议摘要",
+        "交付摘要",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "价格快照",
+        "预订状态"
+      ],
+      "editableInputs": [
+        "确认备注"
+      ],
+      "fixedSelections": [
+        "确认入住"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "入住财务摘要",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "财务摘要",
+          "价格快照"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "确认入住",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "v-f2931e0f",
+          "labelZh": "转人工复核",
+          "labelKey": "scenario7.action.v-f2931e0f.label",
+          "legalActionRef": "legalAction.dormitory.scenario7.confirm-check-in.v-f2931e0f.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "预订状态",
+          "收款确认摘要",
+          "押金确认摘要"
+        ],
+        "to": [
+          "Stay",
+          "RoomBedOccupancy",
+          "CheckInSnapshot",
+          "CheckInEvidence",
+          "CheckInStatusHistory",
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要"
+        ],
+        "noRefillRuleZh": "场景包 7 只能读取预订、财务、价格和运营状态只读摘要，不得要求用户重新填写已确认的预订、价格或财务字段。"
+      },
+      "searchReadModel": [
+        "入住办理",
+        "确认入住",
+        "CheckInCase",
+        "住客",
+        "预订",
+        "日期",
+        "房间/床位",
+        "财务摘要",
+        "协议摘要",
+        "交付摘要",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "Stay"
+      ]
+    },
+    {
+      "stepNo": 6,
+      "stepId": "issue-access-credential",
+      "nameZh": "发放入住凭证",
+      "commandId": "Dorm.StayCredentialIssue",
+      "commandBusinessNameZh": "发放入住凭证",
+      "userSees": [
+        "入住记录号",
+        "住客",
+        "房间/床位",
+        "可发放凭证类型",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要"
+      ],
+      "userFilledFields": [
+        "发放备注",
+        "领取人确认"
+      ],
+      "userSelectedFields": [
+        "钥匙",
+        "门卡",
+        "门禁码",
+        "入住单"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "领取确认记录",
+        "凭证发放照片"
+      ],
+      "systemGeneratedFields": [
+        "accessCredentialRef",
+        "credentialStatus",
+        "issuedAt",
+        "issuedBy"
+      ],
+      "systemWrites": [
+        "AccessCredentialIssued",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ],
+      "validations": [
+        "未成功入住不得发放有效入住凭证。"
+      ],
+      "outputs": [
+        "AccessCredential",
+        "CheckInEvidence",
+        "CheckInStatusHistory"
+      ],
+      "primaryBusinessObject": "CheckInCase",
+      "requiredReadContext": [
+        "入住记录号",
+        "住客",
+        "房间/床位",
+        "可发放凭证类型",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "价格快照",
+        "预订状态"
+      ],
+      "editableInputs": [
+        "发放备注",
+        "领取人确认"
+      ],
+      "fixedSelections": [
+        "钥匙",
+        "门卡",
+        "门禁码",
+        "入住单"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "入住财务摘要",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格快照"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "发放入住凭证",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "预订确认摘要",
+          "预订号",
+          "客户信息",
+          "日期范围",
+          "人数",
+          "房间/床位",
+          "价格快照",
+          "预订状态",
+          "收款确认摘要",
+          "押金确认摘要"
+        ],
+        "to": [
+          "AccessCredential",
+          "CheckInEvidence",
+          "CheckInStatusHistory",
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要",
+          "身份核验摘要",
+          "证据摘要"
+        ],
+        "noRefillRuleZh": "场景包 7 只能读取预订、财务、价格和运营状态只读摘要，不得要求用户重新填写已确认的预订、价格或财务字段。"
+      },
+      "searchReadModel": [
+        "入住办理",
+        "发放入住凭证",
+        "CheckInCase",
+        "入住记录号",
+        "住客",
+        "房间/床位",
+        "可发放凭证类型",
+        "预订确认摘要",
+        "预订号",
+        "客户信息",
+        "日期范围",
+        "人数",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "AccessCredential"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“入住人姓名已脱敏，预订号 R202606200001，301 房间，今日办理入住”“入住记录 S202606200001”。",
+    "upstreamReadonly": [
+      "预订号",
+      "客户信息",
+      "日期范围",
+      "人数",
+      "房间/床位",
+      "价格快照",
+      "预订状态",
+      "收款确认摘要",
+      "押金确认摘要",
+      "担保确认摘要",
+      "剩余待收",
+      "财务确认状态",
+      "房源运营状态摘要"
+    ],
+    "userFilled": [
+      "实际到店时间",
+      "入住人姓名",
+      "证件类型",
+      "证件号码后脱敏展示",
+      "联系电话",
+      "紧急联系人",
+      "协议备注",
+      "交付备注",
+      "钥匙/门禁说明",
+      "确认备注",
+      "发放备注",
+      "领取人确认"
+    ],
+    "userSelected": [
+      "身份核验结果",
+      "协议已确认",
+      "需补财务",
+      "负责人例外审批",
+      "确认交付",
+      "暂缓入住",
+      "换房/换床申请入口",
+      "确认入住",
+      "钥匙",
+      "门卡",
+      "门禁码",
+      "入住单"
+    ],
+    "userUploadedOrBoundEvidence": [
+      "证件照片/扫描件",
+      "本人确认",
+      "授权同意记录",
+      "协议签署记录",
+      "客户确认凭证",
+      "负责人例外审批证据",
+      "房间交付照片",
+      "床位交付照片",
+      "清洁确认记录",
+      "入住确认凭证",
+      "领取确认记录",
+      "凭证发放照片"
+    ],
+    "systemGenerated": [
+      "checkInCaseRef",
+      "reservationRef",
+      "financeReadySnapshotRef",
+      "sourceScenarioRef",
+      "residentRef",
+      "identityVerificationRef",
+      "identityTrustLevel",
+      "verifiedAt",
+      "verifiedBy",
+      "agreementRef",
+      "agreementVersion",
+      "financeCheckSnapshotRef",
+      "occupancyCandidateRef",
+      "resourceStatusSnapshotRef",
+      "handoverEvidenceRef",
+      "stayRef",
+      "stayNo",
+      "occupancyRef",
+      "checkInSnapshotRef",
+      "confirmedAt",
+      "confirmedBy",
+      "accessCredentialRef",
+      "credentialStatus",
+      "issuedAt",
+      "issuedBy"
+    ],
+    "systemCalculated": [
+      "预订有效性",
+      "财务摘要是否满足入住规则",
+      "身份信任等级",
+      "资源可入住状态",
+      "日期范围占用冲突",
+      "合法下一步动作"
+    ],
+    "evidenceBound": [
+      "CheckInEvidence",
+      "EvidenceBinding",
+      "evidenceEnvelopeRef",
+      "summarySnapshotRef"
+    ],
+    "internalAuditOnlyFields": [
+      "stayId",
+      "residentId",
+      "reservationId",
+      "credentialId",
+      "roomId",
+      "bedId",
+      "occupancyId",
+      "checkInCaseId",
+      "identityVerificationId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "forbiddenUserInputFields": [
+      "stayId",
+      "residentId",
+      "reservationId",
+      "credentialId",
+      "roomId",
+      "bedId",
+      "occupancyId",
+      "checkInCaseId",
+      "identityVerificationId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "fieldAuthority": {
+      "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#fieldAuthorityModel",
+      "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+      "businessInput": [
+        {
+          "fieldId": "v-e56aaaeb",
+          "labelZh": "实际到店时间",
+          "control": "text",
+          "labelKey": "scenario7.field.v-e56aaaeb.label",
+          "helpKey": "scenario7.field.v-e56aaaeb.help",
+          "errorKey": "scenario7.field.v-e56aaaeb.error"
+        },
+        {
+          "fieldId": "v-f37f62fd",
+          "labelZh": "入住人姓名",
+          "control": "text",
+          "labelKey": "scenario7.field.v-f37f62fd.label",
+          "helpKey": "scenario7.field.v-f37f62fd.help",
+          "errorKey": "scenario7.field.v-f37f62fd.error"
+        },
+        {
+          "fieldId": "v-5c27546c",
+          "labelZh": "证件类型",
+          "control": "text",
+          "labelKey": "scenario7.field.v-5c27546c.label",
+          "helpKey": "scenario7.field.v-5c27546c.help",
+          "errorKey": "scenario7.field.v-5c27546c.error"
+        },
+        {
+          "fieldId": "v-37135a7b",
+          "labelZh": "证件号码后脱敏展示",
+          "control": "text",
+          "labelKey": "scenario7.field.v-37135a7b.label",
+          "helpKey": "scenario7.field.v-37135a7b.help",
+          "errorKey": "scenario7.field.v-37135a7b.error"
+        },
+        {
+          "fieldId": "contactPhone",
+          "labelZh": "联系电话",
+          "control": "text",
+          "labelKey": "scenario7.field.contactPhone.label",
+          "helpKey": "scenario7.field.contactPhone.help",
+          "errorKey": "scenario7.field.contactPhone.error"
+        },
+        {
+          "fieldId": "v-25b4517a",
+          "labelZh": "紧急联系人",
+          "control": "text",
+          "labelKey": "scenario7.field.v-25b4517a.label",
+          "helpKey": "scenario7.field.v-25b4517a.help",
+          "errorKey": "scenario7.field.v-25b4517a.error"
+        },
+        {
+          "fieldId": "v-64c17d47",
+          "labelZh": "协议备注",
+          "control": "textarea",
+          "labelKey": "scenario7.field.v-64c17d47.label",
+          "helpKey": "scenario7.field.v-64c17d47.help",
+          "errorKey": "scenario7.field.v-64c17d47.error"
+        },
+        {
+          "fieldId": "v-4fdf351e",
+          "labelZh": "交付备注",
+          "control": "textarea",
+          "labelKey": "scenario7.field.v-4fdf351e.label",
+          "helpKey": "scenario7.field.v-4fdf351e.help",
+          "errorKey": "scenario7.field.v-4fdf351e.error"
+        },
+        {
+          "fieldId": "v-0346ea45",
+          "labelZh": "钥匙/门禁说明",
+          "control": "textarea",
+          "labelKey": "scenario7.field.v-0346ea45.label",
+          "helpKey": "scenario7.field.v-0346ea45.help",
+          "errorKey": "scenario7.field.v-0346ea45.error"
+        },
+        {
+          "fieldId": "v-904255d0",
+          "labelZh": "确认备注",
+          "control": "textarea",
+          "labelKey": "scenario7.field.v-904255d0.label",
+          "helpKey": "scenario7.field.v-904255d0.help",
+          "errorKey": "scenario7.field.v-904255d0.error"
+        },
+        {
+          "fieldId": "v-a28914c1",
+          "labelZh": "发放备注",
+          "control": "textarea",
+          "labelKey": "scenario7.field.v-a28914c1.label",
+          "helpKey": "scenario7.field.v-a28914c1.help",
+          "errorKey": "scenario7.field.v-a28914c1.error"
+        },
+        {
+          "fieldId": "v-1aa4220f",
+          "labelZh": "领取人确认",
+          "control": "text",
+          "labelKey": "scenario7.field.v-1aa4220f.label",
+          "helpKey": "scenario7.field.v-1aa4220f.help",
+          "errorKey": "scenario7.field.v-1aa4220f.error"
+        },
+        {
+          "fieldId": "v-1ab7eaaa",
+          "labelZh": "负责人例外审批说明",
+          "control": "textarea",
+          "labelKey": "scenario7.field.v-1ab7eaaa.label",
+          "helpKey": "scenario7.field.v-1ab7eaaa.help",
+          "errorKey": "scenario7.field.v-1ab7eaaa.error"
+        }
+      ],
+      "businessSelect": [
+        {
+          "fieldId": "v-56b0b59e",
+          "labelZh": "身份核验结果",
+          "control": "select",
+          "labelKey": "scenario7.field.v-56b0b59e.label",
+          "helpKey": "scenario7.field.v-56b0b59e.help",
+          "errorKey": "scenario7.field.v-56b0b59e.error",
+          "optionSet": "option.v-56b0b59e",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-7bc5c2f4",
+          "labelZh": "协议已确认",
+          "control": "select",
+          "labelKey": "scenario7.field.v-7bc5c2f4.label",
+          "helpKey": "scenario7.field.v-7bc5c2f4.help",
+          "errorKey": "scenario7.field.v-7bc5c2f4.error",
+          "optionSet": "option.v-7bc5c2f4",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-ff883e7f",
+          "labelZh": "需补财务",
+          "control": "select",
+          "labelKey": "scenario7.field.v-ff883e7f.label",
+          "helpKey": "scenario7.field.v-ff883e7f.help",
+          "errorKey": "scenario7.field.v-ff883e7f.error",
+          "optionSet": "option.v-ff883e7f",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-a7720e54",
+          "labelZh": "负责人例外审批",
+          "control": "searchable-select",
+          "labelKey": "scenario7.field.v-a7720e54.label",
+          "helpKey": "scenario7.field.v-a7720e54.help",
+          "errorKey": "scenario7.field.v-a7720e54.error",
+          "optionSet": "option.v-a7720e54",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-6df00d4b",
+          "labelZh": "确认交付",
+          "control": "select",
+          "labelKey": "scenario7.field.v-6df00d4b.label",
+          "helpKey": "scenario7.field.v-6df00d4b.help",
+          "errorKey": "scenario7.field.v-6df00d4b.error",
+          "optionSet": "option.v-6df00d4b",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-651a62fe",
+          "labelZh": "暂缓入住",
+          "control": "select",
+          "labelKey": "scenario7.field.v-651a62fe.label",
+          "helpKey": "scenario7.field.v-651a62fe.help",
+          "errorKey": "scenario7.field.v-651a62fe.error",
+          "optionSet": "option.v-651a62fe",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-ea3d6081",
+          "labelZh": "换房/换床申请入口",
+          "control": "select",
+          "labelKey": "scenario7.field.v-ea3d6081.label",
+          "helpKey": "scenario7.field.v-ea3d6081.help",
+          "errorKey": "scenario7.field.v-ea3d6081.error",
+          "optionSet": "option.v-ea3d6081",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-0c9c39c3",
+          "labelZh": "确认入住",
+          "control": "select",
+          "labelKey": "scenario7.field.v-0c9c39c3.label",
+          "helpKey": "scenario7.field.v-0c9c39c3.help",
+          "errorKey": "scenario7.field.v-0c9c39c3.error",
+          "optionSet": "option.v-0c9c39c3",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-bc6a9cbb",
+          "labelZh": "钥匙",
+          "control": "select",
+          "labelKey": "scenario7.field.v-bc6a9cbb.label",
+          "helpKey": "scenario7.field.v-bc6a9cbb.help",
+          "errorKey": "scenario7.field.v-bc6a9cbb.error",
+          "optionSet": "option.v-bc6a9cbb",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-ed3f1582",
+          "labelZh": "门卡",
+          "control": "select",
+          "labelKey": "scenario7.field.v-ed3f1582.label",
+          "helpKey": "scenario7.field.v-ed3f1582.help",
+          "errorKey": "scenario7.field.v-ed3f1582.error",
+          "optionSet": "option.v-ed3f1582",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-fc4517d9",
+          "labelZh": "门禁码",
+          "control": "select",
+          "labelKey": "scenario7.field.v-fc4517d9.label",
+          "helpKey": "scenario7.field.v-fc4517d9.help",
+          "errorKey": "scenario7.field.v-fc4517d9.error",
+          "optionSet": "option.v-fc4517d9",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-6cb12ef8",
+          "labelZh": "入住单",
+          "control": "select",
+          "labelKey": "scenario7.field.v-6cb12ef8.label",
+          "helpKey": "scenario7.field.v-6cb12ef8.help",
+          "errorKey": "scenario7.field.v-6cb12ef8.error",
+          "optionSet": "option.v-6cb12ef8",
+          "submitValueSource": "stableValue"
+        }
+      ],
+      "systemDerived": [
+        {
+          "fieldId": "v-22079cdf",
+          "labelZh": "预订有效性",
+          "labelKey": "scenario7.field.v-22079cdf.label",
+          "helpKey": "scenario7.field.v-22079cdf.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-867bef61",
+          "labelZh": "财务摘要是否满足入住规则",
+          "labelKey": "scenario7.field.v-867bef61.label",
+          "helpKey": "scenario7.field.v-867bef61.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-cee104b9",
+          "labelZh": "身份信任等级",
+          "labelKey": "scenario7.field.v-cee104b9.label",
+          "helpKey": "scenario7.field.v-cee104b9.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-ed94e01b",
+          "labelZh": "资源可入住状态",
+          "labelKey": "scenario7.field.v-ed94e01b.label",
+          "helpKey": "scenario7.field.v-ed94e01b.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-bacef793",
+          "labelZh": "日期范围占用冲突",
+          "labelKey": "scenario7.field.v-bacef793.label",
+          "helpKey": "scenario7.field.v-bacef793.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-4098565c",
+          "labelZh": "合法下一步动作",
+          "labelKey": "scenario7.field.v-4098565c.label",
+          "helpKey": "scenario7.field.v-4098565c.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        }
+      ],
+      "readOnlySummary": [
+        {
+          "fieldId": "reservationNoDisplay",
+          "labelZh": "预订号",
+          "labelKey": "scenario7.field.reservationNoDisplay.label",
+          "helpKey": "scenario7.field.reservationNoDisplay.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "customerInfo",
+          "labelZh": "客户信息",
+          "labelKey": "scenario7.field.customerInfo.label",
+          "helpKey": "scenario7.field.customerInfo.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "stayDateRange",
+          "labelZh": "日期范围",
+          "labelKey": "scenario7.field.stayDateRange.label",
+          "helpKey": "scenario7.field.stayDateRange.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "guestCount",
+          "labelZh": "人数",
+          "labelKey": "scenario7.field.guestCount.label",
+          "helpKey": "scenario7.field.guestCount.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "roomOrBedSummary",
+          "labelZh": "房间/床位",
+          "labelKey": "scenario7.field.roomOrBedSummary.label",
+          "helpKey": "scenario7.field.roomOrBedSummary.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "priceSnapshot",
+          "labelZh": "价格快照",
+          "labelKey": "scenario7.field.priceSnapshot.label",
+          "helpKey": "scenario7.field.priceSnapshot.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-c07ac6ca",
+          "labelZh": "预订状态",
+          "labelKey": "scenario7.field.v-c07ac6ca.label",
+          "helpKey": "scenario7.field.v-c07ac6ca.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-b4845f4c",
+          "labelZh": "收款确认摘要",
+          "labelKey": "scenario7.field.v-b4845f4c.label",
+          "helpKey": "scenario7.field.v-b4845f4c.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-9e3dcc77",
+          "labelZh": "押金确认摘要",
+          "labelKey": "scenario7.field.v-9e3dcc77.label",
+          "helpKey": "scenario7.field.v-9e3dcc77.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-1e7c1bba",
+          "labelZh": "担保确认摘要",
+          "labelKey": "scenario7.field.v-1e7c1bba.label",
+          "helpKey": "scenario7.field.v-1e7c1bba.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "remainingReceivable",
+          "labelZh": "剩余待收",
+          "labelKey": "scenario7.field.remainingReceivable.label",
+          "helpKey": "scenario7.field.remainingReceivable.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-881a8943",
+          "labelZh": "财务确认状态",
+          "labelKey": "scenario7.field.v-881a8943.label",
+          "helpKey": "scenario7.field.v-881a8943.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-b670d337",
+          "labelZh": "房源运营状态摘要",
+          "labelKey": "scenario7.field.v-b670d337.label",
+          "helpKey": "scenario7.field.v-b670d337.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-b7e26a46",
+          "labelZh": "预订确认摘要",
+          "labelKey": "scenario7.field.v-b7e26a46.label",
+          "helpKey": "scenario7.field.v-b7e26a46.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-b16c8921",
+          "labelZh": "财务确认摘要",
+          "labelKey": "scenario7.field.v-b16c8921.label",
+          "helpKey": "scenario7.field.v-b16c8921.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-88a6893a",
+          "labelZh": "阻断原因",
+          "labelKey": "scenario7.field.v-88a6893a.label",
+          "helpKey": "scenario7.field.v-88a6893a.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-f71ae921",
+          "labelZh": "证据摘要",
+          "labelKey": "scenario7.field.v-f71ae921.label",
+          "helpKey": "scenario7.field.v-f71ae921.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-cd66b0d5",
+          "labelZh": "只读对象引用",
+          "labelKey": "scenario7.field.v-cd66b0d5.label",
+          "helpKey": "scenario7.field.v-cd66b0d5.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-3dbe671d",
+          "labelZh": "财务状态",
+          "labelKey": "scenario7.field.v-3dbe671d.label",
+          "helpKey": "scenario7.field.v-3dbe671d.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-9a992a59",
+          "labelZh": "房间摘要",
+          "labelKey": "scenario7.field.v-9a992a59.label",
+          "helpKey": "scenario7.field.v-9a992a59.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        },
+        {
+          "fieldId": "v-108420f7",
+          "labelZh": "床位组摘要",
+          "labelKey": "scenario7.field.v-108420f7.label",
+          "helpKey": "scenario7.field.v-108420f7.help",
+          "sourceScenario": "预订确认摘要 / 财务状态 / 房间摘要 / 床位组摘要"
+        }
+      ],
+      "evidenceBinding": [
+        {
+          "fieldId": "evidence.v-e6a868ff",
+          "labelZh": "证件照片/扫描件",
+          "labelKey": "scenario7.evidence.evidence.v-e6a868ff.label",
+          "helpKey": "scenario7.evidence.evidence.v-e6a868ff.help",
+          "evidenceType": "image"
+        },
+        {
+          "fieldId": "evidence.v-bd40f5a9",
+          "labelZh": "本人确认",
+          "labelKey": "scenario7.evidence.evidence.v-bd40f5a9.label",
+          "helpKey": "scenario7.evidence.evidence.v-bd40f5a9.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-43db62f6",
+          "labelZh": "授权同意记录",
+          "labelKey": "scenario7.evidence.evidence.v-43db62f6.label",
+          "helpKey": "scenario7.evidence.evidence.v-43db62f6.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-1a8c4aa7",
+          "labelZh": "协议签署记录",
+          "labelKey": "scenario7.evidence.evidence.v-1a8c4aa7.label",
+          "helpKey": "scenario7.evidence.evidence.v-1a8c4aa7.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.v-ee7bd4de",
+          "labelZh": "客户确认凭证",
+          "labelKey": "scenario7.evidence.evidence.v-ee7bd4de.label",
+          "helpKey": "scenario7.evidence.evidence.v-ee7bd4de.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.v-bc9b8033",
+          "labelZh": "负责人例外审批证据",
+          "labelKey": "scenario7.evidence.evidence.v-bc9b8033.label",
+          "helpKey": "scenario7.evidence.evidence.v-bc9b8033.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-65447c18",
+          "labelZh": "房间交付照片",
+          "labelKey": "scenario7.evidence.evidence.v-65447c18.label",
+          "helpKey": "scenario7.evidence.evidence.v-65447c18.help",
+          "evidenceType": "image"
+        },
+        {
+          "fieldId": "evidence.v-0781f1e2",
+          "labelZh": "床位交付照片",
+          "labelKey": "scenario7.evidence.evidence.v-0781f1e2.label",
+          "helpKey": "scenario7.evidence.evidence.v-0781f1e2.help",
+          "evidenceType": "image"
+        },
+        {
+          "fieldId": "evidence.v-3236047a",
+          "labelZh": "清洁确认记录",
+          "labelKey": "scenario7.evidence.evidence.v-3236047a.label",
+          "helpKey": "scenario7.evidence.evidence.v-3236047a.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-8e5bd33d",
+          "labelZh": "入住确认凭证",
+          "labelKey": "scenario7.evidence.evidence.v-8e5bd33d.label",
+          "helpKey": "scenario7.evidence.evidence.v-8e5bd33d.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.v-3c575c70",
+          "labelZh": "领取确认记录",
+          "labelKey": "scenario7.evidence.evidence.v-3c575c70.label",
+          "helpKey": "scenario7.evidence.evidence.v-3c575c70.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-00d00b26",
+          "labelZh": "凭证发放照片",
+          "labelKey": "scenario7.evidence.evidence.v-00d00b26.label",
+          "helpKey": "scenario7.evidence.evidence.v-00d00b26.help",
+          "evidenceType": "image"
+        }
+      ],
+      "legalAction": [
+        {
+          "fieldId": "v-4999797d",
+          "labelZh": "办理入住",
+          "labelKey": "scenario7.action.v-4999797d.label",
+          "legalActionRef": "legalAction.dormitory.scenario7.v-4999797d.v1"
+        },
+        {
+          "fieldId": "v-fd9c9b61",
+          "labelZh": "返回预订",
+          "labelKey": "scenario7.action.v-fd9c9b61.label",
+          "legalActionRef": "legalAction.dormitory.scenario7.v-fd9c9b61.v1"
+        },
+        {
+          "fieldId": "v-3df51e48",
+          "labelZh": "标记待到店",
+          "labelKey": "scenario7.action.v-3df51e48.label",
+          "legalActionRef": "legalAction.dormitory.scenario7.v-3df51e48.v1"
+        },
+        {
+          "fieldId": "v-f2931e0f",
+          "labelZh": "转人工复核",
+          "labelKey": "scenario7.action.v-f2931e0f.label",
+          "legalActionRef": "legalAction.dormitory.scenario7.v-f2931e0f.v1"
+        }
+      ],
+      "actionControl": [
+        {
+          "fieldId": "v-4999797d",
+          "labelZh": "办理入住",
+          "labelKey": "scenario7.action.v-4999797d.label",
+          "legalActionRef": "legalAction.dormitory.scenario7.v-4999797d.v1"
+        },
+        {
+          "fieldId": "v-fd9c9b61",
+          "labelZh": "返回预订",
+          "labelKey": "scenario7.action.v-fd9c9b61.label",
+          "legalActionRef": "legalAction.dormitory.scenario7.v-fd9c9b61.v1"
+        },
+        {
+          "fieldId": "v-3df51e48",
+          "labelZh": "标记待到店",
+          "labelKey": "scenario7.action.v-3df51e48.label",
+          "legalActionRef": "legalAction.dormitory.scenario7.v-3df51e48.v1"
+        },
+        {
+          "fieldId": "v-f2931e0f",
+          "labelZh": "转人工复核",
+          "labelKey": "scenario7.action.v-f2931e0f.label",
+          "legalActionRef": "legalAction.dormitory.scenario7.v-f2931e0f.v1"
+        }
+      ],
+      "conditionalInput": [],
+      "auditInternal": [
+        {
+          "fieldId": "stayId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "residentId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "credentialId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "occupancyId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "checkInCaseId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "identityVerificationId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "projectionVersion",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "digest",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "domainEventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "checkInCaseRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "financeReadySnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "sourceScenarioRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "residentRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "identityVerificationRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "agreementRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "financeCheckSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "occupancyCandidateRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "resourceStatusSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "handoverEvidenceRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stayRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "occupancyRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "checkInSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "accessCredentialRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        }
+      ]
+    }
+  },
+  "checkInStatusOptions": [
+    "待到店",
+    "待身份核验",
+    "待协议确认",
+    "待财务补齐",
+    "待房源复核",
+    "可办理入住",
+    "已入住",
+    "入住失败",
+    "需人工复核",
+    "凭证待发放",
+    "凭证已发放"
+  ]
+}

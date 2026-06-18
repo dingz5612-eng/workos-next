@@ -1,0 +1,129 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario3-testPlan.generated",
+  "version": "oam.dormitory-scenario3-testPlan.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario3-product-and-pricing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario3-product-and-pricing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:60372bae88f8c69027805c9a2225b4939e2108913d66b25e962e445b68fcf5e1",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "digest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario3.ProductAndPricing",
+  "scenarioPackageNo": 3,
+  "scenarioId": "lodging.product-and-rate",
+  "outputContentDigest": "sha256:483cab9fac6f480c3ec55cfbd72b742c80f5fdd186e0653355b7e4943d1a3042",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "住宿商品与价格",
+  "businessGoalZh": "承接场景包 1 的房源摘要和场景包 2 已确认可运营且未阻断的运营状态摘要，配置住宿商品、售卖单位、商品资源绑定、价格方案、适用日期、价格版本及价格生效/停用记录。",
+  "sourceScenarioDigest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario3.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "AccommodationProduct",
+      "SellableUnit",
+      "ProductResourceBinding",
+      "RatePlan",
+      "RateRule",
+      "PriceCalendar",
+      "PriceVersion",
+      "PriceEvidence",
+      "PriceStatusHistory"
+    ],
+    "searchReadModel": [
+      "住宿商品与价格",
+      "商品摘要",
+      "价格方案摘要",
+      "价格日历摘要",
+      "价格版本历史",
+      "可否进入询价报价",
+      "证据摘要",
+      "只读对象引用",
+      "价格版本和价格日历摘要"
+    ],
+    "noRefillRuleZh": "场景包 3 只能读取场景包 1 和场景包 2 的只读摘要，不得要求用户重新填写房间、床位组、基础就绪或运营状态字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "positiveBrowserTestPlan": [
+    "从场景包 2 可运营房源进入“住宿商品与价格”。",
+    "选择整房创建商品。",
+    "配置按晚价格。",
+    "配置生效日期。",
+    "审核并生效。",
+    "查看价格日历。",
+    "新建调价版本。",
+    "停用旧价格。",
+    "创建单床位商品。",
+    "查看今日、工作项、搜索、我的入口表现。"
+  ],
+  "negativeBrowserTestPlan": [
+    "未可运营资源创建商品。",
+    "维修中资源创建价格。",
+    "价格为空或负数。",
+    "缺币种。",
+    "缺计价周期。",
+    "日期倒置。",
+    "同日期范围价格冲突。",
+    "已生效价格原地编辑。",
+    "伪造 roomId、bedId、ratePlanId。",
+    "搜索结果直接写价格。",
+    "价格生效后直接生成报价或预订。",
+    "重复提交。",
+    "并发调价。"
+  ],
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "select-operable-resource": [
+        "场景包 2 可运营摘要",
+        "只读对象引用绑定记录"
+      ],
+      "define-accommodation-product": [
+        "商品定义证据",
+        "资源绑定证据"
+      ],
+      "configure-rate-plan": [
+        "价格依据证据",
+        "审批材料"
+      ],
+      "configure-price-calendar": [
+        "日期规则证据",
+        "特殊价格证据"
+      ],
+      "review-and-activate-price": [
+        "审核证据",
+        "生效确认记录"
+      ],
+      "price-maintenance": [
+        "调价证据",
+        "停用证据",
+        "作废证据",
+        "补充证据"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "screenshotAnalysisRequired": true,
+  "noSideEffectsProofRequired": true
+}

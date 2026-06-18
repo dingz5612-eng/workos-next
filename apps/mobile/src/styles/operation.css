@@ -283,6 +283,41 @@
   background: #fffaf0;
 }
 
+.operation-pre-submit-details {
+  display: grid;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.operation-pre-submit-details > summary {
+  width: max-content;
+  color: var(--brand);
+  font-size: 13px;
+  font-weight: var(--font-strong);
+  cursor: pointer;
+}
+
+.operation-pre-submit-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.operation-pre-submit-details > summary::before {
+  content: "+";
+  display: inline-block;
+  width: 16px;
+  margin-right: 4px;
+  text-align: center;
+}
+
+.operation-pre-submit-details[open] > summary::before {
+  content: "-";
+}
+
+.operation-pre-submit-details .trusted-confirm-sheet,
+.operation-pre-submit-details .evidence-sheet {
+  margin: 0;
+}
+
 .operation-admission-panel {
   display: grid;
   gap: 8px;

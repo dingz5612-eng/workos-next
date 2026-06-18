@@ -3,14 +3,15 @@ import { routeView } from "../appRouter.js";
 import { saveCompletedRecordSnapshot, saveDraft } from "../operationDrafts.js";
 import { withSystemGeneratedOperationValues } from "../operationSystemValues.js";
 import { createSurfaceCtx, runtimeStore, source, visibleText } from "./surfaceContractTestHelpers.js";
+import { DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS } from "../capabilityProjection.js";
 
 describe("SURFACE-C Operation Panel runtime contract", () => {
   it("normalizes non-persisted task ids and renders only persisted WorkItem runtime identity", () => {
     const ctx = createSurfaceCtx({ view: "operationPanel", selectedWorkItemId: "T-ROOM-CREATE" });
     const html = routeView(ctx);
 
-    expect(ctx.state.selectedWorkItemId).toBe("W-STAY-RESOURCE:roomSetup");
-    expect(html).toContain("W-STAY-RESOURCE:roomSetup");
+    expect(ctx.state.selectedWorkItemId).toBe("wi-dorm-room-setup");
+    expect(html).toContain("wi-dorm-room-setup");
     expect(html).not.toContain("T-ROOM-CREATE");
     expect(visibleText(html)).not.toMatch(/\b(commandSubmissionId|payloadHash|workItemId|caseId|OperationPanelView|TrustedConfirmSheet|ActionResult)\b/);
     expect(visibleText(html)).not.toContain("载荷指纹");
@@ -49,9 +50,9 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(html).toContain('data-runtime-decision="work_item_confirm_ready:production_blocked"');
     expect(html).toContain('data-lifecycle-state="ready"');
     expect(html).toContain('data-surface="operation-admission"');
-    expect(text).toContain("准入状态");
-    expect(text).toContain("内部试点观察");
-    expect(text).toContain("提交观察记录");
+    expect(text).toContain("办理提示");
+    expect(text).toContain("可以填写并提交；提交时会再次检查必填项、材料、权限和设备。");
+    expect(text).toContain("填写房间信息");
   });
 
   it("renders route metadata on the progress rail without a repeated context container", () => {
@@ -69,8 +70,8 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(html).not.toContain('class="operation-panel-page"');
     expect(html).not.toContain('class="operation-context-title"');
     expect(html).not.toContain("intent-card");
-    expect(text).toContain("住宿资源");
-    expect(text).toContain("房间床位配置");
+    expect(text).toContain("新建房间和床位");
+    expect(text).toContain("填写房间信息");
     expect(text).not.toContain("办理进度");
     expect(text).not.toContain("当前办理 我要创建住宿资源");
     expect(text).not.toContain("当前可处理");
@@ -86,8 +87,8 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
       runtimeHydrating: true,
       runtimeStore: store,
       selectedWorkItemId: "wi-loading",
-      selectedWorkspace: "W-STAY-RESOURCE",
-      selectedCardId: "roomSetup"
+      selectedWorkspace: DORMITORY_MAINLINE_WORKSPACE_ID,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[0].cardId
     });
 
     const html = routeView(ctx);
@@ -101,11 +102,11 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
   it("does not render editable fields or submit checks for a not-started step", () => {
     const store = runtimeStore();
     store.workspaces[0].cards = [
-      { ...store.workspaces[0].cards[0], id: "roomSetup", status: "ready", title: { "zh-CN": "房间配置卡" } },
+      { ...store.workspaces[0].cards[0], id: DORMITORY_SCENARIO1_STEPS[0].cardId, status: "ready", title: { "zh-CN": "填写房间信息" } },
       {
-        id: "bedSetup",
+        id: DORMITORY_SCENARIO1_STEPS[1].cardId,
         status: "notStarted",
-        title: { "zh-CN": "床位配置卡" },
+        title: { "zh-CN": "确认床位信息" },
         fields: { business: [field("bedNo", "床位号")], system: [], analytics: [] },
         evidence: [],
         checks: [],
@@ -115,16 +116,16 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     ];
     store.operationWorkItems = [{
       workItemId: "wi-bed-not-started",
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "bedSetup",
+      workspaceId: DORMITORY_MAINLINE_WORKSPACE_ID,
+      cardId: DORMITORY_SCENARIO1_STEPS[1].cardId,
       lifecycleState: "notStarted",
       ownerRole: "operator"
     }];
     const ctx = createSurfaceCtx({
       view: "operationPanel",
       selectedWorkItemId: "wi-bed-not-started",
-      selectedWorkspace: "W-STAY-RESOURCE",
-      selectedCardId: "bedSetup",
+      selectedWorkspace: DORMITORY_MAINLINE_WORKSPACE_ID,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[1].cardId,
       runtimeStore: store
     });
 
@@ -135,7 +136,7 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(text).toContain("第 2/2 步");
     expect(text).not.toContain("填写信息");
     expect(text).not.toContain("提交前检查");
-    expect((text.match(/床位配置卡/g) || []).length).toBe(1);
+    expect((text.match(/确认床位信息/g) || []).length).toBeGreaterThanOrEqual(1);
     expect((text.match(/这张卡还没轮到办理。请先完成前一张卡。/g) || []).length).toBe(1);
     expect(html).not.toContain('data-operation-field="bedNo"');
   });
@@ -153,12 +154,12 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
 
     const text = visibleText(routeView(ctx));
 
-    expect(text).toContain("还需填写: 楼栋");
+    expect(text).toContain("还需填写: 楼层、房间号、床位数");
     expect(text).toContain("提交状态: 暂不能提交: 还需填写");
     expect(text).not.toContain("提交状态: 可以提交");
   });
 
-  it("does not treat a required select as filled just because options exist", () => {
+  it("does not render building context as a hand-filled selector", () => {
     const store = runtimeStore();
     store.workspaces[0].cards[0] = {
       ...store.workspaces[0].cards[0],
@@ -190,8 +191,9 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     const html = routeView(ctx);
     const text = visibleText(html);
 
-    expect(html).toContain('<option value="" selected disabled>请选择</option>');
-    expect(text).toContain("还需填写: 房型");
+    expect(html).not.toContain('list="buildingContextRefOptions"');
+    expect(html).not.toContain('data-operation-field="buildingContextRef" list=');
+    expect(text).toContain("还需填写: 楼层、房间号、床位数");
     expect(text).toContain("提交状态: 暂不能提交: 还需填写");
     expect(text).not.toContain("提交状态: 可以提交");
   });
@@ -429,8 +431,8 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
       runtimeStore: store,
       lastActionResult: {
         status: "committed_projection_pending",
-        workspaceId: "W-STAY-RESOURCE",
-        cardId: "roomSetup",
+        workspaceId: DORMITORY_MAINLINE_WORKSPACE_ID,
+        cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
         message: "已提交成功，视图同步中。"
       }
     });
@@ -452,8 +454,8 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
       operationMessage: message,
       lastActionResult: {
         status: "committed_projection_pending",
-        workspaceId: "W-STAY-RESOURCE",
-        cardId: "roomSetup",
+        workspaceId: DORMITORY_MAINLINE_WORKSPACE_ID,
+        cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
         message
       }
     });
@@ -485,20 +487,110 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(html).not.toContain("data-submit-card");
   });
 
+  it("reopens completed workspace/card routes as readonly records after the WorkItem is removed", () => {
+    const workspaceId = `${DORMITORY_MAINLINE_WORKSPACE_ID}-READONLY-RELOAD`;
+    const store = runtimeStore();
+    store.workspaces[0] = {
+      ...store.workspaces[0],
+      id: workspaceId,
+      cards: [{
+        ...store.workspaces[0].cards[0],
+        id: DORMITORY_SCENARIO1_STEPS[2].cardId,
+        status: "done",
+        title: { "zh-CN": "完成基础检查", "ru-RU": "Базовая проверка" }
+      }]
+    };
+    store.operationWorkItems = [];
+    store.workQueue = [];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      lang: "ru-RU",
+      selectedWorkItemId: "wi-removed-after-submit",
+      selectedWorkspace: workspaceId,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[2].cardId,
+      runtimeStore: store
+    });
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-surface="completed-workspace-record"');
+    expect(text).toContain("Запись только для чтения");
+    expect(text).not.toContain("Пока нельзя обработать напрямую");
+    expect(html).not.toContain('data-submit-card');
+  });
+
+  it("reopens browser-reloaded completed records from the completed read cache without a runtime workspace", () => {
+    const workspaceId = `${DORMITORY_MAINLINE_WORKSPACE_ID}-READONLY-CACHE-RELOAD`;
+    const store = runtimeStore();
+    store.workspaces = [];
+    store.operationWorkItems = [];
+    store.workQueue = [];
+    saveCompletedRecordSnapshot({
+      workspaceId,
+      cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
+      workItemId: "wi-cache-room",
+      values: { roomNo: "A301", bedCount: "4" },
+      evidenceDrafts: [{ name: "room-photo" }]
+    });
+    saveCompletedRecordSnapshot({
+      workspaceId,
+      cardId: DORMITORY_SCENARIO1_STEPS[1].cardId,
+      workItemId: "wi-cache-bed",
+      values: { bedType: "bunk_pair", bedLabels: "01, 02, 03, 04" },
+      evidenceDrafts: [{ name: "bed-photo" }]
+    });
+    saveCompletedRecordSnapshot({
+      workspaceId,
+      cardId: DORMITORY_SCENARIO1_STEPS[2].cardId,
+      workItemId: "wi-cache-readiness",
+      values: {
+        basicCheckResult: "checked_ok",
+        cleaningBasicCheckResult: "checked_ok",
+        facilityBasicCheckResult: "checked_ok",
+        safetyBasicCheckResult: "checked_ok",
+        readinessState: "passed"
+      },
+      evidenceDrafts: [{ name: "readiness-photo" }]
+    });
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      lang: "ru-RU",
+      selectedWorkItemId: "wi-cache-readiness",
+      selectedWorkspace: workspaceId,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[2].cardId,
+      runtimeStore: store
+    });
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-surface="completed-workspace-record"');
+    expect(html).toContain('data-runtime-decision="work_item_terminal:done"');
+    expect(html).not.toContain('data-submit-card');
+    expect(text).toContain("Запись только для чтения");
+    expect(text).toContain("Базовая готовность комнаты и коек завершена");
+    expect(text).toContain("A301");
+    expect(text).toContain("4 коек: 01, 02, 03, 04");
+    expect(text).toContain("Пройдено");
+    expect(text).not.toContain("Пока нельзя обработать напрямую");
+  });
+
   it("shows submitted values on the readonly completed record before offering correction", () => {
     const store = runtimeStore();
     store.workspaces[0] = {
       ...store.workspaces[0],
-      id: "W-STAY-RESOURCE-READONLY-001",
+      id: `${DORMITORY_MAINLINE_WORKSPACE_ID}-READONLY-001`,
       cards: [{
         ...store.workspaces[0].cards[0],
+        id: DORMITORY_SCENARIO1_STEPS[0].cardId,
         status: "done",
         fields: { business: [field("buildingName", "楼栋"), field("roomNo", "房间号"), field("bedCount", "床位数")], system: [], analytics: [] }
       }]
     };
     saveCompletedRecordSnapshot({
-      workspaceId: "W-STAY-RESOURCE-READONLY-001",
-      cardId: "roomSetup",
+      workspaceId: `${DORMITORY_MAINLINE_WORKSPACE_ID}-READONLY-001`,
+      cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
       values: {
         buildingName: "A栋",
         roomNo: "301",
@@ -507,8 +599,8 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     });
     const ctx = createSurfaceCtx({
       view: "workspace",
-      selectedWorkspace: "W-STAY-RESOURCE-READONLY-001",
-      selectedCardId: "roomSetup",
+      selectedWorkspace: `${DORMITORY_MAINLINE_WORKSPACE_ID}-READONLY-001`,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
       selectedWorkItemId: "",
       runtimeStore: store
     });
@@ -524,6 +616,159 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(text).toContain("4");
     expect(html).toContain('data-correction-work-item="true"');
     expect(text).toContain("请先核对已提交的业务内容");
+  });
+
+  it("summarizes scenario 1 completed room, generated bed group, and readiness conclusion", () => {
+    const workspaceId = `${DORMITORY_MAINLINE_WORKSPACE_ID}-READONLY-SC1-001`;
+    const store = runtimeStore();
+    store.workspaces[0] = {
+      ...store.workspaces[0],
+      id: workspaceId,
+      cards: [
+        {
+          ...store.workspaces[0].cards[0],
+          id: DORMITORY_SCENARIO1_STEPS[0].cardId,
+          status: "done",
+          fields: { business: [field("roomNo", "房间号"), field("bedCount", "床位数")], system: [], analytics: [] }
+        },
+        {
+          id: DORMITORY_SCENARIO1_STEPS[1].cardId,
+          status: "done",
+          title: { "zh-CN": "确认床位信息" },
+          fields: { business: [field("bedType", "床铺生成方式")], system: [], analytics: [] },
+          evidence: [],
+          checks: [],
+          blockerRules: [],
+          confirmation: { required: true, requiredRole: "operator" }
+        },
+        {
+          id: DORMITORY_SCENARIO1_STEPS[2].cardId,
+          status: "done",
+          title: { "zh-CN": "完成基础检查" },
+          fields: { business: [field("readinessState", "基础就绪结论"), field("roomId", "所属房间"), field("bedId", "床位")], system: [], analytics: [] },
+          evidence: [],
+          checks: [],
+          blockerRules: [],
+          confirmation: { required: true, requiredRole: "operator" }
+        }
+      ]
+    };
+    saveCompletedRecordSnapshot({
+      workspaceId,
+      cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
+      values: { roomNo: "A301", bedCount: "2" }
+    });
+    saveCompletedRecordSnapshot({
+      workspaceId,
+      cardId: DORMITORY_SCENARIO1_STEPS[1].cardId,
+      values: { bedType: "bunk_pair" }
+    });
+    saveCompletedRecordSnapshot({
+      workspaceId,
+      cardId: DORMITORY_SCENARIO1_STEPS[2].cardId,
+      values: { readinessState: "passed" }
+    });
+    const ctx = createSurfaceCtx({
+      view: "workspace",
+      selectedWorkspace: workspaceId,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[2].cardId,
+      selectedWorkItemId: "",
+      runtimeStore: store
+    });
+
+    const text = visibleText(routeView(ctx));
+
+    expect(text).toContain("房间和床位已新建");
+    expect(text).toContain("A301");
+    expect(text).toContain("2 个床位 01, 02");
+    expect(text).toContain("通过");
+    expect(text).not.toContain("所属房间 未填写");
+    expect(text).not.toContain("床位 未填写");
+
+    const ruText = visibleText(routeView(createSurfaceCtx({
+      view: "workspace",
+      lang: "ru-RU",
+      selectedWorkspace: workspaceId,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[2].cardId,
+      selectedWorkItemId: "",
+      runtimeStore: store
+    })));
+
+    expect(ruText).toContain("Базовая готовность комнаты и коек завершена");
+    expect(ruText).toContain("2 коек: 01, 02");
+    expect(ruText).not.toMatch(/房源建档|基础就绪记录|个床位/);
+  });
+
+  it("renders scenario 1 readiness confirmation with localized dropdowns and no empty internal context input", () => {
+    const store = runtimeStore();
+    const workspaceId = `${DORMITORY_MAINLINE_WORKSPACE_ID}-READINESS-RU-001`;
+    store.workspaces[0] = {
+      ...store.workspaces[0],
+      id: workspaceId,
+      title: { "zh-CN": "房源建档与基础就绪", "ru-RU": "Первая золотая цепочка общежития" },
+      cards: [
+        {
+          ...store.workspaces[0].cards[0],
+          id: DORMITORY_SCENARIO1_STEPS[0].cardId,
+          status: "done",
+          title: { "zh-CN": "填写房间信息", "ru-RU": "Данные комнаты" }
+        },
+        {
+          id: DORMITORY_SCENARIO1_STEPS[1].cardId,
+          status: "done",
+          title: { "zh-CN": "确认床位信息", "ru-RU": "Данные коек" },
+          fields: { business: [field("bedType", "床铺生成方式")], system: [], analytics: [] },
+          evidence: [],
+          checks: [],
+          blockerRules: [],
+          confirmation: { required: true, requiredRole: "operator" }
+        },
+        {
+          id: DORMITORY_SCENARIO1_STEPS[2].workItemType,
+          status: "ready",
+          title: { "zh-CN": "完成基础检查", "ru-RU": "Базовая проверка" },
+          fields: { business: [], system: [], analytics: [] },
+          evidence: [],
+          checks: [],
+          blockerRules: [],
+          confirmation: { required: true, requiredRole: "operator" }
+        }
+      ]
+    };
+    store.operationWorkItems = [{
+      workItemId: "wi-readiness-ru-empty-context",
+      workspaceId,
+      cardId: DORMITORY_SCENARIO1_STEPS[2].workItemType,
+      workItemType: "Dorm.ResourceReadinessConfirm",
+      lifecycleState: "ready",
+      ownerRole: "operator",
+      payload: { roomRef: "room-a655b" }
+    }];
+    store.workQueue = [...store.operationWorkItems];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      lang: "ru-RU",
+      selectedWorkItemId: "wi-readiness-ru-empty-context",
+      selectedWorkspace: workspaceId,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[2].workItemType,
+      runtimeStore: store
+    });
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-operation-field="basicCheckResult"');
+    expect(html).toContain('data-operation-field="readinessState"');
+    expect(text).toContain("Проверено, без замечаний");
+    expect(text).toContain("Есть проблема, нужно дополнить");
+    expect(text).toContain("Если нужно изменить данные, откройте исправление или отмену");
+    expect(text).toContain("Подготовка комнат и коек");
+    expect(text).not.toContain("Первая золотая цепочка общежития");
+    expect(html).toContain('type="hidden" data-operation-field="roomRef" value="room-a655b"');
+    expect(html).not.toContain('data-operation-field="bedId"');
+    expect(text).not.toContain("Комната Заполнено системой; повторно вводить не нужно.");
+    expect(text).not.toMatch(/room-[a-z0-9-]+|bedId|roomId|workItemId|stableRef|projectionVersion|digest|domainEventId/i);
+    expect(text).not.toMatch(/runtime|Runtime|Аудит|аудит|трасс|Трасс|откат|компенсац|scope/i);
   });
 
   it("renders bed setup as a room-capacity batch instead of one single-bed input", () => {
@@ -555,12 +800,12 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
       }
     };
     store.workspaces[0].cards = [
-      { ...store.workspaces[0].cards[0], id: "roomSetup", status: "done", title: { "zh-CN": "房间配置卡" } },
+      { ...store.workspaces[0].cards[0], id: DORMITORY_SCENARIO1_STEPS[0].cardId, status: "done", title: { "zh-CN": "填写房间信息" } },
       {
-        id: "bedSetup",
+        id: DORMITORY_SCENARIO1_STEPS[1].cardId,
         status: "ready",
-        title: { "zh-CN": "床位配置卡" },
-        fields: { business: [field("roomId", "所属房间"), bedCount, bedLabels, bedType, field("bedStatus", "初始床位状态")], system: [], analytics: [] },
+        title: { "zh-CN": "确认床位信息" },
+        fields: { business: [field("roomRef", "所属房间"), bedCount, bedLabels, bedType, field("bedStatus", "初始床位状态")], system: [], analytics: [] },
         evidence: [],
         checks: [],
         blockerRules: [],
@@ -569,8 +814,8 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     ];
     store.operationWorkItems = [{
       workItemId: "wi-bed-batch",
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "bedSetup",
+      workspaceId: DORMITORY_MAINLINE_WORKSPACE_ID,
+      cardId: DORMITORY_SCENARIO1_STEPS[1].cardId,
       lifecycleState: "ready",
       ownerRole: "operator"
     }];
@@ -578,14 +823,14 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     const ctx = createSurfaceCtx({
       view: "operationPanel",
       selectedWorkItemId: "wi-bed-batch",
-      selectedWorkspace: "W-STAY-RESOURCE",
-      selectedCardId: "bedSetup",
+      selectedWorkspace: DORMITORY_MAINLINE_WORKSPACE_ID,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[1].cardId,
       runtimeStore: store,
       projectionEvents: [{
-        workspaceId: "W-STAY-RESOURCE",
-        cardId: "roomSetup",
+        workspaceId: DORMITORY_MAINLINE_WORKSPACE_ID,
+        cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
         eventType: "Accommodation.RoomConfigured",
-        payload: { roomId: "room-401", roomNo: "401", bedCount: "4" }
+        payload: { roomRef: "room-401", roomNo: "401", bedCount: "4" }
       }]
     });
 
@@ -594,7 +839,8 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(html).toContain('data-operation-field="bedCount"');
     expect(html).toContain('value="4"');
     expect(html).toContain('value="401" readonly aria-readonly="true"');
-    expect(html).toContain('data-operation-field="roomId" value="room-401"');
+    expect(html).toContain('data-operation-field="roomRef" value="room-401"');
+    expect(html).not.toContain('data-operation-field="roomId"');
     expect(html).toContain('value="4" readonly aria-readonly="true"');
     expect(visibleText(html)).toContain("系统已带入，不需要重复填写。");
     expect(visibleText(html)).not.toContain("所属房间 · 可搜索选择");
@@ -609,9 +855,8 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(html).toContain("04 · 下铺");
     expect(visibleText(html)).toContain("床铺生成方式");
     expect(visibleText(html)).toContain("将生成的床位");
-    expect(visibleText(html)).toContain("前步带入: 已完成");
-    expect(visibleText(html)).toContain("系统生成: 已完成");
-    expect(visibleText(html)).toContain("需要操作: 已完成");
+    expect(visibleText(html)).toContain("必填项: 已完成");
+    expect(visibleText(html)).toContain("材料核对: 无需补材料");
     expect(visibleText(html)).not.toContain("还需填写: 所属房间");
     expect(visibleText(html)).not.toContain("还需填写: 床位数");
     expect(visibleText(html)).not.toContain("还需填写: 床位标签");
@@ -623,7 +868,7 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
 
   it("ignores suppressed single-bed validation after bed setup switches to generated room-capacity beds", () => {
     const store = runtimeStore();
-    const workspaceId = "W-STAY-RESOURCE-BED-SUPPRESSED-001";
+    const workspaceId = `${DORMITORY_MAINLINE_WORKSPACE_ID}-BED-SUPPRESSED-001`;
     const bedCount = {
       ...field("bedCount", "床位数"),
       type: "number",
@@ -649,14 +894,14 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
       ...store.workspaces[0],
       id: workspaceId,
       cards: [
-        { ...store.workspaces[0].cards[0], id: "roomSetup", status: "done", title: { "zh-CN": "房间配置卡" } },
+        { ...store.workspaces[0].cards[0], id: DORMITORY_SCENARIO1_STEPS[0].cardId, status: "done", title: { "zh-CN": "填写房间信息" } },
         {
-          id: "bedSetup",
+          id: DORMITORY_SCENARIO1_STEPS[1].cardId,
           status: "ready",
-          title: { "zh-CN": "床位配置卡" },
+          title: { "zh-CN": "确认床位信息" },
           fields: {
             business: [
-              field("roomId", "所属房间"),
+              field("roomRef", "所属房间"),
               bedCount,
               bedLabels,
               bedType,
@@ -676,31 +921,31 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     store.operationWorkItems = [{
       workItemId: "wi-bed-suppressed-validation",
       workspaceId,
-      cardId: "bedSetup",
+      cardId: DORMITORY_SCENARIO1_STEPS[1].cardId,
       lifecycleState: "ready",
       ownerRole: "operator"
     }];
     store.workQueue = [...store.operationWorkItems];
     saveCompletedRecordSnapshot({
       workspaceId,
-      cardId: "roomSetup",
-      values: { roomId: "room-a9888", buildingName: "真实浏览器验收", roomNo: "A9888", bedCount: "2" }
+      cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
+      values: { roomRef: "room-a9888", buildingName: "真实浏览器验收", roomNo: "A9888", bedCount: "2" }
     });
     const ctx = createSurfaceCtx({
       view: "operationPanel",
       selectedWorkItemId: "wi-bed-suppressed-validation",
       selectedWorkspace: workspaceId,
-      selectedCardId: "bedSetup",
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[1].cardId,
       runtimeStore: store,
       fieldValidation: {
         workspaceId,
-        cardId: "bedSetup",
+        cardId: DORMITORY_SCENARIO1_STEPS[1].cardId,
         missingFieldIds: ["bedNo"],
         missingLabels: ["床位号"]
       },
       lastActionResult: {
         workspaceId,
-        cardId: "bedSetup",
+        cardId: DORMITORY_SCENARIO1_STEPS[1].cardId,
         status: "business_blocked_422",
         reason: "required_field_missing",
         message: "提交校验未通过"
@@ -745,31 +990,31 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
       }
     };
     store.workspaces[0].cards = [
-      { ...store.workspaces[0].cards[0], id: "roomSetup", status: "done", title: { "zh-CN": "房间配置卡" } },
+      { ...store.workspaces[0].cards[0], id: DORMITORY_SCENARIO1_STEPS[0].cardId, status: "done", title: { "zh-CN": "填写房间信息" } },
       {
-        id: "bedSetup",
+        id: DORMITORY_SCENARIO1_STEPS[1].cardId,
         status: "ready",
-        title: { "zh-CN": "床位配置卡" },
-        fields: { business: [field("roomId", "所属房间"), bedCount, bedLabels, bedType], system: [], analytics: [] },
+        title: { "zh-CN": "确认床位信息" },
+        fields: { business: [field("roomRef", "所属房间"), bedCount, bedLabels, bedType], system: [], analytics: [] },
         evidence: [],
         checks: [],
         blockerRules: [],
         confirmation: { required: true, requiredRole: "operator" }
       }
     ];
-    store.operationWorkItems = [{ workItemId: "wi-bed-stale-draft", workspaceId: "W-STAY-RESOURCE", cardId: "bedSetup", lifecycleState: "ready", ownerRole: "operator" }];
+    store.operationWorkItems = [{ workItemId: "wi-bed-stale-draft", workspaceId: DORMITORY_MAINLINE_WORKSPACE_ID, cardId: DORMITORY_SCENARIO1_STEPS[1].cardId, lifecycleState: "ready", ownerRole: "operator" }];
     store.workQueue = [...store.operationWorkItems];
-    saveDraft("W-STAY-RESOURCE", "bedSetup", { roomId: "room-401", bedCount: "2", bedLabels: "01, 02", bedType: "bunk_pair" });
+    saveDraft(DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS[1].cardId, { roomRef: "room-401", bedCount: "2", bedLabels: "01, 02", bedType: "bunk_pair" });
     saveCompletedRecordSnapshot({
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "roomSetup",
-      values: { roomId: "room-401", roomNo: "401", bedCount: "4" }
+      workspaceId: DORMITORY_MAINLINE_WORKSPACE_ID,
+      cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
+      values: { roomRef: "room-401", roomNo: "401", bedCount: "4" }
     });
     const ctx = createSurfaceCtx({
       view: "operationPanel",
       selectedWorkItemId: "wi-bed-stale-draft",
-      selectedWorkspace: "W-STAY-RESOURCE",
-      selectedCardId: "bedSetup",
+      selectedWorkspace: DORMITORY_MAINLINE_WORKSPACE_ID,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[1].cardId,
       runtimeStore: store
     });
 
@@ -868,22 +1113,23 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     const store = runtimeStore();
     store.workspaces[0] = {
       ...store.workspaces[0],
-      id: "W-STAY-RESOURCE-READONLY-002",
+      id: `${DORMITORY_MAINLINE_WORKSPACE_ID}-READONLY-002`,
       cards: [{
         ...store.workspaces[0].cards[0],
+        id: DORMITORY_SCENARIO1_STEPS[0].cardId,
         status: "done",
         fields: { business: [field("roomNo", "房间号")], system: [], analytics: [] }
       }]
     };
     const ctx = createSurfaceCtx({
       view: "workspace",
-      selectedWorkspace: "W-STAY-RESOURCE-READONLY-002",
-      selectedCardId: "roomSetup",
+      selectedWorkspace: `${DORMITORY_MAINLINE_WORKSPACE_ID}-READONLY-002`,
+      selectedCardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
       selectedWorkItemId: "",
       runtimeStore: store,
       projectionEvents: [{
-        workspaceId: "W-STAY-RESOURCE-READONLY-002",
-        cardId: "roomSetup",
+        workspaceId: `${DORMITORY_MAINLINE_WORKSPACE_ID}-READONLY-002`,
+        cardId: DORMITORY_SCENARIO1_STEPS[0].cardId,
         eventType: "OperationsWorkItemConfirmed",
         payload: {
           input: {

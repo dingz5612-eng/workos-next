@@ -1,6 +1,26 @@
+import { generatedControlForField } from "./capabilityProjection.js";
+
 const runtimeTruthPriority = ["latest-runtime-event-or-projection", "operations-start-context", "completed-record-snapshot", "non-conflicting-draft-fallback"];
 
 const stepContracts = [
+  contract("Dormitory.FirstGoldenChain", "Dorm.RoomSetupConfirm", [], {
+    inherited: [],
+    user: ["roomNo", "floor", "capacity"],
+    derived: [{ fieldId: "roomId", from: ["roomNo"], surface: "hidden-submit-only" }],
+    backend: []
+  }),
+  contract("Dormitory.FirstGoldenChain", "Dorm.BedSetupConfirm", ["Dorm.RoomSetupConfirm"], {
+    inherited: ["roomId"],
+    user: ["bedNo", "bedType"],
+    derived: [{ fieldId: "bedId", from: ["roomId", "bedNo"], surface: "hidden-submit-only" }],
+    backend: []
+  }),
+  contract("Dormitory.FirstGoldenChain", "Dorm.ResourceReadinessConfirm", ["Dorm.BedSetupConfirm"], {
+    inherited: ["roomId", "bedId"],
+    user: ["readinessState"],
+    derived: [],
+    backend: []
+  }),
   contract("Accommodation.ResourceSetup", "roomSetup", [], {
     inherited: [],
     user: ["buildingName", "roomNo", "roomType", "bedCount", "genderPolicy", "furnitureStatus", "technicalState", "roomNote"],
@@ -382,6 +402,8 @@ export function stepContextContract(cardId = "") {
 
 export function fieldContextRole(cardId = "", fieldId = "") {
   const contract = stepContextContract(cardId);
+  const generated = generatedFieldContextRole(cardId, fieldId, contract);
+  if (generated) return generated;
   if (!contract || !fieldId) return { kind: "user", fieldId, contract: null };
   const inherited = contract.inheritedFields.find((item) => item.fieldId === fieldId);
   if (inherited) return { kind: "inherited", fieldId, contract, entry: inherited };
@@ -395,6 +417,34 @@ export function fieldContextRole(cardId = "", fieldId = "") {
   const user = contract.userSelectableFields.find((item) => item.fieldId === fieldId);
   if (user) return { kind: "user", fieldId, contract, entry: user };
   return { kind: "user", fieldId, contract };
+}
+
+function generatedFieldContextRole(cardId = "", fieldId = "", contract = null) {
+  if (!fieldId) return null;
+  const control = generatedControlForField(cardId, fieldId);
+  if (!control) return null;
+  const entry = {
+    fieldId,
+    sourceWorkItemId: "generated-surface-contract",
+    source: control.source || "",
+    surface: control.surface || (control.hiddenSubmitOnly ? "hidden-submit-only" : "editable"),
+    priority: runtimeTruthPriority
+  };
+  if (["contextReadonly", "selectedStableRef"].includes(control.classification)) {
+    return { kind: "inherited", fieldId, contract, entry };
+  }
+  if (control.userSubmitted === false || control.readonly === true) {
+    return {
+      kind: control.hiddenSubmitOnly || control.controlType === "hidden" ? "derived" : "derived",
+      fieldId,
+      contract,
+      entry: { ...entry, derivedFrom: [control.source || "generated-surface-contract"] }
+    };
+  }
+  if (control.classification === "clientSubmitted" || control.userSubmitted === true) {
+    return { kind: "user", fieldId, contract, entry: { fieldId, surface: control.surface || "editable" } };
+  }
+  return null;
 }
 
 export function fieldVisibleByContext(cardId = "", fieldId = "") {

@@ -1,0 +1,341 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-testPlan.generated",
+  "version": "oam.dormitory-13-scenario-testPlan.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:206a7609fdae45bdae06d121cf337ad49e02575acc296d975af6fecc12ccdd21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    }
+  ],
+  "sourceContentDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:1e112de2478ee7075e0b1776b59b3bf2d3de7dc6b2add4decc74cf4654409722",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "testStandard": {
+    "perScenarioRequiredEvidence": [
+      "positiveBrowserScreenshot",
+      "negativeBrowserScreenshot",
+      "screenshotAnalysis",
+      "noSideEffectsProof"
+    ],
+    "globalNegativeCases": [
+      "缺字段",
+      "缺证据",
+      "重复提交",
+      "并发冲突",
+      "伪造内部 ID",
+      "越权操作",
+      "跨场景提前操作",
+      "搜索写事实",
+      "报表写事实",
+      "已确认事实原地编辑",
+      "直接写账",
+      "旧包越权"
+    ],
+    "screenshotAnalysisRequiredQuestions": [
+      "用户是否看得懂",
+      "字段是否合理",
+      "按钮是否顺",
+      "是否暴露内部 ID",
+      "是否误导为下游状态"
+    ]
+  },
+  "scenarioTestMatrix": [
+    {
+      "scenarioNo": 1,
+      "scenarioId": "lodging.resource-basic-readiness",
+      "positiveBrowserScreenshotRequired": true,
+      "negativeBrowserScreenshotRequired": true,
+      "screenshotAnalysisRequired": true,
+      "noSideEffectsProofRequired": true,
+      "globalNegativeCases": [
+        "缺字段",
+        "缺证据",
+        "重复提交",
+        "并发冲突",
+        "伪造内部 ID",
+        "越权操作",
+        "跨场景提前操作",
+        "搜索写事实",
+        "报表写事实",
+        "已确认事实原地编辑",
+        "直接写账",
+        "旧包越权"
+      ]
+    },
+    {
+      "scenarioNo": 2,
+      "scenarioId": "lodging.resource-operation-status",
+      "positiveBrowserScreenshotRequired": true,
+      "negativeBrowserScreenshotRequired": true,
+      "screenshotAnalysisRequired": true,
+      "noSideEffectsProofRequired": true,
+      "globalNegativeCases": [
+        "缺字段",
+        "缺证据",
+        "重复提交",
+        "并发冲突",
+        "伪造内部 ID",
+        "越权操作",
+        "跨场景提前操作",
+        "搜索写事实",
+        "报表写事实",
+        "已确认事实原地编辑",
+        "直接写账",
+        "旧包越权"
+      ]
+    },
+    {
+      "scenarioNo": 3,
+      "scenarioId": "lodging.product-and-rate",
+      "positiveBrowserScreenshotRequired": true,
+      "negativeBrowserScreenshotRequired": true,
+      "screenshotAnalysisRequired": true,
+      "noSideEffectsProofRequired": true,
+      "globalNegativeCases": [
+        "缺字段",
+        "缺证据",
+        "重复提交",
+        "并发冲突",
+        "伪造内部 ID",
+        "越权操作",
+        "跨场景提前操作",
+        "搜索写事实",
+        "报表写事实",
+        "已确认事实原地编辑",
+        "直接写账",
+        "旧包越权"
+      ]
+    },
+    {
+      "scenarioNo": 4,
+      "scenarioId": "lodging.inquiry-and-quote",
+      "positiveBrowserScreenshotRequired": true,
+      "negativeBrowserScreenshotRequired": true,
+      "screenshotAnalysisRequired": true,
+      "noSideEffectsProofRequired": true,
+      "globalNegativeCases": [
+        "缺字段",
+        "缺证据",
+        "重复提交",
+        "并发冲突",
+        "伪造内部 ID",
+        "越权操作",
+        "跨场景提前操作",
+        "搜索写事实",
+        "报表写事实",
+        "已确认事实原地编辑",
+        "直接写账",
+        "旧包越权"
+      ]
+    },
+    {
+      "scenarioNo": 5,
+      "scenarioId": "lodging.reservation-and-inventory-hold",
+      "positiveBrowserScreenshotRequired": true,
+      "negativeBrowserScreenshotRequired": true,
+      "screenshotAnalysisRequired": true,
+      "noSideEffectsProofRequired": true,
+      "globalNegativeCases": [
+        "缺字段",
+        "缺证据",
+        "重复提交",
+        "并发冲突",
+        "伪造内部 ID",
+        "越权操作",
+        "跨场景提前操作",
+        "搜索写事实",
+        "报表写事实",
+        "已确认事实原地编辑",
+        "直接写账",
+        "旧包越权"
+      ]
+    },
+    {
+      "scenarioNo": 6,
+      "scenarioId": "lodging.payment-deposit-and-guarantee",
+      "positiveBrowserScreenshotRequired": true,
+      "negativeBrowserScreenshotRequired": true,
+      "screenshotAnalysisRequired": true,
+      "noSideEffectsProofRequired": true,
+      "globalNegativeCases": [
+        "缺字段",
+        "缺证据",
+        "重复提交",
+        "并发冲突",
+        "伪造内部 ID",
+        "越权操作",
+        "跨场景提前操作",
+        "搜索写事实",
+        "报表写事实",
+        "已确认事实原地编辑",
+        "直接写账",
+        "旧包越权"
+      ]
+    },
+    {
+      "scenarioNo": 7,
+      "scenarioId": "lodging.check-in-processing",
+      "positiveBrowserScreenshotRequired": true,
+      "negativeBrowserScreenshotRequired": true,
+      "screenshotAnalysisRequired": true,
+      "noSideEffectsProofRequired": true,
+      "globalNegativeCases": [
+        "缺字段",
+        "缺证据",
+        "重复提交",
+        "并发冲突",
+        "伪造内部 ID",
+        "越权操作",
+        "跨场景提前操作",
+        "搜索写事实",
+        "报表写事实",
+        "已确认事实原地编辑",
+        "直接写账",
+        "旧包越权"
+      ]
+    },
+    {
+      "scenarioNo": 8,
+      "scenarioId": "lodging.in-stay-management",
+      "positiveBrowserScreenshotRequired": true,
+      "negativeBrowserScreenshotRequired": true,
+      "screenshotAnalysisRequired": true,
+      "noSideEffectsProofRequired": true,
+      "globalNegativeCases": [
+        "缺字段",
+        "缺证据",
+        "重复提交",
+        "并发冲突",
+        "伪造内部 ID",
+        "越权操作",
+        "跨场景提前操作",
+        "搜索写事实",
+        "报表写事实",
+        "已确认事实原地编辑",
+        "直接写账",
+        "旧包越权"
+      ]
+    },
+    {
+      "scenarioNo": 9,
+      "scenarioId": "lodging.checkout-and-settlement",
+      "positiveBrowserScreenshotRequired": true,
+      "negativeBrowserScreenshotRequired": true,
+      "screenshotAnalysisRequired": true,
+      "noSideEffectsProofRequired": true,
+      "globalNegativeCases": [
+        "缺字段",
+        "缺证据",
+        "重复提交",
+        "并发冲突",
+        "伪造内部 ID",
+        "越权操作",
+        "跨场景提前操作",
+        "搜索写事实",
+        "报表写事实",
+        "已确认事实原地编辑",
+        "直接写账",
+        "旧包越权"
+      ]
+    },
+    {
+      "scenarioNo": 10,
+      "scenarioId": "lodging.cancel-noshow-refund-intake",
+      "positiveBrowserScreenshotRequired": true,
+      "negativeBrowserScreenshotRequired": true,
+      "screenshotAnalysisRequired": true,
+      "noSideEffectsProofRequired": true,
+      "globalNegativeCases": [
+        "缺字段",
+        "缺证据",
+        "重复提交",
+        "并发冲突",
+        "伪造内部 ID",
+        "越权操作",
+        "跨场景提前操作",
+        "搜索写事实",
+        "报表写事实",
+        "已确认事实原地编辑",
+        "直接写账",
+        "旧包越权"
+      ]
+    },
+    {
+      "scenarioNo": 11,
+      "scenarioId": "lodging.housekeeping-maintenance-outofservice",
+      "positiveBrowserScreenshotRequired": true,
+      "negativeBrowserScreenshotRequired": true,
+      "screenshotAnalysisRequired": true,
+      "noSideEffectsProofRequired": true,
+      "globalNegativeCases": [
+        "缺字段",
+        "缺证据",
+        "重复提交",
+        "并发冲突",
+        "伪造内部 ID",
+        "越权操作",
+        "跨场景提前操作",
+        "搜索写事实",
+        "报表写事实",
+        "已确认事实原地编辑",
+        "直接写账",
+        "旧包越权"
+      ]
+    },
+    {
+      "scenarioNo": 12,
+      "scenarioId": "lodging.channel-corporate-customer",
+      "positiveBrowserScreenshotRequired": true,
+      "negativeBrowserScreenshotRequired": true,
+      "screenshotAnalysisRequired": true,
+      "noSideEffectsProofRequired": true,
+      "globalNegativeCases": [
+        "缺字段",
+        "缺证据",
+        "重复提交",
+        "并发冲突",
+        "伪造内部 ID",
+        "越权操作",
+        "跨场景提前操作",
+        "搜索写事实",
+        "报表写事实",
+        "已确认事实原地编辑",
+        "直接写账",
+        "旧包越权"
+      ]
+    },
+    {
+      "scenarioNo": 13,
+      "scenarioId": "lodging.reporting-audit-review",
+      "positiveBrowserScreenshotRequired": true,
+      "negativeBrowserScreenshotRequired": true,
+      "screenshotAnalysisRequired": true,
+      "noSideEffectsProofRequired": true,
+      "globalNegativeCases": [
+        "缺字段",
+        "缺证据",
+        "重复提交",
+        "并发冲突",
+        "伪造内部 ID",
+        "越权操作",
+        "跨场景提前操作",
+        "搜索写事实",
+        "报表写事实",
+        "已确认事实原地编辑",
+        "直接写账",
+        "旧包越权"
+      ]
+    }
+  ]
+}

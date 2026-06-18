@@ -1,5 +1,6 @@
 $ErrorActionPreference = "Stop"
 $script:GateResults = @()
+$script:AdvisoryGateResults = @()
 $script:GateReportPath = "artifacts/oam/checks/control-plane-gate-results.json"
 $script:RunStartedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
 $script:ExpectedGateCount = 0
@@ -25,10 +26,22 @@ function Get-ExpectedGateCount {
   $scriptPath = if ($PSCommandPath) { $PSCommandPath } else { $MyInvocation.MyCommand.Path }
   $content = Get-Content -Raw -Path $scriptPath
   $count = [regex]::Matches($content, "(?m)^\s*Invoke-Gate\b(?!.*-RecordResult\s+\`$false)").Count
+  if ($env:ALLOW_GENERATED_COMPILE_CANDIDATE -ne "true" -and -not (Test-FormalGeneratedCompileAuthorized)) {
+    $count -= 1
+  }
   if (Test-Path "artifacts/oam/test-results/mobile/coverage/coverage-summary.json") {
     $count -= 1
   }
   return $count
+}
+
+function Test-FormalGeneratedCompileAuthorized {
+  try {
+    $authorized = & node scripts/oam/formal-generated-compile-authorization-status.mjs --print-authorized
+    return (($authorized -join "").Trim() -eq "true")
+  } catch {
+    return $false
+  }
 }
 
 function Get-StageForCommand {
@@ -74,16 +87,16 @@ function Write-GateReport {
   $finalizable = $RunStatus -eq "completed" -and $effectiveStatus -eq "passed" -and $completedGateCount -eq $script:ExpectedGateCount
   $blockingReasons = @()
   if ($RunStatus -eq "running") {
-    $blockingReasons += "Control Plane 仍在运行，不能作为最终裁决。"
+    $blockingReasons += "Control Plane is still running and cannot be used as final adjudication."
   }
   if ($RunStatus -eq "failed") {
-    $blockingReasons += "Control Plane 已失败，不能作为最终 PASS。"
+    $blockingReasons += "Control Plane failed and cannot be used as final PASS."
   }
   if ($completedGateCount -ne $script:ExpectedGateCount) {
-    $blockingReasons += "Control Plane 已完成 gate 数量与 expectedGateCount 不一致：completed=${completedGateCount}, expected=$($script:ExpectedGateCount)。"
+    $blockingReasons += "Control Plane completed gate count does not match expectedGateCount: completed=${completedGateCount}, expected=$($script:ExpectedGateCount)."
   }
   if ($failed.Count -gt 0) {
-    $blockingReasons += "Control Plane 失败 gate 数量：$($failed.Count)。"
+    $blockingReasons += "Control Plane failed gate count: $($failed.Count)."
   }
   if ($script:TerminalFailureMessage) {
     $blockingReasons += $script:TerminalFailureMessage
@@ -106,6 +119,7 @@ function Write-GateReport {
     currentGate = $CurrentGate
     blockingReasons = $blockingReasons
     gates = $script:GateResults
+    advisoryGates = $script:AdvisoryGateResults
   }
 
   $dir = Split-Path -Parent $script:GateReportPath
@@ -113,7 +127,9 @@ function Write-GateReport {
     New-Item -ItemType Directory -Path $dir | Out-Null
   }
   $tempPath = "$($script:GateReportPath).tmp"
-  $report | ConvertTo-Json -Depth 8 | Set-Content -Path $tempPath -Encoding UTF8
+  $json = $report | ConvertTo-Json -Depth 8
+  $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+  [System.IO.File]::WriteAllText((Resolve-Path -LiteralPath (Split-Path -Parent $tempPath)).Path + [System.IO.Path]::DirectorySeparatorChar + (Split-Path -Leaf $tempPath), $json, $utf8NoBom)
   Move-Item -LiteralPath $tempPath -Destination $script:GateReportPath -Force
 }
 
@@ -150,7 +166,7 @@ function Invoke-Gate {
       Write-GateReport -RunStatus "running"
     }
   } catch {
-    $script:TerminalFailureMessage = "Control Plane 当前 gate 失败：$commandLine。$($_.Exception.Message)"
+    $script:TerminalFailureMessage = "Control Plane current gate failed: $commandLine. $($_.Exception.Message)"
     if ($RecordResult) {
       $script:GateResults += [ordered]@{
         command = $commandLine
@@ -166,6 +182,47 @@ function Invoke-Gate {
   }
 }
 
+function Invoke-AdvisoryGate {
+  param(
+    [Parameter(Mandatory = $true, Position = 0)]
+    [string] $Command,
+    [Parameter(ValueFromRemainingArguments = $true, Position = 1)]
+    [string[]] $Arguments
+  )
+
+  $commandLine = "$Command $($Arguments -join ' ')".Trim()
+  $startedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+  $script:CurrentGate = $commandLine
+  $script:CurrentStage = Get-StageForCommand -CommandLine $commandLine
+  Write-GateReport -RunStatus "running"
+  try {
+    & $Command @Arguments
+    $exitCode = $LASTEXITCODE
+    if ($exitCode -ne 0) {
+      throw "Advisory gate failed with exit code ${exitCode}: $commandLine"
+    }
+    $script:AdvisoryGateResults += [ordered]@{
+      command = $commandLine
+      laneMode = "advisory"
+      status = "passed"
+      exitCode = 0
+      startedAtUtc = $startedAtUtc
+      endedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+    }
+  } catch {
+    $script:AdvisoryGateResults += [ordered]@{
+      command = $commandLine
+      laneMode = "advisory"
+      status = "advisory_failed"
+      exitCode = if ($null -ne $LASTEXITCODE) { $LASTEXITCODE } else { 1 }
+      startedAtUtc = $startedAtUtc
+      endedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+      message = $_.Exception.Message
+    }
+  }
+  Write-GateReport -RunStatus "running"
+}
+
 $script:ExpectedGateCount = Get-ExpectedGateCount
 $script:CurrentStage = "initializing"
 $script:CurrentGate = ""
@@ -173,9 +230,25 @@ Write-GateReport -RunStatus "running"
 
 Invoke-Gate node scripts/oam/check-current-oam.mjs
 Invoke-Gate node scripts/oam/check-current-architecture-manifest.mjs
+Invoke-Gate node scripts/oam/check-authority-ledger-append-only.mjs
+Invoke-Gate node scripts/oam/check-current-projection-from-ledger.mjs
+Invoke-Gate node scripts/oam/check-no-active-legacy-identity.mjs
+Invoke-Gate node scripts/oam/check-no-active-path-legacy-identity.mjs
+Invoke-Gate node scripts/oam/check-no-current-capability-uses-legacy-seed.mjs
+Invoke-Gate node scripts/oam/check-no-stage-number-authority-leak.mjs
+Invoke-Gate node scripts/oam/check-no-stage-number-active-authority.mjs
+Invoke-Gate node scripts/oam/check-compatibility-box-boundary.mjs
+Invoke-Gate node scripts/oam/check-capability-state-machine-transition.mjs
+Invoke-Gate node scripts/oam/check-capability-authority-state-consistency.mjs
+Invoke-Gate node scripts/oam/check-control-plane-lane-boundary.mjs
+Invoke-Gate node scripts/oam/check-gate-taxonomy.mjs
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs --self-test
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs
 Invoke-Gate node scripts/oam/check-current-authority-index.mjs
+Invoke-Gate node scripts/oam/check-project-maintainability-governance.mjs
+Invoke-Gate node scripts/business/check-dormitory-13-scenario-control-authority.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario1-benchmark-inheritance-authority.mjs
 Invoke-Gate node scripts/authority/check-master-design-schema.mjs
 Invoke-Gate node scripts/authority/check-truth-ownership-matrix.mjs
 Invoke-Gate node scripts/oam/generate-authority-source-layer-audit.mjs
@@ -186,10 +259,24 @@ Invoke-Gate node scripts/oam/check-professional-ai-review-seats.mjs
 Invoke-Gate node scripts/oam/check-codex-execution-channel-policy.mjs
 Invoke-Gate node scripts/oam/check-cross-domain-conflict-rules.mjs
 Invoke-Gate node scripts/oam/check-system-operating-kernel.mjs
-Invoke-Gate node scripts/business/generate-dormitory-derived-contracts.mjs
+Invoke-Gate node scripts/oam/check-generated-compile-authorization.mjs
+if ($env:ALLOW_GENERATED_COMPILE_CANDIDATE -eq "true" -or (Test-FormalGeneratedCompileAuthorized)) {
+  Invoke-Gate node scripts/business/generate-dormitory-derived-contracts.mjs
+}
 Invoke-Gate node scripts/oam/compile-current-kernel-graph.mjs
+Invoke-Gate node scripts/oam/check-generated-field-binding-closure.mjs
+Invoke-Gate node scripts/oam/compile-current-capability.mjs
+Invoke-Gate node scripts/business/generate-dormitory-13-scenario-control-contracts.mjs
+Invoke-Gate node scripts/business/generate-dormitory-scenario1-resource-basic-readiness-contracts.mjs
+Invoke-Gate node scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs
 Invoke-Gate node scripts/oam/check-generated-contract-consistency.mjs
 Invoke-Gate node scripts/oam/check-generated-files-not-manually-edited.mjs
+Invoke-Gate node scripts/business/check-dormitory-13-scenario-generated-contracts.mjs
+Invoke-Gate node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario1-generated-contracts.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario1-consumption-boundary.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario1-benchmark-inheritance-generated-contracts.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario2-start-gate-trial.mjs
 Invoke-Gate node scripts/oam/check-oam-kernel-graph.mjs
 Invoke-Gate node scripts/oam/check-system-change-governance.mjs
 Invoke-Gate node scripts/oam/check-iteration-kernel.mjs
@@ -198,6 +285,7 @@ Invoke-Gate node scripts/oam/check-file-lifecycle-policy.mjs
 Invoke-Gate node scripts/oam/check-retired-reference-blocker.mjs
 Invoke-Gate node scripts/oam/generate-system-derived-contracts.mjs
 Invoke-Gate node scripts/oam/check-derived-contract-consistency.mjs
+Invoke-Gate node scripts/oam/check-generated-compile-execution.mjs
 Invoke-Gate node scripts/oam/check-system-handoff-contract.mjs
 Invoke-Gate node scripts/oam/check-system-failure-routing-contract.mjs
 Invoke-Gate node scripts/oam/check-current-engineering-ledger.mjs
@@ -251,32 +339,92 @@ Invoke-Gate node scripts/check-shared-governance-boundary.mjs
 Invoke-Gate node scripts/oam/check-db-no-side-effects-proof.mjs
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs --self-test
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs
+$previousOamWriteProof = $env:OAM_WRITE_PROOF
+$env:OAM_WRITE_PROOF = "1"
 Invoke-Gate node scripts/oam/check-dormitory-golden-chain-source-package.mjs
+if ($null -eq $previousOamWriteProof) {
+  Remove-Item Env:\OAM_WRITE_PROOF -ErrorAction SilentlyContinue
+} else {
+  $env:OAM_WRITE_PROOF = $previousOamWriteProof
+}
 Invoke-Gate node scripts/business/check-dormitory-operating-kernel.mjs
+$previousOamWriteProof = $env:OAM_WRITE_PROOF
+$env:OAM_WRITE_PROOF = "1"
 Invoke-Gate node scripts/business/check-dormitory-resource-saleability-golden-chain.mjs
+if ($null -eq $previousOamWriteProof) {
+  Remove-Item Env:\OAM_WRITE_PROOF -ErrorAction SilentlyContinue
+} else {
+  $env:OAM_WRITE_PROOF = $previousOamWriteProof
+}
 Invoke-Gate node scripts/business/check-dormitory-scenario-package-matrix.mjs
 Invoke-Gate node scripts/business/check-dormitory-ui-readside-experience.mjs
 Invoke-Gate node scripts/business/check-dormitory-period-correction-closure.mjs
 Invoke-Gate node scripts/business/check-dormitory-scenario-closure-tests.mjs
+Invoke-Gate node scripts/business/check-dormitory-13-scenario-integration-chain.mjs
 Invoke-Gate node scripts/business/check-dormitory-golden-chain-tests.mjs
 Invoke-Gate node scripts/business/check-dormitory-derived-contracts.mjs
 Invoke-Gate node scripts/business/check-dormitory-release-train.mjs
 Invoke-Gate node scripts/business/check-dormitory-pilot-scenario-pack.mjs
 Invoke-Gate node scripts/business/check-dormitory-metrics-lens-contract.mjs
+$previousOamWriteProof = $env:OAM_WRITE_PROOF
+$env:OAM_WRITE_PROOF = "1"
 Invoke-Gate node scripts/business/check-dormitory-execution-kernel.mjs
 Invoke-Gate node scripts/business/check-scenario-field-contract.mjs
 Invoke-Gate node scripts/business/check-canonical-scenario-map.mjs
 Invoke-Gate node scripts/business/check-evidence-coverage-contract.mjs
 Invoke-Gate node scripts/business/check-ledger-posting-contract.mjs
-Invoke-Gate pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1
-Invoke-Gate node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs
-Invoke-Gate node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs
+if ($null -eq $previousOamWriteProof) {
+  Remove-Item Env:\OAM_WRITE_PROOF -ErrorAction SilentlyContinue
+} else {
+  $env:OAM_WRITE_PROOF = $previousOamWriteProof
+}
 if (-not (Test-Path "artifacts/oam/test-results/mobile/coverage/coverage-summary.json")) {
   Invoke-Gate npm --prefix apps/mobile run test:coverage
 }
 Invoke-Gate node scripts/oam/generate-mobile-branch-risk-ledger.mjs
 Invoke-Gate node scripts/oam/check-mobile-coverage-policy.mjs
 Invoke-Gate node scripts/oam/check-mobile-critical-branch-scenarios.mjs
+Invoke-Gate node scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs
+Invoke-Gate node scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs
+Invoke-Gate node scripts/oam/generate-generated-candidate-acceptance.mjs
+Invoke-Gate node scripts/oam/check-s5-semantic-digest-idempotency.mjs
+Invoke-Gate node scripts/oam/check-generated-candidate-acceptance.mjs --self-test
+Invoke-Gate node scripts/oam/check-generated-bundle-content-addressed.mjs
+Invoke-Gate node scripts/oam/check-single-capability-bundle-digest.mjs
+Invoke-Gate node scripts/oam/check-generated-candidate-acceptance.mjs
+Invoke-Gate node scripts/oam/check-dormitory-runtime-admission.mjs --write-proof
+Invoke-Gate node scripts/oam/check-runtime-consumes-accepted-bundle.mjs
+Invoke-Gate node scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs
+Invoke-Gate node scripts/oam/check-environment-profile-authority.mjs
+Invoke-Gate node scripts/oam/check-runtime-stability-lane.mjs
+Invoke-Gate node scripts/oam/check-runtime-implementation-drift-policy.mjs
+Invoke-Gate node scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs
+Invoke-Gate node scripts/oam/check-test-plan-generated-from-capability.mjs
+Invoke-AdvisoryGate pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1
+Invoke-Gate node scripts/oam/check-project-purity-authority-seal.mjs
+Invoke-Gate node scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs
+Invoke-Gate node scripts/surface/run-dormitory-first-golden-chain-negative-browser-audit.mjs
+Invoke-Gate node scripts/surface/check-dormitory-first-golden-chain-negative-browser-audit.mjs
+Invoke-AdvisoryGate node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs
+Invoke-AdvisoryGate node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs
+Invoke-Gate node scripts/oam/check-dormitory-first-golden-chain-no-side-effects-proof.mjs
+Invoke-Gate node scripts/oam/check-dormitory-first-golden-chain-db-projection-proof.mjs
+Invoke-Gate node scripts/oam/check-dormitory-evidence-environment-profile.mjs
+Invoke-Gate node scripts/oam/compile-current-capability.mjs
+Invoke-Gate node scripts/business/generate-dormitory-scenario1-resource-basic-readiness-contracts.mjs
+Invoke-Gate node scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs
+Invoke-Gate node scripts/oam/check-generated-contract-consistency.mjs
+Invoke-Gate node scripts/oam/check-generated-files-not-manually-edited.mjs
+Invoke-Gate node scripts/oam/check-capability-evidence-subject-chain-complete.mjs --write-attestation
+Invoke-Gate node scripts/oam/check-no-evidence-digest-cycle.mjs
+Invoke-Gate node scripts/oam/check-evidence-is-projection-only.mjs
+Invoke-Gate node scripts/oam/check-release-authority-is-only-final-go-source.mjs
+Invoke-Gate node scripts/oam/check-evidence-writer-boundary.mjs
+Invoke-AdvisoryGate node scripts/oam/check-current-head-authoritative-artifact-reconciliation.mjs
+Invoke-AdvisoryGate node scripts/oam/check-dormitory-first-golden-chain-landing.mjs
+Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs -RecordResult $false
+Invoke-Gate node scripts/oam/check-evidence-projects-capability-subject-chain-only.mjs
+Invoke-Gate node scripts/oam/check-evidence-digest-chain-single-source.mjs
 Write-GateReport -RunStatus "completed" -Status "passed" -CurrentStage "completed" -CurrentGate ""
 Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs -RecordResult $false
 Invoke-Gate node scripts/oam/check-current-evidence-root.mjs -RecordResult $false

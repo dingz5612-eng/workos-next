@@ -1,0 +1,4144 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario2-runtimeMirror.generated",
+  "version": "oam.dormitory-scenario2-runtimeMirror.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario2-resource-operation-status-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario2-resource-operation-status-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:cddb492e94853f3a2fa63dfb38fdad290ecd2b2d2f0f6df9e83cf3de8adaa166",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+      "digest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario2.ResourceOperationStatus",
+  "scenarioPackageNo": 2,
+  "scenarioId": "lodging.resource-operation-status",
+  "outputContentDigest": "sha256:d5dd4a81939fa7722ed92239772b77cabaf560dbca82afb0d54447c3c6119bef",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "房源运营就绪与状态维护",
+  "businessGoalZh": "承接场景包 1 已完成的房间建档、床位组确认、基础就绪确认摘要，完成房间或床位的运营检查、运营状态设置、阻断维护和恢复确认。",
+  "sourceScenarioDigest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario2.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "OperationResource",
+      "RoomOperationStatus",
+      "BedOperationStatus",
+      "OperationInspection",
+      "OperationBlocker",
+      "OperationStatusChange",
+      "OperationRestore",
+      "OperationEvidence",
+      "StatusHistory"
+    ],
+    "searchReadModel": [
+      "房源运营就绪与状态维护",
+      "房间/床位运营状态摘要",
+      "阻断原因",
+      "预计恢复时间",
+      "可否进入价格维护",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用",
+      "运营状态摘要"
+    ],
+    "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "consumer": "runtime",
+  "objects": [
+    {
+      "objectName": "OperationResource",
+      "businessNameZh": "运营房源",
+      "descriptionZh": "场景包 2 对场景包 1 只读房间或床位摘要的运营维护对象，不拥有房间建档或床位建档事实。",
+      "ownedByScenarioPackageNo": 2,
+      "upstreamReadonlyRefs": [
+        "roomStableRef",
+        "bedRef",
+        "baseReadySnapshotRef"
+      ],
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "RoomOperationStatus",
+      "businessNameZh": "房间运营状态",
+      "descriptionZh": "房间范围当前运营状态；房间级状态影响整个房间及其全部床位。",
+      "ownedByScenarioPackageNo": 2,
+      "scope": "room",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "BedOperationStatus",
+      "businessNameZh": "床位运营状态",
+      "descriptionZh": "床位范围当前运营状态；床位级状态只影响该床位，不覆盖其他床位。",
+      "ownedByScenarioPackageNo": 2,
+      "scope": "bed",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "OperationInspection",
+      "businessNameZh": "运营检查",
+      "descriptionZh": "记录保洁、维修、安全、设施等运营前检查结果和证据。",
+      "ownedByScenarioPackageNo": 2,
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "OperationBlocker",
+      "businessNameZh": "运营阻断原因",
+      "descriptionZh": "记录维修、保洁、安全、停售、异常等导致暂不可运营或限制进入价格维护的原因。",
+      "ownedByScenarioPackageNo": 2,
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "OperationStatusChange",
+      "businessNameZh": "运营状态变更",
+      "descriptionZh": "确认后的运营状态变更事实，只能追加，不能原地覆盖。",
+      "ownedByScenarioPackageNo": 2,
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "OperationRestore",
+      "businessNameZh": "恢复运营确认",
+      "descriptionZh": "阻断关闭并复查通过后追加的恢复运营事实。",
+      "ownedByScenarioPackageNo": 2,
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "OperationEvidence",
+      "businessNameZh": "运营证据",
+      "descriptionZh": "运营检查、状态变更、阻断维护、恢复确认绑定的证据信封。",
+      "ownedByScenarioPackageNo": 2,
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "StatusHistory",
+      "businessNameZh": "状态历史",
+      "descriptionZh": "房间或床位运营状态历史，供列表、详情、搜索和下游只读。",
+      "ownedByScenarioPackageNo": 2,
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "legalNextActions"
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "commandId": "Dorm.OperationInspectionConfirm",
+      "businessNameZh": "运营检查确认",
+      "writesObjects": [
+        "OperationInspection",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "房间建档",
+        "床位组建档",
+        "基础就绪确认",
+        "价格",
+        "报价",
+        "预订",
+        "入住",
+        "收款",
+        "押金",
+        "退款",
+        "账务"
+      ]
+    },
+    {
+      "commandId": "Dorm.OperationStatusChangeConfirm",
+      "businessNameZh": "运营状态变更确认",
+      "writesObjects": [
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "OperationBlocker",
+        "OperationStatusChange",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "价格",
+        "报价",
+        "预订",
+        "入住",
+        "收款",
+        "押金",
+        "退款",
+        "账务"
+      ]
+    },
+    {
+      "commandId": "Dorm.OperationBlockerUpdate",
+      "businessNameZh": "阻断原因更新",
+      "writesObjects": [
+        "OperationBlocker",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "价格",
+        "报价",
+        "预订",
+        "入住",
+        "收款",
+        "押金",
+        "退款",
+        "账务"
+      ]
+    },
+    {
+      "commandId": "Dorm.OperationRestoreConfirm",
+      "businessNameZh": "恢复运营确认",
+      "writesObjects": [
+        "OperationRestore",
+        "RoomOperationStatus",
+        "BedOperationStatus",
+        "OperationEvidence",
+        "StatusHistory"
+      ],
+      "idempotencyRequired": true,
+      "concurrencyVersionCheckRequired": true,
+      "requiresGeneratedContract": true,
+      "forbiddenWritesZh": [
+        "价格",
+        "报价",
+        "预订",
+        "入住",
+        "收款",
+        "押金",
+        "退款",
+        "账务"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "upstream_basic_readiness_missing",
+      "messageZh": "该房源尚未完成基础就绪确认，不能进入运营状态维护。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "inspection_required",
+      "messageZh": "请先完成运营检查，再设置运营状态。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "operation_evidence_missing",
+      "messageZh": "缺少必要运营证据，不能提交。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "unclosed_blocker_for_operable",
+      "messageZh": "仍有未关闭阻断原因，不能设置为可运营。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "invalid_status_transition",
+      "messageZh": "当前状态不能执行该变更，请查看合法下一步动作。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_status_conflict",
+      "messageZh": "状态已被他人更新，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用不匹配，请从页面重新选择房源。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_submission",
+      "messageZh": "该提交已处理，系统将返回原处理结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_result_write_attempt",
+      "messageZh": "查询、搜索、列表、看板、报表只读，不能在这里写入业务事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "post_confirm_inline_edit_forbidden",
+      "messageZh": "已确认事实不能原地编辑，请走追加变更、补充证据、纠错或作废。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "cross_scenario_price_reservation_forbidden",
+      "messageZh": "本场景不能进入价格、报价或预订操作。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "restore_without_recheck_pass",
+      "messageZh": "复查未通过或证据不完整，不能恢复运营。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "invariants": [
+    "同一时间每个房间只能有一个当前运营状态。",
+    "同一时间每个床位只能有一个当前运营状态。",
+    "房间级运营状态影响整个房间及其全部床位。",
+    "床位级运营状态只影响该床位。",
+    "房间为维修中、停售、暂停开放或异常待处理时，必须阻断该房间全部床位进入价格、报价和预订。",
+    "单个床位为维修中时，只阻断该床位进入价格、报价和预订。",
+    "恢复运营必须关闭全部相关阻断原因，且必须有复查通过证据。",
+    "可运营只能输出可否进入价格维护，不得输出可报价或可预订。",
+    "确认失败不得写 CommandSubmission、DomainEvent、Outbox、Projection、Lens、Search、Dashboard、Ledger。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。"
+  ],
+  "operationStatusOptions": [
+    "可运营",
+    "暂不可运营",
+    "部分不可运营",
+    "暂停开放",
+    "维修中",
+    "保洁中",
+    "停售",
+    "异常待处理",
+    "待复查",
+    "已恢复"
+  ],
+  "scopeImpactRules": [
+    {
+      "scope": "room",
+      "statusZh": [
+        "维修中",
+        "停售",
+        "暂停开放",
+        "异常待处理"
+      ],
+      "blocksZh": [
+        "全房间",
+        "全部床位",
+        "价格维护",
+        "报价",
+        "预订"
+      ]
+    },
+    {
+      "scope": "bed",
+      "statusZh": [
+        "维修中",
+        "保洁中",
+        "异常待处理",
+        "待复查"
+      ],
+      "blocksZh": [
+        "该床位",
+        "该床位价格维护",
+        "该床位报价",
+        "该床位预订"
+      ]
+    },
+    {
+      "scope": "room_or_bed",
+      "statusZh": [
+        "可运营",
+        "已恢复"
+      ],
+      "outputsZh": [
+        "运营状态摘要",
+        "可否进入价格维护"
+      ],
+      "mustNotOutputsZh": [
+        "可报价",
+        "可预订"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“1 号楼 3 层 301 房间、6 个床位、床位 01、维修中、预计明日复查”。",
+    "upstreamReadonly": [
+      "buildingArea",
+      "floor",
+      "roomNo",
+      "bedCount",
+      "bedList",
+      "basicReadinessConfirmedAt",
+      "scenario1EvidenceSummary",
+      "scenario1StatusHistory"
+    ],
+    "userFilled": [
+      "exceptionDescription",
+      "operationInspectionNotes",
+      "statusReason",
+      "expectedRestoreAt",
+      "operationStatusNotes",
+      "impactConfirmationNotes",
+      "progressUpdate",
+      "blockerNotes",
+      "restoreReason",
+      "restoreNotes"
+    ],
+    "userSelected": [
+      "roomOrBedScope",
+      "targetRoomOrBed",
+      "cleaningInspectionResult",
+      "maintenanceInspectionResult",
+      "safetyInspectionResult",
+      "facilityInspectionResult",
+      "exceptionFlag",
+      "inspectionConclusion",
+      "newOperationStatus",
+      "statusReasonCode",
+      "impactScope",
+      "statusOwner",
+      "blockerStatus",
+      "followUpOwner",
+      "recheckResult",
+      "restoreConclusion"
+    ],
+    "userUploadedOrBoundEvidence": [
+      "运营检查照片",
+      "维修记录",
+      "安全检查记录",
+      "设施检查记录",
+      "状态原因证据",
+      "阻断原因证据",
+      "进度照片",
+      "复查记录",
+      "恢复照片"
+    ],
+    "systemGenerated": [
+      "operationResourceRef",
+      "resourceScope",
+      "baseReadySnapshotRef",
+      "roomStableRef",
+      "bedSetVersion",
+      "sourceScenarioRef",
+      "inspectionRef",
+      "inspectionTime",
+      "inspectorRef",
+      "evidenceEnvelopeRef",
+      "inspectionVersion",
+      "operationStatusRef",
+      "previousStatus",
+      "newStatus",
+      "effectiveAt",
+      "statusVersion",
+      "blocksPriceFlag",
+      "blocksQuoteFlag",
+      "blocksReservationFlag",
+      "todayTaskRef",
+      "operationStatusChangeRef",
+      "domainEventId",
+      "commandSubmissionRef",
+      "evidenceBindingRef",
+      "projectionVersion",
+      "blockerChangeRef",
+      "blockerVersion",
+      "statusHistoryRef",
+      "operationRestoreRef",
+      "restoreVersion",
+      "restoredAt",
+      "restoredBy",
+      "summarySnapshotRef"
+    ],
+    "systemCalculated": [
+      "blocksPriceFlag",
+      "blocksQuoteFlag",
+      "blocksReservationFlag",
+      "canEnterPriceMaintenance",
+      "cannotSubmitReasons",
+      "legalNextActions"
+    ],
+    "forbiddenUserInputFields": [
+      "operationStatusId",
+      "inspectionId",
+      "roomId",
+      "bedId",
+      "workItemId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "internalAuditOnlyFields": [
+      "operationResourceRef",
+      "operationStatusRef",
+      "inspectionRef",
+      "evidenceEnvelopeRef",
+      "commandSubmissionRef",
+      "domainEventId",
+      "projectionVersion",
+      "digest"
+    ],
+    "fieldAuthority": {
+      "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#fieldAuthorityModel",
+      "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+      "businessInput": [
+        {
+          "fieldId": "statusReason",
+          "control": "textarea",
+          "labelKey": "scenario2.field.statusReason.label",
+          "helpKey": "scenario2.field.statusReason.help",
+          "errorKey": "scenario2.field.statusReason.error"
+        },
+        {
+          "fieldId": "progressUpdate",
+          "control": "textarea",
+          "labelKey": "scenario2.field.progressUpdate.label",
+          "helpKey": "scenario2.field.progressUpdate.help",
+          "errorKey": "scenario2.field.progressUpdate.error"
+        },
+        {
+          "fieldId": "restoreReason",
+          "control": "textarea",
+          "labelKey": "scenario2.field.restoreReason.label",
+          "helpKey": "scenario2.field.restoreReason.help",
+          "errorKey": "scenario2.field.restoreReason.error"
+        }
+      ],
+      "businessSelect": [
+        {
+          "fieldId": "roomOrBedScope",
+          "control": "select",
+          "optionSet": "resourceScope",
+          "labelKey": "scenario2.field.roomOrBedScope.label",
+          "helpKey": "scenario2.field.roomOrBedScope.help",
+          "errorKey": "scenario2.field.roomOrBedScope.error"
+        },
+        {
+          "fieldId": "targetRoomOrBed",
+          "control": "searchable-select",
+          "optionSet": "baseReadyResource",
+          "labelKey": "scenario2.field.targetRoomOrBed.label",
+          "helpKey": "scenario2.field.targetRoomOrBed.help",
+          "errorKey": "scenario2.field.targetRoomOrBed.error",
+          "submitValueSource": "selectedStableRef"
+        },
+        {
+          "fieldId": "cleaningInspectionResult",
+          "control": "select",
+          "optionSet": "inspectionResult",
+          "labelKey": "scenario2.field.cleaningInspectionResult.label",
+          "helpKey": "scenario2.field.cleaningInspectionResult.help",
+          "errorKey": "scenario2.field.cleaningInspectionResult.error"
+        },
+        {
+          "fieldId": "maintenanceInspectionResult",
+          "control": "select",
+          "optionSet": "inspectionResult",
+          "labelKey": "scenario2.field.maintenanceInspectionResult.label",
+          "helpKey": "scenario2.field.maintenanceInspectionResult.help",
+          "errorKey": "scenario2.field.maintenanceInspectionResult.error"
+        },
+        {
+          "fieldId": "safetyInspectionResult",
+          "control": "select",
+          "optionSet": "inspectionResult",
+          "labelKey": "scenario2.field.safetyInspectionResult.label",
+          "helpKey": "scenario2.field.safetyInspectionResult.help",
+          "errorKey": "scenario2.field.safetyInspectionResult.error"
+        },
+        {
+          "fieldId": "facilityInspectionResult",
+          "control": "select",
+          "optionSet": "inspectionResult",
+          "labelKey": "scenario2.field.facilityInspectionResult.label",
+          "helpKey": "scenario2.field.facilityInspectionResult.help",
+          "errorKey": "scenario2.field.facilityInspectionResult.error"
+        },
+        {
+          "fieldId": "exceptionFlag",
+          "control": "select",
+          "optionSet": "yesNo",
+          "labelKey": "scenario2.field.exceptionFlag.label",
+          "helpKey": "scenario2.field.exceptionFlag.help",
+          "errorKey": "scenario2.field.exceptionFlag.error"
+        },
+        {
+          "fieldId": "inspectionConclusion",
+          "control": "select",
+          "optionSet": "inspectionConclusion",
+          "labelKey": "scenario2.field.inspectionConclusion.label",
+          "helpKey": "scenario2.field.inspectionConclusion.help",
+          "errorKey": "scenario2.field.inspectionConclusion.error"
+        },
+        {
+          "fieldId": "newOperationStatus",
+          "control": "select",
+          "optionSet": "operationStatus",
+          "labelKey": "scenario2.field.newOperationStatus.label",
+          "helpKey": "scenario2.field.newOperationStatus.help",
+          "errorKey": "scenario2.field.newOperationStatus.error"
+        },
+        {
+          "fieldId": "statusReasonCode",
+          "control": "select",
+          "optionSet": "statusReasonCode",
+          "labelKey": "scenario2.field.statusReasonCode.label",
+          "helpKey": "scenario2.field.statusReasonCode.help",
+          "errorKey": "scenario2.field.statusReasonCode.error"
+        },
+        {
+          "fieldId": "impactScope",
+          "control": "select",
+          "optionSet": "impactScope",
+          "labelKey": "scenario2.field.impactScope.label",
+          "helpKey": "scenario2.field.impactScope.help",
+          "errorKey": "scenario2.field.impactScope.error"
+        },
+        {
+          "fieldId": "statusOwner",
+          "control": "select",
+          "optionSet": "ownerRole",
+          "labelKey": "scenario2.field.statusOwner.label",
+          "helpKey": "scenario2.field.statusOwner.help",
+          "errorKey": "scenario2.field.statusOwner.error"
+        },
+        {
+          "fieldId": "blockerStatus",
+          "control": "select",
+          "optionSet": "blockerStatus",
+          "labelKey": "scenario2.field.blockerStatus.label",
+          "helpKey": "scenario2.field.blockerStatus.help",
+          "errorKey": "scenario2.field.blockerStatus.error"
+        },
+        {
+          "fieldId": "followUpOwner",
+          "control": "select",
+          "optionSet": "ownerRole",
+          "labelKey": "scenario2.field.followUpOwner.label",
+          "helpKey": "scenario2.field.followUpOwner.help",
+          "errorKey": "scenario2.field.followUpOwner.error"
+        },
+        {
+          "fieldId": "recheckResult",
+          "control": "select",
+          "optionSet": "recheckResult",
+          "labelKey": "scenario2.field.recheckResult.label",
+          "helpKey": "scenario2.field.recheckResult.help",
+          "errorKey": "scenario2.field.recheckResult.error"
+        },
+        {
+          "fieldId": "restoreConclusion",
+          "control": "select",
+          "optionSet": "restoreConclusion",
+          "labelKey": "scenario2.field.restoreConclusion.label",
+          "helpKey": "scenario2.field.restoreConclusion.help",
+          "errorKey": "scenario2.field.restoreConclusion.error"
+        }
+      ],
+      "systemDerived": [
+        {
+          "fieldId": "previousStatus",
+          "derivedFrom": "current operation status",
+          "readonly": true,
+          "labelKey": "scenario2.field.previousStatus.label",
+          "helpKey": "scenario2.field.previousStatus.help"
+        },
+        {
+          "fieldId": "newStatus",
+          "derivedFrom": "newOperationStatus",
+          "readonly": true,
+          "labelKey": "scenario2.field.newStatus.label",
+          "helpKey": "scenario2.field.newStatus.help"
+        },
+        {
+          "fieldId": "blocksPriceFlag",
+          "derivedFrom": "newOperationStatus + scopeImpactRules",
+          "readonly": true,
+          "labelKey": "scenario2.field.blocksPriceFlag.label",
+          "helpKey": "scenario2.field.blocksPriceFlag.help"
+        },
+        {
+          "fieldId": "blocksQuoteFlag",
+          "derivedFrom": "newOperationStatus + scopeImpactRules",
+          "readonly": true,
+          "labelKey": "scenario2.field.blocksQuoteFlag.label",
+          "helpKey": "scenario2.field.blocksQuoteFlag.help"
+        },
+        {
+          "fieldId": "blocksReservationFlag",
+          "derivedFrom": "newOperationStatus + scopeImpactRules",
+          "readonly": true,
+          "labelKey": "scenario2.field.blocksReservationFlag.label",
+          "helpKey": "scenario2.field.blocksReservationFlag.help"
+        },
+        {
+          "fieldId": "canEnterPriceMaintenance",
+          "derivedFrom": "operation status and blockers",
+          "readonly": true,
+          "labelKey": "scenario2.field.canEnterPriceMaintenance.label",
+          "helpKey": "scenario2.field.canEnterPriceMaintenance.help"
+        },
+        {
+          "fieldId": "cannotSubmitReasons",
+          "derivedFrom": "runtime admission and validation",
+          "readonly": true,
+          "labelKey": "scenario2.field.cannotSubmitReasons.label",
+          "helpKey": "scenario2.field.cannotSubmitReasons.help"
+        },
+        {
+          "fieldId": "legalNextActions",
+          "derivedFrom": "LegalAction Resolver",
+          "readonly": true,
+          "labelKey": "scenario2.field.legalNextActions.label",
+          "helpKey": "scenario2.field.legalNextActions.help"
+        }
+      ],
+      "readOnlySummary": [
+        {
+          "fieldId": "buildingArea",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.buildingArea.label",
+          "helpKey": "scenario2.summary.buildingArea.help"
+        },
+        {
+          "fieldId": "floor",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.floor.label",
+          "helpKey": "scenario2.summary.floor.help"
+        },
+        {
+          "fieldId": "roomNo",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.roomNo.label",
+          "helpKey": "scenario2.summary.roomNo.help"
+        },
+        {
+          "fieldId": "bedCount",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.bedCount.label",
+          "helpKey": "scenario2.summary.bedCount.help"
+        },
+        {
+          "fieldId": "bedList",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.bedList.label",
+          "helpKey": "scenario2.summary.bedList.help"
+        },
+        {
+          "fieldId": "basicReadinessConfirmedAt",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.basicReadinessConfirmedAt.label",
+          "helpKey": "scenario2.summary.basicReadinessConfirmedAt.help"
+        },
+        {
+          "fieldId": "scenario1EvidenceSummary",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.scenario1EvidenceSummary.label",
+          "helpKey": "scenario2.summary.scenario1EvidenceSummary.help"
+        },
+        {
+          "fieldId": "scenario1StatusHistory",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario2.summary.scenario1StatusHistory.label",
+          "helpKey": "scenario2.summary.scenario1StatusHistory.help"
+        }
+      ],
+      "evidenceBinding": [
+        {
+          "fieldId": "operationInspectionPhoto",
+          "evidenceType": "operation-inspection-photo",
+          "labelKey": "scenario2.evidence.operation-inspection-photo.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "maintenanceRecord",
+          "evidenceType": "maintenance-record",
+          "labelKey": "scenario2.evidence.maintenance-record.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "safetyInspectionRecord",
+          "evidenceType": "safety-inspection-record",
+          "labelKey": "scenario2.evidence.safety-inspection-record.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "facilityInspectionRecord",
+          "evidenceType": "facility-inspection-record",
+          "labelKey": "scenario2.evidence.facility-inspection-record.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "statusReasonProof",
+          "evidenceType": "status-reason-proof",
+          "labelKey": "scenario2.evidence.status-reason-proof.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "blockerReasonProof",
+          "evidenceType": "blocker-reason-proof",
+          "labelKey": "scenario2.evidence.blocker-reason-proof.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "progressPhoto",
+          "evidenceType": "progress-photo",
+          "labelKey": "scenario2.evidence.progress-photo.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "recheckRecord",
+          "evidenceType": "recheck-record",
+          "labelKey": "scenario2.evidence.recheck-record.label",
+          "helpKey": "scenario2.evidence.help"
+        },
+        {
+          "fieldId": "restorePhoto",
+          "evidenceType": "restore-photo",
+          "labelKey": "scenario2.evidence.restore-photo.label",
+          "helpKey": "scenario2.evidence.help"
+        }
+      ],
+      "actionControl": [
+        {
+          "fieldId": "saveDraft",
+          "labelKey": "saveDraft",
+          "legalActionRef": "draft.save"
+        },
+        {
+          "fieldId": "continueEdit",
+          "labelKey": "startObservation",
+          "legalActionRef": "draft.continue"
+        },
+        {
+          "fieldId": "backToEdit",
+          "labelKey": "searchActionObservation",
+          "legalActionRef": "draft.backToEdit"
+        },
+        {
+          "fieldId": "submit",
+          "labelKey": "primarySubmit",
+          "legalActionRef": "runtime.submit"
+        },
+        {
+          "fieldId": "submitImpactConfirmation",
+          "labelKey": "scenario2.field.submitImpactConfirmation.label",
+          "legalActionRef": "legalAction.dormitory.scenario2.submitImpactConfirmation.v1"
+        }
+      ],
+      "conditionalInput": [
+        {
+          "fieldId": "exceptionDescription",
+          "control": "textarea",
+          "labelKey": "scenario2.field.exceptionDescription.label",
+          "helpKey": "scenario2.field.exceptionDescription.help",
+          "errorKey": "scenario2.field.exceptionDescription.error",
+          "displayCondition": "exceptionFlag == yes or any inspectionResult in [needs_follow_up, failed]",
+          "requiredCondition": "exceptionFlag == yes"
+        },
+        {
+          "fieldId": "operationInspectionNotes",
+          "control": "textarea",
+          "labelKey": "scenario2.field.operationInspectionNotes.label",
+          "helpKey": "scenario2.field.operationInspectionNotes.help",
+          "errorKey": "scenario2.field.operationInspectionNotes.error",
+          "displayCondition": "inspectionConclusion == needs_supplement or operator chooses addNotes",
+          "requiredCondition": "false"
+        },
+        {
+          "fieldId": "expectedRestoreAt",
+          "control": "dateTime",
+          "labelKey": "scenario2.field.expectedRestoreAt.label",
+          "helpKey": "scenario2.field.expectedRestoreAt.help",
+          "errorKey": "scenario2.field.expectedRestoreAt.error",
+          "displayCondition": "newOperationStatus in [temporarily_unavailable, partially_operable, paused, maintenance, cleaning, stopped, exception_pending, needs_recheck]",
+          "requiredCondition": "newOperationStatus in [temporarily_unavailable, partially_operable, paused, maintenance, cleaning, stopped, exception_pending, needs_recheck]"
+        },
+        {
+          "fieldId": "operationStatusNotes",
+          "control": "textarea",
+          "labelKey": "scenario2.field.operationStatusNotes.label",
+          "helpKey": "scenario2.field.operationStatusNotes.help",
+          "errorKey": "scenario2.field.operationStatusNotes.error",
+          "displayCondition": "operator chooses addNotes",
+          "requiredCondition": "false"
+        },
+        {
+          "fieldId": "impactConfirmationNotes",
+          "control": "textarea",
+          "labelKey": "scenario2.field.impactConfirmationNotes.label",
+          "helpKey": "scenario2.field.impactConfirmationNotes.help",
+          "errorKey": "scenario2.field.impactConfirmationNotes.error",
+          "displayCondition": "submitImpactConfirmation == return_to_edit or operator chooses addNotes",
+          "requiredCondition": "submitImpactConfirmation == return_to_edit"
+        },
+        {
+          "fieldId": "blockerNotes",
+          "control": "textarea",
+          "labelKey": "scenario2.field.blockerNotes.label",
+          "helpKey": "scenario2.field.blockerNotes.help",
+          "errorKey": "scenario2.field.blockerNotes.error",
+          "displayCondition": "blockerStatus == closed or operator chooses addNotes",
+          "requiredCondition": "blockerStatus == closed"
+        },
+        {
+          "fieldId": "restoreNotes",
+          "control": "textarea",
+          "labelKey": "scenario2.field.restoreNotes.label",
+          "helpKey": "scenario2.field.restoreNotes.help",
+          "errorKey": "scenario2.field.restoreNotes.error",
+          "displayCondition": "restoreConclusion != operable or operator chooses addNotes",
+          "requiredCondition": "restoreConclusion == needs_recheck"
+        }
+      ],
+      "auditInternal": [
+        {
+          "fieldId": "operationStatusId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "inspectionId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "workItemId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "stableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "roomStableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "operationResourceRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "operationStatusRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "inspectionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "evidenceEnvelopeRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "commandSubmissionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "domainEventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "projectionVersion",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "digest",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        }
+      ],
+      "legalAction": [
+        {
+          "fieldId": "saveDraft",
+          "labelKey": "saveDraft",
+          "legalActionRef": "draft.save"
+        },
+        {
+          "fieldId": "continueEdit",
+          "labelKey": "startObservation",
+          "legalActionRef": "draft.continue"
+        },
+        {
+          "fieldId": "backToEdit",
+          "labelKey": "searchActionObservation",
+          "legalActionRef": "draft.backToEdit"
+        },
+        {
+          "fieldId": "submit",
+          "labelKey": "primarySubmit",
+          "legalActionRef": "runtime.submit"
+        },
+        {
+          "fieldId": "submitImpactConfirmation",
+          "labelKey": "scenario2.field.submitImpactConfirmation.label",
+          "legalActionRef": "legalAction.dormitory.scenario2.submitImpactConfirmation.v1"
+        }
+      ]
+    }
+  },
+  "runtimeExecution": {
+    "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+    "sliceId": "Dormitory.Scenario2.ResourceOperationStatus",
+    "taskId": "T-DORM-SCENARIO2-OPERATION-STATUS",
+    "title": {
+      "zh-CN": "设置房间营业状态",
+      "ru-RU": "Статус эксплуатации комнат",
+      "ky-KG": "Бөлмө иштетүү абалы"
+    },
+    "summary": {
+      "zh-CN": "选择已完成基础检查的房间或床位，完成运营检查、状态设置、阻断维护和恢复确认。",
+      "ru-RU": "Выберите комнату или койку с базовой готовностью, затем проверьте, задайте статус, ведите блокировки и восстановление.",
+      "ky-KG": "Негизги текшерүүсү бүткөн бөлмө же койканы тандап, абалын, бөгөтүн жана калыбына келтирүүнү жүргүзүңүз."
+    },
+    "next": {
+      "zh-CN": "先选择已基础就绪房源，再完成运营检查和营业状态确认。",
+      "ru-RU": "Сначала выберите готовый ресурс, затем выполните проверку и подтвердите статус.",
+      "ky-KG": "Алгач даяр ресурс тандаңыз, анан текшерип абалын ырастаңыз."
+    },
+    "status": "runtime-test-admitted",
+    "generatedExecutionMode": "scenario-source-authority-to-runtime-projection",
+    "startAdapterDefinitionIds": {
+      "W-DORM-RESOURCE-OPERATION-STATUS:cert.selectBaseReadyResource": "definition.dormitory.operationResourceSelect.v1",
+      "W-DORM-RESOURCE-OPERATION-STATUS:cert.operationInspection": "definition.dormitory.operationInspectionConfirm.v1",
+      "W-DORM-RESOURCE-OPERATION-STATUS:cert.setOperationStatus": "definition.dormitory.operationStatusDraft.v1",
+      "W-DORM-RESOURCE-OPERATION-STATUS:cert.impactConfirmation": "definition.dormitory.operationStatusChangeConfirm.v1",
+      "W-DORM-RESOURCE-OPERATION-STATUS:cert.dailyStatusMaintenance": "definition.dormitory.operationBlockerUpdate.v1",
+      "W-DORM-RESOURCE-OPERATION-STATUS:cert.restoreOperation": "definition.dormitory.operationRestoreConfirm.v1"
+    },
+    "searchCommands": [
+      {
+        "templateWorkspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+        "firstCardId": "cert.selectBaseReadyResource",
+        "title": {
+          "zh-CN": "设置房间营业状态",
+          "ru-RU": "Настроить статус комнаты",
+          "ky-KG": "Бөлмө абалын коюу"
+        },
+        "subtitle": {
+          "zh-CN": "对已完成基础检查的房间或床位做运营检查、暂停、停售、恢复等处理；不设置价格或预订。",
+          "ru-RU": "Проверьте готовые комнаты или койки, приостановите, снимите с продажи или восстановите; цены и бронь не меняются.",
+          "ky-KG": "Даяр бөлмө же койканы текшерип, токтотуп же калыбына келтириңиз; баа жана бронь өзгөрбөйт."
+        },
+        "nextAction": {
+          "zh-CN": "开始设置营业状态",
+          "ru-RU": "Начать настройку статуса",
+          "ky-KG": "Абал коюуну баштоо"
+        },
+        "keywords": [
+          "房源运营",
+          "运营状态",
+          "设置房间营业状态",
+          "房源运营就绪与状态维护",
+          "开始运营检查",
+          "恢复运营",
+          "operation status",
+          "room operation status",
+          "статус комнаты",
+          "эксплуатация комнаты",
+          "иштетүү абалы"
+        ]
+      }
+    ],
+    "optionSets": {
+      "resourceScope": [
+        {
+          "value": "room",
+          "label": {
+            "zh-CN": "房间",
+            "ru-RU": "Комната",
+            "ky-KG": "Бөлмө"
+          }
+        },
+        {
+          "value": "bed",
+          "label": {
+            "zh-CN": "床位",
+            "ru-RU": "Койка",
+            "ky-KG": "Койка"
+          }
+        }
+      ],
+      "baseReadyResource": [],
+      "inspectionResult": [
+        {
+          "value": "passed",
+          "label": {
+            "zh-CN": "通过",
+            "ru-RU": "Пройдено",
+            "ky-KG": "Өттү"
+          }
+        },
+        {
+          "value": "needs_follow_up",
+          "label": {
+            "zh-CN": "需要跟进",
+            "ru-RU": "Нужно доработать",
+            "ky-KG": "Көзөмөл керек"
+          }
+        },
+        {
+          "value": "failed",
+          "label": {
+            "zh-CN": "不通过",
+            "ru-RU": "Не пройдено",
+            "ky-KG": "Өткөн жок"
+          }
+        }
+      ],
+      "yesNo": [
+        {
+          "value": "no",
+          "label": {
+            "zh-CN": "否",
+            "ru-RU": "Нет",
+            "ky-KG": "Жок"
+          }
+        },
+        {
+          "value": "yes",
+          "label": {
+            "zh-CN": "是",
+            "ru-RU": "Да",
+            "ky-KG": "Ооба"
+          }
+        }
+      ],
+      "inspectionConclusion": [
+        {
+          "value": "can_set_status",
+          "label": {
+            "zh-CN": "可以设置营业状态",
+            "ru-RU": "Можно задать статус",
+            "ky-KG": "Абалды коюуга болот"
+          }
+        },
+        {
+          "value": "needs_supplement",
+          "label": {
+            "zh-CN": "需补充后再设置",
+            "ru-RU": "Нужно дополнить перед статусом",
+            "ky-KG": "Абалды коюудан мурда толуктоо керек"
+          }
+        }
+      ],
+      "operationStatus": [
+        {
+          "value": "operable",
+          "label": {
+            "zh-CN": "可运营",
+            "ru-RU": "Можно использовать",
+            "ky-KG": "Иштетүүгө болот"
+          }
+        },
+        {
+          "value": "temporarily_unavailable",
+          "label": {
+            "zh-CN": "暂不可运营",
+            "ru-RU": "Временно недоступно",
+            "ky-KG": "Убактылуу мүмкүн эмес"
+          }
+        },
+        {
+          "value": "partially_operable",
+          "label": {
+            "zh-CN": "部分不可运营",
+            "ru-RU": "Частично доступно",
+            "ky-KG": "Жарым-жартылай мүмкүн"
+          }
+        },
+        {
+          "value": "paused",
+          "label": {
+            "zh-CN": "暂停开放",
+            "ru-RU": "Приостановлено",
+            "ky-KG": "Убактылуу жабык"
+          }
+        },
+        {
+          "value": "maintenance",
+          "label": {
+            "zh-CN": "维修中",
+            "ru-RU": "На ремонте",
+            "ky-KG": "Оңдоодо"
+          }
+        },
+        {
+          "value": "cleaning",
+          "label": {
+            "zh-CN": "保洁中",
+            "ru-RU": "На уборке",
+            "ky-KG": "Тазалоодо"
+          }
+        },
+        {
+          "value": "stopped",
+          "label": {
+            "zh-CN": "停售",
+            "ru-RU": "Снято с продажи",
+            "ky-KG": "Сатуу токтоду"
+          }
+        },
+        {
+          "value": "exception_pending",
+          "label": {
+            "zh-CN": "异常待处理",
+            "ru-RU": "Ожидает обработки",
+            "ky-KG": "Каралууда"
+          }
+        },
+        {
+          "value": "needs_recheck",
+          "label": {
+            "zh-CN": "待复查",
+            "ru-RU": "Нужна повторная проверка",
+            "ky-KG": "Кайра текшерүү керек"
+          }
+        },
+        {
+          "value": "restored",
+          "label": {
+            "zh-CN": "已恢复",
+            "ru-RU": "Восстановлено",
+            "ky-KG": "Калыбына келди"
+          }
+        }
+      ],
+      "statusReasonCode": [
+        {
+          "value": "normal_ready",
+          "label": {
+            "zh-CN": "检查通过",
+            "ru-RU": "Проверка пройдена",
+            "ky-KG": "Текшерүү өттү"
+          }
+        },
+        {
+          "value": "repair_required",
+          "label": {
+            "zh-CN": "需要维修",
+            "ru-RU": "Нужен ремонт",
+            "ky-KG": "Оңдоо керек"
+          }
+        },
+        {
+          "value": "cleaning_required",
+          "label": {
+            "zh-CN": "需要保洁",
+            "ru-RU": "Нужна уборка",
+            "ky-KG": "Тазалоо керек"
+          }
+        },
+        {
+          "value": "safety_issue",
+          "label": {
+            "zh-CN": "安全问题",
+            "ru-RU": "Вопрос безопасности",
+            "ky-KG": "Коопсуздук маселеси"
+          }
+        }
+      ],
+      "impactScope": [
+        {
+          "value": "current_room",
+          "label": {
+            "zh-CN": "仅当前房间",
+            "ru-RU": "Только эта комната",
+            "ky-KG": "Ушул бөлмө гана"
+          }
+        },
+        {
+          "value": "selected_beds",
+          "label": {
+            "zh-CN": "选定床位",
+            "ru-RU": "Выбранные койки",
+            "ky-KG": "Тандалган койкалар"
+          }
+        },
+        {
+          "value": "whole_floor_notice",
+          "label": {
+            "zh-CN": "同楼层需关注",
+            "ru-RU": "Проверить этаж",
+            "ky-KG": "Кабатты көзөмөлдөө"
+          }
+        }
+      ],
+      "ownerRole": [
+        {
+          "value": "dormOperator",
+          "label": {
+            "zh-CN": "住宿经办人",
+            "ru-RU": "Оператор проживания",
+            "ky-KG": "Жатакана оператору"
+          }
+        },
+        {
+          "value": "dormHousekeeping",
+          "label": {
+            "zh-CN": "客房/保洁",
+            "ru-RU": "Хозяйственная служба",
+            "ky-KG": "Тазалык кызматы"
+          }
+        },
+        {
+          "value": "dormManager",
+          "label": {
+            "zh-CN": "住宿主管",
+            "ru-RU": "Руководитель проживания",
+            "ky-KG": "Жатакана жетекчиси"
+          }
+        }
+      ],
+      "submitDecision": [
+        {
+          "value": "confirm",
+          "label": {
+            "zh-CN": "确认并提交",
+            "ru-RU": "Подтвердить и отправить",
+            "ky-KG": "Ырастап тапшыруу"
+          }
+        },
+        {
+          "value": "return_to_edit",
+          "label": {
+            "zh-CN": "返回修改",
+            "ru-RU": "Вернуться к правке",
+            "ky-KG": "Оңдоого кайтуу"
+          }
+        }
+      ],
+      "blockerStatus": [
+        {
+          "value": "open",
+          "label": {
+            "zh-CN": "处理中",
+            "ru-RU": "В работе",
+            "ky-KG": "Иштелүүдө"
+          }
+        },
+        {
+          "value": "closed",
+          "label": {
+            "zh-CN": "已关闭",
+            "ru-RU": "Закрыто",
+            "ky-KG": "Жабылды"
+          }
+        },
+        {
+          "value": "needs_recheck",
+          "label": {
+            "zh-CN": "待复查",
+            "ru-RU": "Нужна повторная проверка",
+            "ky-KG": "Кайра текшерүү керек"
+          }
+        }
+      ],
+      "restoreConclusion": [
+        {
+          "value": "operable",
+          "label": {
+            "zh-CN": "恢复为可运营",
+            "ru-RU": "Восстановить как доступную",
+            "ky-KG": "Иштетүүгө калыбына келтирүү"
+          }
+        },
+        {
+          "value": "partially_operable",
+          "label": {
+            "zh-CN": "恢复为部分可运营",
+            "ru-RU": "Восстановить частично",
+            "ky-KG": "Жарым-жартылай калыбына келтирүү"
+          }
+        },
+        {
+          "value": "needs_recheck",
+          "label": {
+            "zh-CN": "仍需复查",
+            "ru-RU": "Нужна повторная проверка",
+            "ky-KG": "Кайра текшерүү керек"
+          }
+        }
+      ],
+      "recheckResult": [
+        {
+          "value": "passed",
+          "label": {
+            "zh-CN": "复查通过",
+            "ru-RU": "Повторная проверка пройдена",
+            "ky-KG": "Кайра текшерүү өттү"
+          }
+        },
+        {
+          "value": "failed",
+          "label": {
+            "zh-CN": "复查不通过",
+            "ru-RU": "Повторная проверка не пройдена",
+            "ky-KG": "Кайра текшерүү өткөн жок"
+          }
+        }
+      ]
+    },
+    "steps": [
+      {
+        "stepNo": 1,
+        "stepId": "select-base-ready-resource",
+        "cardId": "cert.selectBaseReadyResource",
+        "status": "ready",
+        "workItemType": "Dorm.OperationResourceSelect",
+        "definitionId": "definition.dormitory.operationResourceSelect.v1",
+        "commandType": "OperationResource.Select",
+        "eventType": "Dorm.OperationResourceSelect.confirmed",
+        "title": {
+          "zh-CN": "选择已基础就绪房源",
+          "ru-RU": "Выбрать готовую комнату или койку",
+          "ky-KG": "Даяр бөлмө же койка тандоо"
+        },
+        "confirmationLabel": {
+          "zh-CN": "提交选择已基础就绪房源",
+          "ru-RU": "Отправить: Выбрать готовую комнату или койку",
+          "ky-KG": "Тапшыруу: Даяр бөлмө же койка тандоо"
+        },
+        "fields": [
+          {
+            "fieldId": "roomOrBedScope",
+            "label": {
+              "zh-CN": "维护范围",
+              "ru-RU": "Область",
+              "ky-KG": "Чөйрө"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "resourceScope",
+              "options": [
+                {
+                  "value": "room",
+                  "label": {
+                    "zh-CN": "房间",
+                    "ru-RU": "Комната",
+                    "ky-KG": "Бөлмө"
+                  }
+                },
+                {
+                  "value": "bed",
+                  "label": {
+                    "zh-CN": "床位",
+                    "ru-RU": "Койка",
+                    "ky-KG": "Койка"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "选择本次维护房间还是床位。",
+              "ru-RU": "Выберите, что обслуживаете: комнату или койку.",
+              "ky-KG": "Бул жолу бөлмөбү же койкабы тандаңыз."
+            }
+          },
+          {
+            "fieldId": "targetRoomOrBed",
+            "label": {
+              "zh-CN": "已基础就绪房源",
+              "ru-RU": "Готовая комната или койка",
+              "ky-KG": "Даяр бөлмө же койка"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "selectedBusinessObject",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "baseReadyResource",
+              "options": [],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "只能选择已完成基础检查的房间或床位。",
+              "ru-RU": "Можно выбрать только ресурс с завершенной базовой проверкой.",
+              "ky-KG": "Негизги текшерүүсү бүткөн бөлмө же койка гана тандалат."
+            }
+          }
+        ],
+        "evidence": [],
+        "evidenceIds": [],
+        "projectionTargets": [
+          "OperationDraft"
+        ],
+        "sourceStep": {
+          "nameZh": "选择已基础就绪房源",
+          "commandBusinessNameZh": "选择已基础就绪房源",
+          "userSees": [
+            "楼栋/区域",
+            "楼层",
+            "房间号",
+            "床位数量",
+            "床位列表",
+            "基础就绪时间",
+            "场景包 1 证据摘要",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "证据摘要",
+            "状态历史"
+          ],
+          "outputs": [
+            "运营维护草稿"
+          ],
+          "primaryBusinessObject": "OperationResource",
+          "requiredReadContext": [
+            "楼栋/区域",
+            "楼层",
+            "房间号",
+            "床位数量",
+            "床位列表",
+            "基础就绪时间",
+            "场景包 1 证据摘要",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "证据摘要",
+            "状态历史",
+            "只读对象引用",
+            "buildingArea"
+          ],
+          "editableInputs": [],
+          "fixedSelections": [
+            "roomOrBedScope",
+            "targetRoomOrBed"
+          ],
+          "financialContext": {
+            "applies": false,
+            "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+          },
+          "legalActions": [],
+          "handoffSummary": {
+            "from": [
+              "房间摘要",
+              "床位组摘要",
+              "基础就绪摘要",
+              "证据摘要",
+              "状态历史",
+              "只读对象引用"
+            ],
+            "to": [
+              "运营维护草稿",
+              "房间/床位运营状态摘要",
+              "阻断原因",
+              "预计恢复时间",
+              "可否进入价格维护",
+              "证据摘要",
+              "状态历史",
+              "只读对象引用"
+            ],
+            "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。"
+          },
+          "searchReadModel": [
+            "房源运营就绪与状态维护",
+            "选择已基础就绪房源",
+            "OperationResource",
+            "楼栋/区域",
+            "楼层",
+            "房间号",
+            "床位数量",
+            "床位列表",
+            "基础就绪时间",
+            "场景包 1 证据摘要",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "证据摘要",
+            "状态历史",
+            "运营维护草稿"
+          ],
+          "validations": [
+            "只能选择场景包 1 已基础就绪的房间或床位组。",
+            "用户不得输入 roomId、bedId、stableRef 或 projectionVersion。",
+            "选择范围必须明确为房间或床位。"
+          ]
+        }
+      },
+      {
+        "stepNo": 2,
+        "stepId": "operation-inspection",
+        "cardId": "cert.operationInspection",
+        "status": "notStarted",
+        "workItemType": "Dorm.OperationInspectionConfirm",
+        "definitionId": "definition.dormitory.operationInspectionConfirm.v1",
+        "commandType": "OperationInspection.Confirm",
+        "eventType": "Dorm.OperationInspectionConfirm.confirmed",
+        "title": {
+          "zh-CN": "运营检查",
+          "ru-RU": "Операционная проверка",
+          "ky-KG": "Иштетүү текшерүүсү"
+        },
+        "confirmationLabel": {
+          "zh-CN": "提交运营检查",
+          "ru-RU": "Отправить: Операционная проверка",
+          "ky-KG": "Тапшыруу: Иштетүү текшерүүсү"
+        },
+        "fields": [
+          {
+            "fieldId": "cleaningInspectionResult",
+            "label": {
+              "zh-CN": "保洁检查结果",
+              "ru-RU": "Проверка уборки",
+              "ky-KG": "Тазалык текшерүүсү"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "inspectionResult",
+              "options": [
+                {
+                  "value": "passed",
+                  "label": {
+                    "zh-CN": "通过",
+                    "ru-RU": "Пройдено",
+                    "ky-KG": "Өттү"
+                  }
+                },
+                {
+                  "value": "needs_follow_up",
+                  "label": {
+                    "zh-CN": "需要跟进",
+                    "ru-RU": "Нужно доработать",
+                    "ky-KG": "Көзөмөл керек"
+                  }
+                },
+                {
+                  "value": "failed",
+                  "label": {
+                    "zh-CN": "不通过",
+                    "ru-RU": "Не пройдено",
+                    "ky-KG": "Өткөн жок"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "选择保洁是否通过。",
+              "ru-RU": "Выберите результат проверки уборки.",
+              "ky-KG": "Тазалык текшерүүсүнүн жыйынтыгын тандаңыз."
+            }
+          },
+          {
+            "fieldId": "maintenanceInspectionResult",
+            "label": {
+              "zh-CN": "维修检查结果",
+              "ru-RU": "Проверка ремонта",
+              "ky-KG": "Оңдоо текшерүүсү"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "inspectionResult",
+              "options": [
+                {
+                  "value": "passed",
+                  "label": {
+                    "zh-CN": "通过",
+                    "ru-RU": "Пройдено",
+                    "ky-KG": "Өттү"
+                  }
+                },
+                {
+                  "value": "needs_follow_up",
+                  "label": {
+                    "zh-CN": "需要跟进",
+                    "ru-RU": "Нужно доработать",
+                    "ky-KG": "Көзөмөл керек"
+                  }
+                },
+                {
+                  "value": "failed",
+                  "label": {
+                    "zh-CN": "不通过",
+                    "ru-RU": "Не пройдено",
+                    "ky-KG": "Өткөн жок"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "选择维修是否通过。",
+              "ru-RU": "Выберите результат проверки ремонта.",
+              "ky-KG": "Оңдоо текшерүүсүнүн жыйынтыгын тандаңыз."
+            }
+          },
+          {
+            "fieldId": "safetyInspectionResult",
+            "label": {
+              "zh-CN": "安全检查结果",
+              "ru-RU": "Проверка безопасности",
+              "ky-KG": "Коопсуздук текшерүүсү"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "inspectionResult",
+              "options": [
+                {
+                  "value": "passed",
+                  "label": {
+                    "zh-CN": "通过",
+                    "ru-RU": "Пройдено",
+                    "ky-KG": "Өттү"
+                  }
+                },
+                {
+                  "value": "needs_follow_up",
+                  "label": {
+                    "zh-CN": "需要跟进",
+                    "ru-RU": "Нужно доработать",
+                    "ky-KG": "Көзөмөл керек"
+                  }
+                },
+                {
+                  "value": "failed",
+                  "label": {
+                    "zh-CN": "不通过",
+                    "ru-RU": "Не пройдено",
+                    "ky-KG": "Өткөн жок"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "选择安全检查是否通过。",
+              "ru-RU": "Выберите результат проверки безопасности.",
+              "ky-KG": "Коопсуздук текшерүүсүнүн жыйынтыгын тандаңыз."
+            }
+          },
+          {
+            "fieldId": "facilityInspectionResult",
+            "label": {
+              "zh-CN": "设施检查结果",
+              "ru-RU": "Проверка оснащения",
+              "ky-KG": "Жабдык текшерүүсү"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "inspectionResult",
+              "options": [
+                {
+                  "value": "passed",
+                  "label": {
+                    "zh-CN": "通过",
+                    "ru-RU": "Пройдено",
+                    "ky-KG": "Өттү"
+                  }
+                },
+                {
+                  "value": "needs_follow_up",
+                  "label": {
+                    "zh-CN": "需要跟进",
+                    "ru-RU": "Нужно доработать",
+                    "ky-KG": "Көзөмөл керек"
+                  }
+                },
+                {
+                  "value": "failed",
+                  "label": {
+                    "zh-CN": "不通过",
+                    "ru-RU": "Не пройдено",
+                    "ky-KG": "Өткөн жок"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "选择设施检查是否通过。",
+              "ru-RU": "Выберите результат проверки оснащения.",
+              "ky-KG": "Жабдык текшерүүсүнүн жыйынтыгын тандаңыз."
+            }
+          },
+          {
+            "fieldId": "exceptionFlag",
+            "label": {
+              "zh-CN": "是否有异常",
+              "ru-RU": "Есть отклонение",
+              "ky-KG": "Маселе барбы"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "yesNo",
+              "options": [
+                {
+                  "value": "no",
+                  "label": {
+                    "zh-CN": "否",
+                    "ru-RU": "Нет",
+                    "ky-KG": "Жок"
+                  }
+                },
+                {
+                  "value": "yes",
+                  "label": {
+                    "zh-CN": "是",
+                    "ru-RU": "Да",
+                    "ky-KG": "Ооба"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "有异常时，后面需要补充说明和材料。",
+              "ru-RU": "Если есть отклонение, добавьте описание и материалы.",
+              "ky-KG": "Маселе болсо, түшүндүрмө жана материал кошуңуз."
+            }
+          },
+          {
+            "fieldId": "inspectionConclusion",
+            "label": {
+              "zh-CN": "检查结论",
+              "ru-RU": "Итог проверки",
+              "ky-KG": "Текшерүү жыйынтыгы"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "inspectionConclusion",
+              "options": [
+                {
+                  "value": "can_set_status",
+                  "label": {
+                    "zh-CN": "可以设置营业状态",
+                    "ru-RU": "Можно задать статус",
+                    "ky-KG": "Абалды коюуга болот"
+                  }
+                },
+                {
+                  "value": "needs_supplement",
+                  "label": {
+                    "zh-CN": "需补充后再设置",
+                    "ru-RU": "Нужно дополнить перед статусом",
+                    "ky-KG": "Абалды коюудан мурда толуктоо керек"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "确认是否可以进入营业状态设置。",
+              "ru-RU": "Подтвердите, можно ли перейти к статусу эксплуатации.",
+              "ky-KG": "Иштетүү абалын коюуга өтсө болобу ырастоо."
+            }
+          },
+          {
+            "fieldId": "exceptionDescription",
+            "label": {
+              "zh-CN": "异常说明",
+              "ru-RU": "Описание отклонения",
+              "ky-KG": "Маселе сүрөттөмөсү"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": false,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "textarea",
+              "optionSet": "",
+              "options": [],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "仅在有异常时填写，说明需要跟进的点。",
+              "ru-RU": "Заполняется только при отклонении: что нужно доработать.",
+              "ky-KG": "Маселе болгондо гана толтуруңуз."
+            }
+          },
+          {
+            "fieldId": "operationInspectionNotes",
+            "label": {
+              "zh-CN": "检查备注",
+              "ru-RU": "Комментарий проверки",
+              "ky-KG": "Текшерүү эскертүүсү"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": false,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "textarea",
+              "optionSet": "",
+              "options": [],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "可补充检查备注；没有可留空。",
+              "ru-RU": "Дополнительный комментарий к проверке, можно оставить пустым.",
+              "ky-KG": "Кошумча эскертүү, жок болсо бош калат."
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceId": "operation-inspection-photo",
+            "label": {
+              "zh-CN": "运营检查照片",
+              "ru-RU": "Фото операционной проверки",
+              "ky-KG": "Иштетүү текшерүүсүнүн сүрөтү"
+            },
+            "required": true,
+            "source": "scenario2-source-authority",
+            "auditEventField": "operation-inspection-photo",
+            "help": {
+              "zh-CN": "材料会随本次提交绑定到办理记录。",
+              "ru-RU": "Материалы будут привязаны к этой записи.",
+              "ky-KG": "Материалдар ушул иш жазуусуна байланат."
+            }
+          },
+          {
+            "evidenceId": "maintenance-record",
+            "label": {
+              "zh-CN": "维修记录",
+              "ru-RU": "Запись ремонта",
+              "ky-KG": "Оңдоо жазуусу"
+            },
+            "required": true,
+            "source": "scenario2-source-authority",
+            "auditEventField": "maintenance-record",
+            "help": {
+              "zh-CN": "材料会随本次提交绑定到办理记录。",
+              "ru-RU": "Материалы будут привязаны к этой записи.",
+              "ky-KG": "Материалдар ушул иш жазуусуна байланат."
+            }
+          },
+          {
+            "evidenceId": "safety-inspection-record",
+            "label": {
+              "zh-CN": "安全检查记录",
+              "ru-RU": "Запись проверки безопасности",
+              "ky-KG": "Коопсуздук текшерүү жазуусу"
+            },
+            "required": true,
+            "source": "scenario2-source-authority",
+            "auditEventField": "safety-inspection-record",
+            "help": {
+              "zh-CN": "材料会随本次提交绑定到办理记录。",
+              "ru-RU": "Материалы будут привязаны к этой записи.",
+              "ky-KG": "Материалдар ушул иш жазуусуна байланат."
+            }
+          },
+          {
+            "evidenceId": "facility-inspection-record",
+            "label": {
+              "zh-CN": "设施检查记录",
+              "ru-RU": "Запись проверки оснащения",
+              "ky-KG": "Жабдык текшерүү жазуусу"
+            },
+            "required": true,
+            "source": "scenario2-source-authority",
+            "auditEventField": "facility-inspection-record",
+            "help": {
+              "zh-CN": "材料会随本次提交绑定到办理记录。",
+              "ru-RU": "Материалы будут привязаны к этой записи.",
+              "ky-KG": "Материалдар ушул иш жазуусуна байланат."
+            }
+          }
+        ],
+        "evidenceIds": [
+          "operation-inspection-photo",
+          "maintenance-record",
+          "safety-inspection-record",
+          "facility-inspection-record"
+        ],
+        "projectionTargets": [
+          "OperationInspection",
+          "OperationEvidence",
+          "StatusHistory"
+        ],
+        "sourceStep": {
+          "nameZh": "运营检查",
+          "commandBusinessNameZh": "运营检查确认",
+          "userSees": [
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "证据摘要",
+            "当前运营状态",
+            "状态历史",
+            "只读对象引用",
+            "房间/床位运营状态摘要",
+            "阻断原因",
+            "预计恢复时间",
+            "可否进入价格维护",
+            "运营检查摘要"
+          ],
+          "outputs": [
+            "运营检查摘要",
+            "可进入状态设置的检查结果"
+          ],
+          "primaryBusinessObject": "OperationResource",
+          "requiredReadContext": [
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "证据摘要",
+            "当前运营状态",
+            "状态历史",
+            "只读对象引用",
+            "房间/床位运营状态摘要",
+            "阻断原因",
+            "预计恢复时间",
+            "可否进入价格维护",
+            "运营检查摘要",
+            "buildingArea",
+            "floor"
+          ],
+          "editableInputs": [
+            "exceptionDescription",
+            "operationInspectionNotes"
+          ],
+          "fixedSelections": [
+            "cleaningInspectionResult",
+            "maintenanceInspectionResult",
+            "safetyInspectionResult",
+            "facilityInspectionResult",
+            "exceptionFlag",
+            "inspectionConclusion"
+          ],
+          "financialContext": {
+            "applies": true,
+            "businessObject": "房源运营就绪与状态维护",
+            "currency": "CNY",
+            "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+            "amountFields": [
+              "可否进入价格维护"
+            ],
+            "direction": "应收/已收/本次/剩余",
+            "stage": "运营检查",
+            "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+          },
+          "legalActions": [],
+          "handoffSummary": {
+            "from": [
+              "房间摘要",
+              "床位组摘要",
+              "基础就绪摘要",
+              "证据摘要",
+              "状态历史",
+              "只读对象引用"
+            ],
+            "to": [
+              "运营检查摘要",
+              "可进入状态设置的检查结果",
+              "房间/床位运营状态摘要",
+              "阻断原因",
+              "预计恢复时间",
+              "可否进入价格维护",
+              "证据摘要",
+              "状态历史",
+              "只读对象引用"
+            ],
+            "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。"
+          },
+          "searchReadModel": [
+            "房源运营就绪与状态维护",
+            "运营检查",
+            "运营检查确认",
+            "OperationResource",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "证据摘要",
+            "当前运营状态",
+            "状态历史",
+            "只读对象引用",
+            "房间/床位运营状态摘要",
+            "阻断原因",
+            "预计恢复时间",
+            "可否进入价格维护",
+            "运营检查摘要"
+          ],
+          "validations": [
+            "保洁、维修、安全、设施检查结果必须完整。",
+            "存在异常时必须填写异常说明并绑定证据。",
+            "缺少必要检查结果或证据不得提交。"
+          ]
+        }
+      },
+      {
+        "stepNo": 3,
+        "stepId": "set-operation-status",
+        "cardId": "cert.setOperationStatus",
+        "status": "notStarted",
+        "workItemType": "Dorm.OperationStatusDraft",
+        "definitionId": "definition.dormitory.operationStatusDraft.v1",
+        "commandType": "OperationStatus.Draft",
+        "eventType": "Dorm.OperationStatusDraft.confirmed",
+        "title": {
+          "zh-CN": "设置营业状态",
+          "ru-RU": "Задать статус эксплуатации",
+          "ky-KG": "Иштетүү абалын коюу"
+        },
+        "confirmationLabel": {
+          "zh-CN": "提交设置营业状态",
+          "ru-RU": "Отправить: Задать статус эксплуатации",
+          "ky-KG": "Тапшыруу: Иштетүү абалын коюу"
+        },
+        "fields": [
+          {
+            "fieldId": "newOperationStatus",
+            "label": {
+              "zh-CN": "新的营业状态",
+              "ru-RU": "Новый статус",
+              "ky-KG": "Жаңы абал"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "operationStatus",
+              "options": [
+                {
+                  "value": "operable",
+                  "label": {
+                    "zh-CN": "可运营",
+                    "ru-RU": "Можно использовать",
+                    "ky-KG": "Иштетүүгө болот"
+                  }
+                },
+                {
+                  "value": "temporarily_unavailable",
+                  "label": {
+                    "zh-CN": "暂不可运营",
+                    "ru-RU": "Временно недоступно",
+                    "ky-KG": "Убактылуу мүмкүн эмес"
+                  }
+                },
+                {
+                  "value": "partially_operable",
+                  "label": {
+                    "zh-CN": "部分不可运营",
+                    "ru-RU": "Частично доступно",
+                    "ky-KG": "Жарым-жартылай мүмкүн"
+                  }
+                },
+                {
+                  "value": "paused",
+                  "label": {
+                    "zh-CN": "暂停开放",
+                    "ru-RU": "Приостановлено",
+                    "ky-KG": "Убактылуу жабык"
+                  }
+                },
+                {
+                  "value": "maintenance",
+                  "label": {
+                    "zh-CN": "维修中",
+                    "ru-RU": "На ремонте",
+                    "ky-KG": "Оңдоодо"
+                  }
+                },
+                {
+                  "value": "cleaning",
+                  "label": {
+                    "zh-CN": "保洁中",
+                    "ru-RU": "На уборке",
+                    "ky-KG": "Тазалоодо"
+                  }
+                },
+                {
+                  "value": "stopped",
+                  "label": {
+                    "zh-CN": "停售",
+                    "ru-RU": "Снято с продажи",
+                    "ky-KG": "Сатуу токтоду"
+                  }
+                },
+                {
+                  "value": "exception_pending",
+                  "label": {
+                    "zh-CN": "异常待处理",
+                    "ru-RU": "Ожидает обработки",
+                    "ky-KG": "Каралууда"
+                  }
+                },
+                {
+                  "value": "needs_recheck",
+                  "label": {
+                    "zh-CN": "待复查",
+                    "ru-RU": "Нужна повторная проверка",
+                    "ky-KG": "Кайра текшерүү керек"
+                  }
+                },
+                {
+                  "value": "restored",
+                  "label": {
+                    "zh-CN": "已恢复",
+                    "ru-RU": "Восстановлено",
+                    "ky-KG": "Калыбына келди"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "选择这次要设置的营业状态。",
+              "ru-RU": "Выберите новый статус эксплуатации.",
+              "ky-KG": "Бул жолу коюла турган иштетүү абалын тандаңыз."
+            }
+          },
+          {
+            "fieldId": "statusReasonCode",
+            "label": {
+              "zh-CN": "状态原因",
+              "ru-RU": "Причина статуса",
+              "ky-KG": "Абал себеби"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "statusReasonCode",
+              "options": [
+                {
+                  "value": "normal_ready",
+                  "label": {
+                    "zh-CN": "检查通过",
+                    "ru-RU": "Проверка пройдена",
+                    "ky-KG": "Текшерүү өттү"
+                  }
+                },
+                {
+                  "value": "repair_required",
+                  "label": {
+                    "zh-CN": "需要维修",
+                    "ru-RU": "Нужен ремонт",
+                    "ky-KG": "Оңдоо керек"
+                  }
+                },
+                {
+                  "value": "cleaning_required",
+                  "label": {
+                    "zh-CN": "需要保洁",
+                    "ru-RU": "Нужна уборка",
+                    "ky-KG": "Тазалоо керек"
+                  }
+                },
+                {
+                  "value": "safety_issue",
+                  "label": {
+                    "zh-CN": "安全问题",
+                    "ru-RU": "Вопрос безопасности",
+                    "ky-KG": "Коопсуздук маселеси"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "选择最主要的状态原因。",
+              "ru-RU": "Выберите основную причину статуса.",
+              "ky-KG": "Абалдын негизги себебин тандаңыз."
+            }
+          },
+          {
+            "fieldId": "impactScope",
+            "label": {
+              "zh-CN": "影响范围",
+              "ru-RU": "Область влияния",
+              "ky-KG": "Таасир чөйрөсү"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "impactScope",
+              "options": [
+                {
+                  "value": "current_room",
+                  "label": {
+                    "zh-CN": "仅当前房间",
+                    "ru-RU": "Только эта комната",
+                    "ky-KG": "Ушул бөлмө гана"
+                  }
+                },
+                {
+                  "value": "selected_beds",
+                  "label": {
+                    "zh-CN": "选定床位",
+                    "ru-RU": "Выбранные койки",
+                    "ky-KG": "Тандалган койкалар"
+                  }
+                },
+                {
+                  "value": "whole_floor_notice",
+                  "label": {
+                    "zh-CN": "同楼层需关注",
+                    "ru-RU": "Проверить этаж",
+                    "ky-KG": "Кабатты көзөмөлдөө"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "选择本次状态影响的范围。",
+              "ru-RU": "Выберите область влияния этого статуса.",
+              "ky-KG": "Бул абалдын таасир чөйрөсүн тандаңыз."
+            }
+          },
+          {
+            "fieldId": "statusOwner",
+            "label": {
+              "zh-CN": "跟进负责人",
+              "ru-RU": "Ответственный",
+              "ky-KG": "Жооптуу"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "ownerRole",
+              "options": [
+                {
+                  "value": "dormOperator",
+                  "label": {
+                    "zh-CN": "住宿经办人",
+                    "ru-RU": "Оператор проживания",
+                    "ky-KG": "Жатакана оператору"
+                  }
+                },
+                {
+                  "value": "dormHousekeeping",
+                  "label": {
+                    "zh-CN": "客房/保洁",
+                    "ru-RU": "Хозяйственная служба",
+                    "ky-KG": "Тазалык кызматы"
+                  }
+                },
+                {
+                  "value": "dormManager",
+                  "label": {
+                    "zh-CN": "住宿主管",
+                    "ru-RU": "Руководитель проживания",
+                    "ky-KG": "Жатакана жетекчиси"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "选择后续跟进负责人。",
+              "ru-RU": "Выберите ответственного за дальнейшие действия.",
+              "ky-KG": "Кийинки жооптуу адамды тандаңыз."
+            }
+          },
+          {
+            "fieldId": "statusReason",
+            "label": {
+              "zh-CN": "原因说明",
+              "ru-RU": "Описание причины",
+              "ky-KG": "Себеп түшүндүрмөсү"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "textarea",
+              "optionSet": "",
+              "options": [],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "补充一句原因说明，便于后续复核。",
+              "ru-RU": "Кратко поясните причину для последующей проверки.",
+              "ky-KG": "Кийин текшерүү үчүн кыскача себеп жазыңыз."
+            }
+          },
+          {
+            "fieldId": "expectedRestoreAt",
+            "label": {
+              "zh-CN": "预计恢复时间",
+              "ru-RU": "Ожидаемое восстановление",
+              "ky-KG": "Калыбына келүү убактысы"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": false,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "dateTime",
+              "optionSet": "",
+              "options": [],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "只有暂停、维修、保洁或待复查时填写；设为可运营时可留空。",
+              "ru-RU": "Заполняйте только для паузы, ремонта, уборки или повторной проверки; для доступного статуса можно оставить пустым.",
+              "ky-KG": "Токтотуу, оңдоо, тазалоо же кайра текшерүүдө гана толтуруңуз; иштетүүгө болсо бош калса болот."
+            }
+          },
+          {
+            "fieldId": "operationStatusNotes",
+            "label": {
+              "zh-CN": "营业状态备注",
+              "ru-RU": "Комментарий к статусу",
+              "ky-KG": "Абал эскертүүсү"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": false,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "textarea",
+              "optionSet": "",
+              "options": [],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "可补充状态备注；没有可留空。",
+              "ru-RU": "Дополнительный комментарий к статусу, можно оставить пустым.",
+              "ky-KG": "Кошумча абал эскертүүсү, жок болсо бош калат."
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceId": "status-reason-proof",
+            "label": {
+              "zh-CN": "状态原因证据",
+              "ru-RU": "Подтверждение причины статуса",
+              "ky-KG": "Абал себебинин далили"
+            },
+            "required": true,
+            "source": "scenario2-source-authority",
+            "auditEventField": "status-reason-proof",
+            "help": {
+              "zh-CN": "材料会随本次提交绑定到办理记录。",
+              "ru-RU": "Материалы будут привязаны к этой записи.",
+              "ky-KG": "Материалдар ушул иш жазуусуна байланат."
+            }
+          },
+          {
+            "evidenceId": "blocker-reason-proof",
+            "label": {
+              "zh-CN": "阻断原因证据",
+              "ru-RU": "Подтверждение причины блокировки",
+              "ky-KG": "Бөгөт себебинин далили"
+            },
+            "required": true,
+            "source": "scenario2-source-authority",
+            "auditEventField": "blocker-reason-proof",
+            "help": {
+              "zh-CN": "材料会随本次提交绑定到办理记录。",
+              "ru-RU": "Материалы будут привязаны к этой записи.",
+              "ky-KG": "Материалдар ушул иш жазуусуна байланат."
+            }
+          }
+        ],
+        "evidenceIds": [
+          "status-reason-proof",
+          "blocker-reason-proof"
+        ],
+        "projectionTargets": [
+          "OperationStatusDraft",
+          "OperationBlockerDraft"
+        ],
+        "sourceStep": {
+          "nameZh": "设置运营状态",
+          "commandBusinessNameZh": "运营状态草稿",
+          "userSees": [
+            "运营检查摘要",
+            "当前状态",
+            "合法下一步动作",
+            "不可提交原因",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "证据摘要",
+            "状态历史",
+            "只读对象引用",
+            "房间/床位运营状态摘要",
+            "阻断原因"
+          ],
+          "outputs": [
+            "运营状态变更草稿",
+            "阻断原因草稿"
+          ],
+          "primaryBusinessObject": "OperationResource",
+          "requiredReadContext": [
+            "运营检查摘要",
+            "当前状态",
+            "合法下一步动作",
+            "不可提交原因",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "证据摘要",
+            "状态历史",
+            "只读对象引用",
+            "房间/床位运营状态摘要",
+            "阻断原因",
+            "buildingArea",
+            "floor"
+          ],
+          "editableInputs": [
+            "statusReason",
+            "expectedRestoreAt",
+            "operationStatusNotes"
+          ],
+          "fixedSelections": [
+            "newOperationStatus",
+            "statusReasonCode",
+            "impactScope",
+            "statusOwner"
+          ],
+          "financialContext": {
+            "applies": false,
+            "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+          },
+          "legalActions": [],
+          "handoffSummary": {
+            "from": [
+              "房间摘要",
+              "床位组摘要",
+              "基础就绪摘要",
+              "证据摘要",
+              "状态历史",
+              "只读对象引用"
+            ],
+            "to": [
+              "运营状态变更草稿",
+              "阻断原因草稿",
+              "房间/床位运营状态摘要",
+              "阻断原因",
+              "预计恢复时间",
+              "可否进入价格维护",
+              "证据摘要",
+              "状态历史",
+              "只读对象引用"
+            ],
+            "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。"
+          },
+          "searchReadModel": [
+            "房源运营就绪与状态维护",
+            "设置运营状态",
+            "运营状态草稿",
+            "OperationResource",
+            "运营检查摘要",
+            "当前状态",
+            "合法下一步动作",
+            "不可提交原因",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "证据摘要",
+            "状态历史",
+            "只读对象引用",
+            "房间/床位运营状态摘要",
+            "阻断原因"
+          ],
+          "validations": [
+            "未关闭阻断原因时不得设置为可运营。",
+            "预计恢复时间仅在状态会影响运营或需要后续恢复时填写；设置为可运营时不得作为必填阻断。",
+            "状态必须属于场景包 2 的运营状态枚举。",
+            "不得生成价格、报价或预订事实。"
+          ]
+        }
+      },
+      {
+        "stepNo": 4,
+        "stepId": "impact-confirmation",
+        "cardId": "cert.impactConfirmation",
+        "status": "notStarted",
+        "workItemType": "Dorm.OperationStatusChangeConfirm",
+        "definitionId": "definition.dormitory.operationStatusChangeConfirm.v1",
+        "commandType": "OperationStatusChange.Confirm",
+        "eventType": "Dorm.OperationStatusChangeConfirm.confirmed",
+        "title": {
+          "zh-CN": "影响确认",
+          "ru-RU": "Подтверждение влияния",
+          "ky-KG": "Таасирин ырастоо"
+        },
+        "confirmationLabel": {
+          "zh-CN": "提交影响确认",
+          "ru-RU": "Отправить: Подтверждение влияния",
+          "ky-KG": "Тапшыруу: Таасирин ырастоо"
+        },
+        "fields": [
+          {
+            "fieldId": "impactConfirmationNotes",
+            "label": {
+              "zh-CN": "影响确认说明",
+              "ru-RU": "Комментарий влияния",
+              "ky-KG": "Таасир түшүндүрмөсү"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": false,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "textarea",
+              "optionSet": "",
+              "options": [],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "可补充影响说明；没有可留空。",
+              "ru-RU": "Дополнительный комментарий о влиянии, можно оставить пустым.",
+              "ky-KG": "Кошумча таасир түшүндүрмөсү, жок болсо бош калат."
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceId": "impact-proof",
+            "label": {
+              "zh-CN": "补充影响证据",
+              "ru-RU": "Дополнительное подтверждение влияния",
+              "ky-KG": "Таасир боюнча кошумча далил"
+            },
+            "required": true,
+            "source": "scenario2-source-authority",
+            "auditEventField": "impact-proof",
+            "help": {
+              "zh-CN": "材料会随本次提交绑定到办理记录。",
+              "ru-RU": "Материалы будут привязаны к этой записи.",
+              "ky-KG": "Материалдар ушул иш жазуусуна байланат."
+            }
+          }
+        ],
+        "evidenceIds": [
+          "impact-proof"
+        ],
+        "projectionTargets": [
+          "RoomOperationStatus",
+          "BedOperationStatus",
+          "OperationBlocker",
+          "StatusHistory"
+        ],
+        "sourceStep": {
+          "nameZh": "影响确认",
+          "commandBusinessNameZh": "运营状态变更确认",
+          "userSees": [
+            "变更前状态",
+            "变更后状态",
+            "影响房间/床位",
+            "阻断原因",
+            "预计恢复时间",
+            "下游影响",
+            "证据摘要",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "状态历史",
+            "只读对象引用"
+          ],
+          "outputs": [
+            "OperationStatusChange",
+            "DomainEvent",
+            "CommandSubmission",
+            "EvidenceBinding",
+            "Projection update"
+          ],
+          "primaryBusinessObject": "OperationResource",
+          "requiredReadContext": [
+            "变更前状态",
+            "变更后状态",
+            "影响房间/床位",
+            "阻断原因",
+            "预计恢复时间",
+            "下游影响",
+            "证据摘要",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "状态历史",
+            "只读对象引用",
+            "buildingArea",
+            "floor"
+          ],
+          "editableInputs": [
+            "impactConfirmationNotes"
+          ],
+          "fixedSelections": [],
+          "financialContext": {
+            "applies": false,
+            "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+          },
+          "legalActions": [
+            {
+              "actionId": "submitImpactConfirmation",
+              "labelZh": "submitImpactConfirmation",
+              "labelKey": "scenario2.action.submitImpactConfirmation.label",
+              "legalActionRef": "legalAction.dormitory.scenario2.impact-confirmation.submitImpactConfirmation.v1",
+              "admissionRequired": true,
+              "writeBusinessFact": false
+            }
+          ],
+          "handoffSummary": {
+            "from": [
+              "房间摘要",
+              "床位组摘要",
+              "基础就绪摘要",
+              "证据摘要",
+              "状态历史",
+              "只读对象引用"
+            ],
+            "to": [
+              "OperationStatusChange",
+              "DomainEvent",
+              "CommandSubmission",
+              "EvidenceBinding",
+              "Projection update",
+              "房间/床位运营状态摘要",
+              "阻断原因",
+              "预计恢复时间",
+              "可否进入价格维护",
+              "证据摘要"
+            ],
+            "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。"
+          },
+          "searchReadModel": [
+            "房源运营就绪与状态维护",
+            "影响确认",
+            "运营状态变更确认",
+            "OperationResource",
+            "变更前状态",
+            "变更后状态",
+            "影响房间/床位",
+            "阻断原因",
+            "预计恢复时间",
+            "下游影响",
+            "证据摘要",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "状态历史",
+            "只读对象引用"
+          ],
+          "validations": [
+            "影响确认必须有运营检查摘要、状态草稿和必要证据。",
+            "禁止写价格、报价、预订、入住、收款、押金、退款、账务。",
+            "失败路径不得刷新可读投影。"
+          ]
+        }
+      },
+      {
+        "stepNo": 5,
+        "stepId": "daily-status-maintenance",
+        "cardId": "cert.dailyStatusMaintenance",
+        "status": "notStarted",
+        "workItemType": "Dorm.OperationBlockerUpdate",
+        "definitionId": "definition.dormitory.operationBlockerUpdate.v1",
+        "commandType": "OperationBlocker.Update",
+        "eventType": "Dorm.OperationBlockerUpdate.confirmed",
+        "title": {
+          "zh-CN": "日常状态维护",
+          "ru-RU": "Ежедневное ведение статуса",
+          "ky-KG": "Күнүмдүк абалды жүргүзүү"
+        },
+        "confirmationLabel": {
+          "zh-CN": "提交日常状态维护",
+          "ru-RU": "Отправить: Ежедневное ведение статуса",
+          "ky-KG": "Тапшыруу: Күнүмдүк абалды жүргүзүү"
+        },
+        "fields": [
+          {
+            "fieldId": "blockerStatus",
+            "label": {
+              "zh-CN": "阻断处理状态",
+              "ru-RU": "Статус блокировки",
+              "ky-KG": "Бөгөт абалы"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "blockerStatus",
+              "options": [
+                {
+                  "value": "open",
+                  "label": {
+                    "zh-CN": "处理中",
+                    "ru-RU": "В работе",
+                    "ky-KG": "Иштелүүдө"
+                  }
+                },
+                {
+                  "value": "closed",
+                  "label": {
+                    "zh-CN": "已关闭",
+                    "ru-RU": "Закрыто",
+                    "ky-KG": "Жабылды"
+                  }
+                },
+                {
+                  "value": "needs_recheck",
+                  "label": {
+                    "zh-CN": "待复查",
+                    "ru-RU": "Нужна повторная проверка",
+                    "ky-KG": "Кайра текшерүү керек"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "选择阻断事项当前处理状态。",
+              "ru-RU": "Выберите текущий статус блокировки.",
+              "ky-KG": "Бөгөттүн учурдагы абалын тандаңыз."
+            }
+          },
+          {
+            "fieldId": "followUpOwner",
+            "label": {
+              "zh-CN": "跟进负责人",
+              "ru-RU": "Ответственный",
+              "ky-KG": "Жооптуу"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "ownerRole",
+              "options": [
+                {
+                  "value": "dormOperator",
+                  "label": {
+                    "zh-CN": "住宿经办人",
+                    "ru-RU": "Оператор проживания",
+                    "ky-KG": "Жатакана оператору"
+                  }
+                },
+                {
+                  "value": "dormHousekeeping",
+                  "label": {
+                    "zh-CN": "客房/保洁",
+                    "ru-RU": "Хозяйственная служба",
+                    "ky-KG": "Тазалык кызматы"
+                  }
+                },
+                {
+                  "value": "dormManager",
+                  "label": {
+                    "zh-CN": "住宿主管",
+                    "ru-RU": "Руководитель проживания",
+                    "ky-KG": "Жатакана жетекчиси"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "选择继续跟进的人。",
+              "ru-RU": "Выберите ответственного за продолжение.",
+              "ky-KG": "Уланта турган жооптууну тандаңыз."
+            }
+          },
+          {
+            "fieldId": "progressUpdate",
+            "label": {
+              "zh-CN": "处理进展",
+              "ru-RU": "Ход работ",
+              "ky-KG": "Иш жүрүшү"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "textarea",
+              "optionSet": "",
+              "options": [],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "填写本次处理进展，关闭阻断时说明已处理结果。",
+              "ru-RU": "Опишите ход работ; при закрытии укажите результат.",
+              "ky-KG": "Бул жолку иш жүрүшүн жазыңыз; жабууда жыйынтыгын көрсөтүңүз."
+            }
+          },
+          {
+            "fieldId": "expectedRestoreAt",
+            "label": {
+              "zh-CN": "预计恢复时间",
+              "ru-RU": "Ожидаемое восстановление",
+              "ky-KG": "Калыбына келүү убактысы"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": false,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "dateTime",
+              "optionSet": "",
+              "options": [],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "只有暂停、维修、保洁或待复查时填写；设为可运营时可留空。",
+              "ru-RU": "Заполняйте только для паузы, ремонта, уборки или повторной проверки; для доступного статуса можно оставить пустым.",
+              "ky-KG": "Токтотуу, оңдоо, тазалоо же кайра текшерүүдө гана толтуруңуз; иштетүүгө болсо бош калса болот."
+            }
+          },
+          {
+            "fieldId": "blockerNotes",
+            "label": {
+              "zh-CN": "阻断备注",
+              "ru-RU": "Комментарий блокировки",
+              "ky-KG": "Бөгөт эскертүүсү"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": false,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "textarea",
+              "optionSet": "",
+              "options": [],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "可补充阻断备注；没有可留空。",
+              "ru-RU": "Дополнительный комментарий к блокировке, можно оставить пустым.",
+              "ky-KG": "Кошумча бөгөт эскертүүсү, жок болсо бош калат."
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceId": "progress-photo",
+            "label": {
+              "zh-CN": "进度照片",
+              "ru-RU": "Фото хода работ",
+              "ky-KG": "Иш жүрүшүнүн сүрөтү"
+            },
+            "required": true,
+            "source": "scenario2-source-authority",
+            "auditEventField": "progress-photo",
+            "help": {
+              "zh-CN": "材料会随本次提交绑定到办理记录。",
+              "ru-RU": "Материалы будут привязаны к этой записи.",
+              "ky-KG": "Материалдар ушул иш жазуусуна байланат."
+            }
+          },
+          {
+            "evidenceId": "maintenance-progress-record",
+            "label": {
+              "zh-CN": "维修进度记录",
+              "ru-RU": "Запись хода ремонта",
+              "ky-KG": "Оңдоо жүрүшүнүн жазуусу"
+            },
+            "required": true,
+            "source": "scenario2-source-authority",
+            "auditEventField": "maintenance-progress-record",
+            "help": {
+              "zh-CN": "材料会随本次提交绑定到办理记录。",
+              "ru-RU": "Материалы будут привязаны к этой записи.",
+              "ky-KG": "Материалдар ушул иш жазуусуна байланат."
+            }
+          },
+          {
+            "evidenceId": "supplement-proof",
+            "label": {
+              "zh-CN": "补充证据",
+              "ru-RU": "Дополнительный материал",
+              "ky-KG": "Кошумча далил"
+            },
+            "required": true,
+            "source": "scenario2-source-authority",
+            "auditEventField": "supplement-proof",
+            "help": {
+              "zh-CN": "材料会随本次提交绑定到办理记录。",
+              "ru-RU": "Материалы будут привязаны к этой записи.",
+              "ky-KG": "Материалдар ушул иш жазуусуна байланат."
+            }
+          }
+        ],
+        "evidenceIds": [
+          "progress-photo",
+          "maintenance-progress-record",
+          "supplement-proof"
+        ],
+        "projectionTargets": [
+          "OperationBlocker",
+          "OperationEvidence",
+          "StatusHistory"
+        ],
+        "sourceStep": {
+          "nameZh": "日常状态维护",
+          "commandBusinessNameZh": "阻断原因更新",
+          "userSees": [
+            "今日待处理",
+            "工作项",
+            "详情",
+            "搜索结果",
+            "当前状态",
+            "阻断原因",
+            "合法下一步动作",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "证据摘要",
+            "状态历史"
+          ],
+          "outputs": [
+            "阻断进度摘要",
+            "状态历史"
+          ],
+          "primaryBusinessObject": "OperationResource",
+          "requiredReadContext": [
+            "今日待处理",
+            "工作项",
+            "详情",
+            "搜索结果",
+            "当前状态",
+            "阻断原因",
+            "合法下一步动作",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "证据摘要",
+            "状态历史",
+            "只读对象引用",
+            "buildingArea"
+          ],
+          "editableInputs": [
+            "progressUpdate",
+            "expectedRestoreAt",
+            "blockerNotes"
+          ],
+          "fixedSelections": [
+            "blockerStatus",
+            "followUpOwner"
+          ],
+          "financialContext": {
+            "applies": false,
+            "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+          },
+          "legalActions": [],
+          "handoffSummary": {
+            "from": [
+              "房间摘要",
+              "床位组摘要",
+              "基础就绪摘要",
+              "证据摘要",
+              "状态历史",
+              "只读对象引用"
+            ],
+            "to": [
+              "阻断进度摘要",
+              "状态历史",
+              "房间/床位运营状态摘要",
+              "阻断原因",
+              "预计恢复时间",
+              "可否进入价格维护",
+              "证据摘要",
+              "只读对象引用"
+            ],
+            "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。"
+          },
+          "searchReadModel": [
+            "房源运营就绪与状态维护",
+            "日常状态维护",
+            "阻断原因更新",
+            "OperationResource",
+            "今日待处理",
+            "工作项",
+            "详情",
+            "搜索结果",
+            "当前状态",
+            "阻断原因",
+            "合法下一步动作",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "证据摘要",
+            "状态历史"
+          ],
+          "validations": [
+            "确认事实不得原地编辑，只能追加进度、证据、纠错或关闭阻断。",
+            "搜索、报表、看板只读，不得写业务事实。",
+            "关闭阻断必须说明原因并绑定证据。"
+          ]
+        }
+      },
+      {
+        "stepNo": 6,
+        "stepId": "restore-operation",
+        "cardId": "cert.restoreOperation",
+        "status": "notStarted",
+        "workItemType": "Dorm.OperationRestoreConfirm",
+        "definitionId": "definition.dormitory.operationRestoreConfirm.v1",
+        "commandType": "OperationRestore.Confirm",
+        "eventType": "Dorm.OperationRestoreConfirm.confirmed",
+        "title": {
+          "zh-CN": "恢复运营",
+          "ru-RU": "Восстановить эксплуатацию",
+          "ky-KG": "Иштетүүнү калыбына келтирүү"
+        },
+        "confirmationLabel": {
+          "zh-CN": "提交恢复运营",
+          "ru-RU": "Отправить: Восстановить эксплуатацию",
+          "ky-KG": "Тапшыруу: Иштетүүнү калыбына келтирүү"
+        },
+        "fields": [
+          {
+            "fieldId": "recheckResult",
+            "label": {
+              "zh-CN": "复查结果",
+              "ru-RU": "Результат повторной проверки",
+              "ky-KG": "Кайра текшерүү жыйынтыгы"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "recheckResult",
+              "options": [
+                {
+                  "value": "passed",
+                  "label": {
+                    "zh-CN": "复查通过",
+                    "ru-RU": "Повторная проверка пройдена",
+                    "ky-KG": "Кайра текшерүү өттү"
+                  }
+                },
+                {
+                  "value": "failed",
+                  "label": {
+                    "zh-CN": "复查不通过",
+                    "ru-RU": "Повторная проверка не пройдена",
+                    "ky-KG": "Кайра текшерүү өткөн жок"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "选择复查是否通过。",
+              "ru-RU": "Выберите результат повторной проверки.",
+              "ky-KG": "Кайра текшерүү жыйынтыгын тандаңыз."
+            }
+          },
+          {
+            "fieldId": "restoreConclusion",
+            "label": {
+              "zh-CN": "恢复结论",
+              "ru-RU": "Итог восстановления",
+              "ky-KG": "Калыбына келтирүү жыйынтыгы"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "select",
+              "optionSet": "restoreConclusion",
+              "options": [
+                {
+                  "value": "operable",
+                  "label": {
+                    "zh-CN": "恢复为可运营",
+                    "ru-RU": "Восстановить как доступную",
+                    "ky-KG": "Иштетүүгө калыбына келтирүү"
+                  }
+                },
+                {
+                  "value": "partially_operable",
+                  "label": {
+                    "zh-CN": "恢复为部分可运营",
+                    "ru-RU": "Восстановить частично",
+                    "ky-KG": "Жарым-жартылай калыбына келтирүү"
+                  }
+                },
+                {
+                  "value": "needs_recheck",
+                  "label": {
+                    "zh-CN": "仍需复查",
+                    "ru-RU": "Нужна повторная проверка",
+                    "ky-KG": "Кайра текшерүү керек"
+                  }
+                }
+              ],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "选择恢复后的运营结论。",
+              "ru-RU": "Выберите итог восстановления.",
+              "ky-KG": "Калыбына келгенден кийинки жыйынтыкты тандаңыз."
+            }
+          },
+          {
+            "fieldId": "restoreReason",
+            "label": {
+              "zh-CN": "恢复原因",
+              "ru-RU": "Причина восстановления",
+              "ky-KG": "Калыбына келтирүү себеби"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": true,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "textarea",
+              "optionSet": "",
+              "options": [],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "说明为什么可以恢复运营。",
+              "ru-RU": "Укажите, почему эксплуатацию можно восстановить.",
+              "ky-KG": "Эмне үчүн иштетүүнү калыбына келтирсе болорун жазыңыз."
+            }
+          },
+          {
+            "fieldId": "restoreNotes",
+            "label": {
+              "zh-CN": "恢复备注",
+              "ru-RU": "Комментарий восстановления",
+              "ky-KG": "Калыбына келтирүү эскертүүсү"
+            },
+            "layer": "business",
+            "type": "text",
+            "required": false,
+            "source": "clientSubmitted",
+            "userSubmitted": true,
+            "visibleToUser": true,
+            "ui": {
+              "control": "textarea",
+              "optionSet": "",
+              "options": [],
+              "defaultValue": "",
+              "derivedFrom": "",
+              "readonly": false
+            },
+            "help": {
+              "zh-CN": "可补充恢复备注；没有可留空。",
+              "ru-RU": "Дополнительный комментарий к восстановлению, можно оставить пустым.",
+              "ky-KG": "Кошумча калыбына келтирүү эскертүүсү, жок болсо бош калат."
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceId": "restore-photo",
+            "label": {
+              "zh-CN": "恢复照片",
+              "ru-RU": "Фото восстановления",
+              "ky-KG": "Калыбына келтирүү сүрөтү"
+            },
+            "required": true,
+            "source": "scenario2-source-authority",
+            "auditEventField": "restore-photo",
+            "help": {
+              "zh-CN": "材料会随本次提交绑定到办理记录。",
+              "ru-RU": "Материалы будут привязаны к этой записи.",
+              "ky-KG": "Материалдар ушул иш жазуусуна байланат."
+            }
+          },
+          {
+            "evidenceId": "recheck-record",
+            "label": {
+              "zh-CN": "复查记录",
+              "ru-RU": "Запись повторной проверки",
+              "ky-KG": "Кайра текшерүү жазуусу"
+            },
+            "required": true,
+            "source": "scenario2-source-authority",
+            "auditEventField": "recheck-record",
+            "help": {
+              "zh-CN": "材料会随本次提交绑定到办理记录。",
+              "ru-RU": "Материалы будут привязаны к этой записи.",
+              "ky-KG": "Материалдар ушул иш жазуусуна байланат."
+            }
+          },
+          {
+            "evidenceId": "blocker-close-proof",
+            "label": {
+              "zh-CN": "关闭阻断证据",
+              "ru-RU": "Подтверждение закрытия блокировки",
+              "ky-KG": "Бөгөт жабылганын далилдөө"
+            },
+            "required": true,
+            "source": "scenario2-source-authority",
+            "auditEventField": "blocker-close-proof",
+            "help": {
+              "zh-CN": "材料会随本次提交绑定到办理记录。",
+              "ru-RU": "Материалы будут привязаны к этой записи.",
+              "ky-KG": "Материалдар ушул иш жазуусуна байланат."
+            }
+          }
+        ],
+        "evidenceIds": [
+          "restore-photo",
+          "recheck-record",
+          "blocker-close-proof"
+        ],
+        "projectionTargets": [
+          "OperationRestore",
+          "RoomOperationStatus",
+          "BedOperationStatus",
+          "StatusHistory"
+        ],
+        "sourceStep": {
+          "nameZh": "恢复运营",
+          "commandBusinessNameZh": "恢复运营确认",
+          "userSees": [
+            "当前阻断原因",
+            "复查要求",
+            "证据摘要",
+            "可提交/不可提交原因",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "状态历史",
+            "只读对象引用",
+            "房间/床位运营状态摘要",
+            "阻断原因",
+            "预计恢复时间"
+          ],
+          "outputs": [
+            "恢复运营摘要",
+            "房间/床位运营状态摘要",
+            "可否进入价格维护"
+          ],
+          "primaryBusinessObject": "OperationResource",
+          "requiredReadContext": [
+            "当前阻断原因",
+            "复查要求",
+            "证据摘要",
+            "可提交/不可提交原因",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "状态历史",
+            "只读对象引用",
+            "房间/床位运营状态摘要",
+            "阻断原因",
+            "预计恢复时间",
+            "buildingArea",
+            "floor"
+          ],
+          "editableInputs": [
+            "restoreReason",
+            "restoreNotes"
+          ],
+          "fixedSelections": [
+            "recheckResult",
+            "restoreConclusion"
+          ],
+          "financialContext": {
+            "applies": true,
+            "businessObject": "房源运营就绪与状态维护",
+            "currency": "CNY",
+            "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+            "amountFields": [
+              "金额与币种业务摘要"
+            ],
+            "direction": "应收/已收/本次/剩余",
+            "stage": "恢复运营",
+            "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+          },
+          "legalActions": [],
+          "handoffSummary": {
+            "from": [
+              "房间摘要",
+              "床位组摘要",
+              "基础就绪摘要",
+              "证据摘要",
+              "状态历史",
+              "只读对象引用"
+            ],
+            "to": [
+              "恢复运营摘要",
+              "房间/床位运营状态摘要",
+              "可否进入价格维护",
+              "阻断原因",
+              "预计恢复时间",
+              "证据摘要",
+              "状态历史",
+              "只读对象引用"
+            ],
+            "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。"
+          },
+          "searchReadModel": [
+            "房源运营就绪与状态维护",
+            "恢复运营",
+            "恢复运营确认",
+            "OperationResource",
+            "当前阻断原因",
+            "复查要求",
+            "证据摘要",
+            "可提交/不可提交原因",
+            "房间摘要",
+            "床位组摘要",
+            "基础就绪摘要",
+            "状态历史",
+            "只读对象引用",
+            "房间/床位运营状态摘要",
+            "阻断原因",
+            "预计恢复时间"
+          ],
+          "validations": [
+            "全部相关阻断原因必须关闭。",
+            "复查结果必须通过。",
+            "恢复证据必须完整。",
+            "恢复后只输出可运营或部分可运营摘要给场景包 3，不输出可报价或可预订。"
+          ]
+        }
+      }
+    ],
+    "transitions": [
+      {
+        "policyId": "generated-transition.dormitory.scenario2.select-base-ready-resource-to-operation-inspection.v1",
+        "fromDefinitionId": "definition.dormitory.operationResourceSelect.v1",
+        "toDefinitionId": "definition.dormitory.operationInspectionConfirm.v1",
+        "sourceContract": "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2ResourceOperationStatus.generated.json",
+        "condition": null
+      },
+      {
+        "policyId": "generated-transition.dormitory.scenario2.operation-inspection-to-set-operation-status.v1",
+        "fromDefinitionId": "definition.dormitory.operationInspectionConfirm.v1",
+        "toDefinitionId": "definition.dormitory.operationStatusDraft.v1",
+        "sourceContract": "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2ResourceOperationStatus.generated.json",
+        "condition": null
+      },
+      {
+        "policyId": "generated-transition.dormitory.scenario2.set-operation-status-to-impact-confirmation.v1",
+        "fromDefinitionId": "definition.dormitory.operationStatusDraft.v1",
+        "toDefinitionId": "definition.dormitory.operationStatusChangeConfirm.v1",
+        "sourceContract": "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2ResourceOperationStatus.generated.json",
+        "condition": null
+      },
+      {
+        "policyId": "generated-transition.dormitory.scenario2.impact-confirmation-to-daily-status-maintenance.v1",
+        "fromDefinitionId": "definition.dormitory.operationStatusChangeConfirm.v1",
+        "toDefinitionId": "definition.dormitory.operationBlockerUpdate.v1",
+        "sourceContract": "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2ResourceOperationStatus.generated.json",
+        "condition": null
+      },
+      {
+        "policyId": "generated-transition.dormitory.scenario2.daily-status-maintenance-to-restore-operation.v1",
+        "fromDefinitionId": "definition.dormitory.operationBlockerUpdate.v1",
+        "toDefinitionId": "definition.dormitory.operationRestoreConfirm.v1",
+        "sourceContract": "services/core-api/WorkOS.Api/Runtime/DormitoryScenario2ResourceOperationStatus.generated.json",
+        "condition": {
+          "conditionId": "generated-transition-condition.dormitory.scenario2.blocker-closed-before-restore.v1",
+          "fieldId": "blockerStatus",
+          "operator": "equalsAny",
+          "values": [
+            "closed",
+            "已关闭"
+          ],
+          "whenNotMet": "hold_current_closure_loop",
+          "sourceAuthorityRuleZh": "恢复运营前必须先关闭全部相关阻断原因；阻断仍处于处理中或待复查时，不得派发恢复运营确认。"
+        }
+      }
+    ],
+    "definitions": [
+      {
+        "definitionId": "definition.dormitory.operationResourceSelect.v1",
+        "businessLineId": "dormitory",
+        "sliceId": "Accommodation.ResourceOperationStatus",
+        "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+        "workItemType": "Dorm.OperationResourceSelect",
+        "commandType": "OperationResource.Select",
+        "ownerSlice": "Accommodation.ResourceOperationStatus",
+        "migrationRefs": [
+          {
+            "type": "sourceCardId",
+            "value": "cert.selectBaseReadyResource",
+            "readOnly": true,
+            "executable": false,
+            "affectsAdmission": false,
+            "affectsRuntimeConfirm": false,
+            "affectsBusinessIdentity": false,
+            "affectsLedger": false,
+            "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+          }
+        ],
+        "allowedFacts": [
+          "CommandSubmission",
+          "DomainEvent",
+          "EvidenceObject"
+        ],
+        "forbiddenFacts": [
+          "RatePlan",
+          "Quote",
+          "Reservation",
+          "Stay",
+          "Payment",
+          "Deposit",
+          "DepositAccount",
+          "Refund",
+          "LedgerEntry",
+          "LedgerTransaction",
+          "PaymentAllocation",
+          "AmountBasis",
+          "MoneyBasis",
+          "FinancialFact",
+          "FinanceReceipt",
+          "DepositEntry"
+        ],
+        "fieldContractRef": "field.dormitory.scenario2.operationResourceSelect.v1",
+        "evidencePolicyRef": "evidence.dormitory.scenario2.select-base-ready-resource.v1",
+        "riskPolicyRef": "risk.dormitory.standard.v1",
+        "ledgerPolicyRef": "ledger.none.v1",
+        "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+        "surfacePolicyRef": "surface.mobile.work.dormitory-scenario2-select-base-ready-resource",
+        "productionConfirmAllowed": false,
+        "definitionMode": "oam-certification-current",
+        "removalImpact": "Generated from Dormitory Scenario 2 Source Authority; no production confirm."
+      },
+      {
+        "definitionId": "definition.dormitory.operationInspectionConfirm.v1",
+        "businessLineId": "dormitory",
+        "sliceId": "Accommodation.ResourceOperationStatus",
+        "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+        "workItemType": "Dorm.OperationInspectionConfirm",
+        "commandType": "OperationInspection.Confirm",
+        "ownerSlice": "Accommodation.ResourceOperationStatus",
+        "migrationRefs": [
+          {
+            "type": "sourceCardId",
+            "value": "cert.operationInspection",
+            "readOnly": true,
+            "executable": false,
+            "affectsAdmission": false,
+            "affectsRuntimeConfirm": false,
+            "affectsBusinessIdentity": false,
+            "affectsLedger": false,
+            "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+          }
+        ],
+        "allowedFacts": [
+          "OperationInspection",
+          "OperationEvidence",
+          "StatusHistory",
+          "EvidenceObject",
+          "DomainEvent",
+          "CommandSubmission"
+        ],
+        "forbiddenFacts": [
+          "RatePlan",
+          "Quote",
+          "Reservation",
+          "Stay",
+          "Payment",
+          "Deposit",
+          "DepositAccount",
+          "Refund",
+          "LedgerEntry",
+          "LedgerTransaction",
+          "PaymentAllocation",
+          "AmountBasis",
+          "MoneyBasis",
+          "FinancialFact",
+          "FinanceReceipt",
+          "DepositEntry"
+        ],
+        "fieldContractRef": "field.dormitory.scenario2.operationInspectionConfirm.v1",
+        "evidencePolicyRef": "evidence.dormitory.scenario2.operation-inspection.v1",
+        "riskPolicyRef": "risk.dormitory.standard.v1",
+        "ledgerPolicyRef": "ledger.none.v1",
+        "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+        "surfacePolicyRef": "surface.mobile.work.dormitory-scenario2-operation-inspection",
+        "productionConfirmAllowed": false,
+        "definitionMode": "oam-certification-current",
+        "removalImpact": "Generated from Dormitory Scenario 2 Source Authority; no production confirm."
+      },
+      {
+        "definitionId": "definition.dormitory.operationStatusDraft.v1",
+        "businessLineId": "dormitory",
+        "sliceId": "Accommodation.ResourceOperationStatus",
+        "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+        "workItemType": "Dorm.OperationStatusDraft",
+        "commandType": "OperationStatus.Draft",
+        "ownerSlice": "Accommodation.ResourceOperationStatus",
+        "migrationRefs": [
+          {
+            "type": "sourceCardId",
+            "value": "cert.setOperationStatus",
+            "readOnly": true,
+            "executable": false,
+            "affectsAdmission": false,
+            "affectsRuntimeConfirm": false,
+            "affectsBusinessIdentity": false,
+            "affectsLedger": false,
+            "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+          }
+        ],
+        "allowedFacts": [
+          "CommandSubmission",
+          "DomainEvent",
+          "EvidenceObject"
+        ],
+        "forbiddenFacts": [
+          "RatePlan",
+          "Quote",
+          "Reservation",
+          "Stay",
+          "Payment",
+          "Deposit",
+          "DepositAccount",
+          "Refund",
+          "LedgerEntry",
+          "LedgerTransaction",
+          "PaymentAllocation",
+          "AmountBasis",
+          "MoneyBasis",
+          "FinancialFact",
+          "FinanceReceipt",
+          "DepositEntry"
+        ],
+        "fieldContractRef": "field.dormitory.scenario2.operationStatusDraft.v1",
+        "evidencePolicyRef": "evidence.dormitory.scenario2.set-operation-status.v1",
+        "riskPolicyRef": "risk.dormitory.standard.v1",
+        "ledgerPolicyRef": "ledger.none.v1",
+        "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+        "surfacePolicyRef": "surface.mobile.work.dormitory-scenario2-set-operation-status",
+        "productionConfirmAllowed": false,
+        "definitionMode": "oam-certification-current",
+        "removalImpact": "Generated from Dormitory Scenario 2 Source Authority; no production confirm."
+      },
+      {
+        "definitionId": "definition.dormitory.operationStatusChangeConfirm.v1",
+        "businessLineId": "dormitory",
+        "sliceId": "Accommodation.ResourceOperationStatus",
+        "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+        "workItemType": "Dorm.OperationStatusChangeConfirm",
+        "commandType": "OperationStatusChange.Confirm",
+        "ownerSlice": "Accommodation.ResourceOperationStatus",
+        "migrationRefs": [
+          {
+            "type": "sourceCardId",
+            "value": "cert.impactConfirmation",
+            "readOnly": true,
+            "executable": false,
+            "affectsAdmission": false,
+            "affectsRuntimeConfirm": false,
+            "affectsBusinessIdentity": false,
+            "affectsLedger": false,
+            "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+          }
+        ],
+        "allowedFacts": [
+          "RoomOperationStatus",
+          "BedOperationStatus",
+          "OperationBlocker",
+          "OperationStatusChange",
+          "OperationEvidence",
+          "StatusHistory",
+          "EvidenceObject",
+          "DomainEvent",
+          "CommandSubmission"
+        ],
+        "forbiddenFacts": [
+          "RatePlan",
+          "Quote",
+          "Reservation",
+          "Stay",
+          "Payment",
+          "Deposit",
+          "DepositAccount",
+          "Refund",
+          "LedgerEntry",
+          "LedgerTransaction",
+          "PaymentAllocation",
+          "AmountBasis",
+          "MoneyBasis",
+          "FinancialFact",
+          "FinanceReceipt",
+          "DepositEntry"
+        ],
+        "fieldContractRef": "field.dormitory.scenario2.operationStatusChangeConfirm.v1",
+        "evidencePolicyRef": "evidence.dormitory.scenario2.impact-confirmation.v1",
+        "riskPolicyRef": "risk.dormitory.standard.v1",
+        "ledgerPolicyRef": "ledger.none.v1",
+        "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+        "surfacePolicyRef": "surface.mobile.work.dormitory-scenario2-impact-confirmation",
+        "productionConfirmAllowed": false,
+        "definitionMode": "oam-certification-current",
+        "removalImpact": "Generated from Dormitory Scenario 2 Source Authority; no production confirm."
+      },
+      {
+        "definitionId": "definition.dormitory.operationBlockerUpdate.v1",
+        "businessLineId": "dormitory",
+        "sliceId": "Accommodation.ResourceOperationStatus",
+        "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+        "workItemType": "Dorm.OperationBlockerUpdate",
+        "commandType": "OperationBlocker.Update",
+        "ownerSlice": "Accommodation.ResourceOperationStatus",
+        "migrationRefs": [
+          {
+            "type": "sourceCardId",
+            "value": "cert.dailyStatusMaintenance",
+            "readOnly": true,
+            "executable": false,
+            "affectsAdmission": false,
+            "affectsRuntimeConfirm": false,
+            "affectsBusinessIdentity": false,
+            "affectsLedger": false,
+            "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+          }
+        ],
+        "allowedFacts": [
+          "OperationBlocker",
+          "OperationEvidence",
+          "StatusHistory",
+          "EvidenceObject",
+          "DomainEvent",
+          "CommandSubmission"
+        ],
+        "forbiddenFacts": [
+          "RatePlan",
+          "Quote",
+          "Reservation",
+          "Stay",
+          "Payment",
+          "Deposit",
+          "DepositAccount",
+          "Refund",
+          "LedgerEntry",
+          "LedgerTransaction",
+          "PaymentAllocation",
+          "AmountBasis",
+          "MoneyBasis",
+          "FinancialFact",
+          "FinanceReceipt",
+          "DepositEntry"
+        ],
+        "fieldContractRef": "field.dormitory.scenario2.operationBlockerUpdate.v1",
+        "evidencePolicyRef": "evidence.dormitory.scenario2.daily-status-maintenance.v1",
+        "riskPolicyRef": "risk.dormitory.standard.v1",
+        "ledgerPolicyRef": "ledger.none.v1",
+        "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+        "surfacePolicyRef": "surface.mobile.work.dormitory-scenario2-daily-status-maintenance",
+        "productionConfirmAllowed": false,
+        "definitionMode": "oam-certification-current",
+        "removalImpact": "Generated from Dormitory Scenario 2 Source Authority; no production confirm."
+      },
+      {
+        "definitionId": "definition.dormitory.operationRestoreConfirm.v1",
+        "businessLineId": "dormitory",
+        "sliceId": "Accommodation.ResourceOperationStatus",
+        "workspaceId": "W-DORM-RESOURCE-OPERATION-STATUS",
+        "workItemType": "Dorm.OperationRestoreConfirm",
+        "commandType": "OperationRestore.Confirm",
+        "ownerSlice": "Accommodation.ResourceOperationStatus",
+        "migrationRefs": [
+          {
+            "type": "sourceCardId",
+            "value": "cert.restoreOperation",
+            "readOnly": true,
+            "executable": false,
+            "affectsAdmission": false,
+            "affectsRuntimeConfirm": false,
+            "affectsBusinessIdentity": false,
+            "affectsLedger": false,
+            "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+          }
+        ],
+        "allowedFacts": [
+          "OperationRestore",
+          "RoomOperationStatus",
+          "BedOperationStatus",
+          "OperationEvidence",
+          "StatusHistory",
+          "EvidenceObject",
+          "DomainEvent",
+          "CommandSubmission"
+        ],
+        "forbiddenFacts": [
+          "RatePlan",
+          "Quote",
+          "Reservation",
+          "Stay",
+          "Payment",
+          "Deposit",
+          "DepositAccount",
+          "Refund",
+          "LedgerEntry",
+          "LedgerTransaction",
+          "PaymentAllocation",
+          "AmountBasis",
+          "MoneyBasis",
+          "FinancialFact",
+          "FinanceReceipt",
+          "DepositEntry"
+        ],
+        "fieldContractRef": "field.dormitory.scenario2.operationRestoreConfirm.v1",
+        "evidencePolicyRef": "evidence.dormitory.scenario2.restore-operation.v1",
+        "riskPolicyRef": "risk.dormitory.standard.v1",
+        "ledgerPolicyRef": "ledger.none.v1",
+        "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+        "surfacePolicyRef": "surface.mobile.work.dormitory-scenario2-restore-operation",
+        "productionConfirmAllowed": false,
+        "definitionMode": "oam-certification-current",
+        "removalImpact": "Generated from Dormitory Scenario 2 Source Authority; no production confirm."
+      }
+    ]
+  },
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "commandsImplemented": [
+      "Dorm.OperationInspectionConfirm",
+      "Dorm.OperationStatusChangeConfirm",
+      "Dorm.OperationBlockerUpdate",
+      "Dorm.OperationRestoreConfirm"
+    ],
+    "mustSupportZh": [
+      "幂等提交",
+      "并发版本检查",
+      "上游基础就绪检查",
+      "状态流转检查",
+      "证据完整性检查",
+      "未关闭阻断阻断可运营",
+      "伪造内部引用阻断",
+      "失败无副作用"
+    ],
+    "failureNoSideEffectTargets": [
+      "CommandSubmission",
+      "DomainEvent",
+      "Outbox",
+      "Projection",
+      "Lens",
+      "Search",
+      "Dashboard",
+      "Ledger"
+    ],
+    "forbiddenRuntimeWritesZh": [
+      "房间建档",
+      "床位组建档",
+      "基础就绪确认",
+      "价格",
+      "报价",
+      "预订",
+      "入住",
+      "收款",
+      "押金",
+      "退款",
+      "账务"
+    ]
+  },
+  "upstream": {
+    "allowedSourcePackageNo": 1,
+    "allowedSourcePackageNameZh": "房源建档与基础就绪",
+    "requiredReadonlyInputs": [
+      "房间摘要",
+      "床位组摘要",
+      "基础就绪摘要",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用"
+    ],
+    "upstreamWriteBackAllowed": false,
+    "mustNotRequireRefillZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。",
+    "baseReadyRequiredZh": "只有场景包 1 已完成基础就绪确认的房间或床位组才允许进入房源运营就绪与状态维护。"
+  },
+  "downstream": {
+    "allowedConsumerPackageNo": 3,
+    "allowedConsumerPackageNameZh": "住宿商品与价格",
+    "handoffOutputs": [
+      "房间/床位运营状态摘要",
+      "阻断原因",
+      "预计恢复时间",
+      "可否进入价格维护",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用"
+    ],
+    "forbiddenOutputsZh": [
+      "价格",
+      "报价",
+      "预订",
+      "入住",
+      "收款",
+      "押金",
+      "退款",
+      "账务",
+      "可报价",
+      "可预订"
+    ],
+    "downstreamNoRefillRuleZh": "场景包 3 只能读取运营状态摘要、阻断原因、预计恢复时间、可否进入价格维护、证据摘要、状态历史和只读对象引用，不得要求用户重新填写场景包 1 或场景包 2 的字段。"
+  },
+  "noGo": {
+    "businessFeatureDevelopmentAllowed": false,
+    "businessGoLiveAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO",
+    "reasonZh": "本 Source 只完成场景包 2 精准落地闭环，不授予生产发布、业务上线或 final GO。"
+  }
+}

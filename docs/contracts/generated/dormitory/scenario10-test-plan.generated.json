@@ -1,0 +1,147 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario10-testPlan.generated",
+  "version": "oam.dormitory-scenario10-testPlan.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario10-cancel-noshow-refund-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario10-cancel-noshow-refund-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:dcf41b54839e673cf20fdce8624cfcdcb96b2d4e00587daf264cf1548990751c",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario10-cancel-noshow-refund.authority.json",
+      "digest": "sha256:64a4732f01f0d570eb336b2744aad0bfa475db887d30917d7c07a369b2f26de0"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:64a4732f01f0d570eb336b2744aad0bfa475db887d30917d7c07a369b2f26de0",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario10.CancelNoShowRefund",
+  "scenarioPackageNo": 10,
+  "scenarioId": "lodging.cancel-noshow-refund-intake",
+  "outputContentDigest": "sha256:cdb0bf1c5f8da081986eed4a132c04265738804170be607310d4b266530bafb7",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "取消、未到店与退款处理",
+  "businessGoalZh": "承接场景包 5 的预订确认摘要、场景包 6 的收款/押金/担保摘要、场景包 7 的入住状态摘要和场景包 9 的退房结算意向，处理预订取消、客户未到店、取消费/未到店费计算、退款或扣费申请、库存释放请求、客户确认和证据留存。",
+  "sourceScenarioDigest": "sha256:64a4732f01f0d570eb336b2744aad0bfa475db887d30917d7c07a369b2f26de0",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario10.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "CancellationCase",
+      "NoShowCase",
+      "ReservationClosureSnapshot",
+      "CancellationPolicySnapshot",
+      "PaymentDepositSnapshot",
+      "RefundCalculationDraft",
+      "RefundRequestIntent",
+      "CancellationFeeIntent",
+      "ForfeitOrFeeIntent",
+      "InventoryReleaseRequest",
+      "CustomerConfirmationRecord",
+      "CustomerNotificationRecord",
+      "FinanceProcessingRequest",
+      "CancellationEvidence",
+      "CancellationStatusHistory"
+    ],
+    "searchReadModel": [
+      "取消、未到店与退款处理",
+      "取消/未到店关闭摘要",
+      "政策计算摘要",
+      "退款/扣费申请",
+      "库存释放请求",
+      "客户确认摘要",
+      "财务处理请求",
+      "证据摘要",
+      "只读对象引用",
+      "取消/未到店摘要"
+    ],
+    "noRefillRuleZh": "场景包 10 只能读取预订、财务、入住状态和退房结算意向摘要，不得要求用户重新填写已确认预订、收款押金或退房字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "positiveBrowserTestPlan": [
+    "从预订详情进入客户取消。",
+    "填写取消原因和客户确认。",
+    "查看取消政策和退款/扣费计算。",
+    "确认库存释放请求。",
+    "提交退款/扣费财务处理请求。",
+    "确认取消。",
+    "查看取消结果和财务处理状态。",
+    "从今日未到店任务进入。",
+    "确认未到店。",
+    "计算未到店费。",
+    "释放库存并生成财务处理请求。",
+    "查看今日、工作项、搜索、我的入口表现。"
+  ],
+  "negativeBrowserTestPlan": [
+    "无有效预订取消。",
+    "已入住预订取消。",
+    "已退房订单取消。",
+    "已取消重复取消。",
+    "未到店时间未到就关闭。",
+    "缺客户确认。",
+    "存在争议直接关闭。",
+    "金额无政策来源。",
+    "用户手填最终退款金额。",
+    "释放非本预订资源。",
+    "伪造 reservationId/refundId/paymentId/depositId/ledgerEntryId。",
+    "搜索结果直接写取消。",
+    "取消后直接退款入账。",
+    "重复提交。",
+    "并发取消同一预订。"
+  ],
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "enter-cancel-noshow-processing": [
+        "有效预订摘要",
+        "收款押金摘要"
+      ],
+      "reason-and-customer-confirmation": [
+        "聊天记录或电话记录",
+        "客户确认或内部审批证据"
+      ],
+      "policy-and-amount-calculation": [
+        "取消政策快照",
+        "价格快照",
+        "已收/押金摘要"
+      ],
+      "inventory-release-confirmation": [
+        "库存释放确认证据",
+        "预订绑定资源和日期范围"
+      ],
+      "finance-processing-request": [
+        "政策计算摘要",
+        "客户确认摘要",
+        "财务处理请求证据"
+      ],
+      "confirm-cancellation-or-noshow-closure": [
+        "客户确认摘要",
+        "政策计算摘要",
+        "库存释放请求",
+        "财务处理请求"
+      ],
+      "result-and-follow-up": [
+        "客户通知证据",
+        "财务退回补证或纠错证据"
+      ]
+    },
+    "screenshotAnalysisRequired": true,
+    "noSideEffectsProofRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "screenshotAnalysisRequired": true,
+  "noSideEffectsProofRequired": true,
+  "localEvidencePassAllowed": true
+}

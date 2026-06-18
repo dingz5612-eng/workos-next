@@ -1,0 +1,179 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-control.generated",
+  "version": "oam.dormitory-13-scenario-control.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:206a7609fdae45bdae06d121cf337ad49e02575acc296d975af6fecc12ccdd21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    }
+  ],
+  "sourceContentDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:326499938af93c704844aaea813e4a7c2008b0a8e7d63d04c7773dd5045817dd",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "scopeZh": "住宿经营 13 场景总控唯一业务供应链权威。后续场景包 1-13 必须从本文件和各场景 Source Authority 派生；旧场景包只能作为迁移映射和证据参考。",
+  "layerModel": {
+    "mainOperatingChain": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "horizontalSupportChain": [
+      11,
+      12
+    ],
+    "readonlyGovernanceChain": [
+      13
+    ],
+    "rules": [
+      "场景 11 和场景 12 是横向能力，不需要等到场景 10 完成才使用。",
+      "场景 13 只能读取快照、指标、审计证据和行动计划，不得写业务事实。",
+      "下游只能读取上游完成摘要，不得要求用户重新填写已确认字段。"
+    ]
+  },
+  "operationExperienceContract": {
+    "version": "oam.dormitory.operation-experience-contract.v1",
+    "sourceAuthorityRole": "business-work-surface-contract",
+    "appliesToScenarioNos": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "purposeZh": "每个住宿场景步骤都必须声明当前业务对象、页面只读上下文、真正可编辑字段、固定选择、金额语义、合法动作、上下游承接和搜索阅读模型。",
+    "requiredStepFields": [
+      "primaryBusinessObject",
+      "requiredReadContext",
+      "editableInputs",
+      "fixedSelections",
+      "financialContext",
+      "legalActions",
+      "handoffSummary",
+      "searchReadModel"
+    ],
+    "rules": {
+      "readContextMustNotBeUserInput": true,
+      "legalActionsMustNotEnterFormFields": true,
+      "fixedSelectionsRequireOptionSet": true,
+      "amountRequiresCurrencyBusinessObjectDirectionAndStage": true,
+      "searchReadModelUsesBusinessLanguage": true,
+      "handoffMustDeclareNoRefillForUpstreamReadonly": true,
+      "labelsAndSubmittedValuesSeparatedForThreeLanguages": true,
+      "auditInternalForbiddenOnBusinessSurface": true
+    },
+    "paymentBaselineZh": [
+      "客户信息",
+      "联系电话",
+      "预订号",
+      "入住日期",
+      "离店日期",
+      "人数",
+      "房间/床位",
+      "价格快照",
+      "应收项目",
+      "已收金额",
+      "本次金额",
+      "剩余待收",
+      "币种",
+      "凭证要求"
+    ],
+    "finalSafety": {
+      "productionConfirmAllowed": false,
+      "releaseAuthority": false,
+      "finalGoNoGo": "NO_GO"
+    }
+  },
+  "entryAdmissionContract": {
+    "version": "oam.dormitory.entry-admission-contract.v1",
+    "objects": [
+      "EntryResult",
+      "SearchResult",
+      "WorkItem"
+    ],
+    "requiredFields": [
+      "businessTitle",
+      "businessSummary",
+      "legalActions",
+      "admissionDecision",
+      "nextAction",
+      "cannotSubmitReason",
+      "readonlyReason",
+      "sourceScenario"
+    ],
+    "entryPages": [
+      "today",
+      "workItems",
+      "search",
+      "mine",
+      "detail",
+      "correction"
+    ],
+    "resolverChain": [
+      "LegalAction Resolver",
+      "Admission Attach",
+      "Runtime Prepare",
+      "WorkItem"
+    ],
+    "rules": {
+      "frontendButtonJudgementForbidden": true,
+      "searchReadonlyOnly": true,
+      "searchLearningOnlyForbidden": true,
+      "correctionRequiresAdmission": true,
+      "oldWStayCurrentEntryForbidden": true,
+      "writeFactsOnlyThroughOperationsRuntime": true
+    },
+    "legalActionFields": [
+      "action",
+      "label",
+      "view",
+      "allowed",
+      "writeBusinessFact",
+      "admissionDecision"
+    ],
+    "decisionCopy": {
+      "cannotSubmitReasonZh": "当前不能提交时，必须显示业务可懂原因。",
+      "readonlyReasonZh": "只读入口必须说明只能查看或只能跳转合法动作。",
+      "nextActionZh": "下一步必须是业务动作，不得显示内部编号或技术状态。"
+    },
+    "sourceScenarioRuleZh": "入口必须声明来自哪个 13 场景；搜索、今日、工作项、我的和更正入口不得把旧 W-STAY 包当当前主链。"
+  },
+  "runtimeConsumptionBoundary": {
+    "runtime": "只消费总控 generated 合同和各场景 generated 合同来执行命令与校验。",
+    "surface": "只展示、解释、跳转和提交合法动作。",
+    "readModelSearchDashboardReport": "只读消费，不写业务事实。",
+    "financeGate": "独占账务真值。",
+    "forbidden": "runtime、surface、测试脚本不得绕过总控硬编码业务规则。"
+  },
+  "finalSafety": {
+    "businessFeatureDevelopmentAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

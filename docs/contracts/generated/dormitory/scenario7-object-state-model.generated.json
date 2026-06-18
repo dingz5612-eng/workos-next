@@ -1,0 +1,301 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario7-objectStateModel.generated",
+  "version": "oam.dormitory-scenario7-objectStateModel.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario7-check-in-processing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario7-check-in-processing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:288b527a49cfb6fcb1a19b854dcb05468e92b3dfbc4c50796d5ffd0369e6b311",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario7-check-in-processing.authority.json",
+      "digest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario7.CheckInProcessing",
+  "scenarioPackageNo": 7,
+  "scenarioId": "lodging.check-in-processing",
+  "outputContentDigest": "sha256:2cbed9477108d71d92491be17315127dfa9f2be5d19ef87a0c82ae99ae820785",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "入住办理",
+  "businessGoalZh": "承接已确认预订、财务确认摘要和房源运营状态摘要，核验客户到店、身份信息、入住协议、预订信息、房间/床位当前可入住状态后，生成入住记录、占用记录和入住凭证。",
+  "sourceScenarioDigest": "sha256:9a30f7d321b347956dd12381e84a5620bed5e67f09079dba6701eb27d2cba512",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario7.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "CheckInCase",
+      "ArrivingGuest",
+      "ResidentProfile",
+      "IdentityVerification",
+      "Stay",
+      "RoomBedOccupancy",
+      "CheckInAgreement",
+      "AccessCredential",
+      "CheckInSnapshot",
+      "CheckInEvidence",
+      "CheckInStatusHistory"
+    ],
+    "searchReadModel": [
+      "入住办理",
+      "入住记录摘要",
+      "住客摘要",
+      "房间/床位占用摘要",
+      "入住凭证摘要",
+      "协议摘要",
+      "身份核验摘要",
+      "证据摘要",
+      "只读对象引用",
+      "占用摘要",
+      "凭证摘要"
+    ],
+    "noRefillRuleZh": "场景包 7 只能读取预订、财务、价格和运营状态只读摘要，不得要求用户重新填写已确认的预订、价格或财务字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "objects": [
+    {
+      "objectName": "CheckInCase",
+      "businessNameZh": "入住办理单",
+      "descriptionZh": "承接已确认预订并组织到店、身份、协议、财务摘要、房间/床位交付和确认入住的办理对象。",
+      "ownedByScenarioPackageNo": 7,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "credentialHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "ArrivingGuest",
+      "businessNameZh": "到店入住人",
+      "descriptionZh": "实际到店办理入住的客户或住客信息，必须与预订匹配或有审批证据。",
+      "ownedByScenarioPackageNo": 7,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "credentialHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "ResidentProfile",
+      "businessNameZh": "住客档案",
+      "descriptionZh": "入住后形成的住客业务档案，只展示业务可读名称和脱敏证件信息。",
+      "ownedByScenarioPackageNo": 7,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "credentialHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "IdentityVerification",
+      "businessNameZh": "身份核验",
+      "descriptionZh": "证件类型、证件号码脱敏、证件照片/扫描件、本人确认、授权同意和核验结论。",
+      "ownedByScenarioPackageNo": 7,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "credentialHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "Stay",
+      "businessNameZh": "入住记录",
+      "descriptionZh": "确认入住成功后生成的在住事实和系统入住记录号。",
+      "ownedByScenarioPackageNo": 7,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "credentialHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "RoomBedOccupancy",
+      "businessNameZh": "房间/床位占用",
+      "descriptionZh": "确认入住成功后形成的房间/床位在住占用绑定；同一日期范围不得重复占用。",
+      "ownedByScenarioPackageNo": 7,
+      "internalMigrationAlias": "OccupancyBinding",
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "credentialHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CheckInAgreement",
+      "businessNameZh": "入住协议",
+      "descriptionZh": "入住协议版本、签署记录、客户确认凭证和协议确认结论。",
+      "ownedByScenarioPackageNo": 7,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "credentialHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "AccessCredential",
+      "businessNameZh": "入住凭证",
+      "descriptionZh": "钥匙、门卡、门禁码、入住单等凭证发放记录；未成功入住不得发放有效入住凭证。",
+      "ownedByScenarioPackageNo": 7,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "credentialHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CheckInSnapshot",
+      "businessNameZh": "入住确认快照",
+      "descriptionZh": "住客、预订、日期、房间/床位、财务摘要、协议摘要、交付摘要和证据摘要的确认快照。",
+      "ownedByScenarioPackageNo": 7,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "credentialHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CheckInEvidence",
+      "businessNameZh": "入住证据",
+      "descriptionZh": "证件、本人确认、协议签署、交付、财务摘要、凭证发放等证据绑定。",
+      "ownedByScenarioPackageNo": 7,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "credentialHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "CheckInStatusHistory",
+      "businessNameZh": "入住状态历史",
+      "descriptionZh": "待到店、身份核验、协议财务复核、房源复核、确认入住、凭证发放、人工复核和纠错状态历史。",
+      "ownedByScenarioPackageNo": 7,
+      "requiredLifecycle": [
+        "currentState",
+        "versionHistory",
+        "evidenceHistory",
+        "credentialHistory",
+        "legalNextActions"
+      ]
+    }
+  ],
+  "checkInStatusOptions": [
+    "待到店",
+    "待身份核验",
+    "待协议确认",
+    "待财务补齐",
+    "待房源复核",
+    "可办理入住",
+    "已入住",
+    "入住失败",
+    "需人工复核",
+    "凭证待发放",
+    "凭证已发放"
+  ],
+  "stateLayering": {
+    "scenario5StatusZh": [
+      "已预订"
+    ],
+    "scenario6StatusZh": [
+      "财务已确认",
+      "押金已确认",
+      "担保已确认",
+      "剩余待收"
+    ],
+    "scenario7StatusZh": [
+      "待到店",
+      "待身份核验",
+      "待协议确认",
+      "待财务补齐",
+      "待房源复核",
+      "可办理入住",
+      "已入住",
+      "入住失败",
+      "需人工复核",
+      "凭证待发放",
+      "凭证已发放"
+    ],
+    "scenario8StatusZh": [
+      "在住服务"
+    ],
+    "scenario9StatusZh": [
+      "退房"
+    ],
+    "forbiddenStateLeapZh": [
+      "已入住不得解释为已结清。",
+      "已入住不得解释为押金可退。",
+      "已入住不得解释为房源恢复。",
+      "未成功入住不得发放有效入住凭证。"
+    ]
+  },
+  "invariants": [
+    "确认入住必须同时满足预订有效、未取消、未过期、未转入住。",
+    "房间/床位必须仍可入住，且未维修、停售、暂停或异常。",
+    "同一房间/床位同一日期范围不得存在其他有效在住占用。",
+    "身份核验必须通过。",
+    "入住协议必须确认。",
+    "必要财务摘要必须满足入住规则；未满足时不得普通入住，只能走负责人例外审批并留证据。",
+    "入住记录号由系统生成，用户不得手填。",
+    "入住成功后资源状态必须变为“在住占用”。",
+    "入住成功后预订状态必须变为“已转入住”。",
+    "失败路径不得生成 Stay，不得占用床位，不得发放入住凭证，不得写账。",
+    "未成功入住不得发放有效入住凭证。",
+    "已入住不等于已结清。",
+    "已入住不等于押金可退。",
+    "已入住不等于房源恢复。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。",
+    "确认失败不得写 Stay、Occupancy、Credential、CommandSubmission、DomainEvent、Outbox、Projection、Lens、Search、Dashboard、Ledger。"
+  ],
+  "checkInInvariantRule": {
+    "validReservationRequired": true,
+    "reservationCancelledBlocked": true,
+    "reservationExpiredBlocked": true,
+    "reservationAlreadyConvertedBlocked": true,
+    "resourceAvailableForCheckInRequired": true,
+    "resourceOccupiedBlocked": true,
+    "resourceMaintenanceSalePausedAbnormalBlocked": true,
+    "identityVerificationRequired": true,
+    "agreementConfirmationRequired": true,
+    "financeReadinessOrManagerExceptionRequired": true,
+    "managerExceptionRequiresEvidence": true,
+    "stayNoSystemGenerated": true,
+    "confirmedStayStartsOccupancy": true,
+    "reservationConvertedToStayOnSuccess": true,
+    "credentialRequiresSuccessfulStay": true,
+    "failureNoSideEffects": true
+  }
+}

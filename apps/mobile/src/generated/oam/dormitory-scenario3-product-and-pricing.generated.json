@@ -1,0 +1,2089 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario3-mobileMirror.generated",
+  "version": "oam.dormitory-scenario3-mobileMirror.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario3-product-and-pricing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario3-product-and-pricing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:60372bae88f8c69027805c9a2225b4939e2108913d66b25e962e445b68fcf5e1",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "digest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario3.ProductAndPricing",
+  "scenarioPackageNo": 3,
+  "scenarioId": "lodging.product-and-rate",
+  "outputContentDigest": "sha256:ef883b9932ef662ba47d4abd47574719c5b1fded653e569a14e115e5cbe95cc4",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "住宿商品与价格",
+  "businessGoalZh": "承接场景包 1 的房源摘要和场景包 2 已确认可运营且未阻断的运营状态摘要，配置住宿商品、售卖单位、商品资源绑定、价格方案、适用日期、价格版本及价格生效/停用记录。",
+  "sourceScenarioDigest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario3.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "AccommodationProduct",
+      "SellableUnit",
+      "ProductResourceBinding",
+      "RatePlan",
+      "RateRule",
+      "PriceCalendar",
+      "PriceVersion",
+      "PriceEvidence",
+      "PriceStatusHistory"
+    ],
+    "searchReadModel": [
+      "住宿商品与价格",
+      "商品摘要",
+      "价格方案摘要",
+      "价格日历摘要",
+      "价格版本历史",
+      "可否进入询价报价",
+      "证据摘要",
+      "只读对象引用",
+      "价格版本和价格日历摘要"
+    ],
+    "noRefillRuleZh": "场景包 3 只能读取场景包 1 和场景包 2 的只读摘要，不得要求用户重新填写房间、床位组、基础就绪或运营状态字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "consumer": "surface",
+  "surfaceNavigation": {
+    "pages": [
+      "商品列表",
+      "商品详情",
+      "商品新建页",
+      "价格方案页",
+      "价格日历页",
+      "价格版本历史页",
+      "审核生效页",
+      "停用/作废入口"
+    ],
+    "todayZh": "今日只展示今天需要处理的被动任务，例如待审核价格、今日生效价格、即将失效价格、价格冲突待处理。",
+    "workItemsZh": "工作项展示全部被动任务池。",
+    "searchZh": "搜索可以查房间、床位、商品、价格方案、日期、状态，但搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "pageMustShowZh": [
+      "当前价格状态",
+      "适用范围",
+      "版本",
+      "日期",
+      "缺失项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": [
+      {
+        "state": "draft",
+        "buttonsZh": [
+          "继续填写",
+          "提交审核"
+        ]
+      },
+      {
+        "state": "pending_review",
+        "buttonsZh": [
+          "审核通过",
+          "退回修改"
+        ]
+      },
+      {
+        "state": "effective",
+        "buttonsZh": [
+          "新建调价版本",
+          "停用"
+        ]
+      },
+      {
+        "state": "disabled",
+        "buttonsZh": [
+          "查看历史",
+          "重新建版本"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "可报价",
+      "可预订",
+      "已预订",
+      "已锁定",
+      "已入住",
+      "已收款",
+      "final GO",
+      "生产发布",
+      "RatePlanConfirm",
+      "resource-saleability",
+      "lead-reservation",
+      "golden-chain"
+    ]
+  },
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "select-operable-resource",
+      "nameZh": "选择可运营房源",
+      "commandId": "Dorm.PriceResourceSelect",
+      "commandBusinessNameZh": "选择可运营房源",
+      "userSees": [
+        "楼栋/区域",
+        "房间号",
+        "床位列表",
+        "当前运营状态",
+        "可否进入价格维护",
+        "阻断原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "证据摘要",
+        "商品摘要",
+        "价格方案摘要"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "resourceScope",
+        "targetRoomOrBed",
+        "sellableResourceSelection"
+      ],
+      "userUploadedOrBoundEvidence": [],
+      "systemGeneratedFields": [
+        "resourceRef",
+        "operationStatusSnapshotRef",
+        "sourceScenarioRef",
+        "resourceScope"
+      ],
+      "validations": [
+        "只能选择场景包 2 已确认可运营且未被阻断的房间或床位。",
+        "用户不得填写 roomId、bedId、stableRef。",
+        "选择必须明确为整房、指定床位或床位组。"
+      ],
+      "outputs": [
+        "商品资源选择草稿"
+      ],
+      "primaryBusinessObject": "AccommodationProduct",
+      "requiredReadContext": [
+        "楼栋/区域",
+        "房间号",
+        "床位列表",
+        "当前运营状态",
+        "可否进入价格维护",
+        "阻断原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "证据摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "状态历史",
+        "只读对象引用"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [
+        "resourceScope",
+        "targetRoomOrBed",
+        "sellableResourceSelection"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "价格方案/价格版本",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "可否进入价格维护",
+          "价格方案摘要"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "选择可运营房源",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "房间/床位运营状态摘要",
+          "阻断原因",
+          "可否进入价格维护",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用",
+          "运营状态摘要"
+        ],
+        "to": [
+          "商品资源选择草稿",
+          "商品摘要",
+          "价格方案摘要",
+          "价格日历摘要",
+          "价格版本历史",
+          "可否进入询价报价",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 3 只能读取场景包 1 和场景包 2 的只读摘要，不得要求用户重新填写房间、床位组、基础就绪或运营状态字段。"
+      },
+      "searchReadModel": [
+        "住宿商品与价格",
+        "选择可运营房源",
+        "AccommodationProduct",
+        "楼栋/区域",
+        "房间号",
+        "床位列表",
+        "当前运营状态",
+        "可否进入价格维护",
+        "阻断原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "证据摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "商品资源选择草稿"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "define-accommodation-product",
+      "nameZh": "定义住宿商品",
+      "commandId": "Dorm.AccommodationProductConfirm",
+      "commandBusinessNameZh": "商品确认",
+      "userSees": [
+        "可运营房源摘要",
+        "售卖单位",
+        "适用房间/床位",
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "证据摘要",
+        "商品摘要",
+        "价格方案摘要"
+      ],
+      "userFilledFields": [
+        "productName",
+        "productDescription",
+        "targetGuestType",
+        "stayRuleSummary",
+        "productNotes"
+      ],
+      "userSelectedFields": [
+        "sellableUnit",
+        "resourceBindingSelection",
+        "productEnabled"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "商品定义证据",
+        "资源绑定证据"
+      ],
+      "systemGeneratedFields": [
+        "productRef",
+        "productCode",
+        "productVersion",
+        "createdBy",
+        "createdAt"
+      ],
+      "validations": [
+        "未可运营资源不得创建商品。",
+        "商品名称不能替代资源绑定。",
+        "售卖单位必填。"
+      ],
+      "outputs": [
+        "AccommodationProduct",
+        "ProductResourceBinding",
+        "SellableUnit"
+      ],
+      "primaryBusinessObject": "AccommodationProduct",
+      "requiredReadContext": [
+        "可运营房源摘要",
+        "售卖单位",
+        "适用房间/床位",
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "证据摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "状态历史",
+        "只读对象引用"
+      ],
+      "editableInputs": [
+        "productName",
+        "productDescription",
+        "targetGuestType",
+        "stayRuleSummary",
+        "productNotes"
+      ],
+      "fixedSelections": [
+        "sellableUnit",
+        "resourceBindingSelection",
+        "productEnabled"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "价格方案/价格版本",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "可否进入价格维护",
+          "价格方案摘要"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "定义住宿商品",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "房间/床位运营状态摘要",
+          "阻断原因",
+          "可否进入价格维护",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用",
+          "运营状态摘要"
+        ],
+        "to": [
+          "AccommodationProduct",
+          "ProductResourceBinding",
+          "SellableUnit",
+          "商品摘要",
+          "价格方案摘要",
+          "价格日历摘要",
+          "价格版本历史",
+          "可否进入询价报价",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 3 只能读取场景包 1 和场景包 2 的只读摘要，不得要求用户重新填写房间、床位组、基础就绪或运营状态字段。"
+      },
+      "searchReadModel": [
+        "住宿商品与价格",
+        "定义住宿商品",
+        "商品确认",
+        "AccommodationProduct",
+        "可运营房源摘要",
+        "售卖单位",
+        "适用房间/床位",
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "证据摘要",
+        "商品摘要",
+        "价格方案摘要"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "configure-rate-plan",
+      "nameZh": "配置价格方案",
+      "commandId": "Dorm.RatePlanDefinitionConfirm",
+      "commandBusinessNameZh": "价格方案确认",
+      "userSees": [
+        "商品摘要",
+        "资源绑定摘要",
+        "当前价格状态",
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "证据摘要",
+        "价格方案摘要",
+        "价格日历摘要"
+      ],
+      "userFilledFields": [
+        "ratePlanName",
+        "basePrice",
+        "currency",
+        "pricingPeriod",
+        "minimumStayPeriod",
+        "ratePlanNotes"
+      ],
+      "userSelectedFields": [
+        "pricingPeriodOption",
+        "pricingBasis",
+        "customerType",
+        "salesChannel"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "价格依据证据",
+        "审批材料"
+      ],
+      "systemGeneratedFields": [
+        "ratePlanRef",
+        "ratePlanVersion",
+        "pricingBasis",
+        "approvalState"
+      ],
+      "validations": [
+        "价格必须大于等于 0。",
+        "币种和计价周期必填。",
+        "不得把押金或收款写进价格方案。"
+      ],
+      "outputs": [
+        "RatePlan",
+        "RateRule"
+      ],
+      "primaryBusinessObject": "AccommodationProduct",
+      "requiredReadContext": [
+        "商品摘要",
+        "资源绑定摘要",
+        "当前价格状态",
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "证据摘要",
+        "价格方案摘要",
+        "价格日历摘要",
+        "状态历史",
+        "只读对象引用"
+      ],
+      "editableInputs": [
+        "ratePlanName",
+        "basePrice",
+        "currency",
+        "pricingPeriod",
+        "minimumStayPeriod",
+        "ratePlanNotes"
+      ],
+      "fixedSelections": [
+        "pricingPeriodOption",
+        "pricingBasis",
+        "customerType",
+        "salesChannel"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "价格方案/价格版本",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "当前价格状态",
+          "可否进入价格维护",
+          "价格方案摘要",
+          "价格日历摘要",
+          "basePrice",
+          "currency"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "配置价格方案",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "房间/床位运营状态摘要",
+          "阻断原因",
+          "可否进入价格维护",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用",
+          "运营状态摘要"
+        ],
+        "to": [
+          "RatePlan",
+          "RateRule",
+          "商品摘要",
+          "价格方案摘要",
+          "价格日历摘要",
+          "价格版本历史",
+          "可否进入询价报价",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 3 只能读取场景包 1 和场景包 2 的只读摘要，不得要求用户重新填写房间、床位组、基础就绪或运营状态字段。"
+      },
+      "searchReadModel": [
+        "住宿商品与价格",
+        "配置价格方案",
+        "价格方案确认",
+        "AccommodationProduct",
+        "商品摘要",
+        "资源绑定摘要",
+        "当前价格状态",
+        "不可提交原因",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "证据摘要",
+        "价格方案摘要",
+        "价格日历摘要"
+      ]
+    },
+    {
+      "stepNo": 4,
+      "stepId": "configure-price-calendar",
+      "nameZh": "配置适用日期和规则",
+      "commandId": "Dorm.PriceCalendarDraft",
+      "commandBusinessNameZh": "价格日历草稿",
+      "userSees": [
+        "价格方案摘要",
+        "已有价格版本",
+        "日期冲突提示",
+        "覆盖范围",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "证据摘要",
+        "商品摘要",
+        "价格日历摘要"
+      ],
+      "userFilledFields": [
+        "effectiveDate",
+        "expiryDate",
+        "specialDatePrice",
+        "disableReason"
+      ],
+      "userSelectedFields": [
+        "weekdayWeekendRule",
+        "holidayRule",
+        "longTermEffective",
+        "specificDateRange"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "日期规则证据",
+        "特殊价格证据"
+      ],
+      "systemGeneratedFields": [
+        "priceCalendarRef",
+        "priceVersionRef",
+        "effectiveFrom",
+        "effectiveTo"
+      ],
+      "systemCalculatedFields": [
+        "dateRangeConflict",
+        "priceCalendar",
+        "overridesExistingPrice"
+      ],
+      "validations": [
+        "日期不能倒置。",
+        "生效范围冲突必须阻断。",
+        "特殊日期价格不能小于 0。"
+      ],
+      "outputs": [
+        "PriceCalendar",
+        "PriceVersion draft"
+      ],
+      "primaryBusinessObject": "AccommodationProduct",
+      "requiredReadContext": [
+        "价格方案摘要",
+        "已有价格版本",
+        "日期冲突提示",
+        "覆盖范围",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "证据摘要",
+        "商品摘要",
+        "价格日历摘要",
+        "状态历史",
+        "只读对象引用"
+      ],
+      "editableInputs": [
+        "effectiveDate",
+        "expiryDate",
+        "specialDatePrice",
+        "disableReason"
+      ],
+      "fixedSelections": [
+        "weekdayWeekendRule",
+        "holidayRule",
+        "longTermEffective",
+        "specificDateRange"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "价格方案/价格版本",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格方案摘要",
+          "已有价格版本",
+          "可否进入价格维护",
+          "价格日历摘要",
+          "specialDatePrice",
+          "priceCalendar",
+          "overridesExistingPrice"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "配置适用日期和规则",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "房间/床位运营状态摘要",
+          "阻断原因",
+          "可否进入价格维护",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用",
+          "运营状态摘要"
+        ],
+        "to": [
+          "PriceCalendar",
+          "PriceVersion draft",
+          "商品摘要",
+          "价格方案摘要",
+          "价格日历摘要",
+          "价格版本历史",
+          "可否进入询价报价",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 3 只能读取场景包 1 和场景包 2 的只读摘要，不得要求用户重新填写房间、床位组、基础就绪或运营状态字段。"
+      },
+      "searchReadModel": [
+        "住宿商品与价格",
+        "配置适用日期和规则",
+        "价格日历草稿",
+        "AccommodationProduct",
+        "价格方案摘要",
+        "已有价格版本",
+        "日期冲突提示",
+        "覆盖范围",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "证据摘要",
+        "商品摘要",
+        "价格日历摘要"
+      ]
+    },
+    {
+      "stepNo": 5,
+      "stepId": "review-and-activate-price",
+      "nameZh": "审核与生效确认",
+      "commandId": "Dorm.PriceVersionActivate",
+      "commandBusinessNameZh": "价格版本生效",
+      "userSees": [
+        "商品",
+        "资源范围",
+        "价格",
+        "日期",
+        "版本",
+        "下游影响",
+        "证据摘要",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护"
+      ],
+      "userFilledFields": [
+        "approvalNotes"
+      ],
+      "userSelectedFields": [],
+      "userUploadedOrBoundEvidence": [
+        "审核证据",
+        "生效确认记录"
+      ],
+      "systemGeneratedFields": [
+        "productConfirmedRef",
+        "ratePlanConfirmedRef",
+        "priceVersionActivatedRef",
+        "evidenceBindingRef",
+        "projectionVersion"
+      ],
+      "validations": [
+        "审核生效必须有商品、资源绑定、价格方案、日期规则和必要证据。",
+        "已生效价格不得原地覆盖。",
+        "失败路径不得刷新报价可用读模型。"
+      ],
+      "outputs": [
+        "商品摘要",
+        "价格方案摘要",
+        "价格日历摘要",
+        "价格版本历史"
+      ],
+      "primaryBusinessObject": "AccommodationProduct",
+      "requiredReadContext": [
+        "商品",
+        "资源范围",
+        "价格",
+        "日期",
+        "版本",
+        "下游影响",
+        "证据摘要",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "状态历史",
+        "只读对象引用"
+      ],
+      "editableInputs": [
+        "approvalNotes"
+      ],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "价格方案/价格版本",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格",
+          "可否进入价格维护"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "审核与生效确认",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "房间/床位运营状态摘要",
+          "阻断原因",
+          "可否进入价格维护",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用",
+          "运营状态摘要"
+        ],
+        "to": [
+          "商品摘要",
+          "价格方案摘要",
+          "价格日历摘要",
+          "价格版本历史",
+          "可否进入询价报价",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 3 只能读取场景包 1 和场景包 2 的只读摘要，不得要求用户重新填写房间、床位组、基础就绪或运营状态字段。"
+      },
+      "searchReadModel": [
+        "住宿商品与价格",
+        "审核与生效确认",
+        "价格版本生效",
+        "AccommodationProduct",
+        "商品",
+        "资源范围",
+        "价格",
+        "日期",
+        "版本",
+        "下游影响",
+        "证据摘要",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护"
+      ]
+    },
+    {
+      "stepNo": 6,
+      "stepId": "price-maintenance",
+      "nameZh": "价格维护",
+      "commandId": "Dorm.PriceMaintenance",
+      "commandBusinessNameZh": "价格维护",
+      "userSees": [
+        "当前价格状态",
+        "适用范围",
+        "版本历史",
+        "证据历史",
+        "合法下一步动作",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "证据摘要",
+        "商品摘要"
+      ],
+      "userFilledFields": [
+        "adjustmentReason",
+        "newBasePrice",
+        "disableReason",
+        "voidReason",
+        "supplementEvidenceNotes"
+      ],
+      "userSelectedFields": [],
+      "userUploadedOrBoundEvidence": [
+        "调价证据",
+        "停用证据",
+        "作废证据",
+        "补充证据"
+      ],
+      "systemGeneratedFields": [
+        "newPriceVersionRef",
+        "previousPriceVersionRef",
+        "priceDisableRef",
+        "priceVoidRef",
+        "priceStatusHistoryRef"
+      ],
+      "validations": [
+        "已生效价格不得原地编辑。",
+        "新版本替代旧版本必须保留历史。",
+        "停用或作废必须有业务原因和证据。"
+      ],
+      "outputs": [
+        "价格版本历史",
+        "价格状态历史",
+        "证据摘要"
+      ],
+      "primaryBusinessObject": "AccommodationProduct",
+      "requiredReadContext": [
+        "当前价格状态",
+        "适用范围",
+        "版本历史",
+        "证据历史",
+        "合法下一步动作",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "证据摘要",
+        "商品摘要",
+        "状态历史",
+        "只读对象引用"
+      ],
+      "editableInputs": [
+        "adjustmentReason",
+        "newBasePrice",
+        "disableReason",
+        "voidReason",
+        "supplementEvidenceNotes"
+      ],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "价格方案/价格版本",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "当前价格状态",
+          "可否进入价格维护",
+          "newBasePrice"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "价格维护",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "createNewPriceVersion",
+          "labelZh": "createNewPriceVersion",
+          "labelKey": "scenario3.action.createNewPriceVersion.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.price-maintenance.createNewPriceVersion.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "disablePrice",
+          "labelZh": "disablePrice",
+          "labelKey": "scenario3.action.disablePrice.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.price-maintenance.disablePrice.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "voidDraft",
+          "labelZh": "voidDraft",
+          "labelKey": "scenario3.action.voidDraft.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.price-maintenance.voidDraft.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "supplementEvidence",
+          "labelZh": "supplementEvidence",
+          "labelKey": "scenario3.action.supplementEvidence.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.price-maintenance.supplementEvidence.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "correctionRequest",
+          "labelZh": "correctionRequest",
+          "labelKey": "scenario3.action.correctionRequest.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.price-maintenance.correctionRequest.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "房间摘要",
+          "床位组摘要",
+          "房间/床位运营状态摘要",
+          "阻断原因",
+          "可否进入价格维护",
+          "证据摘要",
+          "状态历史",
+          "只读对象引用",
+          "运营状态摘要"
+        ],
+        "to": [
+          "价格版本历史",
+          "价格状态历史",
+          "证据摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格日历摘要",
+          "可否进入询价报价",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 3 只能读取场景包 1 和场景包 2 的只读摘要，不得要求用户重新填写房间、床位组、基础就绪或运营状态字段。"
+      },
+      "searchReadModel": [
+        "住宿商品与价格",
+        "价格维护",
+        "AccommodationProduct",
+        "当前价格状态",
+        "适用范围",
+        "版本历史",
+        "证据历史",
+        "合法下一步动作",
+        "房间摘要",
+        "床位组摘要",
+        "房间/床位运营状态摘要",
+        "阻断原因",
+        "可否进入价格维护",
+        "证据摘要",
+        "商品摘要",
+        "价格版本历史"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“301 房间整房按晚价 180 元”“301-02 床位月租 1200 元”。",
+    "upstreamReadonly": [
+      "buildingArea",
+      "roomNo",
+      "bedList",
+      "operationStatus",
+      "canEnterPriceMaintenance",
+      "operationBlockerReason",
+      "operationEvidenceSummary",
+      "operationStatusHistory"
+    ],
+    "userFilled": [
+      "productName",
+      "productDescription",
+      "targetGuestType",
+      "stayRuleSummary",
+      "productNotes",
+      "ratePlanName",
+      "basePrice",
+      "currency",
+      "pricingPeriod",
+      "minimumStayPeriod",
+      "ratePlanNotes",
+      "effectiveDate",
+      "expiryDate",
+      "specialDatePrice",
+      "disableReason",
+      "approvalNotes",
+      "adjustmentReason",
+      "newBasePrice",
+      "voidReason",
+      "supplementEvidenceNotes"
+    ],
+    "userSelected": [
+      "resourceScope",
+      "targetRoomOrBed",
+      "sellableResourceSelection",
+      "sellableUnit",
+      "resourceBindingSelection",
+      "productEnabled",
+      "pricingPeriodOption",
+      "pricingBasis",
+      "customerType",
+      "salesChannel",
+      "weekdayWeekendRule",
+      "holidayRule",
+      "longTermEffective",
+      "specificDateRange"
+    ],
+    "userUploadedOrBoundEvidence": [
+      "商品定义证据",
+      "资源绑定证据",
+      "价格依据证据",
+      "审批材料",
+      "日期规则证据",
+      "特殊价格证据",
+      "审核证据",
+      "生效确认记录",
+      "调价证据",
+      "停用证据",
+      "作废证据",
+      "补充证据"
+    ],
+    "systemGenerated": [
+      "resourceRef",
+      "operationStatusSnapshotRef",
+      "sourceScenarioRef",
+      "productRef",
+      "productCode",
+      "productVersion",
+      "createdBy",
+      "createdAt",
+      "ratePlanRef",
+      "ratePlanVersion",
+      "approvalState",
+      "priceCalendarRef",
+      "priceVersionRef",
+      "effectiveFrom",
+      "effectiveTo",
+      "productConfirmedRef",
+      "ratePlanConfirmedRef",
+      "priceVersionActivatedRef",
+      "evidenceBindingRef",
+      "projectionVersion",
+      "newPriceVersionRef",
+      "previousPriceVersionRef",
+      "priceDisableRef",
+      "priceVoidRef",
+      "priceStatusHistoryRef",
+      "domainEventId",
+      "commandSubmissionRef"
+    ],
+    "systemCalculated": [
+      "dateRangeConflict",
+      "priceCalendar",
+      "overridesExistingPrice",
+      "cannotSubmitReasons",
+      "legalNextActions",
+      "canEnterInquiryQuote"
+    ],
+    "evidenceBound": [
+      "PriceEvidence",
+      "EvidenceBinding",
+      "evidenceEnvelopeRef"
+    ],
+    "internalAuditOnlyFields": [
+      "productRef",
+      "ratePlanRef",
+      "priceVersionRef",
+      "resourceRef",
+      "operationStatusSnapshotRef",
+      "evidenceBindingRef",
+      "commandSubmissionRef",
+      "domainEventId",
+      "projectionVersion",
+      "digest"
+    ],
+    "forbiddenUserInputFields": [
+      "productId",
+      "ratePlanId",
+      "priceVersionId",
+      "roomId",
+      "bedId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "fieldAuthority": {
+      "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#fieldAuthorityModel",
+      "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+      "businessInput": [
+        {
+          "fieldId": "productName",
+          "labelZh": "productName",
+          "control": "text",
+          "labelKey": "scenario3.field.productName.label",
+          "helpKey": "scenario3.field.productName.help",
+          "errorKey": "scenario3.field.productName.error"
+        },
+        {
+          "fieldId": "productDescription",
+          "labelZh": "productDescription",
+          "control": "textarea",
+          "labelKey": "scenario3.field.productDescription.label",
+          "helpKey": "scenario3.field.productDescription.help",
+          "errorKey": "scenario3.field.productDescription.error"
+        },
+        {
+          "fieldId": "targetGuestType",
+          "labelZh": "targetGuestType",
+          "control": "text",
+          "labelKey": "scenario3.field.targetGuestType.label",
+          "helpKey": "scenario3.field.targetGuestType.help",
+          "errorKey": "scenario3.field.targetGuestType.error"
+        },
+        {
+          "fieldId": "stayRuleSummary",
+          "labelZh": "stayRuleSummary",
+          "control": "text",
+          "labelKey": "scenario3.field.stayRuleSummary.label",
+          "helpKey": "scenario3.field.stayRuleSummary.help",
+          "errorKey": "scenario3.field.stayRuleSummary.error"
+        },
+        {
+          "fieldId": "productNotes",
+          "labelZh": "productNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.productNotes.label",
+          "helpKey": "scenario3.field.productNotes.help",
+          "errorKey": "scenario3.field.productNotes.error"
+        },
+        {
+          "fieldId": "ratePlanName",
+          "labelZh": "ratePlanName",
+          "control": "text",
+          "labelKey": "scenario3.field.ratePlanName.label",
+          "helpKey": "scenario3.field.ratePlanName.help",
+          "errorKey": "scenario3.field.ratePlanName.error"
+        },
+        {
+          "fieldId": "basePrice",
+          "labelZh": "basePrice",
+          "control": "number",
+          "labelKey": "scenario3.field.basePrice.label",
+          "helpKey": "scenario3.field.basePrice.help",
+          "errorKey": "scenario3.field.basePrice.error"
+        },
+        {
+          "fieldId": "currency",
+          "labelZh": "currency",
+          "control": "text",
+          "labelKey": "scenario3.field.currency.label",
+          "helpKey": "scenario3.field.currency.help",
+          "errorKey": "scenario3.field.currency.error"
+        },
+        {
+          "fieldId": "pricingPeriod",
+          "labelZh": "pricingPeriod",
+          "control": "text",
+          "labelKey": "scenario3.field.pricingPeriod.label",
+          "helpKey": "scenario3.field.pricingPeriod.help",
+          "errorKey": "scenario3.field.pricingPeriod.error"
+        },
+        {
+          "fieldId": "minimumStayPeriod",
+          "labelZh": "minimumStayPeriod",
+          "control": "text",
+          "labelKey": "scenario3.field.minimumStayPeriod.label",
+          "helpKey": "scenario3.field.minimumStayPeriod.help",
+          "errorKey": "scenario3.field.minimumStayPeriod.error"
+        },
+        {
+          "fieldId": "ratePlanNotes",
+          "labelZh": "ratePlanNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.ratePlanNotes.label",
+          "helpKey": "scenario3.field.ratePlanNotes.help",
+          "errorKey": "scenario3.field.ratePlanNotes.error"
+        },
+        {
+          "fieldId": "effectiveDate",
+          "labelZh": "effectiveDate",
+          "control": "text",
+          "labelKey": "scenario3.field.effectiveDate.label",
+          "helpKey": "scenario3.field.effectiveDate.help",
+          "errorKey": "scenario3.field.effectiveDate.error"
+        },
+        {
+          "fieldId": "expiryDate",
+          "labelZh": "expiryDate",
+          "control": "text",
+          "labelKey": "scenario3.field.expiryDate.label",
+          "helpKey": "scenario3.field.expiryDate.help",
+          "errorKey": "scenario3.field.expiryDate.error"
+        },
+        {
+          "fieldId": "specialDatePrice",
+          "labelZh": "specialDatePrice",
+          "control": "number",
+          "labelKey": "scenario3.field.specialDatePrice.label",
+          "helpKey": "scenario3.field.specialDatePrice.help",
+          "errorKey": "scenario3.field.specialDatePrice.error"
+        },
+        {
+          "fieldId": "disableReason",
+          "labelZh": "disableReason",
+          "control": "textarea",
+          "labelKey": "scenario3.field.disableReason.label",
+          "helpKey": "scenario3.field.disableReason.help",
+          "errorKey": "scenario3.field.disableReason.error"
+        },
+        {
+          "fieldId": "approvalNotes",
+          "labelZh": "approvalNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.approvalNotes.label",
+          "helpKey": "scenario3.field.approvalNotes.help",
+          "errorKey": "scenario3.field.approvalNotes.error"
+        },
+        {
+          "fieldId": "adjustmentReason",
+          "labelZh": "adjustmentReason",
+          "control": "textarea",
+          "labelKey": "scenario3.field.adjustmentReason.label",
+          "helpKey": "scenario3.field.adjustmentReason.help",
+          "errorKey": "scenario3.field.adjustmentReason.error"
+        },
+        {
+          "fieldId": "newBasePrice",
+          "labelZh": "newBasePrice",
+          "control": "number",
+          "labelKey": "scenario3.field.newBasePrice.label",
+          "helpKey": "scenario3.field.newBasePrice.help",
+          "errorKey": "scenario3.field.newBasePrice.error"
+        },
+        {
+          "fieldId": "voidReason",
+          "labelZh": "voidReason",
+          "control": "textarea",
+          "labelKey": "scenario3.field.voidReason.label",
+          "helpKey": "scenario3.field.voidReason.help",
+          "errorKey": "scenario3.field.voidReason.error"
+        },
+        {
+          "fieldId": "supplementEvidenceNotes",
+          "labelZh": "supplementEvidenceNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.supplementEvidenceNotes.label",
+          "helpKey": "scenario3.field.supplementEvidenceNotes.help",
+          "errorKey": "scenario3.field.supplementEvidenceNotes.error"
+        }
+      ],
+      "businessSelect": [
+        {
+          "fieldId": "resourceScope",
+          "labelZh": "resourceScope",
+          "control": "searchable-select",
+          "labelKey": "scenario3.field.resourceScope.label",
+          "helpKey": "scenario3.field.resourceScope.help",
+          "errorKey": "scenario3.field.resourceScope.error",
+          "optionSet": "option.resourceScope",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "targetRoomOrBed",
+          "labelZh": "targetRoomOrBed",
+          "control": "searchable-select",
+          "labelKey": "scenario3.field.targetRoomOrBed.label",
+          "helpKey": "scenario3.field.targetRoomOrBed.help",
+          "errorKey": "scenario3.field.targetRoomOrBed.error",
+          "optionSet": "option.targetRoomOrBed",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "sellableResourceSelection",
+          "labelZh": "sellableResourceSelection",
+          "control": "searchable-select",
+          "labelKey": "scenario3.field.sellableResourceSelection.label",
+          "helpKey": "scenario3.field.sellableResourceSelection.help",
+          "errorKey": "scenario3.field.sellableResourceSelection.error",
+          "optionSet": "option.sellableResourceSelection",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "sellableUnit",
+          "labelZh": "sellableUnit",
+          "control": "select",
+          "labelKey": "scenario3.field.sellableUnit.label",
+          "helpKey": "scenario3.field.sellableUnit.help",
+          "errorKey": "scenario3.field.sellableUnit.error",
+          "optionSet": "option.sellableUnit",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "resourceBindingSelection",
+          "labelZh": "resourceBindingSelection",
+          "control": "searchable-select",
+          "labelKey": "scenario3.field.resourceBindingSelection.label",
+          "helpKey": "scenario3.field.resourceBindingSelection.help",
+          "errorKey": "scenario3.field.resourceBindingSelection.error",
+          "optionSet": "option.resourceBindingSelection",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "productEnabled",
+          "labelZh": "productEnabled",
+          "control": "select",
+          "labelKey": "scenario3.field.productEnabled.label",
+          "helpKey": "scenario3.field.productEnabled.help",
+          "errorKey": "scenario3.field.productEnabled.error",
+          "optionSet": "option.productEnabled",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "pricingPeriodOption",
+          "labelZh": "pricingPeriodOption",
+          "control": "select",
+          "labelKey": "scenario3.field.pricingPeriodOption.label",
+          "helpKey": "scenario3.field.pricingPeriodOption.help",
+          "errorKey": "scenario3.field.pricingPeriodOption.error",
+          "optionSet": "option.pricingPeriodOption",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "pricingBasis",
+          "labelZh": "pricingBasis",
+          "control": "select",
+          "labelKey": "scenario3.field.pricingBasis.label",
+          "helpKey": "scenario3.field.pricingBasis.help",
+          "errorKey": "scenario3.field.pricingBasis.error",
+          "optionSet": "option.pricingBasis",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "customerType",
+          "labelZh": "customerType",
+          "control": "select",
+          "labelKey": "scenario3.field.customerType.label",
+          "helpKey": "scenario3.field.customerType.help",
+          "errorKey": "scenario3.field.customerType.error",
+          "optionSet": "option.customerType",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "salesChannel",
+          "labelZh": "salesChannel",
+          "control": "select",
+          "labelKey": "scenario3.field.salesChannel.label",
+          "helpKey": "scenario3.field.salesChannel.help",
+          "errorKey": "scenario3.field.salesChannel.error",
+          "optionSet": "option.salesChannel",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "weekdayWeekendRule",
+          "labelZh": "weekdayWeekendRule",
+          "control": "select",
+          "labelKey": "scenario3.field.weekdayWeekendRule.label",
+          "helpKey": "scenario3.field.weekdayWeekendRule.help",
+          "errorKey": "scenario3.field.weekdayWeekendRule.error",
+          "optionSet": "option.weekdayWeekendRule",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "holidayRule",
+          "labelZh": "holidayRule",
+          "control": "select",
+          "labelKey": "scenario3.field.holidayRule.label",
+          "helpKey": "scenario3.field.holidayRule.help",
+          "errorKey": "scenario3.field.holidayRule.error",
+          "optionSet": "option.holidayRule",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "longTermEffective",
+          "labelZh": "longTermEffective",
+          "control": "select",
+          "labelKey": "scenario3.field.longTermEffective.label",
+          "helpKey": "scenario3.field.longTermEffective.help",
+          "errorKey": "scenario3.field.longTermEffective.error",
+          "optionSet": "option.longTermEffective",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "specificDateRange",
+          "labelZh": "specificDateRange",
+          "control": "select",
+          "labelKey": "scenario3.field.specificDateRange.label",
+          "helpKey": "scenario3.field.specificDateRange.help",
+          "errorKey": "scenario3.field.specificDateRange.error",
+          "optionSet": "option.specificDateRange",
+          "submitValueSource": "stableValue"
+        }
+      ],
+      "systemDerived": [
+        {
+          "fieldId": "dateRangeConflict",
+          "labelZh": "dateRangeConflict",
+          "labelKey": "scenario3.field.dateRangeConflict.label",
+          "helpKey": "scenario3.field.dateRangeConflict.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "priceCalendar",
+          "labelZh": "priceCalendar",
+          "labelKey": "scenario3.field.priceCalendar.label",
+          "helpKey": "scenario3.field.priceCalendar.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "overridesExistingPrice",
+          "labelZh": "overridesExistingPrice",
+          "labelKey": "scenario3.field.overridesExistingPrice.label",
+          "helpKey": "scenario3.field.overridesExistingPrice.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "cannotSubmitReasons",
+          "labelZh": "cannotSubmitReasons",
+          "labelKey": "scenario3.field.cannotSubmitReasons.label",
+          "helpKey": "scenario3.field.cannotSubmitReasons.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "legalNextActions",
+          "labelZh": "legalNextActions",
+          "labelKey": "scenario3.field.legalNextActions.label",
+          "helpKey": "scenario3.field.legalNextActions.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "canEnterInquiryQuote",
+          "labelZh": "canEnterInquiryQuote",
+          "labelKey": "scenario3.field.canEnterInquiryQuote.label",
+          "helpKey": "scenario3.field.canEnterInquiryQuote.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        }
+      ],
+      "readOnlySummary": [
+        {
+          "fieldId": "buildingArea",
+          "labelZh": "buildingArea",
+          "labelKey": "scenario3.field.buildingArea.label",
+          "helpKey": "scenario3.field.buildingArea.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "roomNo",
+          "labelZh": "roomNo",
+          "labelKey": "scenario3.field.roomNo.label",
+          "helpKey": "scenario3.field.roomNo.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "bedList",
+          "labelZh": "bedList",
+          "labelKey": "scenario3.field.bedList.label",
+          "helpKey": "scenario3.field.bedList.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "operationStatus",
+          "labelZh": "operationStatus",
+          "labelKey": "scenario3.field.operationStatus.label",
+          "helpKey": "scenario3.field.operationStatus.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "canEnterPriceMaintenance",
+          "labelZh": "canEnterPriceMaintenance",
+          "labelKey": "scenario3.field.canEnterPriceMaintenance.label",
+          "helpKey": "scenario3.field.canEnterPriceMaintenance.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "operationBlockerReason",
+          "labelZh": "operationBlockerReason",
+          "labelKey": "scenario3.field.operationBlockerReason.label",
+          "helpKey": "scenario3.field.operationBlockerReason.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "operationEvidenceSummary",
+          "labelZh": "operationEvidenceSummary",
+          "labelKey": "scenario3.field.operationEvidenceSummary.label",
+          "helpKey": "scenario3.field.operationEvidenceSummary.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "operationStatusHistory",
+          "labelZh": "operationStatusHistory",
+          "labelKey": "scenario3.field.operationStatusHistory.label",
+          "helpKey": "scenario3.field.operationStatusHistory.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-9a992a59",
+          "labelZh": "房间摘要",
+          "labelKey": "scenario3.field.v-9a992a59.label",
+          "helpKey": "scenario3.field.v-9a992a59.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-108420f7",
+          "labelZh": "床位组摘要",
+          "labelKey": "scenario3.field.v-108420f7.label",
+          "helpKey": "scenario3.field.v-108420f7.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-5ac95c4f",
+          "labelZh": "房间/床位运营状态摘要",
+          "labelKey": "scenario3.field.v-5ac95c4f.label",
+          "helpKey": "scenario3.field.v-5ac95c4f.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-88a6893a",
+          "labelZh": "阻断原因",
+          "labelKey": "scenario3.field.v-88a6893a.label",
+          "helpKey": "scenario3.field.v-88a6893a.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-8bc84cbf",
+          "labelZh": "可否进入价格维护",
+          "labelKey": "scenario3.field.v-8bc84cbf.label",
+          "helpKey": "scenario3.field.v-8bc84cbf.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-f71ae921",
+          "labelZh": "证据摘要",
+          "labelKey": "scenario3.field.v-f71ae921.label",
+          "helpKey": "scenario3.field.v-f71ae921.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-fe5f4dd8",
+          "labelZh": "状态历史",
+          "labelKey": "scenario3.field.v-fe5f4dd8.label",
+          "helpKey": "scenario3.field.v-fe5f4dd8.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-cd66b0d5",
+          "labelZh": "只读对象引用",
+          "labelKey": "scenario3.field.v-cd66b0d5.label",
+          "helpKey": "scenario3.field.v-cd66b0d5.help",
+          "sourceScenario": "运营状态摘要"
+        },
+        {
+          "fieldId": "v-6acf9a48",
+          "labelZh": "运营状态摘要",
+          "labelKey": "scenario3.field.v-6acf9a48.label",
+          "helpKey": "scenario3.field.v-6acf9a48.help",
+          "sourceScenario": "运营状态摘要"
+        }
+      ],
+      "evidenceBinding": [
+        {
+          "fieldId": "evidence.v-a76e4fde",
+          "labelZh": "商品定义证据",
+          "labelKey": "scenario3.evidence.evidence.v-a76e4fde.label",
+          "helpKey": "scenario3.evidence.evidence.v-a76e4fde.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-fde40cb1",
+          "labelZh": "资源绑定证据",
+          "labelKey": "scenario3.evidence.evidence.v-fde40cb1.label",
+          "helpKey": "scenario3.evidence.evidence.v-fde40cb1.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-7f1c5156",
+          "labelZh": "价格依据证据",
+          "labelKey": "scenario3.evidence.evidence.v-7f1c5156.label",
+          "helpKey": "scenario3.evidence.evidence.v-7f1c5156.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-875ca47c",
+          "labelZh": "审批材料",
+          "labelKey": "scenario3.evidence.evidence.v-875ca47c.label",
+          "helpKey": "scenario3.evidence.evidence.v-875ca47c.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-ec455b41",
+          "labelZh": "日期规则证据",
+          "labelKey": "scenario3.evidence.evidence.v-ec455b41.label",
+          "helpKey": "scenario3.evidence.evidence.v-ec455b41.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-f4deba5a",
+          "labelZh": "特殊价格证据",
+          "labelKey": "scenario3.evidence.evidence.v-f4deba5a.label",
+          "helpKey": "scenario3.evidence.evidence.v-f4deba5a.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-4a6a558b",
+          "labelZh": "审核证据",
+          "labelKey": "scenario3.evidence.evidence.v-4a6a558b.label",
+          "helpKey": "scenario3.evidence.evidence.v-4a6a558b.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-9f87f64f",
+          "labelZh": "生效确认记录",
+          "labelKey": "scenario3.evidence.evidence.v-9f87f64f.label",
+          "helpKey": "scenario3.evidence.evidence.v-9f87f64f.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-3665a5fc",
+          "labelZh": "调价证据",
+          "labelKey": "scenario3.evidence.evidence.v-3665a5fc.label",
+          "helpKey": "scenario3.evidence.evidence.v-3665a5fc.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-05933c02",
+          "labelZh": "停用证据",
+          "labelKey": "scenario3.evidence.evidence.v-05933c02.label",
+          "helpKey": "scenario3.evidence.evidence.v-05933c02.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-8c0bc09b",
+          "labelZh": "作废证据",
+          "labelKey": "scenario3.evidence.evidence.v-8c0bc09b.label",
+          "helpKey": "scenario3.evidence.evidence.v-8c0bc09b.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-3f4291dc",
+          "labelZh": "补充证据",
+          "labelKey": "scenario3.evidence.evidence.v-3f4291dc.label",
+          "helpKey": "scenario3.evidence.evidence.v-3f4291dc.help",
+          "evidenceType": "businessEvidence"
+        }
+      ],
+      "legalAction": [
+        {
+          "fieldId": "createNewPriceVersion",
+          "labelZh": "createNewPriceVersion",
+          "labelKey": "scenario3.action.createNewPriceVersion.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.createNewPriceVersion.v1"
+        },
+        {
+          "fieldId": "disablePrice",
+          "labelZh": "disablePrice",
+          "labelKey": "scenario3.action.disablePrice.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.disablePrice.v1"
+        },
+        {
+          "fieldId": "voidDraft",
+          "labelZh": "voidDraft",
+          "labelKey": "scenario3.action.voidDraft.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.voidDraft.v1"
+        },
+        {
+          "fieldId": "supplementEvidence",
+          "labelZh": "supplementEvidence",
+          "labelKey": "scenario3.action.supplementEvidence.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.supplementEvidence.v1"
+        },
+        {
+          "fieldId": "correctionRequest",
+          "labelZh": "correctionRequest",
+          "labelKey": "scenario3.action.correctionRequest.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.correctionRequest.v1"
+        }
+      ],
+      "actionControl": [
+        {
+          "fieldId": "createNewPriceVersion",
+          "labelZh": "createNewPriceVersion",
+          "labelKey": "scenario3.action.createNewPriceVersion.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.createNewPriceVersion.v1"
+        },
+        {
+          "fieldId": "disablePrice",
+          "labelZh": "disablePrice",
+          "labelKey": "scenario3.action.disablePrice.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.disablePrice.v1"
+        },
+        {
+          "fieldId": "voidDraft",
+          "labelZh": "voidDraft",
+          "labelKey": "scenario3.action.voidDraft.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.voidDraft.v1"
+        },
+        {
+          "fieldId": "supplementEvidence",
+          "labelZh": "supplementEvidence",
+          "labelKey": "scenario3.action.supplementEvidence.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.supplementEvidence.v1"
+        },
+        {
+          "fieldId": "correctionRequest",
+          "labelZh": "correctionRequest",
+          "labelKey": "scenario3.action.correctionRequest.label",
+          "legalActionRef": "legalAction.dormitory.scenario3.correctionRequest.v1"
+        }
+      ],
+      "conditionalInput": [
+        {
+          "fieldId": "productDescription",
+          "labelZh": "productDescription",
+          "control": "textarea",
+          "labelKey": "scenario3.field.productDescription.label",
+          "helpKey": "scenario3.field.productDescription.help",
+          "errorKey": "scenario3.field.productDescription.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        },
+        {
+          "fieldId": "productNotes",
+          "labelZh": "productNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.productNotes.label",
+          "helpKey": "scenario3.field.productNotes.help",
+          "errorKey": "scenario3.field.productNotes.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        },
+        {
+          "fieldId": "ratePlanNotes",
+          "labelZh": "ratePlanNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.ratePlanNotes.label",
+          "helpKey": "scenario3.field.ratePlanNotes.help",
+          "errorKey": "scenario3.field.ratePlanNotes.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        },
+        {
+          "fieldId": "disableReason",
+          "labelZh": "disableReason",
+          "control": "textarea",
+          "labelKey": "scenario3.field.disableReason.label",
+          "helpKey": "scenario3.field.disableReason.help",
+          "errorKey": "scenario3.field.disableReason.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        },
+        {
+          "fieldId": "approvalNotes",
+          "labelZh": "approvalNotes",
+          "control": "textarea",
+          "labelKey": "scenario3.field.approvalNotes.label",
+          "helpKey": "scenario3.field.approvalNotes.help",
+          "errorKey": "scenario3.field.approvalNotes.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        },
+        {
+          "fieldId": "adjustmentReason",
+          "labelZh": "adjustmentReason",
+          "control": "textarea",
+          "labelKey": "scenario3.field.adjustmentReason.label",
+          "helpKey": "scenario3.field.adjustmentReason.help",
+          "errorKey": "scenario3.field.adjustmentReason.error",
+          "displayCondition": "when related exception, return, dispute, supplement, or manual review is selected",
+          "requiredCondition": "required only when the related exception, return, dispute, supplement, or manual review path is selected"
+        }
+      ],
+      "auditInternal": [
+        {
+          "fieldId": "productRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ratePlanRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceVersionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "resourceRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "operationStatusSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "evidenceBindingRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "commandSubmissionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "domainEventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "projectionVersion",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "digest",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "sourceScenarioRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceCalendarRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "productConfirmedRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ratePlanConfirmedRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceVersionActivatedRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "newPriceVersionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "previousPriceVersionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceDisableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceVoidRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceStatusHistoryRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "productId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ratePlanId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceVersionId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        }
+      ]
+    }
+  },
+  "priceStatusOptions": [
+    "价格草稿",
+    "待审核",
+    "已生效",
+    "已停用",
+    "已过期",
+    "已作废",
+    "需补充证据"
+  ],
+  "readSideOutputs": [
+    "商品摘要",
+    "价格方案摘要",
+    "价格日历摘要",
+    "价格版本历史",
+    "可否进入询价报价",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "forbiddenUserVisibleTermsZh": [
+    "可报价",
+    "可预订",
+    "已预订",
+    "已锁定",
+    "已入住",
+    "已收款",
+    "final GO",
+    "生产发布",
+    "RatePlanConfirm",
+    "resource-saleability",
+    "lead-reservation",
+    "golden-chain"
+  ],
+  "noGo": {
+    "businessFeatureDevelopmentAllowed": false,
+    "businessGoLiveAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO",
+    "reasonZh": "本 Source 只完成场景包 3 精准落地闭环，不授予生产发布、业务上线或 final GO。"
+  }
+}

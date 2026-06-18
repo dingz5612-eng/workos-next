@@ -1,11 +1,17 @@
 import { i18n } from "../i18n.js";
 import { selectRuntimeWorkspaces, selectWorkbenchQueue, selectWorkspaceById } from "./surfaceSelectors.js";
+import { normalizeOperationLifecycleState } from "../operationStatus.js";
 import { translateTerm } from "../termDictionary.js";
 
 export const terminalCardStatuses = new Set(["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"]);
+export const actionableCardStatuses = new Set(["ready", "blocked", "inProgress"]);
 
 export function isTerminalCardStatus(status) {
   return terminalCardStatuses.has(String(status || ""));
+}
+
+export function isActionableCardStatus(status) {
+  return actionableCardStatuses.has(normalizeOperationLifecycleState(status, ""));
 }
 
 export function tr(state, key) {
@@ -50,7 +56,7 @@ export function activeWorkspaceCard(item, selectedCardIndex, selectedCardId = ""
     const selected = item.cards.find((card) => card.id === selectedCardId);
     if (selected) return selected;
   }
-  const defaultIndex = item.cards.findIndex((card) => ["ready", "blocked", "inProgress"].includes(card.status));
+  const defaultIndex = item.cards.findIndex((card) => isActionableCardStatus(card.status));
   const activeIndex = Number.isInteger(selectedCardIndex) && selectedCardIndex >= 0 ? selectedCardIndex : defaultIndex;
   return item.cards[activeIndex >= 0 ? activeIndex : 0] || item.cards[0];
 }
@@ -60,7 +66,7 @@ export function isCardActionDisabled(card) {
 }
 
 export function activeCardForWorkspace(item) {
-  return item.cards.find((card) => ["ready", "blocked", "inProgress"].includes(card.status)) || item.cards[0];
+  return item.cards.find((card) => isActionableCardStatus(card.status)) || item.cards[0];
 }
 
 export function metric(value, label, ctx) {

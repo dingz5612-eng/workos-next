@@ -1,0 +1,261 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario11-objectStateModel.generated",
+  "version": "oam.dormitory-scenario11-objectStateModel.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario11-housekeeping-maintenance-outofservice-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario11-housekeeping-maintenance-outofservice-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:a174cf7da149c4f0ef295ed0b5c70d09a6358bc54a27fb161d62185dceb59ea4",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "digest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+  "scenarioPackageNo": 11,
+  "scenarioId": "lodging.housekeeping-maintenance-outofservice",
+  "outputContentDigest": "sha256:25a8173f43f024dd4ff7a6ac85ec886308b6b4f86cb1b29e8a102fa52577e516",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "房务、维修与停售协同",
+  "businessGoalZh": "承接场景包 2 的运营阻断、场景包 8 的在住服务请求、场景包 9 的退房资源待恢复、场景包 10 的释放后待处理资源，完成保洁、维修、检查、停售申请、恢复建议、作业证据和任务闭环。",
+  "sourceScenarioDigest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario11.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "ServiceWorkCase",
+      "HousekeepingTask",
+      "MaintenanceTask",
+      "InspectionTask",
+      "OutOfServiceRequest",
+      "WorkAssignment",
+      "WorkAssignee",
+      "WorkSchedule",
+      "WorkCompletion",
+      "WorkCompletionEvidence",
+      "WorkVerification",
+      "WorkVerificationResult",
+      "RecoveryRecommendation",
+      "ExpenseIntent",
+      "TaskEvidence",
+      "StatusHistory",
+      "WorkStatusHistory"
+    ],
+    "searchReadModel": [
+      "房务、维修与停售协同",
+      "房务/维修完成摘要",
+      "验收摘要",
+      "停售建议",
+      "恢复运营建议",
+      "费用意向",
+      "作业证据摘要",
+      "状态历史",
+      "只读对象引用",
+      "作业完成摘要",
+      "停售/恢复建议"
+    ],
+    "noRefillRuleZh": "场景包 11 只能读取上游摘要，不得要求用户重新填写场景包 2、8、9、10 已确认字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "objects": [
+    {
+      "objectName": "ServiceWorkCase",
+      "businessNameZh": "房务/维修处理单",
+      "descriptionZh": "承接合法来源摘要并组织保洁、维修、检查、停售或恢复建议的作业闭环。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "caseEnvelopeAppendOnly",
+      "requiredLifecycle": [
+        "currentState",
+        "statusHistory",
+        "evidenceHistory",
+        "verificationHistory",
+        "legalNextActions"
+      ]
+    },
+    {
+      "objectName": "HousekeepingTask",
+      "businessNameZh": "保洁任务",
+      "descriptionZh": "对房间或床位进行保洁处理、完成提交和验收。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyTask"
+    },
+    {
+      "objectName": "MaintenanceTask",
+      "businessNameZh": "维修任务",
+      "descriptionZh": "对房间、床位或设施问题进行维修处理、费用意向和验收。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyTask"
+    },
+    {
+      "objectName": "InspectionTask",
+      "businessNameZh": "检查任务",
+      "descriptionZh": "对房源恢复、服务问题或异常处理结果进行检查。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyTask"
+    },
+    {
+      "objectName": "OutOfServiceRequest",
+      "businessNameZh": "停售申请",
+      "descriptionZh": "建议场景包 2 对房间或床位进行停售、暂停开放或异常处理确认。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyRequest"
+    },
+    {
+      "objectName": "WorkAssignment",
+      "businessNameZh": "派工作业",
+      "descriptionZh": "记录作业类型、负责人、协作人、计划时间、优先级和影响范围。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyAssignment"
+    },
+    {
+      "objectName": "WorkAssignee",
+      "businessNameZh": "作业人员",
+      "descriptionZh": "负责人和协作人只作为作业承接人，不拥有运营状态或财务权威。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyAssignmentMember"
+    },
+    {
+      "objectName": "WorkSchedule",
+      "businessNameZh": "作业计划",
+      "descriptionZh": "计划开始、计划完成、预计恢复和延期记录。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlySchedule"
+    },
+    {
+      "objectName": "WorkCompletion",
+      "businessNameZh": "作业完成记录",
+      "descriptionZh": "完成说明、实际完成时间、处理结果和是否需复查。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyCompletion"
+    },
+    {
+      "objectName": "WorkCompletionEvidence",
+      "businessNameZh": "作业完成证据",
+      "descriptionZh": "完成照片、维修单、保洁记录、供应商凭证和前后对比。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyEvidence"
+    },
+    {
+      "objectName": "WorkVerification",
+      "businessNameZh": "验收确认",
+      "descriptionZh": "有权限角色对完成作业做验收通过、验收不通过、返工或转停售建议。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyVerification"
+    },
+    {
+      "objectName": "WorkVerificationResult",
+      "businessNameZh": "验收结果",
+      "descriptionZh": "验收结论、备注、未通过原因和返工要求。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyVerificationResult"
+    },
+    {
+      "objectName": "RecoveryRecommendation",
+      "businessNameZh": "恢复运营建议",
+      "descriptionZh": "向场景包 2 输出的恢复运营建议，不等于已恢复可运营。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyRecommendation"
+    },
+    {
+      "objectName": "ExpenseIntent",
+      "businessNameZh": "费用意向",
+      "descriptionZh": "维修材料、供应商或外包费用的 finance-gate/支出治理意向，不等于账务成本。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyIntent"
+    },
+    {
+      "objectName": "TaskEvidence",
+      "businessNameZh": "作业证据",
+      "descriptionZh": "现场照片、过程证据、完成证据、验收证据、费用凭证和纠错证据。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyEvidence"
+    },
+    {
+      "objectName": "StatusHistory",
+      "businessNameZh": "状态历史",
+      "descriptionZh": "房务、维修、检查、停售建议、恢复建议和费用意向的追加历史。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyHistory"
+    },
+    {
+      "objectName": "WorkStatusHistory",
+      "businessNameZh": "作业状态历史",
+      "descriptionZh": "作业状态、进度、验收、返工、关闭和纠错的追加历史。",
+      "ownedByScenarioPackageNo": 11,
+      "writeDisposition": "appendOnlyHistory"
+    }
+  ],
+  "workStatusOptions": [
+    "待派工",
+    "已派工",
+    "处理中",
+    "待验收",
+    "验收通过",
+    "验收不通过",
+    "返工中",
+    "建议停售",
+    "建议恢复",
+    "已关闭",
+    "需财务处理"
+  ],
+  "stateLayering": {
+    "operationStatusLayerZh": "运营状态由场景包 2 确认；场景包 11 只能输出停售建议或恢复运营建议。",
+    "inStayServiceLayerZh": "在住服务由场景包 8 发起；场景包 11 只能读取在住服务请求并输出作业结果。",
+    "checkoutRecoveryLayerZh": "退房待恢复由场景包 9 发起；场景包 11 只能执行作业和输出恢复建议。",
+    "releaseAfterCancelLayerZh": "取消释放后待处理资源由场景包 10 提供只读摘要；场景包 11 不能写库存或预订事实。",
+    "workExecutionLayerZh": "房务作业由场景包 11 执行，可产生待派工、已派工、处理中、待验收、验收通过、验收不通过、返工中、建议停售、建议恢复、已关闭、需财务处理。",
+    "nonEquivalenceZh": [
+      "验收通过不等于可运营。",
+      "建议恢复不等于已恢复。",
+      "维修费用意向不等于账务成本。",
+      "停售建议不等于运营状态已停售。"
+    ]
+  },
+  "invariants": [
+    "每个正式作业必须绑定合法来源：运营阻断、在住服务、退房待恢复、取消释放后待处理、人工巡检或负责人批准。",
+    "房间级作业影响整房；床位级作业只影响指定床位。",
+    "维修、停售、异常未关闭前，不得建议恢复。",
+    "作业完成必须有完成说明和证据；缺完成证据不得提交验收。",
+    "验收通过必须由有权限角色确认；验收通过只能输出恢复建议，不得直接改为可运营。",
+    "验收不通过必须生成返工或异常待处理。",
+    "费用意向只能交给 finance-gate 或支出治理场景，不得直接写账务成本。",
+    "查询、搜索、列表、看板、报表永远只读，不得写作业、运营、库存或财务事实。",
+    "失败路径不得关闭阻断、不得恢复运营、不得释放库存、不得写账，不得刷新错误 Projection/Search/Dashboard。"
+  ],
+  "housekeepingMaintenanceInvariantRule": {
+    "legalSourceRequired": true,
+    "sourceSummaryRequired": true,
+    "resourceScopeRequired": true,
+    "roomScopeAffectsWholeRoom": true,
+    "bedScopeAffectsOnlyBed": true,
+    "operationStatusOwnedByScenario2": true,
+    "completionEvidenceRequired": true,
+    "verificationAuthorizedRequired": true,
+    "completionRequiredBeforeVerification": true,
+    "failedVerificationCreatesReworkOrException": true,
+    "unresolvedMaintenanceBlocksRecoveryRecommendation": true,
+    "outOfServiceRecommendationOnly": true,
+    "recoveryRecommendationRequiresResolvedBlocks": true,
+    "expenseIntentOnly": true,
+    "financeGateHandlesExpenseTruth": true,
+    "appendOnlyProgressHistory": true,
+    "failureNoSideEffects": true,
+    "querySearchListBoardReportReadonly": true
+  }
+}

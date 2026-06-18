@@ -1,0 +1,2145 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario11-stepsFields.generated",
+  "version": "oam.dormitory-scenario11-stepsFields.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario11-housekeeping-maintenance-outofservice-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario11-housekeeping-maintenance-outofservice-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:a174cf7da149c4f0ef295ed0b5c70d09a6358bc54a27fb161d62185dceb59ea4",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario11-housekeeping-maintenance-outofservice.authority.json",
+      "digest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario11.HousekeepingMaintenanceOutOfService",
+  "scenarioPackageNo": 11,
+  "scenarioId": "lodging.housekeeping-maintenance-outofservice",
+  "outputContentDigest": "sha256:aa52386163cee17076b306e4f3c288d84e7777c56b3d2423ee421989d4ef8c91",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "房务、维修与停售协同",
+  "businessGoalZh": "承接场景包 2 的运营阻断、场景包 8 的在住服务请求、场景包 9 的退房资源待恢复、场景包 10 的释放后待处理资源，完成保洁、维修、检查、停售申请、恢复建议、作业证据和任务闭环。",
+  "sourceScenarioDigest": "sha256:d2170c02eb3976ed3482c83d84481be6a8b5f02912e26ff140fb595ee781f1b5",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario11.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "ServiceWorkCase",
+      "HousekeepingTask",
+      "MaintenanceTask",
+      "InspectionTask",
+      "OutOfServiceRequest",
+      "WorkAssignment",
+      "WorkAssignee",
+      "WorkSchedule",
+      "WorkCompletion",
+      "WorkCompletionEvidence",
+      "WorkVerification",
+      "WorkVerificationResult",
+      "RecoveryRecommendation",
+      "ExpenseIntent",
+      "TaskEvidence",
+      "StatusHistory",
+      "WorkStatusHistory"
+    ],
+    "searchReadModel": [
+      "房务、维修与停售协同",
+      "房务/维修完成摘要",
+      "验收摘要",
+      "停售建议",
+      "恢复运营建议",
+      "费用意向",
+      "作业证据摘要",
+      "状态历史",
+      "只读对象引用",
+      "作业完成摘要",
+      "停售/恢复建议"
+    ],
+    "noRefillRuleZh": "场景包 11 只能读取上游摘要，不得要求用户重新填写场景包 2、8、9、10 已确认字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "enter-housekeeping-maintenance-processing",
+      "nameZh": "进入房务/维修处理",
+      "commandId": "Dorm.ServiceWorkCaseDraftStart",
+      "secondaryCommandIds": [
+        "Dorm.HousekeepingTaskCreate",
+        "Dorm.MaintenanceTaskCreate",
+        "Dorm.InspectionTaskCreate",
+        "Dorm.OutOfServiceRequestDraftStart"
+      ],
+      "entryFromZh": [
+        "今日任务",
+        "工作项",
+        "房源详情",
+        "在住服务",
+        "退房待恢复",
+        "搜索只读跳转"
+      ],
+      "userSees": [
+        "房间/床位",
+        "来源场景",
+        "问题类型",
+        "阻断原因",
+        "优先级",
+        "预计恢复时间",
+        "证据摘要",
+        "运营阻断摘要",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [],
+      "userUploadedOrBoundEvidence": [],
+      "systemGeneratedFields": [
+        "serviceWorkCaseRef",
+        "sourceScenarioRef",
+        "resourceRef",
+        "sourceRequestRef",
+        "caseVersion"
+      ],
+      "validations": [
+        "无合法上游请求不得创建正式作业",
+        "用户不得填写 roomId、bedId、stayId、serviceRequestId、stableRef"
+      ],
+      "outputs": [
+        "房务/维修处理草稿"
+      ],
+      "primaryBusinessObject": "ServiceWorkCase",
+      "requiredReadContext": [
+        "房间/床位",
+        "来源场景",
+        "问题类型",
+        "阻断原因",
+        "优先级",
+        "预计恢复时间",
+        "证据摘要",
+        "运营阻断摘要",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "退房待恢复请求",
+        "资源待恢复请求"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": false,
+        "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+      },
+      "legalActions": [
+        {
+          "actionId": "v-3d04865e",
+          "labelZh": "创建保洁任务",
+          "labelKey": "scenario11.action.v-3d04865e.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.enter-housekeeping-maintenance-processing.v-3d04865e.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-176ab162",
+          "labelZh": "创建维修任务",
+          "labelKey": "scenario11.action.v-176ab162.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.enter-housekeeping-maintenance-processing.v-176ab162.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-8017e8d7",
+          "labelZh": "创建检查任务",
+          "labelKey": "scenario11.action.v-8017e8d7.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.enter-housekeeping-maintenance-processing.v-8017e8d7.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-9429b3a5",
+          "labelZh": "申请停售",
+          "labelKey": "scenario11.action.v-9429b3a5.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.enter-housekeeping-maintenance-processing.v-9429b3a5.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "运营阻断摘要",
+          "阻断原因",
+          "预计恢复时间",
+          "在住服务请求",
+          "服务请求摘要",
+          "异常摘要",
+          "退房待恢复请求",
+          "资源待恢复请求",
+          "取消释放资源摘要",
+          "库存释放请求"
+        ],
+        "to": [
+          "房务/维修处理草稿",
+          "房务/维修完成摘要",
+          "验收摘要",
+          "停售建议",
+          "恢复运营建议",
+          "费用意向",
+          "作业证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 11 只能读取上游摘要，不得要求用户重新填写场景包 2、8、9、10 已确认字段。"
+      },
+      "searchReadModel": [
+        "房务、维修与停售协同",
+        "进入房务/维修处理",
+        "ServiceWorkCase",
+        "房间/床位",
+        "来源场景",
+        "问题类型",
+        "阻断原因",
+        "优先级",
+        "预计恢复时间",
+        "证据摘要",
+        "运营阻断摘要",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "房务/维修处理草稿"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "dispatch-work-assignment",
+      "nameZh": "派工作业",
+      "commandId": "Dorm.WorkAssignmentDispatch",
+      "userSees": [
+        "来源摘要",
+        "影响范围",
+        "当前状态",
+        "证据摘要",
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要"
+      ],
+      "userFilledFields": [
+        "作业说明",
+        "计划开始时间",
+        "计划完成时间",
+        "备注"
+      ],
+      "userSelectedFields": [
+        "作业类型",
+        "负责人",
+        "协作人",
+        "优先级",
+        "是否影响运营"
+      ],
+      "systemGeneratedFields": [
+        "workAssignmentRef",
+        "assigneeRef",
+        "assignedAt",
+        "scheduleRef"
+      ],
+      "validations": [
+        "无负责人不得派工",
+        "无作业范围不得派工",
+        "无来源摘要不得派工"
+      ],
+      "outputs": [
+        "派工作业摘要"
+      ],
+      "primaryBusinessObject": "ServiceWorkCase",
+      "requiredReadContext": [
+        "来源摘要",
+        "影响范围",
+        "当前状态",
+        "证据摘要",
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "退房待恢复请求",
+        "资源待恢复请求"
+      ],
+      "editableInputs": [
+        "作业说明",
+        "计划开始时间",
+        "计划完成时间",
+        "备注"
+      ],
+      "fixedSelections": [
+        "作业类型",
+        "负责人",
+        "协作人",
+        "优先级",
+        "是否影响运营"
+      ],
+      "financialContext": {
+        "applies": false,
+        "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "运营阻断摘要",
+          "阻断原因",
+          "预计恢复时间",
+          "在住服务请求",
+          "服务请求摘要",
+          "异常摘要",
+          "退房待恢复请求",
+          "资源待恢复请求",
+          "取消释放资源摘要",
+          "库存释放请求"
+        ],
+        "to": [
+          "派工作业摘要",
+          "房务/维修完成摘要",
+          "验收摘要",
+          "停售建议",
+          "恢复运营建议",
+          "费用意向",
+          "作业证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 11 只能读取上游摘要，不得要求用户重新填写场景包 2、8、9、10 已确认字段。"
+      },
+      "searchReadModel": [
+        "房务、维修与停售协同",
+        "派工作业",
+        "ServiceWorkCase",
+        "来源摘要",
+        "影响范围",
+        "当前状态",
+        "证据摘要",
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "派工作业摘要"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "update-work-progress",
+      "nameZh": "执行与进度更新",
+      "commandId": "Dorm.WorkProgressUpdate",
+      "userFilledFields": [
+        "处理进度",
+        "问题说明",
+        "材料使用说明",
+        "预计完成时间"
+      ],
+      "userSelectedFields": [
+        "处理中",
+        "需协助",
+        "需延期",
+        "需停售",
+        "待验收"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "现场照片",
+        "维修过程证据",
+        "保洁过程证据"
+      ],
+      "systemGeneratedFields": [
+        "workProgressRef",
+        "progressVersion",
+        "evidenceEnvelopeRef"
+      ],
+      "validations": [
+        "状态变更必须追加记录，不得覆盖历史进度"
+      ],
+      "outputs": [
+        "作业进度摘要",
+        "作业证据摘要"
+      ],
+      "userSees": [
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "停售建议",
+        "恢复运营建议",
+        "作业进度摘要",
+        "作业证据摘要"
+      ],
+      "primaryBusinessObject": "ServiceWorkCase",
+      "requiredReadContext": [
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "停售建议",
+        "恢复运营建议",
+        "作业进度摘要",
+        "作业证据摘要",
+        "退房待恢复请求",
+        "资源待恢复请求"
+      ],
+      "editableInputs": [
+        "处理进度",
+        "问题说明",
+        "材料使用说明",
+        "预计完成时间"
+      ],
+      "fixedSelections": [
+        "处理中",
+        "需协助",
+        "需延期",
+        "需停售",
+        "待验收"
+      ],
+      "financialContext": {
+        "applies": false,
+        "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "运营阻断摘要",
+          "阻断原因",
+          "预计恢复时间",
+          "在住服务请求",
+          "服务请求摘要",
+          "异常摘要",
+          "退房待恢复请求",
+          "资源待恢复请求",
+          "取消释放资源摘要",
+          "库存释放请求"
+        ],
+        "to": [
+          "作业进度摘要",
+          "作业证据摘要",
+          "房务/维修完成摘要",
+          "验收摘要",
+          "停售建议",
+          "恢复运营建议",
+          "费用意向",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 11 只能读取上游摘要，不得要求用户重新填写场景包 2、8、9、10 已确认字段。"
+      },
+      "searchReadModel": [
+        "房务、维修与停售协同",
+        "执行与进度更新",
+        "ServiceWorkCase",
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "停售建议",
+        "恢复运营建议",
+        "作业进度摘要",
+        "作业证据摘要"
+      ]
+    },
+    {
+      "stepNo": 4,
+      "stepId": "submit-work-completion",
+      "nameZh": "完成作业",
+      "commandId": "Dorm.WorkCompletionSubmit",
+      "userFilledFields": [
+        "完成说明",
+        "实际完成时间",
+        "处理结果",
+        "是否需复查"
+      ],
+      "userSelectedFields": [
+        "返工",
+        "建议停售",
+        "建议恢复"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "完成照片",
+        "维修单",
+        "保洁记录",
+        "供应商凭证"
+      ],
+      "systemGeneratedFields": [
+        "workCompletionRef",
+        "completedAt",
+        "completionEvidenceRef"
+      ],
+      "validations": [
+        "缺完成证据不得提交验收",
+        "建议恢复必须说明阻断原因已处理"
+      ],
+      "outputs": [
+        "作业完成摘要"
+      ],
+      "userSees": [
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "停售建议",
+        "恢复运营建议",
+        "作业完成摘要",
+        "房务、维修与停售协同办理摘要"
+      ],
+      "primaryBusinessObject": "ServiceWorkCase",
+      "requiredReadContext": [
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "停售建议",
+        "恢复运营建议",
+        "作业完成摘要",
+        "房务、维修与停售协同办理摘要",
+        "退房待恢复请求",
+        "资源待恢复请求"
+      ],
+      "editableInputs": [
+        "完成说明",
+        "实际完成时间",
+        "处理结果",
+        "是否需复查"
+      ],
+      "fixedSelections": [
+        "返工",
+        "建议停售",
+        "建议恢复"
+      ],
+      "financialContext": {
+        "applies": false,
+        "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+      },
+      "legalActions": [
+        {
+          "actionId": "v-b07790a3",
+          "labelZh": "提交验收",
+          "labelKey": "scenario11.action.v-b07790a3.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.submit-work-completion.v-b07790a3.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "运营阻断摘要",
+          "阻断原因",
+          "预计恢复时间",
+          "在住服务请求",
+          "服务请求摘要",
+          "异常摘要",
+          "退房待恢复请求",
+          "资源待恢复请求",
+          "取消释放资源摘要",
+          "库存释放请求"
+        ],
+        "to": [
+          "作业完成摘要",
+          "房务/维修完成摘要",
+          "验收摘要",
+          "停售建议",
+          "恢复运营建议",
+          "费用意向",
+          "作业证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 11 只能读取上游摘要，不得要求用户重新填写场景包 2、8、9、10 已确认字段。"
+      },
+      "searchReadModel": [
+        "房务、维修与停售协同",
+        "完成作业",
+        "ServiceWorkCase",
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "停售建议",
+        "恢复运营建议",
+        "作业完成摘要",
+        "房务、维修与停售协同办理摘要"
+      ]
+    },
+    {
+      "stepNo": 5,
+      "stepId": "verify-work-result",
+      "nameZh": "验收确认",
+      "commandId": "Dorm.WorkVerificationConfirm",
+      "secondaryCommandIds": [
+        "Dorm.WorkReworkRequest"
+      ],
+      "userSees": [
+        "作业记录",
+        "完成证据",
+        "前后对比",
+        "费用意向",
+        "影响范围",
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要"
+      ],
+      "userFilledFields": [
+        "验收备注",
+        "未通过原因"
+      ],
+      "userSelectedFields": [
+        "验收通过",
+        "验收不通过",
+        "返工",
+        "转停售建议"
+      ],
+      "systemGeneratedFields": [
+        "workVerificationRef",
+        "verifiedAt",
+        "verifiedBy",
+        "verificationVersion"
+      ],
+      "validations": [
+        "验收不通过必须生成返工或异常待处理",
+        "验收通过只能输出恢复建议，不得直接改为可运营"
+      ],
+      "outputs": [
+        "验收摘要",
+        "返工摘要"
+      ],
+      "primaryBusinessObject": "ServiceWorkCase",
+      "requiredReadContext": [
+        "作业记录",
+        "完成证据",
+        "前后对比",
+        "费用意向",
+        "影响范围",
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "退房待恢复请求",
+        "资源待恢复请求"
+      ],
+      "editableInputs": [
+        "验收备注",
+        "未通过原因"
+      ],
+      "fixedSelections": [
+        "验收通过",
+        "验收不通过",
+        "返工",
+        "转停售建议"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "房务维修费用意向",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "费用意向"
+        ],
+        "direction": "支出/费用意向",
+        "stage": "验收确认",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "运营阻断摘要",
+          "阻断原因",
+          "预计恢复时间",
+          "在住服务请求",
+          "服务请求摘要",
+          "异常摘要",
+          "退房待恢复请求",
+          "资源待恢复请求",
+          "取消释放资源摘要",
+          "库存释放请求"
+        ],
+        "to": [
+          "验收摘要",
+          "返工摘要",
+          "房务/维修完成摘要",
+          "停售建议",
+          "恢复运营建议",
+          "费用意向",
+          "作业证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 11 只能读取上游摘要，不得要求用户重新填写场景包 2、8、9、10 已确认字段。"
+      },
+      "searchReadModel": [
+        "房务、维修与停售协同",
+        "验收确认",
+        "ServiceWorkCase",
+        "作业记录",
+        "完成证据",
+        "前后对比",
+        "费用意向",
+        "影响范围",
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要"
+      ]
+    },
+    {
+      "stepNo": 6,
+      "stepId": "output-outofservice-or-recovery-recommendation",
+      "nameZh": "停售或恢复建议输出",
+      "commandId": "Dorm.OutOfServiceOrRecoveryRecommendationCreate",
+      "userFilledFields": [
+        "停售原因",
+        "恢复建议",
+        "风险说明",
+        "预计影响时间"
+      ],
+      "userSelectedFields": [
+        "建议停售",
+        "建议暂停开放",
+        "建议恢复运营"
+      ],
+      "systemGeneratedFields": [
+        "recommendationRef",
+        "targetScenarioRef",
+        "recommendationVersion"
+      ],
+      "validations": [
+        "场景包 2 必须重新做运营状态确认",
+        "场景包 11 不拥有最终运营状态权威"
+      ],
+      "outputs": [
+        "停售建议",
+        "恢复运营建议",
+        "只读对象引用"
+      ],
+      "userSees": [
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "停售建议",
+        "恢复运营建议",
+        "只读对象引用",
+        "房务、维修与停售协同办理摘要"
+      ],
+      "primaryBusinessObject": "ServiceWorkCase",
+      "requiredReadContext": [
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "停售建议",
+        "恢复运营建议",
+        "只读对象引用",
+        "房务、维修与停售协同办理摘要",
+        "退房待恢复请求",
+        "资源待恢复请求"
+      ],
+      "editableInputs": [
+        "停售原因",
+        "恢复建议",
+        "风险说明",
+        "预计影响时间"
+      ],
+      "fixedSelections": [
+        "建议停售",
+        "建议暂停开放",
+        "建议恢复运营"
+      ],
+      "financialContext": {
+        "applies": false,
+        "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+      },
+      "legalActions": [
+        {
+          "actionId": "v-c18adc69",
+          "labelZh": "关闭任务",
+          "labelKey": "scenario11.action.v-c18adc69.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.output-outofservice-or-recovery-recommendation.v-c18adc69.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "运营阻断摘要",
+          "阻断原因",
+          "预计恢复时间",
+          "在住服务请求",
+          "服务请求摘要",
+          "异常摘要",
+          "退房待恢复请求",
+          "资源待恢复请求",
+          "取消释放资源摘要",
+          "库存释放请求"
+        ],
+        "to": [
+          "停售建议",
+          "恢复运营建议",
+          "只读对象引用",
+          "房务/维修完成摘要",
+          "验收摘要",
+          "费用意向",
+          "作业证据摘要",
+          "状态历史"
+        ],
+        "noRefillRuleZh": "场景包 11 只能读取上游摘要，不得要求用户重新填写场景包 2、8、9、10 已确认字段。"
+      },
+      "searchReadModel": [
+        "房务、维修与停售协同",
+        "停售或恢复建议输出",
+        "ServiceWorkCase",
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "停售建议",
+        "恢复运营建议",
+        "只读对象引用",
+        "房务、维修与停售协同办理摘要"
+      ]
+    },
+    {
+      "stepNo": 7,
+      "stepId": "submit-expense-intent",
+      "nameZh": "费用意向与财务交接",
+      "commandId": "Dorm.ExpenseIntentSubmit",
+      "secondaryCommandIds": [
+        "Dorm.TaskEvidenceSupplement",
+        "Dorm.ServiceWorkCorrectionRequest"
+      ],
+      "userFilledFields": [
+        "费用说明",
+        "供应商",
+        "发票/凭证说明"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "发票",
+        "报价单",
+        "维修单",
+        "付款依据"
+      ],
+      "systemGeneratedFields": [
+        "expenseIntentRef",
+        "expenseEvidenceRef"
+      ],
+      "validations": [
+        "费用意向只能交给 finance-gate 或支出治理场景",
+        "不得直接写账务成本"
+      ],
+      "outputs": [
+        "费用意向",
+        "费用证据摘要"
+      ],
+      "userSees": [
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "停售建议",
+        "恢复运营建议",
+        "费用意向",
+        "费用证据摘要"
+      ],
+      "userSelectedFields": [],
+      "primaryBusinessObject": "ServiceWorkCase",
+      "requiredReadContext": [
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "停售建议",
+        "恢复运营建议",
+        "费用意向",
+        "费用证据摘要",
+        "退房待恢复请求",
+        "资源待恢复请求"
+      ],
+      "editableInputs": [
+        "费用说明",
+        "供应商",
+        "发票/凭证说明"
+      ],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "房务维修费用意向",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "费用意向",
+          "费用证据摘要",
+          "费用说明"
+        ],
+        "direction": "支出/费用意向",
+        "stage": "费用意向与财务交接",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "运营阻断摘要",
+          "阻断原因",
+          "预计恢复时间",
+          "在住服务请求",
+          "服务请求摘要",
+          "异常摘要",
+          "退房待恢复请求",
+          "资源待恢复请求",
+          "取消释放资源摘要",
+          "库存释放请求"
+        ],
+        "to": [
+          "费用意向",
+          "费用证据摘要",
+          "房务/维修完成摘要",
+          "验收摘要",
+          "停售建议",
+          "恢复运营建议",
+          "作业证据摘要",
+          "状态历史",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 11 只能读取上游摘要，不得要求用户重新填写场景包 2、8、9、10 已确认字段。"
+      },
+      "searchReadModel": [
+        "房务、维修与停售协同",
+        "费用意向与财务交接",
+        "ServiceWorkCase",
+        "运营阻断摘要",
+        "阻断原因",
+        "预计恢复时间",
+        "在住服务请求",
+        "服务请求摘要",
+        "异常摘要",
+        "房务/维修完成摘要",
+        "验收摘要",
+        "停售建议",
+        "恢复运营建议",
+        "费用意向",
+        "费用证据摘要"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“301 房间退房后保洁待验收”“301-02 床位维修中，预计 18:00 完成”。普通用户不得输入或记住内部编号。",
+    "upstreamReadonly": [
+      "房间/床位",
+      "来源场景",
+      "运营阻断摘要",
+      "在住服务请求",
+      "退房待恢复请求",
+      "取消释放资源摘要",
+      "问题类型",
+      "阻断原因",
+      "优先级",
+      "预计恢复时间",
+      "证据摘要"
+    ],
+    "userFilled": [
+      "作业说明",
+      "计划开始时间",
+      "计划完成时间",
+      "备注",
+      "处理进度",
+      "问题说明",
+      "材料使用说明",
+      "预计完成时间",
+      "完成说明",
+      "实际完成时间",
+      "处理结果",
+      "验收备注",
+      "未通过原因",
+      "停售原因",
+      "恢复建议",
+      "风险说明",
+      "预计影响时间",
+      "费用说明",
+      "供应商",
+      "发票/凭证说明"
+    ],
+    "userSelected": [
+      "作业类型",
+      "负责人",
+      "协作人",
+      "优先级",
+      "是否影响运营",
+      "处理中",
+      "需协助",
+      "需延期",
+      "需停售",
+      "待验收",
+      "返工",
+      "验收通过",
+      "验收不通过",
+      "转停售建议",
+      "建议停售",
+      "建议暂停开放",
+      "建议恢复运营"
+    ],
+    "systemGenerated": [
+      "serviceWorkCaseRef",
+      "sourceScenarioRef",
+      "resourceRef",
+      "sourceRequestRef",
+      "caseVersion",
+      "workAssignmentRef",
+      "assigneeRef",
+      "assignedAt",
+      "scheduleRef",
+      "workProgressRef",
+      "progressVersion",
+      "evidenceEnvelopeRef",
+      "workCompletionRef",
+      "completedAt",
+      "completionEvidenceRef",
+      "workVerificationRef",
+      "verifiedAt",
+      "verifiedBy",
+      "verificationVersion",
+      "recommendationRef",
+      "targetScenarioRef",
+      "recommendationVersion",
+      "expenseIntentRef",
+      "expenseEvidenceRef",
+      "statusHistoryRef",
+      "projectionVersion",
+      "domainEventId"
+    ],
+    "systemCalculated": [
+      "影响范围摘要",
+      "作业完整度",
+      "证据缺失项",
+      "预计恢复提醒",
+      "超期提醒"
+    ],
+    "evidenceBound": [
+      "现场照片",
+      "维修过程证据",
+      "保洁过程证据",
+      "完成照片",
+      "维修单",
+      "保洁记录",
+      "供应商凭证",
+      "发票",
+      "报价单",
+      "付款依据",
+      "验收证据",
+      "返工证据",
+      "纠错证据"
+    ],
+    "financeGate": [
+      "费用意向",
+      "费用依据",
+      "供应商凭证",
+      "finance-gate 处理状态"
+    ],
+    "internalAudit": [
+      "serviceWorkCaseRef",
+      "sourceScenarioRef",
+      "resourceRef",
+      "sourceRequestRef",
+      "workAssignmentRef",
+      "workCompletionRef",
+      "workVerificationRef",
+      "recommendationRef",
+      "expenseIntentRef",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "forbiddenUserInputFields": [
+      "taskId",
+      "workItemId",
+      "roomId",
+      "bedId",
+      "stayId",
+      "serviceRequestId",
+      "serviceWorkCaseId",
+      "workAssignmentId",
+      "expenseIntentId",
+      "ledgerEntryId",
+      "reservationId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "fieldAuthority": {
+      "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#fieldAuthorityModel",
+      "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+      "businessInput": [
+        {
+          "fieldId": "v-89feed71",
+          "labelZh": "作业说明",
+          "control": "textarea",
+          "labelKey": "scenario11.field.v-89feed71.label",
+          "helpKey": "scenario11.field.v-89feed71.help",
+          "errorKey": "scenario11.field.v-89feed71.error"
+        },
+        {
+          "fieldId": "v-b1b6930d",
+          "labelZh": "计划开始时间",
+          "control": "text",
+          "labelKey": "scenario11.field.v-b1b6930d.label",
+          "helpKey": "scenario11.field.v-b1b6930d.help",
+          "errorKey": "scenario11.field.v-b1b6930d.error"
+        },
+        {
+          "fieldId": "v-c068ea1c",
+          "labelZh": "计划完成时间",
+          "control": "text",
+          "labelKey": "scenario11.field.v-c068ea1c.label",
+          "helpKey": "scenario11.field.v-c068ea1c.help",
+          "errorKey": "scenario11.field.v-c068ea1c.error"
+        },
+        {
+          "fieldId": "v-2834e28a",
+          "labelZh": "备注",
+          "control": "textarea",
+          "labelKey": "scenario11.field.v-2834e28a.label",
+          "helpKey": "scenario11.field.v-2834e28a.help",
+          "errorKey": "scenario11.field.v-2834e28a.error"
+        },
+        {
+          "fieldId": "v-10749aae",
+          "labelZh": "处理进度",
+          "control": "text",
+          "labelKey": "scenario11.field.v-10749aae.label",
+          "helpKey": "scenario11.field.v-10749aae.help",
+          "errorKey": "scenario11.field.v-10749aae.error"
+        },
+        {
+          "fieldId": "v-c9f9e659",
+          "labelZh": "问题说明",
+          "control": "textarea",
+          "labelKey": "scenario11.field.v-c9f9e659.label",
+          "helpKey": "scenario11.field.v-c9f9e659.help",
+          "errorKey": "scenario11.field.v-c9f9e659.error"
+        },
+        {
+          "fieldId": "v-0e24ad5f",
+          "labelZh": "材料使用说明",
+          "control": "textarea",
+          "labelKey": "scenario11.field.v-0e24ad5f.label",
+          "helpKey": "scenario11.field.v-0e24ad5f.help",
+          "errorKey": "scenario11.field.v-0e24ad5f.error"
+        },
+        {
+          "fieldId": "v-b2102c70",
+          "labelZh": "预计完成时间",
+          "control": "text",
+          "labelKey": "scenario11.field.v-b2102c70.label",
+          "helpKey": "scenario11.field.v-b2102c70.help",
+          "errorKey": "scenario11.field.v-b2102c70.error"
+        },
+        {
+          "fieldId": "v-7b83fb53",
+          "labelZh": "完成说明",
+          "control": "textarea",
+          "labelKey": "scenario11.field.v-7b83fb53.label",
+          "helpKey": "scenario11.field.v-7b83fb53.help",
+          "errorKey": "scenario11.field.v-7b83fb53.error"
+        },
+        {
+          "fieldId": "v-806372f2",
+          "labelZh": "实际完成时间",
+          "control": "text",
+          "labelKey": "scenario11.field.v-806372f2.label",
+          "helpKey": "scenario11.field.v-806372f2.help",
+          "errorKey": "scenario11.field.v-806372f2.error"
+        },
+        {
+          "fieldId": "v-8dd21098",
+          "labelZh": "处理结果",
+          "control": "text",
+          "labelKey": "scenario11.field.v-8dd21098.label",
+          "helpKey": "scenario11.field.v-8dd21098.help",
+          "errorKey": "scenario11.field.v-8dd21098.error"
+        },
+        {
+          "fieldId": "v-3aa48d58",
+          "labelZh": "验收备注",
+          "control": "textarea",
+          "labelKey": "scenario11.field.v-3aa48d58.label",
+          "helpKey": "scenario11.field.v-3aa48d58.help",
+          "errorKey": "scenario11.field.v-3aa48d58.error"
+        },
+        {
+          "fieldId": "v-f51712e1",
+          "labelZh": "未通过原因",
+          "control": "textarea",
+          "labelKey": "scenario11.field.v-f51712e1.label",
+          "helpKey": "scenario11.field.v-f51712e1.help",
+          "errorKey": "scenario11.field.v-f51712e1.error"
+        },
+        {
+          "fieldId": "v-00512350",
+          "labelZh": "停售原因",
+          "control": "textarea",
+          "labelKey": "scenario11.field.v-00512350.label",
+          "helpKey": "scenario11.field.v-00512350.help",
+          "errorKey": "scenario11.field.v-00512350.error"
+        },
+        {
+          "fieldId": "v-4117f1d8",
+          "labelZh": "恢复建议",
+          "control": "text",
+          "labelKey": "scenario11.field.v-4117f1d8.label",
+          "helpKey": "scenario11.field.v-4117f1d8.help",
+          "errorKey": "scenario11.field.v-4117f1d8.error"
+        },
+        {
+          "fieldId": "v-b19ffeae",
+          "labelZh": "风险说明",
+          "control": "textarea",
+          "labelKey": "scenario11.field.v-b19ffeae.label",
+          "helpKey": "scenario11.field.v-b19ffeae.help",
+          "errorKey": "scenario11.field.v-b19ffeae.error"
+        },
+        {
+          "fieldId": "v-a79b383a",
+          "labelZh": "预计影响时间",
+          "control": "text",
+          "labelKey": "scenario11.field.v-a79b383a.label",
+          "helpKey": "scenario11.field.v-a79b383a.help",
+          "errorKey": "scenario11.field.v-a79b383a.error"
+        },
+        {
+          "fieldId": "v-a66bf26a",
+          "labelZh": "费用说明",
+          "control": "textarea",
+          "labelKey": "scenario11.field.v-a66bf26a.label",
+          "helpKey": "scenario11.field.v-a66bf26a.help",
+          "errorKey": "scenario11.field.v-a66bf26a.error"
+        },
+        {
+          "fieldId": "v-f9749f04",
+          "labelZh": "供应商",
+          "control": "text",
+          "labelKey": "scenario11.field.v-f9749f04.label",
+          "helpKey": "scenario11.field.v-f9749f04.help",
+          "errorKey": "scenario11.field.v-f9749f04.error"
+        },
+        {
+          "fieldId": "v-c0062355",
+          "labelZh": "发票/凭证说明",
+          "control": "textarea",
+          "labelKey": "scenario11.field.v-c0062355.label",
+          "helpKey": "scenario11.field.v-c0062355.help",
+          "errorKey": "scenario11.field.v-c0062355.error"
+        },
+        {
+          "fieldId": "v-2937fd3e",
+          "labelZh": "是否需复查",
+          "control": "text",
+          "labelKey": "scenario11.field.v-2937fd3e.label",
+          "helpKey": "scenario11.field.v-2937fd3e.help",
+          "errorKey": "scenario11.field.v-2937fd3e.error"
+        }
+      ],
+      "businessSelect": [
+        {
+          "fieldId": "v-fc685889",
+          "labelZh": "作业类型",
+          "control": "select",
+          "labelKey": "scenario11.field.v-fc685889.label",
+          "helpKey": "scenario11.field.v-fc685889.help",
+          "errorKey": "scenario11.field.v-fc685889.error",
+          "optionSet": "option.v-fc685889",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-9c71d6b7",
+          "labelZh": "负责人",
+          "control": "searchable-select",
+          "labelKey": "scenario11.field.v-9c71d6b7.label",
+          "helpKey": "scenario11.field.v-9c71d6b7.help",
+          "errorKey": "scenario11.field.v-9c71d6b7.error",
+          "optionSet": "option.v-9c71d6b7",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-b767fcb4",
+          "labelZh": "协作人",
+          "control": "select",
+          "labelKey": "scenario11.field.v-b767fcb4.label",
+          "helpKey": "scenario11.field.v-b767fcb4.help",
+          "errorKey": "scenario11.field.v-b767fcb4.error",
+          "optionSet": "option.v-b767fcb4",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-368a4e2e",
+          "labelZh": "优先级",
+          "control": "select",
+          "labelKey": "scenario11.field.v-368a4e2e.label",
+          "helpKey": "scenario11.field.v-368a4e2e.help",
+          "errorKey": "scenario11.field.v-368a4e2e.error",
+          "optionSet": "option.v-368a4e2e",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-16de74a9",
+          "labelZh": "是否影响运营",
+          "control": "select",
+          "labelKey": "scenario11.field.v-16de74a9.label",
+          "helpKey": "scenario11.field.v-16de74a9.help",
+          "errorKey": "scenario11.field.v-16de74a9.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-0550e046",
+          "labelZh": "处理中",
+          "control": "select",
+          "labelKey": "scenario11.field.v-0550e046.label",
+          "helpKey": "scenario11.field.v-0550e046.help",
+          "errorKey": "scenario11.field.v-0550e046.error",
+          "optionSet": "option.v-0550e046",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-c2151c1b",
+          "labelZh": "需协助",
+          "control": "select",
+          "labelKey": "scenario11.field.v-c2151c1b.label",
+          "helpKey": "scenario11.field.v-c2151c1b.help",
+          "errorKey": "scenario11.field.v-c2151c1b.error",
+          "optionSet": "option.v-c2151c1b",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-21e4bebc",
+          "labelZh": "需延期",
+          "control": "select",
+          "labelKey": "scenario11.field.v-21e4bebc.label",
+          "helpKey": "scenario11.field.v-21e4bebc.help",
+          "errorKey": "scenario11.field.v-21e4bebc.error",
+          "optionSet": "option.v-21e4bebc",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-4218c8f5",
+          "labelZh": "需停售",
+          "control": "select",
+          "labelKey": "scenario11.field.v-4218c8f5.label",
+          "helpKey": "scenario11.field.v-4218c8f5.help",
+          "errorKey": "scenario11.field.v-4218c8f5.error",
+          "optionSet": "option.v-4218c8f5",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-7aab0bd6",
+          "labelZh": "待验收",
+          "control": "select",
+          "labelKey": "scenario11.field.v-7aab0bd6.label",
+          "helpKey": "scenario11.field.v-7aab0bd6.help",
+          "errorKey": "scenario11.field.v-7aab0bd6.error",
+          "optionSet": "option.v-7aab0bd6",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-61d712d2",
+          "labelZh": "返工",
+          "control": "select",
+          "labelKey": "scenario11.field.v-61d712d2.label",
+          "helpKey": "scenario11.field.v-61d712d2.help",
+          "errorKey": "scenario11.field.v-61d712d2.error",
+          "optionSet": "option.v-61d712d2",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-2b7fd380",
+          "labelZh": "验收通过",
+          "control": "select",
+          "labelKey": "scenario11.field.v-2b7fd380.label",
+          "helpKey": "scenario11.field.v-2b7fd380.help",
+          "errorKey": "scenario11.field.v-2b7fd380.error",
+          "optionSet": "option.v-2b7fd380",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-82331691",
+          "labelZh": "验收不通过",
+          "control": "select",
+          "labelKey": "scenario11.field.v-82331691.label",
+          "helpKey": "scenario11.field.v-82331691.help",
+          "errorKey": "scenario11.field.v-82331691.error",
+          "optionSet": "option.v-82331691",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-91c8385d",
+          "labelZh": "转停售建议",
+          "control": "select",
+          "labelKey": "scenario11.field.v-91c8385d.label",
+          "helpKey": "scenario11.field.v-91c8385d.help",
+          "errorKey": "scenario11.field.v-91c8385d.error",
+          "optionSet": "option.v-91c8385d",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-c35ddf03",
+          "labelZh": "建议停售",
+          "control": "select",
+          "labelKey": "scenario11.field.v-c35ddf03.label",
+          "helpKey": "scenario11.field.v-c35ddf03.help",
+          "errorKey": "scenario11.field.v-c35ddf03.error",
+          "optionSet": "option.v-c35ddf03",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-500fd6e1",
+          "labelZh": "建议暂停开放",
+          "control": "select",
+          "labelKey": "scenario11.field.v-500fd6e1.label",
+          "helpKey": "scenario11.field.v-500fd6e1.help",
+          "errorKey": "scenario11.field.v-500fd6e1.error",
+          "optionSet": "option.v-500fd6e1",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-961cb63b",
+          "labelZh": "建议恢复运营",
+          "control": "select",
+          "labelKey": "scenario11.field.v-961cb63b.label",
+          "helpKey": "scenario11.field.v-961cb63b.help",
+          "errorKey": "scenario11.field.v-961cb63b.error",
+          "optionSet": "option.v-961cb63b",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-a7e8daa4",
+          "labelZh": "建议恢复",
+          "control": "select",
+          "labelKey": "scenario11.field.v-a7e8daa4.label",
+          "helpKey": "scenario11.field.v-a7e8daa4.help",
+          "errorKey": "scenario11.field.v-a7e8daa4.error",
+          "optionSet": "option.v-a7e8daa4",
+          "submitValueSource": "stableValue"
+        }
+      ],
+      "systemDerived": [
+        {
+          "fieldId": "v-238f3c37",
+          "labelZh": "影响范围摘要",
+          "labelKey": "scenario11.field.v-238f3c37.label",
+          "helpKey": "scenario11.field.v-238f3c37.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-702c0167",
+          "labelZh": "作业完整度",
+          "labelKey": "scenario11.field.v-702c0167.label",
+          "helpKey": "scenario11.field.v-702c0167.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-f6aabd92",
+          "labelZh": "证据缺失项",
+          "labelKey": "scenario11.field.v-f6aabd92.label",
+          "helpKey": "scenario11.field.v-f6aabd92.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-ef68bc41",
+          "labelZh": "预计恢复提醒",
+          "labelKey": "scenario11.field.v-ef68bc41.label",
+          "helpKey": "scenario11.field.v-ef68bc41.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-0ac43f2f",
+          "labelZh": "超期提醒",
+          "labelKey": "scenario11.field.v-0ac43f2f.label",
+          "helpKey": "scenario11.field.v-0ac43f2f.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        }
+      ],
+      "readOnlySummary": [
+        {
+          "fieldId": "roomOrBedSummary",
+          "labelZh": "房间/床位",
+          "labelKey": "scenario11.field.roomOrBedSummary.label",
+          "helpKey": "scenario11.field.roomOrBedSummary.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-da5bb4a3",
+          "labelZh": "来源场景",
+          "labelKey": "scenario11.field.v-da5bb4a3.label",
+          "helpKey": "scenario11.field.v-da5bb4a3.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-da063651",
+          "labelZh": "运营阻断摘要",
+          "labelKey": "scenario11.field.v-da063651.label",
+          "helpKey": "scenario11.field.v-da063651.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-d58f0a8f",
+          "labelZh": "在住服务请求",
+          "labelKey": "scenario11.field.v-d58f0a8f.label",
+          "helpKey": "scenario11.field.v-d58f0a8f.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-19b3d52b",
+          "labelZh": "退房待恢复请求",
+          "labelKey": "scenario11.field.v-19b3d52b.label",
+          "helpKey": "scenario11.field.v-19b3d52b.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-e026cfc0",
+          "labelZh": "取消释放资源摘要",
+          "labelKey": "scenario11.field.v-e026cfc0.label",
+          "helpKey": "scenario11.field.v-e026cfc0.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-934c6c41",
+          "labelZh": "问题类型",
+          "labelKey": "scenario11.field.v-934c6c41.label",
+          "helpKey": "scenario11.field.v-934c6c41.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-88a6893a",
+          "labelZh": "阻断原因",
+          "labelKey": "scenario11.field.v-88a6893a.label",
+          "helpKey": "scenario11.field.v-88a6893a.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-c7ca09a1",
+          "labelZh": "预计恢复时间",
+          "labelKey": "scenario11.field.v-c7ca09a1.label",
+          "helpKey": "scenario11.field.v-c7ca09a1.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-f71ae921",
+          "labelZh": "证据摘要",
+          "labelKey": "scenario11.field.v-f71ae921.label",
+          "helpKey": "scenario11.field.v-f71ae921.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-84cd02ad",
+          "labelZh": "服务请求摘要",
+          "labelKey": "scenario11.field.v-84cd02ad.label",
+          "helpKey": "scenario11.field.v-84cd02ad.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-292fff24",
+          "labelZh": "异常摘要",
+          "labelKey": "scenario11.field.v-292fff24.label",
+          "helpKey": "scenario11.field.v-292fff24.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-718cc9b4",
+          "labelZh": "资源待恢复请求",
+          "labelKey": "scenario11.field.v-718cc9b4.label",
+          "helpKey": "scenario11.field.v-718cc9b4.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-b395be03",
+          "labelZh": "库存释放请求",
+          "labelKey": "scenario11.field.v-b395be03.label",
+          "helpKey": "scenario11.field.v-b395be03.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-4d96d7dc",
+          "labelZh": "影响范围",
+          "labelKey": "scenario11.field.v-4d96d7dc.label",
+          "helpKey": "scenario11.field.v-4d96d7dc.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-cd66b0d5",
+          "labelZh": "只读对象引用",
+          "labelKey": "scenario11.field.v-cd66b0d5.label",
+          "helpKey": "scenario11.field.v-cd66b0d5.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-9a992a59",
+          "labelZh": "房间摘要",
+          "labelKey": "scenario11.field.v-9a992a59.label",
+          "helpKey": "scenario11.field.v-9a992a59.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-6acf9a48",
+          "labelZh": "运营状态摘要",
+          "labelKey": "scenario11.field.v-6acf9a48.label",
+          "helpKey": "scenario11.field.v-6acf9a48.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-eb37b301",
+          "labelZh": "在住状态",
+          "labelKey": "scenario11.field.v-eb37b301.label",
+          "helpKey": "scenario11.field.v-eb37b301.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        },
+        {
+          "fieldId": "v-33daca15",
+          "labelZh": "退房确认摘要",
+          "labelKey": "scenario11.field.v-33daca15.label",
+          "helpKey": "scenario11.field.v-33daca15.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 在住状态 / 退房确认摘要"
+        }
+      ],
+      "evidenceBinding": [
+        {
+          "fieldId": "evidence.v-930dbd6d",
+          "labelZh": "现场照片",
+          "labelKey": "scenario11.evidence.evidence.v-930dbd6d.label",
+          "helpKey": "scenario11.evidence.evidence.v-930dbd6d.help",
+          "evidenceType": "image"
+        },
+        {
+          "fieldId": "evidence.v-41182caa",
+          "labelZh": "维修过程证据",
+          "labelKey": "scenario11.evidence.evidence.v-41182caa.label",
+          "helpKey": "scenario11.evidence.evidence.v-41182caa.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-f376700e",
+          "labelZh": "保洁过程证据",
+          "labelKey": "scenario11.evidence.evidence.v-f376700e.label",
+          "helpKey": "scenario11.evidence.evidence.v-f376700e.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-057f582f",
+          "labelZh": "完成照片",
+          "labelKey": "scenario11.evidence.evidence.v-057f582f.label",
+          "helpKey": "scenario11.evidence.evidence.v-057f582f.help",
+          "evidenceType": "image"
+        },
+        {
+          "fieldId": "evidence.v-11865dc6",
+          "labelZh": "维修单",
+          "labelKey": "scenario11.evidence.evidence.v-11865dc6.label",
+          "helpKey": "scenario11.evidence.evidence.v-11865dc6.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-753f90fc",
+          "labelZh": "保洁记录",
+          "labelKey": "scenario11.evidence.evidence.v-753f90fc.label",
+          "helpKey": "scenario11.evidence.evidence.v-753f90fc.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-6d8358be",
+          "labelZh": "供应商凭证",
+          "labelKey": "scenario11.evidence.evidence.v-6d8358be.label",
+          "helpKey": "scenario11.evidence.evidence.v-6d8358be.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.v-daa14f7c",
+          "labelZh": "发票",
+          "labelKey": "scenario11.evidence.evidence.v-daa14f7c.label",
+          "helpKey": "scenario11.evidence.evidence.v-daa14f7c.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-4e136b60",
+          "labelZh": "报价单",
+          "labelKey": "scenario11.evidence.evidence.v-4e136b60.label",
+          "helpKey": "scenario11.evidence.evidence.v-4e136b60.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-7abebfd4",
+          "labelZh": "付款依据",
+          "labelKey": "scenario11.evidence.evidence.v-7abebfd4.label",
+          "helpKey": "scenario11.evidence.evidence.v-7abebfd4.help",
+          "evidenceType": "businessEvidence"
+        }
+      ],
+      "legalAction": [
+        {
+          "fieldId": "v-3d04865e",
+          "labelZh": "创建保洁任务",
+          "labelKey": "scenario11.action.v-3d04865e.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.v-3d04865e.v1"
+        },
+        {
+          "fieldId": "v-176ab162",
+          "labelZh": "创建维修任务",
+          "labelKey": "scenario11.action.v-176ab162.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.v-176ab162.v1"
+        },
+        {
+          "fieldId": "v-8017e8d7",
+          "labelZh": "创建检查任务",
+          "labelKey": "scenario11.action.v-8017e8d7.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.v-8017e8d7.v1"
+        },
+        {
+          "fieldId": "v-9429b3a5",
+          "labelZh": "申请停售",
+          "labelKey": "scenario11.action.v-9429b3a5.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.v-9429b3a5.v1"
+        },
+        {
+          "fieldId": "v-b07790a3",
+          "labelZh": "提交验收",
+          "labelKey": "scenario11.action.v-b07790a3.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.v-b07790a3.v1"
+        },
+        {
+          "fieldId": "v-c18adc69",
+          "labelZh": "关闭任务",
+          "labelKey": "scenario11.action.v-c18adc69.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.v-c18adc69.v1"
+        }
+      ],
+      "actionControl": [
+        {
+          "fieldId": "v-3d04865e",
+          "labelZh": "创建保洁任务",
+          "labelKey": "scenario11.action.v-3d04865e.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.v-3d04865e.v1"
+        },
+        {
+          "fieldId": "v-176ab162",
+          "labelZh": "创建维修任务",
+          "labelKey": "scenario11.action.v-176ab162.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.v-176ab162.v1"
+        },
+        {
+          "fieldId": "v-8017e8d7",
+          "labelZh": "创建检查任务",
+          "labelKey": "scenario11.action.v-8017e8d7.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.v-8017e8d7.v1"
+        },
+        {
+          "fieldId": "v-9429b3a5",
+          "labelZh": "申请停售",
+          "labelKey": "scenario11.action.v-9429b3a5.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.v-9429b3a5.v1"
+        },
+        {
+          "fieldId": "v-b07790a3",
+          "labelZh": "提交验收",
+          "labelKey": "scenario11.action.v-b07790a3.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.v-b07790a3.v1"
+        },
+        {
+          "fieldId": "v-c18adc69",
+          "labelZh": "关闭任务",
+          "labelKey": "scenario11.action.v-c18adc69.label",
+          "legalActionRef": "legalAction.dormitory.scenario11.v-c18adc69.v1"
+        }
+      ],
+      "conditionalInput": [],
+      "auditInternal": [
+        {
+          "fieldId": "serviceWorkCaseRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "sourceScenarioRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "resourceRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "sourceRequestRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "workAssignmentRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "assigneeRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "scheduleRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "workProgressRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "evidenceEnvelopeRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "workCompletionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "completionEvidenceRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "workVerificationRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "recommendationRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "targetScenarioRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "expenseIntentRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "expenseEvidenceRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "statusHistoryRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "projectionVersion",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "domainEventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "taskId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "workItemId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stayId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "serviceRequestId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "serviceWorkCaseId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "workAssignmentId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "expenseIntentId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ledgerEntryId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "digest",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        }
+      ]
+    }
+  },
+  "workStatusOptions": [
+    "待派工",
+    "已派工",
+    "处理中",
+    "待验收",
+    "验收通过",
+    "验收不通过",
+    "返工中",
+    "建议停售",
+    "建议恢复",
+    "已关闭",
+    "需财务处理"
+  ]
+}

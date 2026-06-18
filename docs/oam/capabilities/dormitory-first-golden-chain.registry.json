@@ -1,0 +1,65 @@
+{
+  "version": "oam.capability-delivery-registry.v1",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "authorityMode": "ledger_replay_projection",
+  "currentFilesMode": "ledger_replay_projection_only",
+  "authorityLedgerRef": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+  "currentProjectionRef": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+  "compatibilityBoxRef": "docs/oam/compatibility/compatibility-box.current.json",
+  "lifecycle": [
+    {
+      "state": "SOURCE_CLOSED",
+      "authorityDigestField": "sourceClosureDigest"
+    },
+    {
+      "state": "GENERATED_BUNDLE_BUILT",
+      "authorityDigestField": "generatedBundleDigest"
+    },
+    {
+      "state": "GENERATED_BUNDLE_ACCEPTED",
+      "authorityDigestField": "acceptedGeneratedBundleDigest"
+    },
+    {
+      "state": "RUNTIME_TEST_ADMITTED",
+      "authorityDigestField": "runtimeAdmissionDigest"
+    },
+    {
+      "state": "BUSINESS_LANDING_ADMITTED",
+      "authorityDigestField": "businessLandingDigest"
+    },
+    {
+      "state": "PRODUCTION_CONFIRMED",
+      "authorityDigestField": "productionConfirmationDigest"
+    },
+    {
+      "state": "RELEASE_AUTHORIZED",
+      "authorityDigestField": "releaseAuthorityDigest"
+    }
+  ],
+  "activeAuthority": {
+    "capabilityId": "Dormitory.FirstGoldenChain",
+    "sourceClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
+    "generatedBundleDigest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
+    "acceptedGeneratedBundleDigest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
+    "runtimeConsumedBundleDigest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
+    "runtimeAdmissionDigest": "sha256:dea9d1d6676096f8b29a6494f11321f564328187f59bb644bd9aee3b95e62123",
+    "businessLandingDigest": null,
+    "productionConfirmationDigest": null,
+    "releaseAuthorityDigest": null
+  },
+  "projectionOnlyCurrentRefs": [
+    "docs/oam/generated-candidate-acceptance.current.json",
+    "docs/oam/dormitory-runtime-admission.current.json",
+    "docs/oam/dormitory-first-golden-chain-landing.current.json"
+  ],
+  "forbiddenInterpretations": [
+    "Evidence Root PASS is not capability delivery GO",
+    "CI PASS is not capability delivery GO",
+    "artifact exists is not capability delivery GO",
+    "browser audit PASS is not production confirmation",
+    "runtime test admission is not business landing",
+    "generated bundle acceptance is not release authority",
+    "capability projection is not production confirmation",
+    "current files are projections, not active authority identity"
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-oldPackageMigration.generated",
+  "version": "oam.dormitory-13-scenario-oldPackageMigration.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:206a7609fdae45bdae06d121cf337ad49e02575acc296d975af6fecc12ccdd21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    }
+  ],
+  "sourceContentDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:112023564375ecc6cafcfa76acfc03cd6de059995e492fd0ae4894ff2af46544",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "oldPackageMigrationMap": [
+    {
+      "oldPackage": "resource-saleability",
+      "mapsToScenarios": [
+        1,
+        2
+      ],
+      "allowedUse": "历史参考",
+      "forbiddenUse": "不得继续代表可售或当前总控源"
+    },
+    {
+      "oldPackage": "lead-reservation",
+      "mapsToScenarios": [
+        4,
+        5
+      ],
+      "allowedUse": "历史参考",
+      "forbiddenUse": "不得作为新场景 2"
+    },
+    {
+      "oldPackage": "RatePlanConfirm",
+      "mapsToScenarios": [
+        3
+      ],
+      "allowedUse": "价格参考",
+      "forbiddenUse": "不得覆盖新商品价格模型"
+    },
+    {
+      "oldPackage": "ordinary-payment",
+      "mapsToScenarios": [
+        6
+      ],
+      "allowedUse": "历史参考",
+      "forbiddenUse": "不得写账务真值"
+    },
+    {
+      "oldPackage": "deposit-liability",
+      "mapsToScenarios": [
+        6
+      ],
+      "allowedUse": "历史参考",
+      "forbiddenUse": "不得把押金负债视作收入"
+    },
+    {
+      "oldPackage": "check-in",
+      "mapsToScenarios": [
+        7
+      ],
+      "allowedUse": "历史参考",
+      "forbiddenUse": "不得作为当前入住总控源"
+    },
+    {
+      "oldPackage": "service-task",
+      "mapsToScenarios": [
+        8,
+        11
+      ],
+      "allowedUse": "历史参考",
+      "forbiddenUse": "不得直接声明可运营"
+    },
+    {
+      "oldPackage": "checkout-settlement",
+      "mapsToScenarios": [
+        9
+      ],
+      "allowedUse": "历史参考",
+      "forbiddenUse": "不得直接写退款或账务真值"
+    },
+    {
+      "oldPackage": "period-review",
+      "mapsToScenarios": [
+        13
+      ],
+      "allowedUse": "历史参考",
+      "forbiddenUse": "不得反写业务事实"
+    }
+  ],
+  "oldPackageIsolationPolicy": {
+    "oldPackagesMayKeepInternalIds": true,
+    "oldPackagesMayKeepMigrationEvidence": true,
+    "forbiddenIn": [
+      "业务用户可见页面",
+      "总控主索引",
+      "当前 Source Authority 名称"
+    ],
+    "mustBeLabeledAs": "migration_reference_only"
+  }
+}

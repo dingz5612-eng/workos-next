@@ -16,8 +16,8 @@ export function createInitialState() {
   const state = {
     lang: localStorage.getItem("workosnext.lang") || "zh-CN",
     view: actor ? "onboarding" : "login",
-    selectedTask: "T-STAY-DEPOSIT",
-    selectedWorkspace: "W-STAY-CHECKIN",
+    selectedTask: "T-DORM-MAINLINE",
+    selectedWorkspace: "W-DORM-MAINLINE",
     selectedCardIndex: -1,
     selectedCardId: "",
     query: "",

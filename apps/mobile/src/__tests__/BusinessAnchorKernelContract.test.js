@@ -128,11 +128,11 @@ describe("Business Anchor Kernel contract", () => {
     const ctx = createSurfaceCtx();
     const html = businessAnchorHtml({
       resultType: "command",
-      cardId: "roomSetup",
-      nextAction: { "zh-CN": "先填房号", "ru-RU": "Начать с номера комнаты" }
+      cardId: "cert.roomSetupConfirm",
+      nextAction: { "zh-CN": "填写房间建档资料", "ru-RU": "Начать с номера комнаты" }
     }, ctx);
 
-    expect(visibleText(html)).toContain("房间待配置");
+    expect(visibleText(html)).toContain("填写房间信息");
     expect(visibleText(html)).not.toContain("[object Object]");
   });
 

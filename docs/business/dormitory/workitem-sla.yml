@@ -30,6 +30,36 @@
       "breachRoute": "Dorm.ExceptionResolve"
     },
     {
+      "workItemType": "Dorm.OperationResourceSelect",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.OperationInspectionConfirm",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.OperationStatusDraft",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.OperationStatusChangeConfirm",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.OperationBlockerUpdate",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.OperationRestoreConfirm",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
       "workItemType": "Dorm.LeadCapture",
       "sla": "1h",
       "breachRoute": "Dorm.ExceptionResolve"

@@ -1,0 +1,1448 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario13-runtimeMirror.generated",
+  "version": "oam.dormitory-scenario13-runtimeMirror.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario13-reporting-audit-review-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario13-reporting-audit-review-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:5c31b8e3f7a3a46ed066070e9aa8a4b60b77939d7c44e62f04f0ce8dac7566cb",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario13-reporting-audit-review.authority.json",
+      "digest": "sha256:09768fb5adfce0632073faa7f48b0e744275385dc2ca1219f93d1eeeb26d0899"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:09768fb5adfce0632073faa7f48b0e744275385dc2ca1219f93d1eeeb26d0899",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario13.ReportingAuditReview",
+  "scenarioPackageNo": 13,
+  "scenarioId": "lodging.reporting-audit-review",
+  "outputContentDigest": "sha256:492537bd9a40600f6ee932a7d3c5bb127f9186a38da502a3e0cabf0bc8a3fe02",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "经营报表、审计与复盘",
+  "businessGoalZh": "读取场景包 1-12 和 finance-gate 的已确认事实、证据、投影和摘要，形成经营报表、财务核对视图、审计发现、周期复盘、行动计划和问题追踪。",
+  "sourceScenarioDigest": "sha256:09768fb5adfce0632073faa7f48b0e744275385dc2ca1219f93d1eeeb26d0899",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario13.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "ReportPeriod",
+      "ReportScope",
+      "MetricDefinition",
+      "MetricSnapshot",
+      "ReportSnapshot",
+      "AuditFinding",
+      "EvidenceReviewRecord",
+      "ReviewMeetingRecord",
+      "ReviewConclusion",
+      "ActionPlan",
+      "IssueTrackingItem",
+      "ReportExportRecord",
+      "ReportStatusTimeline",
+      "StatusTimeline"
+    ],
+    "searchReadModel": [
+      "经营报表、审计与复盘",
+      "报表快照",
+      "指标快照",
+      "财务核对视图",
+      "审计发现",
+      "复盘结论",
+      "行动计划",
+      "问题追踪",
+      "导出记录",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "noRefillRuleZh": "场景包 13 只输出报表快照、指标快照、财务核对视图、审计发现、复盘结论、行动计划、问题追踪、导出记录、证据摘要和只读对象引用；所有行动计划只能跳转回对应场景包或 finance-gate 处理。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "consumer": "runtime",
+  "objects": [
+    {
+      "objectName": "ReportPeriod",
+      "businessNameZh": "报表周期",
+      "descriptionZh": "报表锁定的开始时间、结束时间和周期标签。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyPeriod"
+    },
+    {
+      "objectName": "ReportScope",
+      "businessNameZh": "报表范围",
+      "descriptionZh": "楼栋、渠道、企业客户、商品、房间/床位和报表类型范围。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "versionedScope"
+    },
+    {
+      "objectName": "MetricDefinition",
+      "businessNameZh": "指标定义",
+      "descriptionZh": "指标口径来源、公式、数据来源、时间范围、权限、血缘和刷新要求。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "definitionSnapshot"
+    },
+    {
+      "objectName": "MetricSnapshot",
+      "businessNameZh": "指标快照",
+      "descriptionZh": "按照锁定口径和数据版本生成的指标值、趋势、分组和异常点。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlySnapshot"
+    },
+    {
+      "objectName": "ReportSnapshot",
+      "businessNameZh": "报表快照",
+      "descriptionZh": "锁定范围、时间、数据版本、计算口径和报表内容。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlySnapshot"
+    },
+    {
+      "objectName": "AuditFinding",
+      "businessNameZh": "审计发现",
+      "descriptionZh": "异常指标、缺证据、流程断点、状态冲突、重复/并发异常或未闭环任务。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyFinding"
+    },
+    {
+      "objectName": "EvidenceReviewRecord",
+      "businessNameZh": "证据审阅记录",
+      "descriptionZh": "针对报表数据、指标和审计发现的证据完整性审阅记录。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyEvidenceReview"
+    },
+    {
+      "objectName": "ReviewMeetingRecord",
+      "businessNameZh": "复盘会议记录",
+      "descriptionZh": "周期复盘的会议纪要、参与人、结论和跟进事项。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyReviewRecord"
+    },
+    {
+      "objectName": "ReviewConclusion",
+      "businessNameZh": "复盘结论",
+      "descriptionZh": "复盘结论、行动目标和改进方向。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyConclusion"
+    },
+    {
+      "objectName": "ActionPlan",
+      "businessNameZh": "行动计划",
+      "descriptionZh": "改进措施、负责人、期限、优先级和关联场景包跳转。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyPlan"
+    },
+    {
+      "objectName": "IssueTrackingItem",
+      "businessNameZh": "问题追踪项",
+      "descriptionZh": "行动计划或审计发现的处理状态、责任人和关闭记录。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyIssue"
+    },
+    {
+      "objectName": "ReportExportRecord",
+      "businessNameZh": "报表导出记录",
+      "descriptionZh": "导出人、导出范围、导出时间、报表版本和审计轨迹。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyExport"
+    },
+    {
+      "objectName": "ReportStatusTimeline",
+      "businessNameZh": "报表状态历史",
+      "descriptionZh": "报表草稿、数据待确认、已生成、已发布、已归档等状态变更。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyTimeline"
+    },
+    {
+      "objectName": "StatusTimeline",
+      "businessNameZh": "状态历史",
+      "descriptionZh": "记录报表、审计发现、复盘和行动计划的状态历史。",
+      "ownedByScenarioPackageNo": 13,
+      "writeDisposition": "appendOnlyTimeline"
+    }
+  ],
+  "commands": [
+    {
+      "commandId": "Dorm.ReportScopeSelect",
+      "businessNameZh": "选择报表范围",
+      "writesObjects": [
+        "ReportScope",
+        "ReportPeriod",
+        "StatusTimeline"
+      ]
+    },
+    {
+      "commandId": "Dorm.ReportDataQualityCheck",
+      "businessNameZh": "数据完整性检查",
+      "writesObjects": [
+        "EvidenceReviewRecord",
+        "StatusTimeline"
+      ]
+    },
+    {
+      "commandId": "Dorm.BusinessReportSnapshotGenerate",
+      "businessNameZh": "生成经营报表快照",
+      "writesObjects": [
+        "ReportSnapshot",
+        "MetricSnapshot",
+        "ReportStatusTimeline"
+      ]
+    },
+    {
+      "commandId": "Dorm.FinanceReviewSnapshotGenerate",
+      "businessNameZh": "生成财务核对视图",
+      "writesObjects": [
+        "ReportSnapshot",
+        "MetricSnapshot",
+        "EvidenceReviewRecord"
+      ]
+    },
+    {
+      "commandId": "Dorm.AuditFindingCreate",
+      "businessNameZh": "生成审计发现",
+      "writesObjects": [
+        "AuditFinding",
+        "EvidenceReviewRecord",
+        "StatusTimeline"
+      ]
+    },
+    {
+      "commandId": "Dorm.ReviewConclusionActionPlanCreate",
+      "businessNameZh": "生成复盘结论与行动计划",
+      "writesObjects": [
+        "ReviewConclusion",
+        "ReviewMeetingRecord",
+        "ActionPlan",
+        "IssueTrackingItem",
+        "StatusTimeline"
+      ]
+    },
+    {
+      "commandId": "Dorm.ActionPlanCreate",
+      "businessNameZh": "新建行动计划",
+      "writesObjects": [
+        "ActionPlan",
+        "IssueTrackingItem",
+        "StatusTimeline"
+      ]
+    },
+    {
+      "commandId": "Dorm.IssueTrackingItemCreate",
+      "businessNameZh": "新建问题追踪项",
+      "writesObjects": [
+        "IssueTrackingItem",
+        "StatusTimeline"
+      ]
+    },
+    {
+      "commandId": "Dorm.ReportPublish",
+      "businessNameZh": "发布内部报表",
+      "writesObjects": [
+        "ReportSnapshot",
+        "ReportStatusTimeline"
+      ]
+    },
+    {
+      "commandId": "Dorm.ReportExportRecordCreate",
+      "businessNameZh": "创建报表导出记录",
+      "writesObjects": [
+        "ReportExportRecord",
+        "StatusTimeline"
+      ]
+    },
+    {
+      "commandId": "Dorm.ReportArchive",
+      "businessNameZh": "归档报表",
+      "writesObjects": [
+        "ReportSnapshot",
+        "ReportStatusTimeline"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "missing_report_scope",
+      "messageZh": "缺少报表名称、时间范围或报表范围，不能生成报表。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "missing_permission_envelope",
+      "messageZh": "缺少权限包，不能生成正式报表。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "missing_lineage_envelope",
+      "messageZh": "缺少数据血缘，不能生成正式指标。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "stale_freshness_envelope",
+      "messageZh": "数据已过期，不能发布报表。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "ui_state_metric_forbidden",
+      "messageZh": "指标必须来自已确认事实或授权投影，不能从 UI 页面状态计算。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "non_finance_gate_truth_forbidden",
+      "messageZh": "财务指标只能读取 finance-gate 确认事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "audit_direct_source_fix_forbidden",
+      "messageZh": "审计发现不能直接修改房源、预订或账务事实，只能生成问题和行动计划。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "published_report_inline_edit_forbidden",
+      "messageZh": "已发布报表不能原地编辑，只能新建版本、归档或补充说明。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用由系统绑定，用户不能填写内部编号。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_search_write_attempt",
+      "messageZh": "搜索、看板、报表和导出只读，不能直接写业务事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_report_publish",
+      "messageZh": "该报表版本已发布，请查看发布记录。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_report_publish_conflict",
+      "messageZh": "同一报表版本正在被其他人发布，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "unauthorized_report_action",
+      "messageZh": "当前角色不能执行该报表、审计或复盘动作。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "direct_business_fact_write_forbidden",
+      "messageZh": "经营报表、审计与复盘不能直接写前台业务事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "direct_ledger_fact_write_forbidden",
+      "messageZh": "经营报表、审计与复盘不能直接写账务事实。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "invariants": [
+    "报表、看板、搜索、导出均只读，不得写业务事实。",
+    "任何指标必须带 permission、lineage、freshness；缺任一项时只能显示不可用于正式报表或数据待确认。",
+    "报表快照必须锁定时间范围、数据版本和计算口径。",
+    "指标必须来自已确认事实或授权投影，不得从 UI 页面状态计算。",
+    "财务指标只能读取 finance-gate 确认事实。",
+    "审计发现只能生成问题和行动计划，不能直接修正原事实。",
+    "纠错必须回到对应场景包或 finance-gate。",
+    "发布报表锁定快照；后续更正必须生成新版本，不得覆盖已发布报表。",
+    "失败路径不得生成正式报表、不得发布错误指标、不得触发业务状态变更，不得写业务事实、账务事实或刷新错误正式报表。"
+  ],
+  "reportingStatusOptions": [
+    "报表草稿",
+    "数据待确认",
+    "数据不可用于正式报表",
+    "报表已生成",
+    "报表已发布",
+    "报表已归档",
+    "审计发现待确认",
+    "行动计划待处理",
+    "问题已关闭"
+  ],
+  "reportingInvariantRule": {
+    "reportDashboardSearchExportReadonly": true,
+    "permissionRequiredForFormalReport": true,
+    "lineageRequiredForFormalMetric": true,
+    "freshnessRequiredForPublish": true,
+    "metricCalculationFromConfirmedFactsOnly": true,
+    "uiStateMetricCalculationForbidden": true,
+    "financialMetricsReadFinanceGateOnly": true,
+    "auditFindingCannotModifySourceFact": true,
+    "actionPlanRoutesBackOnly": true,
+    "publishedReportAppendOnlyVersion": true,
+    "failureNoSideEffects": true,
+    "querySearchListBoardReportReadonly": true
+  },
+  "metricDefinitionRule": {
+    "mustHaveFormula": true,
+    "mustHaveSourcePackages": true,
+    "mustHaveTimeRange": true,
+    "mustHavePermissionEnvelope": true,
+    "mustHaveLineageEnvelope": true,
+    "mustHaveFreshnessEnvelope": true,
+    "mustHaveCalculationVersion": true,
+    "financialMetricsReadFinanceGateOnly": true
+  },
+  "fields": {
+    "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“6 月经营复盘”“301 房间周转异常”“企业客户转化下降”。",
+    "upstreamReadonly": [
+      "场景包 1-12 已确认事实摘要",
+      "状态历史",
+      "证据摘要",
+      "只读对象引用",
+      "授权投影",
+      "finance-gate 已确认账务事实",
+      "permission envelope",
+      "lineage envelope",
+      "freshness envelope"
+    ],
+    "userFilled": [
+      "报表名称",
+      "备注",
+      "审计说明",
+      "风险等级",
+      "建议处理人",
+      "处理期限",
+      "复盘结论",
+      "行动目标",
+      "改进措施",
+      "负责人",
+      "完成期限"
+    ],
+    "userSelected": [
+      "时间范围",
+      "楼栋/区域",
+      "渠道",
+      "企业客户",
+      "商品",
+      "房间/床位范围",
+      "报表类型",
+      "指标视图",
+      "问题类型",
+      "责任场景包",
+      "是否生成行动计划",
+      "行动计划类型",
+      "优先级"
+    ],
+    "systemGenerated": [
+      "reportScopeRef",
+      "periodStart",
+      "periodEnd",
+      "scopeVersion",
+      "createdBy",
+      "dataQualityCheckRef",
+      "reportSnapshotRef",
+      "metricSnapshotRefs",
+      "calculationVersion",
+      "generatedAt",
+      "financeReviewSnapshotRef",
+      "auditFindingRef",
+      "reviewConclusionRef",
+      "actionPlanRef",
+      "issueTrackingItemRef",
+      "reportVersion",
+      "publishedAt",
+      "exportRecordRef",
+      "auditTrailRef",
+      "projectionVersion",
+      "domainEventId"
+    ],
+    "systemCalculated": [
+      "permissionEnvelope",
+      "lineageEnvelope",
+      "freshnessEnvelope",
+      "evidenceCompleteness",
+      "指标值",
+      "同比/环比",
+      "趋势",
+      "分组",
+      "异常点",
+      "缺失项",
+      "不可发布原因"
+    ],
+    "evidenceBound": [
+      "源数据证据摘要",
+      "指标计算证据",
+      "审计证据",
+      "复盘会议记录",
+      "导出审计轨迹"
+    ],
+    "internalAudit": [
+      "reportScopeRef",
+      "reportSnapshotRef",
+      "metricSnapshotRefs",
+      "financeReviewSnapshotRef",
+      "auditFindingRef",
+      "reviewConclusionRef",
+      "actionPlanRef",
+      "issueTrackingItemRef",
+      "exportRecordRef",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "forbiddenUserInputFields": [
+      "reportId",
+      "metricId",
+      "ledgerEntryId",
+      "reservationId",
+      "stayId",
+      "roomId",
+      "bedId",
+      "paymentId",
+      "depositId",
+      "refundId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "fieldAuthority": {
+      "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#fieldAuthorityModel",
+      "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+      "businessInput": [
+        {
+          "fieldId": "v-2bd1962d",
+          "labelZh": "报表名称",
+          "control": "text",
+          "labelKey": "scenario13.field.v-2bd1962d.label",
+          "helpKey": "scenario13.field.v-2bd1962d.help",
+          "errorKey": "scenario13.field.v-2bd1962d.error"
+        },
+        {
+          "fieldId": "v-2834e28a",
+          "labelZh": "备注",
+          "control": "textarea",
+          "labelKey": "scenario13.field.v-2834e28a.label",
+          "helpKey": "scenario13.field.v-2834e28a.help",
+          "errorKey": "scenario13.field.v-2834e28a.error"
+        },
+        {
+          "fieldId": "v-3f78de7c",
+          "labelZh": "风险等级",
+          "control": "text",
+          "labelKey": "scenario13.field.v-3f78de7c.label",
+          "helpKey": "scenario13.field.v-3f78de7c.help",
+          "errorKey": "scenario13.field.v-3f78de7c.error"
+        },
+        {
+          "fieldId": "v-a51bd38b",
+          "labelZh": "建议处理人",
+          "control": "text",
+          "labelKey": "scenario13.field.v-a51bd38b.label",
+          "helpKey": "scenario13.field.v-a51bd38b.help",
+          "errorKey": "scenario13.field.v-a51bd38b.error"
+        },
+        {
+          "fieldId": "v-6e6ac3e0",
+          "labelZh": "处理期限",
+          "control": "text",
+          "labelKey": "scenario13.field.v-6e6ac3e0.label",
+          "helpKey": "scenario13.field.v-6e6ac3e0.help",
+          "errorKey": "scenario13.field.v-6e6ac3e0.error"
+        },
+        {
+          "fieldId": "v-bb792e69",
+          "labelZh": "复盘结论",
+          "control": "text",
+          "labelKey": "scenario13.field.v-bb792e69.label",
+          "helpKey": "scenario13.field.v-bb792e69.help",
+          "errorKey": "scenario13.field.v-bb792e69.error"
+        },
+        {
+          "fieldId": "v-621c62f6",
+          "labelZh": "行动目标",
+          "control": "text",
+          "labelKey": "scenario13.field.v-621c62f6.label",
+          "helpKey": "scenario13.field.v-621c62f6.help",
+          "errorKey": "scenario13.field.v-621c62f6.error"
+        },
+        {
+          "fieldId": "v-96af4d18",
+          "labelZh": "改进措施",
+          "control": "text",
+          "labelKey": "scenario13.field.v-96af4d18.label",
+          "helpKey": "scenario13.field.v-96af4d18.help",
+          "errorKey": "scenario13.field.v-96af4d18.error"
+        },
+        {
+          "fieldId": "v-9c71d6b7",
+          "labelZh": "负责人",
+          "control": "text",
+          "labelKey": "scenario13.field.v-9c71d6b7.label",
+          "helpKey": "scenario13.field.v-9c71d6b7.help",
+          "errorKey": "scenario13.field.v-9c71d6b7.error"
+        },
+        {
+          "fieldId": "v-e3e898fe",
+          "labelZh": "完成期限",
+          "control": "text",
+          "labelKey": "scenario13.field.v-e3e898fe.label",
+          "helpKey": "scenario13.field.v-e3e898fe.help",
+          "errorKey": "scenario13.field.v-e3e898fe.error"
+        },
+        {
+          "fieldId": "v-b845e555",
+          "labelZh": "审计说明",
+          "control": "textarea",
+          "labelKey": "scenario13.field.v-b845e555.label",
+          "helpKey": "scenario13.field.v-b845e555.help",
+          "errorKey": "scenario13.field.v-b845e555.error"
+        }
+      ],
+      "businessSelect": [
+        {
+          "fieldId": "v-c9175228",
+          "labelZh": "时间范围",
+          "control": "select",
+          "labelKey": "scenario13.field.v-c9175228.label",
+          "helpKey": "scenario13.field.v-c9175228.help",
+          "errorKey": "scenario13.field.v-c9175228.error",
+          "optionSet": "option.v-c9175228",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-dd8f5dde",
+          "labelZh": "楼栋/区域",
+          "control": "select",
+          "labelKey": "scenario13.field.v-dd8f5dde.label",
+          "helpKey": "scenario13.field.v-dd8f5dde.help",
+          "errorKey": "scenario13.field.v-dd8f5dde.error",
+          "optionSet": "option.v-dd8f5dde",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-5301f844",
+          "labelZh": "渠道",
+          "control": "searchable-select",
+          "labelKey": "scenario13.field.v-5301f844.label",
+          "helpKey": "scenario13.field.v-5301f844.help",
+          "errorKey": "scenario13.field.v-5301f844.error",
+          "optionSet": "option.v-5301f844",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-1b1ce015",
+          "labelZh": "企业客户",
+          "control": "searchable-select",
+          "labelKey": "scenario13.field.v-1b1ce015.label",
+          "helpKey": "scenario13.field.v-1b1ce015.help",
+          "errorKey": "scenario13.field.v-1b1ce015.error",
+          "optionSet": "option.v-1b1ce015",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-6edb7c68",
+          "labelZh": "商品",
+          "control": "searchable-select",
+          "labelKey": "scenario13.field.v-6edb7c68.label",
+          "helpKey": "scenario13.field.v-6edb7c68.help",
+          "errorKey": "scenario13.field.v-6edb7c68.error",
+          "optionSet": "option.v-6edb7c68",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-a030ee25",
+          "labelZh": "房间/床位范围",
+          "control": "searchable-select",
+          "labelKey": "scenario13.field.v-a030ee25.label",
+          "helpKey": "scenario13.field.v-a030ee25.help",
+          "errorKey": "scenario13.field.v-a030ee25.error",
+          "optionSet": "option.v-a030ee25",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-2abdf4d6",
+          "labelZh": "报表类型",
+          "control": "select",
+          "labelKey": "scenario13.field.v-2abdf4d6.label",
+          "helpKey": "scenario13.field.v-2abdf4d6.help",
+          "errorKey": "scenario13.field.v-2abdf4d6.error",
+          "optionSet": "option.v-2abdf4d6",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-ee930b03",
+          "labelZh": "指标视图",
+          "control": "select",
+          "labelKey": "scenario13.field.v-ee930b03.label",
+          "helpKey": "scenario13.field.v-ee930b03.help",
+          "errorKey": "scenario13.field.v-ee930b03.error",
+          "optionSet": "option.v-ee930b03",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-934c6c41",
+          "labelZh": "问题类型",
+          "control": "select",
+          "labelKey": "scenario13.field.v-934c6c41.label",
+          "helpKey": "scenario13.field.v-934c6c41.help",
+          "errorKey": "scenario13.field.v-934c6c41.error",
+          "optionSet": "option.v-934c6c41",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-51077933",
+          "labelZh": "责任场景包",
+          "control": "select",
+          "labelKey": "scenario13.field.v-51077933.label",
+          "helpKey": "scenario13.field.v-51077933.help",
+          "errorKey": "scenario13.field.v-51077933.error",
+          "optionSet": "option.v-51077933",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-5f8fea2c",
+          "labelZh": "是否生成行动计划",
+          "control": "select",
+          "labelKey": "scenario13.field.v-5f8fea2c.label",
+          "helpKey": "scenario13.field.v-5f8fea2c.help",
+          "errorKey": "scenario13.field.v-5f8fea2c.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-b7074a0c",
+          "labelZh": "行动计划类型",
+          "control": "select",
+          "labelKey": "scenario13.field.v-b7074a0c.label",
+          "helpKey": "scenario13.field.v-b7074a0c.help",
+          "errorKey": "scenario13.field.v-b7074a0c.error",
+          "optionSet": "option.v-b7074a0c",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-368a4e2e",
+          "labelZh": "优先级",
+          "control": "select",
+          "labelKey": "scenario13.field.v-368a4e2e.label",
+          "helpKey": "scenario13.field.v-368a4e2e.help",
+          "errorKey": "scenario13.field.v-368a4e2e.error",
+          "optionSet": "option.v-368a4e2e",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-f0e570f2",
+          "labelZh": "经营总览",
+          "control": "select",
+          "labelKey": "scenario13.field.v-f0e570f2.label",
+          "helpKey": "scenario13.field.v-f0e570f2.help",
+          "errorKey": "scenario13.field.v-f0e570f2.error",
+          "optionSet": "option.v-f0e570f2",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-dc38bad3",
+          "labelZh": "房源利用",
+          "control": "select",
+          "labelKey": "scenario13.field.v-dc38bad3.label",
+          "helpKey": "scenario13.field.v-dc38bad3.help",
+          "errorKey": "scenario13.field.v-dc38bad3.error",
+          "optionSet": "option.v-dc38bad3",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-3c558cd1",
+          "labelZh": "预订转化",
+          "control": "select",
+          "labelKey": "scenario13.field.v-3c558cd1.label",
+          "helpKey": "scenario13.field.v-3c558cd1.help",
+          "errorKey": "scenario13.field.v-3c558cd1.error",
+          "optionSet": "option.v-3c558cd1",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-7bf55380",
+          "labelZh": "入住在住",
+          "control": "select",
+          "labelKey": "scenario13.field.v-7bf55380.label",
+          "helpKey": "scenario13.field.v-7bf55380.help",
+          "errorKey": "scenario13.field.v-7bf55380.error",
+          "optionSet": "option.v-7bf55380",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-5308e61c",
+          "labelZh": "退房周转",
+          "control": "select",
+          "labelKey": "scenario13.field.v-5308e61c.label",
+          "helpKey": "scenario13.field.v-5308e61c.help",
+          "errorKey": "scenario13.field.v-5308e61c.error",
+          "optionSet": "option.v-5308e61c",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-700fae5f",
+          "labelZh": "渠道企业",
+          "control": "searchable-select",
+          "labelKey": "scenario13.field.v-700fae5f.label",
+          "helpKey": "scenario13.field.v-700fae5f.help",
+          "errorKey": "scenario13.field.v-700fae5f.error",
+          "optionSet": "option.v-700fae5f",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-f051661f",
+          "labelZh": "房务维修",
+          "control": "select",
+          "labelKey": "scenario13.field.v-f051661f.label",
+          "helpKey": "scenario13.field.v-f051661f.help",
+          "errorKey": "scenario13.field.v-f051661f.error",
+          "optionSet": "option.v-f051661f",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-89e5feb6",
+          "labelZh": "异常治理",
+          "control": "select",
+          "labelKey": "scenario13.field.v-89e5feb6.label",
+          "helpKey": "scenario13.field.v-89e5feb6.help",
+          "errorKey": "scenario13.field.v-89e5feb6.error",
+          "optionSet": "option.v-89e5feb6",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-52102460",
+          "labelZh": "关联场景包",
+          "control": "select",
+          "labelKey": "scenario13.field.v-52102460.label",
+          "helpKey": "scenario13.field.v-52102460.help",
+          "errorKey": "scenario13.field.v-52102460.error",
+          "optionSet": "option.v-52102460",
+          "submitValueSource": "stableValue"
+        }
+      ],
+      "systemDerived": [
+        {
+          "fieldId": "permissionEnvelope",
+          "labelZh": "permissionEnvelope",
+          "labelKey": "scenario13.field.permissionEnvelope.label",
+          "helpKey": "scenario13.field.permissionEnvelope.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "lineageEnvelope",
+          "labelZh": "lineageEnvelope",
+          "labelKey": "scenario13.field.lineageEnvelope.label",
+          "helpKey": "scenario13.field.lineageEnvelope.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "freshnessEnvelope",
+          "labelZh": "freshnessEnvelope",
+          "labelKey": "scenario13.field.freshnessEnvelope.label",
+          "helpKey": "scenario13.field.freshnessEnvelope.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "evidenceCompleteness",
+          "labelZh": "evidenceCompleteness",
+          "labelKey": "scenario13.field.evidenceCompleteness.label",
+          "helpKey": "scenario13.field.evidenceCompleteness.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-ef75d41d",
+          "labelZh": "指标值",
+          "labelKey": "scenario13.field.v-ef75d41d.label",
+          "helpKey": "scenario13.field.v-ef75d41d.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-c2cf116d",
+          "labelZh": "同比/环比",
+          "labelKey": "scenario13.field.v-c2cf116d.label",
+          "helpKey": "scenario13.field.v-c2cf116d.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-b45e202f",
+          "labelZh": "趋势",
+          "labelKey": "scenario13.field.v-b45e202f.label",
+          "helpKey": "scenario13.field.v-b45e202f.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-85f34307",
+          "labelZh": "分组",
+          "labelKey": "scenario13.field.v-85f34307.label",
+          "helpKey": "scenario13.field.v-85f34307.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-7cb26b5a",
+          "labelZh": "异常点",
+          "labelKey": "scenario13.field.v-7cb26b5a.label",
+          "helpKey": "scenario13.field.v-7cb26b5a.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-56473657",
+          "labelZh": "缺失项",
+          "labelKey": "scenario13.field.v-56473657.label",
+          "helpKey": "scenario13.field.v-56473657.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-591b56b2",
+          "labelZh": "不可发布原因",
+          "labelKey": "scenario13.field.v-591b56b2.label",
+          "helpKey": "scenario13.field.v-591b56b2.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        }
+      ],
+      "readOnlySummary": [
+        {
+          "fieldId": "1-12",
+          "labelZh": "场景包 1-12 已确认事实摘要",
+          "labelKey": "scenario13.field.1-12.label",
+          "helpKey": "scenario13.field.1-12.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-fe5f4dd8",
+          "labelZh": "状态历史",
+          "labelKey": "scenario13.field.v-fe5f4dd8.label",
+          "helpKey": "scenario13.field.v-fe5f4dd8.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-f71ae921",
+          "labelZh": "证据摘要",
+          "labelKey": "scenario13.field.v-f71ae921.label",
+          "helpKey": "scenario13.field.v-f71ae921.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-cd66b0d5",
+          "labelZh": "只读对象引用",
+          "labelKey": "scenario13.field.v-cd66b0d5.label",
+          "helpKey": "scenario13.field.v-cd66b0d5.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-cbf4a0ae",
+          "labelZh": "授权投影",
+          "labelKey": "scenario13.field.v-cbf4a0ae.label",
+          "helpKey": "scenario13.field.v-cbf4a0ae.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "finance-gate",
+          "labelZh": "finance-gate 已确认账务事实",
+          "labelKey": "scenario13.field.finance-gate.label",
+          "helpKey": "scenario13.field.finance-gate.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "permission-envelope",
+          "labelZh": "permission envelope",
+          "labelKey": "scenario13.field.permission-envelope.label",
+          "helpKey": "scenario13.field.permission-envelope.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "lineage-envelope",
+          "labelZh": "lineage envelope",
+          "labelKey": "scenario13.field.lineage-envelope.label",
+          "helpKey": "scenario13.field.lineage-envelope.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "freshness-envelope",
+          "labelZh": "freshness envelope",
+          "labelKey": "scenario13.field.freshness-envelope.label",
+          "helpKey": "scenario13.field.freshness-envelope.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-9a992a59",
+          "labelZh": "房间摘要",
+          "labelKey": "scenario13.field.v-9a992a59.label",
+          "helpKey": "scenario13.field.v-9a992a59.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-6acf9a48",
+          "labelZh": "运营状态摘要",
+          "labelKey": "scenario13.field.v-6acf9a48.label",
+          "helpKey": "scenario13.field.v-6acf9a48.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-b39788c3",
+          "labelZh": "商品摘要",
+          "labelKey": "scenario13.field.v-b39788c3.label",
+          "helpKey": "scenario13.field.v-b39788c3.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-4e136b60",
+          "labelZh": "报价单",
+          "labelKey": "scenario13.field.v-4e136b60.label",
+          "helpKey": "scenario13.field.v-4e136b60.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-b7e26a46",
+          "labelZh": "预订确认摘要",
+          "labelKey": "scenario13.field.v-b7e26a46.label",
+          "helpKey": "scenario13.field.v-b7e26a46.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-3dbe671d",
+          "labelZh": "财务状态",
+          "labelKey": "scenario13.field.v-3dbe671d.label",
+          "helpKey": "scenario13.field.v-3dbe671d.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-9a7cd5e1",
+          "labelZh": "入住记录摘要",
+          "labelKey": "scenario13.field.v-9a7cd5e1.label",
+          "helpKey": "scenario13.field.v-9a7cd5e1.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-33daca15",
+          "labelZh": "退房确认摘要",
+          "labelKey": "scenario13.field.v-33daca15.label",
+          "helpKey": "scenario13.field.v-33daca15.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-6ed96598",
+          "labelZh": "取消/未到店摘要",
+          "labelKey": "scenario13.field.v-6ed96598.label",
+          "helpKey": "scenario13.field.v-6ed96598.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-c1355004",
+          "labelZh": "作业完成摘要",
+          "labelKey": "scenario13.field.v-c1355004.label",
+          "helpKey": "scenario13.field.v-c1355004.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        },
+        {
+          "fieldId": "v-b08bd58f",
+          "labelZh": "渠道摘要",
+          "labelKey": "scenario13.field.v-b08bd58f.label",
+          "helpKey": "scenario13.field.v-b08bd58f.help",
+          "sourceScenario": "房间摘要 / 运营状态摘要 / 商品摘要 / 报价单 / 预订确认摘要 / 财务状态 / 入住记录摘要 / 退房确认摘要 / 取消/未到店摘要 / 作业完成摘要 / 渠道摘要"
+        }
+      ],
+      "evidenceBinding": [
+        {
+          "fieldId": "runtimeEvidenceSummary",
+          "labelZh": "办理证据摘要",
+          "labelKey": "scenario13.evidence.runtimeEvidenceSummary.label",
+          "helpKey": "scenario13.evidence.runtimeEvidenceSummary.help",
+          "evidenceType": "runtimeSummary"
+        }
+      ],
+      "legalAction": [
+        {
+          "fieldId": "v-339b7fc4",
+          "labelZh": "提交复盘",
+          "labelKey": "scenario13.action.v-339b7fc4.label",
+          "legalActionRef": "legalAction.dormitory.scenario13.v-339b7fc4.v1"
+        },
+        {
+          "fieldId": "v-d6627ee5",
+          "labelZh": "发布内部报表",
+          "labelKey": "scenario13.action.v-d6627ee5.label",
+          "legalActionRef": "legalAction.dormitory.scenario13.v-d6627ee5.v1"
+        },
+        {
+          "fieldId": "v-34321453",
+          "labelZh": "导出",
+          "labelKey": "scenario13.action.v-34321453.label",
+          "legalActionRef": "legalAction.dormitory.scenario13.v-34321453.v1"
+        },
+        {
+          "fieldId": "v-b99031e2",
+          "labelZh": "归档",
+          "labelKey": "scenario13.action.v-b99031e2.label",
+          "legalActionRef": "legalAction.dormitory.scenario13.v-b99031e2.v1"
+        }
+      ],
+      "actionControl": [
+        {
+          "fieldId": "v-339b7fc4",
+          "labelZh": "提交复盘",
+          "labelKey": "scenario13.action.v-339b7fc4.label",
+          "legalActionRef": "legalAction.dormitory.scenario13.v-339b7fc4.v1"
+        },
+        {
+          "fieldId": "v-d6627ee5",
+          "labelZh": "发布内部报表",
+          "labelKey": "scenario13.action.v-d6627ee5.label",
+          "legalActionRef": "legalAction.dormitory.scenario13.v-d6627ee5.v1"
+        },
+        {
+          "fieldId": "v-34321453",
+          "labelZh": "导出",
+          "labelKey": "scenario13.action.v-34321453.label",
+          "legalActionRef": "legalAction.dormitory.scenario13.v-34321453.v1"
+        },
+        {
+          "fieldId": "v-b99031e2",
+          "labelZh": "归档",
+          "labelKey": "scenario13.action.v-b99031e2.label",
+          "legalActionRef": "legalAction.dormitory.scenario13.v-b99031e2.v1"
+        }
+      ],
+      "conditionalInput": [],
+      "auditInternal": [
+        {
+          "fieldId": "reportScopeRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "dataQualityCheckRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reportSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "financeReviewSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "auditFindingRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reviewConclusionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "actionPlanRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "issueTrackingItemRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "exportRecordRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "auditTrailRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "projectionVersion",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "domainEventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reportId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "metricId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ledgerEntryId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stayId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "paymentId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "depositId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "refundId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "digest",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        }
+      ]
+    }
+  },
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "readModelMayReadConfirmedFactsOnly": true,
+    "readModelMayWriteSourceFacts": false,
+    "businessRuntimeMayWriteRoomBedOperation": false,
+    "businessRuntimeMayWritePriceQuoteReservationStay": false,
+    "businessRuntimeMayWritePaymentDepositRefund": false,
+    "businessRuntimeMayWriteLedger": false,
+    "financeGateTruthReadonlyOnly": true,
+    "failurePathBusinessSideEffectsAllowed": false,
+    "successMayWriteReportingAuditReviewFactsOnly": true
+  },
+  "upstream": {
+    "allowedSourcePackageNos": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "requiredReadonlyInputs": [
+      "场景包 1-12 已确认事实摘要",
+      "状态历史",
+      "证据摘要",
+      "只读对象引用",
+      "授权投影",
+      "finance-gate 已确认账务事实",
+      "permission envelope",
+      "lineage envelope",
+      "freshness envelope"
+    ],
+    "upstreamWriteBackAllowed": false,
+    "financeGateTruthReadonlyRuleZh": "财务指标只能读取 finance-gate 已确认账务事实、财务确认快照和授权投影；场景包 13 不写 Payment、Deposit、Refund、LedgerEntry 或 LedgerTransaction。",
+    "formalReportAdmissionRuleZh": "缺少 permission envelope、lineage envelope 或 freshness envelope 的数据不得进入正式报表，只能生成草稿、缺失项或问题清单。"
+  },
+  "downstream": {
+    "allowedConsumers": [
+      {
+        "consumer": "management-review",
+        "allowedReadOutputs": [
+          "报表快照",
+          "指标快照",
+          "复盘结论",
+          "行动计划",
+          "问题追踪",
+          "导出记录",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "ruleZh": "管理复盘只能读取发布后的快照和行动计划，不得在报表中直接修改原业务事实。"
+      },
+      {
+        "consumer": "scenario-packages-1-12",
+        "allowedReadOutputs": [
+          "审计发现",
+          "行动计划",
+          "问题追踪",
+          "异常纠错建议",
+          "只读对象引用"
+        ],
+        "ruleZh": "行动计划只能跳转回对应场景包或 finance-gate 处理，不能在场景包 13 中反写源事实。"
+      }
+    ],
+    "handoffOutputs": [
+      "报表快照",
+      "指标快照",
+      "财务核对视图",
+      "审计发现",
+      "复盘结论",
+      "行动计划",
+      "问题追踪",
+      "导出记录",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "forbiddenOutputsZh": [
+      "Room",
+      "Bed",
+      "OperationStatus",
+      "RatePlan",
+      "Quote",
+      "Reservation",
+      "Stay",
+      "Payment",
+      "Deposit",
+      "Refund",
+      "LedgerEntry",
+      "LedgerTransaction",
+      "已修复原事实",
+      "已入账",
+      "已上线",
+      "final GO"
+    ],
+    "downstreamRecheckRuleZh": "场景包 13 只输出报表快照、指标快照、财务核对视图、审计发现、复盘结论、行动计划、问题追踪、导出记录、证据摘要和只读对象引用；所有行动计划只能跳转回对应场景包或 finance-gate 处理。"
+  },
+  "noGo": {
+    "productionConfirmAllowed": false,
+    "businessGoLiveAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

@@ -1,0 +1,186 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario3-surfaceNavigation.generated",
+  "version": "oam.dormitory-scenario3-surfaceNavigation.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario3-product-and-pricing-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario3-product-and-pricing-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:60372bae88f8c69027805c9a2225b4939e2108913d66b25e962e445b68fcf5e1",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario3-product-and-pricing.authority.json",
+      "digest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario3.ProductAndPricing",
+  "scenarioPackageNo": 3,
+  "scenarioId": "lodging.product-and-rate",
+  "outputContentDigest": "sha256:47542ab75f75769c3eb152d130a63a01282eea028100fa594a7995f262087f89",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "住宿商品与价格",
+  "businessGoalZh": "承接场景包 1 的房源摘要和场景包 2 已确认可运营且未阻断的运营状态摘要，配置住宿商品、售卖单位、商品资源绑定、价格方案、适用日期、价格版本及价格生效/停用记录。",
+  "sourceScenarioDigest": "sha256:cce02944404eaefa8bffb666cee71ef13148027a88484511eefa1a8773260614",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario3.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "AccommodationProduct",
+      "SellableUnit",
+      "ProductResourceBinding",
+      "RatePlan",
+      "RateRule",
+      "PriceCalendar",
+      "PriceVersion",
+      "PriceEvidence",
+      "PriceStatusHistory"
+    ],
+    "searchReadModel": [
+      "住宿商品与价格",
+      "商品摘要",
+      "价格方案摘要",
+      "价格日历摘要",
+      "价格版本历史",
+      "可否进入询价报价",
+      "证据摘要",
+      "只读对象引用",
+      "价格版本和价格日历摘要"
+    ],
+    "noRefillRuleZh": "场景包 3 只能读取场景包 1 和场景包 2 的只读摘要，不得要求用户重新填写房间、床位组、基础就绪或运营状态字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "surfaceNavigation": {
+    "pages": [
+      "商品列表",
+      "商品详情",
+      "商品新建页",
+      "价格方案页",
+      "价格日历页",
+      "价格版本历史页",
+      "审核生效页",
+      "停用/作废入口"
+    ],
+    "todayZh": "今日只展示今天需要处理的被动任务，例如待审核价格、今日生效价格、即将失效价格、价格冲突待处理。",
+    "workItemsZh": "工作项展示全部被动任务池。",
+    "searchZh": "搜索可以查房间、床位、商品、价格方案、日期、状态，但搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "pageMustShowZh": [
+      "当前价格状态",
+      "适用范围",
+      "版本",
+      "日期",
+      "缺失项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": [
+      {
+        "state": "draft",
+        "buttonsZh": [
+          "继续填写",
+          "提交审核"
+        ]
+      },
+      {
+        "state": "pending_review",
+        "buttonsZh": [
+          "审核通过",
+          "退回修改"
+        ]
+      },
+      {
+        "state": "effective",
+        "buttonsZh": [
+          "新建调价版本",
+          "停用"
+        ]
+      },
+      {
+        "state": "disabled",
+        "buttonsZh": [
+          "查看历史",
+          "重新建版本"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "可报价",
+      "可预订",
+      "已预订",
+      "已锁定",
+      "已入住",
+      "已收款",
+      "final GO",
+      "生产发布",
+      "RatePlanConfirm",
+      "resource-saleability",
+      "lead-reservation",
+      "golden-chain"
+    ]
+  },
+  "userReadableNamesOnlyZh": "普通页面只展示业务可读名称，例如“301 房间整房按晚价 180 元”“301-02 床位月租 1200 元”。",
+  "forbiddenUserInputFields": [
+    "productId",
+    "ratePlanId",
+    "priceVersionId",
+    "roomId",
+    "bedId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId"
+  ],
+  "buttonByState": [
+    {
+      "state": "draft",
+      "buttonsZh": [
+        "继续填写",
+        "提交审核"
+      ]
+    },
+    {
+      "state": "pending_review",
+      "buttonsZh": [
+        "审核通过",
+        "退回修改"
+      ]
+    },
+    {
+      "state": "effective",
+      "buttonsZh": [
+        "新建调价版本",
+        "停用"
+      ]
+    },
+    {
+      "state": "disabled",
+      "buttonsZh": [
+        "查看历史",
+        "重新建版本"
+      ]
+    }
+  ],
+  "priceStatusOptions": [
+    "价格草稿",
+    "待审核",
+    "已生效",
+    "已停用",
+    "已过期",
+    "已作废",
+    "需补充证据"
+  ]
+}

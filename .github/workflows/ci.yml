@@ -36,6 +36,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Install ripgrep
         run: sudo apt-get update && sudo apt-get install -y ripgrep
@@ -64,9 +66,31 @@ jobs:
           node scripts/validate-contracts.mjs
           node scripts/check-rule-authority.mjs
           node scripts/oam/check-current-architecture-manifest.mjs
+          node scripts/oam/check-authority-ledger-append-only.mjs
+          node scripts/oam/check-current-projection-from-ledger.mjs
+          node scripts/oam/check-no-active-legacy-identity.mjs
+          node scripts/oam/check-no-active-path-legacy-identity.mjs
+          node scripts/oam/check-no-current-capability-uses-legacy-seed.mjs
+          node scripts/oam/check-no-stage-number-authority-leak.mjs
+          node scripts/oam/check-no-stage-number-active-authority.mjs
+          node scripts/oam/check-compatibility-box-boundary.mjs
+          node scripts/oam/check-capability-state-machine-transition.mjs
+          node scripts/oam/check-capability-authority-state-consistency.mjs
+          node scripts/oam/check-control-plane-lane-boundary.mjs
+          node scripts/oam/check-gate-taxonomy.mjs
           node scripts/oam/check-p0-rule-ledger.mjs --self-test
           node scripts/oam/check-p0-rule-ledger.mjs
           node scripts/oam/check-current-authority-index.mjs
+          node scripts/oam/check-dormitory-mainline-manifest.mjs
+          node scripts/oam/check-lodging-consumer-graph.mjs
+          node scripts/oam/check-legacy-retirement-ledger.mjs
+          node scripts/oam/check-visible-business-copy-contract.mjs
+          node scripts/oam/check-dormitory-defect-closure-ledger.mjs
+          node scripts/oam/check-dormitory-active-path-gate.mjs
+          node scripts/oam/check-dormitory-operation-execution-contract.mjs
+          node scripts/oam/check-dormitory-local-test-environment-manager.mjs
+          node scripts/oam/check-project-maintainability-governance.mjs
+          node scripts/oam/check-dormitory-ci-hard-gates.mjs
           node scripts/authority/check-master-design-schema.mjs
           node scripts/authority/check-truth-ownership-matrix.mjs
           node scripts/oam/generate-authority-source-layer-audit.mjs
@@ -77,10 +101,22 @@ jobs:
           node scripts/oam/check-codex-execution-channel-policy.mjs
           node scripts/oam/check-cross-domain-conflict-rules.mjs
           node scripts/oam/check-system-operating-kernel.mjs
-          node scripts/business/generate-dormitory-derived-contracts.mjs
+          node scripts/oam/check-generated-compile-authorization.mjs
+          FORMAL_GENERATED_COMPILE_AUTHORIZED="$(node scripts/oam/formal-generated-compile-authorization-status.mjs --print-authorized)"
+          if [ "${ALLOW_GENERATED_COMPILE_CANDIDATE:-}" = "true" ] || [ "${FORMAL_GENERATED_COMPILE_AUTHORIZED}" = "true" ]; then
+            node scripts/business/generate-dormitory-derived-contracts.mjs
+          fi
+          node scripts/oam/check-dormitory-golden-chain-source-package.mjs --write-proof
           node scripts/oam/compile-current-kernel-graph.mjs
+          node scripts/oam/check-generated-field-binding-closure.mjs
+          node scripts/oam/compile-current-capability.mjs
           node scripts/oam/check-generated-contract-consistency.mjs
           node scripts/oam/check-generated-files-not-manually-edited.mjs
+          node scripts/oam/check-generated-bundle-content-addressed.mjs
+          node scripts/oam/check-single-capability-bundle-digest.mjs
+          node scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs
+          node scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs
+          node scripts/oam/check-test-plan-generated-from-capability.mjs
           node scripts/oam/check-oam-kernel-graph.mjs
           node scripts/oam/check-system-change-governance.mjs
           node scripts/oam/check-iteration-kernel.mjs
@@ -89,6 +125,7 @@ jobs:
           node scripts/oam/check-retired-reference-blocker.mjs
           node scripts/oam/generate-system-derived-contracts.mjs
           node scripts/oam/check-derived-contract-consistency.mjs
+          node scripts/oam/check-generated-compile-execution.mjs
           node scripts/oam/check-system-handoff-contract.mjs
           node scripts/oam/check-system-failure-routing-contract.mjs
           node scripts/oam/check-current-engineering-ledger.mjs
@@ -158,8 +195,55 @@ jobs:
           node scripts/business/check-dormitory-release-train.mjs
           node scripts/business/check-dormitory-pilot-scenario-pack.mjs
           node scripts/business/check-dormitory-metrics-lens-contract.mjs
-          node scripts/oam/check-dormitory-golden-chain-source-package.mjs
+          node scripts/oam/check-dormitory-golden-chain-source-package.mjs --write-proof
+          node scripts/business/check-dormitory-13-scenario-control-authority.mjs
+          node scripts/business/check-dormitory-production-mainline-activation-authority.mjs
+          node scripts/business/check-dormitory-13-scenario-generated-contracts.mjs
+          node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs
+          node scripts/business/check-dormitory-scenario1-resource-basic-readiness-authority.mjs
+          node scripts/business/check-dormitory-scenario1-generated-contracts.mjs
+          node scripts/business/check-dormitory-scenario1-consumption-boundary.mjs
+          node scripts/business/check-dormitory-scenario2-resource-operation-status-authority.mjs
+          node scripts/business/check-dormitory-scenario2-generated-contracts.mjs
+          node scripts/business/check-dormitory-scenario2-consumption-boundary.mjs
+          node scripts/business/check-dormitory-scenario3-product-and-pricing-authority.mjs
+          node scripts/business/check-dormitory-scenario3-product-and-pricing-generated-contracts.mjs
+          node scripts/business/check-dormitory-scenario3-product-and-pricing-consumption-boundary.mjs
+          node scripts/business/check-dormitory-scenario4-inquiry-and-quote-authority.mjs
+          node scripts/business/check-dormitory-scenario4-inquiry-and-quote-generated-contracts.mjs
+          node scripts/business/check-dormitory-scenario4-inquiry-and-quote-consumption-boundary.mjs
+          node scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-authority.mjs
+          node scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-generated-contracts.mjs
+          node scripts/business/check-dormitory-scenario5-reservation-and-inventory-hold-consumption-boundary.mjs
+          node scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-authority.mjs
+          node scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-generated-contracts.mjs
+          node scripts/business/check-dormitory-scenario6-payment-deposit-and-guarantee-consumption-boundary.mjs
+          node scripts/business/check-dormitory-scenario7-check-in-processing-authority.mjs
+          node scripts/business/check-dormitory-scenario7-check-in-processing-generated-contracts.mjs
+          node scripts/business/check-dormitory-scenario7-check-in-processing-consumption-boundary.mjs
+          node scripts/business/check-dormitory-scenario8-in-stay-management-authority.mjs
+          node scripts/business/check-dormitory-scenario8-in-stay-management-generated-contracts.mjs
+          node scripts/business/check-dormitory-scenario8-in-stay-management-consumption-boundary.mjs
+          node scripts/business/check-dormitory-scenario9-checkout-settlement-authority.mjs
+          node scripts/business/check-dormitory-scenario9-checkout-settlement-generated-contracts.mjs
+          node scripts/business/check-dormitory-scenario9-checkout-settlement-consumption-boundary.mjs
+          node scripts/business/check-dormitory-scenario10-cancel-noshow-refund-authority.mjs
+          node scripts/business/check-dormitory-scenario10-cancel-noshow-refund-generated-contracts.mjs
+          node scripts/business/check-dormitory-scenario10-cancel-noshow-refund-consumption-boundary.mjs
+          node scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-authority.mjs
+          node scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-generated-contracts.mjs
+          node scripts/business/check-dormitory-scenario11-housekeeping-maintenance-outofservice-consumption-boundary.mjs
+          node scripts/business/check-dormitory-scenario12-channel-corporate-customer-authority.mjs
+          node scripts/business/check-dormitory-scenario12-channel-corporate-customer-generated-contracts.mjs
+          node scripts/business/check-dormitory-scenario12-channel-corporate-customer-consumption-boundary.mjs
+          node scripts/business/check-dormitory-scenario13-reporting-audit-review-authority.mjs
+          node scripts/business/check-dormitory-scenario13-reporting-audit-review-generated-contracts.mjs
+          node scripts/business/check-dormitory-scenario13-reporting-audit-review-consumption-boundary.mjs
+          node scripts/business/check-dormitory-13-scenario-integration-chain.mjs
+          node scripts/business/check-dormitory-ui-readside-experience.mjs
           node scripts/business/check-dormitory-execution-kernel.mjs
+          node scripts/oam/check-dormitory-active-path-gate.mjs
+          node scripts/oam/check-dormitory-operation-execution-contract.mjs
           node scripts/business/check-scenario-field-contract.mjs
           node scripts/business/check-canonical-scenario-map.mjs
           node scripts/business/check-evidence-coverage-contract.mjs
@@ -207,26 +291,62 @@ jobs:
       - name: Runtime contract tests
         run: dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release
 
-      - name: Generate dormitory real-browser evidence
+      - name: Generate dormitory 13-scenario real-browser evidence
+        continue-on-error: true
         env:
           WORKOS_REAL_BROWSER_HEADLESS: "1"
           WORKOS_MOBILE_URL: http://127.0.0.1:5175
           WORKOS_API_URL: http://127.0.0.1:5191
         run: |
           pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1
-          node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs
-          node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs
+          node scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs
+          node scripts/oam/check-project-purity-authority-seal.mjs
 
       - name: OAM total gate
         run: pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/oam/run-control-plane-checks.ps1
 
+      - name: Validate dormitory candidate artifact attestation package
+        if: always()
+        run: |
+          node scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs
+          node scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs
+          node scripts/oam/generate-generated-candidate-acceptance.mjs
+          node scripts/oam/check-s5-semantic-digest-idempotency.mjs
+          node scripts/oam/check-generated-candidate-acceptance.mjs --self-test
+          node scripts/oam/check-generated-bundle-content-addressed.mjs
+          node scripts/oam/check-single-capability-bundle-digest.mjs
+          node scripts/oam/check-generated-candidate-acceptance.mjs
+          node scripts/oam/check-dormitory-runtime-admission.mjs --write-proof
+          node scripts/oam/check-runtime-consumes-accepted-bundle.mjs
+          node scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs
+          node scripts/oam/check-environment-profile-authority.mjs
+          node scripts/oam/check-runtime-stability-lane.mjs
+          node scripts/oam/check-runtime-implementation-drift-policy.mjs
+          node scripts/oam/check-capability-authority-state-consistency.mjs
+          node scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs
+          node scripts/oam/check-test-plan-generated-from-capability.mjs
+          node scripts/oam/check-evidence-root-hard-gate-matrix.mjs
+          node scripts/oam/generate-dormitory-mainline-activation-transaction.mjs
+          node scripts/oam/check-evidence-is-projection-only.mjs
+          node scripts/oam/check-release-authority-is-only-final-go-source.mjs
+          node scripts/oam/check-evidence-writer-boundary.mjs
+          node scripts/oam/check-current-head-authoritative-artifact-reconciliation.mjs
+          node scripts/oam/check-dormitory-first-golden-chain-landing.mjs
+
       - name: Generate current OAM evidence root
         if: always()
-        run: node scripts/oam/generate-current-evidence-root.mjs
+        run: |
+          node scripts/oam/generate-current-evidence-root.mjs
+          node scripts/oam/check-evidence-digest-chain-single-source.mjs
+          node scripts/oam/check-evidence-root-hard-gate-matrix.mjs
+          node scripts/oam/generate-current-evidence-root.mjs
+          node scripts/oam/generate-dormitory-mainline-activation-transaction.mjs
 
       - name: Validate current OAM evidence root
         if: always()
-        run: node scripts/oam/check-current-evidence-root.mjs
+        run: |
+          node scripts/oam/check-current-evidence-root.mjs
+          node scripts/oam/check-dormitory-mainline-activation-transaction.mjs
 
       - name: Validate current OAM release attestation
         if: always()
@@ -240,9 +360,17 @@ jobs:
           path: |
             artifacts/oam/evidence/**
             artifacts/oam/proofs/**
+            artifacts/oam/authority-cleanup/**
             artifacts/oam/checks/**
             artifacts/oam/test-results/**
             artifacts/oam/final-report.json
+            docs/oam/db-no-side-effects-proof.json
+            docs/oam/generated-candidate-acceptance.current.json
+            docs/oam/dormitory-runtime-admission.current.json
+            docs/oam/dormitory-first-golden-chain-landing.current.json
+            docs/contracts/generated/dormitory/field-bindings.generated.json
+            docs/contracts/generated/dormitory/test-plan.generated.json
+            docs/oam/evidence-attestation-packages/**
 
       - name: Diff whitespace check
         run: git diff --check

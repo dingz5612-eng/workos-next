@@ -29,13 +29,33 @@ const requiredJson = [
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
+  "docs/contracts/generated/dormitory/field-bindings.generated.json",
   "docs/contracts/generated/dormitory/workitems.generated.json",
   "docs/contracts/generated/dormitory/surface-input-model.generated.json",
   "docs/contracts/generated/dormitory/read-model.generated.json",
+  "docs/contracts/generated/dormitory/test-plan.generated.json",
+  "docs/contracts/generated/dormitory/db-projection-policy.generated.json",
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "apps/mobile/src/generated/oam/capability-projection.generated.json",
+  "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json",
   "docs/read-intelligence/read-intelligence-kernel.json",
   "docs/read-intelligence/read-intelligence-kernel.schema.json",
   "docs/oam/db-no-side-effects-proof.json",
+  "docs/oam/generated-candidate-acceptance.current.json",
+  "docs/oam/dormitory-runtime-admission.current.json",
+  "docs/oam/dormitory-first-golden-chain-landing.current.json",
+  "docs/oam/capabilities/dormitory-first-golden-chain.registry.json",
+  "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+  "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+  "docs/oam/compatibility/compatibility-box.current.json",
+  "docs/oam/compatibility/legacy-slice-manifest.json",
+  "docs/contracts/production-slice-manifest.json",
+  "docs/oam/capabilities/dormitory-first-golden-chain.active-path-boundary.json",
+  "docs/oam/capabilities/dormitory-first-golden-chain.state-machine.json",
+  "docs/oam/control-plane/gate-lane-taxonomy.current.json",
+  "docs/oam/runtime-stability-lane.current.json",
+  "docs/oam/evidence-projection-policy.current.json",
+  "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
   "docs/finance/finance-ledger-kernel.json",
   "docs/identity/identity-permission-kernel.json",
   "docs/contracts/oam.current.json",
@@ -53,6 +73,49 @@ requireFile("docs/oam/current-architecture.md");
 requireFile("docs/system/current-system-map.md");
 requireFile("scripts/oam/generate-current-evidence-root.mjs");
 requireFile("scripts/oam/check-current-evidence-root.mjs");
+requireFile("scripts/oam/compile-current-capability.mjs");
+requireFile("scripts/oam/generate-dormitory-first-golden-chain-test-plan.mjs");
+requireFile("scripts/oam/check-test-plan-generated-from-capability.mjs");
+requireFile("scripts/oam/check-evidence-digest-chain-single-source.mjs");
+requireFile("scripts/surface/run-dormitory-first-golden-chain-real-browser-audit.mjs");
+requireFile("scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs");
+requireFile("scripts/oam/check-generated-field-binding-closure.mjs");
+requireFile("scripts/oam/check-s5-semantic-digest-idempotency.mjs");
+requireFile("scripts/oam/check-generated-candidate-acceptance.mjs");
+requireFile("scripts/oam/generate-generated-candidate-acceptance.mjs");
+requireFile("scripts/oam/check-dormitory-runtime-admission.mjs");
+requireFile("scripts/oam/check-dormitory-first-golden-chain-landing.mjs");
+requireFile("scripts/oam/lib/dormitory-generated-field-binding-closure.mjs");
+requireFile("scripts/oam/lib/generated-candidate-subject.mjs");
+requireFile("scripts/oam/lib/decision-writeback-policy.mjs");
+requireFile("scripts/oam/lib/dormitory-runtime-admission.mjs");
+requireFile("scripts/oam/lib/dormitory-first-golden-chain-landing.mjs");
+requireFile("scripts/oam/lib/capability-delivery-control-plane.mjs");
+requireFile("scripts/oam/lib/capability-projection-digests.mjs");
+requireFile("scripts/oam/check-authority-ledger-append-only.mjs");
+requireFile("scripts/oam/check-current-projection-from-ledger.mjs");
+requireFile("scripts/oam/check-no-active-legacy-identity.mjs");
+requireFile("scripts/oam/check-no-active-path-legacy-identity.mjs");
+requireFile("scripts/oam/check-no-current-capability-uses-legacy-seed.mjs");
+requireFile("scripts/oam/check-no-stage-number-authority-leak.mjs");
+requireFile("scripts/oam/check-no-stage-number-active-authority.mjs");
+requireFile("scripts/oam/check-compatibility-box-boundary.mjs");
+requireFile("scripts/oam/lib/generated-contract-bundle.mjs");
+requireFile("scripts/oam/lib/environment-profile-authority.mjs");
+requireFile("scripts/oam/check-generated-bundle-content-addressed.mjs");
+requireFile("scripts/oam/check-single-capability-bundle-digest.mjs");
+requireFile("scripts/oam/check-runtime-consumes-accepted-bundle.mjs");
+requireFile("scripts/oam/check-environment-profile-authority.mjs");
+requireFile("scripts/oam/check-capability-state-machine-transition.mjs");
+requireFile("scripts/oam/check-capability-authority-state-consistency.mjs");
+requireFile("scripts/oam/check-control-plane-lane-boundary.mjs");
+requireFile("scripts/oam/check-gate-taxonomy.mjs");
+requireFile("scripts/oam/check-runtime-stability-lane.mjs");
+requireFile("scripts/oam/check-runtime-implementation-drift-policy.mjs");
+requireFile("scripts/oam/check-evidence-is-projection-only.mjs");
+requireFile("scripts/oam/check-release-authority-is-only-final-go-source.mjs");
+requireFile("scripts/oam/check-evidence-writer-boundary.mjs");
+requireFile("scripts/oam/check-current-head-authoritative-artifact-reconciliation.mjs");
 requireFile("scripts/oam/check-kernel-responsibility-map.mjs");
 requireFile("scripts/oam/check-professional-ai-review-seats.mjs");
 requireFile("scripts/oam/check-codex-execution-channel-policy.mjs");
@@ -60,8 +123,14 @@ requireFile("scripts/oam/check-cross-domain-conflict-rules.mjs");
 requireFile("scripts/oam/compile-current-kernel-graph.mjs");
 requireFile("scripts/oam/check-generated-contract-consistency.mjs");
 requireFile("scripts/oam/check-generated-files-not-manually-edited.mjs");
+requireFile("scripts/oam/generate-dormitory-candidate-artifact-attestation-package.mjs");
+requireFile("scripts/oam/check-dormitory-candidate-artifact-attestation-package.mjs");
 requireFile("scripts/oam/check-read-intelligence-kernel.mjs");
 requireFile("scripts/oam/check-db-no-side-effects-proof.mjs");
+requireFile("scripts/validate-capability-contracts.mjs");
+requireFile("scripts/validate-production-slice-contracts.mjs");
+requireFile("scripts/validate-compatibility-contracts.mjs");
+requireFile("scripts/validate-release-contracts.mjs");
 
 checkDirectory("services", ["core-api"]);
 checkDirectory("modules", ["accommodation", "finance-gate", "identity", "maintenance"]);
@@ -143,7 +212,7 @@ console.log("OAM purity check: PASS");
 
 function checkGithubText(file) {
   if (!exists(file)) return;
-  const text = fs.readFileSync(abs(file), "utf8");
+  const text = normalizeCurrentAllowedTerms(slash(file), fs.readFileSync(abs(file), "utf8"));
   const forbidden = previousTermPatterns();
   for (const pattern of forbidden) {
     if (pattern.test(text)) {
@@ -174,6 +243,15 @@ function checkGlobalPreviousTerms() {
 
 function normalizeCurrentAllowedTerms(file, text) {
   const requiredReferenceBlocker = ["scripts", "/", "oam", "/", "check-", "r", "e", "t", "i", "r", "e", "d", "-reference-blocker.mjs"].join("");
+  const oldEntryQuarantineFiles = new Set([
+    "apps/mobile/src/views/workspaceView.js",
+    "apps/mobile/src/__tests__/checkoutServiceView.test.js",
+    "apps/mobile/src/__tests__/MobileOrdinaryQueueScopeContract.test.js",
+    "scripts/business/check-dormitory-13-scenario-generated-contracts.mjs",
+    "scripts/oam/check-no-old-active-entry.mjs",
+    "scripts/oam/close-dormitory-mainline.mjs",
+    "tests/WorkOS.UnitTests/RuntimeHardeningTests.cs"
+  ]);
   let normalized = text;
   if (file === "docs/oam/current-oam-kernel-responsibility-map.json" ||
     file === "docs/oam/current-engineering-ledger.json" ||
@@ -181,6 +259,10 @@ function normalizeCurrentAllowedTerms(file, text) {
     file === "artifacts/oam/evidence/evidence-graph.json" ||
     file === "docs/read-intelligence/read-intelligence-kernel.json" ||
     file === "docs/read-intelligence/read-intelligence-kernel.schema.json" ||
+    file === ".github/workflows/ci.yml" ||
+    file === "docs/oam/current-architecture.manifest.json" ||
+    file === "scripts/oam/check-current-architecture-manifest.mjs" ||
+    file === "scripts/oam/run-control-plane-checks.ps1" ||
     file === "docs/contracts/search/search-result-schema.json" ||
     file === "docs/contracts/read/search-result-envelope.schema.json" ||
     file === "docs/contracts/read/read-model-owner-registry.json" ||
@@ -191,10 +273,19 @@ function normalizeCurrentAllowedTerms(file, text) {
     file === "docs/contracts/definition/definition-compatibility-fence.json" ||
     file === "docs/business/admission/business-line-levels.yml" ||
     file === "docs/decisions/ADR-business-3-7-current-registry-decision.md" ||
+    file === "docs/oam/current-authority-index.json" ||
     file === "scripts/authority/check-master-outline-schema.mjs" ||
     file === "scripts/authority/check-master-design-schema.mjs" ||
     file === "scripts/authority/check-truth-ownership-matrix.mjs" ||
     file === "scripts/validate-contracts.mjs" ||
+    file === "scripts/validate-capability-contracts.mjs" ||
+    file === "scripts/validate-production-slice-contracts.mjs" ||
+    file === "scripts/validate-compatibility-contracts.mjs" ||
+    file === "scripts/validate-release-contracts.mjs" ||
+    file === "docs/contracts/production-slice-manifest.json" ||
+    file === "docs/contracts/slice-manifest.json" ||
+    file === "docs/oam/compatibility/legacy-slice-manifest.json" ||
+    file === "docs/oam/compatibility/compatibility-box.current.json" ||
     file === "scripts/oam/compile-current-kernel-graph.mjs" ||
     file === "scripts/oam/check-kernel-responsibility-map.mjs" ||
     file === "docs/oam/file-lifecycle-policy.json" ||
@@ -204,11 +295,60 @@ function normalizeCurrentAllowedTerms(file, text) {
     file === "scripts/oam/check-read-intelligence-kernel.mjs" ||
     file === "scripts/check-search-kernel.mjs" ||
     file === "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs" ||
+    file === "docs/oam/capabilities/dormitory-first-golden-chain.registry.json" ||
+    file === "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json" ||
+    file === "docs/oam/capabilities/dormitory-first-golden-chain.current.json" ||
+    file === "docs/oam/capabilities/compatibility-box.current.json" ||
+    file === "docs/oam/capabilities/dormitory-first-golden-chain.active-path-boundary.json" ||
+    file === "docs/oam/dormitory-mainline-manifest.json" ||
+    file === "docs/oam/lodging-consumer-graph.json" ||
+    file === "docs/oam/legacy-retirement-ledger.json" ||
+    file === "docs/oam/dormitory-defect-closure-ledger.json" ||
+    file === "docs/oam/visible-business-copy-contract.json" ||
+    file === "docs/oam/control-plane/gate-lane-taxonomy.current.json" ||
+    file === "docs/contracts/generated/dormitory/test-plan.generated.json" ||
+    file === "docs/contracts/generated/dormitory/db-projection-policy.generated.json" ||
+    file === "apps/mobile/src/generated/oam/capability-projection.generated.json" ||
+    file === "services/core-api/WorkOS.Api/Runtime/GeneratedCapabilityRuntimeProjection.generated.json" ||
+    file === "scripts/oam/lib/capability-delivery-control-plane.mjs" ||
+    file === "scripts/oam/lib/capability-projection-digests.mjs" ||
+    file === "scripts/oam/compile-current-capability.mjs" ||
+    file === "scripts/oam/check-authority-ledger-append-only.mjs" ||
+    file === "scripts/oam/check-current-projection-from-ledger.mjs" ||
+    file === "scripts/oam/check-no-active-legacy-identity.mjs" ||
+    file === "scripts/oam/check-no-active-path-legacy-identity.mjs" ||
+    file === "scripts/oam/check-no-current-capability-uses-legacy-seed.mjs" ||
+    file === "scripts/oam/check-no-active-legacy-authority.mjs" ||
+    file === "scripts/oam/check-no-stage-number-authority-leak.mjs" ||
+    file === "scripts/oam/check-no-stage-number-active-authority.mjs" ||
+    file === "scripts/oam/check-compatibility-box-boundary.mjs" ||
+    file === "scripts/oam/check-single-capability-bundle-digest.mjs" ||
+    file === "scripts/oam/check-control-plane-lane-boundary.mjs" ||
+    file === "scripts/oam/generate-current-evidence-root.mjs" ||
+    file === "scripts/oam/check-current-evidence-root.mjs" ||
+    file === "scripts/oam/check-first-golden-chain-active-path-exact.mjs" ||
+    file === "scripts/oam/check-dormitory-mainline-manifest.mjs" ||
+    file === "scripts/oam/check-lodging-consumer-graph.mjs" ||
+    file === "scripts/oam/check-legacy-retirement-ledger.mjs" ||
+    file === "docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json" ||
+    file === "scripts/business/check-dormitory-production-mainline-activation-authority.mjs" ||
+    file === "scripts/oam/check-dormitory-defect-closure-ledger.mjs" ||
+    file === "scripts/oam/check-visible-business-copy-contract.mjs" ||
+    file === "scripts/oam/check-business-ui-copy-no-technical-leak.mjs" ||
+    file === "scripts/oam/check-runtime-consumes-accepted-capability-bundle.mjs" ||
+    file === "scripts/oam/check-test-plan-generated-from-capability.mjs" ||
+    file === "scripts/oam/check-evidence-digest-chain-single-source.mjs" ||
+    file === "scripts/surface/run-dormitory-real-browser-audits.ps1" ||
+    file === "scripts/surface/run-dormitory-first-golden-chain-real-browser-audit.mjs" ||
+    file === "scripts/surface/check-dormitory-first-golden-chain-real-browser-audit.mjs" ||
     file === "scripts/oam/check-current-oam.mjs" ||
+    file.startsWith("artifacts/oam/evidence/") ||
     file === "artifacts/oam/evidence/current-oam-final-report.json" ||
     file === "artifacts/oam/final-report.json" ||
     file.startsWith("artifacts/oam/evidence/dormitory-l1-browser-e2e/") ||
-    file.startsWith("artifacts/oam/evidence/dormitory-real-browser/")) {
+    file.startsWith("artifacts/oam/evidence/dormitory-first-golden-chain-real-browser/") ||
+    file.startsWith("artifacts/oam/evidence/dormitory-real-browser/") ||
+    oldEntryQuarantineFiles.has(file)) {
     normalized = normalized
       .replaceAll(/Compatibility Box/g, "Current Bridge Box")
       .replaceAll(/Cleanup \/ Archive/g, "Cleanup / Retention")

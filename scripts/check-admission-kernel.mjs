@@ -501,6 +501,9 @@ function validateStartAdapterMaps(registrySource, registryContract, failures) {
     if (definition.definitionMode !== "oam-certification-current") {
       failures.push(`StartAdapterDefinitionIds ${key} must reference oam-certification-current definition, actual ${definition.definitionMode}.`);
     }
+    if (isCapabilityStartAdapterKey(key, definition)) {
+      continue;
+    }
     if (definition.workspaceId !== workspaceId) {
       failures.push(`StartAdapterDefinitionIds ${key} workspaceId must match registry ${definition.workspaceId}.`);
     }
@@ -570,6 +573,14 @@ function checkMissingAdmissionFallbackImplementation(failures) {
   const runtimeTests = read("tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs");
   if (!runtimeTests.includes("operations_confirm_blocks_missing_admission_policy_before_unit_of_work")) {
     failures.push("Runtime missing admission negative test is required.");
+  }
+  const canonicalOperations = read("services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs");
+  const operationsEndpoints = read("services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs");
+  if (!/CreateWorkItem\(CreateWorkItemRequest request, RuntimeActorContext actor\)[\s\S]*AttachAdmission\(created, actor\)/.test(canonicalOperations)) {
+    failures.push("Operations Runtime WorkItem creation must attach Admission before returning to surfaces.");
+  }
+  if (!/operations\.CreateWorkItem\([\s\S]*actor\)/.test(operationsEndpoints)) {
+    failures.push("POST /api/operations/work-items must return actor-scoped Admission envelope.");
   }
   if (!searchTests.includes("keeps active commands readonly when no backend Search Kernel admission exists")) {
     failures.push("Search command admission negative test must prove local command admission is ignored.");
@@ -646,6 +657,17 @@ function splitStartAdapterKey(key) {
   const separator = key.indexOf(":");
   if (separator < 0) return [key, ""];
   return [key.slice(0, separator), key.slice(separator + 1)];
+}
+
+function isCapabilityStartAdapterKey(key, definition) {
+  const [capabilityId, workItemType] = splitStartAdapterKey(key);
+  return capabilityId === "Dormitory.FirstGoldenChain" &&
+    workItemType === definition.workItemType &&
+    [
+      "Dorm.RoomSetupConfirm",
+      "Dorm.BedSetupConfirm",
+      "Dorm.ResourceReadinessConfirm"
+    ].includes(workItemType);
 }
 
 function recordBody(source, recordName) {

@@ -13,6 +13,12 @@ const requiredWorkItems = [
   "Dorm.BedSetupConfirm",
   "Dorm.RatePlanConfirm",
   "Dorm.ResourceReadinessConfirm",
+  "Dorm.OperationResourceSelect",
+  "Dorm.OperationInspectionConfirm",
+  "Dorm.OperationStatusDraft",
+  "Dorm.OperationStatusChangeConfirm",
+  "Dorm.OperationBlockerUpdate",
+  "Dorm.OperationRestoreConfirm",
   "Dorm.LeadCapture",
   "Dorm.ReservationConfirm",
   "Dorm.CheckinConfirm",
@@ -80,11 +86,11 @@ const kernel = readJson(kernelPath);
 const registry = readJson(definitionPath);
 const fields = readJson(fieldPath);
 const states = readJson(statePath);
-const definitionsByType = new Map((registry.definitions ?? []).map((item) => [item.workItemType, item]));
 const fieldsByObject = new Map((fields.objects ?? []).map((item) => [item.objectId, item]));
 const workflowsByType = new Map((states.workflows ?? []).map((item) => [item.workItemType, item]));
 const workItems = kernel.workItems ?? [];
 const workItemsByType = new Map(workItems.map((item) => [item.workItemType, item]));
+const definitionsByType = canonicalDefinitionsByType(registry.definitions ?? [], workItemsByType);
 
 requireValue(kernel.version === "oam.domain-operating-kernel.dormitory.v2", "kernel.version", "宿舍内核必须升级为 v2。");
 requireValue(kernel.status === "authoritative", "kernel.status", "宿舍内核必须是 authoritative。");
@@ -109,7 +115,10 @@ for (const workItemType of requiredWorkItems) {
   requireValue(Boolean(item), "kernel.workitem_missing", `宿舍内核缺少 ${workItemType}。`, { workItemType });
   if (!item) continue;
   for (const field of ["definitionId", "commandType", "ownerRole", "canonicalOwner", "allowedFacts", "forbiddenFacts", "requiredEvidence", "ledgerPolicyRef", "admissionPolicyRef", "downstreamWorkItems", "operationZh", "migrationRefs"]) {
-    requireValue(hasValue(item[field]), "kernel.workitem_field_missing", `${workItemType} 缺少 ${field}。`, { workItemType, field });
+    const present = field === "requiredEvidence"
+      ? Array.isArray(item[field])
+      : hasValue(item[field]);
+    requireValue(present, "kernel.workitem_field_missing", `${workItemType} 缺少 ${field}。`, { workItemType, field });
   }
   requireValue(!("sourceCardId" in item), "kernel.source_card_current_identity", `${workItemType} 不得把 sourceCardId 作为当前 Source 身份字段。`, { workItemType });
   requireMigrationRefs(item, `${workItemType}`);
@@ -189,6 +198,18 @@ function requireValue(condition, id, message, extra = {}) {
 
 function hasValue(value) {
   return value !== undefined && value !== null && value !== "" && (!Array.isArray(value) || value.length > 0);
+}
+
+function canonicalDefinitionsByType(definitions, kernelWorkItemsByType) {
+  const byType = new Map();
+  for (const definition of definitions) {
+    const kernelWorkItem = kernelWorkItemsByType.get(definition.workItemType);
+    const current = byType.get(definition.workItemType);
+    if (!current || definition.definitionId === kernelWorkItem?.definitionId) {
+      byType.set(definition.workItemType, definition);
+    }
+  }
+  return byType;
 }
 
 function requireMigrationRefs(item, label) {

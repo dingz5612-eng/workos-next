@@ -1,0 +1,188 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario9-surfaceNavigation.generated",
+  "version": "oam.dormitory-scenario9-surfaceNavigation.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario9-checkout-settlement-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario9-checkout-settlement-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:2a8a0365c783206e0a870f20e7a4938488eec7eaa8f3822dd142bc8892529e21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario9-checkout-settlement.authority.json",
+      "digest": "sha256:87e69a9634931a45d6ade3d2e8afc9ddd3135ecfdc3e17ea84efd3c9eb892baa"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:87e69a9634931a45d6ade3d2e8afc9ddd3135ecfdc3e17ea84efd3c9eb892baa",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario9.CheckoutSettlement",
+  "scenarioPackageNo": 9,
+  "scenarioId": "lodging.checkout-and-settlement",
+  "outputContentDigest": "sha256:448dd4ad58efe48cbbaebd7b49217052713cb860edfcbd85195bc808632c98c0",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "退房结算",
+  "businessGoalZh": "承接场景包 7 的入住事实和场景包 8 的在住管理/退房准备摘要，办理实际退房、交接、验房、费用核算、押金抵扣、应退/应补结算意向、退房确认、凭证回收、财务处理请求和资源待恢复请求。",
+  "sourceScenarioDigest": "sha256:87e69a9634931a45d6ade3d2e8afc9ddd3135ecfdc3e17ea84efd3c9eb892baa",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario9.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "CheckoutCase",
+      "CurrentStaySnapshot",
+      "CheckoutInspection",
+      "RoomBedHandover",
+      "DamageAssessment",
+      "FeeSettlementDraft",
+      "DepositSettlementDraft",
+      "RefundRequestIntent",
+      "TopUpRequestIntent",
+      "CredentialReturnRecord",
+      "CheckoutConfirmation",
+      "ResourceRecoveryRequest",
+      "CheckoutEvidence",
+      "CheckoutStatusHistory"
+    ],
+    "searchReadModel": [
+      "退房结算",
+      "退房确认摘要",
+      "费用核算摘要",
+      "押金抵扣摘要",
+      "应退/应补意向",
+      "客户确认摘要",
+      "财务处理请求",
+      "资源待恢复请求",
+      "证据摘要",
+      "只读对象引用",
+      "结算意向"
+    ],
+    "noRefillRuleZh": "场景包 9 只能读取入住、在住、占用、收款、押金、财务、服务、异常、凭证、退房准备和证据摘要，不得要求用户重新填写已确认入住字段或财务确认字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "surfaceNavigation": {
+    "entryPages": [
+      "今日待退房",
+      "退房办理页",
+      "交接确认页",
+      "房间/床位检查页",
+      "费用核算页",
+      "客户确认页",
+      "退房结果页",
+      "财务处理状态页",
+      "资源恢复状态页",
+      "退房历史页"
+    ],
+    "todayZh": "今日只展示今天需要处理的被动任务：今日待退房、待验房、待客户确认、财务退回待补证、资源待检查。",
+    "workItemsZh": "工作项展示全部退房结算被动任务池。",
+    "searchZh": "搜索可以查客户、手机号、房间/床位、预订号、入住记录业务展示、退房状态；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "pageMustShowZh": [
+      "当前退房状态",
+      "已完成步骤",
+      "费用摘要",
+      "证据缺失项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": {
+      "待退房": [
+        "办理退房"
+      ],
+      "待验房": [
+        "开始验房"
+      ],
+      "待结算": [
+        "生成结算"
+      ],
+      "待客户确认": [
+        "客户确认",
+        "转复核"
+      ],
+      "待财务处理": [
+        "查看财务处理状态",
+        "补充证据"
+      ],
+      "已退房": [
+        "查看退房摘要",
+        "查看财务处理状态",
+        "查看资源恢复状态"
+      ]
+    },
+    "forbiddenUserVisibleTermsZh": [
+      "已退款",
+      "已入账",
+      "房源已可运营",
+      "final GO",
+      "生产发布",
+      "业务上线",
+      "CheckoutSettlementApprove",
+      "RefundApprove",
+      "RoomInspectionConfirm"
+    ]
+  },
+  "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“住客姓名已脱敏，301-02 床位，今日退房”“应退 200 元，待财务处理”“房源待保洁”。普通用户不得输入或记住内部编号。",
+  "forbiddenUserInputFields": [
+    "stayId",
+    "checkoutCaseId",
+    "settlementId",
+    "refundId",
+    "ledgerEntryId",
+    "roomId",
+    "bedId",
+    "stableRef",
+    "projectionVersion",
+    "digest",
+    "domainEventId",
+    "paymentId",
+    "ledgerTransactionId"
+  ],
+  "buttonByState": {
+    "待退房": [
+      "办理退房"
+    ],
+    "待验房": [
+      "开始验房"
+    ],
+    "待结算": [
+      "生成结算"
+    ],
+    "待客户确认": [
+      "客户确认",
+      "转复核"
+    ],
+    "待财务处理": [
+      "查看财务处理状态",
+      "补充证据"
+    ],
+    "已退房": [
+      "查看退房摘要",
+      "查看财务处理状态",
+      "查看资源恢复状态"
+    ]
+  },
+  "checkoutStatusOptions": [
+    "待退房",
+    "待验房",
+    "待结算",
+    "待客户确认",
+    "待财务处理",
+    "已退房",
+    "结算有争议",
+    "需补证",
+    "资源待保洁",
+    "资源待检查",
+    "资源待维修",
+    "异常待处理"
+  ]
+}

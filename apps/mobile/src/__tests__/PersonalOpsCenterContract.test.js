@@ -11,7 +11,7 @@ describe("SURFACE-C Personal Ops Center contract", () => {
     expect(html).toContain("最近提交");
     expect(html).toContain("最近轨迹");
     expect(html).toContain("设备可信状态");
-    expect(html).toContain("证据上传");
+    expect(html).toContain("材料上传");
     expect(html).toContain("提交队列");
     expect(html).toContain("当前设备");
     expect(visibleText(html)).not.toContain("PersonalOpsCenter");

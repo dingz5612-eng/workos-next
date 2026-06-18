@@ -6,7 +6,10 @@ public sealed class WorkItemDefinitionRegistryService
 {
     private static readonly Lazy<WorkItemDefinitionRegistryService> Default = new(LoadDefaultRegistry);
     private static readonly IReadOnlyDictionary<string, string> StartAdapterDefinitionIds =
-        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        AcceptedCapabilityRuntimeProjection.StartAdapterDefinitionIds()
+        .Concat(DormitoryScenario2RuntimeProjection.StartAdapterDefinitionIds())
+        .Concat(Dormitory13ScenarioRuntimeProjection.StartAdapterDefinitionIds())
+        .Concat(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["W-DORM-MAINLINE:cert.roomSetupConfirm"] = "definition.dormitory.roomSetupConfirm.v1",
             ["W-DORM-MAINLINE:cert.leadCapture"] = "definition.dormitory.leadCapture.v1",
@@ -18,7 +21,9 @@ public sealed class WorkItemDefinitionRegistryService
             ["W-DORM-SERVICE-CHECKOUT:cert.serviceTaskCreate"] = "definition.dormitory.serviceTaskCreate.v1",
             ["W-DORM-SERVICE-CHECKOUT:cert.expenseRecord"] = "definition.finance.expenseRecord.v1",
             ["W-DORM-GOVERNANCE:cert.periodReview"] = "definition.dormitory.periodReview.v1"
-        };
+        })
+        .GroupBy(item => item.Key, StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(group => group.Key, group => group.Last().Value, StringComparer.OrdinalIgnoreCase);
     private static readonly IReadOnlyDictionary<string, string> StartUiRouteDefinitionKeys =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -180,15 +185,53 @@ public sealed class WorkItemDefinitionRegistryService
     private static string StartAdapterCurrentKey(string? workspaceId, string? cardId)
     {
         var requestedKey = $"{workspaceId ?? string.Empty}:{cardId ?? string.Empty}";
-        return StartUiRouteDefinitionKeys.TryGetValue(requestedKey, out var currentKey)
+        if (StartUiRouteDefinitionKeys.TryGetValue(requestedKey, out var currentKey))
+        {
+            return currentKey;
+        }
+
+        var normalizedWorkspaceId = NormalizeStartAdapterWorkspaceId(workspaceId);
+        var normalizedKey = $"{normalizedWorkspaceId}:{cardId ?? string.Empty}";
+        return StartUiRouteDefinitionKeys.TryGetValue(normalizedKey, out currentKey)
             ? currentKey
-            : requestedKey;
+            : normalizedKey;
+    }
+
+    private static string NormalizeStartAdapterWorkspaceId(string? workspaceId)
+    {
+        var value = workspaceId ?? string.Empty;
+        if (value.Equals(AcceptedCapabilityRuntimeProjection.WorkspaceId, StringComparison.OrdinalIgnoreCase) ||
+            value.StartsWith($"{AcceptedCapabilityRuntimeProjection.WorkspaceId}-", StringComparison.OrdinalIgnoreCase))
+        {
+            return AcceptedCapabilityRuntimeProjection.WorkspaceId;
+        }
+
+        if (DormitoryScenario2RuntimeProjection.IsWorkspace(value))
+        {
+            return DormitoryScenario2RuntimeProjection.WorkspaceId;
+        }
+
+        if (Dormitory13ScenarioRuntimeProjection.IsWorkspace(value))
+        {
+            var matching = Dormitory13ScenarioRuntimeProjection.StartAdapterDefinitionIds().Keys
+                .Select(item => item.Split(':', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? string.Empty)
+                .FirstOrDefault(item =>
+                    value.Equals(item, StringComparison.OrdinalIgnoreCase) ||
+                    value.StartsWith($"{item}-", StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(matching))
+            {
+                return matching;
+            }
+        }
+
+        return value;
     }
 
     private static string GuessBusinessLine(string? workspaceId) =>
         string.IsNullOrWhiteSpace(workspaceId)
             ? "unknown"
             : workspaceId.StartsWith("W-STAY", StringComparison.OrdinalIgnoreCase) ||
+              workspaceId.StartsWith("W-DORM", StringComparison.OrdinalIgnoreCase) ||
               workspaceId.StartsWith("PC-GOVERNANCE", StringComparison.OrdinalIgnoreCase)
                 ? "dormitory"
                 : "unknown";

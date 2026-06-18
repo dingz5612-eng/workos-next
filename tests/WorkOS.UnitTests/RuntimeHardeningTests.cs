@@ -671,6 +671,64 @@ public sealed class RuntimeHardeningTests
     }
 
     [TestMethod]
+    public void ProjectionStateMigratorDoesNotRepublishRetiredDormitoryUserEntries()
+    {
+        var persisted = new RuntimeState(
+            new List<WorkspaceProjection>
+            {
+                Workspace("W-STAY-RESOURCE", Card("roomSetup", "Legacy.Event")),
+                Workspace("Dormitory.FirstGoldenChain", Card("Dorm.RoomSetupConfirm", "Legacy.Event")),
+                Workspace("W-AUDIT-ONLY", Card("auditCard", "Audit.Event"))
+            },
+            new List<WorkspaceEvent>(),
+            new List<RuntimeUser>());
+
+        var current = new RuntimeState(
+            new List<WorkspaceProjection>
+            {
+                Workspace("W-DORM-MAINLINE", Card("cert.roomSetupConfirm", "Current.Event"))
+            },
+            new List<WorkspaceEvent>(),
+            new List<RuntimeUser>());
+
+        var migrated = ProjectionStateMigrator.Migrate(persisted, current);
+
+        Assert.IsFalse(migrated.Workspaces.Any(item => item.Id.StartsWith("W-STAY-", StringComparison.OrdinalIgnoreCase)));
+        Assert.IsFalse(migrated.Workspaces.Any(item => item.Id.Equals("Dormitory.FirstGoldenChain", StringComparison.OrdinalIgnoreCase)));
+        Assert.IsTrue(migrated.Workspaces.Any(item => item.Id == "W-DORM-MAINLINE"));
+        Assert.IsTrue(migrated.Workspaces.Any(item => item.Id == "W-AUDIT-ONLY"));
+    }
+
+    [TestMethod]
+    public void RuntimeQueryEnvelopeHidesRetiredDormitoryUserEntries()
+    {
+        var state = new RuntimeState(
+            new List<WorkspaceProjection>
+            {
+                Workspace("W-DORM-MAINLINE", Card("cert.roomSetupConfirm", "Current.Event")),
+                Workspace("W-STAY-RESOURCE", Card("roomSetup", "Legacy.Event")),
+                Workspace("Dormitory.FirstGoldenChain", Card("Dorm.RoomSetupConfirm", "Legacy.Event"))
+            },
+            new List<WorkspaceEvent>
+            {
+                Event("evt-current") with { WorkspaceId = "W-DORM-MAINLINE" },
+                Event("evt-legacy") with { WorkspaceId = "W-STAY-RESOURCE" }
+            },
+            new List<RuntimeUser>());
+        var query = new RuntimeQueryService();
+
+        var envelope = query.Envelope(state);
+
+        Assert.IsTrue(envelope.Workspaces.Any(item => item.Id == "W-DORM-MAINLINE"));
+        Assert.IsFalse(envelope.Workspaces.Any(item => item.Id.StartsWith("W-STAY-", StringComparison.OrdinalIgnoreCase)));
+        Assert.IsFalse(envelope.Workspaces.Any(item => item.Id.Equals("Dormitory.FirstGoldenChain", StringComparison.OrdinalIgnoreCase)));
+        Assert.IsTrue(envelope.Events.Any(item => item.EventId == "evt-current"));
+        Assert.IsFalse(envelope.Events.Any(item => item.EventId == "evt-legacy"));
+        Assert.IsNull(query.FindUserReachableWorkspace(state, "W-STAY-RESOURCE"));
+        Assert.IsNotNull(query.FindWorkspace(state, "W-STAY-RESOURCE"));
+    }
+
+    [TestMethod]
     public void RuntimeStateMigratorUpgradesOldDocumentsWithoutDroppingRuntimeFacts()
     {
         var oldState = new RuntimeState(

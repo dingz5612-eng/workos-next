@@ -37,10 +37,20 @@ public sealed class SliceRuntimeCapabilityGate
     public ConfirmResult? ForbidConfirmIfNotCurrentSlice(string workspaceId)
     {
         var capability = CapabilityFor(workspaceId);
-        return capability.Status.Equals("production-slice", StringComparison.OrdinalIgnoreCase)
+        return IsConfirmAllowed(capability)
             ? null
             : new ConfirmResult(ConfirmStatus.Forbidden, $"slice_runtime_forbidden:{capability.SliceId}:{capability.Status}", null);
     }
+
+    private static bool IsConfirmAllowed(SliceRuntimeCapability capability) =>
+        capability.Status.Equals("production-slice", StringComparison.OrdinalIgnoreCase) ||
+        (capability.SliceId.Equals(AcceptedCapabilityRuntimeProjection.CapabilityId, StringComparison.OrdinalIgnoreCase) &&
+            capability.Status.Equals("runtime-test-admitted", StringComparison.OrdinalIgnoreCase)) ||
+        (capability.SliceId.Equals(DormitoryScenario2RuntimeProjection.SliceId, StringComparison.OrdinalIgnoreCase) &&
+            capability.Status.Equals("runtime-test-admitted", StringComparison.OrdinalIgnoreCase)) ||
+        (Dormitory13ScenarioRuntimeProjection.RuntimeCapabilities()
+            .Any(item => item.SliceId.Equals(capability.SliceId, StringComparison.OrdinalIgnoreCase)) &&
+            capability.Status.Equals("runtime-test-admitted", StringComparison.OrdinalIgnoreCase));
 
     private static IReadOnlyDictionary<string, SliceRuntimeCapability> LoadCapabilities(string? manifestPath)
     {
@@ -50,14 +60,20 @@ public sealed class SliceRuntimeCapabilityGate
         }
 
         using var manifest = JsonDocument.Parse(File.ReadAllText(manifestPath));
-        return manifest.RootElement
+        var sliceCapabilities = manifest.RootElement
             .GetProperty("slices")
             .EnumerateArray()
             .Select(slice => new SliceRuntimeCapability(
                 slice.GetProperty("id").GetString() ?? "unknown",
                 slice.GetProperty("workspaceId").GetString() ?? "unknown",
                 slice.GetProperty("status").GetString() ?? "unregistered"))
-            .ToDictionary(item => item.WorkspaceId, StringComparer.OrdinalIgnoreCase);
+            .ToList();
+        sliceCapabilities.Add(AcceptedCapabilityRuntimeProjection.RuntimeCapability());
+        sliceCapabilities.Add(DormitoryScenario2RuntimeProjection.RuntimeCapability());
+        sliceCapabilities.AddRange(Dormitory13ScenarioRuntimeProjection.RuntimeCapabilities());
+        return sliceCapabilities
+            .GroupBy(item => item.WorkspaceId, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
     }
 
     private static string? FindManifestPath()

@@ -22,7 +22,7 @@ const violations = [];
 const text = read(matrixPath);
 const matrix = parseSimpleYaml(text);
 const definitionRegistry = readJson(definitionRegistryPath);
-const definitionsByType = new Map((definitionRegistry.definitions ?? []).map((item) => [item.workItemType, item]));
+const definitionsByType = groupDefinitionsByType(definitionRegistry.definitions ?? []);
 
 checkSourceIdentity();
 checkGlobalRules();
@@ -70,12 +70,13 @@ function checkWorkItemBindings() {
     for (const workItem of binding.workItems ?? []) {
       requireValue(Boolean(workItem.workItemType), "matrix.workitem_type_missing", `${binding.packageId} 缺少 workItemType。`, { packageId: binding.packageId });
       requireValue(Boolean(workItem.definitionId), "matrix.definition_id_missing", `${binding.packageId} 缺少 definitionId。`, { packageId: binding.packageId, workItemType: workItem.workItemType });
-      const registryDefinition = definitionsByType.get(workItem.workItemType);
-      requireValue(Boolean(registryDefinition), "matrix.workitem_type_not_registered", `${workItem.workItemType} 不存在于 definition registry。`, { workItemType: workItem.workItemType });
-      if (registryDefinition) {
-        requireValue(registryDefinition.definitionId === workItem.definitionId, "matrix.definition_id_mismatch", `${workItem.workItemType} definitionId 不匹配。`, {
+      const registryDefinitions = definitionsByType.get(workItem.workItemType) ?? [];
+      requireValue(registryDefinitions.length > 0, "matrix.workitem_type_not_registered", `${workItem.workItemType} 不存在于 definition registry。`, { workItemType: workItem.workItemType });
+      if (registryDefinitions.length > 0) {
+        const registryDefinition = registryDefinitions.find((item) => item.definitionId === workItem.definitionId);
+        requireValue(Boolean(registryDefinition), "matrix.definition_id_mismatch", `${workItem.workItemType} definitionId 不匹配。`, {
           workItemType: workItem.workItemType,
-          expected: registryDefinition.definitionId,
+          expected: registryDefinitions.map((item) => item.definitionId),
           actual: workItem.definitionId
         });
       }
@@ -202,6 +203,15 @@ function isAcyclic(outgoing) {
     visited.add(node);
     return true;
   }
+}
+
+function groupDefinitionsByType(definitions) {
+  const grouped = new Map();
+  for (const definition of definitions) {
+    if (!grouped.has(definition.workItemType)) grouped.set(definition.workItemType, []);
+    grouped.get(definition.workItemType).push(definition);
+  }
+  return grouped;
 }
 
 function parseSimpleYaml(source) {

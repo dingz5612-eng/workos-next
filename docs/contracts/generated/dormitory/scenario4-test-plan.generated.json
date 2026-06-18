@@ -1,0 +1,137 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario4-testPlan.generated",
+  "version": "oam.dormitory-scenario4-testPlan.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario4-inquiry-and-quote-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario4-inquiry-and-quote-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:49a1b855da0cc309b2f797c1ff1f12c2bc00fe76bb8161b29ae5c320abc2acf3",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario4-inquiry-and-quote.authority.json",
+      "digest": "sha256:8dbbc0974699eac161fddffd13c6df6e16c63aeee4d29b00f37af52b35886dd2"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:8dbbc0974699eac161fddffd13c6df6e16c63aeee4d29b00f37af52b35886dd2",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario4.InquiryAndQuote",
+  "scenarioPackageNo": 4,
+  "scenarioId": "lodging.inquiry-and-quote",
+  "outputContentDigest": "sha256:1f643495249c0db5b24789eab47e13a83878d72ec90b04819fd93348062deb0a",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "询价与报价",
+  "businessGoalZh": "承接场景包 1 的房源摘要、场景包 2 的运营状态摘要、场景包 3 的商品与价格摘要，为客户生成询价记录、报价方案、报价单、报价版本和报价有效期。",
+  "sourceScenarioDigest": "sha256:8dbbc0974699eac161fddffd13c6df6e16c63aeee4d29b00f37af52b35886dd2",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario4.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "Inquiry",
+      "CustomerContact",
+      "StayDemand",
+      "QuoteOption",
+      "Quote",
+      "QuoteVersion",
+      "QuotePriceSnapshot",
+      "QuoteValidity",
+      "QuoteDeliveryRecord",
+      "QuoteEvidence",
+      "FollowUpTask",
+      "QuoteStatusHistory"
+    ],
+    "searchReadModel": [
+      "询价与报价",
+      "询价摘要",
+      "客户需求摘要",
+      "报价单摘要",
+      "报价版本",
+      "价格快照",
+      "报价有效期",
+      "客户反馈",
+      "转预订准备摘要",
+      "证据摘要",
+      "只读对象引用",
+      "报价单",
+      "有效期"
+    ],
+    "noRefillRuleZh": "场景包 4 只能读取场景包 1、2、3 的只读摘要，不得要求用户重新填写房间、床位组、运营状态、商品或价格字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "positiveBrowserTestPlan": [
+    "从客户询价入口进入。",
+    "登记客户。",
+    "填写入住日期、离店日期、人数。",
+    "查看可报价商品。",
+    "查看价格来源和价格明细。",
+    "生成报价草稿。",
+    "确认并发送报价。",
+    "查看报价单号和有效期。",
+    "记录客户反馈。",
+    "发起转预订准备。",
+    "查看今日、工作项、搜索、我的入口表现。"
+  ],
+  "negativeBrowserTestPlan": [
+    "缺客户联系方式。",
+    "入住日期晚于或等于离店日期。",
+    "人数为 0。",
+    "无有效商品。",
+    "无有效价格。",
+    "维修或停售资源进入报价。",
+    "报价有效期为空。",
+    "报价过期后转预订。",
+    "已发送报价原地编辑。",
+    "伪造 productId、ratePlanId、roomId、bedId、quoteId。",
+    "搜索结果直接写报价。",
+    "报价生成后直接锁库存或生成预订。",
+    "重复提交。",
+    "并发改报价。"
+  ],
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "register-customer-inquiry": [
+        "客户询价证据",
+        "客户来源证据"
+      ],
+      "confirm-stay-demand": [
+        "入住需求证据"
+      ],
+      "select-quotable-product": [
+        "场景包 3 商品价格摘要",
+        "报价选项证据"
+      ],
+      "generate-quote-draft": [
+        "报价依据证据",
+        "价格快照证据",
+        "优惠说明证据"
+      ],
+      "issue-and-send-quote": [
+        "报价确认记录",
+        "报价发送证据"
+      ],
+      "quote-follow-up-and-reservation-prep": [
+        "客户反馈证据",
+        "关闭报价证据",
+        "重新报价证据"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "screenshotAnalysisRequired": true,
+  "noSideEffectsProofRequired": true
+}

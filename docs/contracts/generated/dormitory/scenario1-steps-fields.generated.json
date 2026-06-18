@@ -1,0 +1,928 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario1-stepsFields.generated",
+  "version": "oam.dormitory-scenario1-stepsFields.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario1-resource-basic-readiness-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario1-resource-basic-readiness-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:67e65b1135a0b63537204df7d1bbd7fefb2f5773d2e4f8548b3c6336e8210586",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+      "digest": "sha256:480980f4c45e3e1cacc8a40876eb8d2b54c1a735b3849a5ad7996fdd88747d3b"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:480980f4c45e3e1cacc8a40876eb8d2b54c1a735b3849a5ad7996fdd88747d3b",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario1.ResourceBasicReadiness",
+  "scenarioPackageNo": 1,
+  "scenarioId": "lodging.resource-basic-readiness",
+  "outputContentDigest": "sha256:d1d034dd2573c849b14b3595fa98425ae8248ac0fdcc294f2cb9f345cee57679",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "房源建档与基础就绪",
+  "businessGoalZh": "把房间和床位组建档，完成基础资料与基础检查确认，只输出基础就绪摘要，不输出可运营、可报价或可预订。",
+  "sourceScenarioDigest": "sha256:480980f4c45e3e1cacc8a40876eb8d2b54c1a735b3849a5ad7996fdd88747d3b",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario1.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "BuildingContext",
+      "Room",
+      "BedSet",
+      "Bed",
+      "BasicReadiness",
+      "EvidenceBinding",
+      "StatusHistory"
+    ],
+    "searchReadModel": [
+      "房源建档与基础就绪",
+      "房间摘要",
+      "床位组摘要",
+      "基础就绪摘要",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用"
+    ],
+    "noRefillRuleZh": "场景包 2 只能读取本包输出摘要，不得要求用户重新填写房间、床位组和基础就绪字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "room-filing",
+      "nameZh": "房间建档",
+      "commandId": "Dorm.RoomSetupConfirm",
+      "commandBusinessNameZh": "房间建档确认",
+      "userSees": [
+        "楼栋/区域",
+        "楼层",
+        "房间号",
+        "房间位置说明",
+        "床位数量",
+        "备注",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "只读房间引用",
+        "房源建档与基础就绪办理摘要"
+      ],
+      "userFilledFields": [
+        "floor",
+        "roomNo",
+        "bedCount",
+        "roomRemark"
+      ],
+      "userSelectedFields": [
+        "buildingContextRef"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "房间照片",
+        "房间基础资料证据"
+      ],
+      "systemGeneratedFields": [
+        "roomRef",
+        "roomStableRef",
+        "roomVersion",
+        "createdAt",
+        "createdBy",
+        "domainEventId",
+        "projectionVersion"
+      ],
+      "validations": [
+        {
+          "ruleId": "room-no-unique-within-building-context",
+          "messageZh": "同一楼栋/区域下房间号不能重复。"
+        },
+        {
+          "ruleId": "bed-count-positive",
+          "messageZh": "床位数量必须大于 0。"
+        },
+        {
+          "ruleId": "no-user-filled-internal-room-identity",
+          "messageZh": "用户不得手填 roomId、stableRef、eventId。"
+        }
+      ],
+      "outputs": [
+        "房间摘要",
+        "只读房间引用"
+      ],
+      "primaryBusinessObject": "BuildingContext",
+      "requiredReadContext": [
+        "楼栋/区域",
+        "楼层",
+        "房间号",
+        "房间位置说明",
+        "床位数量",
+        "备注",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "只读房间引用",
+        "房源建档与基础就绪办理摘要"
+      ],
+      "editableInputs": [
+        "floor",
+        "roomNo",
+        "bedCount",
+        "roomRemark"
+      ],
+      "fixedSelections": [
+        "buildingContextRef"
+      ],
+      "financialContext": {
+        "applies": false,
+        "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [],
+        "to": [
+          "房间摘要",
+          "只读房间引用"
+        ],
+        "noRefillRuleZh": "场景包 2 只能读取本包输出摘要，不得要求用户重新填写房间、床位组和基础就绪字段。"
+      },
+      "searchReadModel": [
+        "房源建档与基础就绪",
+        "房间建档",
+        "房间建档确认",
+        "BuildingContext",
+        "楼栋/区域",
+        "楼层",
+        "房间号",
+        "房间位置说明",
+        "床位数量",
+        "备注",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "只读房间引用",
+        "房源建档与基础就绪办理摘要"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "bedset-confirmation",
+      "nameZh": "床位组确认",
+      "commandId": "Dorm.BedSetupConfirm",
+      "commandBusinessNameZh": "床位组确认",
+      "userSees": [
+        "系统根据床位数量生成的床位 01..N",
+        "系统根据床位数量和床铺生成方式生成的床位布局",
+        "所属房间",
+        "床位数量",
+        "床位组完整度",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "只读床位组引用",
+        "房源建档与基础就绪办理摘要"
+      ],
+      "userFilledFields": [
+        "bedRemark",
+        "specialNotes"
+      ],
+      "userSelectedFields": [
+        "bedType",
+        "bedEnabledStatus",
+        "bedTypeBatchSetting"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "床位照片",
+        "房间归属证明"
+      ],
+      "systemGeneratedFields": [
+        "bedSetRef",
+        "bedRef[01..N]",
+        "bedNo[01..N]",
+        "bedLayout[01..N]",
+        "bedSetVersion",
+        "bedCountMatchedFlag"
+      ],
+      "validations": [
+        {
+          "ruleId": "generated-bed-count-matches-room-bed-count",
+          "messageZh": "生成床位数量必须等于 room.bedCount。"
+        },
+        {
+          "ruleId": "bed-no-unique-within-room",
+          "messageZh": "同一房间内床位号唯一；不同房间允许相同床位号。"
+        },
+        {
+          "ruleId": "full-bedset-required",
+          "messageZh": "用户不得只填一个 bedNo 代替床位组。"
+        }
+      ],
+      "outputs": [
+        "床位组摘要",
+        "只读床位组引用"
+      ],
+      "primaryBusinessObject": "BuildingContext",
+      "requiredReadContext": [
+        "系统根据床位数量生成的床位 01..N",
+        "系统根据床位数量和床铺生成方式生成的床位布局",
+        "所属房间",
+        "床位数量",
+        "床位组完整度",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "只读床位组引用",
+        "房源建档与基础就绪办理摘要"
+      ],
+      "editableInputs": [
+        "bedRemark",
+        "specialNotes"
+      ],
+      "fixedSelections": [
+        "bedType",
+        "bedEnabledStatus",
+        "bedTypeBatchSetting"
+      ],
+      "financialContext": {
+        "applies": false,
+        "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [],
+        "to": [
+          "床位组摘要",
+          "只读床位组引用"
+        ],
+        "noRefillRuleZh": "场景包 2 只能读取本包输出摘要，不得要求用户重新填写房间、床位组和基础就绪字段。"
+      },
+      "searchReadModel": [
+        "房源建档与基础就绪",
+        "床位组确认",
+        "BuildingContext",
+        "系统根据床位数量生成的床位 01..N",
+        "系统根据床位数量和床铺生成方式生成的床位布局",
+        "所属房间",
+        "床位数量",
+        "床位组完整度",
+        "房间摘要",
+        "床位组摘要",
+        "基础就绪摘要",
+        "证据摘要",
+        "只读床位组引用",
+        "房源建档与基础就绪办理摘要"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "basic-readiness-confirmation",
+      "nameZh": "基础就绪确认",
+      "commandId": "Dorm.ResourceReadinessConfirm",
+      "commandBusinessNameZh": "基础就绪确认",
+      "userSees": [
+        "房间摘要",
+        "床位组摘要",
+        "基础检查结果选择",
+        "保洁检查结果选择",
+        "设施检查结果选择",
+        "安全检查结果选择",
+        "需要补充时填写检查备注",
+        "证据摘要",
+        "缺失项",
+        "可提交/不可提交原因",
+        "基础就绪摘要",
+        "状态历史"
+      ],
+      "userFilledFields": [
+        "basicReadinessRemark"
+      ],
+      "userSelectedFields": [
+        "basicCheckResult",
+        "cleaningBasicCheckResult",
+        "facilityBasicCheckResult",
+        "safetyBasicCheckResult",
+        "basicReadinessConclusion"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "完成照片",
+        "检查记录",
+        "补充证据"
+      ],
+      "systemGeneratedFields": [
+        "basicReadinessRef",
+        "readinessVersion",
+        "confirmedAt",
+        "confirmedBy",
+        "evidenceEnvelopeRef",
+        "summarySnapshotRef"
+      ],
+      "validations": [
+        {
+          "ruleId": "room-exists-required",
+          "messageZh": "必须已有房间。"
+        },
+        {
+          "ruleId": "complete-bedset-required",
+          "messageZh": "必须已有完整床位组。"
+        },
+        {
+          "ruleId": "required-evidence-required",
+          "messageZh": "必须绑定必要证据。"
+        },
+        {
+          "ruleId": "readiness-output-basic-summary-only",
+          "messageZh": "确认后只输出基础就绪摘要，不能输出可运营或可预订。"
+        }
+      ],
+      "conclusionOptions": [
+        {
+          "value": "passed",
+          "labelZh": "通过",
+          "labelRu": "Пройдено",
+          "labelKy": "Өттү"
+        },
+        {
+          "value": "failed",
+          "labelZh": "不通过",
+          "labelRu": "Не проходит",
+          "labelKy": "Өтпөйт"
+        },
+        {
+          "value": "needs_supplement",
+          "labelZh": "需补充",
+          "labelRu": "Нужно дополнить",
+          "labelKy": "Толуктоо керек"
+        }
+      ],
+      "checkResultOptions": [
+        {
+          "value": "checked_ok",
+          "labelZh": "已检查无异常",
+          "labelRu": "Проверено, без замечаний",
+          "labelKy": "Текшерилди, көйгөй жок"
+        },
+        {
+          "value": "needs_supplement",
+          "labelZh": "有问题需补充",
+          "labelRu": "Есть проблема, нужно дополнить",
+          "labelKy": "Маселе бар, толуктоо керек"
+        },
+        {
+          "value": "failed",
+          "labelZh": "不通过",
+          "labelRu": "Не проходит",
+          "labelKy": "Өтпөйт"
+        }
+      ],
+      "outputs": [
+        "基础就绪摘要",
+        "证据摘要",
+        "状态历史",
+        "只读基础就绪引用"
+      ],
+      "primaryBusinessObject": "BuildingContext",
+      "requiredReadContext": [
+        "房间摘要",
+        "床位组摘要",
+        "基础检查结果选择",
+        "保洁检查结果选择",
+        "设施检查结果选择",
+        "安全检查结果选择",
+        "需要补充时填写检查备注",
+        "证据摘要",
+        "缺失项",
+        "可提交/不可提交原因",
+        "基础就绪摘要",
+        "状态历史"
+      ],
+      "editableInputs": [
+        "basicReadinessRemark"
+      ],
+      "fixedSelections": [
+        "basicCheckResult",
+        "cleaningBasicCheckResult",
+        "facilityBasicCheckResult",
+        "safetyBasicCheckResult",
+        "basicReadinessConclusion"
+      ],
+      "financialContext": {
+        "applies": false,
+        "reasonZh": "本步骤不是金额办理页；如后续出现金额字段，必须补齐币种、业务对象、方向和阶段。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [],
+        "to": [
+          "基础就绪摘要",
+          "证据摘要",
+          "状态历史",
+          "只读基础就绪引用"
+        ],
+        "noRefillRuleZh": "场景包 2 只能读取本包输出摘要，不得要求用户重新填写房间、床位组和基础就绪字段。"
+      },
+      "searchReadModel": [
+        "房源建档与基础就绪",
+        "基础就绪确认",
+        "BuildingContext",
+        "房间摘要",
+        "床位组摘要",
+        "基础检查结果选择",
+        "保洁检查结果选择",
+        "设施检查结果选择",
+        "安全检查结果选择",
+        "需要补充时填写检查备注",
+        "证据摘要",
+        "缺失项",
+        "可提交/不可提交原因",
+        "基础就绪摘要",
+        "状态历史",
+        "只读基础就绪引用"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“1 号楼 3 层 301 房间、6 个床位、床位 01”。",
+    "readonlyContextDisplayRuleZh": "上游房间、床位组和基础就绪上下文只允许以业务可读摘要展示；没有业务可读值时，不得在普通表单渲染空只读输入。roomRef、bedRef、roomId、bedId 等内部引用只能用于隐藏提交、审计详情或证据包。",
+    "userFilled": [
+      "floor",
+      "roomNo",
+      "bedCount",
+      "roomRemark",
+      "bedRemark",
+      "specialNotes",
+      "basicReadinessRemark"
+    ],
+    "userSelected": [
+      "buildingContextRef",
+      "bedType",
+      "bedEnabledStatus",
+      "bedTypeBatchSetting",
+      "basicCheckResult",
+      "cleaningBasicCheckResult",
+      "facilityBasicCheckResult",
+      "safetyBasicCheckResult",
+      "basicReadinessConclusion"
+    ],
+    "evidenceBound": [
+      "roomPhotoEvidence",
+      "roomBasicDocumentEvidence",
+      "bedPhotoEvidence",
+      "roomOwnershipEvidence",
+      "completionPhotoEvidence",
+      "inspectionRecordEvidence",
+      "supplementEvidence"
+    ],
+    "systemGenerated": [
+      "roomRef",
+      "roomStableRef",
+      "roomVersion",
+      "createdAt",
+      "createdBy",
+      "domainEventId",
+      "projectionVersion",
+      "bedSetRef",
+      "bedRef[01..N]",
+      "bedNo[01..N]",
+      "bedLayout[01..N]",
+      "bedSetVersion",
+      "bedCountMatchedFlag",
+      "basicReadinessRef",
+      "readinessVersion",
+      "confirmedAt",
+      "confirmedBy",
+      "evidenceEnvelopeRef",
+      "summarySnapshotRef"
+    ],
+    "forbiddenUserInputFields": [
+      "roomId",
+      "bedId",
+      "workItemId",
+      "stableRef",
+      "roomStableRef",
+      "bedStableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId",
+      "eventId",
+      "summarySnapshotRef",
+      "evidenceEnvelopeRef"
+    ],
+    "fieldAuthority": {
+      "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#fieldAuthorityModel",
+      "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+      "businessInput": [
+        {
+          "fieldId": "floor",
+          "control": "text",
+          "labelKey": "scenario1.field.floor.label",
+          "helpKey": "scenario1.field.floor.help",
+          "errorKey": "scenario1.field.floor.error"
+        },
+        {
+          "fieldId": "roomNo",
+          "control": "text",
+          "labelKey": "scenario1.field.roomNo.label",
+          "helpKey": "scenario1.field.roomNo.help",
+          "errorKey": "scenario1.field.roomNo.error"
+        },
+        {
+          "fieldId": "bedCount",
+          "control": "number",
+          "labelKey": "scenario1.field.bedCount.label",
+          "helpKey": "scenario1.field.bedCount.help",
+          "errorKey": "scenario1.field.bedCount.error"
+        },
+        {
+          "fieldId": "roomRemark",
+          "control": "textarea",
+          "labelKey": "scenario1.field.roomRemark.label",
+          "helpKey": "scenario1.field.roomRemark.help",
+          "errorKey": "scenario1.field.roomRemark.error",
+          "required": false
+        }
+      ],
+      "businessSelect": [
+        {
+          "fieldId": "buildingContextRef",
+          "control": "searchable-select",
+          "optionSet": "buildingContext",
+          "labelKey": "scenario1.field.buildingContextRef.label",
+          "helpKey": "scenario1.field.buildingContextRef.help",
+          "errorKey": "scenario1.field.buildingContextRef.error",
+          "submitValueSource": "selectedStableRef"
+        },
+        {
+          "fieldId": "bedType",
+          "control": "select",
+          "optionSet": "bedType",
+          "labelKey": "scenario1.field.bedType.label",
+          "helpKey": "scenario1.field.bedType.help",
+          "errorKey": "scenario1.field.bedType.error"
+        },
+        {
+          "fieldId": "bedEnabledStatus",
+          "control": "select",
+          "optionSet": "bedEnabledStatus",
+          "labelKey": "scenario1.field.bedEnabledStatus.label",
+          "helpKey": "scenario1.field.bedEnabledStatus.help",
+          "errorKey": "scenario1.field.bedEnabledStatus.error"
+        },
+        {
+          "fieldId": "bedTypeBatchSetting",
+          "control": "select",
+          "optionSet": "bedTypeBatchSetting",
+          "labelKey": "scenario1.field.bedTypeBatchSetting.label",
+          "helpKey": "scenario1.field.bedTypeBatchSetting.help",
+          "errorKey": "scenario1.field.bedTypeBatchSetting.error"
+        },
+        {
+          "fieldId": "basicCheckResult",
+          "control": "select",
+          "optionSet": "basicCheckResult",
+          "labelKey": "scenario1.field.basicCheckResult.label",
+          "helpKey": "scenario1.field.basicCheckResult.help",
+          "errorKey": "scenario1.field.basicCheckResult.error"
+        },
+        {
+          "fieldId": "cleaningBasicCheckResult",
+          "control": "select",
+          "optionSet": "basicCheckResult",
+          "labelKey": "scenario1.field.cleaningBasicCheckResult.label",
+          "helpKey": "scenario1.field.cleaningBasicCheckResult.help",
+          "errorKey": "scenario1.field.cleaningBasicCheckResult.error"
+        },
+        {
+          "fieldId": "facilityBasicCheckResult",
+          "control": "select",
+          "optionSet": "basicCheckResult",
+          "labelKey": "scenario1.field.facilityBasicCheckResult.label",
+          "helpKey": "scenario1.field.facilityBasicCheckResult.help",
+          "errorKey": "scenario1.field.facilityBasicCheckResult.error"
+        },
+        {
+          "fieldId": "safetyBasicCheckResult",
+          "control": "select",
+          "optionSet": "basicCheckResult",
+          "labelKey": "scenario1.field.safetyBasicCheckResult.label",
+          "helpKey": "scenario1.field.safetyBasicCheckResult.help",
+          "errorKey": "scenario1.field.safetyBasicCheckResult.error"
+        },
+        {
+          "fieldId": "basicReadinessConclusion",
+          "control": "select",
+          "optionSet": "basicReadinessConclusion",
+          "labelKey": "scenario1.field.basicReadinessConclusion.label",
+          "helpKey": "scenario1.field.basicReadinessConclusion.help",
+          "errorKey": "scenario1.field.basicReadinessConclusion.error"
+        }
+      ],
+      "systemDerived": [
+        {
+          "fieldId": "bedNo[01..N]",
+          "derivedFrom": "room.bedCount",
+          "readonly": true,
+          "labelKey": "scenario1.field.bedNoGenerated.label",
+          "helpKey": "scenario1.field.bedNoGenerated.help"
+        },
+        {
+          "fieldId": "bedLayout[01..N]",
+          "derivedFrom": "room.bedCount + bedTypeBatchSetting",
+          "readonly": true,
+          "labelKey": "scenario1.field.bedLayout.label",
+          "helpKey": "scenario1.field.bedLayout.help"
+        },
+        {
+          "fieldId": "bedCountMatchedFlag",
+          "derivedFrom": "room.bedCount and generated bed count",
+          "readonly": true,
+          "labelKey": "scenario1.field.bedCountMatchedFlag.label",
+          "helpKey": "scenario1.field.bedCountMatchedFlag.help"
+        },
+        {
+          "fieldId": "summarySnapshotRef",
+          "derivedFrom": "submitted business fields and evidence",
+          "readonly": true,
+          "labelKey": "scenario1.field.summarySnapshot.label",
+          "helpKey": "scenario1.field.summarySnapshot.help"
+        }
+      ],
+      "readOnlySummary": [
+        {
+          "fieldId": "roomSummary",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario1.summary.room.label",
+          "helpKey": "scenario1.summary.room.help"
+        },
+        {
+          "fieldId": "bedSetSummary",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario1.summary.bedSet.label",
+          "helpKey": "scenario1.summary.bedSet.help"
+        },
+        {
+          "fieldId": "basicReadinessSummary",
+          "sourceScenario": "lodging.resource-basic-readiness",
+          "labelKey": "scenario1.summary.basicReadiness.label",
+          "helpKey": "scenario1.summary.basicReadiness.help"
+        }
+      ],
+      "evidenceBinding": [
+        {
+          "fieldId": "roomPhotoEvidence",
+          "evidenceType": "room-photo",
+          "labelKey": "scenario1.evidence.roomPhoto.label",
+          "helpKey": "scenario1.evidence.roomPhoto.help"
+        },
+        {
+          "fieldId": "roomBasicDocumentEvidence",
+          "evidenceType": "room-basic-document",
+          "labelKey": "scenario1.evidence.roomBasicDocument.label",
+          "helpKey": "scenario1.evidence.roomBasicDocument.help"
+        },
+        {
+          "fieldId": "bedPhotoEvidence",
+          "evidenceType": "bed-photo",
+          "labelKey": "scenario1.evidence.bedPhoto.label",
+          "helpKey": "scenario1.evidence.bedPhoto.help"
+        },
+        {
+          "fieldId": "roomOwnershipEvidence",
+          "evidenceType": "room-ownership",
+          "labelKey": "scenario1.evidence.roomOwnership.label",
+          "helpKey": "scenario1.evidence.roomOwnership.help"
+        },
+        {
+          "fieldId": "completionPhotoEvidence",
+          "evidenceType": "completion-photo",
+          "labelKey": "scenario1.evidence.completionPhoto.label",
+          "helpKey": "scenario1.evidence.completionPhoto.help"
+        },
+        {
+          "fieldId": "inspectionRecordEvidence",
+          "evidenceType": "inspection-record",
+          "labelKey": "scenario1.evidence.inspectionRecord.label",
+          "helpKey": "scenario1.evidence.inspectionRecord.help"
+        },
+        {
+          "fieldId": "supplementEvidence",
+          "evidenceType": "supplement",
+          "labelKey": "scenario1.evidence.supplement.label",
+          "helpKey": "scenario1.evidence.supplement.help"
+        }
+      ],
+      "actionControl": [
+        {
+          "fieldId": "saveDraft",
+          "labelKey": "saveDraft",
+          "legalActionRef": "draft.save"
+        },
+        {
+          "fieldId": "continueEdit",
+          "labelKey": "startObservation",
+          "legalActionRef": "draft.continue"
+        },
+        {
+          "fieldId": "backToEdit",
+          "labelKey": "searchActionObservation",
+          "legalActionRef": "draft.backToEdit"
+        },
+        {
+          "fieldId": "submit",
+          "labelKey": "primarySubmit",
+          "legalActionRef": "runtime.submit"
+        }
+      ],
+      "conditionalInput": [
+        {
+          "fieldId": "bedRemark",
+          "control": "textarea",
+          "labelKey": "scenario1.field.bedRemark.label",
+          "helpKey": "scenario1.field.bedRemark.help",
+          "errorKey": "scenario1.field.bedRemark.error",
+          "displayCondition": "bedEnabledStatus != enabled or operator chooses addRemark",
+          "requiredCondition": "false"
+        },
+        {
+          "fieldId": "specialNotes",
+          "control": "textarea",
+          "labelKey": "scenario1.field.specialNotes.label",
+          "helpKey": "scenario1.field.specialNotes.help",
+          "errorKey": "scenario1.field.specialNotes.error",
+          "displayCondition": "bedType or bedEnabledStatus needs explanation",
+          "requiredCondition": "false"
+        },
+        {
+          "fieldId": "basicReadinessRemark",
+          "control": "textarea",
+          "labelKey": "scenario1.field.basicReadinessRemark.label",
+          "helpKey": "scenario1.field.basicReadinessRemark.help",
+          "errorKey": "scenario1.field.basicReadinessRemark.error",
+          "displayCondition": "any basic check result is needs_supplement or failed",
+          "requiredCondition": "basicReadinessConclusion in [needs_supplement, failed]"
+        }
+      ],
+      "auditInternal": [
+        {
+          "fieldId": "roomId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "workItemId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "stableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "roomStableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "bedStableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "projectionVersion",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "digest",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "domainEventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "eventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "迁移报告",
+            "开发证据包"
+          ]
+        },
+        {
+          "fieldId": "evidenceEnvelopeRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "审计详情",
+            "开发证据包"
+          ]
+        }
+      ],
+      "legalAction": [
+        {
+          "fieldId": "saveDraft",
+          "labelKey": "saveDraft",
+          "legalActionRef": "draft.save"
+        },
+        {
+          "fieldId": "continueEdit",
+          "labelKey": "startObservation",
+          "legalActionRef": "draft.continue"
+        },
+        {
+          "fieldId": "backToEdit",
+          "labelKey": "searchActionObservation",
+          "legalActionRef": "draft.backToEdit"
+        },
+        {
+          "fieldId": "submit",
+          "labelKey": "primarySubmit",
+          "legalActionRef": "runtime.submit"
+        }
+      ]
+    }
+  },
+  "systemFields": {
+    "auditOnlyDisplayRuleZh": "内部字段只能在审计详情或证据包中出现。",
+    "userMustNotEnterOrRemember": [
+      "roomId",
+      "bedId",
+      "workItemId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "internalReferenceMapping": [
+      {
+        "internalCommandId": "Dorm.RoomSetupConfirm",
+        "businessMeaningZh": "房间建档确认"
+      },
+      {
+        "internalCommandId": "Dorm.BedSetupConfirm",
+        "businessMeaningZh": "床位组确认"
+      },
+      {
+        "internalCommandId": "Dorm.ResourceReadinessConfirm",
+        "businessMeaningZh": "基础就绪确认"
+      }
+    ]
+  }
+}

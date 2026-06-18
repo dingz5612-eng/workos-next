@@ -1,0 +1,134 @@
+{
+  "version": "oam.legacy-retirement-ledger.v1",
+  "status": "authoritative",
+  "purposeZh": "住宿经营旧链退役总账；全仓旧词必须分类，unclassified 必须为 0，历史证据不得删除。",
+  "scanTerms": [
+    "FirstGoldenChain",
+    "first-golden-chain",
+    "第一金链",
+    "金链",
+    "golden-chain",
+    "W-STAY-RESOURCE",
+    "roomSetup",
+    "bedSetup",
+    "roomReadiness",
+    "roomRelease",
+    "RoomSetupConfirm",
+    "BedSetupConfirm",
+    "ResourceReadinessConfirm",
+    "resource-saleability",
+    "lead-reservation",
+    "runtime-test",
+    "RUNTIME_TEST",
+    "提交内测",
+    "提交观察",
+    "技术详情",
+    "生产阻断"
+  ],
+  "classificationRules": [
+    {
+      "category": "active_forbidden",
+      "pathPrefixes": [
+        "apps/mobile/src/",
+        "services/core-api/WorkOS.Api/",
+        "services/core-api/WorkOS.Api/Runtime/",
+        "docs/contracts/",
+        "modules/",
+        "tools/",
+        ".github/workflows/"
+      ],
+      "pathExclusions": [
+        "apps/mobile/src/generated/",
+        "docs/contracts/generated/",
+        "docs/contracts/runtime-surface-policy.json",
+        "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioControl.generated.json"
+      ],
+      "writeBusinessFactsAllowed": false,
+      "currentMainPathAllowed": false,
+      "remediationTarget": "替换为住宿经营 13 场景 generated 合同、业务可见新文案或只读摘要入口。"
+    },
+    {
+      "category": "legacy_readonly",
+      "pathPrefixes": [
+        "docs/oam/capabilities/",
+        "docs/oam/compatibility/",
+        "docs/contracts/runtime-surface-policy.json",
+        "scripts/oam/lib/",
+        "scripts/oam/check-dormitory-first-golden-chain-landing.mjs",
+        "scripts/oam/check-first-golden-chain-active-path-exact.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs"
+      ],
+      "writeBusinessFactsAllowed": false,
+      "currentMainPathAllowed": false,
+      "readonlyProof": "旧链控制面和兼容盒只读保留，不得作为当前住宿经营主链。"
+    },
+    {
+      "category": "historical_evidence",
+      "pathPrefixes": [
+        "artifacts/oam/",
+        "docs/oam/evidence-attestation-packages/"
+      ],
+      "writeBusinessFactsAllowed": false,
+      "deleteToFixAllowed": false,
+      "readonlyProof": "历史证据只用于追溯 digest 和审计，不得被删除绕过。"
+    },
+    {
+      "category": "test_fixture",
+      "pathPrefixes": [
+        "tests/",
+        "apps/mobile/e2e/",
+        "scripts/",
+        "scripts/surface/",
+        "scripts/business/",
+        "scripts/validate-runtime-api.mjs",
+        "scripts/validate-production-slice-contracts.mjs",
+        "scripts/validate-release-contracts.mjs"
+      ],
+      "writeBusinessFactsAllowed": false,
+      "currentMainPathAllowed": false,
+      "readonlyProof": "测试夹具允许覆盖旧链负向/兼容行为，不得作为当前业务主路径。"
+    },
+    {
+      "category": "generated_legacy_reference",
+      "pathPrefixes": [
+        "docs/contracts/generated/",
+        "apps/mobile/src/generated/",
+        "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioControl.generated.json"
+      ],
+      "writeBusinessFactsAllowed": false,
+      "currentMainPathAllowed": false,
+      "readonlyProof": "generated 中的旧包映射只作为迁移参考，不得手工修改。"
+    },
+    {
+      "category": "documentation_archive",
+      "pathPrefixes": [
+        "docs/business/",
+        "docs/scenarios/",
+        "docs/oam/",
+        "docs/system/",
+        "docs/read-intelligence/",
+        "docs/surface/",
+        "docs/finance/",
+        "README",
+        "scripts/oam/check-legacy-retirement-ledger.mjs",
+        "scripts/oam/check-dormitory-mainline-manifest.mjs",
+        "scripts/oam/check-lodging-consumer-graph.mjs",
+        "scripts/oam/check-dormitory-defect-closure-ledger.mjs",
+        "scripts/oam/check-visible-business-copy-contract.mjs",
+        "scripts/oam/check-business-ui-copy-no-technical-leak.mjs"
+      ],
+      "writeBusinessFactsAllowed": false,
+      "currentMainPathAllowed": false,
+      "archiveLabelRequired": true
+    }
+  ],
+  "requiredCategoryRules": {
+    "unclassifiedMustBeZero": true,
+    "activeForbiddenRequiresRemediationTarget": true,
+    "legacyReadonlyMustProveNoFactWrite": true,
+    "testFixtureMustNotJoinCurrentMainPath": true,
+    "historicalEvidenceMustNotBeDeleted": true,
+    "documentationArchiveMustNotClaimCurrentEntry": true
+  },
+  "verificationScript": "scripts/oam/check-legacy-retirement-ledger.mjs"
+}

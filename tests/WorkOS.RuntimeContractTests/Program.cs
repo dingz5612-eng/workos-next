@@ -20,6 +20,13 @@ ResetPostgres(connectionString);
     DormitoryFactTraceContractTests.Run();
     ValidateOperationsUnitOfWork(connectionString);
     ValidateGeneratedDtos();
+    if (projection.Workspaces.All(workspace => !IsClosedUserEntryWorkspaceId(workspace.Id)))
+    {
+        ValidateCurrentDormitoryRuntimeContracts(runtime, projection, connectionString);
+        Console.WriteLine("WorkOS.RuntimeContractTests: PASS");
+        return;
+    }
+
     ValidateSliceManifest(projection);
     ValidateProjectionEnvelopeAgainstContract(projection);
 
@@ -1131,6 +1138,130 @@ ResetPostgres(connectionString);
 
     WriteRuntimeContractReport(connectionString);
     Console.WriteLine("WorkOS.RuntimeContractTests: PASS");
+}
+
+static void ValidateCurrentDormitoryRuntimeContracts(ProjectionRuntime runtime, ProjectionEnvelope projection, string connectionString)
+{
+    Assert(projection.Workspaces.All(workspace => !IsClosedUserEntryWorkspaceId(workspace.Id)), "current runtime projection must not expose closed W-STAY entry workspaces");
+    Assert(projection.Workspaces.Any(workspace => workspace.Id == "W-DORM-MAINLINE"), "current runtime projection must include W-DORM-MAINLINE");
+    Assert(projection.Workspaces.Any(workspace => workspace.Id == "W-DORM-RESOURCE-OPERATION-STATUS"), "current runtime projection must include scenario 2 operation status workspace");
+    Assert(projection.Workspaces.Any(workspace => workspace.Id == "W-DORM-SCENARIO9-CHECKOUT-SETTLEMENT"), "current runtime projection must include scenario 9 checkout settlement workspace");
+    ValidateProjectionEnvelopeAgainstCurrentContract(projection);
+    ValidateCurrentDormitoryMainline(runtime, projection);
+    ValidateClosedDormitoryEntryBlocked(runtime, connectionString);
+    ValidateCurrentDormitorySurfaces(runtime);
+    ValidateSliceManifestCurrentBridge();
+}
+
+static void ValidateProjectionEnvelopeAgainstCurrentContract(ProjectionEnvelope projection)
+{
+    Assert(projection.Projection == "IntentWorkspaceProjection", "projection envelope type must match contract");
+    Assert(!string.IsNullOrWhiteSpace(projection.Version), "projection envelope missing version");
+    Assert(projection.Languages.Contains("zh-CN") && projection.Languages.Contains("ru-RU"), "projection languages must include zh-CN and ru-RU");
+    Assert(!string.IsNullOrWhiteSpace(projection.SourceOfTruth), "projection sourceOfTruth missing");
+    Assert(projection.Workspaces.Count > 0, "projection workspaces missing");
+
+    foreach (var workspace in projection.Workspaces)
+    {
+        Assert(!string.IsNullOrWhiteSpace(workspace.ProjectionType) && workspace.ProjectionType.EndsWith("Projection", StringComparison.Ordinal), $"{workspace.Id} projectionType mismatch");
+        AssertLocalized(workspace.Title, $"{workspace.Id} title");
+        AssertLocalized(workspace.Summary, $"{workspace.Id} summary");
+        Assert(workspace.Cards.Count > 0, $"{workspace.Id} cards missing");
+        Assert(workspace.Cards.Any(card => card.Fields.Business.Count > 0), $"{workspace.Id} missing business-field-bearing cards");
+        Assert(workspace.Cards.Any(card => card.Evidence.Count > 0), $"{workspace.Id} missing evidence-bearing cards");
+        foreach (var card in workspace.Cards)
+        {
+            Assert(!string.IsNullOrWhiteSpace(card.ProjectionType), $"{workspace.Id}.{card.Id} projectionType missing");
+            AssertLocalized(card.Title, $"{workspace.Id}.{card.Id} title");
+            Assert(new[] { "notStarted", "ready", "blocked", "inProgress", "done" }.Contains(card.Status), $"{workspace.Id}.{card.Id} status invalid");
+            Assert(
+                card.Fields.System.Count + card.Fields.Business.Count + card.Fields.Analytics.Count > 0,
+                $"{workspace.Id}.{card.Id} missing fields");
+            Assert(card.Events.Count > 0, $"{workspace.Id}.{card.Id} missing events");
+            Assert(!string.IsNullOrWhiteSpace(card.Transitions.OnPrepare), $"{workspace.Id}.{card.Id} onPrepare missing");
+            Assert(!string.IsNullOrWhiteSpace(card.Transitions.OnConfirm), $"{workspace.Id}.{card.Id} onConfirm missing");
+            Assert(!string.IsNullOrWhiteSpace(card.Confirmation.RequiredRole), $"{workspace.Id}.{card.Id} confirmation requiredRole missing");
+            Assert(card.Confirmation.ForbiddenForAi, $"{workspace.Id}.{card.Id} must forbid AI confirmation");
+            AssertLocalized(card.Confirmation.Label, $"{workspace.Id}.{card.Id} confirmation label");
+            foreach (var field in card.Fields.Business)
+            {
+                AssertLocalized(field.Label, $"{workspace.Id}.{card.Id}.{field.Id} field label");
+                AssertLocalized(field.Help, $"{workspace.Id}.{card.Id}.{field.Id} field help");
+                Assert(!string.IsNullOrWhiteSpace(field.Ui.Control), $"{workspace.Id}.{card.Id}.{field.Id} missing ui control");
+                if (field.Ui.Options.Count > 0)
+                {
+                    Assert(field.Ui.Options.All(option => !string.IsNullOrWhiteSpace(option.Value)), $"{workspace.Id}.{card.Id}.{field.Id} option missing value");
+                    foreach (var option in field.Ui.Options)
+                    {
+                        AssertLocalized(option.Label, $"{workspace.Id}.{card.Id}.{field.Id} option {option.Value}");
+                    }
+                }
+            }
+        }
+    }
+}
+
+static void ValidateCurrentDormitoryMainline(ProjectionRuntime runtime, ProjectionEnvelope projection)
+{
+    var mainline = projection.Workspaces.Single(workspace => workspace.Id == "W-DORM-MAINLINE");
+    AssertSequence(mainline, "cert.roomSetupConfirm", "cert.bedSetupConfirm", "cert.resourceReadinessConfirm");
+    Assert(runtime.Prepare("W-DORM-MAINLINE", "cert.roomSetupConfirm") is not null, "current mainline room setup should support prepare");
+
+    var scenario9 = projection.Workspaces.Single(workspace => workspace.Id == "W-DORM-SCENARIO9-CHECKOUT-SETTLEMENT");
+    Assert(scenario9.Cards.Any(card => card.Id == "cert.customerSettlementConfirmation"), "scenario 9 must include customer settlement confirmation step");
+}
+
+static void ValidateClosedDormitoryEntryBlocked(ProjectionRuntime runtime, string connectionString)
+{
+    Assert(runtime.Prepare("W-STAY-RESOURCE", "roomSetup") is null, "closed W-STAY resource entry must not prepare as current runtime");
+    var closedEntryConfirm = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-RESOURCE", "roomSetup", Human("closed-resource-entry"), ""));
+    Assert(closedEntryConfirm.Status == ConfirmStatus.NotFound, "closed W-STAY resource entry confirm must be NotFound");
+
+    var operatorToken = LoginToken(runtime, "operator");
+    var missingIdempotencyKey = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-DORM-MAINLINE", "cert.roomSetupConfirm", new ConfirmCardRequest("zh-CN", "", new Dictionary<string, string>(), Array.Empty<string>()), operatorToken));
+    Assert(missingIdempotencyKey.Status == ConfirmStatus.Invalid, "current confirm must require idempotency key");
+    Assert(missingIdempotencyKey.Reason == "Confirm requires an idempotency key.", "missing idempotency key must keep stable reason");
+
+    var unknownLocalizedPayloadKey = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-DORM-MAINLINE", "cert.roomSetupConfirm", new ConfirmCardRequest("zh-CN", "localized-current-field-key", new Dictionary<string, string> { ["未知字段"] = "A999" }, Array.Empty<string>(), "submission-current-localized-field-key", "card-instance-current-localized-field-key"), operatorToken));
+    Assert(unknownLocalizedPayloadKey.Status == ConfirmStatus.Invalid, "current confirm must reject localized field label keys");
+    Assert(unknownLocalizedPayloadKey.Reason == "canonical_field_id_required", "localized field key rejection must use stable reason");
+}
+
+static void ValidateCurrentDormitorySurfaces(ProjectionRuntime runtime)
+{
+    var workQueueJson = JsonSerializer.Serialize(runtime.GetWorkQueue());
+    var homeJson = JsonSerializer.Serialize(runtime.GetHomeSurface());
+    var learningJson = JsonSerializer.Serialize(runtime.GetLearningCatalog());
+    var searchJson = JsonSerializer.Serialize(runtime.Search("房源建档与基础就绪"));
+
+    foreach (var (name, json) in new[] { ("work queue", workQueueJson), ("home surface", homeJson), ("learning catalog", learningJson), ("search", searchJson) })
+    {
+        Assert(!json.Contains("W-STAY-", StringComparison.OrdinalIgnoreCase), $"{name} must not expose closed W-STAY entry workspaces");
+        Assert(!json.Contains("Dormitory.FirstGoldenChain", StringComparison.OrdinalIgnoreCase), $"{name} must not expose closed FirstGoldenChain entry");
+    }
+
+    Assert(searchJson.Contains("W-DORM-MAINLINE", StringComparison.OrdinalIgnoreCase), "search must expose current dormitory mainline workspace");
+}
+
+static void ValidateSliceManifestCurrentBridge()
+{
+    using var manifest = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "slice-manifest.json")));
+    Assert(manifest.RootElement.GetProperty("manifestMode").GetString() == "production_slice_compatibility_shim", "slice manifest must declare current bridge mode");
+    Assert(manifest.RootElement.GetProperty("forbiddenCurrentCapabilityAuthority").GetBoolean(), "current bridge must be forbidden as current capability authority");
+    Assert(manifest.RootElement.GetProperty("currentCapabilityProjectionRefs").EnumerateArray().Any(item => item.GetString() == "docs/oam/capabilities/dormitory-first-golden-chain.current.json"), "current bridge must point to current capability projection authority");
+}
+
+static bool IsClosedUserEntryWorkspaceId(string? workspaceId)
+{
+    if (string.IsNullOrWhiteSpace(workspaceId))
+    {
+        return false;
+    }
+
+    var value = workspaceId.Trim();
+    return value.StartsWith("W-STAY-", StringComparison.OrdinalIgnoreCase) ||
+        value.Equals("Dormitory.FirstGoldenChain", StringComparison.OrdinalIgnoreCase) ||
+        value.StartsWith("Dormitory.FirstGoldenChain-", StringComparison.OrdinalIgnoreCase);
 }
 
 static void AssertSequence(WorkspaceProjection workspace, params string[] expected)

@@ -1,0 +1,436 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario12-runtimeRules.generated",
+  "version": "oam.dormitory-scenario12-runtimeRules.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario12-channel-corporate-customer-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario12-channel-corporate-customer-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:8509552e372fda3a473c97c7ded7142f445c75caf8bab6af715500b37ad3f19e",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "digest": "sha256:84dbed278bccc4a0da3a590157249a3dc02a7266af0d862a8690ca5adb07d196"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:84dbed278bccc4a0da3a590157249a3dc02a7266af0d862a8690ca5adb07d196",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario12.ChannelCorporateCustomer",
+  "scenarioPackageNo": 12,
+  "scenarioId": "lodging.channel-corporate-customer",
+  "outputContentDigest": "sha256:e0c2cded58f2f41890dad9f751b5ca31c6084892ce72408a99d9657576310e42",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "渠道与企业客户",
+  "businessGoalZh": "维护外部渠道、企业客户、协议客户、渠道发布规则、企业协议资格、渠道对接状态、佣金/结算规则意向和证据，并向场景包 3、4、5、finance-gate 和看板提供只读条件。",
+  "sourceScenarioDigest": "sha256:84dbed278bccc4a0da3a590157249a3dc02a7266af0d862a8690ca5adb07d196",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario12.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "ChannelPartner",
+      "ChannelAccount",
+      "CorporateAccount",
+      "CorporateCustomer",
+      "CorporateAgreement",
+      "AgreementEligibility",
+      "ChannelEligibility",
+      "CorporateEligibility",
+      "ChannelProductMapping",
+      "ChannelPublicationRule",
+      "ChannelPublicationStatus",
+      "CommissionRuleIntent",
+      "SettlementRuleIntent",
+      "ChannelContact",
+      "CorporateContact",
+      "ContactPerson",
+      "ContractEvidence",
+      "StatusHistory",
+      "ChannelStatusHistory"
+    ],
+    "searchReadModel": [
+      "渠道与企业客户",
+      "渠道摘要",
+      "企业客户摘要",
+      "协议摘要",
+      "适用商品/价格资格摘要",
+      "渠道发布规则摘要",
+      "佣金/结算规则意向",
+      "证据摘要",
+      "只读对象引用",
+      "协议资格",
+      "发布规则"
+    ],
+    "noRefillRuleZh": "场景包 12 只能读取场景包 2 的运营阻断摘要和场景包 3 的商品/价格摘要，不得要求用户重新填写上游已确认字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "commands": [
+    {
+      "commandId": "Dorm.ChannelCorporateProfileDraftStart",
+      "businessNameZh": "发起渠道或企业客户档案",
+      "writesObjects": [
+        "ChannelPartner",
+        "CorporateAccount",
+        "ContactPerson",
+        "ContractEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ChannelPartnerProfileCreate",
+      "businessNameZh": "创建渠道档案",
+      "writesObjects": [
+        "ChannelPartner",
+        "ChannelAccount",
+        "ChannelContact",
+        "ContractEvidence",
+        "ChannelStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CorporateCustomerProfileCreate",
+      "businessNameZh": "创建企业客户档案",
+      "writesObjects": [
+        "CorporateAccount",
+        "CorporateCustomer",
+        "CorporateContact",
+        "ContractEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CorporateAgreementDraftSubmit",
+      "businessNameZh": "提交合作协议草稿",
+      "writesObjects": [
+        "CorporateAgreement",
+        "AgreementEligibility",
+        "ContractEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CorporateAgreementApproveActivate",
+      "businessNameZh": "审核并生效合作协议",
+      "writesObjects": [
+        "CorporateAgreement",
+        "AgreementEligibility",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ChannelProductEligibilityBind",
+      "businessNameZh": "绑定商品与适用资格",
+      "writesObjects": [
+        "ChannelEligibility",
+        "CorporateEligibility",
+        "ChannelProductMapping",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ChannelPublicationRuleConfigure",
+      "businessNameZh": "配置渠道发布规则",
+      "writesObjects": [
+        "ChannelPublicationRule",
+        "ChannelProductMapping",
+        "ContractEvidence",
+        "ChannelStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ChannelPublicationEnable",
+      "businessNameZh": "启用渠道发布规则",
+      "writesObjects": [
+        "ChannelPublicationRule",
+        "ChannelPublicationStatus",
+        "ChannelStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CommissionSettlementIntentSubmit",
+      "businessNameZh": "提交佣金与结算规则意向",
+      "writesObjects": [
+        "CommissionRuleIntent",
+        "SettlementRuleIntent",
+        "ContractEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ChannelCorporateAuditDecision",
+      "businessNameZh": "审核启用渠道或协议",
+      "writesObjects": [
+        "ChannelPartner",
+        "CorporateAgreement",
+        "ChannelPublicationStatus",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ChannelPause",
+      "businessNameZh": "暂停渠道",
+      "writesObjects": [
+        "ChannelPartner",
+        "ChannelPublicationStatus",
+        "ChannelStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ChannelDisable",
+      "businessNameZh": "停用渠道",
+      "writesObjects": [
+        "ChannelPartner",
+        "ChannelPublicationStatus",
+        "ChannelStatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.CorporateAgreementRenew",
+      "businessNameZh": "续签合作协议",
+      "writesObjects": [
+        "CorporateAgreement",
+        "AgreementEligibility",
+        "ContractEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ChannelCorporateDailyMaintenance",
+      "businessNameZh": "渠道与企业客户日常维护",
+      "writesObjects": [
+        "ChannelPartner",
+        "CorporateAccount",
+        "CorporateAgreement",
+        "ContractEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ChannelCorporateEvidenceSupplement",
+      "businessNameZh": "补充渠道/企业证据",
+      "writesObjects": [
+        "ContractEvidence",
+        "StatusHistory"
+      ]
+    },
+    {
+      "commandId": "Dorm.ChannelCorporateCorrectionRequest",
+      "businessNameZh": "渠道/企业客户纠错申请",
+      "writesObjects": [
+        "ChannelPartner",
+        "CorporateAccount",
+        "CorporateAgreement",
+        "ContractEvidence",
+        "StatusHistory"
+      ]
+    }
+  ],
+  "failureSemantics": [
+    {
+      "failureCode": "missing_required_business_profile",
+      "messageZh": "缺少渠道/企业名称、联系人或联系方式，不能提交档案。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "missing_key_evidence",
+      "messageZh": "缺少营业执照、合作协议、授权证明或合同证据，不能启用渠道或协议。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "invalid_agreement_date_range",
+      "messageZh": "协议开始日期和结束日期不合法，不能提交协议。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "agreement_approval_required",
+      "messageZh": "协议尚未审核，不能生效或作为可用资格。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "expired_agreement_forbidden",
+      "messageZh": "协议已过期，不能作为可用资格或渠道发布依据。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "inactive_product_price_forbidden",
+      "messageZh": "未生效商品或价格版本不能绑定为可用资格。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "missing_effective_price",
+      "messageZh": "缺少有效价格版本，不能启用渠道发布规则。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "operation_blocked_publication_forbidden",
+      "messageZh": "房源存在运营阻断、维修或停售，不能发布为可用。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "direct_rateplan_truth_write_forbidden",
+      "messageZh": "渠道与企业客户不能直接写价格金额真值，必须引用场景包 3 的商品/价格版本。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "direct_quote_reservation_forbidden",
+      "messageZh": "渠道或企业协议不能直接生成报价或预订，必须交给场景包 4 或场景包 5 校验。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "direct_inventory_hold_forbidden",
+      "messageZh": "渠道发布规则不能直接锁库存，外部渠道回传预订必须进入场景包 5 校验。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "direct_finance_ledger_forbidden",
+      "messageZh": "佣金和结算规则意向不能直接写账务，必须交给 finance-gate 或财务规则权威。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "forged_internal_reference",
+      "messageZh": "系统引用由系统绑定，用户不能填写内部编号。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "readonly_result_write_attempt",
+      "messageZh": "搜索、列表、看板和报表只读，不能直接写渠道、协议或发布事实。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "duplicate_channel_submission",
+      "messageZh": "该渠道或协议提交已处理，请查看结果。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "concurrent_channel_conflict",
+      "messageZh": "同一渠道、企业客户、协议或发布规则正在被其他人更新，请刷新后重试。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "unauthorized_channel_action",
+      "messageZh": "当前角色不能执行该渠道、协议、发布或财务规则意向动作。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "confirmed_agreement_inline_edit_forbidden",
+      "messageZh": "已启用渠道、已生效协议或已发布规则不能原地编辑，只能新版本、续签、暂停、停用、补证或纠错。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "commission_settlement_evidence_required",
+      "messageZh": "提交佣金与结算规则意向时必须绑定佣金依据、结算说明或合同证据。",
+      "sideEffectsAllowed": false
+    },
+    {
+      "failureCode": "channel_publish_requires_valid_eligibility",
+      "messageZh": "渠道发布必须先有有效协议、有效商品/价格资格和发布检查结果。",
+      "sideEffectsAllowed": false
+    }
+  ],
+  "invariants": [
+    "企业客户必须有主体名称、联系人、联系方式、协议有效期和证据。",
+    "渠道必须有渠道名称、渠道类型、联系人、对接方式、启停状态和证据。",
+    "协议价资格只能引用场景包 3 的商品/价格版本或价格策略，不得在本包直接手填最终价格真值。",
+    "渠道发布只能引用已生效商品和价格，并且必须受场景包 2 的运营状态阻断。",
+    "佣金、账期、结算方式只能形成规则意向或 finance-gate 输入，不得直接写账务。",
+    "渠道启用不等于商品可报价；协议生效不等于价格已生效；渠道发布不等于库存已锁定。",
+    "已生效协议不得原地覆盖；只能新版本、续签、停用、作废或纠错。",
+    "查询、搜索、列表、看板、报表永远只读，不得写业务事实。",
+    "失败路径不得启用渠道、不得发布商品、不得生成报价或预订，不得写非法 RatePlan、Quote、Reservation、InventoryHold、Payment、Refund、Ledger，不得刷新错误 Projection/Search/Dashboard。"
+  ],
+  "channelCorporateStatusOptions": [
+    "渠道草稿",
+    "待审核",
+    "已启用",
+    "已暂停",
+    "已停用",
+    "企业客户草稿",
+    "协议待审核",
+    "协议已生效",
+    "协议已过期",
+    "协议已停用",
+    "发布待检查",
+    "发布已启用",
+    "发布已暂停",
+    "财务规则待确认"
+  ],
+  "channelCorporateInvariantRule": {
+    "businessProfileRequired": true,
+    "keyEvidenceRequiredBeforeEnable": true,
+    "agreementDateRangeValid": true,
+    "agreementApprovalRequiredBeforeEffective": true,
+    "expiredAgreementCannotBeEligible": true,
+    "productPriceReferenceFromScenario3Only": true,
+    "effectivePriceRequiredForPublication": true,
+    "operationBlockPreventsPublication": true,
+    "channelPublicationDoesNotLockInventory": true,
+    "quoteOwnedByScenario4": true,
+    "reservationInventoryOwnedByScenario5": true,
+    "financeGateHandlesCommissionSettlementTruth": true,
+    "appendOnlyVersionHistory": true,
+    "failureNoSideEffects": true,
+    "querySearchListBoardReportReadonly": true
+  },
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "create-channel-or-corporate-profile": [
+        "营业执照",
+        "合作协议或授权证明"
+      ],
+      "maintain-cooperation-agreement": [
+        "合同扫描件",
+        "审批记录"
+      ],
+      "bind-product-and-eligibility": [
+        "商品/价格版本摘要",
+        "协议摘要"
+      ],
+      "configure-channel-publication-rule": [
+        "发布检查记录",
+        "渠道映射说明"
+      ],
+      "configure-commission-settlement-intent": [
+        "佣金依据",
+        "结算说明",
+        "合同证据"
+      ],
+      "audit-enable": [
+        "审核记录",
+        "证据摘要"
+      ],
+      "daily-maintenance": [
+        "续签协议或补充证据"
+      ]
+    },
+    "screenshotAnalysisRequired": true,
+    "noSideEffectsProofRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "runtimeConsumptionBoundary": {
+    "runtimeMayReadGeneratedOnly": true,
+    "runtimeMayHardcodeBusinessRules": false,
+    "businessRuntimeMayWriteRatePlanTruth": false,
+    "businessRuntimeMayWriteQuote": false,
+    "businessRuntimeMayWriteReservation": false,
+    "businessRuntimeMayWriteInventoryHold": false,
+    "businessRuntimeMayWritePaymentRefund": false,
+    "businessRuntimeMayWriteLedger": false,
+    "financeGateMayConsumeCommissionSettlementIntentOnly": true,
+    "scenario4MayConsumeEligibilityOnly": true,
+    "scenario5MayConsumeEligibilityOnly": true,
+    "failurePathBusinessSideEffectsAllowed": false,
+    "successMayWriteChannelCorporateFactsAndIntentsOnly": true
+  }
+}

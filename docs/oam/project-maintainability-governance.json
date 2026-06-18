@@ -1,0 +1,321 @@
+{
+  "version": "oam.project-maintainability-governance.v1",
+  "status": "authoritative",
+  "mainlineId": "Dormitory.13ScenarioMainline",
+  "purposeZh": "项目整体瘦身与长期可维护性治理总账；只治理复杂度、重复度、性能和退役规则，不改变住宿经营 13 场景业务语义。",
+  "scopeZh": "覆盖住宿经营 13 场景主链、旧链兼容盒、CI、Evidence Root、浏览器证据、移动端体验和本地试运行工具。",
+  "productionConfirmAllowed": false,
+  "businessGoLiveAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "stage0Inputs": [
+    {
+      "label": "2.5 投产可用闭环报告与用户亲测包",
+      "path": "docs/oam/dormitory-13-scenario-production-usable-closure-report.md",
+      "required": true
+    },
+    {
+      "label": "指令 3 主链激活事务",
+      "path": "artifacts/oam/evidence/dormitory-mainline-activation-transaction.json",
+      "required": true
+    },
+    {
+      "label": "指令 4 上线前试运行报告",
+      "path": "artifacts/oam/evidence/dormitory-prelaunch-ops-trial/prelaunch-ops-trial-report.md",
+      "required": true
+    },
+    {
+      "label": "消费者图谱",
+      "path": "docs/oam/lodging-consumer-graph.json",
+      "required": true
+    },
+    {
+      "label": "可见业务文案合同",
+      "path": "docs/oam/visible-business-copy-contract.json",
+      "required": true
+    }
+  ],
+  "protectedArtifacts": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "reasonZh": "住宿经营 13 场景最高业务权威；瘦身不得删除或改写业务语义。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-production-mainline-activation.authority.json",
+      "reasonZh": "投产主链激活权威；保持 NO_GO 和旧链退役边界。"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory",
+      "reasonZh": "generated 合同只能由 compiler 生成，不得手工编辑或删除。"
+    },
+    {
+      "path": "apps/mobile/src/generated/oam",
+      "reasonZh": "移动端 generated OAM 镜像；surface 消费来源。"
+    },
+    {
+      "path": "artifacts/oam/evidence",
+      "reasonZh": "Evidence Root、浏览器截图、历史审计证据和摘要链；不得删除历史证据绕过失败。"
+    },
+    {
+      "path": "docs/oam/lodging-consumer-graph.json",
+      "reasonZh": "真实消费者登记图谱。"
+    }
+  ],
+  "complexityInventory": [
+    {
+      "id": "complexity.duplicate.scenario-browser-audits",
+      "type": "duplicate_browser_audit",
+      "riskLevel": "P2",
+      "handling": "abstract",
+      "currentAction": "retain_until_shared_runner_preserves_digest_contracts",
+      "findingZh": "13 场景正反向浏览器脚本成对存在 52 个，重复度高，但当前是硬门禁和截图证据来源。",
+      "proof": {
+        "scanCommand": "Get-ChildItem scripts/surface -Filter '*dormitory-scenario*-browser-audit.mjs'",
+        "observedCount": 52
+      },
+      "nextSafeStepZh": "后续可抽象共享 runner，但必须保持每个场景独立 reportPath、digest、screenshotIndex 和 Evidence Root 节点。"
+    },
+    {
+      "id": "complexity.duplicate.oam-check-generate-pairs",
+      "type": "duplicate_script",
+      "riskLevel": "P3",
+      "handling": "merge",
+      "currentAction": "retain",
+      "findingZh": "多个 OAM 对象存在 check/generate 成对脚本，重复但语义清晰。",
+      "proof": {
+        "scanCommand": "Get-ChildItem scripts/oam -File | Group-Object normalized check/generate name",
+        "observedRepeatedPairs": 6
+      },
+      "nextSafeStepZh": "只在输出格式稳定后合并公共读写、digest 和 PASS/NO_GO 模板。"
+    },
+    {
+      "id": "complexity.evidence-root.large-generator",
+      "type": "duplicate_evidence_generation",
+      "riskLevel": "P1",
+      "handling": "abstract",
+      "currentAction": "retain",
+      "findingZh": "Evidence Root 生成器聚合 source、generated、browser、CI、transaction，文件较大，抽象风险高。",
+      "proof": {
+        "file": "scripts/oam/generate-current-evidence-root.mjs"
+      },
+      "nextSafeStepZh": "先用新增维护治理检查约束必要节点，再拆分纯函数模块。"
+    },
+    {
+      "id": "complexity.old-chain.compat-residue",
+      "type": "old_chain_compat_residue",
+      "riskLevel": "P1",
+      "handling": "retain",
+      "currentAction": "keep_classified_readonly",
+      "findingZh": "FirstGoldenChain、W-STAY-RESOURCE、resource-saleability 等仍作为历史证据、迁移映射或测试夹具存在。",
+      "proof": {
+        "ledgerRef": "oldChainRetirementLedger",
+        "requiredCheckRef": "oldChainRetirementLedgerCheck"
+      },
+      "nextSafeStepZh": "只允许通过旧链退役总账分类保留；活跃路径命中必须修复。"
+    },
+    {
+      "id": "complexity.frontend.bundle-size",
+      "type": "frontend_bundle",
+      "riskLevel": "P2",
+      "handling": "abstract",
+      "currentAction": "retain_with_performance_budget",
+      "findingZh": "移动端 bundle 曾触发 Vite 大 chunk 警告，但真实浏览器性能预算已通过。",
+      "proof": {
+        "performanceReport": "artifacts/oam/evidence/dormitory-performance-recoverability/performance-recoverability-report.json",
+        "requiredCheck": "scripts/surface/check-dormitory-performance-recoverability-audit.mjs"
+      },
+      "nextSafeStepZh": "后续优先按 PC/治理视图做懒加载，不改变移动主链入口。"
+    },
+    {
+      "id": "complexity.slow-submit",
+      "type": "slow_submit",
+      "riskLevel": "P1",
+      "handling": "retain",
+      "currentAction": "performance_gate_required",
+      "findingZh": "新建和步骤提交慢已通过 Operation Execution Contract 和性能浏览器审计约束为最小返回、后台同步。",
+      "proof": {
+        "contract": "docs/oam/dormitory-operation-execution-contract.json",
+        "requiredCheck": "scripts/oam/check-dormitory-operation-execution-contract.mjs"
+      },
+      "nextSafeStepZh": "新增操作必须继续先即时反馈、只提交当前步骤、读侧后台同步。"
+    },
+    {
+      "id": "complexity.runtime.validation-overlap",
+      "type": "duplicate_runtime_validation",
+      "riskLevel": "P2",
+      "handling": "retain",
+      "currentAction": "retain_as_hard_gate_layers",
+      "findingZh": "runtime、consumption boundary、active path、no side effect 检查有重叠，但各自阻断面不同。",
+      "proof": {
+        "checks": [
+          "scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs",
+          "scripts/oam/check-dormitory-active-path-gate.mjs",
+          "scripts/oam/check-dormitory-operation-execution-contract.mjs"
+        ]
+      },
+      "nextSafeStepZh": "待缺陷复发率稳定后再抽取公共断言库。"
+    },
+    {
+      "id": "complexity.search.projection-overlap",
+      "type": "duplicate_search_projection",
+      "riskLevel": "P2",
+      "handling": "retain",
+      "currentAction": "retain_readonly_boundary",
+      "findingZh": "搜索、今日、工作项、我的都读取场景入口和投影，存在索引消费重叠。",
+      "proof": {
+        "consumerGraph": "docs/oam/lodging-consumer-graph.json",
+        "requiredChecks": [
+          "scripts/oam/check-lodging-consumer-graph.mjs",
+          "scripts/oam/check-dormitory-active-path-gate.mjs"
+        ]
+      },
+      "nextSafeStepZh": "只在保持搜索只读和合法动作跳转后抽象入口适配层。"
+    },
+    {
+      "id": "complexity.dead-code.real-browser-tcp-probe",
+      "type": "unreferenced_file_or_function",
+      "riskLevel": "P3",
+      "handling": "delete",
+      "currentAction": "removed_unused_function",
+      "findingZh": "真实浏览器硬门禁 runner 中的 Test-TcpReady 函数未被调用。",
+      "proof": {
+        "scanCommand": "rg -n \"Test-TcpReady\" scripts/surface/run-dormitory-real-browser-audits.ps1 scripts",
+        "noReferenceProofRequired": true
+      },
+      "verification": "scripts/oam/check-project-maintainability-governance.mjs"
+    },
+    {
+      "id": "complexity.documentation.catalog-drift",
+      "type": "duplicate_documentation",
+      "riskLevel": "P2",
+      "handling": "document_catalog",
+      "currentAction": "retain_with_catalog_label",
+      "findingZh": "历史文档仍包含旧链术语，但由旧链退役总账约束为历史说明或只读证据。",
+      "proof": {
+        "ledgerRef": "oldChainRetirementLedger"
+      },
+      "nextSafeStepZh": "后续只归档或标记 historical，不删除证据链。"
+    },
+    {
+      "id": "complexity.historical-evidence-volume",
+      "type": "duplicate_evidence_generation",
+      "riskLevel": "P1",
+      "handling": "retain",
+      "currentAction": "retain_historical_readonly",
+      "findingZh": "历史证据体积和重复摘要较多，但删除会造成审计断链。",
+      "proof": {
+        "protectedPath": "artifacts/oam/evidence",
+        "ledgerRule": "historicalEvidenceMustNotBeDeleted"
+      },
+      "nextSafeStepZh": "只允许增加索引和压缩策略，不通过删除历史证据制造瘦身。"
+    },
+    {
+      "id": "complexity.control-plane.fragmented-gates",
+      "type": "duplicate_test",
+      "riskLevel": "P2",
+      "handling": "merge",
+      "currentAction": "retain_and_register_maintainability_gate",
+      "findingZh": "CI、Control Plane、Evidence Root、Mainline Transaction 各有门禁列表，存在漏接新专项的风险。",
+      "proof": {
+        "requiredChecks": [
+          "scripts/oam/check-dormitory-ci-hard-gates.mjs",
+          "scripts/oam/check-evidence-root-hard-gate-matrix.mjs",
+          "scripts/oam/check-dormitory-mainline-activation-transaction.mjs"
+        ]
+      },
+      "nextSafeStepZh": "本次把维护治理检查接入所有硬门禁，后续可生成门禁清单减少手工同步。"
+    }
+  ],
+  "safeSlimmingActions": [
+    {
+      "id": "slim.remove-unused-test-tcp-ready",
+      "type": "code_cleanup",
+      "path": "scripts/surface/run-dormitory-real-browser-audits.ps1",
+      "removedSymbol": "Test-TcpReady",
+      "deletionKind": "function_body_only",
+      "noActiveReferenceProof": "rg -n \"Test-TcpReady\" scripts/surface/run-dormitory-real-browser-audits.ps1 scripts returns no matches after cleanup.",
+      "businessSemanticImpact": "none",
+      "protectedArtifactTouched": false,
+      "verificationScripts": [
+        "node scripts/oam/check-project-maintainability-governance.mjs",
+        "node scripts/oam/check-dormitory-ci-hard-gates.mjs",
+        "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1"
+      ]
+    }
+  ],
+  "maintenanceRules": [
+    {
+      "id": "rule.source-authority-first",
+      "ruleZh": "新增或修改住宿经营业务语义必须先进入 Source Authority，再由 generated、runtime、surface、test、evidence 消费。",
+      "enforcement": "check_script",
+      "enforcingChecks": [
+        "scripts/oam/check-current-authority-index.mjs",
+        "scripts/business/check-dormitory-13-scenario-control-authority.mjs",
+        "scripts/business/check-dormitory-13-scenario-generated-contracts.mjs"
+      ]
+    },
+    {
+      "id": "rule.generated-not-manual",
+      "ruleZh": "generated 文件不得手工编辑。",
+      "enforcement": "check_script",
+      "enforcingChecks": [
+        "scripts/oam/check-generated-files-not-manually-edited.mjs"
+      ]
+    },
+    {
+      "id": "rule.old-chain-reference-classified",
+      "ruleZh": "旧链引用必须分类，活跃路径旧链必须失败。",
+      "enforcement": "check_script",
+      "enforcingChecks": [
+        "oam.oldChainRetirementLedgerCheck",
+        "oam.noActivePathOldIdentityCheck",
+        "scripts/oam/check-dormitory-active-path-gate.mjs"
+      ]
+    },
+    {
+      "id": "rule.tests-protect-current-business-ui",
+      "ruleZh": "测试不得迎合错误 UI；必须保护当前住宿经营业务表达、内部 ID 防暴露和搜索只读。",
+      "enforcement": "check_script",
+      "enforcingChecks": [
+        "scripts/oam/check-business-ui-copy-no-technical-leak.mjs",
+        "scripts/surface/check-dormitory-13-scenario-entry-browser-audit.mjs"
+      ]
+    },
+    {
+      "id": "rule.browser-screenshots-retained",
+      "ruleZh": "真实浏览器验收必须保留截图索引，不能只用后台 PASS。",
+      "enforcement": "evidence_root_hard_gate",
+      "enforcingChecks": [
+        "scripts/oam/check-evidence-root-hard-gate-matrix.mjs"
+      ]
+    },
+    {
+      "id": "rule.evidence-root-not-forged",
+      "ruleZh": "Evidence Root 和证据报告不得手工伪造或弱化失败。",
+      "enforcement": "check_script",
+      "enforcingChecks": [
+        "scripts/oam/check-evidence-writer-boundary.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ]
+    },
+    {
+      "id": "rule.delete-requires-no-reference-proof",
+      "ruleZh": "删除文件或符号必须有无活跃引用证明，并避开 protectedArtifacts。",
+      "enforcement": "check_script",
+      "enforcingChecks": [
+        "scripts/oam/check-project-maintainability-governance.mjs",
+        "scripts/oam/check-file-lifecycle-policy.mjs",
+        "scripts/oam/check-retired-reference-blocker.mjs"
+      ]
+    }
+  ],
+  "requiredHardGateIntegrations": [
+    ".github/workflows/ci.yml",
+    "scripts/oam/run-control-plane-checks.ps1",
+    "scripts/oam/check-dormitory-ci-hard-gates.mjs",
+    "scripts/oam/check-evidence-root-hard-gate-matrix.mjs",
+    "scripts/oam/generate-dormitory-mainline-activation-transaction.mjs",
+    "scripts/oam/check-dormitory-mainline-activation-transaction.mjs"
+  ],
+  "verificationScript": "scripts/oam/check-project-maintainability-governance.mjs"
+}

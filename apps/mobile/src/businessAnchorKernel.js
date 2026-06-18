@@ -1,3 +1,5 @@
+import { normalizeOperationLifecycleState } from "./operationStatus.js";
+
 const anchorFieldAliases = {
   roomLabel: ["roomLabel", "room_label", "roomDisplay", "room_display", "roomName", "room_name"],
   buildingName: ["buildingName", "building_name", "building", "buildingId", "building_id"],
@@ -16,6 +18,12 @@ const anchorFieldAliases = {
 };
 
 const actionByCardId = {
+  "cert.roomSetupConfirm": "anchorActionRoomSetup",
+  "cert.bedSetupConfirm": "anchorActionBedSetup",
+  "cert.resourceReadinessConfirm": "anchorActionRoomReadiness",
+  "Dorm.RoomSetupConfirm": "anchorActionRoomSetup",
+  "Dorm.BedSetupConfirm": "anchorActionBedSetup",
+  "Dorm.ResourceReadinessConfirm": "anchorActionRoomReadiness",
   roomSetup: "anchorActionRoomSetup",
   bedSetup: "anchorActionBedSetup",
   rateSetup: "anchorActionRateSetup",
@@ -105,7 +113,7 @@ export function businessAnchorText(source = {}, ctx = {}) {
 export function businessAnchorHtml(source = {}, ctx = {}, options = {}) {
   const anchor = buildBusinessAnchor(source, ctx);
   if (!anchor.hasAnchor) return "";
-  const label = options.label || ctx.tr?.("businessAnchor") || "业务锚点";
+  const label = options.label || ctx.tr?.("businessAnchor") || "业务对象";
   const className = ["business-anchor", options.compact ? "compact" : ""].filter(Boolean).join(" ");
   return `<p class="${escapeAttr(className, ctx)}" data-surface="business-anchor" data-anchor-privacy="display-search-only"><span>${escapeHtml(label, ctx)}</span><strong>${escapeHtml(anchor.label, ctx)}</strong></p>`;
 }
@@ -155,8 +163,8 @@ function pushField(fields = [], key = "", label = "", value = "") {
 
 function actionFieldByCardId(cardId = "") {
   const groups = {
-    room: ["roomSetup", "roomReadiness", "roomBlock", "roomRelease", "roomReleaseAfterService"],
-    bed: ["bedSetup", "bedAssign", "bedRelease"],
+    room: ["cert.roomSetupConfirm", "cert.resourceReadinessConfirm", "roomSetup", "roomReadiness", "roomBlock", "roomRelease", "roomReleaseAfterService"],
+    bed: ["cert.bedSetupConfirm", "bedSetup", "bedAssign", "bedRelease"],
     price: ["rateSetup", "tariff"],
     resident: ["lead", "residentProfile"],
     deposit: ["depositAssessment", "depositReceipt", "depositConfirmation", "depositDeduction", "depositRefundApproval", "depositRefundPayment", "depositClose"],
@@ -333,7 +341,7 @@ function isDisplayValue(value) {
 }
 
 function activeCard(workspace = {}) {
-  return workspace?.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(card.status)) || workspace?.cards?.[0] || {};
+  return workspace?.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(normalizeOperationLifecycleState(card.status, ""))) || workspace?.cards?.[0] || {};
 }
 
 function localized(value, ctx = {}) {

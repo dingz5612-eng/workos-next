@@ -1,0 +1,2317 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario12-mobileMirror.generated",
+  "version": "oam.dormitory-scenario12-mobileMirror.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario12-channel-corporate-customer-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario12-channel-corporate-customer-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:8509552e372fda3a473c97c7ded7142f445c75caf8bab6af715500b37ad3f19e",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario12-channel-corporate-customer.authority.json",
+      "digest": "sha256:84dbed278bccc4a0da3a590157249a3dc02a7266af0d862a8690ca5adb07d196"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:84dbed278bccc4a0da3a590157249a3dc02a7266af0d862a8690ca5adb07d196",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario12.ChannelCorporateCustomer",
+  "scenarioPackageNo": 12,
+  "scenarioId": "lodging.channel-corporate-customer",
+  "outputContentDigest": "sha256:195b100c3285d01dc1bbf8d9437de7934c4bf0eed4f5a97a89cf19fd4c9480a8",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "渠道与企业客户",
+  "businessGoalZh": "维护外部渠道、企业客户、协议客户、渠道发布规则、企业协议资格、渠道对接状态、佣金/结算规则意向和证据，并向场景包 3、4、5、finance-gate 和看板提供只读条件。",
+  "sourceScenarioDigest": "sha256:84dbed278bccc4a0da3a590157249a3dc02a7266af0d862a8690ca5adb07d196",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario12.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "ChannelPartner",
+      "ChannelAccount",
+      "CorporateAccount",
+      "CorporateCustomer",
+      "CorporateAgreement",
+      "AgreementEligibility",
+      "ChannelEligibility",
+      "CorporateEligibility",
+      "ChannelProductMapping",
+      "ChannelPublicationRule",
+      "ChannelPublicationStatus",
+      "CommissionRuleIntent",
+      "SettlementRuleIntent",
+      "ChannelContact",
+      "CorporateContact",
+      "ContactPerson",
+      "ContractEvidence",
+      "StatusHistory",
+      "ChannelStatusHistory"
+    ],
+    "searchReadModel": [
+      "渠道与企业客户",
+      "渠道摘要",
+      "企业客户摘要",
+      "协议摘要",
+      "适用商品/价格资格摘要",
+      "渠道发布规则摘要",
+      "佣金/结算规则意向",
+      "证据摘要",
+      "只读对象引用",
+      "协议资格",
+      "发布规则"
+    ],
+    "noRefillRuleZh": "场景包 12 只能读取场景包 2 的运营阻断摘要和场景包 3 的商品/价格摘要，不得要求用户重新填写上游已确认字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "consumer": "surface",
+  "surfaceNavigation": {
+    "entryPages": [
+      "渠道列表",
+      "渠道详情",
+      "企业客户列表",
+      "企业客户详情",
+      "协议维护页",
+      "商品资格绑定页",
+      "渠道发布规则页",
+      "佣金结算意向页",
+      "审核页",
+      "版本历史页"
+    ],
+    "todayZh": "今日只展示今天需要处理的被动任务：协议即将到期、渠道待审核、资料待补、发布异常待处理、财务规则待确认。",
+    "workItemsZh": "工作项展示全部渠道、企业客户、协议、发布规则、续签、补证和财务规则意向被动任务池。",
+    "searchZh": "搜索可以查渠道名、企业名、联系人、协议编号、商品、状态；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "pageMustShowZh": [
+      "当前状态",
+      "有效期",
+      "适用范围",
+      "证据缺失项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": {
+      "渠道草稿": [
+        "继续填写",
+        "提交审核"
+      ],
+      "企业客户草稿": [
+        "继续填写",
+        "提交审核"
+      ],
+      "待审核": [
+        "审核通过",
+        "退回修改"
+      ],
+      "已启用": [
+        "暂停",
+        "停用",
+        "新建版本"
+      ],
+      "已暂停": [
+        "恢复审核",
+        "停用"
+      ],
+      "已停用": [
+        "查看历史",
+        "新建版本"
+      ],
+      "协议待审核": [
+        "审核通过",
+        "退回修改"
+      ],
+      "协议已生效": [
+        "续签",
+        "停用协议",
+        "新建版本"
+      ],
+      "协议已过期": [
+        "续签",
+        "新建协议"
+      ],
+      "发布待检查": [
+        "检查发布",
+        "暂停发布"
+      ],
+      "发布已启用": [
+        "暂停发布",
+        "新建版本"
+      ],
+      "财务规则待确认": [
+        "提交财务规则复核",
+        "补充证据"
+      ]
+    },
+    "forbiddenUserVisibleTermsZh": [
+      "已报价",
+      "已预订",
+      "已收款",
+      "已入账",
+      "final GO",
+      "生产发布",
+      "业务上线",
+      "lead-reservation",
+      "RatePlan",
+      "PaymentConfirm",
+      "channel/OTA 临时字段"
+    ]
+  },
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "create-channel-or-corporate-profile",
+      "nameZh": "建立渠道或企业客户档案",
+      "commandId": "Dorm.ChannelCorporateProfileDraftStart",
+      "secondaryCommandIds": [
+        "Dorm.ChannelPartnerProfileCreate",
+        "Dorm.CorporateCustomerProfileCreate"
+      ],
+      "entryFromZh": [
+        "渠道列表",
+        "企业客户列表",
+        "今日任务",
+        "工作项"
+      ],
+      "userSees": [
+        "渠道/企业名称",
+        "渠道类型",
+        "企业客户类型",
+        "合作状态",
+        "负责人",
+        "证据摘要",
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期"
+      ],
+      "userFilledFields": [
+        "渠道/企业名称",
+        "统一社会信用代码或证件信息",
+        "联系人",
+        "联系电话",
+        "邮箱",
+        "地址",
+        "备注"
+      ],
+      "userSelectedFields": [
+        "渠道类型",
+        "企业客户类型",
+        "合作状态",
+        "负责人"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "营业执照",
+        "合作协议",
+        "授权证明"
+      ],
+      "systemGeneratedFields": [
+        "partnerRef",
+        "corporateAccountRef",
+        "contactRef",
+        "createdAt",
+        "createdBy",
+        "evidenceEnvelopeRef"
+      ],
+      "validations": [
+        "名称和联系方式不能为空",
+        "关键证据缺失时不得启用",
+        "用户不得填写 channelId、corporateAccountId、stableRef"
+      ],
+      "outputs": [
+        "渠道/企业客户草稿",
+        "联系人摘要",
+        "证据摘要"
+      ],
+      "primaryBusinessObject": "ChannelPartner",
+      "requiredReadContext": [
+        "渠道/企业名称",
+        "渠道类型",
+        "企业客户类型",
+        "合作状态",
+        "负责人",
+        "证据摘要",
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "只读对象引用",
+        "运营状态摘要"
+      ],
+      "editableInputs": [
+        "渠道/企业名称",
+        "统一社会信用代码或证件信息",
+        "联系人",
+        "联系电话",
+        "邮箱",
+        "地址",
+        "备注"
+      ],
+      "fixedSelections": [
+        "渠道类型",
+        "企业客户类型",
+        "合作状态",
+        "负责人"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "渠道企业佣金结算意向",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格方案摘要",
+          "价格版本摘要"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "建立渠道或企业客户档案",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间/床位运营状态摘要",
+          "运营阻断摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格版本摘要",
+          "适用日期",
+          "证据摘要",
+          "只读对象引用",
+          "运营状态摘要"
+        ],
+        "to": [
+          "渠道/企业客户草稿",
+          "联系人摘要",
+          "证据摘要",
+          "渠道摘要",
+          "企业客户摘要",
+          "协议摘要",
+          "适用商品/价格资格摘要",
+          "渠道发布规则摘要",
+          "佣金/结算规则意向",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 12 只能读取场景包 2 的运营阻断摘要和场景包 3 的商品/价格摘要，不得要求用户重新填写上游已确认字段。"
+      },
+      "searchReadModel": [
+        "渠道与企业客户",
+        "建立渠道或企业客户档案",
+        "ChannelPartner",
+        "渠道/企业名称",
+        "渠道类型",
+        "企业客户类型",
+        "合作状态",
+        "负责人",
+        "证据摘要",
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "渠道/企业客户草稿"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "maintain-cooperation-agreement",
+      "nameZh": "维护合作协议",
+      "commandId": "Dorm.CorporateAgreementDraftSubmit",
+      "secondaryCommandIds": [
+        "Dorm.CorporateAgreementApproveActivate"
+      ],
+      "userSees": [
+        "企业客户摘要",
+        "渠道摘要",
+        "现有协议版本",
+        "证据摘要",
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "协议摘要",
+        "适用商品/价格资格摘要"
+      ],
+      "userFilledFields": [
+        "协议名称",
+        "协议编号业务展示",
+        "协议开始日期",
+        "结束日期",
+        "付款/结算说明",
+        "取消规则说明",
+        "入住规则说明"
+      ],
+      "userSelectedFields": [
+        "适用客户类型",
+        "适用渠道",
+        "适用商品范围",
+        "是否需要负责人审核"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "合同扫描件",
+        "审批记录",
+        "补充协议"
+      ],
+      "systemGeneratedFields": [
+        "agreementRef",
+        "agreementVersion",
+        "effectiveFrom",
+        "effectiveTo",
+        "approvalState"
+      ],
+      "validations": [
+        "协议日期必须合法",
+        "协议未审核不得生效",
+        "用户不得填写 agreementId、stableRef"
+      ],
+      "outputs": [
+        "协议摘要",
+        "协议版本",
+        "证据摘要"
+      ],
+      "primaryBusinessObject": "ChannelPartner",
+      "requiredReadContext": [
+        "企业客户摘要",
+        "渠道摘要",
+        "现有协议版本",
+        "证据摘要",
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "只读对象引用",
+        "运营状态摘要"
+      ],
+      "editableInputs": [
+        "协议名称",
+        "协议编号业务展示",
+        "协议开始日期",
+        "结束日期",
+        "付款/结算说明",
+        "取消规则说明",
+        "入住规则说明"
+      ],
+      "fixedSelections": [
+        "适用客户类型",
+        "适用渠道",
+        "适用商品范围",
+        "是否需要负责人审核"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "渠道企业佣金结算意向",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格方案摘要",
+          "价格版本摘要",
+          "适用商品/价格资格摘要"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "维护合作协议",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间/床位运营状态摘要",
+          "运营阻断摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格版本摘要",
+          "适用日期",
+          "证据摘要",
+          "只读对象引用",
+          "运营状态摘要"
+        ],
+        "to": [
+          "协议摘要",
+          "协议版本",
+          "证据摘要",
+          "渠道摘要",
+          "企业客户摘要",
+          "适用商品/价格资格摘要",
+          "渠道发布规则摘要",
+          "佣金/结算规则意向",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 12 只能读取场景包 2 的运营阻断摘要和场景包 3 的商品/价格摘要，不得要求用户重新填写上游已确认字段。"
+      },
+      "searchReadModel": [
+        "渠道与企业客户",
+        "维护合作协议",
+        "ChannelPartner",
+        "企业客户摘要",
+        "渠道摘要",
+        "现有协议版本",
+        "证据摘要",
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "协议版本"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "bind-product-and-eligibility",
+      "nameZh": "绑定商品与适用资格",
+      "commandId": "Dorm.ChannelProductEligibilityBind",
+      "userSees": [
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "运营阻断摘要",
+        "房间/床位运营状态摘要",
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "渠道与企业客户办理摘要"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "适用商品",
+        "适用售卖单位",
+        "适用客户类型",
+        "适用渠道"
+      ],
+      "systemGeneratedFields": [
+        "eligibilityRef",
+        "productRef",
+        "priceVersionRef",
+        "eligibilityVersion"
+      ],
+      "systemCalculatedFields": [
+        "是否有有效价格",
+        "是否有运营阻断",
+        "是否有协议有效期冲突"
+      ],
+      "validations": [
+        "未生效商品/价格不得绑定为可用资格",
+        "维修/停售资源不得发布为可用",
+        "用户不得填写 productId、priceVersionId"
+      ],
+      "outputs": [
+        "适用商品/价格资格摘要"
+      ],
+      "primaryBusinessObject": "ChannelPartner",
+      "requiredReadContext": [
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "运营阻断摘要",
+        "房间/床位运营状态摘要",
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "渠道与企业客户办理摘要",
+        "证据摘要",
+        "只读对象引用",
+        "运营状态摘要"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [
+        "适用商品",
+        "适用售卖单位",
+        "适用客户类型",
+        "适用渠道"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "渠道企业佣金结算意向",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格方案摘要",
+          "价格版本摘要",
+          "适用商品/价格资格摘要",
+          "是否有有效价格"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "绑定商品与适用资格",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间/床位运营状态摘要",
+          "运营阻断摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格版本摘要",
+          "适用日期",
+          "证据摘要",
+          "只读对象引用",
+          "运营状态摘要"
+        ],
+        "to": [
+          "适用商品/价格资格摘要",
+          "渠道摘要",
+          "企业客户摘要",
+          "协议摘要",
+          "渠道发布规则摘要",
+          "佣金/结算规则意向",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 12 只能读取场景包 2 的运营阻断摘要和场景包 3 的商品/价格摘要，不得要求用户重新填写上游已确认字段。"
+      },
+      "searchReadModel": [
+        "渠道与企业客户",
+        "绑定商品与适用资格",
+        "ChannelPartner",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "运营阻断摘要",
+        "房间/床位运营状态摘要",
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "渠道与企业客户办理摘要"
+      ]
+    },
+    {
+      "stepNo": 4,
+      "stepId": "configure-channel-publication-rule",
+      "nameZh": "配置渠道发布规则",
+      "commandId": "Dorm.ChannelPublicationRuleConfigure",
+      "secondaryCommandIds": [
+        "Dorm.ChannelPublicationEnable"
+      ],
+      "userSees": [
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "渠道发布规则摘要",
+        "渠道商品映射摘要"
+      ],
+      "userFilledFields": [
+        "渠道展示名称",
+        "渠道房型/床型映射"
+      ],
+      "userSelectedFields": [
+        "上下架状态",
+        "是否同步库存展示",
+        "是否需要人工确认"
+      ],
+      "systemGeneratedFields": [
+        "channelPublicationRuleRef",
+        "channelMappingRef",
+        "publicationVersion",
+        "syncMode"
+      ],
+      "validations": [
+        "发布规则只能作为展示/可见条件，不得直接锁库存",
+        "外部渠道回传预订必须进入场景包 5 校验",
+        "无有效价格不得启用发布"
+      ],
+      "outputs": [
+        "渠道发布规则摘要",
+        "渠道商品映射摘要"
+      ],
+      "primaryBusinessObject": "ChannelPartner",
+      "requiredReadContext": [
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "渠道发布规则摘要",
+        "渠道商品映射摘要",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "editableInputs": [
+        "渠道展示名称",
+        "渠道房型/床型映射"
+      ],
+      "fixedSelections": [
+        "上下架状态",
+        "是否同步库存展示",
+        "是否需要人工确认"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "渠道企业佣金结算意向",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格方案摘要",
+          "价格版本摘要",
+          "适用商品/价格资格摘要"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "配置渠道发布规则",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "v-06791eec",
+          "labelZh": "发布渠道",
+          "labelKey": "scenario12.action.v-06791eec.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.configure-channel-publication-rule.v-06791eec.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-10da3782",
+          "labelZh": "发布备注",
+          "labelKey": "scenario12.action.v-10da3782.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.configure-channel-publication-rule.v-10da3782.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "房间/床位运营状态摘要",
+          "运营阻断摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格版本摘要",
+          "适用日期",
+          "证据摘要",
+          "只读对象引用",
+          "运营状态摘要"
+        ],
+        "to": [
+          "渠道发布规则摘要",
+          "渠道商品映射摘要",
+          "渠道摘要",
+          "企业客户摘要",
+          "协议摘要",
+          "适用商品/价格资格摘要",
+          "佣金/结算规则意向",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 12 只能读取场景包 2 的运营阻断摘要和场景包 3 的商品/价格摘要，不得要求用户重新填写上游已确认字段。"
+      },
+      "searchReadModel": [
+        "渠道与企业客户",
+        "配置渠道发布规则",
+        "ChannelPartner",
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "渠道发布规则摘要",
+        "渠道商品映射摘要"
+      ]
+    },
+    {
+      "stepNo": 5,
+      "stepId": "configure-commission-settlement-intent",
+      "nameZh": "配置佣金与结算规则意向",
+      "commandId": "Dorm.CommissionSettlementIntentSubmit",
+      "userSees": [
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "佣金/结算规则意向",
+        "渠道与企业客户办理摘要"
+      ],
+      "userFilledFields": [
+        "佣金说明",
+        "账期说明",
+        "发票要求",
+        "结算备注"
+      ],
+      "userSelectedFields": [
+        "佣金类型",
+        "结算周期",
+        "对账方式",
+        "是否需要财务确认"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "佣金依据",
+        "结算说明",
+        "合同证据"
+      ],
+      "systemGeneratedFields": [
+        "commissionRuleIntentRef",
+        "settlementRuleIntentRef",
+        "financeReviewRequestRef"
+      ],
+      "validations": [
+        "佣金和结算规则只能交给 finance-gate 或财务规则权威确认",
+        "不得在本包直接生成账务"
+      ],
+      "outputs": [
+        "佣金/结算规则意向"
+      ],
+      "primaryBusinessObject": "ChannelPartner",
+      "requiredReadContext": [
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "佣金/结算规则意向",
+        "渠道与企业客户办理摘要",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "editableInputs": [
+        "佣金说明",
+        "账期说明",
+        "发票要求",
+        "结算备注"
+      ],
+      "fixedSelections": [
+        "佣金类型",
+        "结算周期",
+        "对账方式",
+        "是否需要财务确认"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "渠道企业佣金结算意向",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格方案摘要",
+          "价格版本摘要",
+          "适用商品/价格资格摘要",
+          "佣金/结算规则意向",
+          "佣金说明",
+          "佣金类型",
+          "是否需要财务确认"
+        ],
+        "direction": "佣金结算意向",
+        "stage": "配置佣金与结算规则意向",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "房间/床位运营状态摘要",
+          "运营阻断摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格版本摘要",
+          "适用日期",
+          "证据摘要",
+          "只读对象引用",
+          "运营状态摘要"
+        ],
+        "to": [
+          "佣金/结算规则意向",
+          "渠道摘要",
+          "企业客户摘要",
+          "协议摘要",
+          "适用商品/价格资格摘要",
+          "渠道发布规则摘要",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 12 只能读取场景包 2 的运营阻断摘要和场景包 3 的商品/价格摘要，不得要求用户重新填写上游已确认字段。"
+      },
+      "searchReadModel": [
+        "渠道与企业客户",
+        "配置佣金与结算规则意向",
+        "ChannelPartner",
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "佣金/结算规则意向",
+        "渠道与企业客户办理摘要"
+      ]
+    },
+    {
+      "stepNo": 6,
+      "stepId": "audit-enable",
+      "nameZh": "审核启用",
+      "commandId": "Dorm.ChannelCorporateAuditDecision",
+      "secondaryCommandIds": [
+        "Dorm.ChannelPublicationEnable",
+        "Dorm.ChannelPause",
+        "Dorm.ChannelDisable"
+      ],
+      "userSees": [
+        "渠道/企业资料",
+        "协议",
+        "商品资格",
+        "发布规则",
+        "佣金结算意向",
+        "证据摘要",
+        "风险提示",
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "退回修改",
+        "暂停"
+      ],
+      "systemGeneratedFields": [
+        "ChannelPartnerEnabled",
+        "CorporateAgreementActivated",
+        "ChannelPublicationEnabled",
+        "EvidenceBinding",
+        "Projection update"
+      ],
+      "validations": [
+        "禁止写入价格金额真值、报价、预订、库存锁定、收款、账务",
+        "审核通过前不得启用渠道或协议"
+      ],
+      "outputs": [
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "渠道发布规则摘要"
+      ],
+      "primaryBusinessObject": "ChannelPartner",
+      "requiredReadContext": [
+        "渠道/企业资料",
+        "协议",
+        "商品资格",
+        "发布规则",
+        "佣金结算意向",
+        "证据摘要",
+        "风险提示",
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "只读对象引用"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [
+        "退回修改",
+        "暂停"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "渠道企业佣金结算意向",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "佣金结算意向",
+          "价格方案摘要",
+          "价格版本摘要"
+        ],
+        "direction": "佣金结算意向",
+        "stage": "审核启用",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "v-50bf5318",
+          "labelZh": "提交审核",
+          "labelKey": "scenario12.action.v-50bf5318.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.audit-enable.v-50bf5318.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-f7bcdc0f",
+          "labelZh": "审核通过",
+          "labelKey": "scenario12.action.v-f7bcdc0f.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.audit-enable.v-f7bcdc0f.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-18411489",
+          "labelZh": "停用",
+          "labelKey": "scenario12.action.v-18411489.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.audit-enable.v-18411489.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "房间/床位运营状态摘要",
+          "运营阻断摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格版本摘要",
+          "适用日期",
+          "证据摘要",
+          "只读对象引用",
+          "运营状态摘要"
+        ],
+        "to": [
+          "渠道摘要",
+          "企业客户摘要",
+          "协议摘要",
+          "渠道发布规则摘要",
+          "适用商品/价格资格摘要",
+          "佣金/结算规则意向",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 12 只能读取场景包 2 的运营阻断摘要和场景包 3 的商品/价格摘要，不得要求用户重新填写上游已确认字段。"
+      },
+      "searchReadModel": [
+        "渠道与企业客户",
+        "审核启用",
+        "ChannelPartner",
+        "渠道/企业资料",
+        "协议",
+        "商品资格",
+        "发布规则",
+        "佣金结算意向",
+        "证据摘要",
+        "风险提示",
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "渠道摘要"
+      ]
+    },
+    {
+      "stepNo": 7,
+      "stepId": "daily-maintenance",
+      "nameZh": "日常维护",
+      "commandId": "Dorm.ChannelCorporateDailyMaintenance",
+      "secondaryCommandIds": [
+        "Dorm.CorporateAgreementRenew",
+        "Dorm.ChannelCorporateEvidenceSupplement",
+        "Dorm.ChannelCorporateCorrectionRequest"
+      ],
+      "entryFromZh": [
+        "今日任务",
+        "工作项",
+        "渠道详情",
+        "企业客户详情",
+        "搜索只读跳转"
+      ],
+      "userSees": [
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "版本历史",
+        "状态历史"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [
+        "补充资料",
+        "续签协议",
+        "暂停渠道",
+        "更新联系人"
+      ],
+      "validations": [
+        "已生效协议不得原地覆盖",
+        "只能新版本、续签、停用、作废或纠错"
+      ],
+      "outputs": [
+        "版本历史",
+        "状态历史",
+        "证据摘要"
+      ],
+      "primaryBusinessObject": "ChannelPartner",
+      "requiredReadContext": [
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "版本历史",
+        "状态历史",
+        "证据摘要",
+        "只读对象引用"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [
+        "补充资料",
+        "续签协议",
+        "暂停渠道",
+        "更新联系人"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "渠道企业佣金结算意向",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格方案摘要",
+          "价格版本摘要",
+          "适用商品/价格资格摘要"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "日常维护",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "v-6bb48114",
+          "labelZh": "停用协议",
+          "labelKey": "scenario12.action.v-6bb48114.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.daily-maintenance.v-6bb48114.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-ac617682",
+          "labelZh": "提交财务规则复核",
+          "labelKey": "scenario12.action.v-ac617682.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.daily-maintenance.v-ac617682.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "房间/床位运营状态摘要",
+          "运营阻断摘要",
+          "商品摘要",
+          "价格方案摘要",
+          "价格版本摘要",
+          "适用日期",
+          "证据摘要",
+          "只读对象引用",
+          "运营状态摘要"
+        ],
+        "to": [
+          "版本历史",
+          "状态历史",
+          "证据摘要",
+          "渠道摘要",
+          "企业客户摘要",
+          "协议摘要",
+          "适用商品/价格资格摘要",
+          "渠道发布规则摘要",
+          "佣金/结算规则意向",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 12 只能读取场景包 2 的运营阻断摘要和场景包 3 的商品/价格摘要，不得要求用户重新填写上游已确认字段。"
+      },
+      "searchReadModel": [
+        "渠道与企业客户",
+        "日常维护",
+        "ChannelPartner",
+        "房间/床位运营状态摘要",
+        "运营阻断摘要",
+        "商品摘要",
+        "价格方案摘要",
+        "价格版本摘要",
+        "适用日期",
+        "渠道摘要",
+        "企业客户摘要",
+        "协议摘要",
+        "适用商品/价格资格摘要",
+        "版本历史",
+        "状态历史",
+        "证据摘要"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“携程渠道，已启用，适用 301 整房按晚价”“某某公司协议客户，有效至 2026-12-31”。普通用户不得输入或记住内部编号。",
+    "upstreamReadonly": [
+      "房间/床位运营状态摘要",
+      "运营阻断摘要",
+      "商品摘要",
+      "价格方案摘要",
+      "价格版本摘要",
+      "适用日期",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "userFilled": [
+      "渠道/企业名称",
+      "统一社会信用代码或证件信息",
+      "联系人",
+      "联系电话",
+      "邮箱",
+      "地址",
+      "备注",
+      "协议名称",
+      "协议编号业务展示",
+      "协议开始日期",
+      "结束日期",
+      "付款/结算说明",
+      "取消规则说明",
+      "入住规则说明",
+      "渠道展示名称",
+      "渠道房型/床型映射",
+      "佣金说明",
+      "账期说明",
+      "发票要求",
+      "结算备注"
+    ],
+    "userSelected": [
+      "渠道类型",
+      "企业客户类型",
+      "合作状态",
+      "负责人",
+      "适用客户类型",
+      "适用渠道",
+      "适用商品范围",
+      "是否需要负责人审核",
+      "适用商品",
+      "适用售卖单位",
+      "上下架状态",
+      "是否同步库存展示",
+      "是否需要人工确认",
+      "佣金类型",
+      "结算周期",
+      "对账方式",
+      "是否需要财务确认",
+      "退回修改",
+      "暂停",
+      "续签协议"
+    ],
+    "systemGenerated": [
+      "partnerRef",
+      "corporateAccountRef",
+      "contactRef",
+      "createdAt",
+      "createdBy",
+      "evidenceEnvelopeRef",
+      "agreementRef",
+      "agreementVersion",
+      "effectiveFrom",
+      "effectiveTo",
+      "approvalState",
+      "eligibilityRef",
+      "productRef",
+      "priceVersionRef",
+      "eligibilityVersion",
+      "channelPublicationRuleRef",
+      "channelMappingRef",
+      "publicationVersion",
+      "syncMode",
+      "commissionRuleIntentRef",
+      "settlementRuleIntentRef",
+      "financeReviewRequestRef",
+      "projectionVersion",
+      "domainEventId"
+    ],
+    "systemCalculated": [
+      "是否有有效价格",
+      "是否有运营阻断",
+      "是否有协议有效期冲突",
+      "证据缺失项",
+      "协议到期提醒",
+      "发布风险提示"
+    ],
+    "evidenceBound": [
+      "营业执照",
+      "合作协议",
+      "授权证明",
+      "合同扫描件",
+      "审批记录",
+      "补充协议",
+      "佣金依据",
+      "结算说明",
+      "合同证据",
+      "纠错证据"
+    ],
+    "financeGate": [
+      "佣金/结算规则意向",
+      "佣金依据",
+      "结算说明",
+      "finance-gate 处理状态"
+    ],
+    "internalAudit": [
+      "partnerRef",
+      "corporateAccountRef",
+      "contactRef",
+      "agreementRef",
+      "eligibilityRef",
+      "productRef",
+      "priceVersionRef",
+      "channelPublicationRuleRef",
+      "commissionRuleIntentRef",
+      "settlementRuleIntentRef",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "forbiddenUserInputFields": [
+      "channelId",
+      "corporateAccountId",
+      "agreementId",
+      "productId",
+      "priceVersionId",
+      "ratePlanId",
+      "quoteId",
+      "reservationId",
+      "inventoryHoldId",
+      "paymentId",
+      "refundId",
+      "ledgerEntryId",
+      "ledgerTransactionId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "fieldAuthority": {
+      "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#fieldAuthorityModel",
+      "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+      "businessInput": [
+        {
+          "fieldId": "v-1b9742fb",
+          "labelZh": "渠道/企业名称",
+          "control": "text",
+          "labelKey": "scenario12.field.v-1b9742fb.label",
+          "helpKey": "scenario12.field.v-1b9742fb.help",
+          "errorKey": "scenario12.field.v-1b9742fb.error"
+        },
+        {
+          "fieldId": "v-aed50dc0",
+          "labelZh": "统一社会信用代码或证件信息",
+          "control": "text",
+          "labelKey": "scenario12.field.v-aed50dc0.label",
+          "helpKey": "scenario12.field.v-aed50dc0.help",
+          "errorKey": "scenario12.field.v-aed50dc0.error"
+        },
+        {
+          "fieldId": "v-fe92c456",
+          "labelZh": "联系人",
+          "control": "text",
+          "labelKey": "scenario12.field.v-fe92c456.label",
+          "helpKey": "scenario12.field.v-fe92c456.help",
+          "errorKey": "scenario12.field.v-fe92c456.error"
+        },
+        {
+          "fieldId": "contactPhone",
+          "labelZh": "联系电话",
+          "control": "text",
+          "labelKey": "scenario12.field.contactPhone.label",
+          "helpKey": "scenario12.field.contactPhone.help",
+          "errorKey": "scenario12.field.contactPhone.error"
+        },
+        {
+          "fieldId": "v-9f299a40",
+          "labelZh": "邮箱",
+          "control": "text",
+          "labelKey": "scenario12.field.v-9f299a40.label",
+          "helpKey": "scenario12.field.v-9f299a40.help",
+          "errorKey": "scenario12.field.v-9f299a40.error"
+        },
+        {
+          "fieldId": "v-e0e9703d",
+          "labelZh": "地址",
+          "control": "text",
+          "labelKey": "scenario12.field.v-e0e9703d.label",
+          "helpKey": "scenario12.field.v-e0e9703d.help",
+          "errorKey": "scenario12.field.v-e0e9703d.error"
+        },
+        {
+          "fieldId": "v-2834e28a",
+          "labelZh": "备注",
+          "control": "textarea",
+          "labelKey": "scenario12.field.v-2834e28a.label",
+          "helpKey": "scenario12.field.v-2834e28a.help",
+          "errorKey": "scenario12.field.v-2834e28a.error"
+        },
+        {
+          "fieldId": "v-6c6e3955",
+          "labelZh": "协议名称",
+          "control": "text",
+          "labelKey": "scenario12.field.v-6c6e3955.label",
+          "helpKey": "scenario12.field.v-6c6e3955.help",
+          "errorKey": "scenario12.field.v-6c6e3955.error"
+        },
+        {
+          "fieldId": "v-79edd185",
+          "labelZh": "协议编号业务展示",
+          "control": "text",
+          "labelKey": "scenario12.field.v-79edd185.label",
+          "helpKey": "scenario12.field.v-79edd185.help",
+          "errorKey": "scenario12.field.v-79edd185.error"
+        },
+        {
+          "fieldId": "v-84cf9cc9",
+          "labelZh": "协议开始日期",
+          "control": "text",
+          "labelKey": "scenario12.field.v-84cf9cc9.label",
+          "helpKey": "scenario12.field.v-84cf9cc9.help",
+          "errorKey": "scenario12.field.v-84cf9cc9.error"
+        },
+        {
+          "fieldId": "v-476d405b",
+          "labelZh": "结束日期",
+          "control": "text",
+          "labelKey": "scenario12.field.v-476d405b.label",
+          "helpKey": "scenario12.field.v-476d405b.help",
+          "errorKey": "scenario12.field.v-476d405b.error"
+        },
+        {
+          "fieldId": "v-8e441890",
+          "labelZh": "付款/结算说明",
+          "control": "textarea",
+          "labelKey": "scenario12.field.v-8e441890.label",
+          "helpKey": "scenario12.field.v-8e441890.help",
+          "errorKey": "scenario12.field.v-8e441890.error"
+        },
+        {
+          "fieldId": "v-d9b762da",
+          "labelZh": "取消规则说明",
+          "control": "textarea",
+          "labelKey": "scenario12.field.v-d9b762da.label",
+          "helpKey": "scenario12.field.v-d9b762da.help",
+          "errorKey": "scenario12.field.v-d9b762da.error"
+        },
+        {
+          "fieldId": "v-054c08e8",
+          "labelZh": "入住规则说明",
+          "control": "textarea",
+          "labelKey": "scenario12.field.v-054c08e8.label",
+          "helpKey": "scenario12.field.v-054c08e8.help",
+          "errorKey": "scenario12.field.v-054c08e8.error"
+        },
+        {
+          "fieldId": "v-827fc636",
+          "labelZh": "渠道展示名称",
+          "control": "text",
+          "labelKey": "scenario12.field.v-827fc636.label",
+          "helpKey": "scenario12.field.v-827fc636.help",
+          "errorKey": "scenario12.field.v-827fc636.error"
+        },
+        {
+          "fieldId": "v-961b88ec",
+          "labelZh": "渠道房型/床型映射",
+          "control": "text",
+          "labelKey": "scenario12.field.v-961b88ec.label",
+          "helpKey": "scenario12.field.v-961b88ec.help",
+          "errorKey": "scenario12.field.v-961b88ec.error"
+        },
+        {
+          "fieldId": "v-cf7e163b",
+          "labelZh": "佣金说明",
+          "control": "textarea",
+          "labelKey": "scenario12.field.v-cf7e163b.label",
+          "helpKey": "scenario12.field.v-cf7e163b.help",
+          "errorKey": "scenario12.field.v-cf7e163b.error"
+        },
+        {
+          "fieldId": "v-d1577df4",
+          "labelZh": "账期说明",
+          "control": "textarea",
+          "labelKey": "scenario12.field.v-d1577df4.label",
+          "helpKey": "scenario12.field.v-d1577df4.help",
+          "errorKey": "scenario12.field.v-d1577df4.error"
+        },
+        {
+          "fieldId": "v-9f094bdf",
+          "labelZh": "发票要求",
+          "control": "text",
+          "labelKey": "scenario12.field.v-9f094bdf.label",
+          "helpKey": "scenario12.field.v-9f094bdf.help",
+          "errorKey": "scenario12.field.v-9f094bdf.error"
+        },
+        {
+          "fieldId": "v-ceb7f4f0",
+          "labelZh": "结算备注",
+          "control": "textarea",
+          "labelKey": "scenario12.field.v-ceb7f4f0.label",
+          "helpKey": "scenario12.field.v-ceb7f4f0.help",
+          "errorKey": "scenario12.field.v-ceb7f4f0.error"
+        }
+      ],
+      "businessSelect": [
+        {
+          "fieldId": "v-a096ed52",
+          "labelZh": "渠道类型",
+          "control": "searchable-select",
+          "labelKey": "scenario12.field.v-a096ed52.label",
+          "helpKey": "scenario12.field.v-a096ed52.help",
+          "errorKey": "scenario12.field.v-a096ed52.error",
+          "optionSet": "option.v-a096ed52",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-c4e19f73",
+          "labelZh": "企业客户类型",
+          "control": "searchable-select",
+          "labelKey": "scenario12.field.v-c4e19f73.label",
+          "helpKey": "scenario12.field.v-c4e19f73.help",
+          "errorKey": "scenario12.field.v-c4e19f73.error",
+          "optionSet": "option.v-c4e19f73",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-d66d5e8c",
+          "labelZh": "合作状态",
+          "control": "select",
+          "labelKey": "scenario12.field.v-d66d5e8c.label",
+          "helpKey": "scenario12.field.v-d66d5e8c.help",
+          "errorKey": "scenario12.field.v-d66d5e8c.error",
+          "optionSet": "option.v-d66d5e8c",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-9c71d6b7",
+          "labelZh": "负责人",
+          "control": "searchable-select",
+          "labelKey": "scenario12.field.v-9c71d6b7.label",
+          "helpKey": "scenario12.field.v-9c71d6b7.help",
+          "errorKey": "scenario12.field.v-9c71d6b7.error",
+          "optionSet": "option.v-9c71d6b7",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-41302426",
+          "labelZh": "适用客户类型",
+          "control": "searchable-select",
+          "labelKey": "scenario12.field.v-41302426.label",
+          "helpKey": "scenario12.field.v-41302426.help",
+          "errorKey": "scenario12.field.v-41302426.error",
+          "optionSet": "option.v-41302426",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-5d3cc232",
+          "labelZh": "适用渠道",
+          "control": "searchable-select",
+          "labelKey": "scenario12.field.v-5d3cc232.label",
+          "helpKey": "scenario12.field.v-5d3cc232.help",
+          "errorKey": "scenario12.field.v-5d3cc232.error",
+          "optionSet": "option.v-5d3cc232",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-d1b3b551",
+          "labelZh": "适用商品范围",
+          "control": "searchable-select",
+          "labelKey": "scenario12.field.v-d1b3b551.label",
+          "helpKey": "scenario12.field.v-d1b3b551.help",
+          "errorKey": "scenario12.field.v-d1b3b551.error",
+          "optionSet": "option.v-d1b3b551",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-efe3f7dc",
+          "labelZh": "是否需要负责人审核",
+          "control": "searchable-select",
+          "labelKey": "scenario12.field.v-efe3f7dc.label",
+          "helpKey": "scenario12.field.v-efe3f7dc.help",
+          "errorKey": "scenario12.field.v-efe3f7dc.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-ba7c9766",
+          "labelZh": "适用商品",
+          "control": "searchable-select",
+          "labelKey": "scenario12.field.v-ba7c9766.label",
+          "helpKey": "scenario12.field.v-ba7c9766.help",
+          "errorKey": "scenario12.field.v-ba7c9766.error",
+          "optionSet": "option.v-ba7c9766",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-b39d4eb1",
+          "labelZh": "适用售卖单位",
+          "control": "select",
+          "labelKey": "scenario12.field.v-b39d4eb1.label",
+          "helpKey": "scenario12.field.v-b39d4eb1.help",
+          "errorKey": "scenario12.field.v-b39d4eb1.error",
+          "optionSet": "option.v-b39d4eb1",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-3803612d",
+          "labelZh": "上下架状态",
+          "control": "select",
+          "labelKey": "scenario12.field.v-3803612d.label",
+          "helpKey": "scenario12.field.v-3803612d.help",
+          "errorKey": "scenario12.field.v-3803612d.error",
+          "optionSet": "option.v-3803612d",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-453bde7f",
+          "labelZh": "是否同步库存展示",
+          "control": "select",
+          "labelKey": "scenario12.field.v-453bde7f.label",
+          "helpKey": "scenario12.field.v-453bde7f.help",
+          "errorKey": "scenario12.field.v-453bde7f.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-7ba9aaa0",
+          "labelZh": "是否需要人工确认",
+          "control": "select",
+          "labelKey": "scenario12.field.v-7ba9aaa0.label",
+          "helpKey": "scenario12.field.v-7ba9aaa0.help",
+          "errorKey": "scenario12.field.v-7ba9aaa0.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-f30acb97",
+          "labelZh": "佣金类型",
+          "control": "select",
+          "labelKey": "scenario12.field.v-f30acb97.label",
+          "helpKey": "scenario12.field.v-f30acb97.help",
+          "errorKey": "scenario12.field.v-f30acb97.error",
+          "optionSet": "option.v-f30acb97",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-de7f7dee",
+          "labelZh": "结算周期",
+          "control": "select",
+          "labelKey": "scenario12.field.v-de7f7dee.label",
+          "helpKey": "scenario12.field.v-de7f7dee.help",
+          "errorKey": "scenario12.field.v-de7f7dee.error",
+          "optionSet": "option.v-de7f7dee",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-37f74276",
+          "labelZh": "对账方式",
+          "control": "select",
+          "labelKey": "scenario12.field.v-37f74276.label",
+          "helpKey": "scenario12.field.v-37f74276.help",
+          "errorKey": "scenario12.field.v-37f74276.error",
+          "optionSet": "option.v-37f74276",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-7407fd4c",
+          "labelZh": "是否需要财务确认",
+          "control": "select",
+          "labelKey": "scenario12.field.v-7407fd4c.label",
+          "helpKey": "scenario12.field.v-7407fd4c.help",
+          "errorKey": "scenario12.field.v-7407fd4c.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-f903b99a",
+          "labelZh": "退回修改",
+          "control": "select",
+          "labelKey": "scenario12.field.v-f903b99a.label",
+          "helpKey": "scenario12.field.v-f903b99a.help",
+          "errorKey": "scenario12.field.v-f903b99a.error",
+          "optionSet": "option.v-f903b99a",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-197c30db",
+          "labelZh": "暂停",
+          "control": "select",
+          "labelKey": "scenario12.field.v-197c30db.label",
+          "helpKey": "scenario12.field.v-197c30db.help",
+          "errorKey": "scenario12.field.v-197c30db.error",
+          "optionSet": "option.v-197c30db",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-cc00798b",
+          "labelZh": "续签协议",
+          "control": "select",
+          "labelKey": "scenario12.field.v-cc00798b.label",
+          "helpKey": "scenario12.field.v-cc00798b.help",
+          "errorKey": "scenario12.field.v-cc00798b.error",
+          "optionSet": "option.v-cc00798b",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-7bd18aa8",
+          "labelZh": "补充资料",
+          "control": "select",
+          "labelKey": "scenario12.field.v-7bd18aa8.label",
+          "helpKey": "scenario12.field.v-7bd18aa8.help",
+          "errorKey": "scenario12.field.v-7bd18aa8.error",
+          "optionSet": "option.v-7bd18aa8",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-098cc276",
+          "labelZh": "暂停渠道",
+          "control": "searchable-select",
+          "labelKey": "scenario12.field.v-098cc276.label",
+          "helpKey": "scenario12.field.v-098cc276.help",
+          "errorKey": "scenario12.field.v-098cc276.error",
+          "optionSet": "option.v-098cc276",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-ed0fa80a",
+          "labelZh": "更新联系人",
+          "control": "select",
+          "labelKey": "scenario12.field.v-ed0fa80a.label",
+          "helpKey": "scenario12.field.v-ed0fa80a.help",
+          "errorKey": "scenario12.field.v-ed0fa80a.error",
+          "optionSet": "option.v-ed0fa80a",
+          "submitValueSource": "stableValue"
+        }
+      ],
+      "systemDerived": [
+        {
+          "fieldId": "v-5f070ad9",
+          "labelZh": "是否有有效价格",
+          "labelKey": "scenario12.field.v-5f070ad9.label",
+          "helpKey": "scenario12.field.v-5f070ad9.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-55d18090",
+          "labelZh": "是否有运营阻断",
+          "labelKey": "scenario12.field.v-55d18090.label",
+          "helpKey": "scenario12.field.v-55d18090.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-7b8b3fcd",
+          "labelZh": "是否有协议有效期冲突",
+          "labelKey": "scenario12.field.v-7b8b3fcd.label",
+          "helpKey": "scenario12.field.v-7b8b3fcd.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-f6aabd92",
+          "labelZh": "证据缺失项",
+          "labelKey": "scenario12.field.v-f6aabd92.label",
+          "helpKey": "scenario12.field.v-f6aabd92.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-451dfbef",
+          "labelZh": "协议到期提醒",
+          "labelKey": "scenario12.field.v-451dfbef.label",
+          "helpKey": "scenario12.field.v-451dfbef.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-ff4850ce",
+          "labelZh": "发布风险提示",
+          "labelKey": "scenario12.field.v-ff4850ce.label",
+          "helpKey": "scenario12.field.v-ff4850ce.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        }
+      ],
+      "readOnlySummary": [
+        {
+          "fieldId": "v-5ac95c4f",
+          "labelZh": "房间/床位运营状态摘要",
+          "labelKey": "scenario12.field.v-5ac95c4f.label",
+          "helpKey": "scenario12.field.v-5ac95c4f.help",
+          "sourceScenario": "商品摘要 / 价格方案摘要 / 运营状态摘要"
+        },
+        {
+          "fieldId": "v-da063651",
+          "labelZh": "运营阻断摘要",
+          "labelKey": "scenario12.field.v-da063651.label",
+          "helpKey": "scenario12.field.v-da063651.help",
+          "sourceScenario": "商品摘要 / 价格方案摘要 / 运营状态摘要"
+        },
+        {
+          "fieldId": "v-b39788c3",
+          "labelZh": "商品摘要",
+          "labelKey": "scenario12.field.v-b39788c3.label",
+          "helpKey": "scenario12.field.v-b39788c3.help",
+          "sourceScenario": "商品摘要 / 价格方案摘要 / 运营状态摘要"
+        },
+        {
+          "fieldId": "v-63d001f4",
+          "labelZh": "价格方案摘要",
+          "labelKey": "scenario12.field.v-63d001f4.label",
+          "helpKey": "scenario12.field.v-63d001f4.help",
+          "sourceScenario": "商品摘要 / 价格方案摘要 / 运营状态摘要"
+        },
+        {
+          "fieldId": "v-04108255",
+          "labelZh": "价格版本摘要",
+          "labelKey": "scenario12.field.v-04108255.label",
+          "helpKey": "scenario12.field.v-04108255.help",
+          "sourceScenario": "商品摘要 / 价格方案摘要 / 运营状态摘要"
+        },
+        {
+          "fieldId": "v-fb2e9a4b",
+          "labelZh": "适用日期",
+          "labelKey": "scenario12.field.v-fb2e9a4b.label",
+          "helpKey": "scenario12.field.v-fb2e9a4b.help",
+          "sourceScenario": "商品摘要 / 价格方案摘要 / 运营状态摘要"
+        },
+        {
+          "fieldId": "v-f71ae921",
+          "labelZh": "证据摘要",
+          "labelKey": "scenario12.field.v-f71ae921.label",
+          "helpKey": "scenario12.field.v-f71ae921.help",
+          "sourceScenario": "商品摘要 / 价格方案摘要 / 运营状态摘要"
+        },
+        {
+          "fieldId": "v-cd66b0d5",
+          "labelZh": "只读对象引用",
+          "labelKey": "scenario12.field.v-cd66b0d5.label",
+          "helpKey": "scenario12.field.v-cd66b0d5.help",
+          "sourceScenario": "商品摘要 / 价格方案摘要 / 运营状态摘要"
+        },
+        {
+          "fieldId": "v-6acf9a48",
+          "labelZh": "运营状态摘要",
+          "labelKey": "scenario12.field.v-6acf9a48.label",
+          "helpKey": "scenario12.field.v-6acf9a48.help",
+          "sourceScenario": "商品摘要 / 价格方案摘要 / 运营状态摘要"
+        }
+      ],
+      "evidenceBinding": [
+        {
+          "fieldId": "evidence.v-2675fe04",
+          "labelZh": "营业执照",
+          "labelKey": "scenario12.evidence.evidence.v-2675fe04.label",
+          "helpKey": "scenario12.evidence.evidence.v-2675fe04.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-680f2f5c",
+          "labelZh": "合作协议",
+          "labelKey": "scenario12.evidence.evidence.v-680f2f5c.label",
+          "helpKey": "scenario12.evidence.evidence.v-680f2f5c.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.v-02ee764b",
+          "labelZh": "授权证明",
+          "labelKey": "scenario12.evidence.evidence.v-02ee764b.label",
+          "helpKey": "scenario12.evidence.evidence.v-02ee764b.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-677ea50f",
+          "labelZh": "合同扫描件",
+          "labelKey": "scenario12.evidence.evidence.v-677ea50f.label",
+          "helpKey": "scenario12.evidence.evidence.v-677ea50f.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.v-20246468",
+          "labelZh": "审批记录",
+          "labelKey": "scenario12.evidence.evidence.v-20246468.label",
+          "helpKey": "scenario12.evidence.evidence.v-20246468.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-375c055a",
+          "labelZh": "补充协议",
+          "labelKey": "scenario12.evidence.evidence.v-375c055a.label",
+          "helpKey": "scenario12.evidence.evidence.v-375c055a.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.v-9e9dafe6",
+          "labelZh": "佣金依据",
+          "labelKey": "scenario12.evidence.evidence.v-9e9dafe6.label",
+          "helpKey": "scenario12.evidence.evidence.v-9e9dafe6.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-d5a1859d",
+          "labelZh": "结算说明",
+          "labelKey": "scenario12.evidence.evidence.v-d5a1859d.label",
+          "helpKey": "scenario12.evidence.evidence.v-d5a1859d.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-3d5a6d8a",
+          "labelZh": "合同证据",
+          "labelKey": "scenario12.evidence.evidence.v-3d5a6d8a.label",
+          "helpKey": "scenario12.evidence.evidence.v-3d5a6d8a.help",
+          "evidenceType": "document"
+        }
+      ],
+      "legalAction": [
+        {
+          "fieldId": "v-06791eec",
+          "labelZh": "发布渠道",
+          "labelKey": "scenario12.action.v-06791eec.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-06791eec.v1"
+        },
+        {
+          "fieldId": "v-10da3782",
+          "labelZh": "发布备注",
+          "labelKey": "scenario12.action.v-10da3782.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-10da3782.v1"
+        },
+        {
+          "fieldId": "v-50bf5318",
+          "labelZh": "提交审核",
+          "labelKey": "scenario12.action.v-50bf5318.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-50bf5318.v1"
+        },
+        {
+          "fieldId": "v-f7bcdc0f",
+          "labelZh": "审核通过",
+          "labelKey": "scenario12.action.v-f7bcdc0f.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-f7bcdc0f.v1"
+        },
+        {
+          "fieldId": "v-18411489",
+          "labelZh": "停用",
+          "labelKey": "scenario12.action.v-18411489.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-18411489.v1"
+        },
+        {
+          "fieldId": "v-6bb48114",
+          "labelZh": "停用协议",
+          "labelKey": "scenario12.action.v-6bb48114.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-6bb48114.v1"
+        },
+        {
+          "fieldId": "v-ac617682",
+          "labelZh": "提交财务规则复核",
+          "labelKey": "scenario12.action.v-ac617682.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-ac617682.v1"
+        }
+      ],
+      "actionControl": [
+        {
+          "fieldId": "v-06791eec",
+          "labelZh": "发布渠道",
+          "labelKey": "scenario12.action.v-06791eec.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-06791eec.v1"
+        },
+        {
+          "fieldId": "v-10da3782",
+          "labelZh": "发布备注",
+          "labelKey": "scenario12.action.v-10da3782.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-10da3782.v1"
+        },
+        {
+          "fieldId": "v-50bf5318",
+          "labelZh": "提交审核",
+          "labelKey": "scenario12.action.v-50bf5318.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-50bf5318.v1"
+        },
+        {
+          "fieldId": "v-f7bcdc0f",
+          "labelZh": "审核通过",
+          "labelKey": "scenario12.action.v-f7bcdc0f.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-f7bcdc0f.v1"
+        },
+        {
+          "fieldId": "v-18411489",
+          "labelZh": "停用",
+          "labelKey": "scenario12.action.v-18411489.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-18411489.v1"
+        },
+        {
+          "fieldId": "v-6bb48114",
+          "labelZh": "停用协议",
+          "labelKey": "scenario12.action.v-6bb48114.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-6bb48114.v1"
+        },
+        {
+          "fieldId": "v-ac617682",
+          "labelZh": "提交财务规则复核",
+          "labelKey": "scenario12.action.v-ac617682.label",
+          "legalActionRef": "legalAction.dormitory.scenario12.v-ac617682.v1"
+        }
+      ],
+      "conditionalInput": [],
+      "auditInternal": [
+        {
+          "fieldId": "partnerRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "corporateAccountRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "contactRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "evidenceEnvelopeRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "agreementRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "eligibilityRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "productRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceVersionRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "channelPublicationRuleRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "channelMappingRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "commissionRuleIntentRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "settlementRuleIntentRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "financeReviewRequestRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "projectionVersion",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "domainEventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "channelId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "corporateAccountId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "agreementId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "productId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "priceVersionId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ratePlanId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "quoteId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "reservationId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "inventoryHoldId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "paymentId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "refundId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ledgerEntryId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "ledgerTransactionId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "digest",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        }
+      ]
+    }
+  },
+  "channelCorporateStatusOptions": [
+    "渠道草稿",
+    "待审核",
+    "已启用",
+    "已暂停",
+    "已停用",
+    "企业客户草稿",
+    "协议待审核",
+    "协议已生效",
+    "协议已过期",
+    "协议已停用",
+    "发布待检查",
+    "发布已启用",
+    "发布已暂停",
+    "财务规则待确认"
+  ],
+  "readSideOutputs": [
+    "渠道摘要",
+    "企业客户摘要",
+    "协议摘要",
+    "适用商品/价格资格摘要",
+    "渠道发布规则摘要",
+    "佣金/结算规则意向",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "forbiddenUserVisibleTermsZh": [
+    "已报价",
+    "已预订",
+    "已收款",
+    "已入账",
+    "final GO",
+    "生产发布",
+    "业务上线",
+    "lead-reservation",
+    "RatePlan",
+    "PaymentConfirm",
+    "channel/OTA 临时字段"
+  ],
+  "noGo": {
+    "productionConfirmAllowed": false,
+    "businessGoLiveAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

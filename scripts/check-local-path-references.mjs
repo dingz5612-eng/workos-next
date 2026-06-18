@@ -95,7 +95,7 @@ function normalizeReference(rawRef) {
     .replace(/[.,;]+$/, "")
     .replace(/\/$/, "");
 
-  if (!normalized || normalized.includes("${") || normalized.includes("*") || normalized.includes("{")) {
+  if (!normalized || normalized.includes("$") || normalized.includes("*") || normalized.includes("{")) {
     return "";
   }
 
@@ -108,6 +108,10 @@ function shouldSkipFile(relativeFile) {
 
 function shouldSkipReference(relativeFile, line, normalizedRef) {
   if (generatedArtifactPrefixes.some((prefix) => normalizedRef.startsWith(prefix))) {
+    return true;
+  }
+
+  if (/(^|\/)(bin|obj)\//.test(normalizedRef)) {
     return true;
   }
 
@@ -150,6 +154,7 @@ function runSelfTest() {
         currentOamCheckOutput: "artifacts/oam/checks/",
         currentOamTestOutput: "artifacts/oam/test-results/",
         currentOamEvidenceOutput: "artifacts/oam/evidence/",
+        buildOutput: "services/core-api/WorkOS.Api/bin/Release/net10.0/WorkOS.Api.dll",
         oldArtifact: oldArtifactRef
       })
     ]

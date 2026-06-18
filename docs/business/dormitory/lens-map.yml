@@ -70,6 +70,153 @@
       ]
     },
     {
+      "lensId": "OperationDraft",
+      "derivedFromFacts": [
+        "Dorm.OperationResourceSelect"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "OperationInspection",
+      "derivedFromFacts": [
+        "Dorm.OperationInspectionConfirm"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "OperationEvidence",
+      "derivedFromFacts": [
+        "Dorm.OperationInspectionConfirm",
+        "Dorm.OperationBlockerUpdate"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "StatusHistory",
+      "derivedFromFacts": [
+        "Dorm.OperationInspectionConfirm",
+        "Dorm.OperationStatusChangeConfirm",
+        "Dorm.OperationBlockerUpdate",
+        "Dorm.OperationRestoreConfirm"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "OperationStatusDraft",
+      "derivedFromFacts": [
+        "Dorm.OperationStatusDraft"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "OperationBlockerDraft",
+      "derivedFromFacts": [
+        "Dorm.OperationStatusDraft"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "RoomOperationStatus",
+      "derivedFromFacts": [
+        "Dorm.OperationStatusChangeConfirm",
+        "Dorm.OperationRestoreConfirm"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "BedOperationStatus",
+      "derivedFromFacts": [
+        "Dorm.OperationStatusChangeConfirm",
+        "Dorm.OperationRestoreConfirm"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "OperationBlocker",
+      "derivedFromFacts": [
+        "Dorm.OperationStatusChangeConfirm",
+        "Dorm.OperationBlockerUpdate"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "OperationRestore",
+      "derivedFromFacts": [
+        "Dorm.OperationRestoreConfirm"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
       "lensId": "LeadFunnelLens",
       "derivedFromFacts": [
         "Dorm.LeadCapture",

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { i18n } from "../i18n.js";
 import { searchView } from "../views/searchView.js";
 import { meView } from "../views/meView.js";
+import { DORMITORY_MAINLINE_WORKSPACE_ID, DORMITORY_SCENARIO1_STEPS } from "../capabilityProjection.js";
 
 describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
   it("keeps Search focused on active business entry instead of personal activity log", () => {
@@ -20,7 +21,12 @@ describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
     expect(html).not.toContain("Release Control");
     expect(html).not.toContain("Finance admin");
 
-    expect(searchView(ctx({ view: "search", query: "新增住宿房源" }))).toContain("主动办理");
+    const mainlineEntry = searchView(ctx({ view: "search", query: "房源建档与基础就绪" }));
+    expect(mainlineEntry).toContain("新建房间和床位");
+    expect(mainlineEntry).toContain(`data-start-operations-workspace="${DORMITORY_MAINLINE_WORKSPACE_ID}"`);
+    expect(mainlineEntry).not.toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
+    expect(mainlineEntry).not.toContain('data-start-operations-workspace="W-STAY-DEPOSIT-LEDGER"');
+    expect(mainlineEntry).not.toContain('data-start-operations-workspace="W-STAY-PAYMENT-LEDGER"');
   });
 
   it("keeps learning and evidence libraries in Me instead of Search results", () => {
@@ -62,22 +68,25 @@ function ctx(overrides = {}) {
       workspaces: [workspace()],
       workQueue: [{
         queueItemId: "q-room",
-        workItemId: "W-STAY-RESOURCE:roomSetup",
-        workspaceId: "W-STAY-RESOURCE",
-        cardId: "roomSetup",
-        caseId: "case:W-STAY-RESOURCE",
-        workItemType: "Dorm.RoomSetup",
+        workItemId: "wi-dorm-room-setup",
+        workspaceId: "W-DORM-MAINLINE",
+        cardId: "cert.roomSetupConfirm",
+        caseId: "case:W-DORM-MAINLINE",
+        workItemType: "Dorm.RoomSetupConfirm",
         lifecycleState: "ready",
         ownerRole: "operator",
         badges: ["mine", "ready"],
         traceRefs: ["trace-room"],
         commandSubmissionId: "cmd-room",
-        reason: "先配置房间和床位"
+        reason: "开始新建房间和床位"
       }],
       operationWorkItems: [],
       homeSurface: [],
       learningCatalog: [],
-      searchResultsByQuery: {}
+      searchResultsByQuery: {
+        "新增房间": [mainlineCommandSearchResult("新增房间")],
+        "房源建档与基础就绪": [mainlineCommandSearchResult("房源建档与基础就绪")]
+      }
     },
     ...overrides
   };
@@ -96,21 +105,56 @@ function ctx(overrides = {}) {
 
 function workspace() {
   return {
-    id: "W-STAY-RESOURCE",
+    id: "W-DORM-MAINLINE",
     domain: "stay",
-    caseId: "case:W-STAY-RESOURCE",
-    title: { "zh-CN": "住宿资源" },
-    summary: { "zh-CN": "房间床位入住资源" },
-    next: { "zh-CN": "先配置房间和床位" },
+    caseId: "case:W-DORM-MAINLINE",
+    title: { "zh-CN": "新建房间和床位" },
+    summary: { "zh-CN": "房间建档、确认床位信息和完成基础检查" },
+    next: { "zh-CN": "开始新建房间和床位" },
     cards: [{
-      id: "roomSetup",
+      id: "cert.roomSetupConfirm",
       status: "ready",
-      title: { "zh-CN": "房间床位配置" },
+      title: { "zh-CN": "填写房间信息" },
       fields: { business: [], system: [], analytics: [] },
-      evidence: [{ id: "room-duplicate-check", label: { "zh-CN": "房间重复校验" } }],
+      evidence: [{ id: "room-basic-info-evidence", label: { "zh-CN": "房间基础资料证据" } }],
       blockerRules: [],
       confirmation: { required: true, requiredRole: "operator" }
     }]
+  };
+}
+
+function mainlineCommandSearchResult(query) {
+  const firstStep = DORMITORY_SCENARIO1_STEPS[0];
+  const admissionDecisionRef = "admission:dormitory-mainline:scenario1:start";
+  return {
+    resultType: "command",
+    commandId: "startOperationsWorkspace",
+    templateWorkspaceId: DORMITORY_MAINLINE_WORKSPACE_ID,
+    firstCardId: firstStep.cardId,
+    title: { "zh-CN": "新建房间和床位" },
+    subtitle: { "zh-CN": "房间建档、确认床位信息和完成基础检查" },
+    status: "ready",
+    nextAction: { "zh-CN": "开始新建房间和床位" },
+    matchedTerms: [query, "房源建档", "新增房间"],
+    sourceRefs: {
+      source: "SearchKernelService",
+      admissionDecisionRef
+    },
+    gateResult: {
+      source: "SearchKernelService",
+      admissionDecisionRef,
+      writeThroughSearchAllowed: false,
+      writeBusinessFactAllowed: false
+    },
+    admission: {
+      visibleAllowed: true,
+      prepareAllowed: true,
+      confirmAllowed: false,
+      productionAllowed: false,
+      mode: "internal_pilot_observation",
+      reason: "search_readonly_runtime_start",
+      admissionDecisionRef
+    }
   };
 }
 

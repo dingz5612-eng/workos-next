@@ -1,4 +1,3 @@
-import { pcManagerLiteView } from "./views/checkoutServiceView.js";
 import { financeReconciliationView } from "./views/financeReconciliationView.js";
 import { managerControlTowerView, pcGovernanceView } from "./views/pcGovernanceView.js";
 import { releaseControlView } from "./views/releaseControlView.js";
@@ -9,10 +8,11 @@ const pcViews = {
   pcGovernance: pcGovernanceView,
   governanceCenter: pcGovernanceView,
   managerControlTower: managerControlTowerView,
-  pcManager: pcManagerLiteView,
   financeReconciliation: financeReconciliationView,
   financeControl: financeReconciliationView
 };
+
+pcViews.pcManager = managerControlTowerView;
 
 export function routePcSurface(ctx) {
   const view = pcViews[ctx.state.view] || pcGovernanceView;

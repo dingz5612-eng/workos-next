@@ -1,0 +1,68 @@
+{
+  "version": "oam.dormitory.capability-decision-authority.v1",
+  "status": "authoritative",
+  "authorityType": "dormitory_first_golden_chain_capability_decision",
+  "currentCapabilityId": "Dormitory.FirstGoldenChain",
+  "currentChain": [
+    "Dorm.RoomSetupConfirm",
+    "Dorm.BedSetupConfirm",
+    "Dorm.ResourceReadinessConfirm"
+  ],
+  "currentBedModel": "BedSet",
+  "decisionBoundaries": {
+    "priorControlledAccommodationResourceSetupBedSetup": "advisory_only_not_current_proof",
+    "singleBedMaintenance": "future_separate_capability_not_current_first_golden_chain",
+    "browserPassIsBusinessGo": false,
+    "evidenceRootPassIsReleaseGo": false,
+    "wStayResourceAsCurrentProofAllowed": false
+  },
+  "firstGoldenChainBusinessModel": [
+    {
+      "command": "Dorm.RoomSetupConfirm",
+      "creates": [
+        "Dormitory.Room"
+      ],
+      "declares": [
+        "room.bedCount"
+      ],
+      "mustPrecede": [
+        "Dorm.BedSetupConfirm",
+        "Dorm.ResourceReadinessConfirm"
+      ]
+    },
+    {
+      "command": "Dorm.BedSetupConfirm",
+      "configures": [
+        "Dormitory.BedSet"
+      ],
+      "creates": [
+        "Dormitory.Bed[1..room.bedCount]"
+      ],
+      "requires": [
+        "existing Dormitory.Room",
+        "declared room.bedCount"
+      ]
+    },
+    {
+      "command": "Dorm.ResourceReadinessConfirm",
+      "createsOrUpdates": [
+        "Dormitory.RoomReadiness"
+      ],
+      "requires": [
+        "existing Dormitory.Room",
+        "complete Dormitory.BedSet"
+      ],
+      "blockedUntil": [
+        "createdBedCount == room.bedCount"
+      ]
+    }
+  ],
+  "landingAndReleaseLocks": {
+    "capabilityStateCeiling": "RUNTIME_TEST_ADMITTED",
+    "landingStatusCeiling": "PENDING_BUSINESS_LANDING_REVIEW",
+    "businessFeatureDevelopmentAllowed": false,
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

@@ -40,9 +40,8 @@
   font-size: 19px;
   line-height: 1.2;
   letter-spacing: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .topbar select {
@@ -106,6 +105,20 @@
 
 .topbar .runtime-status.offline::before {
   background: #c44b31;
+}
+
+@media (max-width: 360px) {
+  .topbar {
+    grid-template-columns: minmax(0, 1fr) 112px;
+  }
+
+  .topbar-title {
+    grid-column: 1 / -1;
+  }
+
+  .topbar .runtime-status {
+    justify-self: start;
+  }
 }
 
 .topbar strong,

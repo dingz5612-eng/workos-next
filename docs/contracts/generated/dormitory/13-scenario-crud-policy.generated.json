@@ -1,0 +1,37 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-13-scenario-crudPolicy.generated",
+  "version": "oam.dormitory-13-scenario-crudPolicy.generated.v1",
+  "generatorVersion": "oam.dormitory-13-scenario-control-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-13-scenario-control-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json"
+  ],
+  "inputDigest": "sha256:206a7609fdae45bdae06d121cf337ad49e02575acc296d975af6fecc12ccdd21",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    }
+  ],
+  "sourceContentDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "authorityId": "Dormitory.Operating13ScenarioControl",
+  "outputContentDigest": "sha256:df2fc95d4c0e48a73107d8e1f88e86fb22b852a711f33f936d4d3e193ae8de4e",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "crudPolicy": {
+    "create": "必须通过发起场景、创建草稿、提交确认。",
+    "draftEdit": "草稿可编辑。",
+    "confirmedFactEdit": "确认后不可原地覆盖，只能追加变更、新版本、补充证据、关闭、停用、作废、取消、恢复或纠错。",
+    "delete": "不得物理删除已确认事实，只能撤销草稿、停用、作废、关闭、取消或追加纠错。",
+    "read": "查询、搜索、列表、看板、报表永远只读，不得写业务事实。",
+    "requiredLifecycle": [
+      "currentState",
+      "stateHistory",
+      "evidenceHistory",
+      "legalNextActions"
+    ]
+  }
+}

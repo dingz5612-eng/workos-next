@@ -63,10 +63,10 @@ function renderAll() {
     recentSearches: [],
     queueDomain: "all",
     queueBadge: "mine",
-    selectedWorkItemId: "T-ROOM-CREATE",
-    selectedWorkspace: "W-STAY-RESOURCE",
-    selectedCardId: "roomSetup",
-    currentActor: { role: "operator", displayName: "内测经办人" },
+    selectedWorkItemId: "wi-dorm-room-setup",
+    selectedWorkspace: "W-DORM-MAINLINE",
+    selectedCardId: "cert.roomSetupConfirm",
+    currentActor: { role: "operator", displayName: "住宿经办人" },
     currentDevice: { deviceId: "mobile-current", deviceTrustStatus: "trusted", surface: "mobile" },
     runtimeStore: runtimeStore()
   };
@@ -97,17 +97,17 @@ function renderAll() {
 function runtimeStore() {
   return {
     workspaces: [{
-      id: "W-STAY-RESOURCE",
+      id: "W-DORM-MAINLINE",
       domain: "stay",
-      caseId: "case:W-STAY-RESOURCE",
-      title: { "zh-CN": "住宿资源" },
-      summary: { "zh-CN": "房间床位入住资源" },
-      next: { "zh-CN": "先配置房间和床位" },
+      caseId: "case:W-DORM-MAINLINE",
+      title: { "zh-CN": "房源建档与基础就绪" },
+      summary: { "zh-CN": "房间建档、床位组确认和基础就绪确认" },
+      next: { "zh-CN": "发起房源建档与基础就绪" },
       blockers: [],
       cards: [{
-        id: "roomSetup",
+        id: "cert.roomSetupConfirm",
         status: "ready",
-        title: { "zh-CN": "房间床位配置" },
+        title: { "zh-CN": "房间建档确认" },
         fields: { business: [], system: [], analytics: [] },
         evidence: [{ id: "room-duplicate-check", label: { "zh-CN": "房间重复校验" } }],
         checks: [],
@@ -116,25 +116,25 @@ function runtimeStore() {
       }]
     }],
     workQueue: [{
-      workItemId: "W-STAY-RESOURCE:roomSetup",
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "roomSetup",
-      caseId: "case:W-STAY-RESOURCE",
-      workItemType: "Dorm.RoomSetup",
+      workItemId: "wi-dorm-room-setup",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm",
+      caseId: "case:W-DORM-MAINLINE",
+      workItemType: "Dorm.RoomSetupConfirm",
       lifecycleState: "ready",
       ownerRole: "operator",
       badges: ["mine", "ready"],
-      reason: "先配置房间和床位"
+      reason: "发起房源建档与基础就绪"
     }],
     operationWorkItems: [{
-      workItemId: "W-STAY-RESOURCE:roomSetup",
-      workspaceId: "W-STAY-RESOURCE",
-      cardId: "roomSetup",
-      caseId: "case:W-STAY-RESOURCE",
-      workItemType: "Dorm.RoomSetup",
+      workItemId: "wi-dorm-room-setup",
+      workspaceId: "W-DORM-MAINLINE",
+      cardId: "cert.roomSetupConfirm",
+      caseId: "case:W-DORM-MAINLINE",
+      workItemType: "Dorm.RoomSetupConfirm",
       lifecycleState: "ready",
       ownerRole: "operator",
-      reason: "先配置房间和床位"
+      reason: "发起房源建档与基础就绪"
     }]
   };
 }

@@ -1,0 +1,338 @@
+{
+  "version": "oam.generated-candidate-acceptance.v1",
+  "decisionType": "generated_candidate_acceptance",
+  "decisionStatus": "ACCEPTED_BY_00",
+  "generatedCandidateAcceptedBy00": true,
+  "generatedCandidateSubject": {
+    "version": "oam.generated-candidate-subject.v1",
+    "subjectType": "generated_candidate_subject",
+    "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
+    "decisionRecordHead": null,
+    "currentRepositoryHead": "818748709eac9176b3ce557379c98f3511abd333",
+    "sourceCandidateHead": "fd60390e678f9d6934137f0480a183701b01de8f",
+    "authorizedCandidateExecutionHead": "2b7bc3772c7351b34c5ca91258fe388371ab9f6c",
+    "formalAuthorizationHead": "a502565ca5672335dc2ee4398a8d443ac7e3b57a",
+    "generatedCompileExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
+    "generatedOutputDigest": "sha256:ac5060cf4c552312aa974eb489d18f02d9790a9b3e6a61e2e5cfbb25d6121941",
+    "generatedFieldBindingClosureDigest": "sha256:38de19e889f519484c11b5d38ba295c462f009ea4ef482a40fb1b45e1cee7e9f",
+    "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
+    "fieldBindingContractDigest": "sha256:3122cb090e2b09b4b345f622d5e802c95187f7b92be4e2d8e7ee511faa2f33cf",
+    "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
+    "evidenceArtifactMode": "ci_artifact_authoritative",
+    "localEvidenceArtifactDigest": "sha256:6b36fb9cdf1ef68e66dd94556e2eb48f1b8c4722a9b2e9cf1216140eb9b4419e",
+    "executionProofDigest": "sha256:530eb8edb9f07f6eebc5e26603a5a731b5a2a18d882c682a274c6e435f0f1743",
+    "evidenceRootDigest": "sha256:bfa305859e0a92dd9f0ac72a5d6f86102c70af67003f61ca72f73949762e081d",
+    "requiredEvidenceDigestSet": [
+      {
+        "id": "generatedCompileExecutionResult",
+        "path": "artifacts/oam/checks/generated-compile-execution-result.json",
+        "digest": "sha256:70a1faa364ab7e424b8e9d4c1dd81b2bfc9b1beec83d8ede60bc1a225899ff4e"
+      },
+      {
+        "id": "generatedCompileExecutionProof",
+        "path": "artifacts/oam/evidence/generated-compile-execution-proof.json",
+        "digest": "sha256:765e7c83d81405e3852f47441cd63dc17708365cb5a774268de49b0ca818f0d6"
+      },
+      {
+        "id": "generatedCompileExecutionSnapshot",
+        "path": "artifacts/oam/checks/generated-compile-execution-input-snapshot.json",
+        "digest": "sha256:8cf425994436102bca5602e7ece66baa4a351e7aea67bf4feb3147f6c49169ba"
+      },
+      {
+        "id": "generatedFilesNotManuallyEdited",
+        "path": "artifacts/oam/checks/generated-files-not-manually-edited-result.json",
+        "digest": "sha256:5261c9c2c4ec6a5827d86c6ab371458e566810c2ede3e0f6db2172e3af6b7f87"
+      },
+      {
+        "id": "generatedContractConsistency",
+        "path": "artifacts/oam/checks/generated-contract-consistency-result.json",
+        "digest": "sha256:c3c4f46d17b664aa45f651293565427df5e139eb2834eeb9d860e6661cbfbdc7"
+      },
+      {
+        "id": "derivedContractConsistency",
+        "path": "artifacts/oam/checks/derived-contract-consistency-result.json",
+        "digest": "sha256:2d469df88e89883c115d165a0054f1ab7e91f501574146d1c2caaf037f3442c4"
+      },
+      {
+        "id": "oamKernelGraph",
+        "path": "artifacts/oam/checks/oam-kernel-graph-result.json",
+        "digest": "sha256:5667f4724814f2a0a7a6972a0f38c3a59df5a1d6465219ab5610d607c99878ea"
+      }
+    ],
+    "requiredGeneratedContractDigestSet": [
+      {
+        "id": "generatedContract:docs/oam/system-derived-contracts.json",
+        "path": "docs/oam/system-derived-contracts.json",
+        "digest": "sha256:b7c32bb1cdf6677a7ad620877b7bf63a48038e8c4a632320ae2b0968307b3e88"
+      },
+      {
+        "id": "generatedContract:docs/oam/domain-derived-contracts.json",
+        "path": "docs/oam/domain-derived-contracts.json",
+        "digest": "sha256:f48a0c3966999e12744ec5bbce8efefebe5c6313eba290f166c24cf094ef6a3d"
+      },
+      {
+        "id": "generatedContract:docs/oam/generated-contracts-manifest.json",
+        "path": "docs/oam/generated-contracts-manifest.json",
+        "digest": "sha256:448ab2a1f38b04b049c97872d1d354fbef52c2982c08d164e29751634d31ca08"
+      },
+      {
+        "id": "generatedContract:docs/contracts/admission/admission-contract.json",
+        "path": "docs/contracts/admission/admission-contract.json",
+        "digest": "sha256:066a842f467fc629ef82f244eced3b03a07b6d94d144ba9b58daa65c932f49c4"
+      },
+      {
+        "id": "generatedContract:docs/oam/kernel/oam-kernel-graph.generated.json",
+        "path": "docs/oam/kernel/oam-kernel-graph.generated.json",
+        "digest": "sha256:92debf915692b1229b6ad0c59f31a0d48adf15aa87ab5017a53b04cb4709525f"
+      },
+      {
+        "id": "generatedContract:docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+        "path": "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+        "digest": "sha256:0b358375125b3d302b6bc2fd54157a6a35778a7cb8c580dcc635874a70b262da"
+      },
+      {
+        "id": "generatedContract:docs/contracts/generated/dormitory/fields.generated.json",
+        "path": "docs/contracts/generated/dormitory/fields.generated.json",
+        "digest": "sha256:6d67668a4f3f9c51784ae83817c6a003df49b46da65551c8f26c83bcc428c7d5"
+      },
+      {
+        "id": "generatedContract:docs/contracts/generated/dormitory/field-bindings.generated.json",
+        "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+        "digest": "sha256:3122cb090e2b09b4b345f622d5e802c95187f7b92be4e2d8e7ee511faa2f33cf"
+      },
+      {
+        "id": "generatedContract:docs/contracts/generated/dormitory/workitems.generated.json",
+        "path": "docs/contracts/generated/dormitory/workitems.generated.json",
+        "digest": "sha256:99f25f210a29b2d038f04eaa22d73b21695eacb403683f99ffbed2577e88ebed"
+      },
+      {
+        "id": "generatedContract:docs/contracts/generated/dormitory/surface-input-model.generated.json",
+        "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+        "digest": "sha256:2d66e8ac2696fd8032cda4e26041a3a78d5e4eb444d78b32ac7ab870e557a28d"
+      },
+      {
+        "id": "generatedContract:docs/contracts/generated/dormitory/read-model.generated.json",
+        "path": "docs/contracts/generated/dormitory/read-model.generated.json",
+        "digest": "sha256:a08f81aca5249762b4840116e7325b7952a573c24d6389e26f5a23a6c7943656"
+      }
+    ],
+    "subjectDigest": "sha256:505070ef20627f4690e4a7e911604191a9c3f127e4922aed8668f14823dd0601"
+  },
+  "subjectStatusAtWrite": "READY_FOR_00_ACCEPTANCE_REVIEW",
+  "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
+  "decisionRecordHead": "7c659f86497a2ca4906bf26cb6e9741c17195c44",
+  "decisionWritebackBaseHead": "7c659f86497a2ca4906bf26cb6e9741c17195c44",
+  "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
+  "generatedFieldBindingClosureDigest": "sha256:38de19e889f519484c11b5d38ba295c462f009ea4ef482a40fb1b45e1cee7e9f",
+  "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
+  "executionProofDigest": "sha256:530eb8edb9f07f6eebc5e26603a5a731b5a2a18d882c682a274c6e435f0f1743",
+  "evidenceRootDigest": "sha256:bfa305859e0a92dd9f0ac72a5d6f86102c70af67003f61ca72f73949762e081d",
+  "blockingReasons": [],
+  "explicitNegativeAuthorities": {
+    "runtimeConsumptionReady": false,
+    "businessFeatureDevelopmentAllowed": false,
+    "businessProductionGoNoGo": "NO_GO",
+    "dormitoryL2GoNoGo": "NO_GO",
+    "productionConfirmAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  },
+  "acceptanceRecord": {
+    "decision": "ACCEPTED_BY_00",
+    "acceptedBy": "00_OAM_CONTROL",
+    "acceptedAtUtc": "2026-06-18T18:18:04.496Z",
+    "acceptedSubjectDigest": "sha256:505070ef20627f4690e4a7e911604191a9c3f127e4922aed8668f14823dd0601",
+    "reviewedExecutionHead": "c618b4020a2a9e55813f5e56c8e2ffac57d5e26e",
+    "currentRepositoryHead": "7c659f86497a2ca4906bf26cb6e9741c17195c44",
+    "evidenceArtifactDigest": "sha256:a12cd1b45bdadef93efc0c52f6e56073e0a36075b9834277b305a464ed2db75f",
+    "generatedFieldBindingClosureDigest": "sha256:38de19e889f519484c11b5d38ba295c462f009ea4ef482a40fb1b45e1cee7e9f",
+    "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
+    "executionProofDigest": "sha256:530eb8edb9f07f6eebc5e26603a5a731b5a2a18d882c682a274c6e435f0f1743",
+    "evidenceRootDigest": "sha256:bfa305859e0a92dd9f0ac72a5d6f86102c70af67003f61ca72f73949762e081d",
+    "scope": "generated_candidate_acceptance_only",
+    "runtimeConsumptionGranted": false,
+    "businessGoGranted": false,
+    "releaseGranted": false,
+    "finalGoNoGoGranted": false,
+    "explicitExclusions": [
+      "runtimeConsumptionReady",
+      "businessFeatureDevelopmentAllowed",
+      "releaseAuthority",
+      "finalGoNoGo",
+      "productionConfirmAllowed",
+      "Dormitory L2 GO",
+      "business production GO"
+    ],
+    "acceptedGeneratedBundleDigest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
+    "acceptedRuntimeConsumableDigests": [
+      {
+        "path": "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+        "digest": "sha256:0b358375125b3d302b6bc2fd54157a6a35778a7cb8c580dcc635874a70b262da"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+        "digest": "sha256:3122cb090e2b09b4b345f622d5e802c95187f7b92be4e2d8e7ee511faa2f33cf"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/fields.generated.json",
+        "digest": "sha256:6d67668a4f3f9c51784ae83817c6a003df49b46da65551c8f26c83bcc428c7d5"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/read-model.generated.json",
+        "digest": "sha256:a08f81aca5249762b4840116e7325b7952a573c24d6389e26f5a23a6c7943656"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+        "digest": "sha256:2d66e8ac2696fd8032cda4e26041a3a78d5e4eb444d78b32ac7ab870e557a28d"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/workitems.generated.json",
+        "digest": "sha256:99f25f210a29b2d038f04eaa22d73b21695eacb403683f99ffbed2577e88ebed"
+      }
+    ],
+    "forbiddenInterpretations": [
+      "runtime ready is not implied",
+      "business landing is not implied",
+      "production confirm is not implied",
+      "release authority is not implied",
+      "final GO is not implied"
+    ]
+  },
+  "historicalAppendix": {
+    "deprecatedAliasReferences": [
+      {
+        "source": "docs/oam/generated-compile-candidate-approval.current.json",
+        "field": "executionHead",
+        "aliasOf": "authorizedCandidateExecutionHead",
+        "participation": "deprecated_alias_reference_only_not_current_acceptance_authority"
+      },
+      {
+        "source": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
+        "field": "candidateRefs.executionHead",
+        "aliasOf": "authorizedCandidateExecutionHead",
+        "participation": "deprecated_alias_reference_only_not_current_acceptance_authority"
+      },
+      {
+        "source": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
+        "field": "previousAuthorizedCandidateExecutionHead",
+        "aliasOf": null,
+        "participation": "appendix_reference_only_not_current_acceptance_authority"
+      },
+      {
+        "source": "docs/oam/evidence-attestation-packages/dormitory-golden-chain-2b7bc377.attestation.json",
+        "field": "artifactVerification.artifactMode",
+        "aliasOf": null,
+        "participation": "appendix_reference_only_not_current_acceptance_authority"
+      }
+    ],
+    "note": "Deprecated aliases are retained only as appendix references and do not participate in current generated candidate acceptance authority.",
+    "previousAcceptedSubjectDigest": "sha256:0992f5186a01171074f300ff3f650deafb7392b964e932288ad1932e92fe7d04",
+    "replacementDecision": "current_generated_candidate_subject_replaces_previous_accepted_subject"
+  },
+  "nextDecisionRequired": "runtime_admission_requires_separate_authority",
+  "forbiddenInterpretations": [
+    "CI success is not generated candidate acceptance",
+    "artifact exists is not generated candidate acceptance",
+    "Evidence Root PASS is not generated candidate acceptance",
+    "formal_compile_execution PASS is not generated candidate acceptance",
+    "acceptance authority does not open runtime consumption",
+    "acceptance authority does not grant releaseAuthority or final GO",
+    "runtime ready is not implied",
+    "business landing is not implied",
+    "production confirm is not implied",
+    "release authority is not implied",
+    "final GO is not implied"
+  ],
+  "acceptedGeneratedBundleDigest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
+  "acceptedGeneratedFiles": [
+    {
+      "path": "docs/contracts/admission/admission-contract.json",
+      "digest": "sha256:066a842f467fc629ef82f244eced3b03a07b6d94d144ba9b58daa65c932f49c4"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+      "digest": "sha256:0b358375125b3d302b6bc2fd54157a6a35778a7cb8c580dcc635874a70b262da"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "digest": "sha256:3122cb090e2b09b4b345f622d5e802c95187f7b92be4e2d8e7ee511faa2f33cf"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/fields.generated.json",
+      "digest": "sha256:6d67668a4f3f9c51784ae83817c6a003df49b46da65551c8f26c83bcc428c7d5"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/read-model.generated.json",
+      "digest": "sha256:a08f81aca5249762b4840116e7325b7952a573c24d6389e26f5a23a6c7943656"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+      "digest": "sha256:2d66e8ac2696fd8032cda4e26041a3a78d5e4eb444d78b32ac7ab870e557a28d"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/workitems.generated.json",
+      "digest": "sha256:99f25f210a29b2d038f04eaa22d73b21695eacb403683f99ffbed2577e88ebed"
+    },
+    {
+      "path": "docs/oam/domain-derived-contracts.json",
+      "digest": "sha256:f48a0c3966999e12744ec5bbce8efefebe5c6313eba290f166c24cf094ef6a3d"
+    },
+    {
+      "path": "docs/oam/generated-contracts-manifest.json",
+      "digest": "sha256:448ab2a1f38b04b049c97872d1d354fbef52c2982c08d164e29751634d31ca08"
+    },
+    {
+      "path": "docs/oam/kernel/oam-kernel-graph.generated.json",
+      "digest": "sha256:92debf915692b1229b6ad0c59f31a0d48adf15aa87ab5017a53b04cb4709525f"
+    },
+    {
+      "path": "docs/oam/system-derived-contracts.json",
+      "digest": "sha256:b7c32bb1cdf6677a7ad620877b7bf63a48038e8c4a632320ae2b0968307b3e88"
+    }
+  ],
+  "acceptedRuntimeConsumableDigests": [
+    {
+      "path": "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+      "digest": "sha256:0b358375125b3d302b6bc2fd54157a6a35778a7cb8c580dcc635874a70b262da"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "digest": "sha256:3122cb090e2b09b4b345f622d5e802c95187f7b92be4e2d8e7ee511faa2f33cf"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/fields.generated.json",
+      "digest": "sha256:6d67668a4f3f9c51784ae83817c6a003df49b46da65551c8f26c83bcc428c7d5"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/read-model.generated.json",
+      "digest": "sha256:a08f81aca5249762b4840116e7325b7952a573c24d6389e26f5a23a6c7943656"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+      "digest": "sha256:2d66e8ac2696fd8032cda4e26041a3a78d5e4eb444d78b32ac7ab870e557a28d"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/workitems.generated.json",
+      "digest": "sha256:99f25f210a29b2d038f04eaa22d73b21695eacb403683f99ffbed2577e88ebed"
+    }
+  ],
+  "currentGeneratedCandidateDivergence": {
+    "acceptedBundleRemainsImmutable": true,
+    "currentGeneratedOutputIsDifferentCandidate": true,
+    "runtimeMustNotAutoConsumeCurrentGeneratedFiles": true,
+    "acceptedSubjectDigest": "sha256:505070ef20627f4690e4a7e911604191a9c3f127e4922aed8668f14823dd0601",
+    "currentSubjectDigest": "sha256:c7147ebac3ca6177da0ce9998fa60b7c3927221db794dba46221dafd815ada64",
+    "acceptedGeneratedBundleDigest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
+    "currentGeneratedBundleDigest": "sha256:231fefc0a6dda8dd98c1fd9285955f90280faa752c3fa1368e208b4235048c66",
+    "acceptedGeneratedOutputDigest": "sha256:ac5060cf4c552312aa974eb489d18f02d9790a9b3e6a61e2e5cfbb25d6121941",
+    "currentGeneratedOutputDigest": "sha256:5fd2261ecd4acdbc81d4ed1f025bdd6884d9d81b7158475c0cff7704ce08f801",
+    "reason": "accepted_generated_contract_bundle_is_immutable_runtime_consumption_identity; current_generated_contract_bundle_requires_explicit_00_acceptance_before_runtime_rebind"
+  },
+  "runtimeConsumptionReady": false,
+  "businessFeatureDevelopmentAllowed": false,
+  "businessProductionGoNoGo": "NO_GO",
+  "dormitoryL2GoNoGo": "NO_GO",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO"
+}

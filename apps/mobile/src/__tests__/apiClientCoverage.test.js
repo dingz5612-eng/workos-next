@@ -90,7 +90,7 @@ describe("OAM mobile API client coverage", () => {
 
     await expect(checkHealth()).resolves.toEqual({ healthy: true });
     await expect(fetchWorkspaceProjection()).resolves.toMatchObject({ index: 0 });
-    await expect(startOperationsWorkspace("W-STAY-RESOURCE", "actor-token", "start_failed", { anchorQuery: "A101", anchorPayload: { stayId: "stay-1" } })).resolves.toMatchObject({ index: 1 });
+    await expect(startOperationsWorkspace("W-DORM-MAINLINE", "actor-token", "start_failed", { anchorQuery: "A101", anchorPayload: { roomNo: "301" } })).resolves.toMatchObject({ index: 1 });
     await expect(fetchWorkQueue()).resolves.toMatchObject({ index: 2 });
     await expect(fetchOperationWorkItems({ tenantId: "tenant-oam", empty: "" })).resolves.toMatchObject({ index: 3 });
     await expect(fetchOperationWorkItem("wi-1")).resolves.toMatchObject({ index: 4 });
@@ -101,7 +101,7 @@ describe("OAM mobile API client coverage", () => {
     await expect(fetchSubmissionTrace("sub-1")).resolves.toMatchObject({ index: 9 });
     await expect(fetchWorkItemTrace("wi-2")).resolves.toMatchObject({ index: 10 });
     await expect(fetchCaseTrace("case-1")).resolves.toMatchObject({ index: 11 });
-    await expect(fetchSearchResults("押金")).resolves.toMatchObject({ index: 12 });
+    await expect(fetchSearchResults("押金", "ru-RU")).resolves.toMatchObject({ index: 12 });
     await expect(recordMobileClientEvent({ eventType: "SearchViewed", objectType: "workspace", objectId: "W1" })).resolves.toMatchObject({ index: 13 });
     await expect(fetchHomeSurface()).resolves.toMatchObject({ index: 14 });
     await expect(fetchLearningCatalog()).resolves.toMatchObject({ index: 15 });
@@ -117,6 +117,9 @@ describe("OAM mobile API client coverage", () => {
     const queryCall = fetchMock.mock.calls.find(([url]) => url instanceof URL && String(url).includes("/api/operations/work-items"));
     expect(queryCall[0].searchParams.get("tenantId")).toBe("tenant-oam");
     expect(queryCall[0].searchParams.has("empty")).toBe(false);
+    const searchCall = fetchMock.mock.calls.find(([url]) => url instanceof URL && String(url).includes("/api/lenses/search"));
+    expect(searchCall[0].searchParams.get("q")).toBe("押金");
+    expect(searchCall[0].searchParams.get("language")).toBe("ru-RU");
 
     const confirmCall = fetchMock.mock.calls.find(([url]) => String(url).includes("/api/operations/work-items/wi-2/confirm"));
     expect(confirmCall[1].headers["X-CSRF-Token"]).toBe("csrf-token");
@@ -138,7 +141,7 @@ describe("OAM mobile API client coverage", () => {
     storage.set("workosnext.actorSession", JSON.stringify({ token: "still-present" }));
     queuedResponses.push(jsonFailure(422));
 
-    await expect(startOperationsWorkspace("W-STAY-RESOURCE", "", "workspace_start_blocked")).rejects.toMatchObject({
+    await expect(startOperationsWorkspace("W-DORM-MAINLINE", "", "workspace_start_blocked")).rejects.toMatchObject({
       code: "workspace_start_blocked",
       reason: "",
       status: 422

@@ -1,0 +1,2503 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario8-mobileMirror.generated",
+  "version": "oam.dormitory-scenario8-mobileMirror.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario8-in-stay-management-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario8-in-stay-management-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:386e1d71aad403f143fa13b3e85a0842199d40113c2cd14efa418c41678ebacd",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario8-in-stay-management.authority.json",
+      "digest": "sha256:b871f26c8745b9497fdd18e7214b5577eed73c360d813f3c39f061372ae4f05f"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:b871f26c8745b9497fdd18e7214b5577eed73c360d813f3c39f061372ae4f05f",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario8.InStayManagement",
+  "scenarioPackageNo": 8,
+  "scenarioId": "lodging.in-stay-management",
+  "outputContentDigest": "sha256:eca85f2a9c783e8e38c0678e27566a0163bf1b69fb03aef498a1799fc7559e15",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "在住管理",
+  "businessGoalZh": "承接场景包 7 已确认入住后的只读入住摘要，在在住期间维护在住状态、入住凭证、续住申请、换房/换床申请、在住服务请求、在住异常记录，并为场景包 9 输出退房准备摘要。",
+  "sourceScenarioDigest": "sha256:b871f26c8745b9497fdd18e7214b5577eed73c360d813f3c39f061372ae4f05f",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario8.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "StayManagementCase",
+      "StayStatus",
+      "ResidentCurrentProfile",
+      "OccupancyStatus",
+      "AccessCredentialStatus",
+      "StayExtensionRequest",
+      "BedTransferRequest",
+      "ResidentServiceRequest",
+      "ResidentIncident",
+      "StayEvidence",
+      "StayStatusHistory"
+    ],
+    "searchReadModel": [
+      "在住管理",
+      "在住状态摘要",
+      "当前占用摘要",
+      "服务请求摘要",
+      "异常摘要",
+      "续住/换房换床结果",
+      "凭证状态",
+      "退房准备摘要",
+      "证据摘要",
+      "只读对象引用",
+      "在住状态",
+      "服务/异常/续住/换房换床摘要",
+      "退房准备"
+    ],
+    "noRefillRuleZh": "场景包 8 只能读取入住、住客、占用、凭证、协议、身份核验、财务、房源状态、价格和证据摘要，不得要求用户重新填写已确认入住字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "consumer": "surface",
+  "surfaceNavigation": {
+    "pagesZh": [
+      "在住列表",
+      "在住详情",
+      "服务请求页",
+      "异常记录页",
+      "续住申请页",
+      "换房/换床页",
+      "凭证管理页",
+      "退房准备页",
+      "状态历史页"
+    ],
+    "todayZh": "今日只展示今日计划离店、服务超时、异常待处理、凭证待回收、续住待确认等今天需要处理的被动任务。",
+    "workItemsZh": "工作项展示全部在住管理被动任务池。",
+    "searchZh": "搜索可以查客户、手机号、入住记录号、房间/床位、在住状态、服务/异常状态；搜索结果只读，只能跳转到合法动作。",
+    "mineZh": "我的只放草稿、个人跟进、收藏、导出、设置。",
+    "mustShowZh": [
+      "当前在住状态",
+      "未闭环事项",
+      "下一步动作",
+      "不可提交原因"
+    ],
+    "buttonByState": [
+      {
+        "state": "正常在住",
+        "buttonsZh": [
+          "登记服务",
+          "登记异常",
+          "申请续住",
+          "申请换床",
+          "发起退房准备"
+        ]
+      },
+      {
+        "state": "服务处理中",
+        "buttonsZh": [
+          "补充进度",
+          "完成确认"
+        ]
+      },
+      {
+        "state": "异常待处理",
+        "buttonsZh": [
+          "提交复核",
+          "关闭异常"
+        ]
+      },
+      {
+        "state": "凭证待处理",
+        "buttonsZh": [
+          "补发",
+          "挂失",
+          "恢复"
+        ]
+      },
+      {
+        "state": "退房待准备",
+        "buttonsZh": [
+          "发起退房准备",
+          "返回处理未闭环项"
+        ]
+      }
+    ],
+    "forbiddenUserVisibleTermsZh": [
+      "已退房",
+      "已退款",
+      "已释放房源",
+      "账务入账",
+      "final GO",
+      "生产发布",
+      "StayLifecycle",
+      "bed-transfer-extend",
+      "service-task",
+      "AccessCredentialIssue",
+      "AccessCredentialRevoke"
+    ]
+  },
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepId": "enter-in-stay-management",
+      "nameZh": "进入在住管理",
+      "commandId": "Dorm.StayManagementContextView",
+      "commandBusinessNameZh": "查看在住上下文",
+      "userSees": [
+        "住客姓名",
+        "入住记录号业务展示",
+        "房间/床位",
+        "入住日期",
+        "计划离店日期",
+        "凭证状态",
+        "财务摘要",
+        "当前在住状态",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [],
+      "userUploadedOrBoundEvidence": [],
+      "systemGeneratedFields": [
+        "stayManagementCaseRef",
+        "stayRef",
+        "occupancyRef",
+        "financeSnapshotRef",
+        "sourceScenarioRef"
+      ],
+      "validations": [
+        "无有效 Stay 或已退房状态不得进入普通在住管理。"
+      ],
+      "outputs": [
+        "StayManagementCase"
+      ],
+      "primaryBusinessObject": "StayManagementCase",
+      "requiredReadContext": [
+        "住客姓名",
+        "入住记录号业务展示",
+        "房间/床位",
+        "入住日期",
+        "计划离店日期",
+        "凭证状态",
+        "财务摘要",
+        "当前在住状态",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "在住服务/续住/换房",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "财务摘要"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "进入在住管理",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "v-d11ccef1",
+          "labelZh": "查看在住详情",
+          "labelKey": "scenario8.action.v-d11ccef1.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.enter-in-stay-management.v-d11ccef1.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-4e29f4d8",
+          "labelZh": "登记服务",
+          "labelKey": "scenario8.action.v-4e29f4d8.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.enter-in-stay-management.v-4e29f4d8.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-497922c4",
+          "labelZh": "登记异常",
+          "labelKey": "scenario8.action.v-497922c4.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.enter-in-stay-management.v-497922c4.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-0a11874b",
+          "labelZh": "申请续住",
+          "labelKey": "scenario8.action.v-0a11874b.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.enter-in-stay-management.v-0a11874b.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-06b3094d",
+          "labelZh": "申请换房/换床",
+          "labelKey": "scenario8.action.v-06b3094d.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.enter-in-stay-management.v-06b3094d.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-1f4ce107",
+          "labelZh": "进入退房准备",
+          "labelKey": "scenario8.action.v-1f4ce107.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.enter-in-stay-management.v-1f4ce107.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要",
+          "身份核验摘要",
+          "财务确认摘要",
+          "当前房源状态摘要",
+          "当前价格摘要",
+          "证据摘要"
+        ],
+        "to": [
+          "StayManagementCase",
+          "在住状态摘要",
+          "当前占用摘要",
+          "服务请求摘要",
+          "异常摘要",
+          "续住/换房换床结果",
+          "凭证状态",
+          "退房准备摘要",
+          "证据摘要",
+          "只读对象引用"
+        ],
+        "noRefillRuleZh": "场景包 8 只能读取入住、住客、占用、凭证、协议、身份核验、财务、房源状态、价格和证据摘要，不得要求用户重新填写已确认入住字段。"
+      },
+      "searchReadModel": [
+        "在住管理",
+        "进入在住管理",
+        "查看在住上下文",
+        "StayManagementCase",
+        "住客姓名",
+        "入住记录号业务展示",
+        "房间/床位",
+        "入住日期",
+        "计划离店日期",
+        "凭证状态",
+        "财务摘要",
+        "当前在住状态",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要"
+      ]
+    },
+    {
+      "stepNo": 2,
+      "stepId": "maintain-stay-status",
+      "nameZh": "维护在住状态",
+      "commandId": "Dorm.StayStatusChange",
+      "commandBusinessNameZh": "变更在住状态",
+      "userSees": [
+        "当前在住状态",
+        "住客",
+        "房间/床位",
+        "未闭环事项",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要"
+      ],
+      "userFilledFields": [
+        "状态说明",
+        "跟进备注",
+        "预计处理时间"
+      ],
+      "userSelectedFields": [
+        "正常在住",
+        "待跟进",
+        "异常待处理",
+        "服务处理中",
+        "退房待准备"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "沟通记录",
+        "现场记录",
+        "住客确认"
+      ],
+      "systemGeneratedFields": [
+        "stayStatusRef",
+        "previousStatus",
+        "newStatus",
+        "statusVersion",
+        "effectiveAt"
+      ],
+      "validations": [
+        "状态变更必须基于当前有效入住。",
+        "不得覆盖历史状态。"
+      ],
+      "outputs": [
+        "StayStatus",
+        "StayEvidence",
+        "StayStatusHistory"
+      ],
+      "primaryBusinessObject": "StayManagementCase",
+      "requiredReadContext": [
+        "当前在住状态",
+        "住客",
+        "房间/床位",
+        "未闭环事项",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要",
+        "财务确认摘要",
+        "当前房源状态摘要"
+      ],
+      "editableInputs": [
+        "状态说明",
+        "跟进备注",
+        "预计处理时间"
+      ],
+      "fixedSelections": [
+        "正常在住",
+        "待跟进",
+        "异常待处理",
+        "服务处理中",
+        "退房待准备"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "在住服务/续住/换房",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "财务确认摘要"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "维护在住状态",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要",
+          "身份核验摘要",
+          "财务确认摘要",
+          "当前房源状态摘要",
+          "当前价格摘要",
+          "证据摘要"
+        ],
+        "to": [
+          "StayStatus",
+          "StayEvidence",
+          "StayStatusHistory",
+          "在住状态摘要",
+          "当前占用摘要",
+          "服务请求摘要",
+          "异常摘要",
+          "续住/换房换床结果",
+          "凭证状态",
+          "退房准备摘要"
+        ],
+        "noRefillRuleZh": "场景包 8 只能读取入住、住客、占用、凭证、协议、身份核验、财务、房源状态、价格和证据摘要，不得要求用户重新填写已确认入住字段。"
+      },
+      "searchReadModel": [
+        "在住管理",
+        "维护在住状态",
+        "变更在住状态",
+        "StayManagementCase",
+        "当前在住状态",
+        "住客",
+        "房间/床位",
+        "未闭环事项",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要"
+      ]
+    },
+    {
+      "stepNo": 3,
+      "stepId": "resident-service-request",
+      "nameZh": "服务请求与跟进",
+      "commandId": "Dorm.ResidentServiceRequestRegister",
+      "secondaryCommandIds": [
+        "Dorm.ResidentServiceProgressUpdate"
+      ],
+      "commandBusinessNameZh": "登记服务请求",
+      "userSees": [
+        "住客",
+        "房间/床位",
+        "当前在住状态",
+        "已有服务进度",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要"
+      ],
+      "userFilledFields": [
+        "服务请求内容",
+        "服务对象",
+        "紧急程度",
+        "期望完成时间",
+        "处理备注"
+      ],
+      "userSelectedFields": [
+        "维修",
+        "保洁",
+        "用品",
+        "门禁",
+        "投诉",
+        "其他"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "照片",
+        "语音/文字记录",
+        "完成证据"
+      ],
+      "systemGeneratedFields": [
+        "residentServiceRequestRef",
+        "serviceType",
+        "serviceStatus",
+        "evidenceEnvelopeRef"
+      ],
+      "validations": [
+        "服务请求可以生成后续服务任务，但不得直接形成支出、收款或账务。"
+      ],
+      "outputs": [
+        "ResidentServiceRequest",
+        "StayEvidence",
+        "StayStatusHistory"
+      ],
+      "primaryBusinessObject": "StayManagementCase",
+      "requiredReadContext": [
+        "住客",
+        "房间/床位",
+        "当前在住状态",
+        "已有服务进度",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要",
+        "财务确认摘要",
+        "当前房源状态摘要"
+      ],
+      "editableInputs": [
+        "服务请求内容",
+        "服务对象",
+        "紧急程度",
+        "期望完成时间",
+        "处理备注"
+      ],
+      "fixedSelections": [
+        "维修",
+        "保洁",
+        "用品",
+        "门禁",
+        "投诉",
+        "其他"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "在住服务/续住/换房",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "财务确认摘要"
+        ],
+        "direction": "支出/费用意向",
+        "stage": "服务请求与跟进",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要",
+          "身份核验摘要",
+          "财务确认摘要",
+          "当前房源状态摘要",
+          "当前价格摘要",
+          "证据摘要"
+        ],
+        "to": [
+          "ResidentServiceRequest",
+          "StayEvidence",
+          "StayStatusHistory",
+          "在住状态摘要",
+          "当前占用摘要",
+          "服务请求摘要",
+          "异常摘要",
+          "续住/换房换床结果",
+          "凭证状态",
+          "退房准备摘要"
+        ],
+        "noRefillRuleZh": "场景包 8 只能读取入住、住客、占用、凭证、协议、身份核验、财务、房源状态、价格和证据摘要，不得要求用户重新填写已确认入住字段。"
+      },
+      "searchReadModel": [
+        "在住管理",
+        "服务请求与跟进",
+        "登记服务请求",
+        "StayManagementCase",
+        "住客",
+        "房间/床位",
+        "当前在住状态",
+        "已有服务进度",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要"
+      ]
+    },
+    {
+      "stepNo": 4,
+      "stepId": "resident-incident-record",
+      "nameZh": "在住异常记录",
+      "commandId": "Dorm.ResidentIncidentRegister",
+      "secondaryCommandIds": [
+        "Dorm.ResidentIncidentClose"
+      ],
+      "commandBusinessNameZh": "登记在住异常",
+      "userSees": [
+        "住客",
+        "房间/床位",
+        "当前在住状态",
+        "异常处理要求",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要"
+      ],
+      "userFilledFields": [
+        "异常说明",
+        "发生时间",
+        "影响范围",
+        "处理建议"
+      ],
+      "userSelectedFields": [
+        "安全异常",
+        "设备异常",
+        "纠纷投诉",
+        "违规",
+        "失联",
+        "其他"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "异常证据",
+        "处理记录",
+        "审批记录"
+      ],
+      "systemGeneratedFields": [
+        "residentIncidentRef",
+        "incidentSeverity",
+        "incidentStatus",
+        "incidentVersion"
+      ],
+      "validations": [
+        "高风险异常必须进入负责人复核。",
+        "不得用异常记录直接改账或退房。"
+      ],
+      "outputs": [
+        "ResidentIncident",
+        "StayEvidence",
+        "StayStatusHistory"
+      ],
+      "primaryBusinessObject": "StayManagementCase",
+      "requiredReadContext": [
+        "住客",
+        "房间/床位",
+        "当前在住状态",
+        "异常处理要求",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要",
+        "财务确认摘要",
+        "当前房源状态摘要"
+      ],
+      "editableInputs": [
+        "异常说明",
+        "发生时间",
+        "影响范围",
+        "处理建议"
+      ],
+      "fixedSelections": [
+        "安全异常",
+        "设备异常",
+        "纠纷投诉",
+        "违规",
+        "失联",
+        "其他"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "在住服务/续住/换房",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "财务确认摘要"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "在住异常记录",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要",
+          "身份核验摘要",
+          "财务确认摘要",
+          "当前房源状态摘要",
+          "当前价格摘要",
+          "证据摘要"
+        ],
+        "to": [
+          "ResidentIncident",
+          "StayEvidence",
+          "StayStatusHistory",
+          "在住状态摘要",
+          "当前占用摘要",
+          "服务请求摘要",
+          "异常摘要",
+          "续住/换房换床结果",
+          "凭证状态",
+          "退房准备摘要"
+        ],
+        "noRefillRuleZh": "场景包 8 只能读取入住、住客、占用、凭证、协议、身份核验、财务、房源状态、价格和证据摘要，不得要求用户重新填写已确认入住字段。"
+      },
+      "searchReadModel": [
+        "在住管理",
+        "在住异常记录",
+        "登记在住异常",
+        "StayManagementCase",
+        "住客",
+        "房间/床位",
+        "当前在住状态",
+        "异常处理要求",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要"
+      ]
+    },
+    {
+      "stepNo": 5,
+      "stepId": "stay-extension-request",
+      "nameZh": "续住申请",
+      "commandId": "Dorm.StayExtensionRequestSubmit",
+      "commandBusinessNameZh": "发起续住申请",
+      "userSees": [
+        "当前入住",
+        "当前房源状态",
+        "当前价格摘要",
+        "财务摘要",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要"
+      ],
+      "userFilledFields": [
+        "新计划离店日期",
+        "续住原因",
+        "备注"
+      ],
+      "userSelectedFields": [
+        "续住天数/周期",
+        "是否需要重新确认价格/财务"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "住客确认",
+        "续住沟通记录"
+      ],
+      "systemGeneratedFields": [
+        "stayExtensionRequestRef",
+        "oldPlannedCheckoutDate",
+        "newPlannedCheckoutDate",
+        "extensionVersion"
+      ],
+      "validations": [
+        "新离店日期必须晚于当前计划离店日期。",
+        "涉及费用时只生成应收/财务准备，不得直接收款或写账。"
+      ],
+      "outputs": [
+        "StayExtensionRequest",
+        "StayChangeRequest",
+        "StayEvidence",
+        "StayStatusHistory"
+      ],
+      "primaryBusinessObject": "StayManagementCase",
+      "requiredReadContext": [
+        "当前入住",
+        "当前房源状态",
+        "当前价格摘要",
+        "财务摘要",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要",
+        "财务确认摘要",
+        "当前房源状态摘要"
+      ],
+      "editableInputs": [
+        "新计划离店日期",
+        "续住原因",
+        "备注"
+      ],
+      "fixedSelections": [
+        "续住天数/周期",
+        "是否需要重新确认价格/财务"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "在住服务/续住/换房",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "当前价格摘要",
+          "财务摘要",
+          "财务确认摘要",
+          "是否需要重新确认价格/财务"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "续住申请",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要",
+          "身份核验摘要",
+          "财务确认摘要",
+          "当前房源状态摘要",
+          "当前价格摘要",
+          "证据摘要"
+        ],
+        "to": [
+          "StayExtensionRequest",
+          "StayChangeRequest",
+          "StayEvidence",
+          "StayStatusHistory",
+          "在住状态摘要",
+          "当前占用摘要",
+          "服务请求摘要",
+          "异常摘要",
+          "续住/换房换床结果",
+          "凭证状态"
+        ],
+        "noRefillRuleZh": "场景包 8 只能读取入住、住客、占用、凭证、协议、身份核验、财务、房源状态、价格和证据摘要，不得要求用户重新填写已确认入住字段。"
+      },
+      "searchReadModel": [
+        "在住管理",
+        "续住申请",
+        "发起续住申请",
+        "StayManagementCase",
+        "当前入住",
+        "当前房源状态",
+        "当前价格摘要",
+        "财务摘要",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要"
+      ]
+    },
+    {
+      "stepNo": 6,
+      "stepId": "bed-transfer-request",
+      "nameZh": "换房/换床申请",
+      "commandId": "Dorm.BedTransferRequestSubmit",
+      "commandBusinessNameZh": "发起换房/换床申请",
+      "userSees": [
+        "当前房间/床位",
+        "目标资源运营状态",
+        "目标占用状态",
+        "价格/规则摘要",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要"
+      ],
+      "userFilledFields": [
+        "换房/换床原因",
+        "备注"
+      ],
+      "userSelectedFields": [
+        "目标房间/床位"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "住客确认",
+        "换房/换床审批记录"
+      ],
+      "systemGeneratedFields": [
+        "bedTransferRequestRef",
+        "fromOccupancyRef",
+        "toResourceRef",
+        "transferVersion"
+      ],
+      "validations": [
+        "目标床位必须可用且未占用。",
+        "换房/换床成功必须追加 OccupancyChanged，不得覆盖原入住事实。"
+      ],
+      "outputs": [
+        "BedTransferRequest",
+        "StayChangeRequest",
+        "StayEvidence",
+        "StayStatusHistory"
+      ],
+      "primaryBusinessObject": "StayManagementCase",
+      "requiredReadContext": [
+        "当前房间/床位",
+        "目标资源运营状态",
+        "目标占用状态",
+        "价格/规则摘要",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要",
+        "财务确认摘要",
+        "当前房源状态摘要"
+      ],
+      "editableInputs": [
+        "换房/换床原因",
+        "备注"
+      ],
+      "fixedSelections": [
+        "目标房间/床位"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "在住服务/续住/换房",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "价格/规则摘要",
+          "财务确认摘要"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "换房/换床申请",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要",
+          "身份核验摘要",
+          "财务确认摘要",
+          "当前房源状态摘要",
+          "当前价格摘要",
+          "证据摘要"
+        ],
+        "to": [
+          "BedTransferRequest",
+          "StayChangeRequest",
+          "StayEvidence",
+          "StayStatusHistory",
+          "在住状态摘要",
+          "当前占用摘要",
+          "服务请求摘要",
+          "异常摘要",
+          "续住/换房换床结果",
+          "凭证状态"
+        ],
+        "noRefillRuleZh": "场景包 8 只能读取入住、住客、占用、凭证、协议、身份核验、财务、房源状态、价格和证据摘要，不得要求用户重新填写已确认入住字段。"
+      },
+      "searchReadModel": [
+        "在住管理",
+        "换房/换床申请",
+        "发起换房/换床申请",
+        "StayManagementCase",
+        "当前房间/床位",
+        "目标资源运营状态",
+        "目标占用状态",
+        "价格/规则摘要",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要"
+      ]
+    },
+    {
+      "stepNo": 7,
+      "stepId": "access-credential-management",
+      "nameZh": "门禁/入住凭证管理",
+      "commandId": "Dorm.AccessCredentialStatusChange",
+      "commandBusinessNameZh": "变更入住凭证状态",
+      "userSees": [
+        "当前凭证状态",
+        "住客",
+        "房间/床位",
+        "有效入住状态",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要"
+      ],
+      "userFilledFields": [
+        "凭证处理说明",
+        "领取/归还确认",
+        "异常原因"
+      ],
+      "userSelectedFields": [
+        "补发",
+        "挂失",
+        "暂停",
+        "恢复",
+        "撤销"
+      ],
+      "userUploadedOrBoundEvidence": [
+        "领取/归还确认记录",
+        "凭证异常记录"
+      ],
+      "systemGeneratedFields": [
+        "credentialStatusRef",
+        "credentialRef",
+        "credentialVersion",
+        "credentialChangedAt"
+      ],
+      "validations": [
+        "无有效入住不得发放或恢复有效凭证。",
+        "退房准备可提示待回收，但不得在本包完成退房释放。"
+      ],
+      "outputs": [
+        "AccessCredentialStatus",
+        "StayEvidence",
+        "StayStatusHistory"
+      ],
+      "primaryBusinessObject": "StayManagementCase",
+      "requiredReadContext": [
+        "当前凭证状态",
+        "住客",
+        "房间/床位",
+        "有效入住状态",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要",
+        "财务确认摘要",
+        "当前房源状态摘要"
+      ],
+      "editableInputs": [
+        "凭证处理说明",
+        "领取/归还确认",
+        "异常原因"
+      ],
+      "fixedSelections": [
+        "补发",
+        "挂失",
+        "暂停",
+        "恢复",
+        "撤销"
+      ],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "在住服务/续住/换房",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "财务确认摘要"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "门禁/入住凭证管理",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [],
+      "handoffSummary": {
+        "from": [
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要",
+          "身份核验摘要",
+          "财务确认摘要",
+          "当前房源状态摘要",
+          "当前价格摘要",
+          "证据摘要"
+        ],
+        "to": [
+          "AccessCredentialStatus",
+          "StayEvidence",
+          "StayStatusHistory",
+          "在住状态摘要",
+          "当前占用摘要",
+          "服务请求摘要",
+          "异常摘要",
+          "续住/换房换床结果",
+          "凭证状态",
+          "退房准备摘要"
+        ],
+        "noRefillRuleZh": "场景包 8 只能读取入住、住客、占用、凭证、协议、身份核验、财务、房源状态、价格和证据摘要，不得要求用户重新填写已确认入住字段。"
+      },
+      "searchReadModel": [
+        "在住管理",
+        "门禁/入住凭证管理",
+        "变更入住凭证状态",
+        "StayManagementCase",
+        "当前凭证状态",
+        "住客",
+        "房间/床位",
+        "有效入住状态",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "在住状态摘要",
+        "当前占用摘要"
+      ]
+    },
+    {
+      "stepNo": 8,
+      "stepId": "checkout-preparation",
+      "nameZh": "退房准备",
+      "commandId": "Dorm.CheckoutPreparationSnapshotCreate",
+      "commandBusinessNameZh": "发起退房准备",
+      "userSees": [
+        "计划离店日期",
+        "在住状态",
+        "未完成服务",
+        "未关闭异常",
+        "凭证状态",
+        "财务摘要",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要"
+      ],
+      "userFilledFields": [],
+      "userSelectedFields": [],
+      "userUploadedOrBoundEvidence": [
+        "退房准备沟通记录"
+      ],
+      "systemGeneratedFields": [
+        "checkoutPreparationSnapshotRef",
+        "preparedAt",
+        "preparedBy",
+        "evidenceEnvelopeRef"
+      ],
+      "validations": [
+        "本包只准备退房，不生成退房结算、不释放资源、不退款。"
+      ],
+      "outputs": [
+        "退房准备摘要",
+        "StayEvidence",
+        "StayStatusHistory"
+      ],
+      "primaryBusinessObject": "StayManagementCase",
+      "requiredReadContext": [
+        "计划离店日期",
+        "在住状态",
+        "未完成服务",
+        "未关闭异常",
+        "凭证状态",
+        "财务摘要",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要",
+        "财务确认摘要",
+        "当前房源状态摘要"
+      ],
+      "editableInputs": [],
+      "fixedSelections": [],
+      "financialContext": {
+        "applies": true,
+        "businessObject": "在住服务/续住/换房",
+        "currency": "CNY",
+        "currencySource": "priceSnapshot, finance summary, agreement, or read-only business snapshot",
+        "amountFields": [
+          "财务摘要",
+          "财务确认摘要"
+        ],
+        "direction": "应收/已收/本次/剩余",
+        "stage": "退房准备",
+        "displayRuleZh": "页面必须同时展示金额、币种、业务对象、方向和阶段，不得只让用户填写一个金额。"
+      },
+      "legalActions": [
+        {
+          "actionId": "v-3418dda3",
+          "labelZh": "发起退房准备",
+          "labelKey": "scenario8.action.v-3418dda3.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.checkout-preparation.v-3418dda3.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        },
+        {
+          "actionId": "v-a8937544",
+          "labelZh": "返回处理未闭环项",
+          "labelKey": "scenario8.action.v-a8937544.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.checkout-preparation.v-a8937544.v1",
+          "admissionRequired": true,
+          "writeBusinessFact": false
+        }
+      ],
+      "handoffSummary": {
+        "from": [
+          "入住记录摘要",
+          "住客摘要",
+          "房间/床位占用摘要",
+          "入住凭证摘要",
+          "协议摘要",
+          "身份核验摘要",
+          "财务确认摘要",
+          "当前房源状态摘要",
+          "当前价格摘要",
+          "证据摘要"
+        ],
+        "to": [
+          "退房准备摘要",
+          "StayEvidence",
+          "StayStatusHistory",
+          "在住状态摘要",
+          "当前占用摘要",
+          "服务请求摘要",
+          "异常摘要",
+          "续住/换房换床结果",
+          "凭证状态",
+          "证据摘要"
+        ],
+        "noRefillRuleZh": "场景包 8 只能读取入住、住客、占用、凭证、协议、身份核验、财务、房源状态、价格和证据摘要，不得要求用户重新填写已确认入住字段。"
+      },
+      "searchReadModel": [
+        "在住管理",
+        "退房准备",
+        "发起退房准备",
+        "StayManagementCase",
+        "计划离店日期",
+        "在住状态",
+        "未完成服务",
+        "未关闭异常",
+        "凭证状态",
+        "财务摘要",
+        "入住记录摘要",
+        "住客摘要",
+        "房间/床位占用摘要",
+        "入住凭证摘要",
+        "协议摘要",
+        "身份核验摘要"
+      ]
+    }
+  ],
+  "fields": {
+    "userReadableNamesOnlyZh": "页面只展示业务可读名称，例如“住客姓名已脱敏，301-02 床位，正常在住，计划 6 月 30 日离店”“服务请求：门禁卡补发处理中”。",
+    "upstreamReadonly": [
+      "入住记录摘要",
+      "住客摘要",
+      "房间/床位占用摘要",
+      "入住凭证摘要",
+      "协议摘要",
+      "身份核验摘要",
+      "财务确认摘要",
+      "当前房源状态摘要",
+      "当前价格摘要",
+      "证据摘要",
+      "只读对象引用"
+    ],
+    "userFilled": [
+      "状态说明",
+      "跟进备注",
+      "预计处理时间",
+      "服务请求内容",
+      "服务对象",
+      "紧急程度",
+      "期望完成时间",
+      "处理备注",
+      "异常说明",
+      "发生时间",
+      "影响范围",
+      "处理建议",
+      "新计划离店日期",
+      "续住原因",
+      "备注",
+      "换房/换床原因",
+      "凭证处理说明",
+      "领取/归还确认",
+      "异常原因"
+    ],
+    "userSelected": [
+      "正常在住",
+      "待跟进",
+      "异常待处理",
+      "服务处理中",
+      "退房待准备",
+      "维修",
+      "保洁",
+      "用品",
+      "门禁",
+      "投诉",
+      "其他",
+      "安全异常",
+      "设备异常",
+      "纠纷投诉",
+      "违规",
+      "失联",
+      "续住天数/周期",
+      "是否需要重新确认价格/财务",
+      "目标房间/床位",
+      "补发",
+      "挂失",
+      "暂停",
+      "恢复",
+      "撤销"
+    ],
+    "userUploadedOrBoundEvidence": [
+      "沟通记录",
+      "现场记录",
+      "住客确认",
+      "照片",
+      "语音/文字记录",
+      "完成证据",
+      "异常证据",
+      "处理记录",
+      "审批记录",
+      "续住沟通记录",
+      "换房/换床审批记录",
+      "领取/归还确认记录",
+      "凭证异常记录",
+      "退房准备沟通记录"
+    ],
+    "systemGenerated": [
+      "stayManagementCaseRef",
+      "stayRef",
+      "occupancyRef",
+      "financeSnapshotRef",
+      "sourceScenarioRef",
+      "stayStatusRef",
+      "previousStatus",
+      "newStatus",
+      "statusVersion",
+      "effectiveAt",
+      "residentServiceRequestRef",
+      "serviceType",
+      "serviceStatus",
+      "evidenceEnvelopeRef",
+      "residentIncidentRef",
+      "incidentSeverity",
+      "incidentStatus",
+      "incidentVersion",
+      "stayExtensionRequestRef",
+      "oldPlannedCheckoutDate",
+      "newPlannedCheckoutDate",
+      "extensionVersion",
+      "bedTransferRequestRef",
+      "fromOccupancyRef",
+      "toResourceRef",
+      "transferVersion",
+      "credentialStatusRef",
+      "credentialRef",
+      "credentialVersion",
+      "credentialChangedAt",
+      "checkoutPreparationSnapshotRef",
+      "preparedAt",
+      "preparedBy"
+    ],
+    "systemCalculated": [
+      "有效入住判断",
+      "当前占用有效性",
+      "目标床位可用性",
+      "续住日期合法性",
+      "服务是否超时",
+      "异常风险等级",
+      "凭证有效性",
+      "退房准备缺失项",
+      "合法下一步动作"
+    ],
+    "evidenceBound": [
+      "StayEvidence",
+      "EvidenceBinding",
+      "evidenceEnvelopeRef",
+      "summarySnapshotRef"
+    ],
+    "internalAuditOnlyFields": [
+      "stayId",
+      "occupancyId",
+      "credentialId",
+      "serviceRequestId",
+      "incidentId",
+      "roomId",
+      "bedId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "forbiddenUserInputFields": [
+      "stayId",
+      "occupancyId",
+      "credentialId",
+      "serviceRequestId",
+      "incidentId",
+      "roomId",
+      "bedId",
+      "stableRef",
+      "projectionVersion",
+      "digest",
+      "domainEventId"
+    ],
+    "fieldAuthority": {
+      "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#fieldAuthorityModel",
+      "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+      "businessInput": [
+        {
+          "fieldId": "v-589778be",
+          "labelZh": "状态说明",
+          "control": "textarea",
+          "labelKey": "scenario8.field.v-589778be.label",
+          "helpKey": "scenario8.field.v-589778be.help",
+          "errorKey": "scenario8.field.v-589778be.error"
+        },
+        {
+          "fieldId": "v-6296bbf0",
+          "labelZh": "跟进备注",
+          "control": "textarea",
+          "labelKey": "scenario8.field.v-6296bbf0.label",
+          "helpKey": "scenario8.field.v-6296bbf0.help",
+          "errorKey": "scenario8.field.v-6296bbf0.error"
+        },
+        {
+          "fieldId": "v-8875b8d2",
+          "labelZh": "预计处理时间",
+          "control": "text",
+          "labelKey": "scenario8.field.v-8875b8d2.label",
+          "helpKey": "scenario8.field.v-8875b8d2.help",
+          "errorKey": "scenario8.field.v-8875b8d2.error"
+        },
+        {
+          "fieldId": "v-49baa5a4",
+          "labelZh": "服务请求内容",
+          "control": "text",
+          "labelKey": "scenario8.field.v-49baa5a4.label",
+          "helpKey": "scenario8.field.v-49baa5a4.help",
+          "errorKey": "scenario8.field.v-49baa5a4.error"
+        },
+        {
+          "fieldId": "v-68fa9045",
+          "labelZh": "服务对象",
+          "control": "text",
+          "labelKey": "scenario8.field.v-68fa9045.label",
+          "helpKey": "scenario8.field.v-68fa9045.help",
+          "errorKey": "scenario8.field.v-68fa9045.error"
+        },
+        {
+          "fieldId": "v-37b53e10",
+          "labelZh": "紧急程度",
+          "control": "text",
+          "labelKey": "scenario8.field.v-37b53e10.label",
+          "helpKey": "scenario8.field.v-37b53e10.help",
+          "errorKey": "scenario8.field.v-37b53e10.error"
+        },
+        {
+          "fieldId": "v-ad9682a9",
+          "labelZh": "期望完成时间",
+          "control": "text",
+          "labelKey": "scenario8.field.v-ad9682a9.label",
+          "helpKey": "scenario8.field.v-ad9682a9.help",
+          "errorKey": "scenario8.field.v-ad9682a9.error"
+        },
+        {
+          "fieldId": "v-4f6c3910",
+          "labelZh": "处理备注",
+          "control": "textarea",
+          "labelKey": "scenario8.field.v-4f6c3910.label",
+          "helpKey": "scenario8.field.v-4f6c3910.help",
+          "errorKey": "scenario8.field.v-4f6c3910.error"
+        },
+        {
+          "fieldId": "v-8a7995c5",
+          "labelZh": "异常说明",
+          "control": "textarea",
+          "labelKey": "scenario8.field.v-8a7995c5.label",
+          "helpKey": "scenario8.field.v-8a7995c5.help",
+          "errorKey": "scenario8.field.v-8a7995c5.error"
+        },
+        {
+          "fieldId": "v-deb8a42b",
+          "labelZh": "发生时间",
+          "control": "text",
+          "labelKey": "scenario8.field.v-deb8a42b.label",
+          "helpKey": "scenario8.field.v-deb8a42b.help",
+          "errorKey": "scenario8.field.v-deb8a42b.error"
+        },
+        {
+          "fieldId": "v-4d96d7dc",
+          "labelZh": "影响范围",
+          "control": "text",
+          "labelKey": "scenario8.field.v-4d96d7dc.label",
+          "helpKey": "scenario8.field.v-4d96d7dc.help",
+          "errorKey": "scenario8.field.v-4d96d7dc.error"
+        },
+        {
+          "fieldId": "v-7005c153",
+          "labelZh": "处理建议",
+          "control": "text",
+          "labelKey": "scenario8.field.v-7005c153.label",
+          "helpKey": "scenario8.field.v-7005c153.help",
+          "errorKey": "scenario8.field.v-7005c153.error"
+        },
+        {
+          "fieldId": "v-499f7e56",
+          "labelZh": "新计划离店日期",
+          "control": "text",
+          "labelKey": "scenario8.field.v-499f7e56.label",
+          "helpKey": "scenario8.field.v-499f7e56.help",
+          "errorKey": "scenario8.field.v-499f7e56.error"
+        },
+        {
+          "fieldId": "v-a0fca17a",
+          "labelZh": "续住原因",
+          "control": "textarea",
+          "labelKey": "scenario8.field.v-a0fca17a.label",
+          "helpKey": "scenario8.field.v-a0fca17a.help",
+          "errorKey": "scenario8.field.v-a0fca17a.error"
+        },
+        {
+          "fieldId": "v-2834e28a",
+          "labelZh": "备注",
+          "control": "textarea",
+          "labelKey": "scenario8.field.v-2834e28a.label",
+          "helpKey": "scenario8.field.v-2834e28a.help",
+          "errorKey": "scenario8.field.v-2834e28a.error"
+        },
+        {
+          "fieldId": "v-9ccb3754",
+          "labelZh": "换房/换床原因",
+          "control": "textarea",
+          "labelKey": "scenario8.field.v-9ccb3754.label",
+          "helpKey": "scenario8.field.v-9ccb3754.help",
+          "errorKey": "scenario8.field.v-9ccb3754.error"
+        },
+        {
+          "fieldId": "v-98aeefc3",
+          "labelZh": "凭证处理说明",
+          "control": "textarea",
+          "labelKey": "scenario8.field.v-98aeefc3.label",
+          "helpKey": "scenario8.field.v-98aeefc3.help",
+          "errorKey": "scenario8.field.v-98aeefc3.error"
+        },
+        {
+          "fieldId": "v-de16a2b6",
+          "labelZh": "领取/归还确认",
+          "control": "text",
+          "labelKey": "scenario8.field.v-de16a2b6.label",
+          "helpKey": "scenario8.field.v-de16a2b6.help",
+          "errorKey": "scenario8.field.v-de16a2b6.error"
+        },
+        {
+          "fieldId": "v-8c0663b8",
+          "labelZh": "异常原因",
+          "control": "textarea",
+          "labelKey": "scenario8.field.v-8c0663b8.label",
+          "helpKey": "scenario8.field.v-8c0663b8.help",
+          "errorKey": "scenario8.field.v-8c0663b8.error"
+        }
+      ],
+      "businessSelect": [
+        {
+          "fieldId": "v-9713b277",
+          "labelZh": "正常在住",
+          "control": "select",
+          "labelKey": "scenario8.field.v-9713b277.label",
+          "helpKey": "scenario8.field.v-9713b277.help",
+          "errorKey": "scenario8.field.v-9713b277.error",
+          "optionSet": "option.v-9713b277",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-10ca30a2",
+          "labelZh": "待跟进",
+          "control": "select",
+          "labelKey": "scenario8.field.v-10ca30a2.label",
+          "helpKey": "scenario8.field.v-10ca30a2.help",
+          "errorKey": "scenario8.field.v-10ca30a2.error",
+          "optionSet": "option.v-10ca30a2",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-73284140",
+          "labelZh": "异常待处理",
+          "control": "select",
+          "labelKey": "scenario8.field.v-73284140.label",
+          "helpKey": "scenario8.field.v-73284140.help",
+          "errorKey": "scenario8.field.v-73284140.error",
+          "optionSet": "option.v-73284140",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-3bfe7554",
+          "labelZh": "服务处理中",
+          "control": "select",
+          "labelKey": "scenario8.field.v-3bfe7554.label",
+          "helpKey": "scenario8.field.v-3bfe7554.help",
+          "errorKey": "scenario8.field.v-3bfe7554.error",
+          "optionSet": "option.v-3bfe7554",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-45139374",
+          "labelZh": "退房待准备",
+          "control": "select",
+          "labelKey": "scenario8.field.v-45139374.label",
+          "helpKey": "scenario8.field.v-45139374.help",
+          "errorKey": "scenario8.field.v-45139374.error",
+          "optionSet": "option.v-45139374",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-6feb0db7",
+          "labelZh": "维修",
+          "control": "select",
+          "labelKey": "scenario8.field.v-6feb0db7.label",
+          "helpKey": "scenario8.field.v-6feb0db7.help",
+          "errorKey": "scenario8.field.v-6feb0db7.error",
+          "optionSet": "option.v-6feb0db7",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-e64c1e6b",
+          "labelZh": "保洁",
+          "control": "select",
+          "labelKey": "scenario8.field.v-e64c1e6b.label",
+          "helpKey": "scenario8.field.v-e64c1e6b.help",
+          "errorKey": "scenario8.field.v-e64c1e6b.error",
+          "optionSet": "option.v-e64c1e6b",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-7b2f4be2",
+          "labelZh": "用品",
+          "control": "select",
+          "labelKey": "scenario8.field.v-7b2f4be2.label",
+          "helpKey": "scenario8.field.v-7b2f4be2.help",
+          "errorKey": "scenario8.field.v-7b2f4be2.error",
+          "optionSet": "option.v-7b2f4be2",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-8d676c62",
+          "labelZh": "门禁",
+          "control": "select",
+          "labelKey": "scenario8.field.v-8d676c62.label",
+          "helpKey": "scenario8.field.v-8d676c62.help",
+          "errorKey": "scenario8.field.v-8d676c62.error",
+          "optionSet": "option.v-8d676c62",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-ed580cbb",
+          "labelZh": "投诉",
+          "control": "select",
+          "labelKey": "scenario8.field.v-ed580cbb.label",
+          "helpKey": "scenario8.field.v-ed580cbb.help",
+          "errorKey": "scenario8.field.v-ed580cbb.error",
+          "optionSet": "option.v-ed580cbb",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-301739cd",
+          "labelZh": "其他",
+          "control": "select",
+          "labelKey": "scenario8.field.v-301739cd.label",
+          "helpKey": "scenario8.field.v-301739cd.help",
+          "errorKey": "scenario8.field.v-301739cd.error",
+          "optionSet": "option.v-301739cd",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-a46f095e",
+          "labelZh": "安全异常",
+          "control": "select",
+          "labelKey": "scenario8.field.v-a46f095e.label",
+          "helpKey": "scenario8.field.v-a46f095e.help",
+          "errorKey": "scenario8.field.v-a46f095e.error",
+          "optionSet": "option.v-a46f095e",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-ed2667d8",
+          "labelZh": "设备异常",
+          "control": "select",
+          "labelKey": "scenario8.field.v-ed2667d8.label",
+          "helpKey": "scenario8.field.v-ed2667d8.help",
+          "errorKey": "scenario8.field.v-ed2667d8.error",
+          "optionSet": "option.v-ed2667d8",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-5474fb5a",
+          "labelZh": "纠纷投诉",
+          "control": "select",
+          "labelKey": "scenario8.field.v-5474fb5a.label",
+          "helpKey": "scenario8.field.v-5474fb5a.help",
+          "errorKey": "scenario8.field.v-5474fb5a.error",
+          "optionSet": "option.v-5474fb5a",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-4e0d08e4",
+          "labelZh": "违规",
+          "control": "select",
+          "labelKey": "scenario8.field.v-4e0d08e4.label",
+          "helpKey": "scenario8.field.v-4e0d08e4.help",
+          "errorKey": "scenario8.field.v-4e0d08e4.error",
+          "optionSet": "option.v-4e0d08e4",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-995ad558",
+          "labelZh": "失联",
+          "control": "select",
+          "labelKey": "scenario8.field.v-995ad558.label",
+          "helpKey": "scenario8.field.v-995ad558.help",
+          "errorKey": "scenario8.field.v-995ad558.error",
+          "optionSet": "option.v-995ad558",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-ba357df4",
+          "labelZh": "续住天数/周期",
+          "control": "select",
+          "labelKey": "scenario8.field.v-ba357df4.label",
+          "helpKey": "scenario8.field.v-ba357df4.help",
+          "errorKey": "scenario8.field.v-ba357df4.error",
+          "optionSet": "option.v-ba357df4",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-80fa5525",
+          "labelZh": "是否需要重新确认价格/财务",
+          "control": "select",
+          "labelKey": "scenario8.field.v-80fa5525.label",
+          "helpKey": "scenario8.field.v-80fa5525.help",
+          "errorKey": "scenario8.field.v-80fa5525.error",
+          "optionSet": "yesNo",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-4593cd1f",
+          "labelZh": "目标房间/床位",
+          "control": "searchable-select",
+          "labelKey": "scenario8.field.v-4593cd1f.label",
+          "helpKey": "scenario8.field.v-4593cd1f.help",
+          "errorKey": "scenario8.field.v-4593cd1f.error",
+          "optionSet": "option.v-4593cd1f",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-938e6823",
+          "labelZh": "补发",
+          "control": "select",
+          "labelKey": "scenario8.field.v-938e6823.label",
+          "helpKey": "scenario8.field.v-938e6823.help",
+          "errorKey": "scenario8.field.v-938e6823.error",
+          "optionSet": "option.v-938e6823",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-7d34349c",
+          "labelZh": "挂失",
+          "control": "select",
+          "labelKey": "scenario8.field.v-7d34349c.label",
+          "helpKey": "scenario8.field.v-7d34349c.help",
+          "errorKey": "scenario8.field.v-7d34349c.error",
+          "optionSet": "option.v-7d34349c",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-197c30db",
+          "labelZh": "暂停",
+          "control": "select",
+          "labelKey": "scenario8.field.v-197c30db.label",
+          "helpKey": "scenario8.field.v-197c30db.help",
+          "errorKey": "scenario8.field.v-197c30db.error",
+          "optionSet": "option.v-197c30db",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-8db9e938",
+          "labelZh": "恢复",
+          "control": "select",
+          "labelKey": "scenario8.field.v-8db9e938.label",
+          "helpKey": "scenario8.field.v-8db9e938.help",
+          "errorKey": "scenario8.field.v-8db9e938.error",
+          "optionSet": "option.v-8db9e938",
+          "submitValueSource": "stableValue"
+        },
+        {
+          "fieldId": "v-1b9e8bc9",
+          "labelZh": "撤销",
+          "control": "select",
+          "labelKey": "scenario8.field.v-1b9e8bc9.label",
+          "helpKey": "scenario8.field.v-1b9e8bc9.help",
+          "errorKey": "scenario8.field.v-1b9e8bc9.error",
+          "optionSet": "option.v-1b9e8bc9",
+          "submitValueSource": "stableValue"
+        }
+      ],
+      "systemDerived": [
+        {
+          "fieldId": "v-91a2d4a7",
+          "labelZh": "有效入住判断",
+          "labelKey": "scenario8.field.v-91a2d4a7.label",
+          "helpKey": "scenario8.field.v-91a2d4a7.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-82ba35e1",
+          "labelZh": "当前占用有效性",
+          "labelKey": "scenario8.field.v-82ba35e1.label",
+          "helpKey": "scenario8.field.v-82ba35e1.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-6c35f46d",
+          "labelZh": "目标床位可用性",
+          "labelKey": "scenario8.field.v-6c35f46d.label",
+          "helpKey": "scenario8.field.v-6c35f46d.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-3efda5eb",
+          "labelZh": "续住日期合法性",
+          "labelKey": "scenario8.field.v-3efda5eb.label",
+          "helpKey": "scenario8.field.v-3efda5eb.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-17afac85",
+          "labelZh": "服务是否超时",
+          "labelKey": "scenario8.field.v-17afac85.label",
+          "helpKey": "scenario8.field.v-17afac85.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-6ab72b2e",
+          "labelZh": "异常风险等级",
+          "labelKey": "scenario8.field.v-6ab72b2e.label",
+          "helpKey": "scenario8.field.v-6ab72b2e.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-79f16ac7",
+          "labelZh": "凭证有效性",
+          "labelKey": "scenario8.field.v-79f16ac7.label",
+          "helpKey": "scenario8.field.v-79f16ac7.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-c948f2f9",
+          "labelZh": "退房准备缺失项",
+          "labelKey": "scenario8.field.v-c948f2f9.label",
+          "helpKey": "scenario8.field.v-c948f2f9.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        },
+        {
+          "fieldId": "v-4098565c",
+          "labelZh": "合法下一步动作",
+          "labelKey": "scenario8.field.v-4098565c.label",
+          "helpKey": "scenario8.field.v-4098565c.help",
+          "derivedFrom": "source authority, upstream summaries, current runtime state, or finance boundary",
+          "readonly": true
+        }
+      ],
+      "readOnlySummary": [
+        {
+          "fieldId": "v-9a7cd5e1",
+          "labelZh": "入住记录摘要",
+          "labelKey": "scenario8.field.v-9a7cd5e1.label",
+          "helpKey": "scenario8.field.v-9a7cd5e1.help",
+          "sourceScenario": "入住记录摘要 / 住客摘要 / 占用摘要 / 凭证摘要"
+        },
+        {
+          "fieldId": "v-74d53ebf",
+          "labelZh": "住客摘要",
+          "labelKey": "scenario8.field.v-74d53ebf.label",
+          "helpKey": "scenario8.field.v-74d53ebf.help",
+          "sourceScenario": "入住记录摘要 / 住客摘要 / 占用摘要 / 凭证摘要"
+        },
+        {
+          "fieldId": "v-2986f3d5",
+          "labelZh": "房间/床位占用摘要",
+          "labelKey": "scenario8.field.v-2986f3d5.label",
+          "helpKey": "scenario8.field.v-2986f3d5.help",
+          "sourceScenario": "入住记录摘要 / 住客摘要 / 占用摘要 / 凭证摘要"
+        },
+        {
+          "fieldId": "v-7a34eba0",
+          "labelZh": "入住凭证摘要",
+          "labelKey": "scenario8.field.v-7a34eba0.label",
+          "helpKey": "scenario8.field.v-7a34eba0.help",
+          "sourceScenario": "入住记录摘要 / 住客摘要 / 占用摘要 / 凭证摘要"
+        },
+        {
+          "fieldId": "v-d77dad3b",
+          "labelZh": "协议摘要",
+          "labelKey": "scenario8.field.v-d77dad3b.label",
+          "helpKey": "scenario8.field.v-d77dad3b.help",
+          "sourceScenario": "入住记录摘要 / 住客摘要 / 占用摘要 / 凭证摘要"
+        },
+        {
+          "fieldId": "v-79814a4e",
+          "labelZh": "身份核验摘要",
+          "labelKey": "scenario8.field.v-79814a4e.label",
+          "helpKey": "scenario8.field.v-79814a4e.help",
+          "sourceScenario": "入住记录摘要 / 住客摘要 / 占用摘要 / 凭证摘要"
+        },
+        {
+          "fieldId": "v-b16c8921",
+          "labelZh": "财务确认摘要",
+          "labelKey": "scenario8.field.v-b16c8921.label",
+          "helpKey": "scenario8.field.v-b16c8921.help",
+          "sourceScenario": "入住记录摘要 / 住客摘要 / 占用摘要 / 凭证摘要"
+        },
+        {
+          "fieldId": "v-c2e928c4",
+          "labelZh": "当前房源状态摘要",
+          "labelKey": "scenario8.field.v-c2e928c4.label",
+          "helpKey": "scenario8.field.v-c2e928c4.help",
+          "sourceScenario": "入住记录摘要 / 住客摘要 / 占用摘要 / 凭证摘要"
+        },
+        {
+          "fieldId": "v-66a9b701",
+          "labelZh": "当前价格摘要",
+          "labelKey": "scenario8.field.v-66a9b701.label",
+          "helpKey": "scenario8.field.v-66a9b701.help",
+          "sourceScenario": "入住记录摘要 / 住客摘要 / 占用摘要 / 凭证摘要"
+        },
+        {
+          "fieldId": "v-f71ae921",
+          "labelZh": "证据摘要",
+          "labelKey": "scenario8.field.v-f71ae921.label",
+          "helpKey": "scenario8.field.v-f71ae921.help",
+          "sourceScenario": "入住记录摘要 / 住客摘要 / 占用摘要 / 凭证摘要"
+        },
+        {
+          "fieldId": "v-cd66b0d5",
+          "labelZh": "只读对象引用",
+          "labelKey": "scenario8.field.v-cd66b0d5.label",
+          "helpKey": "scenario8.field.v-cd66b0d5.help",
+          "sourceScenario": "入住记录摘要 / 住客摘要 / 占用摘要 / 凭证摘要"
+        },
+        {
+          "fieldId": "v-b1a6ef22",
+          "labelZh": "占用摘要",
+          "labelKey": "scenario8.field.v-b1a6ef22.label",
+          "helpKey": "scenario8.field.v-b1a6ef22.help",
+          "sourceScenario": "入住记录摘要 / 住客摘要 / 占用摘要 / 凭证摘要"
+        },
+        {
+          "fieldId": "v-b0101808",
+          "labelZh": "凭证摘要",
+          "labelKey": "scenario8.field.v-b0101808.label",
+          "helpKey": "scenario8.field.v-b0101808.help",
+          "sourceScenario": "入住记录摘要 / 住客摘要 / 占用摘要 / 凭证摘要"
+        }
+      ],
+      "evidenceBinding": [
+        {
+          "fieldId": "evidence.v-d33a9d03",
+          "labelZh": "沟通记录",
+          "labelKey": "scenario8.evidence.evidence.v-d33a9d03.label",
+          "helpKey": "scenario8.evidence.evidence.v-d33a9d03.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-97f37c68",
+          "labelZh": "现场记录",
+          "labelKey": "scenario8.evidence.evidence.v-97f37c68.label",
+          "helpKey": "scenario8.evidence.evidence.v-97f37c68.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-44f90f1e",
+          "labelZh": "住客确认",
+          "labelKey": "scenario8.evidence.evidence.v-44f90f1e.label",
+          "helpKey": "scenario8.evidence.evidence.v-44f90f1e.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-de93c953",
+          "labelZh": "照片",
+          "labelKey": "scenario8.evidence.evidence.v-de93c953.label",
+          "helpKey": "scenario8.evidence.evidence.v-de93c953.help",
+          "evidenceType": "image"
+        },
+        {
+          "fieldId": "evidence.v-b149f5ef",
+          "labelZh": "语音/文字记录",
+          "labelKey": "scenario8.evidence.evidence.v-b149f5ef.label",
+          "helpKey": "scenario8.evidence.evidence.v-b149f5ef.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-592fd74a",
+          "labelZh": "完成证据",
+          "labelKey": "scenario8.evidence.evidence.v-592fd74a.label",
+          "helpKey": "scenario8.evidence.evidence.v-592fd74a.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-893c8614",
+          "labelZh": "异常证据",
+          "labelKey": "scenario8.evidence.evidence.v-893c8614.label",
+          "helpKey": "scenario8.evidence.evidence.v-893c8614.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-695ae328",
+          "labelZh": "处理记录",
+          "labelKey": "scenario8.evidence.evidence.v-695ae328.label",
+          "helpKey": "scenario8.evidence.evidence.v-695ae328.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-20246468",
+          "labelZh": "审批记录",
+          "labelKey": "scenario8.evidence.evidence.v-20246468.label",
+          "helpKey": "scenario8.evidence.evidence.v-20246468.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-0822a353",
+          "labelZh": "续住沟通记录",
+          "labelKey": "scenario8.evidence.evidence.v-0822a353.label",
+          "helpKey": "scenario8.evidence.evidence.v-0822a353.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-c8acae6e",
+          "labelZh": "换房/换床审批记录",
+          "labelKey": "scenario8.evidence.evidence.v-c8acae6e.label",
+          "helpKey": "scenario8.evidence.evidence.v-c8acae6e.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-9205ce65",
+          "labelZh": "领取/归还确认记录",
+          "labelKey": "scenario8.evidence.evidence.v-9205ce65.label",
+          "helpKey": "scenario8.evidence.evidence.v-9205ce65.help",
+          "evidenceType": "businessEvidence"
+        },
+        {
+          "fieldId": "evidence.v-54d6285a",
+          "labelZh": "凭证异常记录",
+          "labelKey": "scenario8.evidence.evidence.v-54d6285a.label",
+          "helpKey": "scenario8.evidence.evidence.v-54d6285a.help",
+          "evidenceType": "document"
+        },
+        {
+          "fieldId": "evidence.v-968fc36d",
+          "labelZh": "退房准备沟通记录",
+          "labelKey": "scenario8.evidence.evidence.v-968fc36d.label",
+          "helpKey": "scenario8.evidence.evidence.v-968fc36d.help",
+          "evidenceType": "businessEvidence"
+        }
+      ],
+      "legalAction": [
+        {
+          "fieldId": "v-d11ccef1",
+          "labelZh": "查看在住详情",
+          "labelKey": "scenario8.action.v-d11ccef1.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-d11ccef1.v1"
+        },
+        {
+          "fieldId": "v-4e29f4d8",
+          "labelZh": "登记服务",
+          "labelKey": "scenario8.action.v-4e29f4d8.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-4e29f4d8.v1"
+        },
+        {
+          "fieldId": "v-497922c4",
+          "labelZh": "登记异常",
+          "labelKey": "scenario8.action.v-497922c4.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-497922c4.v1"
+        },
+        {
+          "fieldId": "v-0a11874b",
+          "labelZh": "申请续住",
+          "labelKey": "scenario8.action.v-0a11874b.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-0a11874b.v1"
+        },
+        {
+          "fieldId": "v-06b3094d",
+          "labelZh": "申请换房/换床",
+          "labelKey": "scenario8.action.v-06b3094d.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-06b3094d.v1"
+        },
+        {
+          "fieldId": "v-1f4ce107",
+          "labelZh": "进入退房准备",
+          "labelKey": "scenario8.action.v-1f4ce107.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-1f4ce107.v1"
+        },
+        {
+          "fieldId": "v-3418dda3",
+          "labelZh": "发起退房准备",
+          "labelKey": "scenario8.action.v-3418dda3.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-3418dda3.v1"
+        },
+        {
+          "fieldId": "v-a8937544",
+          "labelZh": "返回处理未闭环项",
+          "labelKey": "scenario8.action.v-a8937544.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-a8937544.v1"
+        }
+      ],
+      "actionControl": [
+        {
+          "fieldId": "v-d11ccef1",
+          "labelZh": "查看在住详情",
+          "labelKey": "scenario8.action.v-d11ccef1.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-d11ccef1.v1"
+        },
+        {
+          "fieldId": "v-4e29f4d8",
+          "labelZh": "登记服务",
+          "labelKey": "scenario8.action.v-4e29f4d8.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-4e29f4d8.v1"
+        },
+        {
+          "fieldId": "v-497922c4",
+          "labelZh": "登记异常",
+          "labelKey": "scenario8.action.v-497922c4.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-497922c4.v1"
+        },
+        {
+          "fieldId": "v-0a11874b",
+          "labelZh": "申请续住",
+          "labelKey": "scenario8.action.v-0a11874b.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-0a11874b.v1"
+        },
+        {
+          "fieldId": "v-06b3094d",
+          "labelZh": "申请换房/换床",
+          "labelKey": "scenario8.action.v-06b3094d.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-06b3094d.v1"
+        },
+        {
+          "fieldId": "v-1f4ce107",
+          "labelZh": "进入退房准备",
+          "labelKey": "scenario8.action.v-1f4ce107.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-1f4ce107.v1"
+        },
+        {
+          "fieldId": "v-3418dda3",
+          "labelZh": "发起退房准备",
+          "labelKey": "scenario8.action.v-3418dda3.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-3418dda3.v1"
+        },
+        {
+          "fieldId": "v-a8937544",
+          "labelZh": "返回处理未闭环项",
+          "labelKey": "scenario8.action.v-a8937544.label",
+          "legalActionRef": "legalAction.dormitory.scenario8.v-a8937544.v1"
+        }
+      ],
+      "conditionalInput": [],
+      "auditInternal": [
+        {
+          "fieldId": "stayId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "occupancyId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "credentialId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "serviceRequestId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "incidentId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stableRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "projectionVersion",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "digest",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "domainEventId",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stayManagementCaseRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stayRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "occupancyRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "financeSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "sourceScenarioRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stayStatusRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "residentServiceRequestRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "evidenceEnvelopeRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "residentIncidentRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "stayExtensionRequestRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "bedTransferRequestRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "fromOccupancyRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "toResourceRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "credentialStatusRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "credentialRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        },
+        {
+          "fieldId": "checkoutPreparationSnapshotRef",
+          "internalOnly": true,
+          "allowedContexts": [
+            "audit-detail",
+            "migration-evidence",
+            "generated-evidence-package"
+          ]
+        }
+      ]
+    }
+  },
+  "stayStatusOptions": [
+    "正常在住",
+    "待跟进",
+    "服务处理中",
+    "异常待处理",
+    "续住待确认",
+    "换房/换床待确认",
+    "凭证待处理",
+    "退房待准备"
+  ],
+  "readSideOutputs": [
+    "在住状态摘要",
+    "当前占用摘要",
+    "服务请求摘要",
+    "异常摘要",
+    "续住/换房换床结果",
+    "凭证状态",
+    "退房准备摘要",
+    "证据摘要",
+    "只读对象引用"
+  ],
+  "forbiddenUserVisibleTermsZh": [
+    "已退房",
+    "已退款",
+    "已释放房源",
+    "账务入账",
+    "final GO",
+    "生产发布",
+    "StayLifecycle",
+    "bed-transfer-extend",
+    "service-task",
+    "AccessCredentialIssue",
+    "AccessCredentialRevoke"
+  ],
+  "noGo": {
+    "productionConfirmAllowed": false,
+    "businessGoLiveAllowed": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

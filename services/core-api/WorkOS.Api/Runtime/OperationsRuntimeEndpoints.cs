@@ -35,18 +35,20 @@ public static class OperationsRuntimeEndpoints
                 return TenantScopeForbidden("operation_work_item_tenant_mismatch");
             }
 
-            var resolved = operations.CreateWorkItem(string.IsNullOrWhiteSpace(request.TenantId) ? request with { TenantId = actor.TenantId } : request);
+            var resolved = operations.CreateWorkItem(
+                string.IsNullOrWhiteSpace(request.TenantId) ? request with { TenantId = actor.TenantId } : request,
+                actor);
             return resolved is null
                 ? Results.UnprocessableEntity(new { error = "operation_work_item_not_resolved", reason = "persisted_process_intent_or_workspace_card_required" })
                 : Results.Ok(resolved);
         });
 
-        app.MapGet("/api/operations/work-items", (string? tenantId, string? caseId, CanonicalOperationsApiService operations, HttpRequest httpRequest) =>
+        app.MapGet("/api/operations/work-items", (string? tenantId, string? caseId, string? workspaceId, bool? activeOnly, CanonicalOperationsApiService operations, HttpRequest httpRequest) =>
         {
             var actor = httpRequest.HttpContext.RequireActor();
             return !TenantMatches(tenantId, actor.TenantId)
                 ? TenantScopeForbidden("operation_work_items_tenant_mismatch")
-                : Results.Ok(operations.ListWorkItemSurfaces(actor, caseId));
+                : Results.Ok(operations.ListWorkItemSurfaces(actor, caseId, workspaceId, activeOnly == true));
         });
 
         app.MapGet("/api/operations/work-items/{workItemId}", (string workItemId, CanonicalOperationsApiService operations, HttpRequest httpRequest) =>

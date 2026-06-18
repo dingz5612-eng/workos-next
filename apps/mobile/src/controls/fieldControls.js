@@ -1,5 +1,5 @@
 import { translateTerm } from "../termDictionary.js";
-import { canonicalLabelForOptionValue, canonicalOptionLabels, normalizeOptionSetValue, preferredOptionSetDefault } from "./optionSetContract.js";
+import { canonicalLabelForOptionValue, canonicalOptionLabels, normalizeOptionSetValue } from "./optionSetContract.js";
 
 const roomTypeCapacity = {
   single: "1",
@@ -26,15 +26,13 @@ export function optionsForField(field, lang = "zh-CN") {
   const add = (entry = {}) => {
     const value = normalizeOptionSetValue(optionSet, entry.value);
     if (!value || merged.has(value)) return;
-    const canonicalLabel = canonicalLabelForOptionValue(optionSet, value);
+    const canonicalLabel = canonicalLabelForOptionValue(optionSet, value, lang);
     merged.set(value, {
       value,
       label: canonicalLabel ? translateTerm(canonicalLabel, lang) : optionLabelForField(field, { ...entry, value }, lang)
     });
   };
 
-  const preferredDefault = normalizeOptionSetValue(optionSet, field?.ui?.defaultValue || preferredOptionSetDefault(optionSet));
-  if (canonical?.[preferredDefault]) add({ value: preferredDefault });
   for (const entry of field?.ui?.options || []) add(entry);
   if (canonical) {
     for (const value of Object.keys(canonical)) add({ value });
@@ -50,6 +48,10 @@ function fallbackOptionSetForField(field = {}) {
   const id = String(field?.id || "").trim();
   const zh = String(field?.label?.["zh-CN"] || "").trim();
   if (id === "bedType" || zh === "床铺生成方式" || zh === "床位类型") return "bunkType";
+  if (id === "bedEnabledStatus" || zh === "床位启用状态") return "bedEnabledStatus";
+  if (id === "bedTypeBatchSetting" || zh === "床型批量设置") return "bedTypeBatchSetting";
+  if (["basicCheckResult", "cleaningBasicCheckResult", "facilityBasicCheckResult", "safetyBasicCheckResult"].includes(id)) return "basicReadinessCheckResult";
+  if (id === "readinessState" || zh === "就绪状态") return "readinessState";
   if (id === "reservationNextAction" || zh === "预订后动作") return "reservationNextAction";
   return "";
 }
@@ -58,7 +60,7 @@ function optionLabelForField(field, entry = {}, lang) {
   if (typeof entry.label === "string") return translateTerm(entry.label, lang);
   if (entry.label?.[lang]) return entry.label[lang];
   const zhLabel = entry.label?.["zh-CN"] ||
-    canonicalLabelForOptionValue(field?.ui?.optionSet, entry.value) ||
+    canonicalLabelForOptionValue(field?.ui?.optionSet, entry.value, lang) ||
     entry.value;
   return translateTerm(zhLabel, lang);
 }

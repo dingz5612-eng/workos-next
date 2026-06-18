@@ -1,0 +1,86 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario1-benchmark-inheritance-failureRouting.generated",
+  "version": "oam.dormitory-scenario1-benchmark-inheritance-failureRouting.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario1-benchmark-inheritance-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:a4be5229d3c249017f22f49d1356e0e4ee7e181203c2963c1d694f3116b18218",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+      "digest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+      "digest": "sha256:480980f4c45e3e1cacc8a40876eb8d2b54c1a735b3849a5ad7996fdd88747d3b"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
+  "authorityId": "Dormitory.Scenario1BenchmarkInheritanceContract",
+  "outputContentDigest": "sha256:87d6479935cd0d521ef952529c271c1b843f0a920070fee64e8b16c2a53c88be",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "场景 1 标杆继承合同",
+  "highestBusinessAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+  "highestBusinessAuthorityId": "Dormitory.Operating13ScenarioControl",
+  "benchmarkImplementationRef": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+  "controlAuthorityDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "benchmarkContractDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
+  "scenario1SourceDigest": "sha256:480980f4c45e3e1cacc8a40876eb8d2b54c1a735b3849a5ad7996fdd88747d3b",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "failureAttributionRouting": [
+    {
+      "failureClass": "business_rule_missing",
+      "routeBackTo": "总控或本场景 Source Authority"
+    },
+    {
+      "failureClass": "field_source_wrong",
+      "routeBackTo": "字段矩阵"
+    },
+    {
+      "failureClass": "state_overreach",
+      "routeBackTo": "状态阶梯和对象归属"
+    },
+    {
+      "failureClass": "surface_action_confusing",
+      "routeBackTo": "surface 合同和 UX 五问"
+    },
+    {
+      "failureClass": "runtime_hardcoded",
+      "routeBackTo": "Source Authority 或 generated 合同"
+    },
+    {
+      "failureClass": "finance_overreach",
+      "routeBackTo": "finance-gate 边界"
+    },
+    {
+      "failureClass": "evidence_missing",
+      "routeBackTo": "证据策略"
+    },
+    {
+      "failureClass": "test_bypass",
+      "routeBackTo": "测试计划"
+    }
+  ],
+  "forbiddenFailureBypassZh": [
+    "不得手改 generated。",
+    "不得手改报告。",
+    "不得放宽测试脚本绕过失败。"
+  ]
+}

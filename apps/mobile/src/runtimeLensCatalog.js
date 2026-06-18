@@ -1,21 +1,14 @@
 const workspaceLensIds = {
-  "W-STAY-RESOURCE": ["room-readiness", "bed-inventory", "rate-plan", "room-revenue-potential"],
-  "W-STAY-CHECKIN": ["today-operations", "active-stay", "deposit-liability", "payment-risk", "stay-balance"],
-  "W-STAY-LEAD-RESERVATION": ["lead-funnel"],
-  "W-STAY-LIFECYCLE": ["active-stay", "stay-balance"],
-  "W-STAY-DEPOSIT-LEDGER": ["deposit-liability"],
-  "W-STAY-PAYMENT-LEDGER": ["payment-risk", "stay-balance"],
-  "W-STAY-CHECKOUT-SETTLEMENT": ["checkout-queue"],
-  "W-STAY-SERVICE-TASK": ["service-task-queue"],
-  "W-STAY-EXPENSE-LEDGER": ["expense-analytics"],
-  "W-STAY-PERIOD-ANALYTICS": ["period-performance", "risk-command"]
+  "W-DORM-MAINLINE": ["room-readiness", "bed-inventory"],
+  "W-DORM-RESOURCE-OPERATION-STATUS": ["operation-status"]
 };
 
 export const defaultAccommodationLensIds = Array.from(new Set(Object.values(workspaceLensIds).flat()));
 
 const lensTitles = {
-  "room-readiness": { "zh-CN": "房间可售", "ru-RU": "Готовность комнат" },
-  "bed-inventory": { "zh-CN": "床位库存", "ru-RU": "Инвентарь коек" },
+  "room-readiness": { "zh-CN": "基础就绪摘要", "ru-RU": "Базовая готовность" },
+  "bed-inventory": { "zh-CN": "床位组摘要", "ru-RU": "Группа коек" },
+  "operation-status": { "zh-CN": "营业状态摘要", "ru-RU": "Статус эксплуатации" },
   "rate-plan": { "zh-CN": "价格规则", "ru-RU": "Тарифы" },
   "room-revenue-potential": { "zh-CN": "房间潜在收入", "ru-RU": "Потенциал комнат" },
   "today-operations": { "zh-CN": "今日经营", "ru-RU": "Операции сегодня" },
@@ -34,6 +27,7 @@ const lensTitles = {
 const previewFields = {
   "room-readiness": ["roomNo", "status", "capacity"],
   "bed-inventory": ["bedNo", "status", "roomId"],
+  "operation-status": ["resourceName", "operationStatus", "statusReason"],
   "rate-plan": ["roomId", "monthlyRatePerBed", "currency"],
   "room-revenue-potential": ["roomNo", "monthlyRevenuePotential", "currency"],
   "today-operations": ["todayCheckIns", "pendingPayments", "openDeposits"],

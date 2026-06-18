@@ -62,7 +62,7 @@ export async function submitWorkItemOperation({
       projectionStatus: "not_started",
       error: "persisted_work_item_required",
       reason: "persisted_work_item_required",
-      message: "需要先生成可办理任务，再提交观察记录。",
+      message: "需要先生成可办理任务，再提交办理记录。",
       source: "operations_runtime_pure"
     };
   }
@@ -122,6 +122,11 @@ export async function materializeEvidenceObjects({ workspace, card, actor, submi
   if (!drafts.length) return [];
   const actorToken = actor?.token || "";
   return Promise.all(drafts.map(async (draft) => {
+    if (isMaterializedRuntimeEvidenceId(draft.evidenceId) &&
+      draft.submissionId === submissionProtocol.submissionId &&
+      draft.cardInstanceId === submissionProtocol.cardInstanceId) {
+      return draft.evidenceId;
+    }
     const evidence = await createEvidenceDraft({
       workspaceId: workspace.id,
       cardId: card.id,
@@ -137,8 +142,15 @@ export async function materializeEvidenceObjects({ workspace, card, actor, submi
       sizeBytes: draft.sizeBytes || 1
     }, actorToken);
     draft.evidenceId = attached.evidenceId;
+    draft.submissionId = submissionProtocol.submissionId;
+    draft.cardInstanceId = submissionProtocol.cardInstanceId;
+    draft.status = "verified";
     return attached.evidenceId;
   }));
+}
+
+function isMaterializedRuntimeEvidenceId(value = "") {
+  return /^ev-/i.test(String(value || ""));
 }
 
 export async function refreshDefaultAccommodationLenses(onLens) {
@@ -215,7 +227,7 @@ async function syncCommittedReadSide({ result, workspace, onProjection, onLens, 
   }
 
   try {
-    const operationWorkItems = await fetchOperationWorkItems();
+    const operationWorkItems = await fetchOperationWorkItems(workspace?.id ? { workspaceId: workspace.id } : { activeOnly: "true" });
     if (onOperationWorkItems) onOperationWorkItems(operationWorkItems);
     syncResult.workItemsStatus = "refreshed";
   } catch {

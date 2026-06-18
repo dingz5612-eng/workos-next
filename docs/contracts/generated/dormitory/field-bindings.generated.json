@@ -1,0 +1,304 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "field-bindings.generated",
+  "kernelGraphHash": "sha256:4bccb63fdfddbb81a877b092ff5a5ff329277d852fd1470fbe113336bdcef9ec",
+  "sourceNodeRefs": [
+    "dormitory.workItem.Dorm.RoomSetupConfirm",
+    "dormitory.workItem.Dorm.BedSetupConfirm",
+    "dormitory.workItem.Dorm.ResourceReadinessConfirm"
+  ],
+  "sourceRefs": [
+    "dormitory.workItem.Dorm.RoomSetupConfirm",
+    "dormitory.workItem.Dorm.BedSetupConfirm",
+    "dormitory.workItem.Dorm.ResourceReadinessConfirm"
+  ],
+  "sourceHash": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+  "sourceContentDigest": "sha256:1073a7149fd8922fc33ad4bf90778206869203dabc14bd2402f085c9b4dc3e25",
+  "compilerInputDigest": "sha256:f62218113887e1123a62152761edd88cf5ef3cc3628dff366c48e10c60cc792f",
+  "outputContentDigest": "sha256:76040065501c6755eb809fbb535bfea9f5ec948cd2d51e54f1d70470beae9418",
+  "deterministicSort": true,
+  "generatorVersion": "current-oam-kernel-compiler.v1",
+  "generatedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+  "canonicalClosureVersion": "oam.dormitory-source-semantic-closure.v1",
+  "sourceFieldGapsDecisionDigest": "sha256:c38dfcbd898c82fce75e906ef61d95b04594c3657523182c21c62c10d291ed3d",
+  "generatedFieldBindingClosureDigest": "sha256:38de19e889f519484c11b5d38ba295c462f009ea4ef482a40fb1b45e1cee7e9f",
+  "sourceSemanticRefs": [
+    {
+      "id": "dormitorySourceScenario",
+      "path": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "tracked": true,
+      "semanticDigest": "sha256:c0cb0761d571c0cb2fca3bd7d3507ee2d6cbfa1c29170a9ea36017f1477f33e2"
+    },
+    {
+      "id": "dormitoryOperatingKernel",
+      "path": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "tracked": true,
+      "semanticDigest": "sha256:e5e8df356e8ddc00d7942e0b28aa752b8b2bc151bfa67e20fab3dc97c4b55ef6"
+    },
+    {
+      "id": "generatedCompileApproval",
+      "path": "docs/oam/generated-compile-approval.current.json",
+      "tracked": true,
+      "semanticDigest": "sha256:2f3d04a01a02bb4937db87e3cdb24abaace62572f5ca7f581888fad7b4923811"
+    },
+    {
+      "id": "generatedCompileCandidateApproval",
+      "path": "docs/oam/generated-compile-candidate-approval.current.json",
+      "tracked": true,
+      "semanticDigest": "sha256:5542dce523c2e0f0f1db8bce404039a472cde85fe934f952301ff63dbdefe7d7"
+    }
+  ],
+  "fieldBindings": [
+    {
+      "fieldId": "buildingContextRef",
+      "sourceGapId": "buildingId",
+      "decision": "add_as_context_readonly_ref",
+      "compilerInputImpact": "contextReadonly_ref_required",
+      "compileBlocking": true,
+      "classification": "contextReadonly",
+      "bindingType": "contextReadonly",
+      "source": "Source Layer context",
+      "stableRef": "dormitorySiteRef",
+      "evidencePolicyRef": null,
+      "evidenceObjectKind": null,
+      "semanticRole": "building_context_ref",
+      "branchOutputOnly": false,
+      "branchOutputScope": null,
+      "userEditable": false,
+      "rawManualInputAllowed": false,
+      "userSubmitted": false,
+      "forbiddenSources": [
+        "user raw ID input",
+        "route param",
+        "cardId",
+        "sourceCardId",
+        "workspaceCardId",
+        "search label"
+      ],
+      "sourceBindingRef": "fieldBindings.buildingContextRef",
+      "sourceDecisionRef": "sourceFieldGaps.decisions.buildingId",
+      "currentAuthority": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "runtimeConsumptionReady": false,
+      "releaseAuthority": false,
+      "finalGoNoGo": "NO_GO"
+    },
+    {
+      "fieldId": "readinessEvidenceRefs",
+      "sourceGapId": "readinessEvidenceRefs",
+      "decision": "bind_to_evidence_envelope",
+      "compilerInputImpact": "evidenceEnvelope_required",
+      "compileBlocking": true,
+      "classification": "evidence-reference",
+      "bindingType": "EvidenceEnvelope",
+      "source": "Evidence Kernel",
+      "stableRef": null,
+      "evidencePolicyRef": "evidence.dormitory.resource-saleability.v1",
+      "evidenceObjectKind": null,
+      "semanticRole": "readiness_evidence_refs",
+      "branchOutputOnly": false,
+      "branchOutputScope": null,
+      "userEditable": false,
+      "rawManualInputAllowed": false,
+      "userSubmitted": false,
+      "forbiddenSources": [
+        "raw manual input",
+        "ordinary user input",
+        "route param",
+        "cardId",
+        "sourceCardId",
+        "workspaceCardId",
+        "search label"
+      ],
+      "sourceBindingRef": "fieldBindings.readinessEvidenceRefs",
+      "sourceDecisionRef": "sourceFieldGaps.decisions.readinessEvidenceRefs",
+      "currentAuthority": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "runtimeConsumptionReady": false,
+      "releaseAuthority": false,
+      "finalGoNoGo": "NO_GO"
+    },
+    {
+      "fieldId": "serviceVerificationRef",
+      "sourceGapId": "serviceVerificationRef",
+      "decision": "bind_to_verification_evidence_ref",
+      "compilerInputImpact": "evidenceObjectStableRef_required",
+      "compileBlocking": true,
+      "classification": "evidence-reference",
+      "bindingType": "EvidenceObject stableRef",
+      "source": "Evidence Kernel",
+      "stableRef": null,
+      "evidencePolicyRef": null,
+      "evidenceObjectKind": "verification-check",
+      "semanticRole": "service_verification_ref",
+      "branchOutputOnly": false,
+      "branchOutputScope": null,
+      "userEditable": false,
+      "rawManualInputAllowed": false,
+      "userSubmitted": false,
+      "forbiddenSources": [
+        "raw manual input",
+        "ordinary user input",
+        "route param",
+        "cardId",
+        "sourceCardId",
+        "workspaceCardId",
+        "search label"
+      ],
+      "sourceBindingRef": "fieldBindings.serviceVerificationRef",
+      "sourceDecisionRef": "sourceFieldGaps.decisions.serviceVerificationRef",
+      "currentAuthority": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "runtimeConsumptionReady": false,
+      "releaseAuthority": false,
+      "finalGoNoGo": "NO_GO"
+    },
+    {
+      "fieldId": "blockedReason",
+      "sourceGapId": "blockedReason",
+      "decision": "map_to_branch_outcome",
+      "compilerInputImpact": "branchOutputOnly",
+      "compileBlocking": true,
+      "classification": "branch-output",
+      "bindingType": "branch-output",
+      "source": "branchFlows",
+      "stableRef": null,
+      "evidencePolicyRef": null,
+      "evidenceObjectKind": null,
+      "semanticRole": "blocked_reason",
+      "branchOutputOnly": true,
+      "branchOutputScope": "all_no_go_branches",
+      "userEditable": false,
+      "rawManualInputAllowed": false,
+      "userSubmitted": false,
+      "forbiddenSources": [
+        "raw manual input",
+        "ordinary user input",
+        "route param",
+        "cardId",
+        "sourceCardId",
+        "workspaceCardId",
+        "search label"
+      ],
+      "sourceBindingRef": "fieldBindings.blockedReason",
+      "sourceDecisionRef": "sourceFieldGaps.decisions.blockedReason",
+      "currentAuthority": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "runtimeConsumptionReady": false,
+      "releaseAuthority": false,
+      "finalGoNoGo": "NO_GO"
+    },
+    {
+      "fieldId": "notSaleableReason",
+      "sourceGapId": "notSaleableReason",
+      "decision": "map_to_resource_not_saleable_branch",
+      "compilerInputImpact": "branchOutputOnly",
+      "compileBlocking": true,
+      "classification": "branch-output",
+      "bindingType": "branch-output",
+      "source": "branchFlows.resource-not-saleable",
+      "stableRef": null,
+      "evidencePolicyRef": null,
+      "evidenceObjectKind": null,
+      "semanticRole": "not_saleable_reason",
+      "branchOutputOnly": true,
+      "branchOutputScope": "resource-not-saleable",
+      "userEditable": false,
+      "rawManualInputAllowed": false,
+      "userSubmitted": false,
+      "forbiddenSources": [
+        "raw manual input",
+        "ordinary user input",
+        "route param",
+        "cardId",
+        "sourceCardId",
+        "workspaceCardId",
+        "search label"
+      ],
+      "sourceBindingRef": "fieldBindings.notSaleableReason",
+      "sourceDecisionRef": "sourceFieldGaps.decisions.notSaleableReason",
+      "currentAuthority": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "runtimeConsumptionReady": false,
+      "releaseAuthority": false,
+      "finalGoNoGo": "NO_GO"
+    }
+  ],
+  "forbiddenSources": {
+    "buildingContextRef": [
+      "cardId",
+      "route param",
+      "search label",
+      "sourceCardId",
+      "user raw ID input",
+      "workspaceCardId"
+    ],
+    "readinessEvidenceRefs": [
+      "cardId",
+      "ordinary user input",
+      "raw manual input",
+      "route param",
+      "search label",
+      "sourceCardId",
+      "workspaceCardId"
+    ],
+    "serviceVerificationRef": [
+      "cardId",
+      "ordinary user input",
+      "raw manual input",
+      "route param",
+      "search label",
+      "sourceCardId",
+      "workspaceCardId"
+    ],
+    "blockedReason": [
+      "cardId",
+      "ordinary user input",
+      "raw manual input",
+      "route param",
+      "search label",
+      "sourceCardId",
+      "workspaceCardId"
+    ],
+    "notSaleableReason": [
+      "cardId",
+      "ordinary user input",
+      "raw manual input",
+      "route param",
+      "search label",
+      "sourceCardId",
+      "workspaceCardId"
+    ]
+  },
+  "branchOutputSemantics": {
+    "blockedReason": {
+      "sourceBindingRef": "fieldBindings.blockedReason",
+      "sourceDecisionRef": "sourceFieldGaps.decisions.blockedReason",
+      "branchOutputScope": "all_no_go_branches",
+      "userSubmitted": false,
+      "compilerInput": "branchOutputOnly",
+      "mapsTo": [
+        "branchFlows.blockingReasonCode",
+        "branchFlows.blockingReasonCopyKey",
+        "branchFlows.admissionNoGoItem"
+      ]
+    },
+    "notSaleableReason": {
+      "sourceBindingRef": "fieldBindings.notSaleableReason",
+      "sourceDecisionRef": "sourceFieldGaps.decisions.notSaleableReason",
+      "branchOutputScope": "resource-not-saleable",
+      "userSubmitted": false,
+      "compilerInput": "branchOutputOnly",
+      "mapsTo": [
+        "branchFlows.resource-not-saleable.outcome",
+        "branchFlows.resource-not-saleable.blockingReasonCode",
+        "branchFlows.resource-not-saleable.blockingReasonCopyKey"
+      ]
+    }
+  },
+  "lineageImpact": {
+    "sourceFinalizationStatus": "SOURCE_FINALIZED_BY_00",
+    "sourceReadyForCompileDecision": true,
+    "compileDecisionStatus": "READY_FOR_00_COMPILE_DECISION",
+    "generatedCandidateAcceptedBy00": false,
+    "runtimeConsumptionReady": false,
+    "releaseAuthority": false,
+    "finalGoNoGo": "NO_GO"
+  }
+}

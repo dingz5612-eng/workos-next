@@ -1,0 +1,108 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario1-benchmark-inheritance-screenshotReport.generated",
+  "version": "oam.dormitory-scenario1-benchmark-inheritance-screenshotReport.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario1-benchmark-inheritance-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario1-benchmark-inheritance-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+    "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:a4be5229d3c249017f22f49d1356e0e4ee7e181203c2963c1d694f3116b18218",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-benchmark-inheritance.authority.json",
+      "digest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "digest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+      "digest": "sha256:480980f4c45e3e1cacc8a40876eb8d2b54c1a735b3849a5ad7996fdd88747d3b"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
+  "authorityId": "Dormitory.Scenario1BenchmarkInheritanceContract",
+  "outputContentDigest": "sha256:1476cb63a04a12bbe8259533abcd7e87981912f8d4d486bc2acdc145e800b48e",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "场景 1 标杆继承合同",
+  "highestBusinessAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+  "highestBusinessAuthorityId": "Dormitory.Operating13ScenarioControl",
+  "benchmarkImplementationRef": "docs/business/domains/dormitory/dormitory-scenario1-resource-basic-readiness.authority.json",
+  "controlAuthorityDigest": "sha256:8f94118eb550ec95f9848b62b6cfa933bf0bbe22b9602db216910fcce2a9b10a",
+  "benchmarkContractDigest": "sha256:9a4e1ed9152dd8d53ac1767a2427d52564a1277ab157227e0a69d3016c1b61fb",
+  "scenario1SourceDigest": "sha256:480980f4c45e3e1cacc8a40876eb8d2b54c1a735b3849a5ad7996fdd88747d3b",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "template": {
+    "requiredColumns": [
+      "场景编号",
+      "步骤编号",
+      "页面名称",
+      "用户动作",
+      "预期结果",
+      "实际结果",
+      "截图路径",
+      "问题",
+      "建议",
+      "是否闭环"
+    ],
+    "positiveCoverageZh": "正向截图必须覆盖完整主流程。",
+    "negativeCoverage": [
+      "缺字段",
+      "缺证据",
+      "重复提交",
+      "并发冲突",
+      "伪造内部 ID",
+      "越权操作",
+      "跨场景提前操作",
+      "搜索写事实",
+      "已确认事实原地编辑"
+    ],
+    "evidenceLayering": {
+      "singleScenario": "单场景只要求局部证据 PASS。",
+      "integrationStage": "阶段集成要求集成证据 PASS。",
+      "fullChainStage": "全链路阶段再要求 Evidence Root PASS。"
+    },
+    "rootEvidenceRuleZh": "不得要求每个小改动都完整重跑全链路 Evidence Root；任何进入集成闭环的变更必须最终纳入 Evidence Root。"
+  },
+  "testStandardFromControl": {
+    "perScenarioRequiredEvidence": [
+      "positiveBrowserScreenshot",
+      "negativeBrowserScreenshot",
+      "screenshotAnalysis",
+      "noSideEffectsProof"
+    ],
+    "globalNegativeCases": [
+      "缺字段",
+      "缺证据",
+      "重复提交",
+      "并发冲突",
+      "伪造内部 ID",
+      "越权操作",
+      "跨场景提前操作",
+      "搜索写事实",
+      "报表写事实",
+      "已确认事实原地编辑",
+      "直接写账",
+      "旧包越权"
+    ],
+    "screenshotAnalysisRequiredQuestions": [
+      "用户是否看得懂",
+      "字段是否合理",
+      "按钮是否顺",
+      "是否暴露内部 ID",
+      "是否误导为下游状态"
+    ]
+  }
+}

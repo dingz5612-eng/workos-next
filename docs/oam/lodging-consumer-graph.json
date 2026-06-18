@@ -1,0 +1,263 @@
+{
+  "version": "oam.lodging-consumer-graph.v1",
+  "status": "authoritative",
+  "purposeZh": "登记住宿经营 13 场景 generated 合同的全部当前消费者；未登记消费者不得消费住宿经营业务合同。",
+  "mainlineRef": "docs/oam/dormitory-mainline-manifest.json",
+  "generatedDigestPolicy": "sha256-current-file",
+  "hardBoundaries": {
+    "unregisteredConsumerAllowed": false,
+    "firstGoldenChainAsCurrentBusinessEntryAllowed": false,
+    "wStayResourceAsCurrentSeedAllowed": false,
+    "browserAuditMayUseFirstGoldenChainAsCurrentMainAudit": false,
+    "evidenceRootMayBindOnlyLegacyEvidence": false
+  },
+  "requiredConsumers": [
+    "mobile_surface",
+    "runtime",
+    "search",
+    "today",
+    "workitems",
+    "mine",
+    "unit_tests",
+    "contract_tests",
+    "browser_audits",
+    "evidence_root",
+    "ci"
+  ],
+  "consumers": [
+    {
+      "consumerId": "mobile_surface",
+      "nameZh": "mobile surface",
+      "layer": "surface",
+      "ownedPathPrefixes": [
+        "apps/mobile/src/"
+      ],
+      "generatedContractRefs": [
+        "apps/mobile/src/generated/oam/dormitory-13-scenario-control.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-scenario1-resource-basic-readiness.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-scenario2-resource-operation-status.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-scenario3-product-and-pricing.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-scenario4-inquiry-and-quote.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-scenario5-reservation-and-inventory-hold.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-scenario6-payment-deposit-and-guarantee.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-scenario7-check-in-processing.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-scenario8-in-stay-management.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-scenario9-checkout-settlement.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-scenario10-cancel-noshow-refund.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-scenario11-housekeeping-maintenance-outofservice.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-scenario12-channel-corporate-customer.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-scenario13-reporting-audit-review.generated.json"
+      ],
+      "legacyAllowed": false,
+      "legacyReadonly": false,
+      "currentMainAudit": false,
+      "blockingGate": "SURFACE_CURRENT_MAINLINE",
+      "verificationScripts": [
+        "node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs",
+        "node scripts/oam/check-business-ui-copy-no-technical-leak.mjs"
+      ]
+    },
+    {
+      "consumerId": "runtime",
+      "nameZh": "runtime",
+      "layer": "runtime",
+      "ownedPathPrefixes": [
+        "services/core-api/WorkOS.Api/Runtime/"
+      ],
+      "generatedContractRefs": [
+        "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioControl.generated.json"
+      ],
+      "legacyAllowed": true,
+      "legacyReadonly": true,
+      "currentMainAudit": false,
+      "blockingGate": "RUNTIME_GENERATED_CONSUMPTION",
+      "verificationScripts": [
+        "node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs"
+      ]
+    },
+    {
+      "consumerId": "search",
+      "nameZh": "search",
+      "layer": "read-model",
+      "ownedPathPrefixes": [
+        "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+        "apps/mobile/src/searchIntentHub.js"
+      ],
+      "generatedContractRefs": [
+        "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-handoff-summaries.generated.json"
+      ],
+      "legacyAllowed": false,
+      "legacyReadonly": false,
+      "currentMainAudit": false,
+      "blockingGate": "SEARCH_READONLY_MAINLINE",
+      "verificationScripts": [
+        "node scripts/oam/check-search-command-object-query-split.mjs"
+      ]
+    },
+    {
+      "consumerId": "today",
+      "nameZh": "今日",
+      "layer": "surface",
+      "ownedPathPrefixes": [
+        "apps/mobile/src/views/homeView.js",
+        "apps/mobile/src/views/workspaceView.js"
+      ],
+      "generatedContractRefs": [
+        "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-13-scenario-control.generated.json"
+      ],
+      "legacyAllowed": false,
+      "legacyReadonly": false,
+      "currentMainAudit": false,
+      "blockingGate": "TODAY_PASSIVE_TASKS_ONLY",
+      "verificationScripts": [
+        "node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs"
+      ]
+    },
+    {
+      "consumerId": "workitems",
+      "nameZh": "工作项",
+      "layer": "surface",
+      "ownedPathPrefixes": [
+        "apps/mobile/src/views/workbenchView.js",
+        "apps/mobile/src/views/workspaceView.js"
+      ],
+      "generatedContractRefs": [
+        "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-13-scenario-control.generated.json"
+      ],
+      "legacyAllowed": false,
+      "legacyReadonly": false,
+      "currentMainAudit": false,
+      "blockingGate": "WORKITEMS_PASSIVE_POOL",
+      "verificationScripts": [
+        "node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs"
+      ]
+    },
+    {
+      "consumerId": "mine",
+      "nameZh": "我的",
+      "layer": "surface",
+      "ownedPathPrefixes": [
+        "apps/mobile/src/views/meView.js",
+        "apps/mobile/src/views/workspaceView.js"
+      ],
+      "generatedContractRefs": [
+        "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json",
+        "apps/mobile/src/generated/oam/dormitory-13-scenario-control.generated.json"
+      ],
+      "legacyAllowed": false,
+      "legacyReadonly": false,
+      "currentMainAudit": false,
+      "blockingGate": "MINE_PERSONAL_SCOPE_ONLY",
+      "verificationScripts": [
+        "node scripts/business/check-dormitory-13-scenario-consumption-boundary.mjs"
+      ]
+    },
+    {
+      "consumerId": "unit_tests",
+      "nameZh": "unit tests",
+      "layer": "test",
+      "ownedPathPrefixes": [
+        "tests/"
+      ],
+      "generatedContractRefs": [
+        "docs/contracts/generated/dormitory/13-scenario-control.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-index.generated.json"
+      ],
+      "legacyAllowed": true,
+      "legacyReadonly": true,
+      "currentMainAudit": false,
+      "blockingGate": "UNIT_TEST_BOUNDARY",
+      "verificationScripts": [
+        "dotnet test"
+      ]
+    },
+    {
+      "consumerId": "contract_tests",
+      "nameZh": "contract tests",
+      "layer": "test",
+      "ownedPathPrefixes": [
+        "scripts/business/",
+        "scripts/oam/"
+      ],
+      "generatedContractRefs": [
+        "docs/contracts/generated/dormitory/13-scenario-control.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-index.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-test-plan.generated.json"
+      ],
+      "legacyAllowed": true,
+      "legacyReadonly": true,
+      "currentMainAudit": false,
+      "blockingGate": "CONTRACT_TEST_BOUNDARY",
+      "verificationScripts": [
+        "node scripts/business/check-dormitory-13-scenario-generated-contracts.mjs",
+        "node scripts/oam/check-dormitory-mainline-manifest.mjs"
+      ]
+    },
+    {
+      "consumerId": "browser_audits",
+      "nameZh": "browser audits",
+      "layer": "browser",
+      "ownedPathPrefixes": [
+        "scripts/surface/",
+        "apps/mobile/e2e/"
+      ],
+      "generatedContractRefs": [
+        "docs/contracts/generated/dormitory/13-scenario-test-plan.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json"
+      ],
+      "legacyAllowed": true,
+      "legacyReadonly": true,
+      "currentMainAudit": false,
+      "blockingGate": "BROWSER_CURRENT_MAIN_AUDIT",
+      "verificationScripts": [
+        "node scripts/surface/audit-dormitory-scenario-browser.mjs"
+      ]
+    },
+    {
+      "consumerId": "evidence_root",
+      "nameZh": "Evidence Root",
+      "layer": "evidence",
+      "ownedPathPrefixes": [
+        "artifacts/oam/evidence/",
+        "artifacts/oam/checks/",
+        "docs/oam/evidence-attestation-packages/"
+      ],
+      "generatedContractRefs": [
+        "docs/contracts/generated/dormitory/13-scenario-control.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-test-plan.generated.json"
+      ],
+      "legacyAllowed": true,
+      "legacyReadonly": true,
+      "currentMainAudit": false,
+      "mustBindCurrentMainline": true,
+      "blockingGate": "EVIDENCE_ROOT_CURRENT_MAINLINE",
+      "verificationScripts": [
+        "node scripts/oam/check-current-evidence-root.mjs"
+      ]
+    },
+    {
+      "consumerId": "ci",
+      "nameZh": "CI",
+      "layer": "ci",
+      "ownedPathPrefixes": [
+        ".github/"
+      ],
+      "generatedContractRefs": [
+        "docs/contracts/generated/dormitory/13-scenario-control.generated.json"
+      ],
+      "legacyAllowed": false,
+      "legacyReadonly": false,
+      "currentMainAudit": false,
+      "blockingGate": "CI_MAINLINE_GATES",
+      "verificationScripts": [
+        "node scripts/oam/check-current-oam.mjs",
+        "node scripts/business/check-dormitory-13-scenario-control-authority.mjs",
+        "node scripts/business/check-dormitory-13-scenario-generated-contracts.mjs"
+      ]
+    }
+  ],
+  "verificationScript": "scripts/oam/check-lodging-consumer-graph.mjs"
+}

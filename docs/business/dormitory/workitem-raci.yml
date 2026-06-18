@@ -62,6 +62,78 @@
       ]
     },
     {
+      "workItemType": "Dorm.OperationResourceSelect",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.OperationInspectionConfirm",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.OperationStatusDraft",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.OperationStatusChangeConfirm",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.OperationBlockerUpdate",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.OperationRestoreConfirm",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
       "workItemType": "Dorm.LeadCapture",
       "responsible": "宿舍经办人",
       "accountable": "宿舍经办人",

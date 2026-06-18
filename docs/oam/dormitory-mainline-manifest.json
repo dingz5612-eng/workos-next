@@ -1,0 +1,118 @@
+{
+  "version": "oam.dormitory-mainline-manifest.v1",
+  "status": "authoritative",
+  "purposeZh": "住宿经营当前唯一主链治理清单；旧链只能作为历史、迁移、只读证据或测试夹具，不得驱动当前业务路径。",
+  "activeMainlines": [
+    {
+      "id": "Dormitory.13ScenarioMainline",
+      "nameZh": "住宿经营 13 场景总控",
+      "sourceAuthorityRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+      "generatedContractRefs": [
+        "docs/contracts/generated/dormitory/13-scenario-control.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-index.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-state-ladder.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-object-ownership.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-field-source-matrix.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-crud-policy.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-evidence-policy.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-finance-boundary.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-page-entry-policy.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-handoff-summaries.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-old-package-migration.generated.json",
+        "docs/contracts/generated/dormitory/13-scenario-test-plan.generated.json"
+      ],
+      "current": true,
+      "productionConfirmAllowed": false,
+      "releaseAuthority": false,
+      "finalGoNoGo": "NO_GO"
+    }
+  ],
+  "forbiddenActiveMainlineIdentities": [
+    "Dormitory.FirstGoldenChain",
+    "W-STAY-RESOURCE",
+    "roomSetup",
+    "bedSetup",
+    "roomReadiness",
+    "roomRelease",
+    "resource-saleability",
+    "lead-reservation"
+  ],
+  "legacyIdentities": [
+    {
+      "identity": "Dormitory.FirstGoldenChain",
+      "allowedCategories": [
+        "legacy_readonly",
+        "historical_evidence",
+        "test_fixture",
+        "documentation_archive",
+        "migration_reference"
+      ],
+      "activeMainlineAllowed": false
+    },
+    {
+      "identity": "W-STAY-RESOURCE",
+      "allowedCategories": [
+        "legacy_readonly",
+        "historical_evidence",
+        "test_fixture",
+        "documentation_archive",
+        "migration_reference"
+      ],
+      "activeMainlineAllowed": false
+    },
+    {
+      "identity": "resource-saleability",
+      "allowedCategories": [
+        "migration_reference",
+        "documentation_archive",
+        "generated_legacy_reference"
+      ],
+      "activeMainlineAllowed": false
+    },
+    {
+      "identity": "lead-reservation",
+      "allowedCategories": [
+        "migration_reference",
+        "documentation_archive",
+        "generated_legacy_reference"
+      ],
+      "activeMainlineAllowed": false
+    }
+  ],
+  "activePathForbidden": {
+    "mobileSurfaceCurrentBusinessEntry": true,
+    "searchCurrentBusinessEntry": true,
+    "runtimeBusinessFactWrite": true,
+    "browserCurrentMainAudit": true,
+    "evidenceRootCurrentProofOnlyOldChain": true
+  },
+  "currentMainlineConsumerFiles": [
+    "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json",
+    "docs/contracts/generated/dormitory/13-scenario-control.generated.json",
+    "apps/mobile/src/generated/oam/dormitory-13-scenario-control.generated.json",
+    "services/core-api/WorkOS.Api/Runtime/Dormitory13ScenarioControl.generated.json"
+  ],
+  "gates": [
+    {
+      "gateId": "MAINLINE_SINGLE_ACTIVE",
+      "ruleZh": "当前 active mainline 只能有一个。",
+      "blocking": true
+    },
+    {
+      "gateId": "FIRST_GOLDEN_CHAIN_NOT_CURRENT",
+      "ruleZh": "Dormitory.FirstGoldenChain 不得作为 current mainline。",
+      "blocking": true
+    },
+    {
+      "gateId": "W_STAY_RESOURCE_NOT_ACTIVE_SEED",
+      "ruleZh": "W-STAY-RESOURCE 不得作为当前住宿经营 active seed。",
+      "blocking": true
+    },
+    {
+      "gateId": "LEGACY_ONLY_ALLOWED_CATEGORIES",
+      "ruleZh": "旧链引用只能出现在 legacy_readonly、historical_evidence、test_fixture、generated_legacy_reference、documentation_archive 或 migration_reference。",
+      "blocking": true
+    }
+  ],
+  "verificationScript": "scripts/oam/check-dormitory-mainline-manifest.mjs"
+}

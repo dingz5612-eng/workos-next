@@ -1,0 +1,209 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-bed-cardinality.generated",
+  "generatorVersion": "oam.capability-compiler.v1",
+  "generatedBy": "scripts/oam/compile-current-capability.mjs",
+  "generatedFrom": [
+    "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+    "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+    "docs/oam/generated-candidate-acceptance.current.json",
+    "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json",
+    "docs/business/domains/dormitory/dormitory-object-graph.authority.json",
+    "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json",
+    "docs/business/domains/dormitory/dormitory-invariants.authority.json",
+    "docs/business/domains/dormitory/dormitory-command-contracts.authority.json",
+    "docs/business/domains/dormitory/dormitory-failure-semantics.authority.json",
+    "docs/contracts/generated/dormitory/scenario1-runtime-rules.generated.json",
+    "docs/contracts/generated/dormitory/scenario1-steps-fields.generated.json",
+    "docs/contracts/generated/dormitory/scenario1-surface-navigation.generated.json",
+    "docs/contracts/generated/dormitory/workitems.generated.json",
+    "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+    "docs/contracts/generated/dormitory/field-bindings.generated.json",
+    "docs/oam/dormitory-runtime-admission.current.json",
+    "docs/oam/dormitory-first-golden-chain-landing.current.json",
+    "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
+    "docs/oam/visible-business-copy-contract.json"
+  ],
+  "inputDigest": "sha256:883b808589e1d525d25e13b70fa9213514111d30b019f6b05489c71f8611dea3",
+  "inputDigests": [
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+      "digest": "sha256:d1581f72ca277a28ca88fd593d7685afd5b777dabbb5adeda9cb320a1c522683"
+    },
+    {
+      "path": "docs/oam/capabilities/dormitory-first-golden-chain.current.json",
+      "digest": "sha256:27471104478127fd64d8b0e5a2606b8cdd2563cb4c0729df8ef1bf9d76741358"
+    },
+    {
+      "path": "docs/oam/generated-candidate-acceptance.current.json",
+      "digest": "sha256:a7a164cce047cf0ff9de672809a8743b5abf3be0896e48de5a6391c1246d8495"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json",
+      "digest": "sha256:9ce77be50ff154ca2b9b4ea0596a355d90df14243def531fa86a96d21888667c"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-object-graph.authority.json",
+      "digest": "sha256:ec88f95018ec68f77d296b5523a4cdebc5cf02e60306221f6be0f65af0d4cb2b"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json",
+      "digest": "sha256:3454ea277857dbf96e56dd9599a4a240834fad8d2ee3516e6e0fe4f1ad6c02a5"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-invariants.authority.json",
+      "digest": "sha256:03957e3ed19b8f49676e7296f0cce71b33fd6fc32693701c9345220760f6a923"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-command-contracts.authority.json",
+      "digest": "sha256:02e2ffa50248f34ddd989d433fb644021c80308324049b48b80029023a26f781"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-failure-semantics.authority.json",
+      "digest": "sha256:20f0047625dc110569535b1a1780ecd64bf03d8a933b70efc2eb372786c5a0ee"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/scenario1-runtime-rules.generated.json",
+      "digest": "sha256:a0233f7ce04f3ebf6037240a3033c79d69ba13eb14456cfacb1d5304ffe41bab"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/scenario1-steps-fields.generated.json",
+      "digest": "sha256:21ac193280966e91ca138848611e062cf5741e1077c71d45c5004b4447e3284d"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/scenario1-surface-navigation.generated.json",
+      "digest": "sha256:839e4bf1d4d0991e1cdfbc6fa694bd8d3594ed5681ce019e164e3646e42693e9"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/workitems.generated.json",
+      "digest": "sha256:3676fbf68ff31b48b55173875eead9ec843a435bf8fc7cc0cb82aca8af397338"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+      "digest": "sha256:6776df700885f4c5d3aad50d96b3f0583e17b00faf3a6617b5b4fea7e9853af3"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+      "digest": "sha256:d37fda52e36f31b75473dc95fbdf83644bd891266334a1008c9e650bedf19d0f"
+    },
+    {
+      "path": "docs/oam/dormitory-runtime-admission.current.json",
+      "digest": "sha256:96429e0b08783958909ba81b2339c837b2321efca03949c76945fee2fd898d95"
+    },
+    {
+      "path": "docs/oam/dormitory-first-golden-chain-landing.current.json",
+      "digest": "sha256:f99dbc4d22d67bd74803d0ce9b9e4d32d8769f2c3212f91d27521335acd59382"
+    },
+    {
+      "path": "docs/oam/environment-profiles/current-runtime-evidence.environment-profile.json",
+      "digest": "sha256:69085b5c102cd8ba16e2c61c9b666fc3e622bc5747fc5ccc48551e5a0e6583e6"
+    },
+    {
+      "path": "docs/oam/visible-business-copy-contract.json",
+      "digest": "sha256:1c304d60ac5612329f621bf5abca7c784012f6f0fd6044408c26b367cec9ab80"
+    }
+  ],
+  "outputContentDigest": "sha256:af77a4db58055c8d1367d6edfbb822347049bdd359f9691eff6a84b806945d3a",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "acceptedGeneratedBundleDigest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
+  "currentFilesMode": "ledger_replay_projection_only",
+  "capabilityLedgerReplay": {
+    "status": "PASS",
+    "eventCount": 56
+  },
+  "lifecycleState": "RUNTIME_TEST_ADMITTED",
+  "runtimeAdmissionStatus": "APPROVED_TEST_ONLY_RUNTIME_CONSUMPTION",
+  "landingStatus": "PENDING_BUSINESS_LANDING_REVIEW",
+  "environmentProfileId": "local.in_memory.browser_evidence",
+  "version": "oam.dormitory.bed-cardinality.generated.v1",
+  "sourceAuthorityRefs": {
+    "capabilityDecisionAuthority": "docs/business/domains/dormitory/dormitory-first-golden-chain.capability-decision.authority.json",
+    "objectGraphAuthority": "docs/business/domains/dormitory/dormitory-object-graph.authority.json",
+    "bedCardinalityAuthority": "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json",
+    "invariantAuthority": "docs/business/domains/dormitory/dormitory-invariants.authority.json",
+    "commandContractAuthority": "docs/business/domains/dormitory/dormitory-command-contracts.authority.json",
+    "failureSemanticsAuthority": "docs/business/domains/dormitory/dormitory-failure-semantics.authority.json",
+    "scenario1RuntimeRules": "docs/contracts/generated/dormitory/scenario1-runtime-rules.generated.json"
+  },
+  "canonicalBedQuantity": "room.bedCount",
+  "acceptedInputAliases": [
+    {
+      "field": "capacity",
+      "normalizesTo": "room.bedCount"
+    },
+    {
+      "field": "bedCount",
+      "normalizesTo": "room.bedCount"
+    }
+  ],
+  "rules": [
+    {
+      "generatedRuleId": "dormitory.bed_cardinality.capacity_1_exactly_bed_01",
+      "sourceAuthorityRef": "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json",
+      "sourceRuleId": "capacity_1_exactly_bed_01",
+      "ruleId": "capacity_1_exactly_bed_01",
+      "when": "room.bedCount == 1",
+      "creates": [
+        "Dormitory.Bed[01]"
+      ],
+      "generatedBedCount": 1
+    },
+    {
+      "generatedRuleId": "dormitory.bed_cardinality.capacity_n_exactly_bed_01_to_n",
+      "sourceAuthorityRef": "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json",
+      "sourceRuleId": "capacity_n_exactly_bed_01_to_n",
+      "ruleId": "capacity_n_exactly_bed_01_to_n",
+      "when": "room.bedCount == N",
+      "creates": [
+        "Dormitory.Bed[01..N]"
+      ],
+      "generatedBedCount": "N"
+    },
+    {
+      "generatedRuleId": "dormitory.bed_cardinality.generated_bed_count_matches_room_bed_count",
+      "sourceAuthorityRef": "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json",
+      "sourceRuleId": "generated_bed_count_matches_room_bed_count",
+      "ruleId": "generated_bed_count_matches_room_bed_count",
+      "expression": "generatedBedCount == room.bedCount"
+    },
+    {
+      "generatedRuleId": "dormitory.bed_cardinality.resource_readiness_blocked_until_complete_bed_set",
+      "sourceAuthorityRef": "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json",
+      "sourceRuleId": "resource_readiness_blocked_until_complete_bed_set",
+      "ruleId": "resource_readiness_blocked_until_complete_bed_set",
+      "blockedCommand": "Dorm.ResourceReadinessConfirm",
+      "when": "createdBedCount < room.bedCount",
+      "failureCode": "bed_count_not_satisfied"
+    },
+    {
+      "generatedRuleId": "dormitory.bed_cardinality.same_room_same_bed_no_forbidden",
+      "sourceAuthorityRef": "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json",
+      "sourceRuleId": "same_room_same_bed_no_forbidden",
+      "ruleId": "same_room_same_bed_no_forbidden",
+      "scope": "same roomStableRef + same normalizedBedNo",
+      "allowed": false,
+      "failureCode": "bed_already_exists"
+    },
+    {
+      "generatedRuleId": "dormitory.bed_cardinality.different_room_same_bed_no_allowed",
+      "sourceAuthorityRef": "docs/business/domains/dormitory/dormitory-bed-cardinality.authority.json",
+      "sourceRuleId": "different_room_same_bed_no_allowed",
+      "ruleId": "different_room_same_bed_no_allowed",
+      "scope": "different roomStableRef + same normalizedBedNo",
+      "allowed": true
+    }
+  ],
+  "authorityBoundaries": {
+    "roomNoGlobalUniqueAllowed": false,
+    "bedNoGlobalUniqueAllowed": false,
+    "userSubmittedRoomIdTrusted": false,
+    "userSubmittedBedIdTrusted": false,
+    "userSubmittedBuildingContextRefTrusted": false,
+    "runtimeUiTestMayInventBedCardinalityRules": false,
+    "wStayResourceAsCurrentProofAllowed": false
+  },
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO"
+}

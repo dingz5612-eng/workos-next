@@ -1,0 +1,130 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario6-testPlan.generated",
+  "version": "oam.dormitory-scenario6-testPlan.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario6-payment-deposit-and-guarantee-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario6-payment-deposit-and-guarantee-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:728f2da1a8cce479fad0139d66a71f2c5df6bfe4fde02dc8be476179cd2c08a5",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario6-payment-deposit-and-guarantee.authority.json",
+      "digest": "sha256:b1efd73f8434736d54338d3cfa6bbc910f503b8eeb0164c00708031469684514"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:b1efd73f8434736d54338d3cfa6bbc910f503b8eeb0164c00708031469684514",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario6.PaymentDepositAndGuarantee",
+  "scenarioPackageNo": 6,
+  "scenarioId": "lodging.payment-deposit-and-guarantee",
+  "outputContentDigest": "sha256:0ebc4dcf192c65a3c2c2a9e5e82000a850d5b317a1979c64715774ad2acb0cd6",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "收款、押金与担保",
+  "businessGoalZh": "承接场景包 5 已确认预订，生成应收、押金和担保要求，采集收款凭证、押金凭证和担保信息，并通过 finance-gate 完成财务确认。",
+  "sourceScenarioDigest": "sha256:b1efd73f8434736d54338d3cfa6bbc910f503b8eeb0164c00708031469684514",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario6.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "PaymentRequirement",
+      "PaymentIntent",
+      "PaymentReceiptEvidence",
+      "DepositRequirement",
+      "DepositIntent",
+      "DepositGuarantee",
+      "FinanceReviewRequest",
+      "FinanceConfirmationSnapshot",
+      "PaymentStatusHistory",
+      "DepositStatusHistory"
+    ],
+    "searchReadModel": [
+      "收款、押金与担保",
+      "收款确认摘要",
+      "押金确认摘要",
+      "担保确认摘要",
+      "剩余待收",
+      "财务确认状态",
+      "证据摘要",
+      "只读对象引用",
+      "收款/押金/担保确认摘要",
+      "财务状态"
+    ],
+    "noRefillRuleZh": "场景包 6 只能读取预订和价格/报价只读摘要，不得要求用户重新填写房间、床位、报价或预订字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "positiveBrowserTestPlan": [
+    "从已确认预订进入收款押金办理。",
+    "查看应收和押金要求。",
+    "提交房费/订金凭证。",
+    "提交押金凭证。",
+    "提交担保信息。",
+    "进入财务确认。",
+    "财务确认房费。",
+    "财务确认押金。",
+    "查看确认摘要。",
+    "查看进入入住办理准备。",
+    "查看今日、工作项、搜索、我的入口表现。"
+  ],
+  "negativeBrowserTestPlan": [
+    "未确认预订进入本包。",
+    "缺凭证提交。",
+    "金额为 0 或负数。",
+    "币种不一致。",
+    "押金标记为收入。",
+    "担保标记为已收款。",
+    "非授权角色财务确认。",
+    "伪造 reservationId、paymentId、depositId、ledgerEntryId。",
+    "搜索结果直接写收款。",
+    "业务侧绕过 finance-gate 写账。",
+    "财务退回后原地覆盖凭证。",
+    "重复提交。",
+    "并发确认。",
+    "收款确认后直接入住。"
+  ],
+  "evidence": {
+    "requiredEvidenceByStep": {
+      "enter-payment-deposit-processing": [
+        "预订确认摘要证据"
+      ],
+      "confirm-payment-and-deposit-requirements": [
+        "应收依据证据",
+        "押金政策证据"
+      ],
+      "submit-payment-receipt-evidence": [
+        "收款凭证"
+      ],
+      "submit-deposit-or-guarantee": [
+        "押金凭证",
+        "担保证据"
+      ],
+      "finance-gate-confirmation": [
+        "财务确认凭证",
+        "finance-gate 审核证据"
+      ],
+      "output-finance-ready-summary": [
+        "财务确认摘要证据"
+      ]
+    },
+    "noSideEffectsProofRequired": true,
+    "screenshotAnalysisRequired": true,
+    "financeGateEvidenceRequired": true,
+    "localEvidencePassAllowed": true,
+    "evidenceRootRequiredAtIntegration": true
+  },
+  "screenshotAnalysisRequired": true,
+  "noSideEffectsProofRequired": true,
+  "financeGateEvidenceRequired": true
+}

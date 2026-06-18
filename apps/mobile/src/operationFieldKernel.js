@@ -1,15 +1,19 @@
 import { bedLayoutForCount, labelForBedType, normalizeBedTypePattern } from "./controls/bedLabelControls.js";
 import { optionsForField } from "./controls/fieldControls.js";
+import { defaultBedTypeForCount, generatedFieldLabel, generatedFieldOrderForCard, isBedSetupCardId } from "./capabilityProjection.js";
 
 const operationFieldAliases = {
   "楼栋": "buildingName",
   "楼栋/地点": "buildingName",
+  "楼栋/区域": "buildingContextRef",
   "buildingId": "buildingName",
   "房间号": "roomNo",
   "房型": "roomType",
   "房间类型": "roomType",
   "容量": "capacity",
   "床位数": "bedCount",
+  "capacity": "capacity",
+  "楼层": "floor",
   "bedId": "bedId",
   "bedNo": "bedNo",
   "bedLabel": "bedLabel",
@@ -18,9 +22,9 @@ const operationFieldAliases = {
   "家具状态": "furnitureStatus",
   "技术状态": "technicalState",
   "房间备注": "roomNote",
-  "所属房间": "roomId",
-  "房间": "roomId",
-  "关联房间": "roomId",
+  "所属房间": "roomRef",
+  "房间": "roomRef",
+  "关联房间": "roomRef",
   "床位": "bedId",
   "关联床位": "bedId",
   "床位号": "bedNo",
@@ -43,6 +47,7 @@ const operationFieldAliases = {
   "生效日期": "effectiveFrom",
   "价格备注": "rateNote",
   "可售状态": "availabilityStatus",
+  "就绪状态": "readinessState",
   "紧急程度": "urgency",
   "负责人": "ownerName",
   "是否阻断可售": "blocksAvailability",
@@ -96,11 +101,9 @@ const operationFieldAliases = {
   "住客": "residentId",
   "入住人": "residentId",
   "住客姓名": "residentName",
-  "证件类型": "identityType",
   "证件号码": "identityNo",
   "性别": "gender",
   "国籍": "nationality",
-  "紧急联系人": "emergencyContactName",
   "紧急联系电话": "emergencyContactPhone",
   "房间床位": "roomBed",
   "入住周期": "stayPeriod",
@@ -125,12 +128,34 @@ const operationFieldAliases = {
   "免押原因": "depositWaiverReason",
   "押金单": "depositId",
   "押金收款记录": "depositReceiptId",
+  "对应收款项目": "paymentItem",
+  "收款项目": "paymentItem",
+  "是否分笔": "splitPayment",
+  "是否需要押金": "depositRequired",
+  "是否需要担保": "guaranteeRequired",
   "付款人": "payerName",
+  "实收金额": "receivedAmount",
   "实收押金金额": "receivedAmount",
   "收取日期": "receivedDate",
+  "收款时间": "paymentTime",
+  "收款方式": "paymentMethod",
   "支付方式": "paymentMethod",
   "收款人": "receivedBy",
   "押金凭证": "depositEvidenceId",
+  "押金金额": "depositAmount",
+  "押金": "depositOption",
+  "押金方式": "depositMethod",
+  "担保": "guaranteeOption",
+  "预授权": "preAuthorizationOption",
+  "担保人/担保方式": "guaranteeMethod",
+  "担保有效期": "guaranteeValidUntil",
+  "确认": "financeConfirm",
+  "退回补证": "financeReturnForEvidence",
+  "部分确认": "financePartialConfirm",
+  "标记异常": "financeMarkException",
+  "财务确认备注": "financeConfirmRemark",
+  "退回原因": "financeReturnReason",
+  "财务退回原因": "financeReturnReason",
   "确认金额": "confirmedAmount",
   "确认结果": "confirmationResult",
   "匹配结果": "matchResult",
@@ -287,15 +312,28 @@ const operationFieldAliases = {
 
 const taskValueAliases = {
   buildingName: ["building_name", "building", "buildingId", "building_id", "楼栋", "楼栋/地点"],
-  roomId: ["room_id", "roomLabel", "room_label", "roomDisplay", "room_display", "所属房间", "房间", "关联房间"],
+  roomRef: ["roomRef", "room_ref", "roomId", "room_id", "roomLabel", "room_label", "roomDisplay", "room_display", "所属房间", "房间", "关联房间"],
+  roomId: ["room_id", "roomRef", "room_ref", "roomLabel", "room_label", "roomDisplay", "room_display", "所属房间", "房间", "关联房间"],
   roomNo: ["room_no", "roomNumber", "room_number", "房间号"],
   roomType: ["room_type", "房型", "房间类型"],
   bedCount: ["bed_count", "capacity", "容量", "床位数", "需要床位"],
   capacity: ["bedCount", "bed_count", "容量", "床位数"],
+  buildingContextRef: ["building_context_ref", "buildingContext", "buildingName", "楼栋", "楼栋/区域"],
+  roomRemark: ["room_remark", "roomNote", "房间备注"],
   genderPolicy: ["gender_policy", "性别策略"],
   bedId: ["bed_id", "bedLabel", "bed_label", "bedNo", "bed_no", "床位", "关联床位", "床位号"],
   bedLabels: ["bed_labels", "bedLabel", "bed_label", "bedNo", "bed_no", "床位标签", "床位编号", "将生成的床位"],
   bedType: ["bed_type", "bunkType", "bunk_type", "床铺类型", "床位类型", "床型模板", "上/下铺", "床铺生成方式"],
+  bedRemark: ["bed_remark", "床位备注"],
+  specialNotes: ["special_notes", "特殊说明"],
+  bedEnabledStatus: ["bed_enabled_status", "床位启用状态", "启用状态"],
+  bedTypeBatchSetting: ["bed_type_batch_setting", "床型批量设置"],
+  basicCheckResult: ["basic_check_result", "基础检查结果"],
+  cleaningBasicCheckResult: ["cleaning_basic_check_result", "保洁基础检查结果", "保洁检查结果"],
+  facilityBasicCheckResult: ["facility_basic_check_result", "设施基础检查结果", "设施检查结果"],
+  safetyBasicCheckResult: ["safety_basic_check_result", "安全基础检查结果", "安全检查结果"],
+  readinessState: ["basicReadinessConclusion", "basic_readiness_conclusion", "基础就绪结论", "基础检查结论"],
+  basicReadinessRemark: ["basic_readiness_remark", "检查备注", "基础就绪备注"],
   residentName: ["resident_name", "customerName", "customer_name", "contactName", "contact_name", "guestName", "guest_name", "leadName", "lead_name", "name", "姓名", "线索姓名", "客户姓名", "客户"],
   leadName: ["lead_name", "线索姓名"],
   guestName: ["guest_name", "姓名"],
@@ -350,12 +388,29 @@ const taskValueAliases = {
   verificationNote: ["verification_note", "验收备注"],
   handlingOpinion: ["handling_opinion", "处理意见"],
   paymentAmount: ["payment_amount", "付款金额", "收款金额"],
-  receivedAmount: ["received_amount", "收到金额", "实收押金金额", "收款金额"],
+  receivedAmount: ["received_amount", "收到金额", "实收金额", "实收押金金额", "收款金额"],
   confirmedAmount: ["confirmed_amount", "确认金额"],
-  paymentMethod: ["payment_method", "付款方式", "支付方式"],
+  paymentMethod: ["payment_method", "付款方式", "收款方式", "支付方式"],
   payerName: ["payer_name", "付款人"],
   receivedDate: ["received_date", "收款日期", "收取日期"],
-  paymentTime: ["payment_time", "付款时间"],
+  paymentTime: ["payment_time", "付款时间", "收款时间"],
+  paymentItem: ["payment_item", "对应收款项目", "收款项目"],
+  splitPayment: ["split_payment", "是否分笔"],
+  depositRequired: ["deposit_required", "是否需要押金"],
+  guaranteeRequired: ["guarantee_required", "是否需要担保"],
+  depositAmount: ["deposit_amount", "押金金额"],
+  depositOption: ["deposit_option", "押金"],
+  depositMethod: ["deposit_method", "押金方式"],
+  guaranteeOption: ["guarantee_option", "担保"],
+  preAuthorizationOption: ["pre_authorization_option", "预授权"],
+  guaranteeMethod: ["guarantee_method", "担保人/担保方式"],
+  guaranteeValidUntil: ["guarantee_valid_until", "担保有效期"],
+  financeConfirm: ["finance_confirm", "确认"],
+  financeReturnForEvidence: ["finance_return_for_evidence", "退回补证"],
+  financePartialConfirm: ["finance_partial_confirm", "部分确认"],
+  financeMarkException: ["finance_mark_exception", "标记异常"],
+  financeConfirmRemark: ["finance_confirm_remark", "财务确认备注"],
+  financeReturnReason: ["finance_return_reason", "退回原因", "财务退回原因"],
   confirmationResult: ["confirmation_result", "确认结果"],
   matchResult: ["match_result", "匹配结果"],
   differenceReason: ["difference_reason", "varianceReason", "variance_reason", "差异原因"],
@@ -420,15 +475,28 @@ taskLabelAliases["关闭结果"] = "closeResult";
 const taskFallbackLabels = {
   "zh-CN": {
     buildingName: "楼栋",
+    buildingContextRef: "楼栋/区域",
+    roomRef: "所属房间",
     roomId: "房间",
     roomNo: "房间号",
     roomType: "房型",
     bedCount: "床位数",
     capacity: "床位数",
+    roomRemark: "房间备注",
     genderPolicy: "性别策略",
     bedId: "床位",
     bedLabels: "将生成的床位",
     bedType: "床铺生成方式",
+    bedRemark: "床位备注",
+    specialNotes: "特殊说明",
+    bedEnabledStatus: "床位启用状态",
+    bedTypeBatchSetting: "床型批量设置",
+    basicCheckResult: "基础检查结果",
+    cleaningBasicCheckResult: "保洁检查结果",
+    facilityBasicCheckResult: "设施检查结果",
+    safetyBasicCheckResult: "安全检查结果",
+    readinessState: "基础检查结论",
+    basicReadinessRemark: "检查备注",
     residentName: "客户",
     leadName: "线索姓名",
     guestName: "姓名",
@@ -462,14 +530,27 @@ const taskFallbackLabels = {
   },
   "ru-RU": {
     buildingName: "Корпус",
+    buildingContextRef: "Корпус/зона",
+    roomRef: "Комната",
     roomId: "Комната",
     roomNo: "Номер комнаты",
     roomType: "Тип комнаты",
     bedCount: "Количество коек",
     capacity: "Количество коек",
+    roomRemark: "Примечание к комнате",
     bedId: "Койка",
     bedLabels: "Будут созданы койки",
     bedType: "Как создать койки",
+    bedRemark: "Примечание к койке",
+    specialNotes: "Особые заметки",
+    bedEnabledStatus: "Статус койки",
+    bedTypeBatchSetting: "Пакетная настройка типа",
+    basicCheckResult: "Результат проверки",
+    cleaningBasicCheckResult: "Проверка уборки",
+    facilityBasicCheckResult: "Проверка оборудования",
+    safetyBasicCheckResult: "Проверка безопасности",
+    readinessState: "Итог проверки",
+    basicReadinessRemark: "Комментарий",
     residentName: "Клиент",
     leadName: "Имя лида",
     guestName: "Имя",
@@ -486,14 +567,27 @@ const taskFallbackLabels = {
   },
   "ky-KG": {
     buildingName: "Имарат",
+    buildingContextRef: "Имарат/аймак",
+    roomRef: "Бөлмө",
     roomId: "Бөлмө",
     roomNo: "Бөлмө номери",
     roomType: "Бөлмө түрү",
     bedCount: "Койка саны",
     capacity: "Койка саны",
+    roomRemark: "Бөлмө эскертүүсү",
     bedId: "Койка",
     bedLabels: "Түзүлө турган койкалар",
     bedType: "Койка түзүү жолу",
+    bedRemark: "Койка эскертүүсү",
+    specialNotes: "Өзгөчө эскертүү",
+    bedEnabledStatus: "Койка абалы",
+    bedTypeBatchSetting: "Койка түрүн топтом орнотуу",
+    basicCheckResult: "Текшерүү жыйынтыгы",
+    cleaningBasicCheckResult: "Тазалык текшерүүсү",
+    facilityBasicCheckResult: "Жабдуу текшерүүсү",
+    safetyBasicCheckResult: "Коопсуздук текшерүүсү",
+    readinessState: "Текшерүү жыйынтыгы",
+    basicReadinessRemark: "Эскертүү",
     residentName: "Кардар",
     leadName: "Лид аты",
     guestName: "Аты",
@@ -552,7 +646,7 @@ const preferredFieldsByCard = {
 };
 
 export function operationFieldId(field = {}) {
-  const rawId = String(field.id || "").trim();
+  const rawId = String(field.fieldId || field.id || "").trim();
   if (operationFieldAliases[rawId]) return operationFieldAliases[rawId];
   if (rawId && !hasCjk(rawId)) return rawId;
   return operationFieldAliases[field.label?.["zh-CN"]] || rawId || "";
@@ -578,14 +672,16 @@ export function taskFieldForId(card, fieldId, ctx) {
 }
 
 export function syntheticTaskField(fieldId, ctx = {}) {
+  const generatedLabel = generatedFieldLabel(fieldId, ctx.state?.lang || "zh-CN");
   return {
     id: fieldId,
     label: {
-      "zh-CN": taskFallbackLabels["zh-CN"][fieldId] || fieldId,
-      "ru-RU": taskFallbackLabels["ru-RU"][fieldId] || taskFallbackLabels["zh-CN"][fieldId] || fieldId,
-      "ky-KG": taskFallbackLabels["ky-KG"][fieldId] || taskFallbackLabels["zh-CN"][fieldId] || fieldId
+      "zh-CN": taskFallbackLabels["zh-CN"][fieldId] || generatedFieldLabel(fieldId, "zh-CN") || fieldId,
+      "ru-RU": taskFallbackLabels["ru-RU"][fieldId] || generatedFieldLabel(fieldId, "ru-RU") || taskFallbackLabels["zh-CN"][fieldId] || fieldId,
+      "ky-KG": taskFallbackLabels["ky-KG"][fieldId] || generatedFieldLabel(fieldId, "ky-KG") || taskFallbackLabels["zh-CN"][fieldId] || fieldId
     },
-    ui: fieldId === "bedType" ? { control: "select", optionSet: "bunkType", defaultValue: "bunk_pair" } : {}
+    ui: fieldId === "bedType" ? { control: "select", optionSet: "bunkType", defaultValue: "whole" } : {},
+    generatedLabel
   };
 }
 
@@ -610,10 +706,11 @@ export function taskFieldAliases(fieldId, field, ctx) {
 }
 
 export function taskDisplayLabel(field, fieldId, card, ctx) {
-  if (card?.id === "bedSetup" && fieldId === "bedType") return ctx.tr?.("bedTypeTemplateLabel") || taskFallbackLabels["zh-CN"].bedType;
-  if (card?.id === "bedSetup" && fieldId === "bedLabels") return ctx.tr?.("bedLayoutPreviewLabel") || taskFallbackLabels["zh-CN"].bedLabels;
+  const generated = generatedFieldLabel(fieldId, ctx.state?.lang || "zh-CN");
+  if (isBedSetupCardId(card?.id) && fieldId === "bedType") return ctx.tr?.("bedTypeTemplateLabel") || taskFallbackLabels["zh-CN"].bedType;
+  if (isBedSetupCardId(card?.id) && fieldId === "bedLabels") return ctx.tr?.("bedLayoutPreviewLabel") || taskFallbackLabels["zh-CN"].bedLabels;
   if (fieldId === "capacity") return taskFallbackLabels[ctx.state?.lang]?.bedCount || taskFallbackLabels["zh-CN"].bedCount;
-  return localizedFieldText(field?.label, ctx) || taskFallbackLabels[ctx.state?.lang]?.[fieldId] || taskFallbackLabels["zh-CN"][fieldId] || fieldId;
+  return localizedFieldText(field?.label, ctx) || taskFallbackLabels[ctx.state?.lang]?.[fieldId] || taskFallbackLabels["zh-CN"][fieldId] || generated || fieldId;
 }
 
 export function taskDisplayValue(field, fieldId, value, ctx) {
@@ -625,13 +722,14 @@ export function taskDisplayValue(field, fieldId, value, ctx) {
 export function bedLayoutPreviewValue(count, pattern, ctx) {
   const parsed = Number(count);
   if (!Number.isFinite(parsed) || parsed <= 0) return "";
-  return bedLayoutForCount(parsed, pattern, ctx.state?.lang || "zh-CN")
+  return bedLayoutForCount(parsed, pattern || defaultBedTypeForCount(parsed), ctx.state?.lang || "zh-CN")
     .map((entry) => `${entry.label} · ${entry.typeLabel || labelForBedType(entry.type, ctx.state?.lang || "zh-CN")}`)
     .join(" / ");
 }
 
 export function preferredTaskFieldIds(cardId = "") {
-  return preferredFieldsByCard[cardId] || [];
+  const generatedOrder = generatedFieldOrderForCard(cardId);
+  return generatedOrder.length ? generatedOrder : preferredFieldsByCard[cardId] || [];
 }
 
 export function isLowValueTaskField(field, ctx) {

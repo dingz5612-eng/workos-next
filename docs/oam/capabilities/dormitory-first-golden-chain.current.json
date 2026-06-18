@@ -1,0 +1,100 @@
+{
+  "version": "oam.capability-ledger-current-projection.v1",
+  "capabilityId": "Dormitory.FirstGoldenChain",
+  "projectionSource": "docs/oam/capabilities/dormitory-first-golden-chain.authority-ledger.json",
+  "registryRef": "docs/oam/capabilities/dormitory-first-golden-chain.registry.json",
+  "compatibilityBoxRef": "docs/oam/compatibility/compatibility-box.current.json",
+  "currentFilesMode": "ledger_replay_projection_only",
+  "activeAuthority": {
+    "capabilityId": "Dormitory.FirstGoldenChain",
+    "sourceClosureDigest": "sha256:a71f29aa0d7d4982f77af9e21b536d686ccd9342fbb0c3b59c59a2417870d8ab",
+    "generatedBundleDigest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
+    "acceptedGeneratedBundleDigest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
+    "runtimeConsumedBundleDigest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
+    "runtimeAdmissionDigest": "sha256:dea9d1d6676096f8b29a6494f11321f564328187f59bb644bd9aee3b95e62123",
+    "businessLandingDigest": null,
+    "productionConfirmationDigest": null,
+    "releaseAuthorityDigest": null
+  },
+  "generatedBundle": {
+    "digest": "sha256:c31377f76921ba01692a2b88115c4f780b72eecfe8b7ea0e2912e01deb10edfe",
+    "files": [
+      {
+        "path": "docs/contracts/admission/admission-contract.json",
+        "digest": "sha256:066a842f467fc629ef82f244eced3b03a07b6d94d144ba9b58daa65c932f49c4"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+        "digest": "sha256:0b358375125b3d302b6bc2fd54157a6a35778a7cb8c580dcc635874a70b262da"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/field-bindings.generated.json",
+        "digest": "sha256:3122cb090e2b09b4b345f622d5e802c95187f7b92be4e2d8e7ee511faa2f33cf"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/fields.generated.json",
+        "digest": "sha256:6d67668a4f3f9c51784ae83817c6a003df49b46da65551c8f26c83bcc428c7d5"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/read-model.generated.json",
+        "digest": "sha256:a08f81aca5249762b4840116e7325b7952a573c24d6389e26f5a23a6c7943656"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+        "digest": "sha256:2d66e8ac2696fd8032cda4e26041a3a78d5e4eb444d78b32ac7ab870e557a28d"
+      },
+      {
+        "path": "docs/contracts/generated/dormitory/workitems.generated.json",
+        "digest": "sha256:99f25f210a29b2d038f04eaa22d73b21695eacb403683f99ffbed2577e88ebed"
+      },
+      {
+        "path": "docs/oam/domain-derived-contracts.json",
+        "digest": "sha256:f48a0c3966999e12744ec5bbce8efefebe5c6313eba290f166c24cf094ef6a3d"
+      },
+      {
+        "path": "docs/oam/generated-contracts-manifest.json",
+        "digest": "sha256:448ab2a1f38b04b049c97872d1d354fbef52c2982c08d164e29751634d31ca08"
+      },
+      {
+        "path": "docs/oam/kernel/oam-kernel-graph.generated.json",
+        "digest": "sha256:92debf915692b1229b6ad0c59f31a0d48adf15aa87ab5017a53b04cb4709525f"
+      },
+      {
+        "path": "docs/oam/system-derived-contracts.json",
+        "digest": "sha256:b7c32bb1cdf6677a7ad620877b7bf63a48038e8c4a632320ae2b0968307b3e88"
+      }
+    ]
+  },
+  "lifecycleAchieved": [
+    "SOURCE_CLOSED",
+    "GENERATED_BUNDLE_BUILT",
+    "GENERATED_BUNDLE_ACCEPTED",
+    "RUNTIME_TEST_ADMITTED"
+  ],
+  "lifecycleNotAdmitted": [
+    "BUSINESS_LANDING_ADMITTED",
+    "PRODUCTION_CONFIRMED",
+    "RELEASE_AUTHORIZED"
+  ],
+  "runtimeTestConsumptionAdmitted": true,
+  "runtimeConsumptionReady": false,
+  "runtimeGoNoGo": "NO_GO",
+  "businessFeatureDevelopmentAllowed": false,
+  "businessLandingGoNoGo": "NO_GO",
+  "businessLandingDigestActive": null,
+  "productionConfirmAllowed": false,
+  "productionGoNoGo": "NO_GO",
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "legacyCurrentFilesAreAuthority": false,
+  "forbiddenInterpretations": [
+    "Evidence Root PASS is not capability delivery GO",
+    "CI PASS is not capability delivery GO",
+    "artifact exists is not capability delivery GO",
+    "browser audit PASS is not production confirmation",
+    "runtime test admission is not business landing",
+    "generated bundle acceptance is not release authority",
+    "capability projection is not production confirmation",
+    "current files are projections, not active authority identity"
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "dormitory-scenario2-crudPolicy.generated",
+  "version": "oam.dormitory-scenario2-crudPolicy.generated.v1",
+  "generatorVersion": "oam.dormitory-scenario2-resource-operation-status-generator.v1",
+  "generatedBy": "scripts/business/generate-dormitory-scenario2-resource-operation-status-contracts.mjs",
+  "generatedFrom": [
+    "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+    "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json"
+  ],
+  "inputDigest": "sha256:cddb492e94853f3a2fa63dfb38fdad290ecd2b2d2f0f6df9e83cf3de8adaa166",
+  "inputDigests": [
+    {
+      "path": "docs/business/domains/dormitory/dormitory-scenario2-resource-operation-status.authority.json",
+      "digest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57"
+    },
+    {
+      "path": "docs/business/domains/dormitory/lodging-scenario-package-index.authority.json",
+      "digest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce"
+    }
+  ],
+  "sourceContentDigest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57",
+  "packageIndexContentDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "authorityId": "Dormitory.Scenario2.ResourceOperationStatus",
+  "scenarioPackageNo": 2,
+  "scenarioId": "lodging.resource-operation-status",
+  "outputContentDigest": "sha256:08f1958a019d29170d56574039fe9f677754f7a51eaf84cf3908f16c0846e1ce",
+  "productionConfirmAllowed": false,
+  "releaseAuthority": false,
+  "finalGoNoGo": "NO_GO",
+  "nameZh": "房源运营就绪与状态维护",
+  "businessGoalZh": "承接场景包 1 已完成的房间建档、床位组确认、基础就绪确认摘要，完成房间或床位的运营检查、运营状态设置、阻断维护和恢复确认。",
+  "sourceScenarioDigest": "sha256:063ca5ea3d434672922c477602f502de66e20078912404e7bbdebfb47f466d57",
+  "packageIndexDigest": "sha256:f53620a392b52d4958f83279e5b7b7c5d94b505cbfc30d1f60850c356226c9ce",
+  "experienceContract": {
+    "version": "oam.dormitory.scenario2.operation-experience-contract.v1",
+    "modelRef": "docs/business/domains/dormitory/dormitory-13-scenario-control.authority.json#operationExperienceContract",
+    "languageContractRef": "docs/oam/visible-business-copy-contract.json",
+    "primaryBusinessObjects": [
+      "OperationResource",
+      "RoomOperationStatus",
+      "BedOperationStatus",
+      "OperationInspection",
+      "OperationBlocker",
+      "OperationStatusChange",
+      "OperationRestore",
+      "OperationEvidence",
+      "StatusHistory"
+    ],
+    "searchReadModel": [
+      "房源运营就绪与状态维护",
+      "房间/床位运营状态摘要",
+      "阻断原因",
+      "预计恢复时间",
+      "可否进入价格维护",
+      "证据摘要",
+      "状态历史",
+      "只读对象引用",
+      "运营状态摘要"
+    ],
+    "noRefillRuleZh": "场景包 2 只能读取场景包 1 的只读摘要，不得要求用户重新填写房间、床位组或基础就绪字段。",
+    "legalActionFieldClass": "legalAction",
+    "finalGoNoGo": "NO_GO"
+  },
+  "crudRules": {
+    "create": {
+      "ordinaryCreateButtonAllowed": false,
+      "buttonZh": "发起运营检查",
+      "alternateButtonsZh": [
+        "发起状态变更",
+        "发起恢复运营"
+      ],
+      "createsDraft": true
+    },
+    "draftEdit": {
+      "allowed": true,
+      "buttonsZh": [
+        "继续填写",
+        "保存草稿",
+        "撤销草稿"
+      ]
+    },
+    "confirmedFactEdit": {
+      "allowed": false,
+      "allowedChangePathsZh": [
+        "草稿修改",
+        "补充证据",
+        "追加状态变更",
+        "追加进度",
+        "关闭阻断",
+        "纠错申请",
+        "作废",
+        "恢复运营确认"
+      ]
+    },
+    "delete": {
+      "physicalDeleteConfirmedFactAllowed": false,
+      "roomOperationCanVoid": true,
+      "bedOperationCanDisable": true,
+      "wrongConfirmationCorrectionOnly": true
+    },
+    "read": {
+      "querySearchListBoardReportReadonly": true,
+      "readonlyEntriesZh": [
+        "列表",
+        "详情",
+        "今日",
+        "工作项",
+        "搜索",
+        "看板",
+        "报表"
+      ]
+    },
+    "requiredLifecyclePerObject": [
+      "currentState",
+      "statusHistory",
+      "evidenceHistory",
+      "legalNextActions"
+    ]
+  },
+  "requiredLifecyclePerObject": [
+    "currentState",
+    "statusHistory",
+    "evidenceHistory",
+    "legalNextActions"
+  ]
+}

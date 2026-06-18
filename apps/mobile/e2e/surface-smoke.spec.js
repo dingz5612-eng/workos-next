@@ -3,14 +3,14 @@ import { expect, test } from "@playwright/test";
 const workItem = {
   workItemId: "wi-e2e-room-setup",
   caseId: "case:e2e-room",
-  workItemType: "roomSetup",
+  workItemType: "Dorm.RoomSetupConfirm",
   lifecycleState: "ready",
   ownerRole: "operator",
-  workspaceId: "W-STAY-RESOURCE",
-  cardId: "roomSetup",
-  domain: "stay",
-  businessObject: "房间准备",
-  nextAction: "配置房间和床位后提交确认。",
+  workspaceId: "W-DORM-MAINLINE",
+  cardId: "cert.roomSetupConfirm",
+  domain: "dormitory",
+  businessObject: "房源建档与基础就绪",
+  nextAction: "房间建档确认",
   requiredEvidence: ["room_duplicate_check"],
   traceRefs: ["trace:e2e-room"],
   riskLevel: "P1",
@@ -29,16 +29,16 @@ const workItem = {
 const projection = {
   workspaces: [
     {
-      id: "W-STAY-RESOURCE",
-      domain: "stay",
-      title: { "zh-CN": "房间资源配置" },
-      summary: { "zh-CN": "配置房间和床位，准备宿舍 L1 内测资源。" },
-      next: { "zh-CN": "配置房间和床位后提交确认。" },
+      id: "W-DORM-MAINLINE",
+      domain: "dormitory",
+      title: { "zh-CN": "房源建档与基础就绪" },
+      summary: { "zh-CN": "完成房间建档、床位组确认和基础就绪确认。" },
+      next: { "zh-CN": "房间建档确认" },
       cards: [
         {
-          id: "roomSetup",
+          id: "cert.roomSetupConfirm",
           status: "ready",
-          title: { "zh-CN": "房间配置" },
+          title: { "zh-CN": "房间建档确认" },
           fields: {
             business: [
               { id: "roomId", label: { "zh-CN": "房间编号" }, type: "text" },
@@ -108,6 +108,16 @@ test.beforeEach(async ({ page }) => {
         }
       });
     }
+    if (url.pathname === "/api/operations/workspaces/start" && method === "POST") {
+      return route.fulfill({
+        json: {
+          workspace: projection.workspaces[0],
+          workItem,
+          operationWorkItems: [workItem],
+          projection
+        }
+      });
+    }
     if (url.pathname.endsWith("/prepare") && method === "POST") return route.fulfill({ json: { prepared: true, workItemId: workItem.workItemId } });
     if (url.pathname.endsWith("/confirm") && method === "POST") {
       return route.fulfill({
@@ -127,7 +137,7 @@ test.beforeEach(async ({ page }) => {
 
 function actorFor(role) {
   const actors = {
-    operator: { role: "operator", displayName: "内测经办人", token: "dev-e2e-token", capabilities: ["operations.confirm"] },
+    operator: { role: "operator", displayName: "住宿经办人", token: "dev-e2e-token", capabilities: ["operations.confirm"] },
     finance: { role: "finance", displayName: "财务确认人", token: "finance-e2e-token", capabilities: ["finance.control.view"] },
     manager: { role: "manager", displayName: "经理", token: "manager-e2e-token", capabilities: ["manager.control.view"] },
     releaseOwner: { role: "releaseOwner", displayName: "发布负责人", token: "release-e2e-token", capabilities: ["release.flight_deck.view"] }
@@ -157,16 +167,21 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await bottomNav.getByRole("button", { name: "工作项", exact: true }).click();
   await page.locator('[data-work-item-id="wi-e2e-room-setup"]').click();
   await expect(page.locator('[data-surface="operation-panel-route"]')).toBeVisible();
+  await expect(page.locator('[data-surface="operation-admission"]')).toBeVisible();
+  await expect(page.locator("body")).toContainText("办理提示");
+  await expect(page.locator("body")).toContainText("提交前检查");
+  await expect(page.locator("body")).toContainText("还需填写");
+  await expect(page.locator("body")).toContainText("查看检查详情");
+  await expect(page.locator('[data-surface="trusted-confirm"]')).toBeHidden();
+  await page.locator('[data-surface="operation-pre-submit-details"] summary').click();
   await expect(page.locator('[data-surface="trusted-confirm"]')).toBeVisible();
   await expect(page.locator('[data-surface="evidence-sheet"]')).toBeVisible();
-  await expect(page.locator('[data-surface="operation-admission"]')).toBeVisible();
-  await expect(page.locator("body")).toContainText("准入状态");
   await expect(page.locator("body")).toContainText("可信确认");
   await expect(page.locator("body")).toContainText("可信证据");
-  await expect(page.locator("body")).toContainText("提交前检查");
-  await expect(page.locator("body")).toContainText("可以提交");
-  await expect(page.locator("body")).toContainText("查看检查详情");
-  await expect(page.getByRole("button", { name: /提交观察记录/u })).toBeVisible();
+  await expect(page.locator("body")).toContainText("材料");
+  await expect(page.locator("body")).toContainText("填写房间信息");
+  await expect(page.getByRole("button", { name: /^提交房间信息$/u })).toBeVisible();
+  await expect(page.locator("body")).not.toContainText("提交观察记录");
   await expect(page.locator("body")).not.toContainText("payloadHash");
   await expect(page.locator("body")).not.toContainText("commandSubmissionId");
   await expect(page.locator("body")).not.toContainText("traceAvailable");
@@ -175,14 +190,16 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await expect(page.locator('[data-surface="operation-panel-route"]')).toHaveAttribute("data-admission-decision", "confirm_allowed_production_blocked");
   await expect(page.locator('[data-surface="operation-panel-route"]')).toHaveAttribute("data-runtime-decision", "work_item_confirm_ready:production_blocked");
 
+  runtimeSearchResults = [mainlineCommandSearchResult("房源建档与基础就绪")];
   await bottomNav.getByRole("button", { name: "搜索", exact: true }).click();
-  await page.locator("#query").fill("创建房间");
+  await page.locator("#query").fill("房源建档与基础就绪");
   await page.locator("#searchNow").click();
   await expect(page.locator("body")).not.toContainText("[object Object]");
-  await expect(page.locator('[data-search-section="searchWorkItems"]')).toContainText("查看记录");
-  await expect(page.locator('[data-search-section="searchWorkItems"]')).not.toContainText("继续观察记录");
+  await expect(page.locator('[data-search-section="activeCommands"]')).toContainText("房源建档与基础就绪");
+  await expect(page.locator('[data-search-section="activeCommands"]')).toContainText("开始办理");
+  await expect(page.locator("body")).not.toContainText("继续观察记录");
   await expect(page.locator('[data-search-section="searchLearning"]')).toHaveCount(0);
-  await page.locator('[data-search-section="searchWorkItems"] [data-work-item-id]').first().click();
+  await page.getByRole("button", { name: "开始办理" }).first().click();
   await expect(page.locator('[data-surface="operation-panel-route"]')).toBeVisible();
 
   await bottomNav.getByRole("button", { name: "我的", exact: true }).click();
@@ -192,6 +209,40 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await expect(page.locator("body")).not.toContainText("Governance Center");
   await expect(page.locator("body")).not.toContainText("Release Flight Deck");
 });
+
+function mainlineCommandSearchResult(query) {
+  const admissionDecisionRef = "admission:e2e:search-kernel";
+  return {
+    resultType: "command",
+    commandId: "startOperationsWorkspace",
+    templateWorkspaceId: "W-DORM-MAINLINE",
+    firstCardId: "cert.roomSetupConfirm",
+    title: { "zh-CN": "房源建档与基础就绪" },
+    subtitle: { "zh-CN": "完成房间建档、床位组确认和基础就绪确认。" },
+    status: "ready",
+    nextAction: { "zh-CN": "开始办理" },
+    matchedTerms: [query, "房源建档", "新增房间"],
+    sourceRefs: {
+      source: "SearchKernelService",
+      admissionDecisionRef
+    },
+    gateResult: {
+      source: "SearchKernelService",
+      admissionDecisionRef,
+      writeThroughSearchAllowed: false,
+      writeBusinessFactAllowed: false
+    },
+    admission: {
+      visibleAllowed: true,
+      prepareAllowed: true,
+      confirmAllowed: false,
+      productionAllowed: false,
+      mode: "internal_pilot_observation",
+      reason: "search_readonly_runtime_start",
+      admissionDecisionRef
+    }
+  };
+}
 
 test("mobile finance session stays on home and direct PC route shows diagnostic", async ({ page }) => {
   await seedActor(page, "finance");
